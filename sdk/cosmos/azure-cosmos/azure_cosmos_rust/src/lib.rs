@@ -33,7 +33,7 @@
 //!   `patch_item`
 //!
 //! Queries and feeds (`ffi/query.rs`, `wire/item_feed.rs`):
-//!   `query_items`, `read_all_items`, `fetch_page_with_cursor`, and the
+//!   `query_items`, `fetch_page_with_cursor`, and the
 //!   `_ItemFeedCursor` class
 //!
 //! Feed ranges (`ffi/feed_range.rs`, `feed_range_subset.rs`):
@@ -115,7 +115,6 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, ffi::patch_item);
     add_pyfn!(m, wire::batch::execute_item_batch);
     add_pyfn!(m, ffi::query_items);
-    add_pyfn!(m, ffi::read_all_items);
     add_pyfn!(m, ffi::read_feed_ranges);
     add_pyfn!(m, ffi::feed_range_from_partition_key);
     add_pyfn!(m, ffi::is_feed_range_subset);
@@ -143,7 +142,6 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, ffi::patch_item_async);
     add_pyfn!(m, wire::batch::execute_item_batch_async);
     add_pyfn!(m, ffi::query_items_async);
-    add_pyfn!(m, ffi::read_all_items_async);
     add_pyfn!(m, ffi::read_feed_ranges_async);
     add_pyfn!(m, ffi::feed_range_from_partition_key_async);
     add_pyfn!(m, ffi::is_feed_range_subset_async);

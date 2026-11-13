@@ -35,9 +35,9 @@ KEY = os.environ.get(
 class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
+        self.client = CosmosClient(HOST, KEY, _backend="rust", timeout=30)
         await self.client.__aenter__()
-        self._db_id = "legacy_read_all_crud_async_" + uuid.uuid4().hex[:8]
+        self._db_id = "rust_read_all_crud_async_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
         self.database = await self.client.create_database(self._db_id)
         self.container = await self.database.create_container(
@@ -48,9 +48,8 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         try:
             await self.client.delete_database(self._db_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
-        await self.client.close()
+        finally:
+            await self.client.close()
 
     async def test_query_iterable_functionality_async_rust(self):
         """Enumerating a whole container works item by item and page by page.
@@ -65,9 +64,8 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         looping or repeating the last page.
 
         This runs against a real account because read_all_items takes no
-        partition key, so it is a whole-container read served through the Rust
-        query fast path. If it were routed to a native read-feed instead the
-        driver would reject it and this would error.
+        partition key, so it is a whole-container read served through a live
+        Rust read-many cursor. No continuation token is required between pages.
         """
         # Source: tests/test_crud_async.py::TestCRUDOperationsAsync.test_query_iterable_functionality_async
         doc1 = await self.container.upsert_item(body={"id": "doc1", "prop1": "value1"})
@@ -108,4 +106,3 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert 1 == len([page async for page in await page_iter.__anext__()])
         with self.assertRaises(StopAsyncIteration):
             await page_iter.__anext__()
-

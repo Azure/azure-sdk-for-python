@@ -34,8 +34,8 @@ KEY = os.environ.get(
 class TestCRUDOperations(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
-        self._db_id = "legacy_read_all_crud_" + uuid.uuid4().hex[:8]
+        self.client = CosmosClient(HOST, KEY, _backend="rust", timeout=30)
+        self._db_id = "rust_read_all_crud_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
         self.database = self.client.create_database(self._db_id)
         self.container = self.database.create_container(
@@ -46,8 +46,8 @@ class TestCRUDOperations(unittest.TestCase):
     def tearDown(self) -> None:
         try:
             self.client.delete_database(self._db_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
+        finally:
+            self.client.close()
 
     def test_query_iterable_functionality_rust(self):
         """Enumerating a whole container works item by item and page by page.
@@ -61,9 +61,8 @@ class TestCRUDOperations(unittest.TestCase):
         looping or repeating the last page.
 
         This runs against a real account because read_all_items takes no
-        partition key, so it is a whole-container read served through the Rust
-        query fast path. If it were routed to a native read-feed instead the
-        driver would reject it and this would error.
+        partition key, so it is a whole-container read served through a live
+        Rust read-many cursor. No continuation token is required between pages.
         """
         # Source: tests/test_crud.py::TestCRUDOperations.test_query_iterable_functionality
         doc1 = self.container.create_item(body={"id": "doc1", "prop1": "value1", "pk": "pk"})
@@ -104,4 +103,3 @@ class TestCRUDOperations(unittest.TestCase):
         self.assertEqual(1, len(list(next(page_iter))))
         with self.assertRaises(StopIteration):
             next(page_iter)
-

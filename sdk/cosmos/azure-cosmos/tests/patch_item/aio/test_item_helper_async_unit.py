@@ -105,7 +105,7 @@ class TestAsyncPatchItem(unittest.TestCase):
         self.assertEqual(call.kwargs["operations"], _OPERATIONS)
         self.assertIs(call.kwargs["options"]["disableAutomaticIdGeneration"], True)
 
-    def test_async_backend_dispatch_parses_response_and_skips_legacy_rust(self):
+    def test_async_backend_dispatch_parses_response_and_skips_core_python_rust(self):
         """When the backend returns a ``BackendResponse`` (Rust path), the
         helper parses it into a ``CosmosDict`` and never awaits the legacy
         ``PatchItem``."""
@@ -131,7 +131,7 @@ class TestAsyncPatchItem(unittest.TestCase):
         self.assertEqual(result.get_response_headers()["etag"], "v2")
         cc.PatchItem.assert_not_awaited()
 
-    def test_async_filter_predicate_uses_rust_without_legacy_rust(self):
+    def test_async_filter_predicate_uses_rust_without_core_python_rust(self):
         """The body retains the condition without invoking legacy."""
         cc = _connection_with_cache()
         backend = _async_dispatch_backend(
@@ -154,7 +154,7 @@ class TestAsyncPatchItem(unittest.TestCase):
         self.assertEqual(json.loads(prepared.body_bytes)["condition"], "from root where root.number = 3")
         cc.PatchItem.assert_not_awaited()
 
-    def test_async_version_guard_uses_rust_without_legacy_rust(self):
+    def test_async_version_guard_uses_rust_without_core_python_rust(self):
         """A guarded async patch travels as a typed setting, not a raw header, and skips the legacy call.
 
         ``etag`` plus ``IfNotModified`` reaches the backend as

@@ -12,14 +12,13 @@ These pin the async customer-facing contract of ``read_items`` -- missing items
 omitted, single vs multi item, different / hierarchical partition keys, the
 aggregated request-charge header, and input-order preservation.
 
-Not copied here (and why): the fault-injection and internals-patching tests, for
-the same reasons noted in the sync legacy copy -- the core-python
-``FaultInjectionTransport`` is not on the Rust path, and the concurrency-internals
-test patches an internal method rather than pinning a customer contract.
+Native fault coverage lives in ``test_read_items_native.py``; Python transport
+injection cannot observe Rust requests. The removed Python concurrency
+coordinator is intentionally not tested.
 
 Run with::
 
-    pytest --noconftest tests/read_items/aio/test_read_items_async.py -v
+    pytest --import-mode=importlib tests/read_items/aio/test_read_items_async.py -v
 """
 import os
 import unittest
@@ -46,22 +45,19 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
     and the aggregated request-charge header)."""
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
+        self.client = CosmosClient(HOST, KEY, _backend="rust", timeout=20)
+        self.addAsyncCleanup(self.client.close)
         await self.client.__aenter__()
-        self._db_id = "legacy_read_items_async_" + uuid.uuid4().hex[:8]
+        self._db_id = "rust_read_items_async_" + uuid.uuid4().hex[:8]
         self.database = await self.client.create_database(self._db_id)
+        self.addAsyncCleanup(self.client.delete_database, self._db_id)
+        self.key_database = self.database
+        self._container_id = "read_items_container_" + str(uuid.uuid4())
         container_ref = await self.database.create_container(
-            id="read_items_container_" + str(uuid.uuid4()),
+            id=self._container_id,
             partition_key=PartitionKey(path="/id"),
         )
         self.container = self.database.get_container_client(container_ref.id)
-
-    async def asyncTearDown(self):
-        try:
-            await self.client.delete_database(self._db_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
-        await self.client.close()
 
     async def _create_records_for_read_items(self, container, count, id_prefix="item"):
         # Seed `count` items and return the (id, pk) pairs to read back plus the
@@ -178,18 +174,20 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
         read_items = await self.container.read_items(items=items_to_read)
         headers = read_items.get_response_headers()
         self.assertEqual(len(read_items), 0)
-        self.assertListEqual(list(headers.keys()), ['x-ms-request-charge'])
+        self.assertIn('x-ms-request-charge', headers)
+        self.assertNotIn('x-ms-continuation', headers)
         self.assertGreater(float(headers.get('x-ms-request-charge')), 0)
 
     async def test_headers_being_returned_on_success_async_rust(self):
-        """On success the merged result exposes only the aggregated x-ms-request-charge header (the summed RU cost of all the leaf reads)."""
+        """Success exposes the total charge and available metadata, without a continuation."""
         # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_headers_being_returned_on_success_async
         items_to_read, item_ids = await self._create_records_for_read_items(self.container, 5)
         read_items = await self.container.read_items(items=items_to_read)
         headers = read_items.get_response_headers()
         self.assertEqual(len(read_items), len(item_ids))
         self.assertIsNotNone(headers)
-        self.assertListEqual(list(headers.keys()), ['x-ms-request-charge'])
+        self.assertIn('x-ms-request-charge', headers)
+        self.assertNotIn('x-ms-continuation', headers)
         self.assertGreater(float(headers.get('x-ms-request-charge')), 0)
 
     async def test_read_items_order_using_zip_comparison_async_rust(self):
@@ -213,3 +211,114 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
                             "Order was not preserved. Input order doesn't match output order.")
         finally:
             await self.database.delete_container(container_id)
+
+    async def test_read_items_large_count_async_rust(self):
+        """Tests read_items with a large number of items."""
+        # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_read_items_large_count_async
+        items_to_read, item_ids = await self._create_records_for_read_items(self.container, 3100)
+
+        read_items = await self.container.read_items(items=items_to_read)
+
+        self.assertEqual(len(read_items), len(item_ids))
+        read_ids = {item['id'] for item in read_items}
+        self.assertSetEqual(read_ids, set(item_ids))
+
+    async def test_read_items_preserves_input_order_async_rust(self):
+        """Tests that read_items preserves the original order of input items."""
+        # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_read_items_preserves_input_order_async
+        # control-plane container creation
+        container_ref = await self.key_database.create_container(
+            id='read_order_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk")
+        )
+        container_pk = self.database.get_container_client(container_ref.id)
+
+        try:
+            # Create items with varied partition keys to ensure cross-partition queries
+            all_items = []
+
+            # Create items with alternating partition keys to ensure they span partitions
+            for i in range(50):
+                doc_id = f"order_item_{i}_{uuid.uuid4()}"
+                # Use different partition keys to ensure items are spread across partitions
+                pk_value = f"pk_{i % 5}"
+
+                # Create the item in the container
+                await container_pk.create_item({'id': doc_id, 'pk': pk_value, 'order_value': i})
+                all_items.append((doc_id, pk_value))
+
+            # Create a complex order for the read operation
+            scrambled_items = []
+            scrambled_items.extend(all_items[25:])  # Second half first
+            scrambled_items.extend(all_items[:25])  # Then first half
+
+            # Add a few more out-of-order items
+            if len(all_items) >= 30:
+                # Move some items from the middle to the end
+                moved_items = scrambled_items[10:15]
+                scrambled_items = scrambled_items[:10] + scrambled_items[15:]
+                scrambled_items.extend(moved_items)
+
+            # Read items using read_items with scrambled order
+            read_items = await container_pk.read_items(items=scrambled_items)
+
+            # Verify that all items were returned
+            self.assertEqual(len(read_items), len(scrambled_items))
+
+            # Verify the order matches the scrambled input order
+            for i, item in enumerate(read_items):
+                expected_id = scrambled_items[i][0]
+                expected_pk = scrambled_items[i][1]
+                self.assertEqual(
+                    item['id'],
+                    expected_id,
+                    f"Item at position {i} does not match input order. Expected ID {expected_id}, got {item['id']}"
+                )
+                self.assertEqual(
+                    item['pk'],
+                    expected_pk,
+                    f"Item at position {i} does not match input order. Expected PK {expected_pk}, got {item['pk']}"
+                )
+
+        finally:
+            # Clean up
+            await self.key_database.delete_container(container_ref.id)  # control-plane
+
+    async def test_read_after_container_recreation_async_rust(self):
+        """Tests read_items after a container is deleted and recreated with a different configuration."""
+        # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_read_after_container_recreation_async
+        container_id = self._container_id
+        initial_items_to_read, initial_item_ids = await self._create_records_for_read_items(self.container, 3,
+                                                                                             "initial")
+
+        read_items_before = await self.container.read_items(items=initial_items_to_read)
+        self.assertEqual(len(read_items_before), len(initial_item_ids))
+
+        await self.key_database.delete_container(container_id)  # control-plane
+
+        # Recreate the container with a different partition key and throughput
+        # control-plane container creation
+        container_ref = await self.key_database.create_container(
+            id=container_id,
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=10100
+        )
+        self.container = self.database.get_container_client(container_ref.id)
+        # Force the AAD client to re-read container properties so it caches the
+        # new partition key path (/pk instead of /id) and the new RID.
+        await self.container.read()
+
+        # Create new items with the new partition key structure
+        new_items_to_read = []
+        new_item_ids = []
+        for i in range(5):
+            doc_id = f"new_item_{i}_{uuid.uuid4()}"
+            pk_value = f"new_pk_{i}"
+            new_item_ids.append(doc_id)
+            await self.container.create_item({'id': doc_id, 'pk': pk_value, 'data': i})
+            new_items_to_read.append((doc_id, pk_value))
+
+        read_items_after = await self.container.read_items(items=new_items_to_read)
+        self.assertEqual(len(read_items_after), len(new_item_ids))
+        read_ids = {item['id'] for item in read_items_after}
+        self.assertSetEqual(read_ids, set(new_item_ids))

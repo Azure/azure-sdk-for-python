@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from common import test_legacy_migration_enforcer_unit as enforcer
+from common import test_migration_enforcer_unit as enforcer
 from common._retired_test_sources import RETIRED_THROUGHPUT_SOURCES
 
 

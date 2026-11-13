@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Original async-client connection-string assertions with Rust selected."""
+"""Async Rust connection-string scenarios, including an intentional User-Agent contract change."""
 
 import unittest
 from unittest import mock
@@ -35,7 +35,11 @@ class TestUserAgentOverwriteRegressionAsync(unittest.IsolatedAsyncioTestCase):
     connection_str = settings.TestSettings.connection_str
 
     async def test_overwrite_via_from_connection_string_async_rust(self):
-        """Rust clients support only user_agent_suffix, so user_agent is rejected by design."""
+        """accepted-vnext-change: User-Agent rejection (Gap 33, Bite 14).
+
+        Decision: RUST_PARITY_PUSHBACKS.md#client-bite-14.
+        This verifies the intentional exclusion, not legacy header parity.
+        """
         # pylint: disable-next=line-too-long
         # Source: tests/test_user_agent_overwrite_regression_async.py::TestUserAgentOverwriteRegressionAsync.test_overwrite_via_from_connection_string_async
         with self.assertRaisesRegex(TypeError, "user_agent is not supported by Rust-backed APIs"):

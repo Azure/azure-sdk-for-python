@@ -189,7 +189,7 @@ mod tests {
     }
 
     #[test]
-    fn native_scalars_match_legacy_routing_keys() {
+    fn native_scalars_match_core_python_routing_keys() {
         crate::test_support::prepare_python();
         Python::with_gil(|py| {
             let cases: Vec<(PyObject, &str)> = vec![

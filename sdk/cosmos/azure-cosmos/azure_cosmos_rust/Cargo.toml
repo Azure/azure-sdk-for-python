@@ -29,7 +29,7 @@ pyo3 = { version = "0.22", features = [
     "generate-import-lib",
 ] }
 
-# The workspace pins the driver source so CI needs no neighboring checkout.
+# The workspace selects the neighboring driver checkout for local development.
 #
 # Enable the driver's internal native query-planning integration. A query plan
 # describes execution across partitions and result combination. This feature

@@ -61,7 +61,7 @@ def _legacy_feed_ranges(raw_ranges):
     ]
 
 
-def test_rust_parser_matches_legacy_for_multi_range_mixed_case_rust():
+def test_rust_parser_matches_core_python_for_multi_range_mixed_case_rust():
     """Rust payload to feed ranges must be byte-identical to the legacy builder.
 
     Uses multiple ranges with lowercase hex EPKs so a dropped .upper() (or any
@@ -94,7 +94,7 @@ def test_rust_parser_matches_legacy_for_multi_range_mixed_case_rust():
         assert feed_range["Range"]["max"] == feed_range["Range"]["max"].upper()
 
 
-def test_rust_parser_matches_legacy_for_full_range_rust():
+def test_rust_parser_matches_core_python_for_full_range_rust():
     """Single full range parity (the shape the emulator suites exercise)."""
     raw = [{"minInclusive": "", "maxExclusive": "FF"}]
     rust_payload = {
@@ -321,7 +321,7 @@ def test_read_feed_ranges_builder_does_not_coerce_refresh_rust(value):
     {"initial_headers": {"x-customer": "orders"}}, {"request_options": {}},
     {"unknown_option": False},
 ])
-def test_read_feed_ranges_rejects_extra_options_without_legacy_execution_rust(async_client, options):
+def test_read_feed_ranges_rejects_extra_options_without_core_python_execution_rust(async_client, options):
     container, recording = _container(async_client)
     with pytest.raises(NotImplementedError, match="read_feed_ranges"):
         _collect(container.read_feed_ranges(**options), async_client)
@@ -518,7 +518,7 @@ def test_read_feed_ranges_preserves_service_errors_and_does_not_replay_rust(asyn
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("error", [RuntimeError("binding failed"), NotImplementedError("unsupported driver call")])
-def test_read_feed_ranges_binding_failures_never_execute_legacy_rust(async_client, error):
+def test_read_feed_ranges_binding_failures_never_execute_core_python_rust(async_client, error):
     container, recording = _container(async_client)
     recording.error = error
     with pytest.raises(type(error), match=str(error)):
@@ -580,7 +580,7 @@ def test_read_feed_ranges_unsupported_hooks_are_not_copied_or_called_rust(async_
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("force_refresh", [False, True])
-def test_read_feed_ranges_preserves_the_private_legacy_comparison_path_rust(async_client, force_refresh):
+def test_read_feed_ranges_preserves_the_private_core_python_comparison_path_rust(async_client, force_refresh):
     container, recording = _container(async_client)
     connection = container.client_connection
     connection._backend = ASYNC_LEGACY_BACKEND if async_client else LEGACY_BACKEND

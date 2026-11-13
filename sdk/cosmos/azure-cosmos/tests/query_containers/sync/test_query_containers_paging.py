@@ -9,12 +9,13 @@ from __future__ import annotations
 
 import os
 import uuid
+from unittest.mock import patch
 
 import pytest
 
 from azure.cosmos import CosmosClient, exceptions
 from azure.cosmos.partition_key import PartitionKey
-from common._rust_checks import run_on_rust
+from common._rust_checks import assert_live_page_headers, run_on_rust
 
 CONTAINER_COUNT = 3
 
@@ -56,12 +57,19 @@ def test_one_container_per_page_resumes_from_continuation_token_rust(database_wi
         database = client.get_database_client(database_id)
         query = "SELECT * FROM c WHERE c.id != @excluded"
         options = {"parameters": [{"name": "@excluded", "value": "not_here"}], "max_item_count": 1}
+        snapshots = []
 
         def target():
-            pages = database.query_containers(query, **options).by_page()
-            first = list(next(pages))
-            token = pages.continuation_token
-            remaining_pages = [list(page) for page in pages]
+            adapter = client._adapter
+            with patch.object(adapter, "execute_pages", wraps=adapter.execute_pages) as fetch:
+                pages = database.query_containers(
+                    query, response_hook=lambda headers, _results: snapshots.append(dict(headers)), **options
+                ).by_page()
+                first = list(next(pages))
+                token = pages.continuation_token
+                remaining_pages = [list(page) for page in pages]
+            assert len(snapshots) == fetch.call_count >= CONTAINER_COUNT
+            assert_live_page_headers(snapshots)
             replay = [
                 item
                 for page in database.query_containers(query, **options).by_page(continuation_token=token)

@@ -4,7 +4,7 @@
 """Rust-path copies of the sync availability-strategy tests that reach query_items.
 
 The originals inject faults through a custom Python transport, read the account
-regions with ``get_database_account()``, enable ``multiple_write_locations`` and
+regions through internal account discovery, enable ``multiple_write_locations`` and
 check contacted regions from azure-core ``Request URL:`` log records. On the Rust
 path the transport becomes ``_fault_injection_rules`` built from the same predicate
 and error lambdas, regions come from the configured WRITE_LOCATION/READ_LOCATION
@@ -430,7 +430,7 @@ class TestAvailabilityStrategy:
 
         cls._open_clients = []
         cls.client_without_fault = create_data_client(_backend="rust")
-        # Known gap 24: Account information is internal and cannot be returned to Python (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-24). get_database_account() raises NotImplementedError on Rust, so the regions come from the configured WRITE_LOCATION/READ_LOCATION settings.
+        # Account inspection is excluded from the client API; use configured test regions.
         cls.write_locations = [loc for loc in [TestSettings.WRITE_LOCATION] if loc]
         cls.read_locations = [loc for loc in [TestSettings.READ_LOCATION] if loc]
         # Use first writable location as primary region and any distinct region as failover.
@@ -438,7 +438,7 @@ class TestAvailabilityStrategy:
                                       if cls.write_locations else (None, None))
         if cls.REGION_2 is None:
             cls.client_without_fault.close()
-            pytest.skip("environment-gap: availability strategy tests need two distinct regions in WRITE_LOCATION/READ_LOCATION; Rust cannot discover account regions (known gap 24).")
+            pytest.skip("environment-gap: availability strategy tests need two distinct regions in WRITE_LOCATION/READ_LOCATION.")
         cls.REGION_BY_URI = {_location_cache.LocationCache.GetLocationalEndpoint(cls.host, region): region
                              for region in (cls.REGION_1, cls.REGION_2)}
 

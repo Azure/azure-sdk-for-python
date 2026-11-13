@@ -1173,7 +1173,7 @@ def test_container_get_or_create_preserves_bodyless_conditional_results_rust(con
     assert hook.call_args.args[1] == {}
 
 
-def test_container_get_or_create_explicit_legacy_keeps_transport_options_rust(container_get_or_create_case):
+def test_container_get_or_create_explicit_core_python_keeps_transport_options_rust(container_get_or_create_case):
     """A customer who chose legacy on purpose keeps the transport options only legacy
     supports.
 
@@ -1936,7 +1936,7 @@ def test_sync_read_container_routes_to_rust_and_fires_the_hook_once_rust():
 
 
 
-def test_read_container_does_not_pass_the_hook_to_the_legacy_call_rust():
+def test_read_container_does_not_pass_the_hook_to_the_core_python_call_rust():
     """The helper owns the hook on both engines: it strips ``response_hook`` from the
     kwargs it forwards, so the legacy pipeline cannot fire it a second time."""
     legacy_body = CosmosDict({"id": "c1"}, response_headers=CaseInsensitiveDict())

@@ -187,7 +187,7 @@ def test_sync_async_read_parameter_contracts_match_rust():
           "test_partitioned_collection_quota_async"]),
     ],
 )
-def test_legacy_read_copies_preserve_original_methods_rust(surface, source_file, class_name, method_names):
+def test_source_read_copies_preserve_original_methods_rust(surface, source_file, class_name, method_names):
     """The copied container tests still match the shipped originals, sync and async.
 
     Each copy is compared against its source in parsed form, so the assertions

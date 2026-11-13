@@ -53,6 +53,40 @@ def request_count(query_client):
     )
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", ["list_databases", "query_databases"])
+async def test_page_hooks_are_lazy_once_per_fetch_and_isolated_rust(query_client, operation):
+    client, connection, backend, is_async, _ = query_client
+    snapshots = []
+
+    def hook(headers):
+        snapshots.append(dict(headers))
+        headers["x-hook-only"] = "local"
+
+    call = getattr(client, operation)
+    pages = call(*([SQL] if operation == "query_databases" else []), response_hook=hook).by_page()
+    assert request_count(query_client) == 0
+    assert snapshots == []
+
+    for index in range(2):
+        activity_id = f"page-{index}"
+        headers = CaseInsensitiveDict({"x-ms-activity-id": activity_id, "x-ms-request-charge": "2"})
+        if index == 0:
+            headers["x-ms-continuation"] = "next"
+        backend._response = BackendResponse(
+            status_code=200, headers=headers, body=json.dumps({"Databases": [{"id": activity_id}]}).encode()
+        )
+
+        assert await _next_listing_page(pages, is_async) == [{"id": activity_id}]
+        assert len(snapshots) == request_count(query_client) == index + 1
+        assert snapshots[-1]["x-ms-activity-id"] == activity_id
+        assert connection.last_response_headers["x-ms-activity-id"] == activity_id
+        assert "x-hook-only" not in connection.last_response_headers
+        assert "x-hook-only" not in backend._response.headers
+
+    assert [headers["x-ms-activity-id"] for headers in snapshots] == ["page-0", "page-1"]
+
+
 @pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
 @pytest.mark.parametrize(
     "name,key",
@@ -229,7 +263,7 @@ async def test_query_projection_rows_are_not_forced_into_property_dicts_rust(que
 
 
 @pytest.mark.asyncio
-async def test_rust_query_does_not_use_legacy_query_orchestrators_rust(listing_client):
+async def test_rust_query_does_not_use_core_python_query_orchestrators_rust(listing_client):
     client, connection, _, is_async = listing_client
     for name in ("QueryDatabases", "ReadDatabases", "_CosmosClientConnection__QueryFeed",
                  "_CosmosClientConnection__CheckAndUnifyQueryFormat"):

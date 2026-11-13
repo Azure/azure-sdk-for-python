@@ -189,7 +189,7 @@ class TestParityWithLegacyGenerator(unittest.TestCase):
             return document["id"]
         return document.get("id") if document.get("id") else None
 
-    def test_helper_and_legacy_produce_same_shape_for_each_input_rust(self):
+    def test_helper_and_core_python_produce_same_shape_for_each_input_rust(self):
         """For preset / empty / None / missing ids, helper and legacy agree on shape."""
         inputs = [
             {"id": "preset"},

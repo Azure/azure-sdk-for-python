@@ -60,6 +60,7 @@ _ALL_CONSISTENCY_LEVELS = (
 
 _RUST_FAULT_OPERATION_TYPES = frozenset(
     (
+        "All",
         "ReadItem",
         "QueryItem",
         "CreateItem",
@@ -232,6 +233,9 @@ def _prepare_fault_injection_rules(
     Reject unknown fields, duplicate rule IDs, unsupported operation types,
     and invalid field values. Operation types use Rust driver test-rule names
     such as "ReadItem", not Python wrapper operation names such as "read_item".
+    The explicit "All" selector leaves the driver's operation filter unset.
+    Other rule filters still apply. It can affect account initialization, so
+    tests can start with enabled=False and enable their owned rule afterward.
 
     Return a tuple of read-only PreparedFaultInjectionRule records with omitted
     optional fields filled in. None or an empty sequence produces no rules.

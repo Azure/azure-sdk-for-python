@@ -70,6 +70,7 @@ __all__ = [
     "WORKLOAD_MEASUREMENT_SECONDS",
     "WORKLOAD_MEASUREMENT_MANIFEST",
     "WORKLOAD_DELETE_ITEM_COUNT",
+    "WORKLOAD_MAINTENANCE_CONCURRENCY",
     "WORKLOAD_QUERY_MANIFEST",
     "WORKLOAD_QUERY_SCENARIO",
 ]
@@ -173,6 +174,11 @@ WORKLOAD_MEASUREMENT_SECONDS = _safe_float(
 )
 WORKLOAD_MEASUREMENT_MANIFEST = os.environ.get("WORKLOAD_MEASUREMENT_MANIFEST", "")
 WORKLOAD_DELETE_ITEM_COUNT = int(os.environ.get("WORKLOAD_DELETE_ITEM_COUNT", "0"))
+WORKLOAD_MAINTENANCE_CONCURRENCY = int(os.environ.get("WORKLOAD_MAINTENANCE_CONCURRENCY", "1"))
+if WORKLOAD_MAINTENANCE_CONCURRENCY < 1:
+    raise ValueError("WORKLOAD_MAINTENANCE_CONCURRENCY must be positive")
+if WORKLOAD_MAINTENANCE_CONCURRENCY != 1 and WORKLOAD_OPERATIONS != {"delete"}:
+    raise ValueError("Concurrent owned maintenance is supported only for delete")
 WORKLOAD_QUERY_MANIFEST = os.environ.get("WORKLOAD_QUERY_MANIFEST", "")
 WORKLOAD_QUERY_SCENARIO = os.environ.get("WORKLOAD_QUERY_SCENARIO", "")
 
@@ -274,11 +280,12 @@ if WORKLOAD_MEASUREMENT_SECONDS:
         raise ValueError("Select WORKLOAD_MEASUREMENT_SECONDS or the read-only duration, not both")
     if any((
         len(WORKLOAD_OPERATIONS) != 1, WORKLOAD_MIX, WORKLOAD_USE_SYNC, WORKLOAD_USE_PROXY,
-        WORKLOAD_NUM_CLIENTS != 1, CONCURRENT_REQUESTS != 1,
+        WORKLOAD_NUM_CLIENTS != 1,
+        CONCURRENT_REQUESTS != 1 and WORKLOAD_OPERATIONS != {"delete"},
         WORKLOAD_ARRIVAL_RATE, not WORKLOAD_MANAGE_CLIENT_LIFECYCLE,
     )):
         raise ValueError(
-            "Bounded measurements require one async operation, one client, one concurrent request, "
+            "Bounded measurements require one async operation, one client, concurrency one except for delete, "
             "zero arrival rate, no proxy/mix, and managed client lifecycle"
         )
     if WORKLOAD_OPERATIONS == {"query"} and any((
@@ -294,8 +301,11 @@ if WORKLOAD_MEASUREMENT_SECONDS:
         or not WORKLOAD_MEASUREMENT_MANIFEST
     ):
         raise ValueError("Bounded writes require the orders profile, an ownership namespace and its saved manifest")
-    if WORKLOAD_OPERATIONS == {"delete"} and WORKLOAD_DELETE_ITEM_COUNT <= 3:
-        raise ValueError("WORKLOAD_DELETE_ITEM_COUNT must cover three warm-up deletes and the measured sequence")
+    if WORKLOAD_OPERATIONS == {"delete"}:
+        if "COSMOS_CONCURRENT_REQUESTS" not in os.environ:
+            raise ValueError("Bounded deletes require an explicit COSMOS_CONCURRENT_REQUESTS")
+        if WORKLOAD_DELETE_ITEM_COUNT < 3 + CONCURRENT_REQUESTS:
+            raise ValueError("WORKLOAD_DELETE_ITEM_COUNT must cover three warm-up deletes and all concurrent requests")
 if (WORKLOAD_QUERY_MANIFEST or WORKLOAD_QUERY_SCENARIO) and (
     not WORKLOAD_MEASUREMENT_SECONDS or WORKLOAD_OPERATIONS != {"query"}
 ):

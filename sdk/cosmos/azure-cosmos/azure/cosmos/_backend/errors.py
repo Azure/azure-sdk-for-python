@@ -12,10 +12,6 @@ path. Separate exception types keep those cases distinct.
 """
 from __future__ import annotations
 
-from typing import Any
-
-from .constants import is_rust_backend
-
 
 class PagePreflightError(RuntimeError):
     """Report that page preflight cannot find the required binding function.
@@ -37,19 +33,3 @@ class BindingProtocolError(RuntimeError):
     or the binding may return no page. Report the mismatch rather than hiding
     it by repeating the operation through the legacy path.
     """
-
-
-def raise_account_read_unsupported(backend: Any) -> None:
-    """Reject get_database_account on the Rust path instead of silently falling back.
-
-    The binding has no function for this public account read. The retained
-    legacy test branch can still perform it, so this check returns without
-    raising for that branch. This is not a customer-facing execution-path choice.
-    """
-    if not is_rust_backend(backend):
-        return
-    raise NotImplementedError(
-        "get_database_account() is not yet available through the Rust binding. "
-        "The rust driver reads account metadata internally for "
-        "routing but does not yet expose it across the binding."
-    )

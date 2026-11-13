@@ -18,7 +18,9 @@ import pytest
 
 from azure.cosmos import CosmosClient
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
-from common._rust_checks import run_on_rust
+from common._rust_checks import assert_live_page_headers, run_on_rust
+
+pytestmark = [pytest.mark.cosmosEmulator]
 
 
 def _rust_client():
@@ -53,7 +55,29 @@ def client():
 
 def test_listed_databases_include_created_ones_with_system_properties_rust(client, database_ids):
     """Every created database is listed with its id, _rid, _self, _etag and _ts properties."""
-    rows = run_on_rust(client, lambda: list(client.list_databases()))
+    snapshots = []
+
+    def target():
+        rows = []
+        page_count = 0
+        for page in client.list_databases(
+            max_item_count=2,
+            timeout=10,
+            throughput_bucket=1,
+            initial_headers={"x-list-databases-test": "sync"},
+            response_hook=lambda headers: snapshots.append(dict(headers)),
+        ).by_page():
+            rows.extend(page)
+            page_count += 1
+            assert len(snapshots) == page_count
+            assert (
+                snapshots[-1]["x-ms-activity-id"] == client.client_connection.last_response_headers["x-ms-activity-id"]
+            )
+        assert page_count >= 2
+        return rows
+
+    rows = run_on_rust(client, target)
+    assert_live_page_headers(snapshots)
     selected = [row for row in rows if row.get("id") in database_ids]
     assert sorted(row["id"] for row in selected) == sorted(database_ids)
     for row in selected:

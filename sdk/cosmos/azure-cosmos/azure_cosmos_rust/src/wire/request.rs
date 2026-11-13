@@ -69,7 +69,7 @@ pub(crate) struct RequestHeadersAndOptions {
     // turns it on with the caller's threshold. ``None`` means the caller did
     // not set it and the driver keeps its default.
     pub(crate) availability_strategy: Option<AvailabilityStrategy>,
-    // Read-item entry points validate once, before driver lookup or async dispatch.
+    // Read-item entry points validate once, before retaining the driver or async dispatch.
     pub(crate) read_consistency_strategy: Option<ReadConsistencyStrategy>,
     pub(crate) patch_strategy: Option<PatchStrategy>,
     pub(crate) custom_headers: HashMap<HeaderName, HeaderValue>,

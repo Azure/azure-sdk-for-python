@@ -11,11 +11,23 @@ header) use these helpers instead of the retiring parity framework.
 
 from __future__ import annotations
 
-from typing import Any, Awaitable, Callable, TypeVar
+from typing import Any, Awaitable, Callable, Mapping, Sequence, TypeVar
 
 from config.diagnostics import _binding_operation_count, _rust_fallback_count
 
 T = TypeVar("T")
+
+
+def assert_live_page_headers(snapshots: Sequence[Mapping[str, Any]]) -> None:
+    """Require charged, diagnosed service pages with distinct activity IDs."""
+    assert snapshots, "no page headers were captured"
+    activity_ids = []
+    for headers in snapshots:
+        assert headers["x-ms-activity-id"]
+        assert float(headers["x-ms-request-charge"]) > 0
+        assert headers["x-ms-cosmos-sdk-diagnostics"]
+        activity_ids.append(headers["x-ms-activity-id"])
+    assert len(set(activity_ids)) == len(activity_ids), "page activity IDs were reused"
 
 
 def backend_name(client: Any) -> str:

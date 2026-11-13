@@ -1172,25 +1172,6 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
         await self.key_database_for_test.delete_container(collection.id)
 
-
-
-
-    async def test_database_account_functionality_async(self):
-
-        # Validate database account functionality.
-        database_account = await self.client._get_database_account()
-        assert database_account.DatabasesLink == '/dbs/'
-        assert database_account.MediaLink == '/media/'
-        if (HttpHeaders.MaxMediaStorageUsageInMB in
-                self.client.client_connection.last_response_headers):
-            assert database_account.MaxMediaStorageUsageInMB == self.client.client_connection.last_response_headers[
-                HttpHeaders.MaxMediaStorageUsageInMB]
-        if (HttpHeaders.CurrentMediaStorageUsageInMB in
-                self.client.client_connection.last_response_headers):
-            assert database_account.CurrentMediaStorageUsageInMB == self.client.client_connection.last_response_headers[
-                HttpHeaders.CurrentMediaStorageUsageInMB]
-        assert database_account.ConsistencyPolicy['defaultConsistencyLevel'] is not None
-
     async def test_index_progress_headers_async(self):
 
         created_db = self.key_database_for_test

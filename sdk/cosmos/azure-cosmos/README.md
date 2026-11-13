@@ -6,7 +6,7 @@ backend that some operations can route through instead of the legacy
 Python HTTP path.
 
 This README covers SDK usage, **building it locally and running the tests**.
-For architecture and design, see the docs under `docs/`.
+Other architecture and design material lives under `docs/`.
 
 ---
 

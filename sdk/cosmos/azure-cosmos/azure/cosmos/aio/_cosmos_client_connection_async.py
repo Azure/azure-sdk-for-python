@@ -75,7 +75,6 @@ from .._backend.operations import (
     OP_QUERY_CONTAINERS,
     OP_QUERY_DATABASES,
     OP_QUERY_ITEMS,
-    OP_READ_ALL_ITEMS,
 )
 from .._backend.contracts import PreparedPageRequest
 from .._backend.capabilities import OperationRouting, reject_removed_options
@@ -105,7 +104,7 @@ from .._backend.credentials import reject_resource_token_fields
 from .._constants import _Constants as Constants
 from .._query_advisor import get_query_advice_info
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
-from .._query_rust_routing import build_list_databases_prepared_page_request, build_query_databases_prepared_page_request, build_list_containers_prepared_page_request, build_query_containers_prepared_page_request, build_read_all_items_prepared_page_request, build_query_items_prepared_page_request, can_use_rust_backend_for_list_databases_page, can_use_rust_backend_for_query_databases_page, can_use_rust_backend_for_list_containers_page, can_use_rust_backend_for_query_containers_page, can_use_rust_backend_for_query_page, can_use_rust_backend_for_read_all_items_page, process_query_page
+from .._query_rust_routing import build_list_databases_prepared_page_request, build_query_databases_prepared_page_request, build_list_containers_prepared_page_request, build_query_containers_prepared_page_request, build_query_items_prepared_page_request, can_use_rust_backend_for_list_databases_page, can_use_rust_backend_for_query_databases_page, can_use_rust_backend_for_list_containers_page, can_use_rust_backend_for_query_containers_page, can_use_rust_backend_for_query_page, process_query_page
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
 from ._backend.cosmos_backend import AsyncCosmosBackend
@@ -129,7 +128,6 @@ from ..partition_key import (
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
-from ._read_items_helper_async import ReadItemsHelperAsync
 from .._user_agent_policy import CosmosUserAgentPolicy
 
 _LOGGER = logging.getLogger(__name__)
@@ -1677,65 +1675,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
 
-    async def read_items(
-            self,
-            collection_link: str,
-            items: Sequence[Tuple[str, PartitionKeyType]],
-            options: Optional[Mapping[str, Any]] = None,
-            **kwargs: Any
-     ) -> CosmosList:
-        """Reads many items.
-
-        :param str collection_link: The link to the document collection.
-        :param items: A list of tuples, where each tuple contains an item's ID and partition key.
-        :type items: Sequence[Tuple[str, _PartitionKeyType]]
-        :param dict options: The request options for the request.
-        :return: The list of read items.
-        :rtype: CosmosList
-        """
-        if options is None:
-            options = {}
-        if not items:
-            return CosmosList([], response_headers=CaseInsensitiveDict())
-
-        partition_key_definition = await self._get_partition_key_definition(collection_link, options)
-        if not partition_key_definition:
-            raise ValueError("Could not find partition key definition for collection.")
-
-        # Extract and remove max_concurrency from kwargs
-        max_concurrency = kwargs.pop('max_concurrency', None)
-        helper = ReadItemsHelperAsync(
-            client=self,
-            collection_link=collection_link,
-            items=items,
-            options=options,
-            partition_key_definition=partition_key_definition,
-            max_concurrency=max_concurrency,
-            **kwargs)
-        return await helper.read_items()
-
-    def ReadItems(
-        self,
-        collection_link: str,
-        feed_options: Optional[Mapping[str, Any]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Reads all documents in a collection.
-
-        :param str collection_link: The link to the document collection.
-        :param dict feed_options: The additional options for the operation.
-        :param response_hook: A callable invoked with the response metadata.
-        :type response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]
-        :return: Query Iterable of Documents.
-        :rtype: query_iterable.QueryIterable
-
-        """
-        if feed_options is None:
-            feed_options = {}
-
-        return self.QueryItems(collection_link, None, feed_options, response_hook=response_hook, **kwargs)
-
     def QueryItems(
         self,
         database_or_container_link: str,
@@ -1798,7 +1737,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     response_headers=response_headers,
                     **kwargs
                 ),
-                response_headers if "_read_all_response_headers" in options else self.last_response_headers,
+                self.last_response_headers,
             )
 
         return CosmosAsyncItemPaged(
@@ -2082,7 +2021,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        page_backend = kwargs.pop("_read_all_backend", self._backend)
+        page_backend = kwargs.pop("_feed_backend", self._backend)
         deadline = options.get("_item_operation_deadline")
         if deadline is not None:
             options = legacy_deadline_options(options, deadline)
@@ -2232,25 +2171,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     return prepared
                 build_request_page = _build_list_containers_page
             else:
-                page_op = OP_READ_ALL_ITEMS
-                rust_eligible = can_use_rust_backend_for_read_all_items_page(
-                    options=options,
-                    kwargs=kwargs,
-                    is_query_plan=is_query_plan,
-                    resource_type=resource_type,
-                    partition_key_range_id=partition_key_range_id,
-                )
-
-                def _build_read_all_items_page() -> PreparedPageRequest:
-                    nonlocal rust_request_headers
-                    prepared = build_read_all_items_prepared_page_request(
-                        path=path,
-                        options=options,
-                        req_headers=self.default_headers,
-                    )
-                    rust_request_headers = prepared.headers
-                    return prepared
-                build_request_page = _build_read_all_items_page
+                return await _run_legacy_read_feed()
 
             def _parse_rust_page(page):
                 parsed_page = process_query_page(

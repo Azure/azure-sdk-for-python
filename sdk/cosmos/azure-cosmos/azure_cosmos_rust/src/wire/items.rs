@@ -78,7 +78,7 @@ impl ItemTarget {
 }
 
 /// Run one item operation and return a binding response tuple.
-/// The shared runner retains the cached CosmosDriver, prepares the operation,
+/// The shared runner retains the handle-owned CosmosDriver, prepares the operation,
 /// and releases Python's global interpreter lock (GIL) while the calling thread
 /// waits on the Tokio runtime. Metadata resolution and item execution share
 /// the supplied binding timeout; neither gets a fresh timeout after waiting.
@@ -218,7 +218,8 @@ fn execute_item_on_driver(
     let deadline = modifiers
         .operation_timeout
         .map(|timeout| tokio::time::Instant::now() + timeout);
-    async move {
+    // Keep timeout and lifecycle wrappers from carrying the full operation state.
+    Box::pin(async move {
         let resolution_options = build_operation_options(
             None,
             modifiers.excluded_regions_value.clone(),
@@ -326,7 +327,7 @@ fn execute_item_on_driver(
         options.patch_strategy = modifiers.patch_strategy;
 
         Ok(driver.execute_singleton_operation(op, options).await)
-    }
+    })
 }
 
 #[cfg(test)]
@@ -782,7 +783,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn create_legacy_quoted_paths_preserve_partition_key_headers() {
+    async fn create_core_python_quoted_paths_preserve_partition_key_headers() {
         #[derive(Debug, Default)]
         struct Keys(Mutex<Vec<String>>);
         impl RequestObserver for Keys {
@@ -808,7 +809,7 @@ mod tests {
         }
         crate::test_support::prepare_python();
         let cases: Vec<serde_json::Value> = serde_json::from_str(include_str!(
-            "../../../tests/create_item/legacy_partition_key_cases.json"
+            "../../../tests/create_item/partition_key_reference_cases.json"
         ))
         .unwrap();
         for case in cases {

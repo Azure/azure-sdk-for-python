@@ -113,7 +113,7 @@ def test_retained_write_helpers_and_split_inputs_are_unchanged_rust():
 
 
 @pytest.mark.parametrize("mode", ["collection", "units"])
-def test_retained_suite_collects_and_runs_units_without_legacy_sources_rust(mode):
+def test_retained_suite_collects_and_runs_units_without_original_sources_rust(mode):
     """Block original imports AND dynamic reads, without touching shared files."""
     script = r'''
 import os

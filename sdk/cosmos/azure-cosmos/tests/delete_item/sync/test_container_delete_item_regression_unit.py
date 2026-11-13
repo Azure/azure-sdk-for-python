@@ -17,6 +17,7 @@ the delete sends on. They check two things:
 import unittest
 from unittest.mock import MagicMock, patch
 
+import pytest
 from azure.core import MatchConditions
 from azure.core.utils import CaseInsensitiveDict
 
@@ -28,6 +29,27 @@ from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
+from azure.cosmos.http_constants import HttpHeaders
+from query_items.test_query_backend_routing_unit import _new_sync_connection
+
+
+@pytest.mark.parametrize("populate_query_metrics", [False, True])
+def test_deprecated_query_metrics_warn_and_do_not_reach_delete_headers_rust(populate_query_metrics):
+    """Preserve the legacy DELETE header boundary without sending an HTTP request."""
+    connection = _new_sync_connection()
+    connection._container_properties_cache["dbs/db/colls/c"] = {"_rid": "cached-rid"}
+    send = MagicMock(return_value=(None, CaseInsensitiveDict()))
+    connection._CosmosClientConnection__Delete = send
+    container = ContainerProxy(connection, "dbs/db", "c", _item_context=ItemClientContext(LEGACY_BACKEND))
+
+    with pytest.warns(DeprecationWarning, match="populate_query_metrics"):
+        assert container.delete_item("order", "customer", populate_query_metrics=populate_query_metrics) is None
+
+    send.assert_called_once()
+    path, _, headers = send.call_args.args
+    assert path == "/dbs/db/colls/c/docs/order/"
+    assert headers[HttpHeaders.PartitionKey] == '["customer"]'
+    assert HttpHeaders.PopulateQueryMetrics not in headers
 
 
 def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):

@@ -86,7 +86,7 @@ class TestCommonOptionsTableContent(unittest.TestCase):
         }
         self.assertEqual(supported, self.EXPECTED_ENTRIES)
 
-    def test_legacy_alias_in_base_module_is_the_same_object_rust(self):
+    def test_compatibility_alias_in_base_module_is_the_same_object_rust(self):
         """``_base._COMMON_OPTIONS`` is the same dict object — catches a future contributor forking it."""
         self.assertIs(_base._COMMON_OPTIONS, COMMON_OPTIONS)
 
@@ -226,7 +226,7 @@ class TestParityWithLegacyBuildOptions(unittest.TestCase):
                 options[opt_key] = kwargs.pop(kwarg)
         return options
 
-    def test_kwarg_mapping_subset_matches_legacy_rust(self):
+    def test_kwarg_mapping_subset_matches_core_python_rust(self):
         """For every input shape, helper and legacy produce the same options dict and consume the same kwargs."""
         for inputs in self.KWARG_INPUTS:
             with self.subTest(kwargs=inputs):

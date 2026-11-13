@@ -7,7 +7,6 @@ Copy:     tests/query_databases/sync/test_crud_database.py
 """
 
 import unittest
-import uuid
 
 import pytest
 
@@ -35,8 +34,8 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         """Query databases by id with a parameterized dict, a no-match filter and a raw string."""
         # Source: tests/test_crud_database.py::TestCRUDDatabaseOperations.test_sql_query_crud
         # create two databases.
-        db1 = self.key_client.create_database('database 1' + str(uuid.uuid4()))
-        db2 = self.key_client.create_database('database 2' + str(uuid.uuid4()))
+        db1 = self.key_client.create_database(settings.unique_database_id("db1"))
+        db2 = self.key_client.create_database(settings.unique_database_id("db2"))
 
         # query with parameters.
         databases = list(self.key_client.query_databases({

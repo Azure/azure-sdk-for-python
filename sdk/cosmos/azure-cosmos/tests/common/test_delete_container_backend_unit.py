@@ -256,7 +256,7 @@ def test_delete_has_matching_argument_binding_rust(delete_case, legacy, args, kw
     {"request_options": {"timeout": 10}},
     {"request_options": {Constants.ContainerRID: "unexpected"}},
 ])
-def test_delete_unsupported_rust_settings_never_reach_legacy_rust(delete_case, kwargs):
+def test_delete_unsupported_rust_settings_never_reach_core_python_rust(delete_case, kwargs):
     """Options the Rust path cannot honor stop the delete instead of moving it to the
     legacy transport.
 
@@ -490,7 +490,7 @@ def test_delete_binding_errors_and_cancellation_are_not_replayed_rust(delete_cas
     case.backend.execute.assert_called_once()
 
 
-def test_explicit_legacy_delete_retains_legacy_transport_options_rust(delete_case):
+def test_explicit_core_python_delete_retains_core_python_transport_options_rust(delete_case):
     """A customer who chose legacy on purpose keeps the transport options only legacy
     supports.
 

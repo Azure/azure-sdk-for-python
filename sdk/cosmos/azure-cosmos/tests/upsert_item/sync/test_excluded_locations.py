@@ -31,10 +31,10 @@ L2 = settings.TestSettings.READ_LOCATION
 
 @pytest.fixture(scope="class", autouse=True)
 def _require_configured_regions():
-    # Known gap 24: Account information is internal and cannot be returned to Python (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-24). The original discovers regions from the account; this copy needs them configured.
+    # Account inspection is excluded from the client API; use configured test regions.
     if not L1 or not L2:
         pytest.skip("environment-gap: excluded-locations tests need WRITE_LOCATION and READ_LOCATION set to account "
-                    "regions; Rust cannot discover account regions (known gap 24).")
+                    "regions.")
 L3 = "East US 2"
 
 CLIENT_ONLY_TEST_DATA = [

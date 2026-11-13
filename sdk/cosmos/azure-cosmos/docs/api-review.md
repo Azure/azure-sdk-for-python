@@ -1,5 +1,7 @@
 # Python Cosmos DB SDK - Public API changes for review
 
+This document covers customer-visible API decisions.
+
 ## Contents
 
 - [Client setup and navigation](#client-setup-and-navigation)
@@ -7,6 +9,7 @@
   - [`CosmosClient.from_connection_string` - Connection-string client creation](#cosmosclientfrom_connection_string)
   - [`CosmosClient.get_database_client` - Getting a database client from properties](#cosmosclientget_database_client)
 - [Account and database operations](#account-and-database-operations)
+  - [`CosmosClient.get_database_account` - Omitted; use the management SDK](#cosmosclientget_database_account)
   - [`CosmosClient.create_database` - Creating a database](#cosmosclientcreate_database)
   - [`CosmosClient.create_database_if_not_exists` - Creating a database if it does not exist](#cosmosclientcreate_database_if_not_exists)
   - [`CosmosClient.list_databases` - Listing databases](#cosmosclientlist_databases)
@@ -224,6 +227,14 @@ keys and Entra, not Cosmos resource tokens. Both backends reject resource-token
 maps, permission feeds, and `resourceTokens` or `permissionFeed` fields with
 `ValueError` during construction, including when supplied alongside `masterKey`.
 An empty or otherwise unsupported credential also fails during construction.
+
+**Review decision for an empty credential mapping:** rejecting `{}` with
+`ValueError` during client construction is accepted instead of constructing
+the client and waiting for `list_databases` to return HTTP 401. This approval
+is limited to that empty-input validation change. A genuine service-side
+401 during listing must still propagate as a service error. The original-test
+disposition and focused verification are recorded in
+`V5/testing/v5-test-accounting.md`, section 14.6.
 
 Account keys and Entra credentials remain supported. Cosmos resource permissions
 are not Entra role assignments; changing the credential does not automatically
@@ -460,6 +471,71 @@ without `await`; await subsequent service operations such as `database.read()`.
 
 ## Account and database operations
 
+<a id="cosmosclientget_database_account"></a>
+
+### `CosmosClient.get_database_account`
+
+**Decision: Omitted from the new major release.** Account-configuration
+inspection uses the separate `azure-mgmt-cosmosdb` management SDK, not a new
+Rust-driver operation behind `CosmosClient`.
+
+**Why the customer needs an alternative**
+
+Alpha Bank wants to inspect its account's configured read/write regions,
+default consistency or multiple-write-regions setting. Previously, the
+customer app called `client.get_database_account()` and received a
+`DatabaseAccount` object. The new release does not retain that public method
+solely to preserve the earlier API.
+
+Use the **control plane**, Azure's interface for reading and managing
+resource configuration. This is separate from the **data plane**, which
+serves the customer app's database and item operations.
+
+**How the customer reads the account configuration**
+
+Install `azure-mgmt-cosmosdb` and `azure-identity` in the environment running
+the configuration check. Configure a Microsoft Entra identity, and supply
+the subscription ID, resource group and account name:
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.mgmt.cosmosdb import CosmosDBManagementClient
+
+with DefaultAzureCredential() as credential:
+    with CosmosDBManagementClient(
+        credential=credential,
+        subscription_id="<subscription-id>",
+    ) as management_client:
+        account = management_client.database_accounts.get(
+            resource_group_name="alpha-bank-resources",
+            account_name="alpha-bank-orders",
+        )
+        print(account)
+```
+
+The [management operation](https://learn.microsoft.com/en-us/python/api/azure-mgmt-cosmosdb/azure.mgmt.cosmosdb.operations.databaseaccountsoperations#azure-mgmt-cosmosdb-operations-databaseaccountsoperations-get)
+returns a `DatabaseAccountGetResults` object. Use the
+[management result model](https://learn.microsoft.com/en-us/python/api/azure-mgmt-cosmosdb/azure.mgmt.cosmosdb.models.databaseaccountgetresults)
+for account configuration; it is not the legacy `DatabaseAccount` type or
+a promise to expose every internal field used by the Cosmos SDK.
+
+**What changes for permissions**
+
+The identity needs the
+[`Microsoft.DocumentDB/databaseAccounts/read` control-plane permission](https://learn.microsoft.com/en-us/azure/role-based-access-control/permissions/databases#microsoftdocumentdb)
+for the account. A Cosmos account key does not authenticate this management
+request, and permission to read items does not automatically grant account
+management access. A customer with only data-plane access must obtain the
+additional permission or have an authorized configuration tool perform the
+check.
+
+This is an intentional breaking change, not a transparent replacement.
+The Cosmos client must not silently call the control plane or replay the
+operation through legacy Python. The decision does not remove database or
+container property reads.
+
+
+
 <a id="2---creating-a-database"></a>
 <a id="cosmosclientcreate_database"></a>
 
@@ -637,8 +713,7 @@ undo creation.
 
 **Decision requested**
 
-Approve or revise the stricter argument rules, early throughput validation,
-and common response-hook contract.
+
 
 Customer migration consists of naming optional arguments, removing
 inapplicable keywords, choosing one throughput mode, updating one-argument
@@ -671,9 +746,7 @@ By default, the result is the database object. With `return_properties=True`,
 the result also includes a `CosmosDict`: the database properties with access
 to the creation-response headers. These return forms already exist.
 
-This presentation makes the supported named options visible for review.
-The current implementation receives several of them through `**kwargs`;
-listing them here does not introduce new options.
+
 
 <a id="3---creating-a-database-if-it-does-not-exist"></a>
 <a id="cosmosclientcreate_database_if_not_exists"></a>
@@ -720,6 +793,23 @@ recovery changes, not missing Rust-driver capabilities.
 The argument rules and response-hook contract explained in `CosmosClient.create_database` also
 apply here. They are not repeated below.
 
+**Database IDs: validate their format before checking existence**
+
+**Decision: Approved and implemented.** Both clients apply the same shared
+ID-format validation as `create_database` before the existence read.
+
+Previously, `create_database_if_not_exists("sales/")` could read and return
+`sales` if it existed, because the read removed the trailing slash. If
+`sales` was missing, creation rejected the original `"sales/"` ID instead.
+
+The call now raises `ValueError` before any database request in both cases.
+Pass the database name `"sales"`, not a path ending in `/`. A valid name
+still returns the existing database or creates it when missing.
+
+This is an intentional tightening of legacy input behavior, applied to both
+execution paths. Standalone `DatabaseProxy.read` keeps its existing
+trailing-slash compatibility; its normalization rules are unchanged.
+
 **Concurrent creation: return the database instead of reporting a conflict**
 
 Consider two callers trying to make `sales` available:
@@ -751,6 +841,18 @@ this particular call created it.
 This recovery does not suppress every failure. If the follow-up read fails,
 that error reaches the customer app. The Python wrapper does not start
 another creation attempt.
+
+**Verification coverage:** New sync and async integration tests in
+`tests\create_database_if_not_exists\sync\test_cosmos_responses.py` and
+`tests\create_database_if_not_exists\aio\test_cosmos_responses.py` exercise
+real `404 -> 409 -> 200` recovery and `404 -> 409 -> 404` failure using a
+competing client. They verify the winner's identity and throughput are
+preserved, the success hook describes only the final successful response,
+and a failed follow-up read does not trigger another creation attempt.
+These are new tests, not copies of legacy coverage. Their `_rust` names
+inherit the classes' `cosmosEmulator` and `cosmosAADLong` markers.
+All four race cases passed against the local emulator; Azure live-account
+execution has not been verified.
 
 **Invalid creation settings: reject them even when the database exists**
 
@@ -784,8 +886,7 @@ The same early validation applies to conflicting or incomplete throughput
 settings, as explained in `CosmosClient.create_database`.
 
 **Why:** valid arguments should not depend on what happens to exist in the
-account. These local checks do not guarantee that the service backend will
-accept every correctly typed capacity value.
+account. 
 
 **Conditional headers: reject requests that conflict with returning the database**
 
@@ -847,15 +948,13 @@ of all requests in the operation.
 
 A hook exception is not treated as a missing database or a creation conflict.
 
-**Decision requested; approval is not recorded**
+**Other decisions requested; approval is not recorded**
 
-Approve or revise the early argument validation, rejection of conditional
-headers, recovery from concurrent creation, and single operation timeout.
+ID-format validation above is approved. Approval remains unrecorded for the
+early creation-option validation, rejection of conditional headers, recovery
+from concurrent creation, and single operation timeout.
 
-Together with the shared changes in `CosmosClient.create_database`, these rules require customers
-to correct invalid setup arguments and remove conditions that do not fit
-this API. A concurrent creation that previously raised a conflict can now
-return the existing database successfully.
+
 
 **Async signature for review**
 
@@ -970,9 +1069,8 @@ invoke it. Code expecting an immediate hook call must now iterate. Code
 recording one event per method call must account for multiple page responses.
 The hook remains an ordinary `def` function on both clients.
 
-`DatabaseProxy.list_containers` consolidates this timing change across database and container
-listing/query APIs. Database hooks do not gain a results-iterator argument;
-container hooks retain theirs.
+The change is **when the callback runs**, not which arguments it receives.
+It still receives only the fetched page's headers: `response_hook(headers)`.
 
 An ordinary exception raised by the hook reaches the customer app without
 repeating the page request. Hook exceptions `StopIteration` and
@@ -998,6 +1096,31 @@ The current wrapper rejects `populate_query_metrics`, `session_token`,
 Removal approval is limited to argument forms confirmed to have been ignored.
 In particular, legacy `content_type` could set a request header; its rejection
 is not included in the ignored-option cleanup.
+
+**Approved change: reject `session_token` (November 12, 2026)**
+
+For both synchronous and asynchronous `list_databases`, reject
+`session_token` with `TypeError` rather than accepting and ignoring it.
+This includes explicit `None` and the corresponding entry in the selected
+settings dictionary. The argument does not provide session-token behavior
+for database listing; rejecting it makes that unsupported use explicit.
+
+This is an intentional breaking change. Legacy Python accepted the argument
+without applying it to listing. Customers must remove it from this call,
+including shared dictionaries passed as settings:
+
+```python
+# Previously accepted, but the token was ignored.
+databases = client.list_databases(session_token=token)
+
+# Use this on either client.
+databases = client.list_databases()
+```
+
+This approval is limited to `list_databases`. It does not approve rejection
+on other database/container APIs or retire the whole legacy compatibility
+test, which exercises several operations. Rejection coverage replaces the
+listing-specific accept-and-ignore expectation, not the other assertions.
 
 **Use `request_options` for a settings dictionary**
 
@@ -1061,12 +1184,30 @@ Customer processing of delivered results does not consume the next fetch's
 budget. Invalid initial timeouts raise `ValueError` when the iterator is
 created; use `None` or finite, non-boolean seconds with `1 <= timeout < 2**64`.
 
-**Decision requested; approval is not recorded**
+**Remaining decisions requested**
 
+The `session_token` rejection above is approved for both clients.
 Approve or revise the per-page response-hook timing, explicit handling of
 hook failures, named arguments, validation and fixed iterator settings.
 Agree on the shared `request_options` proposal and its deprecation schedule.
-The current blanket option rejection is not an approved removal decision.
+Rejection of the remaining options is not approved merely by this decision.
+
+**Verification status**
+
+Maintained offline listing tests exercise the real sync/async adapters with
+controlled acquisition and native-call doubles: setup consumes the page
+budget, including fractional remainders, and no native request or legacy
+fallback occurs when setup exhausts that budget.
+
+The native duration regression now runs in
+`tests/binding/test_binding_contract_parity.py` with real driver handles against
+the Windows emulator, rather than failing early on a string handle. Both
+native listing exports returned service pages for `None`, `0.25`, and `2`
+seconds, and rejected invalid durations. The regression is retained in normal
+`cosmosEmulator` selection.
+
+Live Azure-account coverage and remaining driver gaps are still outstanding;
+these checks do not establish complete operation parity.
 
 **Asynchronous-client signature for review**
 
@@ -1196,38 +1337,35 @@ parameters[0]["value"] = "archive"
 The existing iterator still queries `sales`, including on later pages.
 To query `archive`, create a new iterator with the changed parameter.
 
-**Cross-partition option: removal remains unresolved**
+**Cross-partition option: removal approved**
 
-Legacy synchronous calls accepted `enable_cross_partition_query=True` and
-forwarded its request header. The current Python wrapper instead raises
-`TypeError`, including for `False` or `None`. For example:
+Remove `enable_cross_partition_query` from database-query calls on both
+clients. Supply the query and parameters as in the examples above, without
+this option. Passing it raises `TypeError` before iteration, including
+`True`, `False`, or `None`, and when `query=None`. The
+`enableCrossPartitionQuery` entry in `request_options` or the legacy
+`feed_options` dictionary is rejected too; it is not silently ignored.
 
-```python
-databases = client.query_databases(
-    "SELECT * FROM db WHERE db.id = @id",
-    parameters=[{"name": "@id", "value": "sales"}],
-    enable_cross_partition_query=True,
-)
-```
+Live Windows-emulator comparisons found identical results with the legacy
+flag omitted, `False`, or `True` for filtering, no matches, projections,
+scalar values, and counts, on both sync and async paths. The `True` header
+was verified at the HTTP transport; Rust matched without it. `ORDER BY`
+queries returned the same HTTP 400 in every variant, so the flag did not
+enable that feature.
 
-This is a Python rejection, not an established Rust-driver gap. Because
-legacy forwarded the flag, it is not included in the ignored-option cleanup.
-Live verification remains pending to establish whether removing it changes
-service behavior. Removing the argument avoids the local error, but is not
-yet an established behavior-preserving migration.
+This is an approved Python API removal, not a Rust-driver gap or a claim
+that legacy Python never forwarded the option. The evidence is limited to
+the tested emulator scenarios, not an Azure-account comparison.
+`ContainerProxy.query_items` retains its cross-partition option.
 
 **Shared changes from `CosmosClient.list_databases`**
 
-The page-size, response-hook timing, timeout and settings-copying changes in
-`CosmosClient.list_databases` also apply here, as does the proposal to use `request_options`
-and deprecate the old dictionary name.
-
-For `query_databases`, the SDK previously invoked the customer's
-`response_hook(headers)` before returning the iterator. It now returns the
-iterator first and invokes that same one-argument hook after each successful
-service page, including empty pages. Customer code must start iteration before
-expecting the hook to run and account for multiple invocations. `DatabaseProxy.list_containers`
-consolidates the timing comparison; no results-iterator argument is added here.
+The page-size, timeout and settings-copying changes described in
+[`CosmosClient.list_databases`](#cosmosclientlist_databases) also apply here,
+as does the proposal to use `request_options` and deprecate the old dictionary
+name. Follow that section's response-hook guidance as well:
+`response_hook(headers)` runs after each successfully fetched service page,
+with no change to its arguments.
 
 The current wrapper also rejects `session_token`, `populate_query_metrics`,
 `availability_strategy`, `no_response` and `content_type`, including explicit
@@ -1235,14 +1373,16 @@ The current wrapper also rejects `session_token`, `populate_query_metrics`,
 Removal approval remains limited to forms established to have been ignored;
 the blanket rejection is not an approved compatibility decision.
 
-**Decision requested; approval is not recorded**
+**Verification status**
 
-Approve or revise the required query argument, named optional settings,
-early query validation, fixed query-parameter values and shared changes from
-`CosmosClient.list_databases`.
-
-Keep the cross-partition option decision open until its legacy service
-effect is established.
+The maintained database-query paging and CRUD tests passed on the Windows
+emulator. Additional live checks covered fixed query inputs, scalar
+continuation replay, response hooks, `query=None`, and service errors.
+Unit regressions reject the removed cross-partition option before dispatch
+across both clients, backend selections, and supported settings dictionaries.
+Azure-account coverage remains outstanding; these checks and
+current-transport comparisons do not establish complete parity with a
+released Python SDK.
 
 **Asynchronous-client signature for review**
 
@@ -2804,80 +2944,10 @@ not in the contract decision.
 
 ### `ContainerProxy.read_items`
 
-**Why the customer calls this API**
+#### Why does the customer call this API?
 
-The customer needs several known orders for a single view and already has
-each order's ID and partition key. This API accepts those pairs and returns
-the matching items, rather than requiring the customer to issue each read
-separately.
-
-For example, `("order-42", "tenant-a")` and `("order-42", "tenant-b")` identify
-different orders. The review must preserve that distinction and explain how
-result order, repeated pairs, and missing items affect the returned list.
-
-**Why the Python/binding behavior needs correction**
-
-The customer needs the right order for each `(ID, partition key)` pair.
-Matching by ID alone could confuse tenants and lose repeated input
-occurrences. Some partition keys were represented incorrectly in requests,
-and the reported charge could omit earlier query pages. A response callback
-could also change the data eventually returned to the customer.
-
-The input checks and timeout handling need consistent rules too. For example,
-an empty list should not fetch container properties, and waiting for another
-read to finish should consume the same timeout budget as the read itself.
-These are Python/binding corrections, not requests to remove the API.
-
-**Input rules and bounded concurrency**
-
-Keep only `items` positional. Copy the inputs and request options, validate
-the `(ID, partition key)` pairs before requesting container properties, and
-check the number of key components once the container definition is available.
-
-**Concurrency** means how many pieces of work may run together.
-`max_concurrency` must be a positive integer, not a boolean. `None` retains
-the async default of five or the synchronous executor's default. An
-**executor** schedules synchronous work; customers can supply their own.
-That does not make an invalid `max_concurrency` value acceptable.
-
-The current combination of individual reads and queries is retained while
-these behaviors are corrected. Changing its request count and performance
-needs a separate decision; the remaining Rust-only integration is explained
-below.
-
-**Response contract:** Return a `CosmosList` in input order, matching by both ID
-and the full typed partition key. Return one item per occurrence of an existing
-pair, including duplicates; omit missing items. Sum available point-read and
-query-page request charges, including empty continuation pages and point-read
-404 responses. This is not separate accounting for all metadata or failed attempts.
-Do not return partial results on other failures; unresolved routing is an error.
-
-Empty input performs no network calls and returns an empty list with empty
-headers. A supplied success hook runs once, including for empty input, with
-independent headers and a deep `CosmosList` snapshot. `response_hook=None` means
-no callback; false-valued callable objects are honored. Callback exceptions
-propagate unchanged without replaying work. Hooks remain supplied through
-`**kwargs`, rather than a new explicit signature parameter.
-
-**Timeout contract:** A supported explicit `timeout` covers the whole call:
-obtaining container and routing information, waiting for access to shared
-SDK data, queued work, and all item reads and query pages. The SDK honors a
-remaining fraction of a second rather than restarting or rounding up the
-budget. Async failure/cancellation cancels outstanding work and waits for
-it to stop.
-Sync cancels pending work and leaves caller-owned executors open; already-running
-synchronous requests may finish later. The
-[first-use acquisition wait](#first-use-initialization-deadlines) uses the same
-remaining budget without cancelling shared initialization.
-
-**Customer migration:** Supply complete partition keys and valid positive
-concurrency values, or omit concurrency to use its default. Remove duplicate
-input pairs if one result per distinct item is desired. Match responses using
-ID plus partition key, not ID alone or input position. Do not rely on input
-mutation, hook edits to returned data, metadata requests for empty input, or a
-separate timeout per chunk.
-
-**Illustration - the partition key is part of item identity:**
+Alpha Bank needs several known orders for one screen. Its customer app has
+each order's ID and partition key, so it requests those pairs together:
 
 ```python
 items = container.read_items([
@@ -2888,35 +2958,53 @@ items = container.read_items([
 ])
 ```
 
-Assume the first two distinct items exist and `"missing"` does not. The result
-contains tenant A's item, tenant B's item, then tenant A's item again, in that
-order. It contains three entries, not two; duplicate input occurrences are
-preserved. Matching by ID alone would confuse the two tenants. Missing items
-are omitted, so do not zip the results blindly with the original input list.
+Assume the two distinct orders exist and `"missing"` does not. The result is
+tenant A's order, tenant B's order, then tenant A's order again. These are three
+entries: the partition key is part of identity, and repeated input pairs
+remain repeated results.
 
-| Input or response | Current observable result |
+#### Which public contract is retained?
+
+The synchronous call returns a `CosmosList`, a list with response headers.
+The async customer app awaits `read_items` to obtain the same result shape.
+Only `items` is positional; options remain keyword-only.
+
+| Input or event | Customer-visible result |
 |---|---|
-| `items=[]` | Empty result and headers, no network calls; supplied hook runs once |
-| `max_concurrency=0` or `True` | Validation error before metadata lookup |
-| Two data pages cost 2 and 3 RU, an empty continuation page costs 1 | Available charges sum to 6, not just the final page's 1 |
-| One non-404 request fails | Raise the error rather than return a misleading partial list |
+| Existing pairs | Items in input-relative order, matched by ID and full typed partition key |
+| Repeated pair | One independent result object per occurrence |
+| Missing item | Omitted; do not zip the result with the original input |
+| Empty input | Empty list and headers, no network calls; supplied success hook still runs once |
+| Invalid ID, key shape or setting | Explicit error, including for empty input where applicable |
+| Incomplete hierarchical partition key | Rejected once container metadata establishes the required width |
+| Execution failure | Error rather than a partial list |
 
-One timeout covers waiting work as well as running requests; it is not
-renewed for each group of items. Refer to reading an item (`ContainerProxy.read_item`) for the shared-budget example
-and database creation (`CosmosClient.create_database`) for hook isolation, here applied
-to a `CosmosList` (a list with response headers). Async cancellation waits for
-outstanding work to stop; already-running sync requests may finish later.
-Charge summation is not a promise to include every metadata request or failed
-attempt.
+A supplied success hook runs once with independent headers and a deep copy
+of the result. Hook changes cannot modify the returned orders; callback errors
+propagate without replay. `None` disables the hook. Available driver-page
+charges are combined, and the result does not expose a continuation header.
+This is not complete accounting for metadata requests or failed attempts.
 
-**Contract (async-client signature, unchanged):**
+One supported `timeout` covers input preparation, metadata and every result
+page. It is not renewed per group. Async cancellation cleans up the in-flight
+fetch. There is no Python thread pool or customer-owned executor in this path.
+
+#### What changes in the new major version?
+
+Remove `executor` and `max_concurrency` from calls. Supplying either raises
+`TypeError`, even when its value is `None`.
+
+**Method signature for sync and async clients**
+
+The asynchronous signature is shown below. The synchronous method has the same
+parameters and return type, uses `def` rather than `async def`, and is called
+without `await`.
 
 ```python
 async def read_items(
     self,
     items: Sequence[Tuple[str, PartitionKeyType]],
     *,
-    max_concurrency: Optional[int] = None,
     consistency_level: Optional[str] = None,
     session_token: Optional[str] = None,
     initial_headers: Optional[dict[str, str]] = None,
@@ -2929,152 +3017,105 @@ async def read_items(
     ...
 ```
 
-**Remaining integration and capability gaps**
-
-The current implementation groups requested items by physical partition and
-divides each group into chunks. A one-item chunk can use a Rust point read;
-multi-item chunks still use legacy Python queries. For example, when two
-requested orders share a physical partition, a successful call can still
-depend on that retained query path. It is not evidence of a complete Rust-only
-implementation. Replacing this coordination is Python/binding work; changes
-to its request count or performance need a separate decision.
-
-Older-container partition-key handling remains unresolved, as explained in
-the shared section "Older containers need their existing partition-key
-representation". Original response headers outside the driver's selected
-fields can also be lost. Neither limitation is an approved exclusion.
-This entry is a draft for board review, not recorded board approval.
-
 <a id="19---reading-every-item"></a>
 <a id="containerproxyread_all_items"></a>
 
 ### `ContainerProxy.read_all_items`
 
-**Why the customer calls this API**
+#### Why does the customer call this API?
 
-The customer needs to process every item in `orders`, for example to produce
-an export, without filtering by a query or knowing the order IDs in advance.
-This API returns an iterator that fetches results in pages rather than
-loading the whole container into one list.
-
-After processing a page containing `order-42` and `order-43`, the customer
-can save a **continuation token**, a bookmark for the next fetch. The review
-must ensure later pages continue the same scan and explain whether a saved
-bookmark remains usable after an SDK upgrade.
-
-**Why the Python/binding behavior needs correction**
-
-An export must continue correctly after its first page, including when orders
-span several storage partitions. The earlier binding did not retain enough
-progress information to do that reliably. Response headers could also belong
-to another operation, and callback handling could fail or change returned data.
-
-The corrections preserve progress and response details for each separate
-scan. Requests begin only when the customer iterates. Unsupported settings
-raise an error rather than silently running legacy Python. These are
-integration corrections; they do not establish that all driver limitations
-listed below have been resolved.
-
-**Why bookmarks require a compatibility decision**
-
-The Rust-backed scan uses a different bookmark format. A customer who saved
-a bookmark after exporting `order-42` and `order-43` cannot assume the upgraded
-SDK can resume from that same value. This input-compatibility difference is
-separate from fixing how the SDK keeps track of the current scan.
-
-**Request contract:** All arguments are keyword-only. `max_item_count` accepts
-a positive integer, `-1` for service-selected size, or `None`. Cache staleness,
-the permitted age of cached data, accepts a nonnegative integer or `None`.
-Booleans are invalid for both settings.
-Reject query metrics by presence, even `False` or `None`. Snapshot request
-options and do not modify customer objects.
-
-**Bookmark contract:** Rust accepts its `c1.` bookmarks and rejects
-legacy/service bookmarks. Legacy Python does not accept the Rust bookmarks
-either. The driver checks the token and the container and operation it
-belongs to. There is no automatic conversion or silent restart. Save a bookmark only
-after processing a complete page. A failed/cancelled fetch or hook failure
-requires a new result iterator starting from the last successfully delivered bookmark.
-Concurrent fetching on the same result iterator is rejected.
-
-**Response contract:** Each scan keeps its own response headers and bookmark.
-Call the customer's hook once per fetched public page, including an
-empty-container response. The hook receives independent headers and a copy
-of the response body, including its nested values; edits cannot change
-returned orders or the bookmark. The body has a `Documents` field containing
-the items, as illustrated below. `None` disables the hook; otherwise a valid
-callable runs even if the object evaluates to `False`.
-
-Hook errors reach the customer without fetching the page again. Errors used
-to end iteration become `RuntimeError` instead, so a failing hook cannot make
-an incomplete export look complete. Finishing an already-consumed scan does
-not invent another response or callback. Reported charge includes available
-charges for internal empty pages, but is not a complete account of metadata
-requests or failed attempts.
-
-**Timeout contract:** A supported explicit `timeout` is one budget per public
-page fetch, spanning metadata, planning, and internal empty pages. Remaining
-sub-second time reaches the binding; processing time between pages consumes
-none of the next budget. Async cancellation waits for outstanding work to stop.
-The [first-use acquisition wait](#first-use-initialization-deadlines) is bounded
-by that page's deadline without forcibly terminating shared initialization.
-
-**Customer migration:** Use keyword arguments and valid page/cache settings;
-remove query metrics. Finish bookmarked scans using the earlier SDK version
-before upgrading, or intentionally begin a new scan. Unsupported controls are
-release gaps unless their exclusion is approved; selecting legacy Python is
-not a configuration option in the Rust-only release.
-
-**Illustration - save a bookmark only after processing the page:**
+Alpha Bank exports every order without knowing the IDs or partition keys in
+advance. The customer app consumes pages rather than collecting the whole
+container in memory:
 
 ```python
 pages = container.read_all_items(max_item_count=2, timeout=5).by_page()
 for page in pages:
     for item in page:
         process(item)
+```
+
+`process` is customer-app code. The same iterator keeps the in-memory progress
+across physical partitions. Creating it sends no requests; fetching starts
+when the customer app iterates. The binding calls Rust `read_many` for the
+whole-container range, not a binding-generated select-all query or legacy
+Python fallback.
+
+#### Why is there no saved continuation token?
+
+**User decision confirmed November 12, 2026:** remove continuation-token
+support from synchronous and asynchronous `read_all_items`; use `query_items`
+for resumable enumeration. This is not a request to restore read-all tokens.
+
+**Intentional compatibility change:** `read_all_items` is not resumable with
+a new iterator. Every non-`None` continuation input is rejected, including
+empty strings and tokens from any earlier implementation. Accessing
+`pages.continuation_token` raises `NotImplementedError`.
+
+The Rust team explained that unified read-many can use point reads, making
+continuation support overly complicated. The accepted direction is to use
+queries for saved progress, not to promise a future read-all token fix. This
+decision is recorded in [gap 34](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-34).
+
+For an export that must resume later, use an ordinary select-all query:
+
+```python
+pages = container.query_items("SELECT * FROM c", max_item_count=2).by_page()
+for page in pages:
+    for item in page:
+        process(item)
     save_checkpoint(pages.continuation_token)
 ```
 
-`process` and `save_checkpoint` stand for application functions. A bookmark
-records where the next fetch should continue, not which individual items the
-application has already processed. If processing fails halfway through a page,
-restart from the previous saved bookmark and handle possible repeated items.
-If fetching or the hook fails, create a new result iterator rather than continuing the
-failed one. Rust's `c1.` prefix identifies its bookmark format; it is not a
-service token that legacy Python can consume. Do not strip the prefix to
-try to convert it.
+`save_checkpoint` stores the token after the whole page is processed. Resume
+the same query with `.by_page(continuation_token=saved_checkpoint)` against
+the same container with equivalent settings. This does not convert an old
+read-all token or promise a snapshot while items change.
 
-Each public page gets its own five-second fetch budget. Spending 30 seconds
-processing one delivered page does not consume the next page's five seconds.
-Metadata, planning which partitions to read, and internal empty-page requests
-all consume the current fetch budget. This differs from the single workflow
-budget in database get-or-create (`CosmosClient.create_database_if_not_exists`).
+#### Which paging contract remains?
 
-The hook here receives `(headers, body)` with a copied `Documents` envelope,
-for example `{"Documents": [{"id": "order-42"}]}`, not just the one argument
-used by listing databases (`CosmosClient.list_databases`). Editing that copy cannot
-change returned items or the bookmark. An exception normally used to end
-iteration, such as `StopIteration`, becomes `RuntimeError` so a hook cannot
-make a failed scan appear complete. Other hook exceptions propagate without
-fetching the page again. Only one fetch at a time may use a given result iterator.
-
-**Remaining driver limitations and ownership**
-
-| Customer requirement | Remaining difference |
+| Setting or event | Customer-visible behavior |
 |---|---|
-| Set connection or read-inactivity limits for one scan | The Rust driver lacks those per-operation controls. An overall page-fetch budget does not provide the same limits. |
-| Start reads in additional regions when earlier attempts remain slow | Rust supports one primary and one alternate request, not progressively adding more regions. Explicit `threshold_steps_ms` is rejected. This is an accepted release-scope difference, not a request to add a third overlapping hedge. |
-| Inspect original response headers | The driver returns selected fields rather than a generic success-header map, which is excluded by design. |
-| Inspect throttle retry counts and accumulated waiting | Still open: clarify the available driver metadata and Python mapping. |
-| Inspect or edit the outgoing HTTP request with `raw_request_hook` | Removed from both backends; supplying it raises `TypeError`. Use supported observability for information and supported settings for configuration; arbitrary prepared-request mutation is not preserved. |
+| `max_item_count` | Page-size hint, not a total result limit; positive integer, `-1` or `None` |
+| Cache staleness | Nonnegative integer or `None`; booleans are invalid, as for page size |
+| Query metrics | Rejected by presence, including `False` or `None` |
+| Per-call availability override | Unsupported; leave it unset to use client configuration |
+| `timeout=5` | One five-second budget per public fetch, including metadata, planning and skipped empty pages |
+| Customer app spends 30 seconds processing a page | Does not consume the next page's fetch budget |
+| Concurrent fetches on one iterator | Rejected |
+| New enumeration | Starts from the beginning; no automatic resume |
 
-The driver team owns the remaining driver requirements, not a new raw-hook
-extension. The Python SDK/binding team owns
-verifying that the scan preserves the required results, options,
-and paging behavior. Overrides of driver-owned request headers require a
-separate compatibility decision; they are not the same as adding an
-application-specific header. This read-all review does not establish that
-public `query_items` has completed migration. It records no board approval.
+Each scan keeps its own response headers and cursor. The hook runs once per
+fetched public page, including an empty-container response, with independent
+headers and a deep copy of the `Documents` envelope. For example, the body
+can be `{"Documents": [{"id": "order-42"}]}`. Hook changes do not affect the
+returned items. `None` disables the hook; false-valued callables still run.
+
+Hook errors propagate without another fetch. Exceptions normally used to end
+iteration become `RuntimeError`, preventing a failed hook from making an
+incomplete export appear complete. Exhaustion without another service
+response does not invent a callback or request charge. Available charges
+include skipped internal empty pages, not complete metadata/failed-attempt
+accounting.
+
+Execution failure, timeout, cancellation or hook failure makes the iterator
+unusable; restarting read-all starts from the beginning. Setup may be retried
+only when the binding confirms execution has not started and the failure is
+an SDK/service error other than a timeout. Cancellation remains terminal.
+
+#### What is verified, and what remains open?
+
+Rust-only paging, token rejection, failure handling and sync/async result
+comparisons are verified for the cases recorded in the
+[migration status](V5/api-review/RUST_MIGRATION_STATUS.md#containerproxyread_all_items).
+Native tests also cover 100, 101 and 150 simulated physical partitions and a
+split while using the same iterator. There is no retained 100-partition cap
+in this binding path. These tests are not cloud-account performance evidence.
+
+Complete throttle retry totals remain open in
+[gap 29](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-29). No claim of equal RU
+cost, request count or latency is made. This entry records the implemented
+migration decision, not formal API-board approval.
 
 <a id="30---query-execution-defaults-and-unordered-distinct-compatibility"></a>
 <a id="30---requiring-a-finite-window-for-unordered-distinct"></a>
@@ -3228,9 +3269,9 @@ when iteration needs it.
 **Bookmark contract:** A valid continuation, supplied at creation or through
 `by_page()`, determines mode, start and scope before those settings are
 validated. Rust bookmarks begin with `cf1.` and must be saved and passed back
-unchanged. Legacy bookmarks cannot be converted automatically, and bookmarks
-from item queries or read-all scans cannot be substituted. Invalid tokens
-raise an error rather than silently restarting the feed.
+unchanged. Legacy bookmarks cannot be converted automatically, and item-query
+tokens cannot be substituted. `read_all_items` provides no saved bookmark.
+Invalid tokens raise an error rather than silently restarting the feed.
 
 **Polling/response contract:** `by_page()` returns one empty caught-up page
 with its updated checkpoint, then ends that iteration. Ordinary item
@@ -3303,10 +3344,10 @@ there are no currently available changes in the polled scope, not that future
 changes cannot occur. A supplied valid bookmark already identifies its mode,
 starting position and scope; it is not combined with a new unrelated start.
 
-Rust uses `cf1.` change-feed bookmarks, not the `c1.` read-all bookmarks.
-Refer to reading every item (`ContainerProxy.read_all_items`) for saving complete pages,
-separate page budgets, failed-iterator handling and hooks that must not silently
-end iteration. Do not transfer bookmarks between those APIs or between backends.
+Rust uses `cf1.` change-feed bookmarks. Ordinary item queries use their own
+continuation tokens; `read_all_items` exposes no saved bookmark. Save a
+change-feed bookmark only after processing its complete page, as shown above.
+Do not transfer tokens between operations or assume cross-backend compatibility.
 
 **Why the current Rust restriction matters:** suppose a scope covers storage
 partitions A and B. A has no changes, but B has two. If the driver declares

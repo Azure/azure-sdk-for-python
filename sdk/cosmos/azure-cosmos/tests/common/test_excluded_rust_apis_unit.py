@@ -322,7 +322,7 @@ def test_scripting_modules_are_removed_rust(module):
     "azure.cosmos._cosmos_client_connection",
     "azure.cosmos.aio._cosmos_client_connection_async",
 ])
-def test_legacy_scripting_operations_are_removed_rust(module):
+def test_core_python_scripting_operations_are_removed_rust(module):
     connection = importlib.import_module(module).CosmosClientConnection
     for resource in ("StoredProcedure", "Trigger", "UserDefinedFunction"):
         for operation in ("Create", "Upsert", "Read", "Replace", "Delete", "Execute"):
@@ -385,7 +385,7 @@ def test_user_permission_modules_are_removed_rust(module):
     "azure.cosmos._cosmos_client_connection",
     "azure.cosmos.aio._cosmos_client_connection_async",
 ])
-def test_legacy_user_permission_operations_are_removed_rust(module):
+def test_core_python_user_permission_operations_are_removed_rust(module):
     connection = importlib.import_module(module).CosmosClientConnection
     for resource in ("User", "Permission"):
         for operation in ("Create", "Upsert", "Read", "Replace", "Delete"):
@@ -408,13 +408,13 @@ def test_permission_token_expiry_is_not_a_rust_request_option_rust(option):
         build_request_headers_and_settings({option: 60})
 
 
-def test_legacy_hedging_strategy_can_represent_threshold_steps_rust():
+def test_core_python_hedging_strategy_can_represent_threshold_steps_rust():
     strategy = CrossRegionHedgingStrategy({"threshold_ms": 100, "threshold_steps_ms": 50})
     assert strategy.threshold_steps_ms == 50
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-def test_rust_client_rejects_steps_but_legacy_client_keeps_them_rust(asynchronous, monkeypatch):
+def test_rust_client_rejects_steps_but_core_python_client_keeps_them_rust(asynchronous, monkeypatch):
     module = "azure.cosmos.aio._cosmos_client" if asynchronous else "azure.cosmos.cosmos_client"
     connection = MagicMock()
     monkeypatch.setattr(module + ".CosmosClientConnection", connection)
@@ -576,7 +576,7 @@ def test_supported_constructor_preserves_backend_and_threshold_rust(
 
 @pytest.mark.parametrize("connection_string", [False, True], ids=["direct", "connection-string"])
 @pytest.mark.parametrize("options", EXCLUDED_OPTIONS)
-def test_legacy_constructor_preserves_excluded_options_rust(
+def test_core_python_constructor_preserves_excluded_options_rust(
     client_constructor, connection_string, options,
 ):
     client = construct_client(

@@ -24,7 +24,7 @@ from typing import List, Mapping, Set
 import pytest
 
 from azure.cosmos import CosmosClient, PartitionKey
-from query_items import _legacy_feed_range_helpers as test_config
+from query_items import _feed_range_helpers as test_config
 
 SINGLE_PARTITION_CONTAINER_ID = "single"
 MULTI_PARTITION_CONTAINER_ID = "multi"
@@ -128,6 +128,8 @@ def get_key_container(setup, container_id: str):
     return setup["key_db"].get_container_client(container_id)
 
 
+@pytest.mark.cosmosQuery
+@pytest.mark.cosmosAADSplit
 class TestQueryFeedRange:
     def _create_seeded_container(self, container_id):
         container = self.database.create_container(id=container_id, partition_key=PartitionKey(path="/pk", kind="Hash"))
@@ -142,7 +144,6 @@ class TestQueryFeedRange:
         self.client.delete_database(self.database_id)
         print(f"Deleted owned SUM database: {self.database_id}")
 
-    @pytest.mark.cosmosEmulator
     @pytest.mark.usefixtures("owned_orders")
     @pytest.mark.skip(
         reason=(
@@ -180,7 +181,6 @@ class TestQueryFeedRange:
         )
         assert items[0] == 100
 
-    @pytest.mark.cosmosEmulator
     @pytest.mark.usefixtures("owned_orders")
     @pytest.mark.skip(
         reason=(
@@ -218,7 +218,6 @@ class TestQueryFeedRange:
         )
         assert items[0] == 100 * len(PK_VALUES)
 
-    @pytest.mark.cosmosEmulator
     @pytest.mark.usefixtures("owned_orders")
     def test_query_with_avg_aggregate_single_partition_feed_range_succeeds_rust(self):
         """AVG scoped to a single-partition feed_range must still succeed."""
@@ -257,8 +256,6 @@ class TestQueryFeedRange:
         assert single_items, "Single-partition container AVG must return a row"
         assert single_items[0] == 100
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADSplit
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     def test_query_with_both_feed_range_and_partition_key_rust(self, setup, container_id):
         # Source: tests/test_query_feed_range.py::TestQueryFeedRange.test_query_with_both_feed_range_and_partition_key
@@ -276,8 +273,6 @@ class TestQueryFeedRange:
             ))
         assert str(e.value) == expected_error_message
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADSplit
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     def test_query_with_feed_range_for_a_full_range_rust(self, setup, container_id):
         # Source: tests/test_query_feed_range.py::TestQueryFeedRange.test_query_with_feed_range_for_a_full_range
@@ -300,8 +295,6 @@ class TestQueryFeedRange:
         add_all_pk_values_to_set(items, actual_pk_values)
         assert expected_pk_values.issubset(actual_pk_values)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADSplit
     def test_query_with_avg_aggregate_across_full_feed_range_raises_rust(self, setup):
         """AVG over a feed_range spanning multiple partitions must raise."""
         # pylint: disable-next=line-too-long
@@ -346,8 +339,6 @@ class TestQueryFeedRange:
             )
         ) == [100]
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADSplit
     def test_query_value_numeric_field_across_full_feed_range_returns_list_rust(self, setup):
         """Numeric VALUE projections should return one row per document, not a sum."""
         # pylint: disable-next=line-too-long
@@ -381,8 +372,6 @@ class TestQueryFeedRange:
         )
         assert sum(items) == 100 * len(PK_VALUES)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADSplit
     def test_query_value_boolean_expression_across_full_feed_range_returns_list_rust(self, setup):
         """Boolean VALUE projections should return one boolean per document."""
         # pylint: disable-next=line-too-long
@@ -414,8 +403,6 @@ class TestQueryFeedRange:
             f"All seeded values are 100 > 0; expected every row to be True. Got {items}"
         )
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADSplit
     def test_query_value_max_across_full_feed_range_returns_scalar_rust(self, setup):
         """MAX over a multi-partition feed_range should return one value (the largest)."""
         # pylint: disable-next=line-too-long
@@ -451,8 +438,6 @@ class TestQueryFeedRange:
         )
         assert items[0] == 100
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADSplit
     def test_query_value_count_across_full_feed_range_still_counts_rust(self, setup):
         """COUNT should still return a single total across partitions."""
         # pylint: disable-next=line-too-long
@@ -486,10 +471,8 @@ class TestQueryFeedRange:
         assert len(items) == 1
         assert items[0] == len(PK_VALUES)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADSplit
-    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     @pytest.mark.cosmosSplit
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     @pytest.mark.skipif(os.environ.get(REAL_SPLIT_ENV) != "1", reason=(
         "environment-gap: real partition split raises throughput to 11000/60000 RU/s; "
         "opt in with COSMOS_QUERY_FEED_RANGE_REAL_SPLIT=1"
@@ -599,8 +582,6 @@ class TestQueryFeedRange:
         assert initial_sum == post_split_sum, f"Sum mismatch: before={initial_sum}, after={post_split_sum}"
         print("Test 4 (sum aggregate with stale feed ranges) passed")
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADSplit
     @pytest.mark.skip(reason=(
         "environment-gap: retains the original's unconditional real-split skip "
         "(covered by test_query_with_feed_range_during_partition_split_combined)"))
@@ -623,8 +604,6 @@ class TestQueryFeedRange:
             add_all_pk_values_to_set(items, actual_pk_values)
         assert expected_pk_values == actual_pk_values
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADSplit
     @pytest.mark.skip(reason=(
         "environment-gap: retains the original's unconditional real-split skip "
         "(covered by test_query_with_feed_range_during_partition_split_combined)"))
@@ -650,8 +629,6 @@ class TestQueryFeedRange:
 
         assert expected_pk_values == actual_pk_values
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADSplit
     @pytest.mark.skip(reason=(
         "environment-gap: retains the original's unconditional real-split skip "
         "(covered by test_query_with_feed_range_during_partition_split_combined)"))
@@ -685,8 +662,6 @@ class TestQueryFeedRange:
         assert initial_total_count == post_split_total_count
         assert post_split_total_count == len(PK_VALUES)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADSplit
     @pytest.mark.skip(reason=(
         "environment-gap: retains the original's unconditional real-split skip "
         "(covered by test_query_with_feed_range_during_partition_split_combined)"))
@@ -723,8 +698,6 @@ class TestQueryFeedRange:
         assert initial_total_sum == post_split_total_sum
         assert post_split_total_sum == expected_total_sum
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADSplit
     def test_query_with_static_continuation_rust(self, setup):
         # Source: tests/test_query_feed_range.py::TestQueryFeedRange.test_query_with_static_continuation
         # Known gap 30 item 7: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-feed-range-continuation
@@ -751,8 +724,6 @@ class TestQueryFeedRange:
                 items = list(page)
                 assert len(items) > 0
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADSplit
     def test_query_with_continuation_rust(self, setup):
         # Source: tests/test_query_feed_range.py::TestQueryFeedRange.test_query_with_continuation
         container = get_container(setup, SINGLE_PARTITION_CONTAINER_ID)

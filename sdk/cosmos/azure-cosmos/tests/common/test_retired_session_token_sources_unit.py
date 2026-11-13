@@ -7,8 +7,9 @@ from pathlib import Path
 
 import pytest
 
-from common import test_legacy_migration_enforcer_unit as enforcer
+from common import test_migration_enforcer_unit as enforcer
 from common._retired_test_sources import (
+    RENAMED_TEST_SOURCES,
     RETIRED_CONNECTION_STRING_SOURCES,
     RETIRED_QUERY_SOURCES,
     RETIRED_SESSION_TOKEN_SOURCES,
@@ -44,9 +45,11 @@ def test_only_approved_five_methods_and_17_cases_retired_rust():
     assert not set(RETIRED_SESSION_TOKEN_SOURCES).intersection(RETIRED_THROUGHPUT_SOURCES)
     assert RETIRED_TEST_SOURCES == {
         **RETIRED_THROUGHPUT_SOURCES, **RETIRED_SESSION_TOKEN_SOURCES, **RETIRED_QUERY_SOURCES,
-        **RETIRED_CONNECTION_STRING_SOURCES,
+        **RETIRED_CONNECTION_STRING_SOURCES, **RENAMED_TEST_SOURCES,
     }
-    assert len(RETIRED_TEST_SOURCES) == 38 + len(RETIRED_QUERY_SOURCES) + len(RETIRED_CONNECTION_STRING_SOURCES)
+    assert len(RETIRED_TEST_SOURCES) == (
+        38 + len(RETIRED_QUERY_SOURCES) + len(RETIRED_CONNECTION_STRING_SOURCES) + len(RENAMED_TEST_SOURCES)
+    )
     assert not (ROOT / "tests" / "test_session_token_helpers.py").exists()
 
 
@@ -189,14 +192,14 @@ def test_token_retirement_does_not_hide_unknown_or_broken_sources_rust(monkeypat
 
 
 @pytest.mark.parametrize("check_name", [
-    "test_legacy_folders_discovered_rust",
-    "test_every_legacy_folder_is_a_package_rust",
+    "test_migrated_folders_discovered_rust",
+    "test_every_migrated_folder_is_a_package_rust",
     "test_every_test_method_has_a_source_comment_rust",
     "test_every_source_reference_resolves_rust",
-    "test_every_legacy_file_pins_rust_backend_rust",
+    "test_every_migrated_file_pins_rust_backend_rust",
     "test_no_unstructured_skips_rust",
     "test_every_copy_keeps_original_lane_markers_rust",
-    "test_every_legacy_test_collects_without_conftest_rust",
+    "test_every_migrated_test_collects_without_conftest_rust",
 ])
 def test_retained_token_copies_pass_migration_enforcement_rust(monkeypatch, check_name):
     monkeypatch.setattr(enforcer, "_TESTS_DIR", TOKEN_TESTS)

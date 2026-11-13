@@ -8,7 +8,7 @@ import pytest
 from azure.cosmos import PartitionKey, exceptions
 import asyncio
 from azure.cosmos.aio import CosmosClient
-from replace_container._legacy_setup import AsyncReplacementCase
+from replace_container._container_setup import AsyncReplacementCase
 
 @pytest.mark.cosmosQuery
 @pytest.mark.cosmosAADLong

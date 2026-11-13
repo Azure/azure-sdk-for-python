@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 """Opt-in copy of the grouped real split; never part of the ordinary runner.
 
-Control-plane range polling uses a separate key-auth Python client. Customer
+Control-plane range polling uses a separate key-auth Rust runtime. Customer
 operations use Rust. Python stale-cache injection is explicitly disabled:
 this copy preserves customer assertions, not proof of Rust routing recovery.
 """
@@ -16,25 +16,27 @@ from functools import partial
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos import CosmosClient, CosmosRuntime, PartitionKey
+from config.clients import create_data_client
 from azure.cosmos._session_token_helpers import parse_session_token
 from get_latest_session_token._fixtures import create_items_logical_pk, create_items_physical_pk
 from get_latest_session_token._split_support import (
     SPLIT_TIMEOUT,
     assert_no_stage_failures,
     require_real_split,
+    real_split_enabled,
     snapshot_split_routing_map,
     split_stage,
     trigger_split,
-    wait_for_split_ranges,
+    wait_for_feed_range_split,
 )
 
 
 @pytest.mark.cosmosSplit
 @pytest.mark.cosmosAADSplit
 @pytest.mark.skipif(
-    os.environ.get("COSMOS_SESSION_TOKEN_REAL_SPLIT") != "1",
-    reason="environment-gap: opt in with COSMOS_SESSION_TOKEN_REAL_SPLIT=1 to authorize 11000 RU/s",
+    not real_split_enabled(),
+    reason="environment-gap: use the CI split lane or COSMOS_SESSION_TOKEN_REAL_SPLIT=1 to authorize 11000 RU/s",
 )
 class TestLatestSessionTokenRealSplit(unittest.TestCase):
     def setUp(self):
@@ -43,10 +45,11 @@ class TestLatestSessionTokenRealSplit(unittest.TestCase):
         self.addCleanup(random.setstate, state)
         random.seed(0)
         self.create_data_client = partial(
-            CosmosClient, os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust"
+            create_data_client, _backend="rust"
         )
         self.key_client = CosmosClient(
-            os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="core-python"
+            os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust",
+            runtime=CosmosRuntime.create(),
         )
         self.addCleanup(self.key_client.close)
         self.key_database = self.key_client.create_database("token_parity_" + uuid.uuid4().hex)
@@ -133,14 +136,13 @@ class TestLatestSessionTokenRealSplit(unittest.TestCase):
             assert continuation != ''
 
         with split_stage("split_and_convergence"):
-            initial_ranges = list(key_container_for_split.client_connection._ReadPartitionKeyRanges(
-                key_container_for_split.container_link))
+            initial_ranges = list(key_container_for_split.read_feed_ranges(force_refresh=True))
             self.assertEqual(len(initial_ranges), 1)
             collection_rid = key_container_for_split.read()["_rid"]
             restore_routing_map = snapshot_split_routing_map(container, collection_rid, legacy_routing_cache=False)
             deadline = time.monotonic() + SPLIT_TIMEOUT
             trigger_split(key_container_for_split, 11000)
-            wait_for_split_ranges(key_container_for_split, initial_ranges[0]["id"], deadline)
+            wait_for_feed_range_split(key_container_for_split, initial_ranges[0], deadline)
 
         failures = []
         with split_stage("read_items_after", failures) as diagnostics:

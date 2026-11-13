@@ -8,7 +8,7 @@
 The Rust migration workflow copies each in-scope v4 test into a
 ``tests/<op>/<surface>/`` folder, pins the client to ``_backend="rust"``,
 and adds a ``# Source:`` comment to every method;
-``tests/common/test_legacy_migration_enforcer_unit.py`` (the enforcer) checks
+``tests/common/test_migration_enforcer_unit.py`` (the enforcer) checks
 their shape. There are ~80 operations across a sync and an async surface, so
 writing all the copies by hand is repetitive and error-prone (a forgotten
 ``_backend="rust"`` pin, a broken ``# Source:`` line, a missing ``__init__.py``).
@@ -22,7 +22,7 @@ the enforcer.
 
 The existing hand-written folders vary in a few structural ways, captured as
 spec fields; the generator reproduces the cleanest example of each
-byte-for-byte (checked by ``tests/common/test_legacy_copy_generator_unit.py``):
+byte-for-byte (checked by ``tests/common/test_copy_generator_unit.py``):
 
 * ``surface`` -- ``"sync"`` (``unittest.TestCase``, ``setUp`` with registered cleanup)
   or ``"aio"`` (``unittest.IsolatedAsyncioTestCase``, ``asyncSetUp`` /

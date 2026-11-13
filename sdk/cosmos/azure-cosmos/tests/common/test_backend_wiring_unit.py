@@ -20,6 +20,7 @@ import asyncio
 import concurrent.futures
 import importlib
 import inspect
+import json
 import logging
 import os
 import re
@@ -60,7 +61,6 @@ from azure.cosmos._backend.operations import (
     STATELESS_PAGE_BINDING_FUNCTION_NAMES,
 )
 from azure.cosmos._backend.errors import UnsupportedQueryError
-from azure.cosmos._backend.errors import raise_account_read_unsupported
 from azure.cosmos._backend._binding_adapter_shared import (
     configure_packaged_query_plan_interop,
     driver_transport_error_type,
@@ -196,6 +196,52 @@ def test_client_headers_reach_point_and_page_binding_calls_rust(monkeypatch, asy
         CaseInsensitiveDict({"x-application": "call", "x-default-only": "retained", "x-call-only": "once"}),
         CaseInsensitiveDict({"x-application": "client", "x-default-only": "retained"}),
     ]
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("scope", ["client_default", "per_call", "override"])
+def test_public_read_forwards_application_headers_to_binding_without_network_rust(monkeypatch, asynchronous, scope):
+    from azure.core.utils import CaseInsensitiveDict
+
+    module = async_cosmos_client_module if asynchronous else sync_cosmos_client_module
+    client_headers = {"x-application": "client"} if scope != "per_call" else {}
+    call_headers = {"X-Application": "call"} if scope != "client_default" else {}
+    client = module.CosmosClient("https://headers.invalid", "ZmFrZQ==", _backend="rust", headers=client_headers)
+    adapter = client._adapter
+    binding = importlib.import_module(type(adapter).__module__)._rust_module
+    stub = AsyncMock if asynchronous else MagicMock
+    monkeypatch.setattr(adapter, "_ensure_driver_handle", stub(return_value="test-handle"))
+    suffix = "_async" if asynchronous else ""
+    monkeypatch.setattr(binding, "get_container_metadata" + suffix, stub(return_value=("rid", ("/pk",), "Hash", None)))
+    captured = []
+    expected = {"id": "order", "pk": "customer", "status": "paid"}
+
+    def read(handle, prepared, **_kwargs):
+        assert handle == "test-handle"
+        captured.append(CaseInsensitiveDict(prepared.headers))
+        return 200, 0, {}, json.dumps(expected).encode(), None
+
+    monkeypatch.setattr(binding, "read_item" + suffix, stub(side_effect=read))
+    container = client.get_database_client("sales").get_container_client("orders")
+    kwargs = {"initial_headers": call_headers} if call_headers else {}
+
+    async def run_async():
+        try:
+            return await container.read_item("order", partition_key="customer", **kwargs)
+        finally:
+            await client.close()
+
+    if asynchronous:
+        result = asyncio.run(run_async())
+    else:
+        try:
+            result = container.read_item("order", partition_key="customer", **kwargs)
+        finally:
+            client.close()
+
+    assert dict(result) == expected
+    assert len(captured) == 1
+    assert captured[0]["x-application"] == ("client" if scope == "client_default" else "call")
 
 
 @pytest.mark.parametrize(
@@ -397,6 +443,78 @@ def test_driver_initialization_configures_query_plan_path_before_acquisition_rus
         backend.abort_construction()
 
 
+@pytest.mark.parametrize("backend_type", [BindingAdapter, AsyncBindingAdapter])
+@pytest.mark.parametrize("explicit_runtime", [False, True])
+@pytest.mark.parametrize("status", [401, 403, 404, 429])
+def test_driver_initialization_preserves_service_error_rust(backend_type, explicit_runtime, status):
+    from azure.cosmos.exceptions import CosmosHttpResponseError, CosmosResourceNotFoundError
+
+    binding = MagicMock()
+    binding.__file__ = None
+    binding._DriverResponseError = type("_DriverResponseError", (RuntimeError,), {})
+    response = (
+        status,
+        1002,
+        {"x-ms-activity-id": "account-request", "x-ms-substatus": "1002", "x-ms-retry-after-ms": "25"},
+        b'{"message":"account lookup failed"}',
+        '{"request_count":1}',
+    )
+    original = binding._DriverResponseError(response)
+    binding.acquire_driver_handle.side_effect = original
+    runtime = MagicMock() if explicit_runtime else None
+    backend = backend_type(endpoint="https://initialization.invalid", master_key="key")
+    try:
+        expected = CosmosResourceNotFoundError if status == 404 else CosmosHttpResponseError
+        with pytest.raises(expected) as caught:
+            backend._initialize_driver(binding, runtime)
+        error = caught.value
+        assert error.status_code == status
+        assert error.sub_status == 1002
+        assert error.headers["x-ms-activity-id"] == "account-request"
+        assert error.headers["x-ms-retry-after-ms"] == "25"
+        assert error.headers["x-ms-cosmos-sdk-diagnostics"] == '{"request_count":1}'
+        assert "account lookup failed" in str(error)
+        assert error.__cause__ is original
+        binding.acquire_driver_handle.assert_called_once_with(
+            *backend._acquire_driver_handle_args(),
+            **({"runtime": runtime._handle} if explicit_runtime else {}),
+        )
+        assert backend._driver_handle is None
+    finally:
+        backend.abort_construction()
+
+
+@pytest.mark.parametrize("backend_type", [BindingAdapter, AsyncBindingAdapter])
+@pytest.mark.parametrize("transport_failure", [False, True])
+def test_driver_initialization_preserves_non_http_error_rust(backend_type, transport_failure):
+    from azure.core.exceptions import ServiceResponseError
+
+    binding = MagicMock()
+    binding.__file__ = None
+    binding._DriverResponseError = type("_DriverResponseError", (RuntimeError,), {})
+    binding._DriverTransportError = type("_DriverTransportError", (RuntimeError,), {})
+    original = (
+        binding._DriverTransportError("account transport failed")
+        if transport_failure
+        else RuntimeError("initialization task failed")
+    )
+    binding.acquire_driver_handle.side_effect = original
+    backend = backend_type(endpoint="https://initialization.invalid", master_key="key")
+    try:
+        expected = ServiceResponseError if transport_failure else RuntimeError
+        with pytest.raises(expected) as caught:
+            backend._initialize_driver(binding)
+        if transport_failure:
+            assert caught.value.__cause__ is original
+            assert "account transport failed" in str(caught.value)
+        else:
+            assert caught.value is original
+        binding.acquire_driver_handle.assert_called_once()
+        assert backend._driver_handle is None
+    finally:
+        backend.abort_construction()
+
+
 def test_query_plan_configuration_preserves_override_added_during_discovery_rust(tmp_path, monkeypatch):
     sidecar = tmp_path / ".libs"
     sidecar.mkdir()
@@ -542,7 +660,7 @@ def test_import_guard_rust(guarded_name, allowed_files):
 # "core-python" or "rust"; anything else fails at construction so a typo does
 # not quietly fall back to the default.
 
-def test_factory_default_returns_legacy_backend_rust(monkeypatch):
+def test_factory_default_returns_core_python_backend_rust(monkeypatch):
     """With nothing set, the factory returns the concrete default backend."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     backend = make_backend(None)
@@ -1459,11 +1577,188 @@ def test_async_backend_coalesces_concurrent_first_init_to_one_call_rust(monkeypa
     assert fake_module.read_item_async.await_count == 50
 
 
+@pytest.mark.parametrize("close_during_creation", [False, True])
+def test_async_acquisition_does_not_starve_credentials_or_close_rust(monkeypatch, close_during_creation):
+    """Matching clients must not occupy the workers needed by their credential or close."""
+    from types import SimpleNamespace
+    from azure.core.credentials import AccessToken
+    from azure.cosmos.aio._backend import binding_adapter
+
+    async def run():
+        loop = asyncio.get_running_loop()
+        loop.set_default_executor(concurrent.futures.ThreadPoolExecutor(max_workers=2))
+        both_entered = asyncio.Event()
+        token_submitted = asyncio.Event()
+        finish_token = asyncio.Event()
+        token_started = threading.Event()
+        arrivals_lock = threading.Lock()
+        creation_lock = threading.Lock()
+        arrivals = []
+        token_requests = []
+        acquired = []
+        released = []
+        cached = False
+
+        class Credential:
+            async def get_token(self, *_scopes, **_kwargs):
+                await both_entered.wait()
+                token_submitted.set()
+
+                def token_work():
+                    token_started.set()
+                    return AccessToken("test-token", 4102444800)
+
+                token = await asyncio.to_thread(token_work)
+                await finish_token.wait()
+                return token
+
+        def acquire(_endpoint, _key, _config, credential):
+            nonlocal cached
+            with arrivals_lock:
+                arrivals.append(credential)
+                if len(arrivals) == 2:
+                    loop.call_soon_threadsafe(both_entered.set)
+            # Model the binding's same-key creation lock, using the real credential bridge.
+            with creation_lock:
+                if not cached:
+                    request = credential._start_token_request("https://cosmos.azure.com/.default")
+                    token_requests.append(request)
+                    request.result(timeout=10)
+                    cached = True
+                handle = object()
+                acquired.append(handle)
+                return handle
+
+        monkeypatch.setattr(
+            binding_adapter,
+            "_rust_module",
+            SimpleNamespace(
+                acquire_driver_handle=acquire,
+                release_driver_handle=released.append,
+                _DriverResponseError=type("_DriverResponseError", (RuntimeError,), {}),
+                _DriverTransportError=type("_DriverTransportError", (RuntimeError,), {}),
+            ),
+        )
+        credential = Credential()
+        adapters = [
+            AsyncBindingAdapter("https://alpha-bank.documents.azure.com", token_credential=credential) for _ in range(2)
+        ]
+        initializations = [asyncio.create_task(adapter.initialize()) for adapter in adapters]
+        closes = []
+        try:
+            await asyncio.wait_for(token_submitted.wait(), timeout=5)
+            assert arrivals[0] is arrivals[1]
+            if close_during_creation:
+                closes = [asyncio.create_task(adapter.close()) for adapter in adapters]
+                _, pending = await asyncio.wait(closes, timeout=2)
+                assert not pending, "Acquisition workers prevented close from running"
+                await asyncio.gather(*closes)
+                results = await asyncio.wait_for(asyncio.gather(*initializations, return_exceptions=True), timeout=5)
+                assert all(isinstance(result, BaseException) for result in results)
+                assert not acquired
+            else:
+                finish_token.set()
+                _, pending = await asyncio.wait(initializations, timeout=2)
+                assert not pending, "Acquisition workers prevented credential work from running"
+                await asyncio.gather(*initializations)
+                assert token_started.is_set()
+                assert len(token_requests) == 1
+                assert len(acquired) == 2
+                assert acquired[0] is not acquired[1]
+                await asyncio.wait_for(asyncio.gather(*(adapter.close() for adapter in adapters)), timeout=5)
+                assert set(released) == set(acquired)
+                assert len(released) == 2
+        finally:
+            # Unblock the stand-in even when the regression fails, without needing a pool worker.
+            finish_token.set()
+            for request in token_requests:
+                request.cancel()
+            await asyncio.wait_for(
+                asyncio.gather(
+                    *(adapter.close() for adapter in adapters),
+                    *initializations,
+                    *closes,
+                    return_exceptions=True,
+                ),
+                timeout=10,
+            )
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as acquisition_executor:
+        monkeypatch.setattr(binding_adapter, "_DRIVER_ACQUISITION_EXECUTOR", acquisition_executor)
+        asyncio.run(run())
+
+
+def test_async_acquisition_submission_failure_can_be_retried_rust(monkeypatch):
+    from azure.cosmos.aio._backend import binding_adapter
+
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "handle-1"
+    monkeypatch.setattr(binding_adapter, "_rust_module", fake_module)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as acquisition_executor:
+        monkeypatch.setattr(binding_adapter, "_DRIVER_ACQUISITION_EXECUTOR", acquisition_executor)
+        submit = acquisition_executor.submit
+        submissions = 0
+
+        def fail_first_submit(*args, **kwargs):
+            nonlocal submissions
+            submissions += 1
+            if submissions == 1:
+                raise RuntimeError("acquisition submission failed")
+            return submit(*args, **kwargs)
+
+        monkeypatch.setattr(acquisition_executor, "submit", fail_first_submit)
+
+        async def run():
+            adapter = AsyncBindingAdapter("https://alpha-bank.documents.azure.com", master_key="key")
+            try:
+                with pytest.raises(RuntimeError, match="acquisition submission failed"):
+                    await adapter.initialize()
+                assert adapter._init_future is None
+                assert adapter._init_future_loop is None
+                fake_module.acquire_driver_handle.assert_not_called()
+                await adapter.initialize()
+                assert adapter._driver_handle == "handle-1"
+            finally:
+                await adapter.close()
+
+        asyncio.run(run())
+    assert submissions == 2
+    fake_module.acquire_driver_handle.assert_called_once()
+    fake_module.release_driver_handle.assert_called_once_with("handle-1")
+
+
+def test_async_acquisition_pool_survives_client_and_event_loop_close_rust(monkeypatch):
+    from azure.cosmos.aio._backend import binding_adapter
+
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.side_effect = ["handle-1", "handle-2"]
+    monkeypatch.setattr(binding_adapter, "_rust_module", fake_module)
+
+    async def run(shutdown_default_executor):
+        if shutdown_default_executor:
+            await asyncio.get_running_loop().shutdown_default_executor()
+        adapter = AsyncBindingAdapter("https://alpha-bank.documents.azure.com", master_key="key")
+        try:
+            await adapter.initialize()
+        finally:
+            await adapter.close()
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as acquisition_executor:
+        monkeypatch.setattr(binding_adapter, "_DRIVER_ACQUISITION_EXECUTOR", acquisition_executor)
+        asyncio.run(run(False))
+        asyncio.run(run(True))
+    assert fake_module.acquire_driver_handle.call_count == 2
+    assert [call.args[0] for call in fake_module.release_driver_handle.call_args_list] == ["handle-1", "handle-2"]
+
+
 def test_async_backend_retries_init_after_failure_rust(monkeypatch):
     """A failed init is not cached on the shared future: the next operation retries
     ``acquire_driver_handle`` rather than handing back the first failure forever."""
     attempts = []
     fake_module = MagicMock()
+    fake_module._DriverResponseError = type("_DriverResponseError", (RuntimeError,), {})
+    fake_module._DriverTransportError = type("_DriverTransportError", (RuntimeError,), {})
 
     def _flaky_init(*args):
         attempts.append(args)
@@ -1708,7 +2003,7 @@ def test_helper_parses_backend_response_into_cosmos_dict_rust(monkeypatch):
 # ``LegacyBackend`` now exists again (see ``azure.cosmos._backend.legacy``): the
 # item helper coerces a ``None`` selection to it so "use the existing client" runs
 # through the same ``run_operation`` interface as Rust. Its own behavior is
-# covered in test_legacy_backend_unit.py; the item-helper legacy path is covered
+# covered in test_core_python_backend_unit.py; the item-helper legacy path is covered
 # by the fall-through tests in test_item_helper_unit.py.
 
 
@@ -2434,26 +2729,27 @@ def test_async_factory_carries_all_startup_settings_into_rust_backend_rust(monke
     )
 
 
-# ---------------------------------------------------------------------------
-# get_database_account fails loudly on the Rust path (no core-python fallback)
-# ---------------------------------------------------------------------------
-#
-# get_database_account is a client-level read that isn't routed through the
-# backend dispatch; on a Rust-backed client it must raise a clear gap error
-# instead of silently borrowing the legacy core-python connection.
-
-
-def test_account_read_guard_is_noop_for_core_python_rust():
-    """The explicit legacy backend leaves the core-python path unchanged."""
-    assert raise_account_read_unsupported(LEGACY_BACKEND) is None
-
-
-def test_account_read_guard_raises_for_rust_backend_rust():
-    """The Rust backend gets a clear not-yet-available error."""
-    backend = MagicMock(name=BACKEND_NAME_RUST)
-    backend.name = BACKEND_NAME_RUST
-    with pytest.raises(NotImplementedError, match="not yet available through the Rust binding"):
-        raise_account_read_unsupported(backend)
+@pytest.mark.asyncio
+@pytest.mark.parametrize("asynchronous", [False, True])
+@pytest.mark.parametrize("backend", [BACKEND_NAME_CORE_PYTHON, BACKEND_NAME_RUST])
+async def test_account_read_is_removed_from_client_surface_rust(monkeypatch, asynchronous, backend):
+    module = async_cosmos_client_module if asynchronous else sync_cosmos_client_module
+    connection = MagicMock()
+    monkeypatch.setattr(module, "CosmosClientConnection", MagicMock(return_value=connection))
+    client = module.CosmosClient(
+        "https://account-surface.documents.azure.com", "key", _backend=backend,
+    )
+    try:
+        for name in ("get_database_account", "_get_database_account"):
+            assert not hasattr(module.CosmosClient, name)
+            with pytest.raises(AttributeError, match=name):
+                getattr(client, name)
+        connection.GetDatabaseAccount.assert_not_called()
+    finally:
+        if asynchronous:
+            await client._adapter.close()
+        else:
+            client._adapter.close()
 
 
 # ---------------------------------------------------------------------------
@@ -3020,7 +3316,7 @@ def test_container_read_feed_ranges_routes_to_rust_backend_rust(monkeypatch):
         container._item_context.adapter.close()
 
 
-def test_container_read_feed_ranges_with_kwargs_rejects_legacy_fallback_rust(monkeypatch):
+def test_container_read_feed_ranges_with_kwargs_rejects_core_python_fallback_rust(monkeypatch):
     """Unsupported options fail without executing the legacy routing-map lookup."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
@@ -3112,7 +3408,7 @@ def test_async_container_read_feed_ranges_routes_to_rust_backend_rust(monkeypatc
         asyncio.run(mock_cc._backend.close())
 
 
-def test_async_container_read_feed_ranges_with_kwargs_rejects_legacy_fallback_rust(monkeypatch):
+def test_async_container_read_feed_ranges_with_kwargs_rejects_core_python_fallback_rust(monkeypatch):
     """Async unsupported options fail without executing legacy metadata work."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "h"
@@ -3515,6 +3811,8 @@ def test_rust_backend_init_driver_handle_serialised_under_concurrent_threads_rus
     second_waiting = threading.Event()
     first_error = RuntimeError("first acquisition failed")
     fake_module = MagicMock()
+    fake_module._DriverResponseError = type("_DriverResponseError", (RuntimeError,), {})
+    fake_module._DriverTransportError = type("_DriverTransportError", (RuntimeError,), {})
     monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
     backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
     wait_lock = threading.Lock()
@@ -3868,7 +4166,7 @@ def test_async_backend_maps_transport_error_to_service_response_error_rust(monke
     asyncio.run(run())
 
 
-def test_sync_list_databases_transport_error_does_not_replay_legacy_rust(monkeypatch):
+def test_sync_list_databases_transport_error_does_not_replay_core_python_rust(monkeypatch):
     """A response-less list_databases failure is translated, not replayed."""
     from azure.core.exceptions import ServiceResponseError
     import azure.cosmos._backend.binding_adapter as rust_mod
@@ -3902,7 +4200,7 @@ def test_sync_list_databases_transport_error_does_not_replay_legacy_rust(monkeyp
         backend.close()
 
 
-def test_async_list_databases_transport_error_does_not_replay_legacy_rust(monkeypatch):
+def test_async_list_databases_transport_error_does_not_replay_core_python_rust(monkeypatch):
     """The async list_databases transport mapping also avoids legacy replay."""
     from azure.core.exceptions import ServiceResponseError
     import azure.cosmos.aio._backend.binding_adapter as async_rust_mod

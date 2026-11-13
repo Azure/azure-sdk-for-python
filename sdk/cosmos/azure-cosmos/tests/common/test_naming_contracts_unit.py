@@ -157,7 +157,6 @@ def test_page_contracts_have_no_query_only_aliases_rust(current, retired):
     "current,retired",
     [
         ("build_query_items_prepared_page_request", "build_query_items_prepared_query"),
-        ("build_read_all_items_prepared_page_request", "build_read_all_items_prepared_query"),
         ("build_list_databases_prepared_page_request", "build_list_databases_prepared_query"),
         ("build_query_databases_prepared_page_request", "build_query_databases_prepared_query"),
         ("build_list_containers_prepared_page_request", "build_list_containers_prepared_query"),
@@ -422,7 +421,7 @@ def test_executor_converts_the_same_deadline_after_initialization_rust(
         PreparedPageRequest(
             op="read_all_items",
             container_link="dbs/d/colls/c",
-            cursor=SimpleNamespace(has_more=False, continuation_supported=True),
+            cursor=SimpleNamespace(has_more=False, continuation_supported=False),
         )
         if paged
         else point_request()
@@ -852,17 +851,22 @@ def test_handle_release_logs_do_not_disclose_handle_or_native_exception_rust(mon
     handle = "https://sensitive.invalid/credential-fingerprint"
     module = async_rust if async_mode else sync_rust
     monkeypatch.setattr(
-        module, "_rust_module",
+        module,
+        "_rust_module",
         SimpleNamespace(release_driver_handle=MagicMock(side_effect=RuntimeError(handle))),
     )
-    caplog.set_level(logging.DEBUG, logger=module.__name__)
+    caplog.set_level(logging.DEBUG, logger=shared_rust.__name__)
+    assert module.release_driver_handle_quietly is shared_rust.release_driver_handle_quietly
+    adapter_type = module.AsyncBindingAdapter if async_mode else module.BindingAdapter
+    adapter = object.__new__(adapter_type)
+    adapter._driver_handle_lock = threading.Lock()
+    adapter._driver_handle = handle
+    adapter._token_credential = None
     if async_mode:
-        module._close_driver_handle_quietly(handle)
+        adapter._close_lock = threading.Lock()
+        adapter._close_future = None
+        asyncio.run(adapter.close())
     else:
-        adapter = object.__new__(module.BindingAdapter)
-        adapter._driver_handle_lock = threading.Lock()
-        adapter._driver_handle = handle
-        monkeypatch.setattr(adapter, "_close_token_credential_bridge", lambda: None)
         adapter.close()
     assert "releasing the driver handle" in caplog.text
     assert handle not in caplog.text
@@ -870,12 +874,15 @@ def test_handle_release_logs_do_not_disclose_handle_or_native_exception_rust(mon
     assert all(record.exc_info is None for record in caplog.records)
 
 
-def test_native_handle_lookup_error_does_not_disclose_the_handle_rust():
+def test_native_handle_type_error_does_not_disclose_the_handle_rust():
     native = pytest.importorskip("azure.cosmos._rust")
     handle = "https://sensitive.invalid/credential-fingerprint"
     request = PreparedRequest(
-        op="read_item", container_link="dbs/d/colls/c", body_bytes=b"",
-        item_id="i", partition_key=BindingPartitionKey("components", ("p",)),
+        op="read_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b"",
+        item_id="i",
+        partition_key=BindingPartitionKey("components", ("p",)),
     )
     with pytest.raises(TypeError, match="_DriverHandle") as caught:
         native.read_item(handle, request)

@@ -22,7 +22,6 @@
 """
 import threading
 import warnings
-from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, Callable, cast, Iterable, Mapping, Optional, overload, Sequence, Tuple, Union, Dict
 from typing_extensions import Literal
@@ -37,7 +36,7 @@ from . import _utils as utils
 from ._availability_strategy_config import _validate_request_hedging_strategy
 from ._base import (_build_properties_cache, build_options,
                     GenerateGuidId, validate_cache_staleness_value)
-from ._constants import _Constants as Constants, TimeoutScope
+from ._constants import _Constants as Constants
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
 from ._helpers._item_arguments import (
@@ -51,11 +50,11 @@ from ._helpers._item_arguments import (
 from ._helpers._item_operations import ItemHelper
 from ._helpers._batch_operations import execute_batch
 from ._helpers._item_prep import prepare_read_item_kwargs, prepare_create_item_kwargs, prepare_item_target
-from ._helpers._read_items import complete_read_items_response, prepare_read_items
+from ._helpers._read_many import read_items as _read_items
 from ._helpers._read_all_items import read_all_items as _read_all_items
 from ._helpers._query_items import query_items as _query_items, uses_rust, reject_rust_continuation_token
 from ._helpers._response_parse import complete_item_response
-from ._operation_deadline import deadline_lock, legacy_deadline_options, remaining_timeout
+from ._operation_deadline import deadline_lock, remaining_timeout
 from ._helpers._container_operations import ContainerHelper
 from ._helpers._request_container import validate_container_create_kwargs
 from ._helpers._feed_range_operations import (
@@ -373,8 +372,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             self,
             items: Sequence[Tuple[str, PartitionKeyType]],
             *,
-            executor: Optional[ThreadPoolExecutor] = None,
-            max_concurrency: Optional[int] = None,
             consistency_level: Optional[str] = None,
             session_token: Optional[str] = None,
             initial_headers: Optional[dict[str, str]] = None,
@@ -386,17 +383,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     ) -> CosmosList:
         """Reads multiple items from the container.
 
-        Groups known ID/partition-key pairs into concurrent point reads and queries.
-        Request count and RU cost depend on partition placement and chunking.
+        Uses Rust read-many to retrieve known ID/partition-key pairs.
+        Request count and RU cost depend on partition placement and grouping.
 
         :param items: A list of tuples, where each tuple contains an item's ID and partition key.
         :type items: list[Tuple[str, PartitionKeyType]]
-        :keyword executor: Optional ThreadPoolExecutor for handling concurrent operations.
-                      If not provided, a new executor will be created as needed.
-        :keyword int max_concurrency: The maximum number of concurrent operations for the
-                      items request. If supplied, must be a positive integer (not bool).
-                      Scheduling is controlled by the executor if one is provided. If not specified,
-                      the default max_concurrency defined by Python's ThreadPoolExecutor will be applied.
         :keyword str consistency_level: The consistency level to use for the request.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -413,8 +404,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :keyword response_hook: Optional callback receiving independent header and CosmosList snapshots once
             after success, including empty input. None disables the callback.
-        :keyword float timeout: One operation budget in seconds, including metadata, routing and queued work.
-            Pending work is cancelled on failure; already-running synchronous requests may finish later.
+        :keyword float timeout: One operation budget in seconds, including metadata and all result pages.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
         :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
             The items that are returned preserve their relative order from the input ``items`` sequence. Because
@@ -423,14 +413,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             Repeated pairs produce one result per occurrence. Empty input performs no network calls.
         :rtype: ~azure.cosmos.CosmosList
         """
-        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
-
-        items, deadline = prepare_read_items(items, max_concurrency, kwargs)
-        if not items:
-            return complete_read_items_response(
-                CosmosList([], response_headers=CaseInsensitiveDict()), kwargs.get("response_hook"), deadline
-            )
-
         if session_token is not None:
             kwargs['session_token'] = session_token
         if initial_headers is not None:
@@ -444,25 +426,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if availability_strategy is not None:
             kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
 
-        kwargs['max_concurrency'] = max_concurrency
-        query_options = legacy_deadline_options(build_options(kwargs), deadline)
-        # consistency_level is not in the shared keyword-to-option map, so set
-        # the option directly. Left in kwargs it would be sent on the wire.
         if consistency_level is not None:
-            query_options['consistencyLevel'] = consistency_level
-        self._get_properties_with_options(query_options)
-        remaining_timeout(deadline)
-        query_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-        query_options["enableCrossPartitionQuery"] = True
-        query_options[Constants.TimeoutScope] = TimeoutScope.OPERATION
-
-        return self.client_connection.read_items(
-            _item_context=self._item_context,
-            collection_link=self.container_link,
-            items=items,
-            options=query_options,
-            executor=executor,
-            **kwargs)
+            kwargs["consistency_level"] = consistency_level
+        return _read_items(self._item_context, self.container_link, items, kwargs)
 
 
 
@@ -483,10 +449,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """List all the items in the container.
 
         Metadata and pages are fetched lazily. All arguments are keyword-only.
-        Rust uses an internal query and retains cross-partition paging state.
-        Save ``by_page().continuation_token`` after processing a complete page;
-        bookmarks cannot be moved between Rust and core-python. Unsupported
-        Rust settings raise instead of switching backends. Query metrics are
+        Rust read-many retains a live cursor across partitions. Continue using
+        the same iterator: continuation tokens and resuming a new iterator are
+        not supported. A new enumeration starts from the beginning. To save
+        progress and resume later, use ``query_items`` to select all items instead.
+        Unsupported settings raise without a legacy fallback. Query metrics are
         not accepted, including an explicit ``populate_query_metrics=None``.
 
         :keyword float timeout: Per-page fetch budget, including metadata, planning,
@@ -498,7 +465,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: Called once per fetched public page with independent
             headers and a deep copy of the Documents envelope. Callback failures
-            do not replay the page; resume a new pager from the last delivered bookmark.
+            make the iterator unusable; a new enumeration starts from the beginning.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -511,17 +478,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
-            False (disable hedging even if client has it enabled),
-            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
-            If not provided, uses the client's configured strategy.
-        :paramtype availability_strategy: Union[bool, dict[str, Any]]
-            Per-call availability overrides are supported only on core-python.
+        :keyword Union[bool, dict[str, Any]] availability_strategy: Per-call availability
+            overrides are not supported by this API. Leave this unset to use the client's configuration.
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
-        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         if session_token is not None:
             kwargs['session_token'] = session_token
         if initial_headers is not None:

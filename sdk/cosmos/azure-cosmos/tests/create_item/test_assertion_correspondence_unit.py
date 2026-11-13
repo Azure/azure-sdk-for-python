@@ -530,21 +530,21 @@ def test_actual_create_copy_annotation_inventory_rust():
 
 
 @pytest.mark.parametrize("check", [
-    "test_legacy_folders_discovered_rust",
-    "test_every_legacy_folder_is_a_package_rust",
+    "test_migrated_folders_discovered_rust",
+    "test_every_migrated_folder_is_a_package_rust",
     "test_every_test_method_has_a_source_comment_rust",
     "test_every_source_reference_resolves_rust",
-    "test_every_legacy_file_pins_rust_backend_rust",
+    "test_every_migrated_file_pins_rust_backend_rust",
     "test_no_unstructured_skips_rust",
 ])
 def test_create_copies_pass_existing_enforcer_rust(monkeypatch, check):
-    from common import test_legacy_migration_enforcer_unit as enforcer
+    from common import test_migration_enforcer_unit as enforcer
 
     paths = sorted({
         ROOT.joinpath(*item["replacement"]["path"].split("\\"))
         for item in _load()["create_copy_annotation_audit"]["inventory"] if item["source"]
         and Path(item["replacement"]["path"]).name in {
-            "test_headers.py", "test_legacy_contracts.py", "test_legacy_variants.py",
+            "test_headers.py", "test_contracts.py", "test_input_variants.py",
         }
     })
     monkeypatch.setattr(enforcer, "_legacy_test_files", lambda: paths)
@@ -590,7 +590,7 @@ def test_create_copies_use_configured_data_auth_rust(monkeypatch, mode, surface,
     container.create_item = mock_type(side_effect=create)
     container.read_item = mock_type(side_effect=lambda *_args, **_kwargs: dict(stored))
     module_name = "test_headers" if entrypoint == "header_fixture" else (
-        "test_legacy_variants" if entrypoint in {"partition_keys", "unicode"} else "test_legacy_contracts"
+        "test_input_variants" if entrypoint in {"partition_keys", "unicode"} else "test_contracts"
     )
     module = importlib.import_module(f"create_item.{surface}.{module_name}")
     if entrypoint == "header_fixture":
@@ -704,7 +704,7 @@ def test_create_copy_exclusion_and_invalid_id_vectors_rust():
         ("tests\\test_resource_id_async.py", "TestResourceIdsAsync.test_create_illegal_characters_async"),
     ):
         expected_ids.update(_literal_vector(_assigned_value(path, "illegal_strings", symbol)))
-    actual_ids = _literal_vector(_assigned_value("tests\\create_item\\_legacy_contracts.py", "INVALID_IDS"))
+    actual_ids = _literal_vector(_assigned_value("tests\\create_item\\_contract_cases.py", "INVALID_IDS"))
     assert len(actual_ids) == len(set(actual_ids)) == 11
     assert set(actual_ids) == expected_ids
 
@@ -730,7 +730,7 @@ def test_repaired_create_live_lane_marks_rust():
             "document_crud_create_persistence", "document_crud_response_payload_on_write_disabled",
         ):
             assert "pytest.mark.cosmosLong" in effective(
-                f"tests\\create_item\\{surface}\\test_legacy_contracts.py", f"test_{name}_rust"
+                f"tests\\create_item\\{surface}\\test_contracts.py", f"test_{name}_rust"
             )
         for name in (
             "partitioned_collection_partition_key_extraction_special_chars",
@@ -744,16 +744,16 @@ def test_repaired_create_live_lane_marks_rust():
             "unicode_characters_in_partition_key",
         ):
             assert "pytest.mark.cosmosLong" in effective(
-                f"tests\\create_item\\{surface}\\test_legacy_variants.py", f"test_{name}_rust"
+                f"tests\\create_item\\{surface}\\test_input_variants.py", f"test_{name}_rust"
             )
 
 
 def test_create_copy_unicode_scalar_and_suppression_vectors_rust():
-    helper = "tests\\create_item\\_legacy_variants.py"
+    helper = "tests\\create_item\\_input_variants.py"
     unicode_key = _literal_vector(_assigned_value(helper, "UNICODE_KEY"))
     unicode_content = _literal_vector(_assigned_value(helper, "UNICODE_CONTENT"))
-    emoji = _literal_vector(_assigned_value("tests\\create_item\\_legacy_contracts.py", "EMOJI_CASES"))
-    cases = json.loads(LEDGER.with_name("legacy_partition_key_cases.json").read_text(encoding="utf-8"))
+    emoji = _literal_vector(_assigned_value("tests\\create_item\\_contract_cases.py", "EMOJI_CASES"))
+    cases = json.loads(LEDGER.with_name("partition_key_reference_cases.json").read_text(encoding="utf-8"))
     assert len(cases) == 15
     scalar_names = {"hash-null", "hash-missing", "hash-boolean", "hash-string", "hash-integer", "hash-float"}
     scalar_bodies = [{key: value for key, value in case["body"].items() if key != "id"}

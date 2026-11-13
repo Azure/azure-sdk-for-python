@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 """Unit coverage for Rust query-page routing helpers (no network).
 
-These pin the query paging behavior: ``query_items`` and ``read_all_items`` fetch one page
+These pin the query paging behavior: ``query_items`` fetches one page
 at a time through the backend's paged handoff (``execute_pages``), not the
 single-reply path; and the Python-side eligibility gates decide when a page may go
 to the Rust backend versus the legacy HTTP path. The old Python SQL-regex scan is
@@ -66,7 +66,6 @@ from azure.cosmos._query_rust_routing import (
     can_use_rust_backend_for_list_containers_page,
     can_use_rust_backend_for_query_containers_page,
     can_use_rust_backend_for_query_page,
-    can_use_rust_backend_for_read_all_items_page,
 )
 
 
@@ -957,27 +956,29 @@ async def test_query_databases_accepts_positional_or_named_query_with_keyword_se
 @pytest.mark.parametrize("value", [None, False, True])
 @pytest.mark.parametrize("query", [None, "SELECT * FROM root r"])
 @pytest.mark.parametrize("use_legacy_backend", [False, True], ids=["rust", "core-python"])
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
 def test_query_databases_rejects_cross_partition_option_before_iteration_rust(
-    listing_client, value, query, use_legacy_backend
+    listing_client, value, query, use_legacy_backend, source
 ):
-    """``enable_cross_partition_query`` is refused for database queries on both backends.
+    """Enforce the approved database-query option removal, not a legacy test copy.
 
-    Databases are not partitioned, so the option has no meaning here. It is
-    rejected with a ``TypeError`` naming it, for every value including
-    ``None`` and ``False``, with or without a query, on Rust and core-python
-    alike.
-
-    Rejecting even ``False`` is deliberate: passing it at all means the caller
-    thinks the setting applies. Nothing is constructed or sent.
+    Reject every supplied value, including None/False, in keywords and settings
+    dictionaries, for SQL and query=None on both clients and backend selections.
+    No request or hook runs; the removed option is not silently ignored.
     """
     client, conn, backend, is_async = listing_client
     if use_legacy_backend:
         conn._backend = ASYNC_LEGACY_BACKEND if is_async else LEGACY_BACKEND
+        client._adapter = conn._backend
     conn.QueryDatabases = MagicMock(side_effect=AssertionError("pager must not be constructed"))
     conn.ReadDatabases = MagicMock(side_effect=AssertionError("pager must not be constructed"))
     hook = MagicMock()
+    kwargs = (
+        {"enable_cross_partition_query": value}
+        if source == "keyword" else {source: {"enableCrossPartitionQuery": value}}
+    )
     with pytest.raises(TypeError, match="'enable_cross_partition_query'"):
-        client.query_databases(query, enable_cross_partition_query=value, response_hook=hook)
+        client.query_databases(query, response_hook=hook, **kwargs)
     hook.assert_not_called()
     conn.QueryDatabases.assert_not_called()
     conn.ReadDatabases.assert_not_called()
@@ -996,7 +997,6 @@ def test_query_databases_rejects_cross_partition_option_before_iteration_rust(
         (http_constants.ResourceType.Collection, "/dbs/db/colls/", "DocumentCollections", None, OP_LIST_CONTAINERS),
         (http_constants.ResourceType.Collection, "/dbs/db/colls/", "DocumentCollections",
          {"query": "SELECT * FROM c"}, OP_QUERY_CONTAINERS),
-        (http_constants.ResourceType.Document, "/dbs/db/colls/c/docs/", "Documents", None, OP_READ_ALL_ITEMS),
         (http_constants.ResourceType.Document, "/dbs/db/colls/c/docs/", "Documents",
          {"query": "SELECT * FROM c"}, OP_QUERY_ITEMS),
     ],
@@ -1006,8 +1006,8 @@ async def test_all_rust_feed_operations_expose_diagnostics_rust(
 ):
     """Every Rust feed operation reports diagnostics everywhere, and prepares no legacy headers.
 
-    Runs all six paged operations -- listing and querying databases,
-    containers and items -- sync and async, and checks each is tagged with its
+    Runs the stateless listing and query operations -- sync and async --
+    and checks each is tagged with its
     own operation identity.
 
     The diagnostics string has to reach all four places a customer might look:
@@ -1161,8 +1161,8 @@ def _run_sync_read_feed(
 ):
     """Call the shared read-feed with either resource type.
 
-    ``list_databases`` and ``read_all_items`` run through the same code inside
-    the client connection and are told apart only by resource type. This helper
+    Database listing and remaining internal read feeds share connection code.
+    Public ``read_all_items`` instead owns a retained Rust cursor. This helper
     fills in the three things that differ -- the URL path, the resource id, and
     the name of the JSON list in the reply -- so a test can switch between the
     two by changing one argument.
@@ -1341,7 +1341,7 @@ def test_rust_feed_header_and_paging_precedence_is_case_insensitive_rust(typed):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("is_async", [False, True])
 @pytest.mark.parametrize("route", ["legacy", "capability-fallback", "ineligible", "query-plan"])
-async def test_query_legacy_preparation_is_lazy_but_preserved_rust(monkeypatch, is_async, route):
+async def test_query_core_python_preparation_is_lazy_but_preserved_rust(monkeypatch, is_async, route):
     """Whenever a query does end up on the legacy path, it is prepared exactly as before.
 
     Four ways to get there: a legacy backend, a backend that rejects the page
@@ -1711,232 +1711,12 @@ def test_async_query_backend_eligibility_honors_unsupported_request_options_rust
     )
 
 
-def test_sync_read_all_marks_unsupported_options_as_rust_ineligible_rust():
-    """Check which sync read-all inputs the Rust eligibility function accepts.
-
-    A plain document read-feed is eligible; the listed unsupported options and
-    resource kinds are not. This tests selection, not execution of a fallback.
-    """
-    eligibility = can_use_rust_backend_for_read_all_items_page
-
-    assert eligibility(
-        options={},
-        kwargs={},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id=None,
-    )
-    assert not eligibility(
-        options={"initialHeaders": {"User-Agent": "customer-agent"}},
-        kwargs={},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id=None,
-    )
-    assert not eligibility(
-        options={"populateQueryMetrics": True},
-        kwargs={},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id=None,
-    )
-    assert not eligibility(
-        options={Constants.Kwargs.AVAILABILITY_STRATEGY: False},
-        kwargs={},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id=None,
-    )
-    assert not eligibility(
-        options={"changeFeedState": {"ct": "value"}},
-        kwargs={},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id=None,
-    )
-    assert not eligibility(
-        options={},
-        kwargs={"feed_range": {"Range": {"min": "AA", "max": "BB"}}},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id=None,
-    )
-    assert not eligibility(
-        options={},
-        kwargs={},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id="0",
-    )
-    assert not eligibility(
-        options={},
-        kwargs={},
-        is_query_plan=True,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id=None,
-    )
-    assert not eligibility(
-        options={},
-        kwargs={},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Collection,
-        partition_key_range_id=None,
-    )
 
 
-def test_async_read_all_marks_unsupported_options_as_rust_ineligible_rust():
-    """Async twin of the read_all_items eligibility gate."""
-    eligibility = can_use_rust_backend_for_read_all_items_page
-
-    assert eligibility(
-        options={},
-        kwargs={},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id=None,
-    )
-    assert not eligibility(
-        options={"populateQueryMetrics": False},
-        kwargs={},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id=None,
-    )
-    assert not eligibility(
-        options={Constants.Kwargs.AVAILABILITY_STRATEGY: True},
-        kwargs={},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id=None,
-    )
-    assert not eligibility(
-        options={"changeFeedState": {"ct": "value"}},
-        kwargs={},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id=None,
-    )
-    assert not eligibility(
-        options={},
-        kwargs={"feed_range": {"Range": {"min": "AA", "max": "BB"}}},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id=None,
-    )
-    assert not eligibility(
-        options={},
-        kwargs={},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id="1",
-    )
-    assert not eligibility(
-        options={},
-        kwargs={},
-        is_query_plan=True,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id=None,
-    )
-    assert not eligibility(
-        options={},
-        kwargs={},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Collection,
-        partition_key_range_id=None,
-    )
 
 
-def test_sync_read_all_backend_delegates_cross_partition_scope_rust(monkeypatch):
-    """Sync read_all_items, whole container. Builds a ``read_all_items`` prepared
-    query with the cross-partition header (``"[]"``), no ``PartitionKey`` header, and
-    no query text (a native read-feed, not a synthesized SELECT), and still
-    propagates headers/session and fires the response hook exactly once.
-    """
-    conn = _new_sync_connection()
-    backend = _CapturingSyncBackend(
-        BackendResponse(
-            status_code=200,
-            sub_status=0,
-            headers=CaseInsensitiveDict({"x-ms-continuation": "ct-read-all"}),
-            body=b'{"Documents":[{"id":"doc-1"}]}',
-            diagnostics="diag",
-        )
-    )
-    conn._backend = backend
-    monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
-    monkeypatch.setattr(base_helpers, "set_session_token_header", lambda *args, **kwargs: None)
-
-    response_headers = CaseInsensitiveDict()
-    hook_calls = []
-    result, headers = _run_sync_read_feed(
-        conn,
-        resource_type=http_constants.ResourceType.Document,
-        options={Constants.Kwargs.EXCLUDED_LOCATIONS: ["West US"]},
-        response_hook=lambda h, b: hook_calls.append((dict(h), b)),
-        response_headers=response_headers,
-    )
-
-    assert result[0]["id"] == "doc-1"
-    assert headers["x-ms-continuation"] == "ct-read-all"
-    assert response_headers["x-ms-continuation"] == "ct-read-all"
-    assert len(hook_calls) == 1
-
-    prepared = backend.prepared
-    assert prepared is not None
-    assert prepared.op == OP_READ_ALL_ITEMS
-    assert prepared.container_link == "dbs/db/colls/c"
-    assert legacy_partition_key_from_request(prepared) == "[]"
-    assert http_constants.HttpHeaders.PartitionKey not in wire_headers(prepared)
-    assert settings_options(prepared)["excludedLocations"] == ["West US"]
-    assert prepared.query is None
 
 
-def test_async_read_all_backend_delegates_cross_partition_scope_rust(monkeypatch):
-    """Async twin of the whole-container read_all_items delegation test."""
-    async def _run() -> None:
-        conn = _new_async_connection()
-        backend = _CapturingAsyncBackend(
-            BackendResponse(
-                status_code=200,
-                sub_status=0,
-                headers=CaseInsensitiveDict({"x-ms-continuation": "ct-read-all-async"}),
-                body=b'{"Documents":[{"id":"doc-2"}]}',
-                diagnostics="diag",
-            )
-        )
-        conn._backend = backend
-        monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
-
-        async def _noop_set_session(*_args, **_kwargs):
-            return None
-
-        monkeypatch.setattr(base_helpers, "set_session_token_header_async", _noop_set_session)
-
-        response_headers = CaseInsensitiveDict()
-        hook_calls = []
-        result = await _run_async_read_feed(
-            conn,
-            resource_type=http_constants.ResourceType.Document,
-            options={Constants.Kwargs.EXCLUDED_LOCATIONS: ["East US"]},
-            response_hook=lambda h, b: hook_calls.append((dict(h), b)),
-            response_headers=response_headers,
-        )
-
-        assert result[0]["id"] == "doc-2"
-        assert conn.last_response_headers["x-ms-continuation"] == "ct-read-all-async"
-        assert response_headers["x-ms-continuation"] == "ct-read-all-async"
-        assert len(hook_calls) == 1
-
-        prepared = backend.prepared
-        assert prepared is not None
-        assert prepared.op == OP_READ_ALL_ITEMS
-        assert prepared.container_link == "dbs/db/colls/c"
-        assert legacy_partition_key_from_request(prepared) == "[]"
-        assert http_constants.HttpHeaders.PartitionKey not in wire_headers(prepared)
-        assert settings_options(prepared)["excludedLocations"] == ["East US"]
-        assert prepared.query is None
-
-    asyncio.run(_run())
 
 
 # ---------------------------------------------------------------------------
@@ -2128,7 +1908,7 @@ def test_async_list_databases_backend_uses_default_headers_without_initial_heade
     asyncio.run(_run())
 
 
-def test_list_databases_legacy_path_sends_initial_headers_rust(monkeypatch):
+def test_list_databases_core_python_path_sends_initial_headers_rust(monkeypatch):
     """When the call runs on the old path, ``initial_headers`` still works.
 
     A customer passing ``initial_headers`` can override one of the client's own
@@ -2179,7 +1959,7 @@ def test_list_databases_legacy_path_sends_initial_headers_rust(monkeypatch):
     assert conn.default_headers == {"x-default-header": "default", "x-override": "default"}
 
 
-def test_async_list_databases_legacy_path_sends_initial_headers_rust(monkeypatch):
+def test_async_list_databases_core_python_path_sends_initial_headers_rust(monkeypatch):
     """The async legacy database feed honors the same initial_headers contract."""
     async def _run() -> None:
         conn = _new_async_connection()
@@ -2330,12 +2110,11 @@ def test_list_databases_rejection_categories_are_explicit_rust(monkeypatch, is_a
     keyword, change feed state, and an API version override.
 
     All raise ``NotImplementedError`` naming ``list_databases``, and the
-    message tells the customer what to do -- configure it when constructing
-    the client -- and states plainly that the call will not be sent through
+    message directs connection and HTTP-request configuration to CosmosRuntime,
+    states that read inactivity is unsupported, and rules out replay through
     the legacy Python path.
 
-    That second half matters because database listing is the one feed that
-    never falls back. Nothing is prepared and the legacy transport is unused.
+    Nothing is prepared and the legacy transport is unused.
     """
     conn = _new_async_connection() if is_async else _new_sync_connection()
     backend_type = _CapturingAsyncBackend if is_async else _CapturingSyncBackend
@@ -2354,7 +2133,8 @@ def test_list_databases_rejection_categories_are_explicit_rust(monkeypatch, is_a
                 conn, resource_type=http_constants.ResourceType.Database, options=options, **kwargs
             )
 
-    assert "constructing CosmosClient" in str(error.value)
+    assert "Configure connection and HTTP-request limits through CosmosRuntime" in str(error.value)
+    assert "read inactivity is unsupported" in str(error.value)
     assert "not be sent through legacy Python" in str(error.value)
     assert conn._backend.prepared is None
     legacy_get.assert_not_called()
@@ -2365,7 +2145,7 @@ def test_list_databases_rejection_categories_are_explicit_rust(monkeypatch, is_a
 
 
 @pytest.mark.parametrize("fail_on_page", [1, 2])
-def test_sync_list_databases_capability_error_never_replays_legacy_rust(monkeypatch, fail_on_page):
+def test_sync_list_databases_capability_error_never_replays_core_python_rust(monkeypatch, fail_on_page):
     """A capability error part way through a listing is reported, never replayed on legacy.
 
     The backend fails either on the first page or on the second, after one
@@ -2409,7 +2189,7 @@ def test_sync_list_databases_capability_error_never_replays_legacy_rust(monkeypa
 
 
 @pytest.mark.parametrize("fail_on_page", [1, 2])
-def test_async_list_databases_capability_error_never_replays_legacy_rust(monkeypatch, fail_on_page):
+def test_async_list_databases_capability_error_never_replays_core_python_rust(monkeypatch, fail_on_page):
     """The async listing behaves exactly like the sync one when a page is unsupported.
 
     Same scenario through the async client: fail on the first page or after
@@ -2454,11 +2234,11 @@ def test_async_list_databases_capability_error_never_replays_legacy_rust(monkeyp
     asyncio.run(run())
 
 
-@pytest.mark.parametrize("status_code", [403, 404, 429])
-def test_sync_list_databases_rust_service_errors_do_not_replay_legacy_rust(monkeypatch, status_code):
+@pytest.mark.parametrize("status_code", [401, 403, 404, 429])
+def test_sync_list_databases_rust_service_errors_do_not_replay_core_python_rust(monkeypatch, status_code):
     """An error from the service is raised once and the call is not retried on the old path.
 
-    Rust returning a 403, 404, or 429 means the service answered. That is a real
+    Rust returning a 401, 403, 404, or 429 means the service answered. That is a real
     answer, not a sign that Rust cannot do the job, so running the whole request
     again on the old path would bill the customer twice and slow down the error.
     The old path is wired to fail the test if it is reached. The status,
@@ -2497,8 +2277,8 @@ def test_sync_list_databases_rust_service_errors_do_not_replay_legacy_rust(monke
     assert backend.prepared.op == OP_LIST_DATABASES
 
 
-@pytest.mark.parametrize("status_code", [403, 404, 429])
-def test_async_list_databases_rust_service_errors_do_not_replay_legacy_rust(monkeypatch, status_code):
+@pytest.mark.parametrize("status_code", [401, 403, 404, 429])
+def test_async_list_databases_rust_service_errors_do_not_replay_core_python_rust(monkeypatch, status_code):
     """Same as the sync error test above, on the async client."""
     async def _run() -> None:
         conn = _new_async_connection()
@@ -2593,153 +2373,12 @@ def test_async_read_databases_keeps_python_paging_and_rust_fetches_each_page_rus
     asyncio.run(_run())
 
 
-def test_sync_read_all_backend_page_with_partition_key_uses_native_read_feed_rust(monkeypatch):
-    """Sync read_all_items scoped to one partition key. Builds a ``read_all_items``
-    prepared query carrying that partition-key header and no query text -- served as
-    a native single-partition read-feed, not a synthesized query.
-    """
-    conn = _new_sync_connection()
-    backend = _CapturingSyncBackend(
-        BackendResponse(
-            status_code=200,
-            sub_status=0,
-            headers=CaseInsensitiveDict({"x-ms-continuation": "ct-read-all-pk"}),
-            body=b'{"Documents":[{"id":"doc-pk"}]}',
-            diagnostics="diag",
-        )
-    )
-    conn._backend = backend
-    monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
-    monkeypatch.setattr(base_helpers, "set_session_token_header", lambda *args, **kwargs: None)
-
-    result, _ = _run_sync_read_feed(
-        conn,
-        resource_type=http_constants.ResourceType.Document,
-        options={"partitionKey": ["tenant-a"]},
-    )
-
-    assert result[0]["id"] == "doc-pk"
-    prepared = backend.prepared
-    assert prepared is not None
-    assert prepared.op == OP_READ_ALL_ITEMS
-    assert legacy_partition_key_from_request(prepared) == '["tenant-a"]'
-    assert prepared.query is None
 
 
-def test_async_read_all_backend_page_with_partition_key_uses_native_read_feed_rust(monkeypatch):
-    """Async twin of the single-partition read_all_items native-read-feed test."""
-    async def _run() -> None:
-        conn = _new_async_connection()
-        backend = _CapturingAsyncBackend(
-            BackendResponse(
-                status_code=200,
-                sub_status=0,
-                headers=CaseInsensitiveDict({"x-ms-continuation": "ct-read-all-pk-async"}),
-                body=b'{"Documents":[{"id":"doc-pk-async"}]}',
-                diagnostics="diag",
-            )
-        )
-        conn._backend = backend
-        monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
-
-        async def _noop_set_session(*_args, **_kwargs):
-            return None
-
-        monkeypatch.setattr(base_helpers, "set_session_token_header_async", _noop_set_session)
-
-        result = await _run_async_read_feed(
-            conn,
-            resource_type=http_constants.ResourceType.Document,
-            options={"partitionKey": ["tenant-a"]},
-        )
-
-        assert result[0]["id"] == "doc-pk-async"
-        prepared = backend.prepared
-        assert prepared is not None
-        assert prepared.op == OP_READ_ALL_ITEMS
-        assert legacy_partition_key_from_request(prepared) == '["tenant-a"]'
-        assert prepared.query is None
-
-    asyncio.run(_run())
 
 
-def test_sync_read_all_backend_page_empty_container_rust(monkeypatch):
-    """Sync read_all_items on an empty (or fully-drained) container. Cross-partition
-    read_all is routed through the Rust query-page path (``SELECT * FROM root r``) and
-    still finalizes normally: empty ``Documents`` array, header and session
-    propagation, and the response hook fired exactly once.
-    """
-    conn = _new_sync_connection()
-    backend = _CapturingSyncBackend(
-        BackendResponse(
-            status_code=200,
-            sub_status=0,
-            headers=CaseInsensitiveDict({"x-ms-session-token": "st-empty"}),
-            body=b'{"Documents":[]}',
-            diagnostics="diag",
-        )
-    )
-    conn._backend = backend
-    monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
-    monkeypatch.setattr(base_helpers, "set_session_token_header", lambda *args, **kwargs: None)
-
-    response_headers = CaseInsensitiveDict()
-    hook_calls = []
-    result, headers = _run_sync_read_feed(
-        conn,
-        resource_type=http_constants.ResourceType.Document,
-        options={},
-        response_hook=lambda h, b: hook_calls.append((dict(h), b)),
-        response_headers=response_headers,
-    )
-
-    assert result == []
-    assert headers["x-ms-session-token"] == "st-empty"
-    assert response_headers["x-ms-session-token"] == "st-empty"
-    assert len(hook_calls) == 1
-    assert backend.prepared.op == OP_READ_ALL_ITEMS
-    assert backend.prepared.query is None
 
 
-def test_async_read_all_backend_page_empty_container_rust(monkeypatch):
-    """Async twin of the empty-container read_all_items test."""
-    async def _run() -> None:
-        conn = _new_async_connection()
-        backend = _CapturingAsyncBackend(
-            BackendResponse(
-                status_code=200,
-                sub_status=0,
-                headers=CaseInsensitiveDict({"x-ms-session-token": "st-empty-async"}),
-                body=b'{"Documents":[]}',
-                diagnostics="diag",
-            )
-        )
-        conn._backend = backend
-        monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
-
-        async def _noop_set_session(*_args, **_kwargs):
-            return None
-
-        monkeypatch.setattr(base_helpers, "set_session_token_header_async", _noop_set_session)
-
-        response_headers = CaseInsensitiveDict()
-        hook_calls = []
-        result = await _run_async_read_feed(
-            conn,
-            resource_type=http_constants.ResourceType.Document,
-            options={},
-            response_hook=lambda h, b: hook_calls.append((dict(h), b)),
-            response_headers=response_headers,
-        )
-
-        assert result == []
-        assert conn.last_response_headers["x-ms-session-token"] == "st-empty-async"
-        assert response_headers["x-ms-session-token"] == "st-empty-async"
-        assert len(hook_calls) == 1
-        assert backend.prepared.op == OP_READ_ALL_ITEMS
-        assert backend.prepared.query is None
-
-    asyncio.run(_run())
 
 
 def test_sync_driver_unsupported_query_never_replays_rust():
@@ -2935,7 +2574,7 @@ def test_async_empty_page_iterator_is_not_replayed_rust():
     asyncio.run(_run())
 
 
-def test_sync_missing_backend_attribute_is_not_silently_treated_as_legacy_rust():
+def test_sync_missing_backend_attribute_is_not_silently_treated_as_core_python_rust():
     """A broken connection state raises its public error instead of using Python."""
     conn = _new_sync_connection()
     del conn._backend
@@ -2948,7 +2587,7 @@ def test_sync_missing_backend_attribute_is_not_silently_treated_as_legacy_rust()
         )
 
 
-def test_async_missing_backend_attribute_is_not_silently_treated_as_legacy_rust():
+def test_async_missing_backend_attribute_is_not_silently_treated_as_core_python_rust():
     """A broken async connection state raises instead of using Python."""
     async def _run():
         conn = _new_async_connection()
@@ -2964,103 +2603,8 @@ def test_async_missing_backend_attribute_is_not_silently_treated_as_legacy_rust(
     asyncio.run(_run())
 
 
-def test_sync_read_all_legacy_fallback_updates_session_rust(monkeypatch):
-    """Sync legacy fallback (no backend). The read-feed still calls
-    ``_UpdateSessionIfRequired`` and propagates the session token, so a fallback read
-    advances the session bookmark exactly like before the migration.
-    """
-    conn = _new_sync_connection()
-    conn._backend = LEGACY_BACKEND
-    update_calls = []
-    monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
-    monkeypatch.setattr(base_helpers, "set_session_token_header", lambda *args, **kwargs: None)
-    monkeypatch.setattr(
-        conn,
-        "_CosmosClientConnection__Get",
-        lambda *_args, **_kwargs: (
-            {"Documents": [{"id": "legacy-doc"}]},
-            CaseInsensitiveDict({"x-ms-session-token": "st-1"}),
-        ),
-    )
-    monkeypatch.setattr(
-        conn,
-        "_UpdateSessionIfRequired",
-        lambda req_headers, response_result, response_headers: update_calls.append(
-            (req_headers, response_result, response_headers)
-        ),
-    )
-
-    response_headers = CaseInsensitiveDict()
-    result, headers = conn._CosmosClientConnection__QueryFeed(
-        path="/dbs/db/colls/c/docs/",
-        resource_type=http_constants.ResourceType.Document,
-        resource_id="coll-rid",
-        result_fn=lambda payload: payload["Documents"],
-        create_fn=lambda _, item: item,
-        query=None,
-        options={},
-        partition_key_range_id=None,
-        response_headers=response_headers,
-    )
-
-    assert result[0]["id"] == "legacy-doc"
-    assert headers["x-ms-session-token"] == "st-1"
-    assert response_headers["x-ms-session-token"] == "st-1"
-    assert len(update_calls) == 1
 
 
-def test_async_read_all_legacy_fallback_updates_session_rust(monkeypatch):
-    """Async twin of the legacy-fallback session-update test. The async legacy
-    read-feed branch already called ``_UpdateSessionIfRequired`` before this
-    migration; this pins it so a future refactor cannot silently drop the session
-    update on the async fall-back path, keeping sync, async, and both Rust paths
-    consistent about advancing the session token.
-    """
-    async def _run() -> None:
-        conn = _new_async_connection()
-        conn._backend = ASYNC_LEGACY_BACKEND
-        update_calls = []
-        monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
-
-        async def _noop_set_session(*_args, **_kwargs):
-            return None
-
-        monkeypatch.setattr(base_helpers, "set_session_token_header_async", _noop_set_session)
-
-        async def _fake_get(*_args, **_kwargs):
-            return (
-                {"Documents": [{"id": "legacy-doc-async"}]},
-                CaseInsensitiveDict({"x-ms-session-token": "st-async-1"}),
-            )
-
-        monkeypatch.setattr(conn, "_CosmosClientConnection__Get", _fake_get)
-        monkeypatch.setattr(
-            conn,
-            "_UpdateSessionIfRequired",
-            lambda req_headers, response_result, response_headers: update_calls.append(
-                (req_headers, response_result, response_headers)
-            ),
-        )
-
-        response_headers = CaseInsensitiveDict()
-        result = await conn._CosmosClientConnection__QueryFeed(
-            path="/dbs/db/colls/c/docs/",
-            resource_type=http_constants.ResourceType.Document,
-            id_="coll-rid",
-            result_fn=lambda payload: payload["Documents"],
-            create_fn=lambda _, item: item,
-            query=None,
-            options={},
-            partition_key_range_id=None,
-            response_headers=response_headers,
-        )
-
-        assert result[0]["id"] == "legacy-doc-async"
-        assert conn.last_response_headers["x-ms-session-token"] == "st-async-1"
-        assert response_headers["x-ms-session-token"] == "st-async-1"
-        assert len(update_calls) == 1
-
-    asyncio.run(_run())
 
 
 # Database-query routing preserves query text, options, pages, and continuations.

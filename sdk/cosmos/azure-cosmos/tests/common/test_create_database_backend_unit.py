@@ -177,7 +177,7 @@ def test_read_database_prepared_request_is_bodiless_rust():
     assert settings_options(prepared)["timeout_seconds"] == 3.5
 
 
-def test_read_database_prepared_preserves_legacy_option_headers_rust():
+def test_read_database_prepared_preserves_original_option_headers_rust():
     """Every truthy option that legacy GetHeaders emits reaches the binding."""
     initial_headers = {"x-custom": "value"}
     options = {
@@ -227,14 +227,14 @@ def test_read_database_prepared_preserves_legacy_option_headers_rust():
         "throughputBucket",
     ],
 )
-def test_read_database_prepared_omits_falsy_legacy_headers_rust(option_key):
+def test_read_database_prepared_omits_falsy_original_headers_rust(option_key):
     """Prove empty Python-only options do not become request headers."""
     prepared = build_read_database_prepared("db1", {option_key: None})
 
     assert option_key not in wire_headers(prepared)
 
 
-def test_read_database_prepared_preserves_legacy_id_stringification_rust():
+def test_read_database_prepared_preserves_original_id_stringification_rust():
     """Read keeps its own id rules: it stringifies and tolerates a trailing slash,
     where create validates."""
     assert build_read_database_prepared(123, {}).item_id == "123"
@@ -318,7 +318,7 @@ def test_sync_connection_read_database_forwards_initial_headers_rust():
         ({"id": 1}, "Id type must be a string."),
     ],
 )
-def test_create_database_prepared_preserves_legacy_id_validation_rust(database, error_message):
+def test_create_database_prepared_preserves_original_id_validation_rust(database, error_message):
     """A bad database id (illegal characters, a trailing space, or a non-string) is
     rejected while building the request -- before anything is sent -- exactly as the
     legacy path rejected it, so the customer gets the same clear error."""
@@ -901,7 +901,7 @@ def test_database_read_not_modified_preserves_empty_response_and_hook_rust(datab
     case.connection.ReadDatabase.assert_not_called()
 
 
-def test_sync_helper_keeps_legacy_create_database_behind_boundary_rust():
+def test_sync_helper_keeps_core_python_create_database_behind_boundary_rust():
     """With no Rust backend (the core-python client) the coordinator runs the legacy
     ``CreateDatabase`` call directly, passing the database, options, and any extra
     kwargs straight through -- the legacy engine stays behind the same boundary."""
@@ -953,7 +953,7 @@ def test_sync_helper_maps_conflict_to_resource_exists_rust():
     assert hook_calls == []
 
 
-def test_sync_if_not_exists_reads_through_rust_without_legacy_calls_rust():
+def test_sync_if_not_exists_reads_through_rust_without_core_python_calls_rust():
     """The database already exists, so the read is the only request sent.
 
     Python decides whether to create; the Rust path performs the read. The legacy
@@ -992,7 +992,7 @@ def test_sync_if_not_exists_reads_through_rust_without_legacy_calls_rust():
     ]
 
 
-def test_sync_if_not_exists_rust_404_then_rust_create_without_legacy_calls_rust():
+def test_sync_if_not_exists_rust_404_then_rust_create_without_core_python_calls_rust():
     """The database is missing, so both requests run on the Rust path.
 
     Also checks the two legs carry different options: ``offerThroughput`` sets the
@@ -1082,7 +1082,7 @@ def test_sync_if_not_exists_rust_create_race_reads_winning_database_rust():
     connection.CreateDatabase.assert_not_called()
 
 
-def test_sync_if_not_exists_legacy_returns_existing_without_create_headers_rust():
+def test_sync_if_not_exists_core_python_returns_existing_without_create_headers_rust():
     """When the database already exists, the legacy path returns it straight from the
     existence read and never calls CreateDatabase. Provisioning-only options
     (``offerThroughput``, ``autoUpgradePolicy``) are stripped from the read so it can't
@@ -1121,7 +1121,7 @@ def test_sync_if_not_exists_legacy_returns_existing_without_create_headers_rust(
     ]
 
 
-def test_sync_if_not_exists_legacy_reads_winning_database_after_conflict_rust():
+def test_sync_if_not_exists_core_python_reads_winning_database_after_conflict_rust():
     """The shared Python coordinator also recovers when using legacy transport."""
     connection = SimpleNamespace(
         ReadDatabase=MagicMock(
@@ -1531,7 +1531,7 @@ def test_async_helper_does_not_call_response_hook_on_failure_rust():
     asyncio.run(run())
 
 
-def test_async_helper_keeps_legacy_create_database_behind_boundary_rust():
+def test_async_helper_keeps_core_python_create_database_behind_boundary_rust():
     """Async twin: with no Rust backend, the async coordinator awaits the legacy
     ``CreateDatabase`` call directly, passing database/options/extra kwargs through."""
     async def run():
@@ -1564,7 +1564,7 @@ def test_async_helper_keeps_legacy_create_database_behind_boundary_rust():
 
 
 
-def test_async_if_not_exists_legacy_reads_then_creates_only_on_404_rust():
+def test_async_if_not_exists_core_python_reads_then_creates_only_on_404_rust():
     """Async legacy path: the existence read returns 404, so it goes on to create, and
     ``response_hook`` fires once with the created database. The read leg drops the
     internal ``response_hook`` kwarg so the hook can't be invoked twice."""
@@ -2144,7 +2144,8 @@ def test_create_driver_setup_consumes_budget_rust(native_create_database_client,
         create_database=binding, create_database_async=binding,
     ))
 
-    def setup():
+    def setup(*, deadline=None):
+        assert deadline == (None if is_async else 101.0)
         clock[0] += setup_seconds
         return "fake-handle"
 
@@ -2248,7 +2249,7 @@ def test_create_boolean_overload_preserves_literal_overloads_rust(client_type):
 
 
 @pytest.mark.parametrize("is_async", [False, True])
-def test_create_explicit_legacy_preserves_pipeline_and_isolates_hook_rust(is_async):
+def test_create_explicit_core_python_preserves_pipeline_and_isolates_hook_rust(is_async):
     """On the legacy path the transport settings still reach the old call, and the
     hook is still handed its own copy.
 
@@ -2660,7 +2661,7 @@ def test_async_if_not_exists_uses_python_coordinator_with_rust_selected_rust():
     asyncio.run(run())
 
 
-def test_async_if_not_exists_rust_404_then_rust_create_without_legacy_calls_rust():
+def test_async_if_not_exists_rust_404_then_rust_create_without_core_python_calls_rust():
     """Async twin: the database is missing, so both requests run on the Rust path.
 
     Async clients are a separate code path with their own coordinator, so the same
@@ -2763,7 +2764,7 @@ def test_async_if_not_exists_rust_create_race_reads_winning_database_rust():
     asyncio.run(run())
 
 
-def test_async_if_not_exists_legacy_existing_skips_create_and_strips_create_only_options_rust():
+def test_async_if_not_exists_core_python_existing_skips_create_and_strips_create_only_options_rust():
     """Async twin of ``test_sync_if_not_exists_legacy_returns_existing_without_create_headers``:
     the legacy path returns the existing database without calling CreateDatabase, and
     strips provisioning-only options (offerThroughput, autoUpgradePolicy) from the
@@ -2882,6 +2883,55 @@ def _get_or_create_responses(statuses):
         )
         for index, status in enumerate(statuses)
     ]
+
+
+@pytest.mark.parametrize("use_legacy", [False, True])
+@pytest.mark.parametrize("exists", [False, True])
+@pytest.mark.parametrize("database_id,error_type", [
+    ("db1/", ValueError),
+    ("db1/child", ValueError),
+    ("db1\\child", ValueError),
+    ("db1#fragment", ValueError),
+    ("db1?query", ValueError),
+    ("db1\tvalue", ValueError),
+    ("db1\rvalue", ValueError),
+    ("db1\nvalue", ValueError),
+    ("db1 ", ValueError),
+    ("db1\n", ValueError),
+    (123, TypeError),
+])
+def test_if_not_exists_rejects_invalid_id_before_read_rust(
+    create_database_client, use_legacy, exists, database_id, error_type,
+):
+    """Creation ID rules apply before either backend can check database existence."""
+    from dataclasses import replace
+
+    client = create_database_client
+    backend = client._adapter
+    backend.responses = _get_or_create_responses([200] if exists else [404, 201])
+    if use_legacy:
+        asynchronous = isinstance(client, AsyncCosmosClient)
+        client._adapter = ASYNC_LEGACY_BACKEND if asynchronous else LEGACY_BACKEND
+        client._item_context = replace(client._item_context, adapter=client._adapter)
+        mock_type = AsyncMock if asynchronous else MagicMock
+        client.client_connection.ReadDatabase = mock_type(
+            return_value=CosmosDict({"id": "db1"}, response_headers={}),
+            side_effect=None if exists else CosmosResourceNotFoundError(status_code=404, message="missing"),
+        )
+        client.client_connection.CreateDatabase = mock_type(
+            return_value=CosmosDict({"id": "db1"}, response_headers={}),
+        )
+    hook = MagicMock()
+
+    with pytest.raises(error_type, match="Id"):
+        _call_create_database(
+            client, database_id, method_name="create_database_if_not_exists", response_hook=hook,
+        )
+
+    assert backend.prepared_requests == []
+    client.client_connection.ReadDatabase.assert_not_called()
+    client.client_connection.CreateDatabase.assert_not_called()
+    hook.assert_not_called()
 
 
 @pytest.mark.parametrize("options,error", [
@@ -3161,7 +3211,8 @@ def test_if_not_exists_native_dispatch_gets_only_remaining_time_rust(native_crea
         read_database=binding, read_database_async=binding,
     ))
 
-    def setup():
+    def setup(*, deadline=None):
+        assert deadline == (None if is_async else 105.0)
         if not remaining:
             clock[0] += 1
         return "fake-handle"
@@ -3265,7 +3316,7 @@ def test_if_not_exists_boolean_overload_preserves_literal_overloads_rust(client_
 
 
 @pytest.mark.parametrize("statuses", [[200], [404, 201], [404, 409, 200]])
-def test_if_not_exists_legacy_receives_remaining_budget_and_isolated_hook_rust(
+def test_if_not_exists_core_python_receives_remaining_budget_and_isolated_hook_rust(
     create_database_client, monkeypatch, statuses
 ):
     """On the legacy path the same budget and hook rules apply, in that path's own
@@ -4005,7 +4056,8 @@ def test_delete_driver_setup_consumes_budget_rust(native_create_database_client,
     ))
     client.client_connection.DeleteDatabase = MagicMock(side_effect=AssertionError("legacy delete called"))
 
-    def setup():
+    def setup(*, deadline=None):
+        assert deadline == (None if is_async else 101.0)
         clock[0] += setup_seconds
         return "fake-handle"
 
@@ -4064,7 +4116,7 @@ def test_delete_database_prepared_rejects_a_link_with_no_id_rust(database_link):
         build_delete_database_prepared(database_link, {})
 
 
-def test_delete_database_prepared_drops_headers_the_legacy_path_suppresses_rust():
+def test_delete_database_prepared_drops_headers_the_core_python_path_suppresses_rust():
     """A database is a master resource: the legacy path attaches no session token
     and drops the intended-collection-rid header. The Rust request has to carry the
     same headers, while keeping the options the customer did set."""
@@ -4084,7 +4136,7 @@ def test_delete_database_prepared_drops_headers_the_legacy_path_suppresses_rust(
     assert settings_options(prepared)["timeout_seconds"] == 3.5
 
 
-def test_sync_delete_database_routes_to_rust_and_never_calls_legacy_rust():
+def test_sync_delete_database_routes_to_rust_and_never_calls_core_python_rust():
     """On a Rust-backed client the delete runs through the backend, records the
     response headers on the connection, and returns nothing. A 204 with no body is
     a success, not a parse failure."""
@@ -4130,7 +4182,7 @@ def test_sync_delete_database_raises_not_found_for_a_missing_database_rust():
 
 
 
-def test_async_delete_database_routes_to_rust_and_never_calls_legacy_rust():
+def test_async_delete_database_routes_to_rust_and_never_calls_core_python_rust():
     """Prove async database deletion uses Rust and does not call Python."""
     async def run():
         """Drive the async delete through Rust and verify the backend was used, not legacy."""

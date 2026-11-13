@@ -57,6 +57,7 @@ from ._binding_adapter_shared import (
     driver_unsupported_query_error_type,
     finalize_adapter_resources,
     page_binding_call_errors,
+    release_driver_handle_quietly,
     validate_page_request,
 )
 from .constants import BACKEND_NAME_RUST
@@ -83,16 +84,6 @@ _DRIVER_TRANSPORT_ERROR = driver_transport_error_type(_rust_module)
 _DRIVER_RESPONSE_ERROR = _binding_error_type(_rust_module, "_DriverResponseError")
 _UNSUPPORTED_QUERY_ERROR = driver_unsupported_query_error_type(_rust_module)
 _REQUEST_CONTRACT_ERROR = binding_settings_contract_error(_rust_module) if _rust_module is not None else None
-
-
-def _release_driver_handle(driver_handle: _DriverHandle, binding: Any) -> None:
-    release = getattr(binding, "release_driver_handle", None)
-    if release is not None:
-        try:
-            release(driver_handle)
-        except Exception:  # pylint: disable=broad-except
-            # Binding exception text can contain the handle.
-            _LOGGER.debug("BindingAdapter.close failed while releasing the driver handle")
 
 
 # Look up functions per call so tests can install a stand-in binding.
@@ -193,8 +184,9 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
     def _ensure_driver_handle(self, *, deadline: Optional[float] = None) -> _DriverHandle:
         """Reuse a handle or wait within this caller's budget for shared acquisition.
 
-        One worker acquires the handle for all concurrent callers. Each caller
-        has its own deadline; timing out stops only that wait, not the worker.
+        One dedicated Python thread runs this adapter's pending acquisition
+        attempt for concurrent callers. Each caller has its own deadline;
+        timing out stops only that wait, not the acquisition thread.
         A late handle remains available to an open client. If close wins, the
         worker releases the acquisition instead of publishing it.
         """
@@ -252,7 +244,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
                 if not closed:
                     self._driver_handle = handle
             if closed:
-                _release_driver_handle(handle, binding)
+                release_driver_handle_quietly(handle, binding)
                 raise RuntimeError("BindingAdapter: the client was closed during initialization.")
         except BaseException as error:
             with self._driver_handle_lock:
@@ -270,8 +262,9 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
 
         When two clients have acquired the same driver::
 
-            clients A and B use H -> close A -> B still holds its acquisition
-            close A again -> no second driver release
+            A holds H_A and B holds H_B for driver D1
+            close A -> release H_A's cache acquisition; B still holds H_B
+            close A again -> no second acquisition release
 
         Mark this BindingAdapter closed and remove its handle before cleanup. Release
         its SDK-owned async credential bridge, if present, but not the customer's
@@ -287,7 +280,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
             self._close_token_credential_bridge()
         finally:
             if driver_handle is not None:
-                _release_driver_handle(driver_handle, _rust_module)
+                release_driver_handle_quietly(driver_handle, _rust_module)
 
     def __del__(self) -> None:
         """Hand abandoned resources to the cleanup helper without raising.
@@ -464,7 +457,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
             get_operation(self, prepared.op)
             if prepared.op in ("list_databases", "query_databases", "list_containers", "query_containers")
             or (
-                prepared.op in ("read_all_items", "query_items", "query_items_change_feed")
+                prepared.op in ("read_items", "read_all_items", "query_items", "query_items_change_feed")
                 and prepared.cursor is not None
             )
             else None

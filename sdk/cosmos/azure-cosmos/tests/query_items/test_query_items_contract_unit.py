@@ -453,7 +453,7 @@ def test_typed_scope_is_prepared_without_creating_a_cursor_rust(query, interval)
     query.binding._ItemFeedCursor.assert_not_called()
 
 
-def test_complete_iteration_scalar_results_and_no_legacy_metadata_rust(query):
+def test_complete_iteration_scalar_results_and_no_core_python_metadata_rust(query):
     """A full enumeration returns scalars untouched and never touches the legacy path.
 
     Nothing is fetched until iteration starts. Draining the pager then returns
@@ -1074,7 +1074,7 @@ def legacy_query(query):
         pytest.param({"enable_cross_partition_query": False}, id="false-flag"),
     ],
 )
-def test_legacy_query_cross_partition_defaults_rust(legacy_query, scope, unscoped, query_options):
+def test_core_python_query_cross_partition_defaults_rust(legacy_query, scope, unscoped, query_options):
     """Both public clients default only unscoped queries and retain explicit flags."""
     result = legacy_query.proxy.query_items("SELECT * FROM c", **scope, **query_options)
     assert result is legacy_query.connection.QueryItems.return_value
@@ -1107,7 +1107,7 @@ def test_rust_query_cross_partition_defaults_rust(query, query_options, expected
 
 
 @pytest.mark.parametrize("token", ["q1.saved", "c1.saved", "c2.saved", "cf1.saved"])
-def test_core_python_public_query_stays_on_legacy_and_rejects_rust_tokens_rust(legacy_query, token):
+def test_core_python_public_query_stays_on_core_python_and_rejects_rust_tokens_rust(legacy_query, token):
     """On the core-python backend queries run the legacy path and refuse Rust tokens.
 
     With the legacy backend selected, the query returns the legacy iterable

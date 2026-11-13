@@ -193,7 +193,7 @@ def test_container_recovery_verifies_requested_ttl_rust(actual_ttl):
 
 @pytest.mark.parametrize("status", [None, 404, 403, 500])
 def test_variant_cleanup_reports_http_failure_without_swallowing_it_rust(monkeypatch, caplog, status):
-    from create_item import _legacy_variants as variants
+    from create_item import _input_variants as variants
 
     database = SimpleNamespace(id="owned-database", delete_container=Mock())
     create = Mock(return_value=object())

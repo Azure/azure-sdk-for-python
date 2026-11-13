@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Original database-throughput assertions with write responses disabled."""
+"""Original database CRUD and throughput checks with write responses disabled."""
 
 import os
 import unittest
@@ -9,7 +9,10 @@ import uuid
 import pytest
 
 from azure.cosmos import CosmosClient
+from azure.cosmos import exceptions
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
+from azure.cosmos.http_constants import StatusCodes
+from config import settings
 
 
 class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
@@ -31,13 +34,35 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
     @pytest.mark.cosmosAADLong
     def test_database_crud_rust(self):
         # Source: tests/test_crud_response_payload_on_write_disabled.py::TestCRUDOperationsResponsePayloadOnWriteDisabled.test_database_crud
-        database_id = self.database_id
+        database_id = settings.unique_database_id()
+        self.database_id = database_id
+        created_db = self.key_client.create_database(database_id)
+        self.assertEqual(created_db.id, database_id)
+        databases = list(
+            self.key_client.query_databases(
+                {"query": "SELECT * FROM root r WHERE r.id=@id", "parameters": [{"name": "@id", "value": database_id}]}
+            )
+        )
+        self.assertTrue(databases, "number of results for the query should be > 0")
+        self.key_client.get_database_client(created_db.id).read()
+        self.key_client.delete_database(created_db.id)
+        read_db = self.key_client.get_database_client(created_db.id)
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND, read_db.read)
         database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         self.assertEqual(database_id, database_proxy.id)
         self.assertEqual(5000, database_proxy.get_throughput().offer_throughput)
         database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         self.assertEqual(database_id, database_proxy.id)
         self.assertEqual(5000, database_proxy.get_throughput().offer_throughput)
+
+        self.key_client.delete_database(database_id)
+
+    def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
+        try:
+            func(*args, **kwargs)
+            self.assertFalse(True, "function should fail.")
+        except exceptions.CosmosHttpResponseError as inst:
+            self.assertEqual(inst.status_code, status_code)
 
     @pytest.mark.cosmosEmulator
     def test_database_level_offer_throughput_rust(self):

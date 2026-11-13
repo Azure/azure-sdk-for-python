@@ -113,7 +113,7 @@ def test_public_operations_reject_namer_before_work(native, location, target, ar
 
 
 @pytest.mark.parametrize("from_connection_string", [False, True])
-def test_legacy_constructor_retains_callback(construct_client, client_module, from_connection_string):
+def test_core_python_constructor_retains_callback(construct_client, client_module, from_connection_string):
     callback = Mock(return_value="orders-get")
     construct_client(
         _backend="core-python",
@@ -124,7 +124,7 @@ def test_legacy_constructor_retains_callback(construct_client, client_module, fr
     callback.assert_not_called()
 
 
-def test_legacy_operation_preserves_callback_and_rust_omission_is_supported():
+def test_core_python_operation_preserves_callback_and_rust_omission_is_supported():
     callback = Mock(return_value="orders-get")
     kwargs = {"network_span_namer": callback}
     legacy = SimpleNamespace(_item_context=SimpleNamespace(adapter=SimpleNamespace(name="core-python")))

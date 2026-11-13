@@ -35,7 +35,7 @@ FAMILIES = (
     "transactional_batch",
 )
 SHARED = r"tests\execute_item_batch\test_shared_contracts.py"
-SERIALIZATION = r"tests\execute_item_batch\test_legacy_serialization_unit.py"
+SERIALIZATION = r"tests\execute_item_batch\test_serialization_compatibility_unit.py"
 FAILURES = r"tests\execute_item_batch\test_service_failures.py"
 OUTPUT = ROOT / "tests" / "execute_item_batch" / "assertion_correspondence.json"
 

@@ -329,9 +329,12 @@ def _make_sync_client(monkeypatch):
     monkeypatch.setattr(
         sync_cosmos_client_module, "CosmosClientConnection", MagicMock()
     )
-    return sync_cosmos_client_module.CosmosClient(
+    client = sync_cosmos_client_module.CosmosClient(
         SYNC_URL, "key", _backend=BACKEND_NAME_RUST
     )
+    # These cleanup tests model a retained request that already created its pipeline.
+    client.client_connection.pipeline_client = MagicMock()
+    return client
 
 
 def _make_async_client(monkeypatch):
@@ -566,23 +569,12 @@ def _install_async_close_resources(monkeypatch, client):
 def test_async_close_after_executor_shutdown_releases_resources_rust(
     monkeypatch, caplog, resources
 ):
-    """With no worker threads left to run cleanup on, the async client cleans up on its
-    own thread instead of giving up.
+    """Close still attempts cleanup after the default executor has shut down.
 
-    Releasing the driver blocks, so cleanup normally runs on a worker thread to
-    avoid stalling the event loop. During program shutdown those workers are
-    already gone -- which is exactly when clients get closed. Refusing to clean
-    up there would strand the driver and its threads for the life of the
-    process.
-
-    Three combinations are covered: both resources held, only the credential
-    bridge, and neither. Each is released once and only if it was actually held,
-    closing twice is safe, and nothing new is started on the way out.
-
-    Falling back to the calling thread is recorded in the log, since it means
-    the loop was briefly blocked. When there was nothing to release, nothing is
-    logged -- an ordinary close must not leave a message implying something
-    unusual happened.
+    Check mocked driver and bridge release calls for both resources, bridge
+    only, and neither. Closing twice calls each required hook once and never
+    acquires a driver. The calling-thread fallback is logged only when there
+    is cleanup to perform.
     """
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
@@ -614,21 +606,12 @@ def test_async_close_after_executor_shutdown_releases_resources_rust(
 
 @pytest.mark.parametrize("cancel_first", [False, True])
 def test_repeated_async_close_waits_for_original_cleanup_rust(monkeypatch, cancel_first):
-    """A second close waits for the cleanup already running instead of starting its own or
-    returning early.
+    """A second close waits for the cleanup already running.
 
-    Cleanup is held partway through and a second close is started. It does not
-    finish while the first is still working, and when it does return the
-    resources were released exactly once.
-
-    Returning early would be the tempting shortcut and the wrong one: the caller
-    would believe the client was closed and move on -- typically to exiting the
-    program -- while the driver was still being torn down.
-
-    The second run cancels the first caller before the second arrives. Cleanup
-    was started by the client, not owned by whoever asked for it, so one
-    caller's cancellation must not abandon it. Otherwise a timeout around close
-    would leave the driver permanently half-released.
+    Pause the mocked driver release and check that the second close cannot
+    finish yet. Also cover cancelling the first caller before the second
+    arrives. In both cases, cleanup finishes and each release hook is called
+    once.
     """
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
@@ -811,16 +794,11 @@ async def test_cancelled_async_close_releases_only_its_routing_cache_share_rust(
 
 
 def test_async_backend_close_completion_is_shared_across_event_loops_rust(monkeypatch):
-    """Two closes from two different event loops still produce one cleanup, and the second
-    waits for the first.
+    """Close callers on two event loops wait for the same cleanup.
 
-    Each thread runs its own loop, which is what happens when a client is shared
-    across threads or closed from a shutdown handler that starts a fresh loop.
-
-    The waiting cannot be built from anything tied to a single loop. Something
-    that only works within one loop would let the second close sail past while
-    the first was still releasing the driver, and would release it twice. The
-    resources are confirmed released exactly once.
+    Run each loop on a different thread and pause the mocked driver release.
+    The second close must wait until cleanup finishes. Both callers then
+    return, with each release hook called once.
     """
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
@@ -880,20 +858,11 @@ def test_completed_async_close_does_not_schedule_more_work_rust(monkeypatch):
 async def test_async_close_preserves_logged_native_and_bridge_errors_rust(
     monkeypatch, caplog
 ):
-    """When releasing resources fails, closing still succeeds and both failures are
-    written to the log.
+    """Ordinary release errors are logged without making close raise.
 
-    Both cleanup steps are made to fail. Close returns normally, and each
-    failure appears in the log with its own message.
-
-    Raising instead would be worse than useless. Close is usually called while
-    shutting down or unwinding from another error, so an exception there would
-    replace the problem the customer is actually trying to diagnose with one
-    they can do nothing about.
-
-    Both steps run even though the first failed -- the second is not skipped --
-    and both messages are kept rather than one replacing the other, so support
-    can see everything that went wrong.
+    Make both mocked release hooks fail. Each is still called once, and close
+    returns None. Both failures are logged, but the native exception text is
+    omitted while the bridge exception text remains available.
     """
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
@@ -988,7 +957,7 @@ async def test_async_close_does_not_start_until_awaited_rust(monkeypatch):
     assert client._adapter._closing
 
 
-def test_sync_close_preserves_stateless_legacy_backend_rust(monkeypatch):
+def test_sync_close_preserves_stateless_core_python_backend_rust(monkeypatch):
     """A client using the legacy backend can be closed repeatedly, and the transport is
     closed each time.
 
@@ -1011,7 +980,7 @@ def test_sync_close_preserves_stateless_legacy_backend_rust(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_async_close_preserves_stateless_legacy_backend_rust(monkeypatch):
+async def test_async_close_preserves_stateless_core_python_backend_rust(monkeypatch):
     """The async legacy backend behaves the same way: every close reaches the transport.
 
     Checked separately from the sync case because the two have separate closing
@@ -1127,8 +1096,10 @@ async def test_cleanup_runs_once_if_executor_queues_work_then_raises_rust(monkey
     """A simulated submit failure after queuing does not cause duplicate cleanup.
 
     The fallback runs first; the saved job is then invoked manually. Both
-    resource-release mocks must still have exactly one call. This matters
-    because a duplicate native release could decrement another client's hold.
+    resource-release mocks must still have exactly one call. Native handles
+    already prevent duplicate acquisition release, but releasing a shared
+    credential bridge twice could consume another client's share and cancel
+    its pending token work. The wrapper must therefore guard cleanup as a whole.
     """
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)

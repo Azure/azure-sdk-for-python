@@ -355,7 +355,7 @@ def test_throughput_workflow_policy_applies_to_both_legs_rust(monkeypatch):
         assert not OperationRouting(op, True, capability=REPLACE_THROUGHPUT).uses_legacy()
 
 
-def test_query_scope_is_typed_and_preserves_the_legacy_payload_rust():
+def test_query_scope_is_typed_and_preserves_the_original_payload_rust():
     """How much of a container a query covers is a checked record, written out unchanged.
 
     By default a query may span the whole container. Narrowing it to one range is
@@ -378,7 +378,7 @@ def test_query_scope_is_typed_and_preserves_the_legacy_payload_rust():
         QueryScope(["00", "FF"])
 
 
-def test_reserved_batch_and_legacy_port_are_absent_rust():
+def test_reserved_batch_and_core_python_port_are_absent_rust():
     """Names reserved for work not yet done must not exist yet.
 
     Five names are checked to be absent: three record types, a routing table, and a

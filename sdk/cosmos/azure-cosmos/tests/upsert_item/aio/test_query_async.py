@@ -68,7 +68,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         """Delete container via sync key-auth setup client (control-plane)."""
         self.key_db.delete_container(container_id)
 
-    async def test_full_pk_continuation_emits_legacy_by_default_async_rust(self):
+    async def test_full_pk_continuation_emits_service_token_by_default_async_rust(self):
         """Full partition-key queries return legacy continuation tokens by default."""
         # Source: tests/test_query_async.py::TestQueryAsync.test_full_pk_continuation_emits_legacy_by_default_async
         # The token is the legacy (opaque) form, not the new feed-range token: _decode_token
@@ -90,7 +90,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert token is not None
         assert _decode_token(token) is None
 
-    async def test_full_pk_legacy_replay_resumes_same_page_async_rust(self):
+    async def test_full_pk_service_token_replay_resumes_same_page_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_full_pk_legacy_replay_resumes_same_page_async
         # Replaying that legacy continuation token must resume on the same next page. Without
         # this, a regression in legacy-token replay would drop or repeat results for customers

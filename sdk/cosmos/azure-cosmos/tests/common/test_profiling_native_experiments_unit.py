@@ -45,7 +45,7 @@ def fixture_package(tmp_path):
         "azure_cosmos_rust/src/wire/items.rs": "// item operations\n",
         "azure/cosmos/_backend/_async_credential_bridge.py": "# fixture\n",
         "azure/cosmos/__init__.py": "# Python source is fingerprinted, not transplanted\n",
-        "tests/create_item/legacy_partition_key_cases.json": "[]\n",
+        "tests/create_item/partition_key_reference_cases.json": "[]\n",
     }
     for name, content in files.items():
         target = root / name

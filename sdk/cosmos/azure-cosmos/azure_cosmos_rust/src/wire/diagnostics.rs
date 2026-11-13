@@ -208,7 +208,7 @@ pub(super) fn attempt_payload<'py>(
 //
 // Process-wide count at explicit increment sites, including driver runners,
 // retained feed-page calls, and local feed-range subset checks. Several sites
-// precede driver lookup, so an increment does not prove driver execution, a network
+// precede retaining a driver reference, so an increment does not prove driver execution, a network
 // request, or success. Earlier extraction failures and uninstrumented paths
 // (such as metadata lookup) are not counted. Workload deltas include concurrent
 // callers in this process. Relaxed ordering does not synchronize other state.
@@ -337,5 +337,183 @@ mod tests {
         append_transport_summary(&mut summary, std::iter::empty());
 
         assert_eq!(summary, "activity=test requests=0 transports=[]");
+    }
+
+    // Test-only prototype: preserve production behavior and the Python header contract.
+    struct DeferredDiagnostics {
+        context: std::sync::Arc<azure_data_cosmos_driver::diagnostics::DiagnosticsContext>,
+        text: std::sync::OnceLock<String>,
+    }
+
+    impl DeferredDiagnostics {
+        fn new(
+            context: std::sync::Arc<azure_data_cosmos_driver::diagnostics::DiagnosticsContext>,
+        ) -> Self {
+            use super::{BINDING_ATTEMPT_COUNT, BINDING_RETRY_COUNT};
+            use std::sync::atomic::Ordering;
+
+            // Mirror the eager counter work; parity is checked against record_diagnostics.
+            BINDING_ATTEMPT_COUNT.fetch_add(context.request_count() as u64, Ordering::Relaxed);
+            let retries = context
+                .requests()
+                .iter()
+                .filter(|request| request.execution_context().as_str() != "initial")
+                .count() as u64;
+            BINDING_RETRY_COUNT.fetch_add(retries, Ordering::Relaxed);
+            Self {
+                context,
+                text: std::sync::OnceLock::new(),
+            }
+        }
+
+        fn text(&self) -> &str {
+            self.text.get_or_init(|| {
+                let mut summary = self.context.to_string();
+                append_transport_summary(
+                    &mut summary,
+                    self.context.requests().iter().map(|request| {
+                        (
+                            request.pipeline_type().as_str(),
+                            request.transport_kind().as_str(),
+                        )
+                    }),
+                );
+                summary
+            })
+        }
+    }
+
+    #[test]
+    #[ignore = "offline microbenchmark; use --release --ignored --nocapture --test-threads=1"]
+    fn measure_deferred_diagnostics() {
+        use super::{record_diagnostics, BINDING_ATTEMPT_COUNT, BINDING_RETRY_COUNT};
+        use std::hint::black_box;
+        use std::sync::atomic::Ordering;
+        use std::sync::Arc;
+
+        assert!(!cfg!(debug_assertions), "Use --release for this benchmark");
+        let runtime = tokio::runtime::Runtime::new().unwrap();
+        let (created, read, conflict) =
+            runtime.block_on(crate::wire::response::tests::create_read_and_conflict());
+        let counts = || {
+            (
+                BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed),
+                BINDING_RETRY_COUNT.load(Ordering::Relaxed),
+            )
+        };
+        for context in [
+            created.diagnostics(),
+            read.diagnostics(),
+            conflict.response().unwrap().diagnostics(),
+        ] {
+            let before = counts();
+            let expected = record_diagnostics(context.clone());
+            let after_eager = counts();
+            let deferred = DeferredDiagnostics::new(context);
+            let after_deferred = counts();
+            assert_eq!(
+                (after_eager.0 - before.0, after_eager.1 - before.1),
+                (
+                    after_deferred.0 - after_eager.0,
+                    after_deferred.1 - after_eager.1
+                )
+            );
+            assert!(deferred.text.get().is_none());
+            assert_eq!(deferred.text(), expected);
+            assert!(std::ptr::eq(
+                deferred.text().as_ptr(),
+                deferred.text().as_ptr()
+            ));
+            assert_eq!(counts(), after_deferred, "inspection must not recount");
+        }
+
+        let context = read.diagnostics();
+        let expected = record_diagnostics(context.clone());
+        let weak = Arc::downgrade(&context);
+        let deferred = DeferredDiagnostics::new(context.clone());
+        drop(read);
+        drop(context);
+        assert!(weak.upgrade().is_some());
+        std::thread::spawn(move || {
+            assert_eq!(deferred.text(), expected);
+            assert_eq!(deferred.text(), expected);
+        })
+        .join()
+        .unwrap();
+        assert!(
+            weak.upgrade().is_none(),
+            "drop must release retained context"
+        );
+
+        let (_, read, _) =
+            runtime.block_on(crate::wire::response::tests::create_read_and_conflict());
+        let context = read.diagnostics();
+        let iterations = 50_000;
+        let samples = 12;
+        let labels = [
+            "eager_unused",
+            "deferred_unused",
+            "eager_once",
+            "deferred_once",
+            "eager_three_reads",
+            "deferred_three_reads",
+        ];
+        let mut measurements: [Vec<f64>; 6] = std::array::from_fn(|_| Vec::new());
+        let run = |mode: usize| {
+            let reads = [0, 1, 3][mode / 2];
+            let context = black_box(context.clone());
+            if mode % 2 == 0 {
+                let text = record_diagnostics(context);
+                for _ in 0..reads {
+                    black_box(text.as_str());
+                }
+                drop(black_box(text));
+            } else {
+                let deferred = DeferredDiagnostics::new(context);
+                for _ in 0..reads {
+                    black_box(deferred.text());
+                }
+                drop(black_box(deferred));
+            }
+        };
+        for _ in 0..2_000 {
+            for mode in 0..labels.len() {
+                run(mode);
+            }
+        }
+        for sample in 0..samples {
+            for offset in 0..labels.len() {
+                let position = if sample % 2 == 0 {
+                    offset
+                } else {
+                    labels.len() - 1 - offset
+                };
+                let mode = (sample / 2 + position) % labels.len();
+                let start = Instant::now();
+                for _ in 0..iterations {
+                    run(mode);
+                }
+                measurements[mode].push(start.elapsed().as_nanos() as f64 / f64::from(iterations));
+            }
+        }
+        let timings: std::collections::BTreeMap<_, _> =
+            labels.into_iter().zip(measurements).collect();
+        println!(
+            "DEFERRED_DIAGNOSTICS_BENCHMARK={}",
+            serde_json::json!({
+                "scope": "Windows local release microbenchmark; one completed in-memory read; native diagnostics only; no Python conversion or network",
+                "iterations_per_sample": iterations,
+                "samples": samples,
+                "request_count": context.request_count(),
+                "retained_request_count": context.requests().len(),
+                "nanoseconds_per_operation": timings,
+                "content_and_counter_parity": true,
+                "cached_reads_do_not_recount": true,
+                "context_survives_response_drop_and_thread_transfer": true,
+                "context_released_on_holder_drop": true,
+                "retention": "Arc retains full diagnostics until holder drop, including after formatting",
+                "production_header_contract_changed": false
+            })
+        );
     }
 }

@@ -26,7 +26,7 @@ from .errors import BindingProtocolError
 from ._immutable import json_mapping
 from .operations import (
     OP_LIST_CONTAINERS, OP_LIST_DATABASES, OP_READ_ALL_ITEMS,
-    OP_QUERY_ITEMS_CHANGE_FEED, OP_QUERY_ITEMS,
+    OP_QUERY_ITEMS_CHANGE_FEED, OP_QUERY_ITEMS, OP_READ_ITEMS,
 )
 from ..exceptions import CosmosHttpResponseError
 from .._operation_deadline import remaining_timeout
@@ -35,7 +35,7 @@ if TYPE_CHECKING:
     from .._rust import _DriverHandle
 
 
-_PARAMETERLESS_FEED_OPS = frozenset({OP_READ_ALL_ITEMS, OP_LIST_DATABASES, OP_LIST_CONTAINERS})
+_PARAMETERLESS_FEED_OPS = frozenset({OP_READ_ALL_ITEMS, OP_READ_ITEMS, OP_LIST_DATABASES, OP_LIST_CONTAINERS})
 
 
 def build_binding_request_from_page(prepared: PreparedPageRequest) -> PreparedRequest:
@@ -85,6 +85,7 @@ def build_binding_request_from_page(prepared: PreparedPageRequest) -> PreparedRe
         headers=headers,
         settings=replace(prepared.settings, query=query_settings),
         query_scope=query_scope,
+        read_many_items=prepared.read_many_items,
     )
 
 
@@ -115,10 +116,10 @@ def build_backend_page(prepared: PreparedPageRequest, response: BackendResponse)
     """Convert a backend response into a backend page.
 
     Copy the continuation token from response headers. For retained item
-    queries, also copy has_more and continuation_supported from the feed cursor.
+    queries and read-many operations, also copy has_more and continuation_supported from the feed cursor.
     Other page paths leave has_more as None and apply their own completion rules.
     """
-    cursor = prepared.cursor if prepared.op == OP_QUERY_ITEMS else None
+    cursor = prepared.cursor if prepared.op in (OP_QUERY_ITEMS, OP_READ_ITEMS, OP_READ_ALL_ITEMS) else None
     return BackendPage(
         status_code=response.status_code,
         continuation=response.headers.get("x-ms-continuation") if response.headers else None,
@@ -152,7 +153,7 @@ def build_container_metadata(raw: Any) -> ContainerMetadata:
 
 
 def metadata_exception_from_binding(error: BaseException) -> CosmosHttpResponseError:
-    """Convert a failed container-property lookup to a public Python exception.
+    """Convert a failed account or container metadata lookup to a public exception.
 
     Keep its headers on the exception without replacing the client's saved
     response headers.

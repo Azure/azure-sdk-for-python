@@ -1,56 +1,41 @@
-# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-# -------------------------------------------------------------------------
-"""Backend-agnostic unit tests for the read_items query-leg routing marker.
+# Licensed under the MIT License.
+"""Read-many dispatch is retained Rust execution, never the compatibility query gate."""
 
-No emulator and no Rust binding needed -- these exercise the pure gate
-``can_use_rust_backend_for_query_page`` directly, in milliseconds.
+from dataclasses import FrozenInstanceError
 
-read_items keeps its orchestration in Python. Singleton chunks can use Rust
-point reads; multi-item chunks deliberately retain legacy queries using
-``Constants.ReadItemsQueryLeg``. These tests pin that strategy boundary, shared
-by both connections. Earlier topology-panic reports are historical, not a
-current reproduction established by this unit test.
-"""
-from __future__ import annotations
+import pytest
 
-from azure.cosmos import http_constants
-from azure.cosmos._constants import _Constants as Constants
-from azure.cosmos._query_rust_routing import can_use_rust_backend_for_query_page
+from azure.cosmos._backend._binding_conversions import build_binding_request_from_page
+from azure.cosmos._backend.contracts import PreparedPageRequest, ReadManyItem
+from azure.cosmos._backend.operations import get_page_binding_function_name
+from azure.cosmos._backend.partition_key_input import BindingPartitionKey
+from ._helpers import make_proxy
 
 
-# A representative read_items multi-item chunk query: a cross-partition
-# ``id IN (...)`` with none of the shapes the Rust cross-partition path rejects.
-_ID_IN_QUERY = {"query": "SELECT * FROM c WHERE c.id IN (@id0, @id1)"}
+def test_read_items_has_only_retained_native_dispatch_rust():
+    assert get_page_binding_function_name("read_items", uses_cursor=True) == "fetch_page_with_cursor"
+    assert get_page_binding_function_name("read_items", uses_cursor=False) is None
 
 
-def _gate(options):
-    """Run the gate for the read_items query shape with the given options."""
-    return can_use_rust_backend_for_query_page(
-        query_payload=_ID_IN_QUERY,
-        options=options,
-        kwargs={},
-        container_properties=None,
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-    )
+def test_typed_selection_is_immutable_and_not_a_sql_query_rust():
+    item = ReadManyItem("a", BindingPartitionKey("components", ("tenant", None, Ellipsis)))
+    page = PreparedPageRequest("read_items", "dbs/d/colls/c", read_many_items=(item,))
+    request = build_binding_request_from_page(page)
+    assert request.read_many_items == (item,)
+    assert request.body_bytes == b"" and request.query_scope is None
+    with pytest.raises(FrozenInstanceError):
+        item.item_id = "other"
+    with pytest.raises(TypeError):
+        PreparedPageRequest("read_items", "dbs/d/colls/c", read_many_items=[item])
 
 
-def test_query_leg_marker_forces_legacy_rust():
-    """The marker keeps internal query chunks on the selected legacy strategy."""
-    assert _gate({Constants.ReadItemsQueryLeg: True}) is False
-
-
-def test_same_query_without_marker_is_eligible_for_rust():
-    """Control: the identical query without the marker is otherwise eligible for
-    Rust, proving the marker -- not some other gate -- is what forces legacy."""
-    assert _gate({}) is True
-
-
-def test_marker_uses_the_shared_constant_value_rust():
-    """Guard against the producers (read_items helpers) and this consumer drifting
-    on the raw key: the constant is the single source of truth."""
-    assert Constants.ReadItemsQueryLeg == "_read_items_query_leg"
-    assert _gate({"_read_items_query_leg": True}) is False
+@pytest.mark.parametrize("backend", ["missing-context", "core-python"])
+def test_read_items_never_falls_back_to_core_python_rust(backend):
+    proxy, adapter = make_proxy()
+    if backend == "missing-context":
+        proxy._item_context = None
+    else:
+        adapter.name = "core-python"
+    with pytest.raises(NotImplementedError, match="Rust"):
+        proxy.read_items([("a", "p")])

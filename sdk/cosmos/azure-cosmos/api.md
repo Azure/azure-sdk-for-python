@@ -540,14 +540,6 @@ namespace azure.cosmos
                 **kwargs: Any
             ) -> None: ...
 
-        @distributed_trace
-        def get_database_account(
-                self, 
-                *, 
-                response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
-                **kwargs
-            ) -> DatabaseAccount: ...
-
         def get_database_client(self, database: Union[str, DatabaseProxy, Mapping[str, Any]]) -> DatabaseProxy: ...
 
         @distributed_trace
@@ -2239,14 +2231,6 @@ namespace azure.cosmos.cosmos_client
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
             ) -> None: ...
-
-        @distributed_trace
-        def get_database_account(
-                self, 
-                *, 
-                response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
-                **kwargs
-            ) -> DatabaseAccount: ...
 
         def get_database_client(self, database: Union[str, DatabaseProxy, Mapping[str, Any]]) -> DatabaseProxy: ...
 

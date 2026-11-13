@@ -4,9 +4,9 @@
 """Rust-path copy of the sync read_items multi-partition test that exercises query_items.
 
 The original creates a multi-partition container, checks item distribution with a
-``partition_key_range_id`` query per physical range, then calls ``read_items`` with a
-response hook. Setup is test-owned: a uniquely named database replaces the shared one,
-and the key-auth/data client pair are both Rust-backed. Steps and assertions are unchanged.
+query per physical range, then calls ``read_items`` with a response hook.
+Public feed ranges replace legacy routing internals. The hook result is now an
+independent snapshot; original data, distribution and result assertions remain.
 """
 
 import os
@@ -49,11 +49,6 @@ class TestReadItems(unittest.TestCase):
     def test_read_items_multiple_physical_partitions_and_hook_rust(self):
         # Source: tests/test_read_items.py::TestReadItems.test_read_items_multiple_physical_partitions_and_hook
         """Tests read_items on a container with multiple physical partitions and verifies response_hook."""
-        pytest.skip(
-            "internals-only: the original queries each physical partition through the internal "
-            "partition_key_range_id keyword and _ReadPartitionKeyRanges; the Rust query path does not "
-            "accept partition_key_range_id."
-        )
         container_id = 'multi_partition_container_' + str(uuid.uuid4())
         # Create a container with high throughput to force multiple physical partitions
         # control-plane container creation
@@ -65,8 +60,7 @@ class TestReadItems(unittest.TestCase):
         multi_partition_container = self.database.get_container_client(container_id)
         try:
             # 1. Verify that we have more than one physical partition
-            pk_ranges = list(multi_partition_container.client_connection._ReadPartitionKeyRanges(
-                multi_partition_container.container_link))
+            pk_ranges = list(multi_partition_container.read_feed_ranges())
             self.assertGreater(len(pk_ranges), 1, "Container should have multiple physical partitions.")
 
             # 2. Create items across different logical partitions
@@ -81,12 +75,11 @@ class TestReadItems(unittest.TestCase):
 
             # 3. Check item distribution across physical partitions
             partition_item_map = {}
-            for pk_range in pk_ranges:
-                pk_range_id = pk_range['id']
+            for pk_range_id, pk_range in enumerate(pk_ranges):
                 # Query items within this specific physical partition
                 items_in_partition = list(multi_partition_container.query_items(
                     "SELECT c.id FROM c",
-                    partition_key_range_id=pk_range_id
+                    feed_range=pk_range
                 ))
                 if items_in_partition:
                     partition_item_map[pk_range_id] = {item['id'] for item in items_in_partition}
@@ -125,8 +118,8 @@ class TestReadItems(unittest.TestCase):
             hook_read_ids = {item['id'] for item in hook_results}
             self.assertSetEqual(hook_read_ids, all_item_ids)
 
-            # Verify that the CosmosList passed to the hook is the same object as the one returned
-            self.assertIs(read_items_result, hook_results)
+            self.assertEqual(read_items_result, hook_results)
+            self.assertIsNot(read_items_result, hook_results)
 
         finally:
             try:

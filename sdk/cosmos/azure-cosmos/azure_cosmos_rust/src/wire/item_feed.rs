@@ -42,7 +42,6 @@ use super::legacy_partition_key::legacy_partition_key_header;
 use super::{
     deadline::{parse_remaining_timeout, with_timeout},
     diagnostics::BINDING_OP_COUNT,
-    lookup_driver,
     request::{
         build_operation_options, extract_common_prepared_inputs, parse_container_link,
         RequestHeadersAndOptions,
@@ -65,6 +64,7 @@ struct Progress {
 #[derive(Clone, PartialEq)]
 enum FeedRequest {
     ReadAll,
+    ReadMany(Vec<(PartitionKey, String)>),
     ChangeFeed(ChangeFeedRequest),
     Query(QueryRequest),
 }
@@ -508,9 +508,11 @@ async fn next_plan_page(
     let diagnostics_complete =
         progress.is_some() && !matches!(&request, FeedRequest::ChangeFeed(_));
     if state.started && progress.is_none() {
-        return Err(PyRuntimeError::new_err(
-            "Feed cursor failed; resume using the last delivered continuation token",
-        ));
+        return Err(PyRuntimeError::new_err(if state.continuation_unsupported {
+            "Feed cursor failed; start a new operation from the beginning"
+        } else {
+            "Feed cursor failed; resume using the last delivered continuation token"
+        }));
     }
     modifiers
         .custom_headers
@@ -551,9 +553,21 @@ async fn next_plan_page(
         let mut operation = match &request {
             FeedRequest::ChangeFeed(request) => request.operation(container.clone())?,
             FeedRequest::Query(request) => request.operation(container.clone())?,
-            FeedRequest::ReadAll => {
-                CosmosOperation::query_items(container.clone(), Some(FeedRange::full()))
-                    .with_body(br#"{"query":"SELECT * FROM root r"}"#.to_vec())
+            FeedRequest::ReadAll => CosmosOperation::read_many(
+                container.clone(),
+                azure_data_cosmos_driver::read_many::ItemScope::FeedRanges(vec![FeedRange::full()]),
+            ),
+            FeedRequest::ReadMany(items) => {
+                let width = container.partition_key_definition().paths().len();
+                if items.iter().any(|(key, _)| key.len() != width) {
+                    return Err(PyValueError::new_err(
+                        "read_items requires every component of the container's partition key",
+                    ));
+                }
+                CosmosOperation::read_many(
+                    container.clone(),
+                    azure_data_cosmos_driver::read_many::ItemScope::Items(items.clone()),
+                )
             }
         };
         if let Some(activity) = modifiers.activity_header {
@@ -602,6 +616,10 @@ async fn next_plan_page(
             None => plan_options,
         };
         let plan_options = match &request {
+            // Preserve Python's existing admission policy, not a new partition-count cap.
+            FeedRequest::ReadAll | FeedRequest::ReadMany(_) => {
+                plan_options.with_max_fan_out(u32::MAX)
+            }
             FeedRequest::Query(query) => {
                 // Legacy Python has no query fan-out cap; keep that policy in the binding.
                 plan_options
@@ -673,6 +691,12 @@ async fn next_plan_page(
     // advance the Rust driver's plan even on failure or cancellation; do not
     // restore that potentially advanced plan for another fetch.
     state.started = true;
+    if matches!(
+        progress.request,
+        FeedRequest::ReadAll | FeedRequest::ReadMany(_)
+    ) {
+        state.continuation_unsupported = true;
+    }
     let response = match driver
         .execute_plan(
             &mut progress.plan,
@@ -742,6 +766,31 @@ fn feed_inputs(prepared: &Bound<'_, PyAny>, scope: BindingPartitionKey) -> PyRes
             ));
         }
         return Ok(FeedRequest::ReadAll);
+    }
+    if op == "read_items" {
+        if key.is_some() {
+            return Err(PyValueError::new_err(
+                "read_items requires explicit item selections, not a query partition scope",
+            ));
+        }
+        let inputs = prepared.getattr("read_many_items")?;
+        let inputs = inputs.downcast::<PyTuple>()?;
+        let mut items = Vec::with_capacity(inputs.len());
+        for input in inputs.iter() {
+            let key = super::partition_key_input::extract_partition_key(&input)?
+                .into_item_key()?
+                .ok_or_else(|| {
+                    PyValueError::new_err("read_items requires an explicit partition key")
+                })?;
+            let id: String = input.getattr("item_id")?.extract()?;
+            if id.is_empty() {
+                return Err(PyValueError::new_err(
+                    "read_items requires a nonempty item ID",
+                ));
+            }
+            items.push((key, id));
+        }
+        return Ok(FeedRequest::ReadMany(items));
     }
     let body = super::request::extract_body_bytes(prepared)?;
     if op == "query_items" {
@@ -852,14 +901,19 @@ fn inputs(
         .getattr("continuation")?
         .extract()?;
     let op: String = prepared.getattr("op")?.extract()?;
+    if matches!(op.as_str(), "read_items" | "read_all_items") && continuation.is_some() {
+        return Err(PyValueError::new_err(format!(
+            "{op} does not support continuation tokens; continue the live iterator",
+        )));
+    }
     if op != "query_items"
         && continuation
             .as_ref()
             .is_some_and(|token| !token.starts_with("c1.") && !token.starts_with("c2."))
     {
-        return Err(PyValueError::new_err(
-            "read_all_items requires a Rust driver continuation token, not a legacy bookmark",
-        ));
+        return Err(PyValueError::new_err(format!(
+            "{op} requires a Rust driver continuation token, not a legacy bookmark",
+        )));
     }
     Ok((link, modifiers, continuation, scope))
 }
@@ -878,7 +932,7 @@ pub(crate) fn fetch_page_with_cursor<'py>(
     let timeout = parse_remaining_timeout(timeout_seconds)?;
     let request = feed_inputs(prepared, scope)?;
     BINDING_OP_COUNT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
+    let driver = driver_handle.driver();
     let state = cursor.state.clone();
     let identity = (driver_handle.cache_key().to_owned(), link);
     let runtime = require_runtime_context("fetch_page_with_cursor")?;
@@ -912,7 +966,7 @@ pub(crate) fn fetch_page_with_cursor_async<'py>(
     let timeout = parse_remaining_timeout(timeout_seconds)?;
     let request = feed_inputs(prepared, scope)?;
     BINDING_OP_COUNT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
+    let driver = driver_handle.driver();
     let state = cursor.state.clone();
     let identity = (driver_handle.cache_key().to_owned(), link);
     let runtime = require_runtime_context("fetch_page_with_cursor_async")?;
@@ -946,7 +1000,7 @@ mod tests {
     use super::*;
     use azure_core::http::{
         headers::{HeaderName, HeaderValue},
-        Url,
+        Method, Request, Url,
     };
     use azure_data_cosmos_driver::{
         fault_injection::{
@@ -954,11 +1008,13 @@ mod tests {
             FaultInjectionRule, FaultInjectionRuleBuilder,
         },
         in_memory_emulator::{
-            ContainerConfig, InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion,
+            ContainerConfig, InMemoryEmulatorHttpClient, RequestObserver, VirtualAccountConfig,
+            VirtualRegion,
         },
         models::{AccountReference, ItemReference, PartitionKey, PartitionKeyDefinition},
         options::{
             ContentResponseOnWrite, DriverOptions, EndToEndOperationLatencyPolicy, QueryPlanMode,
+            Region,
         },
     };
     use std::{
@@ -1114,6 +1170,7 @@ mod tests {
             assert_eq!(result.2, fetches != 0);
             let exhausted = result.0.as_ref().unwrap().is_none();
             token = result.1.clone();
+            assert!(token.is_none());
             Python::with_gil(|py| {
                 let ordinary = finish_page(py, result.clone(), false).unwrap();
                 let envelope = finish_page(py, result, true).unwrap();
@@ -1141,22 +1198,12 @@ mod tests {
                             .unwrap()
                             .is_empty());
                     }
-                    let headers = ordinary.get_item(2).unwrap();
-                    assert_eq!(
-                        headers
-                            .get_item("x-ms-continuation")
-                            .unwrap()
-                            .extract::<String>()
-                            .unwrap(),
-                        token.clone().unwrap()
-                    );
-                } else {
-                    assert!(!ordinary
-                        .get_item(2)
-                        .unwrap()
-                        .contains("x-ms-continuation")
-                        .unwrap());
                 }
+                assert!(!ordinary
+                    .get_item(2)
+                    .unwrap()
+                    .contains("x-ms-continuation")
+                    .unwrap());
             });
             fetches += 1;
             if exhausted {
@@ -1247,7 +1294,7 @@ mod tests {
         assert!(!cursor.can_retry_setup());
         let _in_flight = cursor.state.lock().await;
         assert!(cursor.has_more());
-        assert!(cursor.continuation_supported());
+        assert!(!cursor.continuation_supported());
     }
 
     #[test]
@@ -1299,7 +1346,7 @@ mod tests {
 
     #[tokio::test]
     async fn setup_errors_can_retry_but_execution_errors_invalidate() {
-        for operation in ["MetadataReadContainer", "MetadataQueryPlan", "QueryItem"] {
+        for operation in ["MetadataReadContainer", "QueryItem"] {
             let (driver, rule) = setup_fault(operation, Duration::ZERO).await;
             let cursor = ItemFeedCursor::default();
             let identity = ("test".into(), "dbs/db/colls/other".into());
@@ -1330,14 +1377,16 @@ mod tests {
                 assert!(!cursor.can_retry_setup(), "{operation}");
             } else {
                 let error = retry.err().expect("execution failure must remain terminal");
-                assert!(error.to_string().contains("Feed cursor failed"));
+                assert!(error
+                    .to_string()
+                    .contains("Feed cursor failed; start a new operation from the beginning"));
             }
         }
     }
 
     #[tokio::test]
     async fn cancellation_before_execution_does_not_start_cursor() {
-        for operation in ["MetadataReadContainer", "MetadataQueryPlan", "QueryItem"] {
+        for operation in ["MetadataReadContainer", "QueryItem"] {
             let (driver, rule) = setup_fault(operation, Duration::from_secs(60)).await;
             let cursor = ItemFeedCursor::default();
             let mut options = modifiers();
@@ -1421,6 +1470,7 @@ mod tests {
         let mut rows = Vec::new();
         for _ in 0..100 {
             let (page, next) = fetch(driver, state, token).await;
+            assert!(next.is_none());
             token = next;
             match page {
                 Some(page) => rows.extend(page),
@@ -1454,7 +1504,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn queries_cover_more_than_one_hundred_partitions() {
+    async fn queries_and_read_all_cover_more_than_one_hundred_partitions() {
         let expected: BTreeSet<_> = (0..150).map(|i| i.to_string()).collect();
         for partition_count in [100, 101, 150] {
             let (_emulator, driver) = setup_with_partition_count(
@@ -1495,23 +1545,26 @@ mod tests {
                         .status(),
                     status_codes::CLIENT_CROSS_PARTITION_FAN_OUT_EXCEEDED,
                 );
-                let (response, _, _) = next_plan_page(
-                    driver.clone(),
-                    Arc::new(Mutex::new(CursorState::default())),
-                    ("test".into(), "dbs/db/colls/c".into()),
-                    None,
-                    modifiers(),
-                    FeedRequest::ReadAll,
-                    plan_options,
-                )
-                .await
-                .unwrap();
-                assert_eq!(
-                    response.unwrap_err().status(),
-                    status_codes::CLIENT_CROSS_PARTITION_FAN_OUT_EXCEEDED,
-                    "the query override must not change read-all policy",
-                );
             }
+
+            let state = Arc::new(Mutex::new(CursorState::default()));
+            let mut ids = Vec::new();
+            let mut exhausted = false;
+            for _ in 0..partition_count as usize + expected.len() + 1 {
+                let (rows, token) = fetch(&driver, &state, None).await;
+                assert!(token.is_none());
+                let Some(rows) = rows else {
+                    exhausted = true;
+                    break;
+                };
+                ids.extend(rows);
+            }
+            assert!(
+                exhausted,
+                "read-all did not finish across {partition_count} partitions"
+            );
+            assert_eq!(ids.len(), expected.len());
+            assert_eq!(ids.into_iter().collect::<BTreeSet<_>>(), expected);
 
             for explicit_range in [false, true] {
                 let mut request = query_request("SELECT * FROM c");
@@ -1693,7 +1746,7 @@ mod tests {
     }
 
     #[test]
-    fn hybrid_limit_uses_plan_metadata_and_legacy_take_not_offset_window() {
+    fn hybrid_limit_uses_plan_metadata_and_core_python_take_not_offset_window() {
         crate::test_support::prepare_python();
         for body in [
             br#"{"queryInfo":{"top":1}}"#.as_slice(),
@@ -2556,20 +2609,202 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn retained_plan_covers_three_partitions_and_every_bookmark_resumes_exactly() {
+    async fn read_all_transport_preserves_bucket_and_original_exclusion_matrix_rust() {
+        #[derive(Debug, Default)]
+        struct Requests(std::sync::Mutex<Vec<(String, Option<String>)>>);
+        impl RequestObserver for Requests {
+            fn on_request(&self, request: &Request) {
+                if request.method() == Method::Post
+                    && request
+                        .url()
+                        .path()
+                        .trim_end_matches('/')
+                        .ends_with("/docs")
+                {
+                    self.0.lock().unwrap().push((
+                        request.url().host_str().unwrap().to_owned(),
+                        request
+                            .headers()
+                            .get_optional_str(&HeaderName::from_static(
+                                "x-ms-cosmos-throughput-bucket",
+                            ))
+                            .map(str::to_owned),
+                    ));
+                }
+            }
+        }
+
+        crate::test_support::prepare_python();
+        let w = "West US";
+        let r = "East US";
+        let third = "East US 2";
+        // Original read exclusion matrix: client default, request override, destination.
+        let cases = [
+            (vec![], None, "westus"),
+            (vec![w], None, "eastus"),
+            (vec![w, r], None, "westus"),
+            (vec![third], None, "westus"),
+            (vec![], Some(vec![w]), "eastus"),
+            (vec![w], Some(vec![w]), "eastus"),
+            (vec![w, r], Some(vec![w]), "eastus"),
+            (vec![w], Some(vec![w, r]), "westus"),
+            (vec![w, r], Some(vec![w, r]), "westus"),
+            (vec![w], Some(vec![r]), "westus"),
+            (vec![w, r], Some(vec![third]), "westus"),
+            (vec![w, r], Some(vec![]), "westus"),
+        ];
+        for (index, (client, request, expected)) in cases.into_iter().enumerate() {
+            let url = Url::parse("https://westus.emulator.local").unwrap();
+            let observed = Arc::new(Requests::default());
+            let emulator = Arc::new(
+                InMemoryEmulatorHttpClient::new(
+                    VirtualAccountConfig::new(vec![
+                        VirtualRegion::new(w, url.clone()),
+                        VirtualRegion::new(r, Url::parse("https://eastus.emulator.local").unwrap()),
+                    ])
+                    .unwrap(),
+                )
+                .with_request_observer(observed.clone()),
+            );
+            emulator.store().create_database("db");
+            emulator.store().create_container_with_config(
+                "db",
+                "c",
+                PartitionKeyDefinition::from("/pk"),
+                ContainerConfig::new()
+                    .with_partition_count(3)
+                    .build()
+                    .unwrap(),
+            );
+            let runtime = emulator.runtime_builder().build().await.unwrap();
+            let driver = runtime
+                .create_driver(
+                    DriverOptions::builder(AccountReference::with_account_key(
+                        url,
+                        "ZW11bGF0b3Ita2V5",
+                    ))
+                    .with_preferred_regions(vec![Region::WEST_US, Region::EAST_US])
+                    .build(),
+                )
+                .await
+                .unwrap();
+            let container = driver
+                .resolve_container("db", "c", Default::default())
+                .await
+                .unwrap();
+            for i in 0..10 {
+                driver
+                    .execute_operation(
+                        CosmosOperation::create_item(ItemReference::from_name(
+                            &container,
+                            PartitionKey::from("mypk"),
+                            i.to_string(),
+                        ))
+                        .with_body(
+                            serde_json::to_vec(
+                                &serde_json::json!({"id": i.to_string(), "pk": "mypk"}),
+                            )
+                            .unwrap(),
+                        ),
+                        Default::default(),
+                    )
+                    .await
+                    .unwrap();
+            }
+            emulator.store().drain_pending_replications().await;
+            observed.0.lock().unwrap().clear();
+            let exclusions = request.unwrap_or(client);
+            let state = Arc::new(Mutex::new(CursorState::default()));
+            let mut rows = Vec::new();
+            let mut exhausted = false;
+            for _ in 0..30 {
+                let options = Python::with_gil(|py| {
+                    let kwargs = PyDict::new_bound(py);
+                    let headers = PyDict::new_bound(py);
+                    headers
+                        .set_item("x-ms-cosmos-throughput-bucket", "2")
+                        .unwrap();
+                    kwargs.set_item("headers", headers).unwrap();
+                    kwargs.set_item("protocol_version", 3).unwrap();
+                    let settings = super::super::settings::test_settings(py);
+                    settings.setattr("throughput_bucket", 3).unwrap();
+                    settings.setattr("excluded_locations", &exclusions).unwrap();
+                    settings
+                        .getattr("query")
+                        .unwrap()
+                        .setattr("max_item_count", 2)
+                        .unwrap();
+                    kwargs.set_item("settings", settings).unwrap();
+                    let prepared = py
+                        .import_bound("types")
+                        .unwrap()
+                        .getattr("SimpleNamespace")
+                        .unwrap()
+                        .call((), Some(&kwargs))
+                        .unwrap();
+                    super::super::request::extract_account_prepared_modifiers(&prepared).unwrap()
+                });
+                let (response, token, _) = next_page(
+                    driver.clone(),
+                    state.clone(),
+                    ("test".into(), "dbs/db/colls/c".into()),
+                    None,
+                    options,
+                )
+                .await
+                .unwrap();
+                assert!(token.is_none());
+                let Some(response) = response.unwrap() else {
+                    exhausted = true;
+                    break;
+                };
+                rows.extend(
+                    response
+                        .body()
+                        .clone()
+                        .into_items::<serde_json::Value>()
+                        .unwrap(),
+                );
+            }
+            assert!(exhausted, "case {index}");
+            assert_eq!(rows.len(), 10, "case {index}");
+            assert_eq!(
+                rows.iter()
+                    .map(|row| row["id"].as_str().unwrap().to_owned())
+                    .collect::<BTreeSet<_>>(),
+                (0..10).map(|i| i.to_string()).collect()
+            );
+            let calls = observed.0.lock().unwrap();
+            assert!(calls.len() > 1, "case {index}");
+            for (host, bucket) in calls.iter() {
+                assert_eq!(
+                    host,
+                    &format!("{expected}.emulator.local"),
+                    "case {index}; requests: {calls:?}"
+                );
+                assert_eq!(bucket.as_deref(), Some("3"), "case {index}");
+            }
+        }
+    }
+
+    #[tokio::test]
+    async fn read_all_covers_three_partitions_without_continuation_tokens() {
         let (_emulator, driver) = setup(23).await;
         let state = Arc::new(Mutex::new(CursorState::default()));
         let mut token = None;
         let mut all = Vec::new();
-        let mut checkpoints = Vec::new();
+        let mut pages = 0;
+        let mut exhausted = false;
         for _ in 0..100 {
             let (page, next) = fetch(&driver, &state, token).await;
             token = next;
+            assert!(token.is_none());
             if let Some(page) = page {
                 assert!(page.len() <= 2);
                 all.extend(page);
-                checkpoints.push((all.len(), token.clone()));
+                pages += 1;
             } else {
+                exhausted = true;
                 break;
             }
         }
@@ -2578,12 +2813,10 @@ mod tests {
             all.iter().cloned().collect::<BTreeSet<_>>(),
             (0..23).map(|i| i.to_string()).collect()
         );
-        assert!(checkpoints.len() > 3);
-        for (offset, token) in checkpoints {
-            assert!(token.as_ref().unwrap().starts_with("c2."));
-            let resumed = Arc::new(Mutex::new(CursorState::default()));
-            assert_eq!(drain(&driver, &resumed, token).await, all[offset..]);
-        }
+        assert!(exhausted);
+        assert!(pages > 3);
+        assert!(!state.lock().await.has_more);
+        assert!(state.lock().await.continuation_unsupported);
     }
 
     #[tokio::test]
@@ -2597,35 +2830,16 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn empty_container_and_invalid_or_wrong_container_tokens() {
+    async fn empty_read_all_finishes_without_a_continuation_token() {
         let (_emulator, driver) = setup(0).await;
         let empty = Arc::new(Mutex::new(CursorState::default()));
         assert!(drain(&driver, &empty, None).await.is_empty());
-        let (_rows, token) =
-            fetch(&driver, &Arc::new(Mutex::new(CursorState::default())), None).await;
-        for (link, token) in [
-            ("dbs/db/colls/c", Some("c1.invalid".into())),
-            ("dbs/db/colls/other", token),
-        ] {
-            let state = Arc::new(Mutex::new(CursorState::default()));
-            let (result, _, _) = next_page(
-                driver.clone(),
-                state,
-                ("test".into(), link.into()),
-                token,
-                modifiers(),
-            )
-            .await
-            .unwrap();
-            assert!(
-                result.is_err(),
-                "invalid/wrong-container bookmark was accepted"
-            );
-        }
+        assert!(!empty.lock().await.has_more);
+        assert!(empty.lock().await.continuation_unsupported);
     }
 
     #[tokio::test]
-    async fn partition_split_preserves_remaining_rows_and_bookmarks() {
+    async fn read_all_partition_split_preserves_remaining_rows() {
         let (emulator, driver) = setup(31).await;
         let state = Arc::new(Mutex::new(CursorState::default()));
         let (first, token) = fetch(&driver, &state, None).await;
@@ -2637,10 +2851,8 @@ mod tests {
             emulator.store().child_partition_ids("db", "c", &[0]).len(),
             2
         );
-        let resumed = Arc::new(Mutex::new(CursorState::default()));
-        let restored = drain(&driver, &resumed, token.clone()).await;
+        assert!(token.is_none());
         let rest = drain(&driver, &state, token).await;
-        assert_eq!(rest, restored);
         let all: Vec<_> = first.unwrap().into_iter().chain(rest).collect();
         assert_eq!(all.len(), 31);
         assert_eq!(
@@ -2683,7 +2895,8 @@ mod tests {
         )
         .await
         .is_err());
-        let resumed = Arc::new(Mutex::new(CursorState::default()));
-        assert!(!drain(&driver, &resumed, token).await.is_empty());
+        assert!(token.is_none());
+        let restarted = Arc::new(Mutex::new(CursorState::default()));
+        assert_eq!(drain(&driver, &restarted, None).await.len(), 9);
     }
 }

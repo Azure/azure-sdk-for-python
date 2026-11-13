@@ -4,7 +4,7 @@
 #   - azure_cosmos_rust/   the PyO3 binding compiled into _rust.pyd
 #
 # The driver crate (azure_data_cosmos_driver) is no longer in-tree. It is
-# pulled from a pinned azure-sdk-for-rust revision declared below. `maturin develop`
+# built from the neighboring azure-sdk-for-rust checkout. `maturin develop`
 # (run from this directory) compiles the binding plus the external driver
 # into one cdylib that gets dropped into azure/cosmos/ next to the .py files.
 
@@ -42,8 +42,9 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(test_category, values("emu
 # --- azure-sdk-for-rust crates ---
 # azure_core aligned with the driver's published version so the two unify.
 azure_core     = "1.1.0"
-# Pin the reviewed main revision; normal and test dependencies share this source.
-azure_data_cosmos_driver = { git = "https://github.com/Azure/azure-sdk-for-rust", rev = "5ba864be8f128a6faf3f736ae0043f60d5911235" }
+# Local development: every rebuild uses this checkout, including uncommitted changes.
+# Release builds must restore an approved portable dependency source.
+azure_data_cosmos_driver = { path = '..\..\..\..\azure-sdk-for-rust\sdk\cosmos\azure_data_cosmos_driver' }
 
 # --- crates.io deps the binding uses ---
 async-lock   = "3"

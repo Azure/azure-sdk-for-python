@@ -16,13 +16,19 @@ only in a slow emulator run.
 from __future__ import annotations
 from common.typed_requests import legacy_partition_key_from_request
 
+import asyncio
 import json
 from types import SimpleNamespace
+from unittest.mock import AsyncMock, Mock
 
 import pytest
+from azure.core.utils import CaseInsensitiveDict
 
+from azure.cosmos._backend.contracts import BackendResponse
+from azure.cosmos._backend.cosmos_backend import CosmosBackend
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.operations import OP_IS_FEED_RANGE_SUBSET
+from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos._feed_ranges_rust_routing import (
@@ -167,3 +173,50 @@ def test_parser_rejects_non_boolean_is_subset_rust():
     """A non-Boolean result raises the expected public parsing error."""
     with pytest.raises(ValueError):
         parse_is_feed_range_subset_payload({"IsSubset": "true"})
+
+
+@pytest.mark.parametrize("async_mode", [False, True])
+@pytest.mark.parametrize("is_subset", [False, True])
+def test_subset_comparison_preserves_previous_response_headers_rust(async_mode, is_subset, monkeypatch):
+    from azure.cosmos.container import ContainerProxy
+    from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
+
+    response = BackendResponse(
+        status_code=200,
+        headers=CaseInsensitiveDict({"x-ms-activity-id": "comparison"}),
+        body=json.dumps({"IsSubset": is_subset}).encode(),
+    )
+    execute = (AsyncMock if async_mode else Mock)(return_value=response)
+
+    class Sync(CosmosBackend):
+        name = "rust"
+
+        def execute(self, prepared, *, deadline=None):
+            return execute(prepared, deadline=deadline)
+
+    class Async(AsyncCosmosBackend):
+        name = "rust"
+
+        async def execute(self, prepared, *, deadline=None):
+            return await execute(prepared, deadline=deadline)
+
+    monkeypatch.setattr(
+        FeedRangeInternalEpk, "from_json", Mock(side_effect=AssertionError("Unexpected legacy comparison"))
+    )
+    previous = CaseInsensitiveDict({"x-ms-activity-id": "previous-read", "x-ms-request-charge": "2"})
+    connection = SimpleNamespace(_backend=Async() if async_mode else Sync(), last_response_headers=previous.copy())
+    container_type = AsyncContainerProxy if async_mode else ContainerProxy
+    container = container_type(connection, "dbs/db", "orders")
+    arguments = {
+        "parent_feed_range": _feed_range("", "FF"),
+        "child_feed_range": _feed_range("3F", "7F"),
+    }
+
+    result = container.is_feed_range_subset(**arguments)
+    if async_mode:
+        result = asyncio.run(result)
+
+    assert result is is_subset
+    execute.assert_called_once()
+    assert execute.call_args.args[0].op == OP_IS_FEED_RANGE_SUBSET
+    assert connection.last_response_headers == previous

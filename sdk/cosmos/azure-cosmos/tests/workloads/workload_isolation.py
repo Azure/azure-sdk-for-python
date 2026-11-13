@@ -7,6 +7,7 @@ namespace in WORKLOAD_ITEM_NAMESPACE. Retain the manifest for recovery after a
 crash; no per-operation ownership journal is written during measurement.
 """
 
+import asyncio
 import os
 from pathlib import Path
 import random
@@ -18,6 +19,35 @@ from perf_results import OPERATIONS
 from profiling_restore_orders import load_manifest, restoration_config, validate_owned_order
 import workload_configs as config
 import workload_utils as utils
+
+
+async def _run_maintenance(items, operation):
+    concurrency = config.WORKLOAD_MAINTENANCE_CONCURRENCY
+    if concurrency == 1:
+        for item in items:
+            await operation(item)
+        return
+    pending = iter(items)
+    failed = False
+
+    async def worker():
+        nonlocal failed
+        try:
+            while not failed:
+                try:
+                    item = next(pending)
+                except StopIteration:
+                    return
+                await operation(item)
+        except BaseException:
+            failed = True
+            raise
+
+    workers = [asyncio.create_task(worker()) for _ in range(concurrency)]
+    try:
+        await asyncio.gather(*workers)
+    finally:
+        await asyncio.gather(*workers, return_exceptions=True)
 
 
 class PointMeasurement:
@@ -89,7 +119,7 @@ class PointMeasurement:
                 else config.MAX_ITEM_INDEX + 1 if self.operation in ("upsert", "replace", "patch")
                 else 0
             )
-            for _ in range(count):
+            async def create_owned(_):
                 if stop_event.is_set():
                     raise RuntimeError("Measurement interrupted during item preparation")
                 item = self._new_item()
@@ -98,6 +128,7 @@ class PointMeasurement:
                 self.items.append(item["id"])
                 self.existing_ids.add(item["id"])
                 self.expected_items += 1
+            await _run_maintenance(range(count), create_owned)
 
     async def run(self, stats):
         if self.operation == "read":
@@ -134,6 +165,7 @@ class PointMeasurement:
                 self.expected_items += 1
             elif self.operation == "delete":
                 self.expected_items -= 1
+        return succeeded
 
     async def cleanup(self):
         if not self.owns_namespace:
@@ -146,11 +178,12 @@ class PointMeasurement:
             for item in items:
                 validate_owned_order(item, self.namespace)
             # Validate the full inventory before deleting; never touch baseline orders.
-            for item in items:
+            async def delete_owned(item):
                 await container.delete_item(
                     item["id"], partition_key=item["id"], etag=item["_etag"],
                     match_condition=MatchConditions.IfNotModified, **extra,
                 )
+            await _run_maintenance(items, delete_owned)
             async for _ in self._owned_items(container):
                 raise RuntimeError("Owned measurement items remain after cleanup")
             if not complete_inventory:

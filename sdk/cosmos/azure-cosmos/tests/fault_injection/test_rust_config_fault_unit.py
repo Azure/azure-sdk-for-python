@@ -27,7 +27,7 @@ def test_fault_setup_uses_independent_direct_rust_runtimes_rust(monkeypatch):
     assert all(call.kwargs["connection_pool"].proxy_allowed is False for call in create_runtime.call_args_list)
 
 
-def test_fault_setup_does_not_replace_a_rust_failure_with_legacy_rust(monkeypatch):
+def test_fault_setup_does_not_replace_a_rust_failure_with_core_python_rust(monkeypatch):
     create_runtime = Mock(side_effect=RuntimeError("Rust unavailable"))
     constructor = Mock()
     monkeypatch.setattr(clients, "CosmosRuntime", SimpleNamespace(create=create_runtime))

@@ -314,13 +314,14 @@ def test_required_inventory_matches_default_exclusions_rust():
     mixed = PACKAGE / "tests" / "binding" / "test_binding_contract_parity.py"
     assert runner.declared_tests(mixed) == {
         "test_binding_rejects_invalid_timeout_with_real_handle",
+        "test_native_listing_accepts_remaining_duration_rust",
     }
 
 
-def test_offline_inventory_keeps_shared_backend_contracts_not_legacy_rust():
+def test_offline_inventory_keeps_shared_backend_contracts_not_core_python_rust():
     files = runner.discover_tests(PACKAGE, "offline")
     shared = PACKAGE / "tests" / "common" / "test_backend_contract_unit.py"
-    legacy = PACKAGE / "tests" / "common" / "test_legacy_backend_unit.py"
+    legacy = PACKAGE / "tests" / "common" / "test_core_python_backend_unit.py"
     assert shared in files
     assert legacy not in files
     assert runner.declared_tests(shared) == {
@@ -330,8 +331,8 @@ def test_offline_inventory_keeps_shared_backend_contracts_not_legacy_rust():
     }
 
 
-def test_required_guard_allows_only_explicit_legacy_parameter_exclusions_rust(tmp_path):
-    path = PACKAGE / "tests" / "create_item" / "sync" / "test_legacy_variants.py"
+def test_required_guard_allows_only_explicit_core_python_parameter_exclusions_rust(tmp_path):
+    path = PACKAGE / "tests" / "create_item" / "sync" / "test_input_variants.py"
     guard = runner.RequiredCoverage([path], tmp_path)
     legacy = SimpleNamespace(path=path, callspec=SimpleNamespace(params={"backend": "core-python"}))
     rust = SimpleNamespace(path=path, callspec=SimpleNamespace(params={"backend": "rust"}))

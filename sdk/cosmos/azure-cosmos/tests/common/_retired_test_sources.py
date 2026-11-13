@@ -267,6 +267,23 @@ RETIRED_QUERY_SOURCES = {
     for method in methods
 }
 
+# Original class markers at ed9fa78ef7b2e550e94da3448cda13a9f84bd58f.
+# These retired query methods had no additional method or module lane markers.
+_QUERY_ORIGINAL_CLASS_MARKERS = {
+    "tests/test_query.py": ("cosmosCircuitBreaker", "cosmosQuery", "cosmosAADQuery"),
+    "tests/test_query_async.py": ("cosmosCircuitBreaker", "cosmosQuery", "cosmosAADQuery"),
+    "tests/test_none_options.py": ("cosmosEmulator",),
+    "tests/test_none_options_async.py": ("cosmosEmulator",),
+    "tests/test_orderby.py": ("cosmosQuery", "cosmosAADLong"),
+    "tests/test_query_feed_range.py": ("cosmosQuery", "cosmosAADSplit"),
+    "tests/test_query_feed_range_async.py": ("cosmosQuery", "cosmosAADSplit"),
+    "tests/test_query_feed_range_multipartition.py": ("cosmosQuery",),
+    "tests/test_query_feed_range_multipartition_async.py": ("cosmosQuery", "cosmosAADQuery"),
+}
+RETIRED_QUERY_SOURCE_MARKERS = {
+    reference: frozenset(_QUERY_ORIGINAL_CLASS_MARKERS[reference.split("::")[0]]) for reference in RETIRED_QUERY_SOURCES
+}
+
 RETIRED_CONNECTION_STRING_SOURCES = {
     "tests/test_utils.py::TestsUtils.test_connection_string": (
         "tests/from_connection_string/sync/test_from_connection_string.py"
@@ -302,3 +319,30 @@ RETIRED_TEST_SOURCES = {
     **RETIRED_QUERY_SOURCES,
     **RETIRED_CONNECTION_STRING_SOURCES,
 }
+
+# Historical Source comments retain the original identifiers after name-only renames.
+RENAMED_TEST_SOURCES = {
+    "tests/test_query.py::TestQuery.test_full_pk_continuation_emits_legacy_by_default": (
+        "tests/test_query.py::TestQuery.test_full_pk_continuation_emits_service_token_by_default"
+    ),
+    "tests/test_query.py::TestQuery.test_full_pk_legacy_replay_resumes_same_page": (
+        "tests/test_query.py::TestQuery.test_full_pk_service_token_replay_resumes_same_page"
+    ),
+    "tests/test_query_async.py::TestQueryAsync.test_full_pk_continuation_emits_legacy_by_default_async": (
+        "tests/test_query_async.py::TestQueryAsync.test_full_pk_continuation_emits_service_token_by_default_async"
+    ),
+    "tests/test_query_async.py::TestQueryAsync.test_full_pk_legacy_replay_resumes_same_page_async": (
+        "tests/test_query_async.py::TestQueryAsync.test_full_pk_service_token_replay_resumes_same_page_async"
+    ),
+    "tests/test_query_feed_range_multipartition.py::TestFeedRangeMultiPartition.test_legacy_opaque_token_compat": (
+        "tests/test_query_feed_range_multipartition.py::TestFeedRangeMultiPartition.test_service_token_compat"
+    ),
+    (
+        "tests/test_query_feed_range_multipartition_async.py"
+        "::TestFeedRangeMultiPartitionAsync.test_legacy_opaque_token_compat_async"
+    ): (
+        "tests/test_query_feed_range_multipartition_async.py"
+        "::TestFeedRangeMultiPartitionAsync.test_service_token_compat_async"
+    ),
+}
+RETIRED_TEST_SOURCES.update(RENAMED_TEST_SOURCES)

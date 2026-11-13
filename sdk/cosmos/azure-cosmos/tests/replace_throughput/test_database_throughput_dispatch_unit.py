@@ -220,7 +220,7 @@ def test_database_read_service_failure_keeps_headers_and_skips_hook_rust(databas
 
 @pytest.mark.parametrize("fail", [False, True])
 @pytest.mark.parametrize("alias", ["request_options", "feed_options", "options"])
-def test_explicit_legacy_database_read_preserves_owned_data_rust(database_read, fail, alias):
+def test_explicit_core_python_database_read_preserves_owned_data_rust(database_read, fail, alias):
     invoke, database, recording, _ = database_read
     from azure.cosmos._backend.legacy import LEGACY_BACKEND
     from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
@@ -283,7 +283,7 @@ def test_explicit_legacy_database_read_preserves_owned_data_rust(database_read, 
     {"request_options": {"initialHeaders": {"Accept": "custom"}}},
     {"timeout": 0.5},
 ])
-def test_database_read_rejects_unsupported_inputs_without_legacy_rust(database_read, kwargs):
+def test_database_read_rejects_unsupported_inputs_without_core_python_rust(database_read, kwargs):
     from unittest.mock import Mock
     from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 
@@ -502,7 +502,7 @@ def test_public_throughput_surface_has_no_offer_aliases_rust(proxy):
 
 @pytest.mark.parametrize("asynchronous", [False, True])
 @pytest.mark.parametrize("continuation", [None, "next-page"])
-def test_legacy_retry_keeps_empty_database_offer_pages_rust(asynchronous, continuation):
+def test_core_python_retry_keeps_empty_database_offer_pages_rust(asynchronous, continuation):
     from unittest.mock import MagicMock
     from azure.cosmos import _retry_utility
     from azure.cosmos.aio import _retry_utility_async
@@ -722,7 +722,7 @@ def test_async_replace_throughput_routes_both_legs_to_rust(monkeypatch: pytest.M
 # --- explicitly selected comparison backend ------------------------------
 
 
-def test_sync_explicit_legacy_get_throughput_preserves_options_rust(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_sync_explicit_core_python_get_throughput_preserves_options_rust(monkeypatch: pytest.MonkeyPatch) -> None:
     """The separately selected legacy Python path remains available for comparison."""
     monkeypatch.setattr(
         "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_get_throughput",
@@ -747,7 +747,7 @@ def test_sync_explicit_legacy_get_throughput_preserves_options_rust(monkeypatch:
     assert seen["query"]["parameters"][0]["value"] == "dbs/db/"
 
 
-def test_sync_explicit_legacy_replacement_applies_options_to_both_legs_rust(
+def test_sync_explicit_core_python_replacement_applies_options_to_both_legs_rust(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """The isolated reference receives owned options on both legs."""
@@ -783,7 +783,7 @@ def test_sync_explicit_legacy_replacement_applies_options_to_both_legs_rust(
     assert replace_kwargs["sent_throughput"] == 500
 
 
-def test_async_explicit_legacy_replacement_applies_options_to_both_legs_rust(
+def test_async_explicit_core_python_replacement_applies_options_to_both_legs_rust(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Async replacement options continue to reach both operations."""
@@ -880,7 +880,7 @@ def test_async_replace_throughput_uses_consistent_not_found_wording_rust(
 # --- async-specific regression cases --------------------------------------
 
 
-def test_async_explicit_legacy_get_throughput_preserves_options_rust(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_async_explicit_core_python_get_throughput_preserves_options_rust(monkeypatch: pytest.MonkeyPatch) -> None:
     """The separately selected legacy Python path remains available for comparison."""
     monkeypatch.setattr(
         "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_get_throughput",

@@ -22,6 +22,7 @@ import pytest
 from azure.core.credentials import AccessToken
 
 import azure.cosmos.cosmos_client as sync_client
+import azure.cosmos._cosmos_client_connection as sync_connection
 import azure.cosmos.aio._cosmos_client as async_client
 from azure.cosmos._backend import binding_adapter as sync_backend
 from azure.cosmos.aio._backend import binding_adapter as async_backend
@@ -54,6 +55,119 @@ def close_backend(backend):
     result = backend.close()
     if inspect.isawaitable(result):
         asyncio.run(result)
+
+
+@pytest.mark.parametrize("enter", [False, True])
+def test_sync_rust_client_never_constructs_unused_python_pipeline_rust(monkeypatch, enter):
+    factory = MagicMock(side_effect=AssertionError("unused Python pipeline constructed"))
+    monkeypatch.setattr(sync_connection, "PipelineClient", factory)
+    client = sync_client.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust")
+    try:
+        if enter:
+            with client:
+                assert "pipeline_client" not in vars(client.client_connection)
+    finally:
+        client.close()
+        client.close()
+    factory.assert_not_called()
+    assert "pipeline_client" not in vars(client.client_connection)
+    assert client._adapter._closing
+    assert client.client_connection._routing_map_provider._released
+
+
+def test_sync_rust_context_error_closes_without_constructing_pipeline_rust(monkeypatch):
+    factory = MagicMock(side_effect=AssertionError("unused Python pipeline constructed"))
+    monkeypatch.setattr(sync_connection, "PipelineClient", factory)
+    client = sync_client.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust")
+    error = RuntimeError("customer block failed")
+    with pytest.raises(RuntimeError) as caught:
+        with client:
+            raise error
+    assert caught.value is error
+    factory.assert_not_called()
+    assert client._adapter._closing
+    assert client.client_connection._routing_map_provider._released
+
+
+def test_sync_rust_construction_failure_does_not_construct_pipeline_rust(monkeypatch):
+    factory = MagicMock(side_effect=AssertionError("unused Python pipeline constructed"))
+    error = RuntimeError("routing setup failed")
+    monkeypatch.setattr(sync_connection, "PipelineClient", factory)
+    monkeypatch.setattr(
+        sync_connection.routing_map_provider, "SmartRoutingMapProvider", MagicMock(side_effect=error),
+    )
+    with pytest.raises(RuntimeError) as caught:
+        sync_client.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust")
+    assert caught.value is error
+    factory.assert_not_called()
+
+
+def test_sync_deferred_pipeline_is_created_once_on_retained_request_rust(monkeypatch):
+    pipeline = MagicMock()
+    factory = MagicMock(return_value=pipeline)
+    request = MagicMock(return_value=({}, {}))
+    monkeypatch.setattr(sync_connection, "PipelineClient", factory)
+    monkeypatch.setattr(sync_connection.synchronized_request, "SynchronizedRequest", request)
+    with sync_client.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust") as client:
+        factory.assert_not_called()
+        for _ in range(2):
+            client.client_connection.GetDatabaseAccount()
+        assert client.client_connection.pipeline_client is pipeline
+        factory.assert_called_once()
+        assert request.call_count == 2
+        assert request.call_args.kwargs["pipeline_client"] is pipeline
+    pipeline.__exit__.assert_called_once()
+
+
+def test_sync_deferred_pipeline_construction_failure_is_not_cached_rust(monkeypatch):
+    pipeline = MagicMock()
+    error = RuntimeError("pipeline construction failed")
+    factory = MagicMock(side_effect=[error, pipeline])
+    monkeypatch.setattr(sync_connection, "PipelineClient", factory)
+    client = sync_client.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust")
+    try:
+        with pytest.raises(RuntimeError) as caught:
+            _ = client.client_connection.pipeline_client
+        assert caught.value is error
+        assert "pipeline_client" not in vars(client.client_connection)
+        assert client.client_connection.pipeline_client is pipeline
+        assert factory.call_count == 2
+    finally:
+        client.close()
+    pipeline.__exit__.assert_called_once()
+
+
+def test_sync_deferred_pipeline_is_shared_across_threads_rust(monkeypatch):
+    pipeline = MagicMock()
+    factory = MagicMock(return_value=pipeline)
+    monkeypatch.setattr(sync_connection, "PipelineClient", factory)
+    ready = threading.Barrier(4)
+    with sync_client.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust") as client:
+        factory.assert_not_called()
+
+        def get_pipeline():
+            ready.wait(timeout=5)
+            return client.client_connection.pipeline_client
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+            futures = [executor.submit(get_pipeline) for _ in range(4)]
+            assert all(future.result(timeout=5) is pipeline for future in futures)
+        factory.assert_called_once()
+    pipeline.__exit__.assert_called_once()
+
+
+def test_sync_core_python_pipeline_preserves_eager_startup_and_context_rust(monkeypatch):
+    pipeline = MagicMock()
+    factory = MagicMock(return_value=pipeline)
+    setup = MagicMock()
+    monkeypatch.setattr(sync_connection, "PipelineClient", factory)
+    monkeypatch.setattr(sync_connection.CosmosClientConnection, "_setup", setup)
+    client = sync_client.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="core-python")
+    factory.assert_called_once()
+    setup.assert_called_once()
+    with client:
+        pipeline.__enter__.assert_called_once()
+    pipeline.__exit__.assert_called_once()
 
 
 @pytest.mark.parametrize("enter", [False, True])
@@ -252,7 +366,7 @@ def test_factory_keeps_credential_guard_active_through_construction_rust(monkeyp
 
 @pytest.mark.parametrize("value", [-1, True, 1.5, "3", 2**32])
 @pytest.mark.parametrize("nested", [False, True])
-def test_invalid_retry_counts_fail_before_legacy_startup_rust(module, value, nested):
+def test_invalid_retry_counts_fail_before_core_python_startup_rust(module, value, nested):
     """A retry count that is not a whole number of attempts is refused before anything is
     started or reserved.
 

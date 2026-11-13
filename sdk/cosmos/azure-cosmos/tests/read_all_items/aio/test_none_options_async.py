@@ -34,9 +34,9 @@ KEY = os.environ.get(
 class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
+        self.client = CosmosClient(HOST, KEY, _backend="rust", timeout=30)
         await self.client.__aenter__()
-        self._db_id = "legacy_read_all_none_opts_async_" + uuid.uuid4().hex[:8]
+        self._db_id = "rust_read_all_none_opts_async_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
         self.database = await self.client.create_database(self._db_id)
         self.container = await self.database.create_container(
@@ -47,9 +47,8 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         try:
             await self.client.delete_database(self._db_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
-        await self.client.close()
+        finally:
+            await self.client.close()
 
     async def _create_sample_item(self):
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}
@@ -83,4 +82,3 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
         )
         items = [item async for item in pager]
         assert len(items) >= 1
-

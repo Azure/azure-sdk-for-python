@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! Share CosmosDriver lookup, waiting, and result conversion across binding calls.
+//! Share driver-reference retention, waiting, and result conversion across binding calls.
 //!
-//! For example, an item read retains the CosmosDriver named by its driver handle.
+//! For example, an item read retains the CosmosDriver owned by its driver handle.
 //! The sync path waits on the calling thread with Python's global interpreter
 //! lock (GIL) released. The async path schedules work on the Tokio runtime and
 //! returns a Python awaitable. Both convert the result with the GIL held.
@@ -19,7 +19,7 @@ use pyo3::types::PyTuple;
 use azure_data_cosmos_driver::driver::CosmosDriver;
 
 use super::diagnostics::BINDING_OP_COUNT;
-use super::{lookup_driver, AbortOnDrop};
+use super::AbortOnDrop;
 use crate::runtime::require_runtime_context;
 
 /// Convert a Rust driver result into the binding response tuple returned to Python.
@@ -49,7 +49,7 @@ where
     )
 }
 
-/// Prepare after driver lookup, preserving synchronous validation errors.
+/// Retain the handle's driver before preparation, preserving synchronous validation errors.
 pub(super) fn run_prepared_driver_operation_sync<'py, R, F, Fut>(
     py: Python<'py>,
     driver_handle: &crate::runtime::DriverHandle,
@@ -63,7 +63,7 @@ where
     R: Send,
 {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
+    let driver = driver_handle.driver();
     let future = prepare(driver)?;
     let runtime_ctx = require_runtime_context(operation_name)?;
     let response_result = py.allow_threads(|| runtime_ctx.tokio_rt.block_on(future));
@@ -108,7 +108,7 @@ where
     R: Send + 'static,
 {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
+    let driver = driver_handle.driver();
     let future = prepare(driver)?;
     let runtime_ctx = require_runtime_context(operation_name)?;
     let join = runtime_ctx.tokio_rt.spawn(future);

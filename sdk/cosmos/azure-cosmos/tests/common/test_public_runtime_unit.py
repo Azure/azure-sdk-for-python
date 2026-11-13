@@ -6,8 +6,9 @@ from dataclasses import FrozenInstanceError, asdict, replace
 import gc
 import inspect
 import threading
+from types import SimpleNamespace
 import weakref
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -161,7 +162,7 @@ def runtime_for_rejection():
     )
     for value in values
 ])
-def test_legacy_client_network_overrides_are_rejected_rust(
+def test_core_python_client_network_overrides_are_rejected_rust(
     client_type, factory_path, from_connection_string, include_runtime,
     setting, value, runtime_for_rejection, monkeypatch,
 ):
@@ -183,7 +184,7 @@ def test_legacy_client_network_overrides_are_rejected_rust(
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
-def test_legacy_connection_alias_explains_conversion_to_runtime_seconds_rust(client_type):
+def test_core_python_connection_alias_explains_conversion_to_runtime_seconds_rust(client_type):
     with pytest.raises(TypeError) as caught:
         client_type("https://runtime.invalid", "key", _backend="rust", request_timeout=5000)
     message = str(caught.value)
@@ -278,35 +279,62 @@ def test_invalid_runtime_is_rejected_rust(client_type):
         client_type("https://runtime.invalid", "key", runtime=CosmosRuntime.create(), _backend="core-python")
 
 
-def test_async_close_cannot_switch_an_acquisition_to_default_runtime_rust(monkeypatch):
+@pytest.mark.parametrize("credential_kind", ["account_key", "sync_token", "async_token"])
+def test_async_close_cannot_switch_an_acquisition_to_default_runtime_rust(monkeypatch, credential_kind):
     from azure.cosmos.aio._backend.binding_adapter import AsyncBindingAdapter
 
     async def run():
         runtime = await CosmosRuntime.create_async()
-        adapter = AsyncBindingAdapter("https://runtime.invalid", master_key="key", runtime=runtime)
+        credential = None
+        if credential_kind != "account_key":
+            credential = SimpleNamespace(get_token=AsyncMock() if credential_kind == "async_token" else MagicMock())
+        adapter = AsyncBindingAdapter(
+            "https://runtime.invalid",
+            master_key="key" if credential is None else None,
+            token_credential=credential,
+            runtime=runtime,
+        )
         entered, resume = threading.Event(), threading.Event()
         binding = MagicMock()
         binding.acquire_driver_handle.return_value = "late-driver"
+        release_lock_states = []
+
+        def record_release(_handle):
+            release_lock_states.append(
+                (
+                    adapter._driver_handle_lock.locked(),
+                    adapter._driver_acquisition_lock.locked(),
+                )
+            )
+
+        binding.release_driver_handle.side_effect = record_release
         monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", binding)
         initialize = adapter._initialize_driver
 
-        def delayed_initialize(selected_binding, selected_runtime):
+        def delayed_initialize(selected_binding, selected_runtime, **kwargs):
             entered.set()
             assert resume.wait(5), "test did not release acquisition"
-            return initialize(selected_binding, selected_runtime)
+            return initialize(selected_binding, selected_runtime, **kwargs)
 
         monkeypatch.setattr(adapter, "_initialize_driver", delayed_initialize)
         pending = asyncio.create_task(adapter._ensure_driver_handle())
         try:
             assert await asyncio.to_thread(entered.wait, 5), "acquisition did not start"
+            expected_args = adapter._acquire_driver_handle_args()
             await adapter.close()
             assert adapter._runtime is None
+            assert adapter._token_credential is None
         finally:
             resume.set()
             with pytest.raises(RuntimeError, match="closed during initialization"):
-                await pending
+                await asyncio.wait_for(pending, timeout=2)
             await adapter.close()
+        assert binding.acquire_driver_handle.call_args.args == expected_args
         assert binding.acquire_driver_handle.call_args.kwargs["runtime"] is runtime._handle
         binding.release_driver_handle.assert_called_once_with("late-driver")
+        assert release_lock_states == [(False, False)]
+        assert adapter._driver_handle is None
+        if credential is not None:
+            credential.get_token.assert_not_called()
 
     asyncio.run(run())

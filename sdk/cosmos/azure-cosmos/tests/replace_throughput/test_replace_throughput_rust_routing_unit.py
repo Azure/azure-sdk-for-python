@@ -45,7 +45,7 @@ def test_replace_gate_rust(backend, options, kwargs, expected):
 
 
 @pytest.mark.parametrize("resource_link", ["dbs/db", "dbs/db/colls/coll"])
-def test_replace_preparation_never_uses_legacy_transport_rust(monkeypatch, resource_link):
+def test_replace_preparation_never_uses_core_python_transport_rust(monkeypatch, resource_link):
     """Building a throughput replacement touches no legacy code and keeps the offer's identity.
 
     The same five legacy helpers are replaced with mocks that fail if called,

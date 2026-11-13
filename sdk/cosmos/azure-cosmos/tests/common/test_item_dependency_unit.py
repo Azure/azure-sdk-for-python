@@ -220,7 +220,7 @@ def test_rust_helper_reuse_is_context_scoped_and_does_not_retain_proxy_rust(asyn
     assert reference() is None
 
 
-def test_legacy_helpers_are_not_cached_with_a_container_bound_callback_rust(point_read):
+def test_core_python_helpers_are_not_cached_with_a_container_bound_callback_rust(point_read):
     """On the legacy path a fresh helper is built each time and nothing is cached.
 
     The legacy helper holds a callback tied to its container, so keeping one
@@ -331,7 +331,7 @@ def call_target(proxy, operation, item, **kwargs):
     for target_kind in ("id", "mapping", "address-only")
     if operation != "replace_item" or target_kind != "address-only"
 ])
-def test_links_are_built_only_for_legacy_and_mapping_fields_are_read_once_rust(
+def test_links_are_built_only_for_core_python_and_mapping_fields_are_read_once_rust(
     point_read, monkeypatch, operation, target_kind
 ):
     """Only the legacy path builds an item link, and an item passed as a set of values has
@@ -450,7 +450,7 @@ def test_mapping_validation_still_precedes_item_io_rust(
     assert point_read.native_calls == 0
 
 
-def test_rust_preparation_retains_no_legacy_address_rust():
+def test_rust_preparation_retains_no_core_python_address_rust():
     """Preparation for the Rust path drops the legacy address entirely, even when one was
     supplied.
 

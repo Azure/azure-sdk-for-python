@@ -38,7 +38,7 @@ class TestServiceRequestRetryPolicies(unittest.TestCase):
 
         # 1. Get write regions and ensure there are at least 2 for this test.
         endpoint_manager = self.client.client_connection._global_endpoint_manager
-        db_account = self.client.get_database_account()
+        db_account = self.client.client_connection.GetDatabaseAccount()
         endpoint_manager.refresh_endpoint_list(db_account)
 
         write_locations_map = endpoint_manager.location_cache.account_locations_by_write_endpoints
@@ -92,5 +92,4 @@ class TestServiceRequestRetryPolicies(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
 

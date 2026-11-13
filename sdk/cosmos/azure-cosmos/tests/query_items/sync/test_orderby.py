@@ -24,6 +24,8 @@ from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos import _query_iterable as query_iterable
 
 
+@pytest.mark.cosmosQuery
+@pytest.mark.cosmosAADLong
 class TestCrossPartitionTopOrderBy(unittest.TestCase):
     def setUp(self):
         self.client = CosmosClient(
@@ -56,7 +58,6 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
         self.client.delete_database(self.database_id)
         print(f"\nDeleted owned TOP database: {self.database_id}")
 
-    @pytest.mark.cosmosEmulator
     # Known gap 30: query_items remaining query, paging, and continuation-token gaps (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-top-page-size).
     @pytest.mark.skip(
         reason=(
@@ -132,8 +133,6 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
         with self.assertRaises(StopIteration):
             next(page_iter)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADLong
     def test_orderby_query_rust(self):
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_orderby_query
         # test a simple order by query
@@ -151,8 +150,6 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
         # validates the results size and order
         self.execute_query_and_validate_results(query, expected_ordered_ids)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADLong
     def test_orderby_query_as_string_rust(self):
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_orderby_query_as_string
         # test a simple order by query as string
@@ -168,8 +165,6 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
         # validates the results size and order
         self.execute_query_and_validate_results(query, expected_ordered_ids)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADLong
     def test_orderby_asc_query_rust(self):
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_orderby_asc_query
         # test an order by query with explicit ascending ordering
@@ -187,8 +182,6 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
         # validates the results size and order
         self.execute_query_and_validate_results(query, expected_ordered_ids)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADLong
     def test_orderby_desc_query_rust(self):
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_orderby_desc_query
         # test an order by query with explicit descending ordering
@@ -206,8 +199,6 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
         # validates the results size and order
         self.execute_query_and_validate_results(query, expected_ordered_ids)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADLong
     def test_orderby_top_query_less_results_than_top_counts_rust(self):
         # pylint: disable-next=line-too-long
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_orderby_top_query_less_results_than_top_counts
@@ -229,8 +220,6 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
 
         self.execute_query_and_validate_results(query, expected_ordered_ids)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADLong
     def test_top_query_rust(self):
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_top_query
         # test a simple top query without order by.
@@ -270,8 +259,6 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
         }
         self.execute_query_and_validate_results(query, expected_ordered_ids)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADLong
     def test_top_query_as_string_rust(self):
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_top_query_as_string
         # test a simple top query without order by.
@@ -309,8 +296,6 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
         query = 'SELECT top %d * FROM root r' % len(expected_ordered_ids)  # nosec
         self.execute_query_and_validate_results(query, expected_ordered_ids)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADLong
     def test_parametrized_top_query_rust(self):
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_parametrized_top_query
         # test a simple parameterized query without order by.
@@ -354,8 +339,6 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
         }
         self.execute_query_and_validate_results(query, expected_ordered_ids)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADLong
     def test_orderby_query_with_parametrized_top_rust(self):
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_orderby_query_with_parametrized_top
         # test an order by query combined with parametrized top
@@ -380,8 +363,6 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
 
         self.execute_query_and_validate_results(query, expected_ordered_ids)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADLong
     def test_orderby_query_with_parametrized_predicate_rust(self):
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_orderby_query_with_parametrized_predicate
         # test an order by query combined with parametrized predicate
@@ -404,8 +385,6 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
 
         self.execute_query_and_validate_results(query, expected_ordered_ids)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADLong
     def test_orderby_query_noncomparable_orderby_item_rust(self):
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_orderby_query_noncomparable_orderby_item
         # Known gap 30 item 10: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30
@@ -432,10 +411,9 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
             self.fail('non comparable order by items did not result in failure.')
         except ValueError as e:
             self.assertTrue(
-                e.args[0] == "Expected String, but got Number." or e.message == "Expected Number, but got String.")
+                e.args[0] == "Expected String, but got Number." or e.args[0] == "Expected Number, but got String."
+            )
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADLong
     def test_orderby_integer_query_rust(self):
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_orderby_integer_query
         # an order by integer query
@@ -451,8 +429,6 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
         # validates the results size and order
         self.execute_query_and_validate_results(query, expected_ordered_ids)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADLong
     def test_orderby_floating_point_number_query_rust(self):
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_orderby_floating_point_number_query
         # an orderby by floating point number query
@@ -468,8 +444,6 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
         # validates the results size and order
         self.execute_query_and_validate_results(query, expected_ordered_ids)
 
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADLong
     def test_orderby_boolean_query_rust(self):
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_orderby_boolean_query
         # an orderby by floating point number query

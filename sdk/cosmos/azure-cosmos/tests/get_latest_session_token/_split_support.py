@@ -34,12 +34,19 @@ _CONTEXT_FIELDS = (
 )
 
 
+def real_split_enabled():
+    return os.environ.get(REAL_SPLIT_ENV) == "1" or (
+        os.environ.get("TF_BUILD", "").lower() == "true"
+        and os.environ.get("TESTMARKARGUMENT") in ("cosmosSplit", "cosmosAADSplit")
+    )
+
+
 def require_real_split():
     """Fail closed before constructing any client or increasing throughput."""
-    if os.environ.get(REAL_SPLIT_ENV) != "1":
+    if not real_split_enabled():
         raise unittest.SkipTest(
             "environment-gap: real split requires explicit approval; set "
-            "COSMOS_SESSION_TOKEN_REAL_SPLIT=1 to authorize 11000 RU/s"
+            "COSMOS_SESSION_TOKEN_REAL_SPLIT=1 or use the dedicated CI split lane to authorize 11000 RU/s"
         )
     if not all(os.environ.get(name) for name in ("ACCOUNT_HOST", "ACCOUNT_KEY")):
         raise unittest.SkipTest("environment-gap: real split requires ACCOUNT_HOST and ACCOUNT_KEY")
@@ -170,6 +177,45 @@ def _split_observed(ranges, parent_id):
         and len({r["id"] for r in ranges}) == 2
         and all(parent_id in r.get("parents", []) for r in ranges)
     )
+
+
+def _feed_split_observed(ranges, parent):
+    if len(ranges) != 2:
+        return False
+    children = sorted((item["Range"] for item in ranges), key=lambda item: item["min"])
+    original = parent["Range"]
+    return (
+        children[0]["min"] == original["min"]
+        and children[1]["max"] == original["max"]
+        and children[0]["max"] == children[1]["min"]
+        and children[0]["min"] < children[0]["max"] < children[1]["max"]
+    )
+
+
+def wait_for_feed_range_split(container, parent, deadline, poll_interval=5):
+    """Observe two adjacent children covering the original range via the Rust control client."""
+    while True:
+        ranges = list(container.read_feed_ranges(force_refresh=True))
+        if _feed_split_observed(ranges, parent):
+            _record("physical_ranges", "passed", child_ranges=ranges)
+            return
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise AssertionError(f"Physical split did not converge to two children: {ranges}")
+        time.sleep(min(poll_interval, remaining))
+
+
+async def wait_for_feed_range_split_async(container, parent, deadline, poll_interval=5):
+    """Async counterpart of public-range split observation."""
+    while True:
+        ranges = [item async for item in container.read_feed_ranges(force_refresh=True)]
+        if _feed_split_observed(ranges, parent):
+            _record("physical_ranges", "passed", child_ranges=ranges)
+            return
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise AssertionError(f"Physical split did not converge to two children: {ranges}")
+        await asyncio.sleep(min(poll_interval, remaining))
 
 
 def _timeout(parent_id, ranges):

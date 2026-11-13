@@ -77,7 +77,7 @@ def test_throttle_wait_accepts_driver_final_retry_and_count_limited_wait_rust(re
     (5, 0.005, 6), (5, 2.0, 3), (5, 4.8, 6), (5, 5.4, 6), (5, 10.0, 6),
     (5, 16.02, 6), (5, float("nan"), 6),
 ])
-def test_throttle_wait_rejects_wrong_count_legacy_timing_and_incorrect_driver_wait_rust(retries, elapsed, hits):
+def test_throttle_wait_rejects_wrong_count_previous_timing_and_incorrect_driver_wait_rust(retries, elapsed, hits):
     with pytest.raises(AssertionError):
         assert_throttle_wait_failure(
             exceptions.CosmosHttpResponseError(429), elapsed, hits, retries, max_retries=5,

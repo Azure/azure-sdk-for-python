@@ -1396,28 +1396,6 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
         self.key_databaseForTest.delete_container(collection.id)
 
-
-
-
-    def test_database_account_functionality(self):
-        # Validate database account functionality.
-        database_account = self.key_client.get_database_account()
-        self.assertEqual(database_account.DatabasesLink, '/dbs/')
-        self.assertEqual(database_account.MediaLink, '/media/')
-        if (HttpHeaders.MaxMediaStorageUsageInMB in
-                self.client.client_connection.last_response_headers):
-            self.assertEqual(
-                database_account.MaxMediaStorageUsageInMB,
-                self.client.client_connection.last_response_headers[
-                    HttpHeaders.MaxMediaStorageUsageInMB])
-        if (HttpHeaders.CurrentMediaStorageUsageInMB in
-                self.client.client_connection.last_response_headers):
-            self.assertEqual(
-                database_account.CurrentMediaStorageUsageInMB,
-                self.client.client_connection.last_response_headers[
-                    HttpHeaders.CurrentMediaStorageUsageInMB])
-        self.assertIsNotNone(database_account.ConsistencyPolicy['defaultConsistencyLevel'])
-
     def test_index_progress_headers(self):
         created_db = self.key_databaseForTest
         created_container = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)

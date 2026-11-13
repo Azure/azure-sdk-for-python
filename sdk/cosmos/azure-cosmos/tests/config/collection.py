@@ -166,7 +166,7 @@ LEGACY_MODULES = frozenset({
     "test_user_configs.py",
     "test_vector_policy.py",
     "test_vector_policy_async.py",
-    "common/test_legacy_backend_unit.py",
+    "common/test_core_python_backend_unit.py",
     "patch_item/sync/core_python/test_headers.py",
     "patch_item/aio/core_python/test_headers.py",
 })
@@ -181,6 +181,7 @@ LOCAL_COMPARISON_MODULES = frozenset({
 RETAINED_COMPARISON_TESTS = {
     "binding/test_binding_contract_parity.py": frozenset({
         "test_binding_rejects_invalid_timeout_with_real_handle",
+        "test_native_listing_accepts_remaining_duration_rust",
     }),
     "common/test_write_session_token_emulator.py": frozenset({
         "test_future_token_is_enforced_on_a_read_rust",
@@ -191,10 +192,10 @@ RETAINED_COMPARISON_TESTS = {
 # fake Adapters must not lose their compatibility-contract cases.
 ADAPTER_PARAMETER_MODULES = frozenset({
     "common/test_write_session_token_emulator.py",
-    "create_item/aio/test_legacy_contracts.py",
-    "create_item/aio/test_legacy_variants.py",
-    "create_item/sync/test_legacy_contracts.py",
-    "create_item/sync/test_legacy_variants.py",
+    "create_item/aio/test_contracts.py",
+    "create_item/aio/test_input_variants.py",
+    "create_item/sync/test_contracts.py",
+    "create_item/sync/test_input_variants.py",
 })
 
 

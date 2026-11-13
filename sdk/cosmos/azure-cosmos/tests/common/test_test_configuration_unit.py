@@ -82,7 +82,7 @@ def test_invalid_authentication_mode_is_not_silently_key_auth_rust():
         clients.create_data_client_for_endpoint("local", settings=settings)
 
 
-def test_legacy_config_inherits_one_set_of_resource_identifiers_rust():
+def test_original_config_inherits_one_set_of_resource_identifiers_rust():
     import test_config
 
     assert issubclass(test_config.TestConfig, TestSettings)
@@ -206,7 +206,7 @@ def test_setup_cleanup_closes_client_even_after_partial_failure_rust(monkeypatch
 
 
 @pytest.mark.parametrize("include_legacy", [False, True])
-def test_legacy_account_lookup_only_runs_for_selected_originals_rust(
+def test_original_account_lookup_only_runs_for_selected_originals_rust(
     monkeypatch, setup_module_under_test, include_legacy,
 ):
     legacy = SimpleNamespace(TestConfig=object(), initialize_legacy_account_info=Mock())
@@ -226,7 +226,7 @@ def test_legacy_account_lookup_only_runs_for_selected_originals_rust(
         legacy.initialize_legacy_account_info.assert_not_called()
 
 
-def test_legacy_resource_methods_delegate_with_legacy_overrides_rust(monkeypatch):
+def test_original_resource_methods_delegate_with_core_python_overrides_rust(monkeypatch):
     import test_config
 
     class LocalConfig(test_config.TestConfig):
@@ -267,7 +267,7 @@ assert TestSettings.TEST_DATABASE_ID
         "common.fault_resources",
     )),
 ])
-def test_maintained_copies_collect_without_legacy_configuration_rust(tmp_path, selections, blocked):
+def test_maintained_copies_collect_without_original_configuration_rust(tmp_path, selections, blocked):
     code = f"""
 import importlib.abc
 import sys

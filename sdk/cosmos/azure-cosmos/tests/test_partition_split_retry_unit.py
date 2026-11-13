@@ -1349,7 +1349,7 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         assert seen_headers[0][HttpHeaders.ReadFeedKeyType] == "EffectivePartitionKeyRange"
         assert client._routing_map_provider.get_overlapping_ranges.call_count >= 2
 
-    def test_queryfeed_feed_range_legacy_inbound_single_partition_honors_and_emits_legacy(self):
+    def test_queryfeed_feed_range_service_token_inbound_single_partition_honors_and_emits_service_token(self):
         """Legacy inbound continuation is honored when feed_range currently maps to one partition."""
         client = self._create_minimal_connection()
         client._query_compatibility_mode = client._QueryCompatibilityMode.Default
@@ -1391,7 +1391,7 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         assert seen_request_continuations == ["legacy-inbound-token"]
         assert headers.get(HttpHeaders.Continuation) == "legacy-next-token"
 
-    def test_queryfeed_feed_range_legacy_inbound_multi_partition_restarts_and_emits_v1(self):
+    def test_queryfeed_feed_range_service_token_inbound_multi_partition_restarts_and_emits_v1(self):
         """Legacy inbound continuation is ignored when scope is multi-partition; outbound becomes v=1."""
         client = self._create_minimal_connection()
         client._query_compatibility_mode = client._QueryCompatibilityMode.Default

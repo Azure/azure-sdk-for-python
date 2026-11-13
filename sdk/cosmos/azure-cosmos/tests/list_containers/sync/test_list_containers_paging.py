@@ -14,7 +14,7 @@ import pytest
 
 from azure.cosmos import CosmosClient, exceptions
 from azure.cosmos.partition_key import PartitionKey
-from common._rust_checks import run_on_rust
+from common._rust_checks import assert_live_page_headers, run_on_rust
 
 CONTAINER_COUNT = 3
 EXPECTED_IDS = ["c0", "c1", "c2"]
@@ -73,11 +73,22 @@ def test_empty_database_lists_no_containers_rust(client, empty_database_id):
 def test_one_container_per_page_returns_every_container_rust(client, populated_database_id):
     """With ``max_item_count=1`` each page holds exactly one container and the pages together hold all of them."""
     database = client.get_database_client(populated_database_id)
+    snapshots = []
 
     def target():
-        return [list(page) for page in database.list_containers(max_item_count=1).by_page()]
+        return [
+            list(page)
+            for page in database.list_containers(
+                max_item_count=1,
+                timeout=10,
+                initial_headers={"x-company-trace": "list-containers"},
+                response_hook=lambda headers, _results: snapshots.append(dict(headers)),
+            ).by_page()
+        ]
 
     pages = run_on_rust(client, target)
+    assert_live_page_headers(snapshots)
+    assert len(snapshots) == len(pages)
     assert len(pages) == CONTAINER_COUNT
     assert all(len(page) == 1 for page in pages)
     assert _ids([item for page in pages for item in page]) == EXPECTED_IDS

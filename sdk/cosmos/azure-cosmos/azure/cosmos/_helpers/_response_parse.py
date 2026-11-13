@@ -20,7 +20,7 @@ from ._exceptions import (
 )
 from ._item_context import ClientLastResponseHeaders
 from ._wire_encoding import format_ru_charge
-from .._backend.contracts import BackendResponse
+from .._backend.contracts import BackendPage, BackendResponse
 from .._cosmos_responses import CosmosDict
 from .._operation_deadline import remaining_timeout
 
@@ -28,6 +28,17 @@ from .._operation_deadline import remaining_timeout
 # an extra import for a single string.
 _REQUEST_CHARGE_HEADER = "x-ms-request-charge"
 _DIAGNOSTICS_HEADER = "x-ms-cosmos-sdk-diagnostics"
+
+
+def page_to_backend_response(page: BackendPage) -> BackendResponse:
+    """Expose a page's response fields to the shared body and error parser."""
+    return BackendResponse(
+        status_code=page.status_code,
+        sub_status=page.sub_status,
+        headers=page.headers,
+        body=page.body,
+        diagnostics=page.diagnostics,
+    )
 
 
 def with_response_header_snapshot(

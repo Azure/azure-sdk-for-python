@@ -29,14 +29,6 @@ from ._pk_extract import _retrieve_partition_key
 from ._resource_validation import validate_resource
 
 
-def validate_concurrency(value: Optional[int]) -> None:
-    if value is not None:
-        if isinstance(value, bool) or not isinstance(value, int):
-            raise TypeError("read_items max_concurrency must be a positive integer or None.")
-        if value <= 0:
-            raise ValueError("read_items max_concurrency must be positive.")
-
-
 def partition_key_components(value: Any) -> list[Any]:
     values = list(value) if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)) else [value]
     components: list[Any] = []
@@ -76,10 +68,9 @@ def partition_key_identity(value: Any) -> tuple:
 
 
 def prepare_read_items(
-    items: Any, max_concurrency: Optional[int], kwargs: dict[str, Any]
+    items: Any, kwargs: dict[str, Any]
 ) -> tuple[list[tuple[str, Any]], Optional[float]]:
     started = time.monotonic()
-    validate_concurrency(max_concurrency)
     hook = kwargs.get("response_hook")
     if hook is not None and not callable(hook):
         raise TypeError("read_items response_hook must be callable or None.")
@@ -100,6 +91,9 @@ def prepare_read_items(
     if "request_options" not in kwargs and "feed_options" in kwargs:
         kwargs["request_options"] = kwargs.pop("feed_options")
     deadline = prepare_item_deadline(kwargs, "read_items", started)
+    inherited = kwargs.get("_item_operation_deadline")
+    if inherited is not None:
+        deadline = inherited if deadline is None else min(inherited, deadline)
     if deadline is not None:
         kwargs["_item_operation_deadline"] = deadline
     remaining_timeout(deadline)

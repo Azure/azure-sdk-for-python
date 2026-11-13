@@ -94,7 +94,7 @@ def source_files(package):
         if path.is_file() and not {"target", ".git", "__pycache__"}.intersection(path.relative_to(package).parts)
     )
     files.extend((package / "azure" / "cosmos").rglob("*.py"))
-    files.append(package / "tests" / "create_item" / "legacy_partition_key_cases.json")
+    files.append(package / "tests" / "create_item" / "partition_key_reference_cases.json")
     return sorted(set(files))
 
 

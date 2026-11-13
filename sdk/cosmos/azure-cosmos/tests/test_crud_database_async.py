@@ -22,7 +22,7 @@ import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes
+from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
 
@@ -83,8 +83,7 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        # Control-plane (key-auth): used for all database CRUD / throughput / account
-        # operations in this file. AAD data-plane tokens cannot authorize control-plane.
+        # Use the key-auth client for database operations.
         self.key_client, self.database_for_test, self.client, self.data_database_for_test = (
             test_config.TestConfig.create_test_clients_async(self.configs.TEST_DATABASE_ID))
         await self.key_client.__aenter__()
@@ -156,22 +155,6 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.key_client.delete_database(db1.id)
         await self.key_client.delete_database(db2.id)
-
-    async def test_database_account_functionality_async(self):
-        # Validate database account functionality.
-        database_account = await self.key_client._get_database_account()
-        assert database_account.DatabasesLink == '/dbs/'
-        assert database_account.MediaLink == '/media/'
-        if (HttpHeaders.MaxMediaStorageUsageInMB in
-                self.key_client.client_connection.last_response_headers):
-            assert database_account.MaxMediaStorageUsageInMB == self.key_client.client_connection.last_response_headers[
-                HttpHeaders.MaxMediaStorageUsageInMB]
-        if (HttpHeaders.CurrentMediaStorageUsageInMB in
-                self.key_client.client_connection.last_response_headers):
-            assert database_account.CurrentMediaStorageUsageInMB == self.key_client.client_connection.last_response_headers[
-                HttpHeaders.CurrentMediaStorageUsageInMB]
-        assert database_account.ConsistencyPolicy['defaultConsistencyLevel'] is not None
-
 
 
 if __name__ == '__main__':

@@ -24,7 +24,7 @@ from typing import TYPE_CHECKING, Any, Callable, Iterator, Optional, Tuple, Type
 from azure.core.exceptions import ServiceResponseError
 from azure.core.utils import CaseInsensitiveDict
 
-from ._binding_conversions import acquire_driver_handle_args
+from ._binding_conversions import acquire_driver_handle_args, metadata_exception_from_binding
 from .contracts import PreparedClientConfig, PreparedPageRequest, PreparedRequest
 from .errors import PagePreflightError, UnsupportedQueryError
 from .operations import get_page_binding_function_name
@@ -198,6 +198,26 @@ def validate_page_request(
         raise PagePreflightError(
             f"{backend_name}.execute_pages does not yet support op={prepared.op!r}."
         )
+
+
+def release_driver_handle_quietly(driver_handle: _DriverHandle, binding: Any) -> None:
+    """Release one cache acquisition without exposing handles in cleanup errors.
+
+    Other handles and in-flight operations can still retain the same driver.
+
+    :param driver_handle: Owning handle whose cache acquisition should be released.
+    :type driver_handle: ~azure.cosmos._rust._DriverHandle
+    :param binding: Binding module that exports ``release_driver_handle``, if available.
+    :type binding: typing.Any
+    """
+    release = getattr(binding, "release_driver_handle", None)
+    if release is None:
+        return
+    try:
+        release(driver_handle)
+    except Exception:  # pylint: disable=broad-except
+        # Binding exception text can contain the handle too.
+        _LOGGER.debug("Failed releasing the driver handle")
 
 
 def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
@@ -381,13 +401,19 @@ class BindingAdapterShared:
 
         This method returns the handle without storing it or executing the pending
         operation. The caller coordinates with close to store or release the handle.
+        Account metadata failures use the same error conversion as container metadata.
         """
         configure_packaged_query_plan_interop(binding)
         # A background acquisition retains its inputs even if close clears the adapter.
         args = self._acquire_driver_handle_args() if acquisition_args is None else acquisition_args
-        if runtime is not None:
-            return binding.acquire_driver_handle(*args, runtime=runtime._handle)
-        return binding.acquire_driver_handle(*args)
+        try:
+            if runtime is not None:
+                return binding.acquire_driver_handle(*args, runtime=runtime._handle)
+            return binding.acquire_driver_handle(*args)
+        except _binding_error_type(binding, "_DriverResponseError") as exc:
+            raise metadata_exception_from_binding(exc) from exc
+        except driver_transport_error_type(binding) as exc:
+            raise ServiceResponseError(message=str(exc)) from exc
 
     def _acquire_driver_handle_args(self) -> tuple[Any, ...]:
         """Build the same driver-handle acquisition arguments for both client types."""

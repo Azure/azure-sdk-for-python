@@ -32,8 +32,8 @@ KEY = os.environ.get(
 class TestNoneOptions(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
-        self._db_id = "legacy_read_all_none_opts_" + uuid.uuid4().hex[:8]
+        self.client = CosmosClient(HOST, KEY, _backend="rust", timeout=30)
+        self._db_id = "rust_read_all_none_opts_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
         self.database = self.client.create_database(self._db_id)
         self.container = self.database.create_container(
@@ -44,8 +44,8 @@ class TestNoneOptions(unittest.TestCase):
     def tearDown(self) -> None:
         try:
             self.client.delete_database(self._db_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
+        finally:
+            self.client.close()
 
     def _create_sample_item(self):
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}
@@ -79,4 +79,3 @@ class TestNoneOptions(unittest.TestCase):
         )
         items = list(pager)
         assert len(items) >= 1
-

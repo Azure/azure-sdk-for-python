@@ -38,7 +38,8 @@ from .._routing.routing_range import Range
 from .._telemetry import trace_operation
 from ..exceptions import CosmosHttpResponseError
 from ._partition_key import query_partition_key_components
-from ._read_all_items import ReadAllConfig, ReadAllPageState
+from ._read_all_items import ReadAllConfig
+from ._feed_paging import FeedPageState
 from ._read_items import partition_key_components
 from ._wire_encoding import serialize_body_to_bytes
 from ._request_settings import normalize_query_specification
@@ -263,7 +264,7 @@ class QueryConfig(ReadAllConfig):
         )
 
 
-class QueryPageState(ReadAllPageState):
+class QueryPageState(FeedPageState):
     """Track pending progress separately from the last delivered continuation token.
 
     A fetch may advance self.token through empty pages. Only accept() publishes

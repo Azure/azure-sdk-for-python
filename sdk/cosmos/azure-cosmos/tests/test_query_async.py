@@ -301,7 +301,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         self._delete_container_for_test(container_id)
 
-    async def test_full_pk_continuation_emits_legacy_by_default_async(self):
+    async def test_full_pk_continuation_emits_service_token_by_default_async(self):
         """Full partition-key queries return legacy continuation tokens by default."""
         # The token is the legacy (opaque) form, not the new feed-range token: _decode_token
         # returns None only for the legacy form. Without this, changing the default token format
@@ -323,7 +323,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert _decode_token(token) is None
 
 
-    async def test_full_pk_legacy_replay_resumes_same_page_async(self):
+    async def test_full_pk_service_token_replay_resumes_same_page_async(self):
         # Replaying that legacy continuation token must resume on the same next page. Without
         # this, a regression in legacy-token replay would drop or repeat results for customers
         # who page through query results.

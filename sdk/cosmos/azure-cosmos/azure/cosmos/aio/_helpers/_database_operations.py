@@ -34,6 +34,7 @@ from ..._constants import _Constants as Constants
 from ..._cosmos_responses import CosmosDict
 from ..._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options, remaining_timeout, run_with_deadline
 from ..._helpers._item_context import ClientLastResponseHeaders
+from ..._helpers._resource_validation import validate_resource
 from ..._helpers._request_database import (
     build_create_database_prepared,
     build_delete_database_prepared,
@@ -233,6 +234,7 @@ class AsyncDatabaseHelper:
         copies of the final headers and properties. Changes made by the hook
         do not change the result returned to the customer app.
         """
+        validate_resource(database)
         if response_hook is not None and not callable(response_hook):
             raise TypeError("create_database_if_not_exists response_hook must be callable or None.")
         hook = with_response_header_snapshot(response_hook, copy_body=True)

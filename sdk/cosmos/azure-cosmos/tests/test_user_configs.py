@@ -65,7 +65,7 @@ class TestUserConfigs(unittest.TestCase):
     def test_default_account_consistency(self):
         database_id = test_config.unique_database_id("user-config")
         container_id = "PythonSDKTestContainer-" + str(uuid.uuid4())
-        database_account = self.key_client.get_database_account()
+        database_account = self.key_client.client_connection.GetDatabaseAccount()
         account_consistency_level = database_account.ConsistencyPolicy["defaultConsistencyLevel"]
         self.assertEqual(account_consistency_level, "Session")
 
@@ -95,7 +95,7 @@ class TestUserConfigs(unittest.TestCase):
                                                                  credential=TestConfig.masterKey,
                                                                  consistency_level=custom_level)
         with eventual_consistency_client:
-            database_account = eventual_consistency_client.get_database_account()
+            database_account = eventual_consistency_client.client_connection.GetDatabaseAccount()
             self.assertEqual(
                 database_account.ConsistencyPolicy["defaultConsistencyLevel"],
                 account_consistency_level,

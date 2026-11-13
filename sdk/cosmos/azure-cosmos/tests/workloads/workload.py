@@ -14,6 +14,10 @@ Environment variables:
   WORKLOAD_MEASUREMENT_MANIFEST  ownership file created by profiling_restore_orders.py --initialize
   WORKLOAD_ITEM_NAMESPACE  namespace from that manifest; must be empty before a bounded write run
   WORKLOAD_DELETE_ITEM_COUNT  items prepared before bounded deletes, including warm-up (required for delete)
+  COSMOS_CONCURRENT_REQUESTS  bounded deletes continuously refill this many slots;
+                              other bounded operations require 1
+  WORKLOAD_MAINTENANCE_CONCURRENCY  owned delete preparation/cleanup concurrency,
+                                   outside measurement (default: 1)
   WORKLOAD_QUERY_MANIFEST  versioned query suite with policies, parameters and expected results
   WORKLOAD_QUERY_SCENARIO  cross_partition, aggregate, full_text, vector or hybrid (bounded async only)
 """
@@ -53,6 +57,8 @@ from workload_configs import (
     WORKLOAD_MANAGE_CLIENT_LIFECYCLE,
     WORKLOAD_READ_MEASUREMENT_SECONDS,
     WORKLOAD_MEASUREMENT_SECONDS,
+    WORKLOAD_DELETE_ITEM_COUNT,
+    WORKLOAD_MAINTENANCE_CONCURRENCY,
     WORKLOAD_QUERY_MANIFEST,
     WORKLOAD_QUERY_SCENARIO,
     WORKLOAD_USE_PROXY,
@@ -121,6 +127,9 @@ def _start_reporter(query_scenario=None):
         perf_reporting_config.update(
             report_after_load=True, measurement_seconds=_measurement_seconds(),
             measurement_operation=_measurement_operation(),
+            measurement_concurrency=CONCURRENT_REQUESTS if _measurement_operation() == "delete" else 1,
+            measurement_delete_pool=WORKLOAD_DELETE_ITEM_COUNT,
+            measurement_maintenance_concurrency=WORKLOAD_MAINTENANCE_CONCURRENCY,
         )
         if _measurement_operation() == "query":
             from workload_queries import build_identity, load_scenario
@@ -264,9 +273,30 @@ async def _run_bounded_operations(point, stats, reporter, stop_event, client_log
     deadline = loop.time() + _measurement_seconds()
     timer = loop.call_later(_measurement_seconds(), end_load)
     monitor = asyncio.create_task(_loop_lag_monitor(stats)) if WORKLOAD_LOOP_LAG_MONITOR else None
+    concurrency = CONCURRENT_REQUESTS if point.operation == "delete" else 1
+    failed = False
+
+    async def worker():
+        nonlocal failed
+        try:
+            while not stop_event.is_set() and not duration_elapsed and not failed and loop.time() < deadline:
+                succeeded = await point.run(stats)
+                if concurrency > 1 and succeeded is False:
+                    raise RuntimeError("Concurrent delete failed; measurement is incomplete")
+        except BaseException:
+            # Stop refilling other slots, but let their issued calls finish before cleanup.
+            failed = True
+            raise
+
     try:
-        while not stop_event.is_set() and not duration_elapsed and loop.time() < deadline:
-            await point.run(stats)
+        if concurrency == 1:
+            await worker()
+        else:
+            workers = [asyncio.create_task(worker()) for _ in range(concurrency)]
+            try:
+                await asyncio.gather(*workers)
+            finally:
+                await asyncio.gather(*workers, return_exceptions=True)
         if stop_event.is_set():
             raise RuntimeError(f"{name} measurement interrupted; discard this run and restart")
         reporter.finish_measurement()

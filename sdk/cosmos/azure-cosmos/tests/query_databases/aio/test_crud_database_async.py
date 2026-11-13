@@ -7,7 +7,6 @@ Copy:     tests/query_databases/aio/test_crud_database_async.py
 """
 
 import unittest
-import uuid
 
 import pytest
 
@@ -32,8 +31,8 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
         """Query databases by id with a parameterized query, a no-match filter and a plain query string."""
         # Source: tests/test_crud_database_async.py::TestCRUDDatabaseOperationsAsync.test_sql_query_crud_async
         # create two databases.
-        db1 = await self.key_client.create_database('database 1' + str(uuid.uuid4()))
-        db2 = await self.key_client.create_database('database 2' + str(uuid.uuid4()))
+        db1 = await self.key_client.create_database(settings.unique_database_id("db1"))
+        db2 = await self.key_client.create_database(settings.unique_database_id("db2"))
 
         # query with parameters.
         databases = [database async for database in self.key_client.query_databases(

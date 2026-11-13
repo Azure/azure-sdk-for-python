@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! Binding functions for stateless item-query and read-all page fetching.
+//! Binding functions for stateless item-query page fetching.
 //!
 //! Each call fetches one page without retaining a feed cursor between calls.
 //! Public retained paging uses fetch_page_with_cursor in wire/item_feed.rs.
@@ -39,30 +39,6 @@ pub(crate) fn query_items<'py>(
     )
 }
 
-/// Stateless `read_all_items`: a supplied partition key selects read-feed;
-/// whole-container scope selects `SELECT * FROM root r`. This is separate from
-/// the retained-paging path used for public feed iteration.
-#[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
-pub(crate) fn read_all_items<'py>(
-    py: Python<'py>,
-    driver_handle: &Bound<'_, PyAny>,
-    prepared: &Bound<'py, PyAny>,
-    timeout_seconds: Option<f64>,
-) -> PyResult<Bound<'py, PyTuple>> {
-    super::validate_prepared_operation(prepared, "read_all_items")?;
-    let (container_link, partition_key, modifiers) = extract_read_all_inputs(prepared)?;
-    run_read_all_items_operation(
-        py,
-        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
-        &container_link,
-        partition_key,
-        modifiers,
-        "read_all_items",
-        timeout_seconds,
-    )
-}
-
 /// Async twin of `query_items`.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
@@ -82,29 +58,6 @@ pub(crate) fn query_items_async<'py>(
         modifiers,
         body_bytes,
         "query_items",
-        timeout_seconds,
-    )
-}
-
-/// Async twin of `read_all_items`: identical inputs/driver work; returns a Python
-/// awaitable instead of a ready tuple.
-#[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
-pub(crate) fn read_all_items_async<'py>(
-    py: Python<'py>,
-    driver_handle: &Bound<'_, PyAny>,
-    prepared: &Bound<'py, PyAny>,
-    timeout_seconds: Option<f64>,
-) -> PyResult<Bound<'py, PyAny>> {
-    super::validate_prepared_operation(prepared, "read_all_items")?;
-    let (container_link, partition_key, modifiers) = extract_read_all_inputs(prepared)?;
-    run_read_all_items_operation_async(
-        py,
-        &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
-        &container_link,
-        partition_key,
-        modifiers,
-        "read_all_items",
         timeout_seconds,
     )
 }

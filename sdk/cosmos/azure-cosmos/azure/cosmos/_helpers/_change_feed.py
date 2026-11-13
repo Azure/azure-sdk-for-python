@@ -52,7 +52,7 @@ from ._partition_key import (
     serialize_partition_key_for_continuation,
 )
 from .._backend.partition_key_input import BindingPartitionKey
-from ._read_all_items import ReadAllConfig, ReadAllPageState
+from ._feed_paging import FeedConfig, FeedPageState
 from ._response_parse import process_backend_response
 
 _PREFIX = "cf1."
@@ -167,7 +167,7 @@ def _settings(values: dict[str, Any], *, rust: bool) -> dict[str, Any]:
     return result
 
 
-class ChangeFeedConfig(ReadAllConfig):
+class ChangeFeedConfig(FeedConfig):
     def __init__(self, proxy: Any, kwargs: dict[str, Any]) -> None:
         self.requested = {key: deepcopy(kwargs.pop(key)) for key in _SETTINGS if key in kwargs}
         for key, replacement in (
@@ -180,7 +180,13 @@ class ChangeFeedConfig(ReadAllConfig):
                     DeprecationWarning,
                     stacklevel=4,
                 )
-        super().__init__(proxy, kwargs, operation=OP_QUERY_ITEMS_CHANGE_FEED)
+        self.connection = proxy.client_connection
+        context = proxy._item_context
+        backend = context.adapter if context is not None else self.connection._backend
+        super().__init__(
+            proxy, kwargs, operation=OP_QUERY_ITEMS_CHANGE_FEED,
+            backend=backend, retained=backend.name != "core-python",
+        )
         self.path = _base.GetPathFromLink(proxy.container_link, http_constants.ResourceType.Document)
         self.collection_id = _base.GetResourceIdOrFullNameFromLink(proxy.container_link)
         if self.rust:
@@ -272,7 +278,7 @@ class ChangeFeedConfig(ReadAllConfig):
         return _settings({"mode": saved["mode"]}, rust=False), token
 
 
-class ChangeFeedPageState(ReadAllPageState):
+class ChangeFeedPageState(FeedPageState):
     """Retain the feed settings, inner continuation token, and polling progress."""
 
     config: ChangeFeedConfig
@@ -284,6 +290,7 @@ class ChangeFeedPageState(ReadAllPageState):
         token: Optional[str],
     ) -> None:
         super().__init__(config, headers, token)
+        self.legacy_options: dict[str, Any] = {}
         self.settings, self.inner_token = config.resolve(token)
         self.fetcher: Any = None
         self.initial_time_poll = self.inner_token is None and self.settings["start"] not in ("Now", "Beginning")
@@ -380,11 +387,11 @@ class ChangeFeedPageState(ReadAllPageState):
         return rows
 
     def finish(
-        self, rows: list[dict[str, Any]], deadline: Optional[float]
+        self, rows: list[dict[str, Any]], deadline: Optional[float], *, notify_hook: bool = True
     ) -> tuple[Optional[str], list[dict[str, Any]]]:
         if self.token is not None:
             self.accumulated.headers["etag"] = self.token
-        result = super().finish(rows, deadline)
+        result = super().finish(rows, deadline, notify_hook=notify_hook)
         self.done = not rows
         if self.done:
             self.cursor = None

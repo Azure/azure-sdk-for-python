@@ -138,7 +138,7 @@ def test_header_policies_remain_distinct_rust():
 
 
 @pytest.mark.parametrize("resource_link", ["dbs/db", "/dbs/db/colls/coll/"])
-def test_offer_read_preparation_never_uses_legacy_transport_rust(monkeypatch, resource_link):
+def test_offer_read_preparation_never_uses_core_python_transport_rust(monkeypatch, resource_link):
     """Building an offer read touches no legacy code and resolves every header conflict correctly.
 
     Five legacy helpers -- header building, session token handling, the

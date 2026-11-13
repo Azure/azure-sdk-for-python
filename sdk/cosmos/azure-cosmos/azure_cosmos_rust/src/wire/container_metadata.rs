@@ -15,7 +15,7 @@ use super::deadline::{parse_remaining_timeout, with_operation_timeout};
 use super::errors::_DriverResponseError;
 use super::request::{build_operation_options, parse_container_link};
 use super::response::tuple_from_result;
-use super::{lookup_driver, AbortOnDrop};
+use super::AbortOnDrop;
 use crate::runtime::require_runtime_context;
 use azure_data_cosmos_driver::options::EndToEndOperationLatencyPolicy;
 use azure_data_cosmos_driver::{
@@ -52,7 +52,7 @@ fn metadata_result<'py>(
     }
 }
 
-pub(super) fn metadata_error(py: Python<'_>, error: CosmosError) -> PyErr {
+pub(crate) fn metadata_error(py: Python<'_>, error: CosmosError) -> PyErr {
     match tuple_from_result(py, Err(error)) {
         Ok(response) => _DriverResponseError::new_err((response.unbind(),)),
         Err(error) => error,
@@ -84,7 +84,7 @@ pub(crate) fn get_container_metadata<'py>(
         None,
         Default::default(),
     );
-    let driver = lookup_driver(driver_handle)?;
+    let driver = driver_handle.driver();
     let (database_name, container_name) = parse_container_link(container_link)?;
     let runtime_ctx = require_runtime_context("get_container_metadata")?;
     let result = py.allow_threads(|| {
@@ -111,7 +111,7 @@ pub(crate) fn get_container_metadata_async<'py>(
         None,
         Default::default(),
     );
-    let driver = lookup_driver(driver_handle)?;
+    let driver = driver_handle.driver();
     let (database_name, container_name) = parse_container_link(container_link)?;
     let runtime_ctx = require_runtime_context("get_container_metadata_async")?;
     let operation = async move {

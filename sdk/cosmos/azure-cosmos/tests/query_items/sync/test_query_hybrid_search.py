@@ -127,6 +127,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             os.environ["AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS"] = "1000"
 
     def test_hybrid_search_default_limit_rust(self):
+        # Source: (new) Default/overridden hybrid limits and real results; legacy env test only sets max to zero.
         item_vector = self.test_container.read_item("50", "1")["vector"]
         missing_limit = (
             "Executing a hybrid search query without TOP or LIMIT can consume many"

@@ -33,8 +33,8 @@ from azure.cosmos import (
 )
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._routing.feed_range_continuation import _decode_token
-from query_items._legacy_distinct_helpers import DistinctConfig, distinct_query_diagnostics
-from query_items._legacy_feed_range_helpers import create_feed_range_in_dict, create_range
+from query_items._distinct_helpers import DistinctConfig, distinct_query_diagnostics
+from query_items._feed_range_helpers import create_feed_range_in_dict, create_range
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -44,7 +44,7 @@ KEY = os.environ.get(
 )
 
 
-class TestQuery(unittest.TestCase):
+class _QueryTestCase(unittest.TestCase):
     config = DistinctConfig
 
     def setUp(self) -> None:
@@ -64,7 +64,15 @@ class TestQuery(unittest.TestCase):
         self.client.delete_database(self._db_id)
         print(f"\nDeleted owned query database: {self._db_id}")
 
-    @pytest.mark.cosmosEmulator
+    def _create_multi_partition_container(self):
+        return self.database.create_container(
+            "multi_partition_" + uuid.uuid4().hex[:8], PartitionKey(path="/pk"), offer_throughput=11000)
+
+
+@pytest.mark.cosmosCircuitBreaker
+@pytest.mark.cosmosQuery
+@pytest.mark.cosmosAADQuery
+class TestQuery(_QueryTestCase):
     def test_populate_query_metrics_rust(self):
         # Source: tests/test_query.py::TestQuery.test_populate_query_metrics
         created_collection = self.container
@@ -95,7 +103,6 @@ class TestQuery(unittest.TestCase):
         self.assertTrue(all(['=' in x for x in metrics]))
         self.database.delete_container(created_collection.id)
 
-    @pytest.mark.cosmosEmulator
     def test_populate_index_metrics_rust(self):
         # Source: tests/test_query.py::TestQuery.test_populate_index_metrics
         created_collection = self.container
@@ -138,7 +145,6 @@ class TestQuery(unittest.TestCase):
         ))
         self.database.delete_container(created_collection.id)
 
-    @pytest.mark.cosmosEmulator
     # Known gap 36: query advice is dropped by the driver's response headers on both transports (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-advice-response-header).
     @pytest.mark.skip(
         reason=(
@@ -233,7 +239,6 @@ class TestQuery(unittest.TestCase):
         self.assertIn("QA1009", query_advice)
         self.database.delete_container(created_collection.id)
 
-    @pytest.mark.cosmosEmulator
     @pytest.mark.skip(
         reason="driver-gap: Gap 30 - Rust rejects MAX queries without a partition key "
         "(HTTP 400/1004). Re-enable when the driver supports this aggregate query."
@@ -253,9 +258,6 @@ class TestQuery(unittest.TestCase):
         assert len(item_list) == 1
         assert item_list[0] == 3
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     def test_query_positional_args_rust(self):
         # Source: tests/test_query.py::TestQuery.test_query_positional_args
         container = self.container
@@ -303,7 +305,6 @@ class TestQuery(unittest.TestCase):
             assert num_items <= max_item_count
         assert ids == [item['id'] for item in new_items if item['pk'] == partition_key_value]
 
-    @pytest.mark.cosmosEmulator
     def test_query_items_with_parameters_none_rust(self):
         """Test that query_items handles parameters=None correctly (issue #43662)."""
         # Source: tests/test_query.py::TestQuery.test_query_items_with_parameters_none
@@ -356,7 +357,6 @@ class TestQuery(unittest.TestCase):
 
         self.database.delete_container(created_collection.id)
 
-    @pytest.mark.cosmosEmulator
     def test_query_pagination_with_max_item_count_rust(self):
         """Test pagination showing per-page limits and total results counting."""
         # Source: tests/test_query.py::TestQuery.test_query_pagination_with_max_item_count
@@ -410,7 +410,6 @@ class TestQuery(unittest.TestCase):
 
         self.database.delete_container(created_collection.id)
 
-    @pytest.mark.cosmosEmulator
     @pytest.mark.skip(
         reason="driver-gap: Gap 30 - For SELECT DISTINCT c[\"value\"] with ORDER BY and "
         "OFFSET LIMIT, Rust returns rows with a '$1' field instead of the requested "
@@ -468,7 +467,6 @@ class TestQuery(unittest.TestCase):
         )
         self.assertListEqual(list(map(lambda doc: doc["value"], list(query_iterable))), results)
 
-    @pytest.mark.cosmosEmulator
     def test_distinct_rust(self):
         # Source: tests/test_query.py::TestQuery.test_distinct
         distinct_field = 'distinct_field'
@@ -550,7 +548,6 @@ class TestQuery(unittest.TestCase):
             result_strings = sorted(result_strings)
         self.assertListEqual(result_strings, query_results_strings)
 
-    @pytest.mark.cosmosEmulator
     def test_partition_scoped_count_is_index_only_rust(self):
         # Source: tests/test_query.py::TestQuery.test_partition_scoped_count_is_index_only
         created_collection = self.container
@@ -602,7 +599,6 @@ class TestQuery(unittest.TestCase):
             for item_id, item_partition_key in created_items:
                 created_collection.delete_item(item_id, item_partition_key)
 
-    @pytest.mark.cosmosEmulator
     def test_paging_with_continuation_token_rust(self):
         """A continuation token replays the page that follows it.
 
@@ -639,7 +635,6 @@ class TestQuery(unittest.TestCase):
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
-    @pytest.mark.cosmosEmulator
     def test_continuation_token_size_limit_query_rust(self):
         """Preserve the original one-kilobyte token assertions on owned data."""
         # Source: tests/test_query.py::TestQuery.test_continuation_token_size_limit_query
@@ -657,72 +652,6 @@ class TestQuery(unittest.TestCase):
         token = pager.continuation_token
         self.assertLessEqual(len(token.encode('utf-8')), 1024)
 
-    @pytest.mark.cosmosEmulator
-    def test_continuation_token_limit_preserves_broad_scope_and_resume_rust(self):
-        """Forward the service limit without imposing a size cap on the SDK token."""
-        container = self._create_multi_partition_container()
-        self.assertGreater(len(list(container.read_feed_ranges())), 1)
-        expected = {f"token-limit-{i}" for i in range(7)}
-        for i in range(7):
-            container.create_item({"id": f"token-limit-{i}", "pk": f"customer-{i % 3}"})
-        full_range = {
-            "Range": {
-                "min": "",
-                "max": "FF",
-                "isMinInclusive": True,
-                "isMaxInclusive": False,
-            }
-        }
-        for scope in ({}, {"feed_range": full_range}):
-            with self.subTest(scope=scope):
-                options = dict(
-                    query="SELECT * FROM c",
-                    max_item_count=1,
-                    continuation_token_limit=1,
-                    enable_cross_partition_query=True,
-                    **scope,
-                )
-                pages = container.query_items(**options).by_page()
-                first = list(next(pages))
-                token = pages.continuation_token
-                self.assertTrue(first)
-                self.assertTrue(token)
-                resumed = container.query_items(**options).by_page(
-                    continuation_token=token
-                )
-                rows = first + [row for page in resumed for row in page]
-                self.assertEqual(len(rows), len(expected))
-                self.assertEqual({row["id"] for row in rows}, expected)
-
-    @pytest.mark.cosmosEmulator
-    def test_cross_partition_disabled_without_partition_key_matches_legacy_rust(self):
-        """Without partition_key, False runs only a query that the filter pins to one key."""
-        container = self._create_multi_partition_container()
-        self.assertGreater(len(list(container.read_feed_ranges())), 1)
-        for order_id, customer in (("order-1", "c-501"), ("order-2", "c-501"), ("order-3", "c-502")):
-            container.create_item({"id": order_id, "pk": customer})
-
-        def ids(query, **scope):
-            return sorted(row["id"] for row in container.query_items(
-                query=query, enable_cross_partition_query=False, **scope))
-
-        self.assertEqual(ids("SELECT c.id FROM c WHERE c.pk = 'c-501'"), ["order-1", "order-2"])
-        self.assertEqual(ids("SELECT c.id FROM c WHERE c.pk = 'c-501' ORDER BY c.id DESC"),
-                         ["order-1", "order-2"])
-        feed_range = container.feed_range_from_partition_key("c-501")
-        self.assertEqual(ids("SELECT c.id FROM c", feed_range=feed_range), ["order-1", "order-2"])
-        for query in (
-            "SELECT c.id FROM c",
-            "SELECT c.id FROM c WHERE c.id = 'order-1'",
-            "SELECT c.id FROM c WHERE c.pk IN ('c-501', 'c-502')",
-        ):
-            with self.subTest(query=query):
-                with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
-                    ids(query)
-                self.assertEqual(caught.exception.status_code, 400)
-                self.assertIn("Cross partition query is required but disabled", caught.exception.message)
-
-    @pytest.mark.cosmosEmulator
     def test_cross_partition_query_with_continuation_token_rust(self):
         """Original cross-partition continuation replay, using this test's isolated container."""
         # Source: tests/test_query.py::TestQuery.test_cross_partition_query_with_continuation_token
@@ -758,13 +687,6 @@ class TestQuery(unittest.TestCase):
         # Source helper: tests/test_query.py::TestQuery._delete_container_for_test
         return self.database.delete_container(*args, **kwargs)
 
-    def _create_multi_partition_container(self):
-        return self.database.create_container(
-            "multi_partition_" + uuid.uuid4().hex[:8], PartitionKey(path="/pk"), offer_throughput=11000)
-
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     def test_first_and_last_slashes_trimmed_for_query_string_rust(self):
         # Source: tests/test_query.py::TestQuery.test_first_and_last_slashes_trimmed_for_query_string
         created_collection = self._create_container_for_test(
@@ -782,9 +704,6 @@ class TestQuery(unittest.TestCase):
         self.assertEqual(iter_list[0]['id'], doc_id)
         self._delete_container_for_test(created_collection.id)
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     @pytest.mark.skip(reason="internals-only: the original is unconditionally skipped and counts requests by "
                              "patching legacy retry_utility.ExecuteFunction, which Rust never calls.")
     def test_max_item_count_honored_in_order_by_query_rust(self):
@@ -829,9 +748,6 @@ class TestQuery(unittest.TestCase):
         self.count += 1
         return self.OriginalExecuteFunction(function, *args, **kwargs)
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     def test_unsupported_queries_rust(self):
         # Source: tests/test_query.py::TestQuery.test_unsupported_queries
         # Known gap 30 item 9: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30
@@ -850,9 +766,6 @@ class TestQuery(unittest.TestCase):
             except exceptions.CosmosHttpResponseError as e:
                 self.assertEqual(e.status_code, 400)
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     def test_query_with_non_overlapping_pk_ranges_rust(self):
         # Source: tests/test_query.py::TestQuery.test_query_with_non_overlapping_pk_ranges
         created_collection = self._create_multi_partition_container()
@@ -860,9 +773,6 @@ class TestQuery(unittest.TestCase):
                                                         enable_cross_partition_query=True)
         self.assertListEqual(list(query_iterable), [])
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     def test_distinct_on_different_types_and_field_orders_rust(self):
         # Source: tests/test_query.py::TestQuery.test_distinct_on_different_types_and_field_orders
         created_collection = self._create_container_for_test(
@@ -969,10 +879,7 @@ class TestQuery(unittest.TestCase):
         else:
             raise StopIteration
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
-    def test_full_pk_continuation_emits_legacy_by_default_rust(self):
+    def test_full_pk_continuation_emits_service_token_by_default_rust(self):
         # Source: tests/test_query.py::TestQuery.test_full_pk_continuation_emits_legacy_by_default
         created_collection = self._create_multi_partition_container()
         created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
@@ -990,10 +897,7 @@ class TestQuery(unittest.TestCase):
         self.assertIsNotNone(token)
         self.assertIsNone(_decode_token(token))
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
-    def test_full_pk_legacy_replay_resumes_same_page_rust(self):
+    def test_full_pk_service_token_replay_resumes_same_page_rust(self):
         # Source: tests/test_query.py::TestQuery.test_full_pk_legacy_replay_resumes_same_page
         created_collection = self._create_multi_partition_container()
         created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
@@ -1016,9 +920,6 @@ class TestQuery(unittest.TestCase):
         replay_second_page = list(replay_pager.next())[0]
         self.assertEqual(second_page['id'], replay_second_page['id'])
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     def test_cross_partition_query_with_none_partition_key_rust(self):
         # Source: tests/test_query.py::TestQuery.test_cross_partition_query_with_none_partition_key
         created_collection = self._create_multi_partition_container()
@@ -1036,9 +937,6 @@ class TestQuery(unittest.TestCase):
 
         assert len(list(query_iterable)) >= 2
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     def test_value_max_query_rust(self):
         # Source: tests/test_query.py::TestQuery.test_value_max_query
         container = self._create_multi_partition_container()
@@ -1053,9 +951,6 @@ class TestQuery(unittest.TestCase):
                     "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-unscoped-max). The query was built.")
         self.assertListEqual(list(query_results), [None])
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     def test_query_request_params_none_retry_policy_rust(self):
         # Source: tests/test_query.py::TestQuery.test_query_request_params_none_retry_policy
         created_collection = self._create_container_for_test(
@@ -1147,9 +1042,6 @@ class TestQuery(unittest.TestCase):
                 raise ex_to_raise
         return self.OriginalExecuteFunction(function, *args, **kwargs)
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     def test_query_pagination_without_max_item_count_rust(self):
         """Test pagination behavior without specifying max_item_count."""
         # Source: tests/test_query.py::TestQuery.test_query_pagination_without_max_item_count
@@ -1182,9 +1074,6 @@ class TestQuery(unittest.TestCase):
 
         self._delete_container_for_test(created_collection.id)
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     def test_query_items_parameters_none_with_options_rust(self):
         """Test parameters=None works with various query options."""
         # Source: tests/test_query.py::TestQuery.test_query_items_parameters_none_with_options
@@ -1250,9 +1139,6 @@ class TestQuery(unittest.TestCase):
             _synchronized_request, "_PipelineRunFunction", side_effect=_wrapper,
         )
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     def test_outer_timeout_propagates_through_by_page_paging_rust(self):
         # Source: tests/test_query.py::TestQuery.test_outer_timeout_propagates_through_by_page_paging
         container = self._create_container_for_test(
@@ -1290,9 +1176,6 @@ class TestQuery(unittest.TestCase):
         finally:
             self._delete_container_for_test(container.id)
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     def test_connection_timeout_propagates_through_by_page_paging_rust(self):
         # Source: tests/test_query.py::TestQuery.test_connection_timeout_propagates_through_by_page_paging
         container = self._create_container_for_test(
@@ -1327,9 +1210,6 @@ class TestQuery(unittest.TestCase):
         finally:
             self._delete_container_for_test(container.id)
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     def test_avg_aggregate_by_page_raises_value_error_cross_partition_rust(self):
         # Source: tests/test_query.py::TestQuery.test_avg_aggregate_by_page_raises_value_error_cross_partition
         container = self._create_container_for_test(
@@ -1382,3 +1262,71 @@ class TestQuery(unittest.TestCase):
             self.assertEqual(len(single_result), 1)
         finally:
             self._delete_container_for_test(container.id)
+
+
+@pytest.mark.cosmosEmulator
+class TestQueryRegressions(_QueryTestCase):
+    def test_continuation_token_limit_preserves_broad_scope_and_resume_rust(self):
+        """Forward the service limit without imposing a size cap on the SDK token."""
+        # Source: (new) Broad-scope token-limit replay; not the legacy single-key token-size assertion.
+        container = self._create_multi_partition_container()
+        self.assertGreater(len(list(container.read_feed_ranges())), 1)
+        expected = {f"token-limit-{i}" for i in range(7)}
+        for i in range(7):
+            container.create_item({"id": f"token-limit-{i}", "pk": f"customer-{i % 3}"})
+        full_range = {
+            "Range": {
+                "min": "",
+                "max": "FF",
+                "isMinInclusive": True,
+                "isMaxInclusive": False,
+            }
+        }
+        for scope in ({}, {"feed_range": full_range}):
+            with self.subTest(scope=scope):
+                options = dict(
+                    query="SELECT * FROM c",
+                    max_item_count=1,
+                    continuation_token_limit=1,
+                    enable_cross_partition_query=True,
+                    **scope,
+                )
+                pages = container.query_items(**options).by_page()
+                first = list(next(pages))
+                token = pages.continuation_token
+                self.assertTrue(first)
+                self.assertTrue(token)
+                resumed = container.query_items(**options).by_page(
+                    continuation_token=token
+                )
+                rows = first + [row for page in resumed for row in page]
+                self.assertEqual(len(rows), len(expected))
+                self.assertEqual({row["id"] for row in rows}, expected)
+
+    def test_cross_partition_disabled_without_partition_key_matches_core_python_rust(self):
+        """Without partition_key, False runs only a query that the filter pins to one key."""
+        # Source: (new) Explicit False without partition_key: inferred-key/feed-range success and fan-out rejection.
+        container = self._create_multi_partition_container()
+        self.assertGreater(len(list(container.read_feed_ranges())), 1)
+        for order_id, customer in (("order-1", "c-501"), ("order-2", "c-501"), ("order-3", "c-502")):
+            container.create_item({"id": order_id, "pk": customer})
+
+        def ids(query, **scope):
+            return sorted(row["id"] for row in container.query_items(
+                query=query, enable_cross_partition_query=False, **scope))
+
+        self.assertEqual(ids("SELECT c.id FROM c WHERE c.pk = 'c-501'"), ["order-1", "order-2"])
+        self.assertEqual(ids("SELECT c.id FROM c WHERE c.pk = 'c-501' ORDER BY c.id DESC"),
+                         ["order-1", "order-2"])
+        feed_range = container.feed_range_from_partition_key("c-501")
+        self.assertEqual(ids("SELECT c.id FROM c", feed_range=feed_range), ["order-1", "order-2"])
+        for query in (
+            "SELECT c.id FROM c",
+            "SELECT c.id FROM c WHERE c.id = 'order-1'",
+            "SELECT c.id FROM c WHERE c.pk IN ('c-501', 'c-502')",
+        ):
+            with self.subTest(query=query):
+                with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
+                    ids(query)
+                self.assertEqual(caught.exception.status_code, 400)
+                self.assertIn("Cross partition query is required but disabled", caught.exception.message)

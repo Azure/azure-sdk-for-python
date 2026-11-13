@@ -218,7 +218,7 @@ def test_untouched_routing_policy_can_be_reused_rust(construct_client, backend):
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize("grouped", [False, True])
 @pytest.mark.parametrize("discovery,multi_write", [(True, False), (False, True), (None, None)])
-def test_legacy_routing_switches_remain_available_rust(
+def test_core_python_routing_switches_remain_available_rust(
     construct_client, monkeypatch, from_connection_string, grouped, discovery, multi_write,
 ):
     monkeypatch.setenv("COSMOS_BACKEND", "rust")
@@ -288,7 +288,7 @@ def test_rust_fixed_throttle_interval_fails_before_startup_rust(
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize("grouped", [False, True])
 @pytest.mark.parametrize("milliseconds", [250, 500])
-def test_legacy_fixed_throttle_interval_still_selects_requested_delay_rust(
+def test_core_python_fixed_throttle_interval_still_selects_requested_delay_rust(
     construct_client, monkeypatch, from_connection_string, grouped, milliseconds
 ):
     from azure.cosmos import exceptions
@@ -351,7 +351,7 @@ def test_rust_connection_retry_controls_fail_before_policy_or_backend_creation_r
 
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize("connect,read", [(0, 0), (2, 4), (None, None)])
-def test_legacy_connection_retry_counts_remain_available_rust(
+def test_core_python_connection_retry_counts_remain_available_rust(
     construct_client, monkeypatch, from_connection_string, connect, read
 ):
     monkeypatch.setenv("COSMOS_BACKEND", "rust")
@@ -368,7 +368,7 @@ def test_legacy_connection_retry_counts_remain_available_rust(
 
 
 @pytest.mark.parametrize("from_connection_string", [False, True])
-def test_legacy_custom_retry_policy_is_preserved_rust(
+def test_core_python_custom_retry_policy_is_preserved_rust(
     client_module, construct_client, monkeypatch, from_connection_string
 ):
     monkeypatch.setenv("COSMOS_BACKEND", "rust")
@@ -563,7 +563,7 @@ def test_region_keywords_override_policy_including_empty_rust(construct_client, 
         assert client._adapter._client_config.excluded_locations == ()
 
 
-def test_legacy_policy_timeouts_still_resolve_with_keyword_and_alias_precedence_rust(construct_client):
+def test_core_python_policy_timeouts_still_resolve_with_keyword_and_alias_precedence_rust(construct_client):
     """The older millisecond name for the connection timeout still wins, and the caller's
     policy is left alone.
 

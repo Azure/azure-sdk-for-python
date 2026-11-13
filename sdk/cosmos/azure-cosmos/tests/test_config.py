@@ -201,7 +201,8 @@ class TestConfig(TestSettings):
 
     @classmethod
     def get_account_info(cls, client: CosmosClient):
-        account_info = client.get_database_account()
+        """Read internal discovery metadata for the retained legacy test setup."""
+        account_info = client.client_connection.GetDatabaseAccount()
         cls.WRITE_LOCATION = account_info.WritableLocations[0]["name"]
         if len(account_info.ReadableLocations) > 1:
             cls.READ_LOCATION = account_info.ReadableLocations[1]["name"]

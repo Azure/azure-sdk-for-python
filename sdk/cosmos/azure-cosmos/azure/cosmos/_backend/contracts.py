@@ -48,6 +48,22 @@ class ContainerMetadata:
 
 
 @dataclass(frozen=True)
+class ReadManyItem:
+    """One immutable ID and full partition key passed to the binding."""
+
+    protocol_version: ClassVar[int] = 3
+
+    item_id: str
+    partition_key: BindingPartitionKey
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.item_id, str) or not self.item_id:
+            raise ValueError("ReadManyItem requires a nonempty item ID")
+        if not isinstance(self.partition_key, BindingPartitionKey) or self.partition_key.kind != "components":
+            raise TypeError("ReadManyItem requires explicit partition-key components")
+
+
+@dataclass(frozen=True)
 class PreparedRequest:
     """Prepared inputs for an operation or page binding function.
 
@@ -94,6 +110,7 @@ class PreparedRequest:
     #: Returned resource address for a dictionary read, replacement or patch. It selects
     #: the original resource, not a recreated item with the same user ID.
     item_self_link: Optional[str] = None
+    read_many_items: tuple[ReadManyItem, ...] = ()
 
     def __post_init__(self) -> None:
         if not isinstance(self.body_bytes, bytes):
@@ -110,6 +127,10 @@ class PreparedRequest:
             raise TypeError("PreparedRequest requires a typed BindingPartitionKey")
         if self.query_scope is not None and not isinstance(self.query_scope, QueryScope):
             raise TypeError("PreparedRequest requires a typed QueryScope")
+        if not isinstance(self.read_many_items, tuple) or any(
+            not isinstance(item, ReadManyItem) for item in self.read_many_items
+        ):
+            raise TypeError("PreparedRequest.read_many_items must be a tuple of ReadManyItem")
         object.__setattr__(self, "headers", freeze_headers(self.headers))
 
 
@@ -122,7 +143,7 @@ class PreparedFaultInjectionRule(_ValidatedSettings):
     """
 
     id: str
-    #: Rust driver test-rule label, such as "ReadItem", not Python's "read_item".
+    #: Driver test-rule label, such as "ReadItem"; "All" leaves the operation filter unset.
     operation_type: str
     status_code: Optional[int] = None
     sub_status: int = 0
@@ -365,6 +386,7 @@ class PreparedPageRequest:
     #: SQL and parameters already converted to JSON bytes for reuse across pages.
     #: For SQL requests, these bytes take precedence over query and parameters.
     query_body: Optional[bytes] = None
+    read_many_items: tuple[ReadManyItem, ...] = ()
 
     def __post_init__(self) -> None:
         if not isinstance(self.settings, RequestSettings):
@@ -390,6 +412,10 @@ class PreparedPageRequest:
             self.query_scope, QueryScope
         ):
             raise TypeError("PreparedPageRequest requires a typed QueryScope")
+        if not isinstance(self.read_many_items, tuple) or any(
+            not isinstance(item, ReadManyItem) for item in self.read_many_items
+        ):
+            raise TypeError("PreparedPageRequest.read_many_items must be a tuple of ReadManyItem")
         object.__setattr__(self, "headers", freeze_headers(self.headers))
         object.__setattr__(self, "parameters", freeze_json(self.parameters))
         object.__setattr__(self, "change_feed", freeze_json(self.change_feed))

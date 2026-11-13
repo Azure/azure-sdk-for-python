@@ -59,7 +59,6 @@ from ._backend.operations import (
     OP_QUERY_CONTAINERS,
     OP_QUERY_DATABASES,
     OP_QUERY_ITEMS,
-    OP_READ_ALL_ITEMS,
 )
 from ._backend.contracts import BackendResponse, PreparedPageRequest, BackendPage
 from ._constants import _Constants as Constants
@@ -71,7 +70,7 @@ from ._helpers._request_settings import (
     overrides_driver_owned_header,
     prepare_service_request_settings,
 )
-from ._helpers._response_parse import process_backend_response
+from ._helpers._response_parse import page_to_backend_response, process_backend_response
 from ._query_advisor import get_query_advice_info
 from .partition_key import _build_partition_key_from_properties
 
@@ -124,10 +123,6 @@ def can_use_rust_backend_for_query_page(
         return False
     if resource_type != http_constants.ResourceType.Document:
         return False
-    # read_items marks its internal "id IN (...)" queries with this flag.
-    # Keep that existing legacy path; its individual item reads are separate.
-    if options.get(Constants.ReadItemsQueryLeg):
-        return False
     if "feed_range" in kwargs:
         return False
     if "prefix_partition_key_object" in kwargs or "prefix_partition_key_value" in kwargs:
@@ -162,39 +157,6 @@ def can_use_rust_backend_for_query_page(
         return False
     partition_key_obj = _build_partition_key_from_properties(container_properties)
     if partition_key_obj._is_prefix_partition_key(partition_key_value):
-        return False
-    return True
-
-
-def can_use_rust_backend_for_read_all_items_page(
-    *,
-    options: Mapping[str, Any],
-    kwargs: Mapping[str, Any],
-    is_query_plan: bool,
-    resource_type: str,
-    partition_key_range_id: Optional[str],
-) -> bool:
-    """Check inputs for the legacy/internal whole-container read path.
-
-    This is separate from the public retained read-all page iterator. Reject
-    query-plan requests, change feed, a selected partition range, and options
-    this compatibility path cannot forward.
-    """
-    if is_query_plan:
-        return False
-    if resource_type != http_constants.ResourceType.Document:
-        return False
-    if partition_key_range_id is not None:
-        return False
-    if options.get("changeFeedState") is not None:
-        return False
-    if Constants.Kwargs.AVAILABILITY_STRATEGY in options:
-        return False
-    if overrides_driver_owned_header(options):
-        return False
-    if "populateQueryMetrics" in options:
-        return False
-    if "feed_range" in kwargs:
         return False
     return True
 
@@ -439,26 +401,6 @@ def build_query_items_prepared_page_request(
     )
 
 
-def build_read_all_items_prepared_page_request(
-    *,
-    path: str,
-    options: Mapping[str, Any],
-    req_headers: Mapping[str, Any],
-) -> PreparedPageRequest:
-    """Build a prepared page request for read_all_items without constructing SQL.
-
-    The partition-key field carries the requested scope. Choosing the Rust
-    driver operation happens later through the binding, not in this builder.
-    """
-    return _build_prepared_page_request(
-        op=OP_READ_ALL_ITEMS,
-        container_link=_extract_container_link_from_docs_path(path),
-        resource_type="docs",
-        options=options,
-        req_headers=req_headers,
-    )
-
-
 def build_list_databases_prepared_page_request(
     *,
     options: Mapping[str, Any],
@@ -534,21 +476,6 @@ def build_query_containers_prepared_page_request(
         query_payload=query_payload,
         options=options,
         req_headers=req_headers,
-    )
-
-
-def page_to_backend_response(page: BackendPage) -> BackendResponse:
-    """Represent a backend page's response fields as BackendResponse for body parsing.
-
-    Reuse the headers and body bytes without decoding them. Page-only
-    continuation information is not included.
-    """
-    return BackendResponse(
-        status_code=page.status_code,
-        sub_status=page.sub_status,
-        headers=page.headers,
-        body=page.body,
-        diagnostics=page.diagnostics,
     )
 
 

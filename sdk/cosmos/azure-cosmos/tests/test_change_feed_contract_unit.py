@@ -21,6 +21,7 @@ from azure.cosmos.aio import _retry_utility_async
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos._helpers._change_feed import ChangeFeedPageState
+from azure.cosmos._helpers import _feed_paging
 from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 from azure.cosmos.partition_key import NonePartitionKeyValue
@@ -30,7 +31,8 @@ from azure.cosmos._routing.routing_range import Range
 
 
 @pytest.fixture
-def feed(base_feed):
+def feed(base_feed, monkeypatch):
+    monkeypatch.setattr(_feed_paging, "time", base_feed.clock)
     base_feed.pages = [
         (
             [
@@ -45,6 +47,27 @@ def feed(base_feed):
         ([{"current": {"id": "b"}}], "c1.c"),
         ([], "c1.d"),
     ]
+    def page(handle, prepared, cursor, *, timeout_seconds=None):
+        base_feed.calls.append((prepared, cursor, timeout_seconds))
+        if base_feed.setup_status:
+            return base_feed.setup_status, 0, {}, b'{"message":"setup failed"}', None
+        cursor.can_retry_setup = False
+        if timeout_seconds is not None and base_feed.delay > timeout_seconds:
+            raise TimeoutError("native page budget exhausted")
+        base_feed.clock.now += base_feed.delay
+        token = prepared.settings.query.continuation
+        index = 0 if token is None else next(
+            i + 1 for i, (_, value) in enumerate(base_feed.pages) if value == token
+        )
+        rows, following = base_feed.pages[index]
+        headers = {"x-ms-request-charge": "2", "x-ms-session-token": "session"}
+        if following is not None:
+            headers["x-ms-continuation"] = following
+        base_feed.prepared = prepared
+        return base_feed.status, 0, headers, json.dumps({"Documents": rows}).encode(), None
+
+    base_feed.binding.fetch_page_with_cursor.side_effect = page
+    base_feed.binding.fetch_page_with_cursor_async.side_effect = page
     return base_feed
 
 
@@ -375,7 +398,7 @@ def legacy(request, monkeypatch):
 
 @pytest.mark.parametrize("mode", ["LatestVersion", "AllVersionsAndDeletes"])
 @pytest.mark.parametrize("key", [None, False, 0, ""])
-def test_legacy_modes_empty_checkpoint_and_authoritative_resume(legacy, mode, key):
+def test_core_python_modes_empty_checkpoint_and_authoritative_resume(legacy, mode, key):
     options = {"maxItemCount": 1}
     pager = legacy.proxy.query_items_change_feed(
         mode=mode, partition_key=key, request_options=options
@@ -474,7 +497,7 @@ def test_async_cancellation_and_concurrent_fetch_are_failure_safe(feed):
     asyncio.run(run())
 
 
-def test_legacy_polls_past_empty_partition_and_aggregates_page_headers(
+def test_core_python_polls_past_empty_partition_and_aggregates_page_headers(
     legacy, monkeypatch
 ):
     from collections import deque
@@ -518,7 +541,7 @@ def test_legacy_polls_past_empty_partition_and_aggregates_page_headers(
     assert all(part["token"] for part in decoded["continuation"]["continuation"])
 
 
-def test_legacy_split_retries_are_bounded(legacy, monkeypatch):
+def test_core_python_split_retries_are_bounded(legacy, monkeypatch):
     from azure.cosmos._change_feed.change_feed_state import ChangeFeedStateV2
     from azure.cosmos.exceptions import CosmosHttpResponseError
 
@@ -547,7 +570,7 @@ def test_legacy_split_retries_are_bounded(legacy, monkeypatch):
     assert pages.continuation_token is None
 
 
-def test_legacy_v1_keyword_checkpoint_resume(legacy):
+def test_core_python_v1_keyword_checkpoint_resume(legacy):
     with pytest.warns(DeprecationWarning):
         pages = legacy.proxy.query_items_change_feed(
             partition_key_range_id="0"

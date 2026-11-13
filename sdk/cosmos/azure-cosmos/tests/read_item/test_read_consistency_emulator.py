@@ -25,7 +25,7 @@ SOURCES = ["client", "request_options", "feed_options", "initial_headers"]
 def consistency_order():
     endpoint, key = os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"]
     with CosmosClient(endpoint, key, _backend="core-python") as setup:
-        account = setup.get_database_account()
+        account = setup.client_connection.GetDatabaseAccount()
         strong_account = (
             account.ConsistencyPolicy["defaultConsistencyLevel"] == "Strong"
             and not account._EnableMultipleWritableLocations

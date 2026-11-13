@@ -8,8 +8,12 @@ from pathlib import Path
 
 import pytest
 
-from common import test_legacy_migration_enforcer_unit as enforcer
-from common._retired_test_sources import RETIRED_QUERY_SOURCES, RETIRED_TEST_SOURCES
+from common import test_migration_enforcer_unit as enforcer
+from common._retired_test_sources import (
+    RETIRED_QUERY_SOURCE_MARKERS,
+    RETIRED_QUERY_SOURCES,
+    RETIRED_TEST_SOURCES,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -39,6 +43,7 @@ def test_query_retirement_matches_all_33_retired_sources_rust():
         "tests/test_query_feed_range_multipartition_async.py": 1,
     }
     assert all(RETIRED_TEST_SOURCES[ref] == target for ref, target in RETIRED_QUERY_SOURCES.items())
+    assert RETIRED_QUERY_SOURCE_MARKERS.keys() == RETIRED_QUERY_SOURCES.keys()
 
 
 @pytest.mark.parametrize("reference,replacement", RETIRED_QUERY_SOURCES.items())
@@ -54,19 +59,131 @@ def test_only_original_method_is_removed_and_exact_copy_remains_rust(reference, 
     retained = ROOT / filename
     assert retained.is_relative_to(QUERY_TESTS)
     text = retained.read_text(encoding="utf-8")
-    methods = {
-        f"{cls}.{method.name}": method
-        for cls, method in enforcer._iter_test_functions(ast.parse(text))
-    }
+    methods = {f"{cls}.{method.name}": method for cls, method in enforcer._iter_test_functions(ast.parse(text))}
     assert copied_qualified == qualified + "_rust"
     assert enforcer._source_ref(methods[copied_qualified], text.splitlines()) == reference
     assert text.count('_backend="rust"') >= 1
     copied_class = next(
-        node for node in ast.parse(text).body
+        node
+        for node in ast.parse(text).body
         if isinstance(node, ast.ClassDef) and node.name == copied_qualified.rsplit(".", 1)[0]
     )
-    marker = "cosmosQuery" if "feed_range_multipartition" in filename else "cosmosEmulator"
-    assert any(ast.unparse(decorator) == f"pytest.mark.{marker}" for decorator in copied_class.decorator_list)
+    expected = RETIRED_QUERY_SOURCE_MARKERS[reference]
+    assert enforcer._lane_markers_from(copied_class.decorator_list) == expected
+    assert not enforcer._lane_markers_from(methods[copied_qualified].decorator_list)
+    assert (
+        enforcer._effective_lane_markers(ast.parse(text), copied_class.name, methods[copied_qualified].name) == expected
+    )
+
+
+@pytest.mark.parametrize(
+    "markers",
+    [
+        (),
+        ("cosmosEmulator",),
+        ("cosmosQuery", "cosmosAADQuery"),
+        ("cosmosCircuitBreaker", "cosmosQuery", "cosmosAADQuery", "cosmosEmulator"),
+    ],
+)
+def test_retired_query_markers_cannot_validate_against_the_replacement_rust(monkeypatch, tmp_path, markers):
+    reference = "tests/test_query.py::TestQuery.test_query_items_with_parameters_none"
+    filename, qualified = RETIRED_QUERY_SOURCES[reference].split("::")
+    class_name, method_name = qualified.rsplit(".", 1)
+    replacement = tmp_path / filename
+    replacement.parent.mkdir(parents=True)
+    replacement.write_text(
+        "import pytest\n"
+        + "".join(f"@pytest.mark.{marker}\n" for marker in markers)
+        + f"class {class_name}:\n"
+        + f"    def {method_name}(self):\n"
+        + f"        # Source: {reference}\n"
+        + "        pass\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(enforcer, "_PKG_ROOT", tmp_path)
+    monkeypatch.setattr(enforcer, "_legacy_test_files", lambda: [replacement])
+    check = enforcer.LegacyMigrationEnforcerTests("test_every_copy_keeps_original_lane_markers_rust")
+    with pytest.raises(AssertionError, match="lane markers differ"):
+        check.test_every_copy_keeps_original_lane_markers_rust()
+
+
+@pytest.mark.parametrize(
+    "filename,class_name,method_name,markers",
+    [
+        (
+            "sync/test_query.py",
+            "TestQueryRegressions",
+            "test_continuation_token_limit_preserves_broad_scope_and_resume_rust",
+            {"cosmosEmulator"},
+        ),
+        (
+            "sync/test_query.py",
+            "TestQueryRegressions",
+            "test_cross_partition_disabled_without_partition_key_matches_core_python_rust",
+            {"cosmosEmulator"},
+        ),
+        (
+            "aio/test_query_async.py",
+            "TestQueryRegressionsAsync",
+            "test_continuation_token_limit_preserves_broad_scope_and_resume_async_rust",
+            {"cosmosEmulator"},
+        ),
+        (
+            "aio/test_query_async.py",
+            "TestQueryRegressionsAsync",
+            "test_cross_partition_disabled_without_partition_key_matches_core_python_async_rust",
+            {"cosmosEmulator"},
+        ),
+        (
+            "aio/test_query_feed_range_multipartition_async.py",
+            "TestFeedRangeMultiPartitionRegressionsAsync",
+            "test_prefix_partition_key_query_cross_partition_disabled_async_rust",
+            {"cosmosQuery"},
+        ),
+    ],
+)
+def test_additional_query_regressions_keep_their_own_lanes_rust(filename, class_name, method_name, markers):
+    text = (QUERY_TESTS / filename).read_text(encoding="utf-8")
+    tree = ast.parse(text)
+    cls = next(node for node in tree.body if isinstance(node, ast.ClassDef) and node.name == class_name)
+    method = next(
+        node
+        for node in cls.body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == method_name
+    )
+    assert enforcer._source_ref(method, text.splitlines()).startswith("(new)")
+    assert enforcer._lane_markers_from(cls.decorator_list) == markers
+    assert not enforcer._lane_markers_from(method.decorator_list)
+    assert enforcer._effective_lane_markers(tree, class_name, method_name) == markers
+
+
+@pytest.mark.parametrize(
+    "message,accepted",
+    [
+        ("Expected String, but got Number.", True),
+        ("Expected Number, but got String.", True),
+        ("Unexpected query error.", False),
+        (None, False),
+    ],
+)
+def test_retained_orderby_error_assertion_checks_both_core_python_messages_rust(monkeypatch, message, accepted):
+    from query_items.sync import test_orderby
+
+    case = test_orderby.TestCrossPartitionTopOrderBy("test_orderby_query_noncomparable_orderby_item_rust")
+    case.document_definitions = []
+
+    def execute_query(*_args):
+        if message is not None:
+            raise ValueError(message)
+
+    monkeypatch.setattr(case, "execute_query_and_validate_results", execute_query)
+    # Exercise only the assertion offline; the service test's Gap 30 skip stays in place.
+    monkeypatch.setattr(test_orderby.pytest, "skip", lambda *_args, **_kwargs: None)
+    if accepted:
+        case.test_orderby_query_noncomparable_orderby_item_rust()
+    else:
+        with pytest.raises(AssertionError):
+            case.test_orderby_query_noncomparable_orderby_item_rust()
 
 
 @pytest.mark.parametrize("surface,suffix", [("sync", ""), ("aio", "_async")])
@@ -117,14 +234,18 @@ def test_query_retirement_does_not_hide_unknown_or_broken_sources_rust(monkeypat
         check.test_every_source_reference_resolves_rust()
 
 
-@pytest.mark.parametrize("check_name", [
-    "test_legacy_folders_discovered_rust",
-    "test_every_legacy_folder_is_a_package_rust",
-    "test_every_test_method_has_a_source_comment_rust",
-    "test_every_source_reference_resolves_rust",
-    "test_every_legacy_file_pins_rust_backend_rust",
-    "test_no_unstructured_skips_rust",
-])
+@pytest.mark.parametrize(
+    "check_name",
+    [
+        "test_migrated_folders_discovered_rust",
+        "test_every_migrated_folder_is_a_package_rust",
+        "test_every_test_method_has_a_source_comment_rust",
+        "test_every_source_reference_resolves_rust",
+        "test_every_migrated_file_pins_rust_backend_rust",
+        "test_no_unstructured_skips_rust",
+        "test_every_copy_keeps_original_lane_markers_rust",
+    ],
+)
 def test_retained_query_copies_pass_migration_enforcement_rust(monkeypatch, check_name):
     monkeypatch.setattr(enforcer, "_TESTS_DIR", QUERY_TESTS)
     getattr(enforcer.LegacyMigrationEnforcerTests(check_name), check_name)()

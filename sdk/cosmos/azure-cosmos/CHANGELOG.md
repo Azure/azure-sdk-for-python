@@ -13,6 +13,8 @@
 
 #### Breaking Changes
 
+* Synchronous and asynchronous `create_database_if_not_exists()` now apply database-creation ID validation before checking existence. Invalid IDs such as `"sales/"` raise `ValueError` even when `"sales"` already exists; standalone database reads are unchanged.
+* Removed `CosmosClient.get_database_account()` and its private async counterpart on both backends; use `azure-mgmt-cosmosdb` for account configuration with a Microsoft Entra identity authorized to read the account through the control plane.
 * Rust-backed constructors, connection-string factories, and per-operation inputs reject `user_agent`, `user_agent_overwrite`, and `user_agent_use_env` with `TypeError`, including empty strings, `False`, and `None`. The Rust driver supports only `user_agent_suffix` among these four controls and does not append `AZURE_HTTP_USER_AGENT`; legacy behavior is unchanged.
 * Rust-backed constructors, connection-string factories, and per-operation inputs reject `network_span_namer`, including `None`, with `TypeError` before database work. The current driver has no supported production request-observation interface for this callback; legacy support is unchanged.
 * Rust-backed sync/async clients and connection-string factories reject `connection_retry_policy`, including `None`, with `TypeError`; legacy behavior is retained pending the driver team's implementation decision.

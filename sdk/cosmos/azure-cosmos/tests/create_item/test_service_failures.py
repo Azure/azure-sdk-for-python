@@ -19,8 +19,8 @@ import pytest_asyncio
 from azure.core.exceptions import ServiceResponseError
 from azure.cosmos import CosmosClient, PartitionKey, exceptions
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
-from create_item._legacy_variants import assert_fields, observe_native_create
-from create_item._legacy_variants import (  # pylint: disable=unused-import
+from create_item._input_variants import assert_fields, observe_native_create
+from create_item._input_variants import (  # pylint: disable=unused-import
     _make_variant_container_fixture,
     _variant_database_fixture,
 )

@@ -41,7 +41,7 @@ def generated_files():
                 imports.append("import asyncio" if surface == "aio" else "import time")
             imports.extend([
                 f"from azure.cosmos{'.aio' if surface == 'aio' else ''} import CosmosClient",
-                f"from replace_container._legacy_setup import {base}",
+                f"from replace_container._container_setup import {base}",
             ])
             chunks = [
                 render_init_py().rstrip(),

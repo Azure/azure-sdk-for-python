@@ -25,6 +25,23 @@ def _rule(**overrides):
     return {"id": "test-fault", "operation_type": "CreateItem", "status_code": 502, **overrides}
 
 
+def test_all_operations_requires_an_explicit_selector_and_preserves_filters_rust():
+    rule = _rule(operation_type="All", enabled=False, container_id="orders", delay_ms=5000)
+    before = dict(rule)
+    (prepared,) = _prepare_fault_injection_rules([rule])
+    assert prepared.operation_type == "All"
+    assert prepared.enabled is False
+    assert prepared.container_id == "orders"
+    assert prepared.delay_ms == 5000
+    assert rule == before
+    for invalid in (None, "", "all", "ReadDatabases"):
+        with pytest.raises(ValueError, match="operation_type"):
+            _prepare_fault_injection_rules([_rule(operation_type=invalid)])
+    del rule["operation_type"]
+    with pytest.raises(ValueError, match="operation_type"):
+        _prepare_fault_injection_rules([rule])
+
+
 @pytest.mark.parametrize("rules", [None, [], ()])
 def test_absent_or_empty_rule_sequence_disables_injection_rust(rules):
     """Asking for no faults, in any of the three ways, means no faults.

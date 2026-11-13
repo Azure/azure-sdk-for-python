@@ -61,9 +61,9 @@ def read_item(container, doc_id):
 def read_items(container):
     print('\n1.3 - Reading all items in a container\n')
 
-    # NOTE: Use MaxItemCount on Options to control how many items come back per trip to the server
-    #       Important to handle throttles whenever you are doing operations such as this that might
-    #       result in a 429 (throttled request)
+    # max_item_count is a page-size hint, not a result limit.
+    # Continue the same live iterator; continuation tokens and resumption are not supported.
+    # Use query_items to select all items when you need to save and resume progress.
     item_list = list(container.read_all_items(max_item_count=10))
 
     print('Found {0} items'.format(item_list.__len__()))

@@ -291,7 +291,8 @@ pub(super) fn tuple_from_feed_result<'py>(
 ///
 /// Wraps item-list bodies in `{"Databases":[...]}` and supplies an empty envelope
 /// for `None`; raw byte bodies pass through. Errors with attached responses use
-/// the feed-error converter; response-less errors become `_DriverTransportError`.
+/// the feed-error converter. A response-less client-operation deadline becomes
+/// `TimeoutError`; other response-less errors become `_DriverTransportError`.
 /// Matching the envelope does not establish full legacy response parity.
 pub(super) fn tuple_from_database_feed_result<'py>(
     py: Python<'py>,
@@ -460,6 +461,8 @@ fn tuple_from_named_feed_result_for<'py>(
                 backend_response_tuple_from_cosmos_error_feed(py, &cosmos_error)?
             {
                 Ok(raw_http_error)
+            } else if let Some(timeout) = client_operation_timeout_error(&cosmos_error) {
+                Err(timeout)
             } else {
                 record_diagnostics_for_responseless(&cosmos_error);
                 Err(_DriverTransportError::new_err(format!(
@@ -1081,7 +1084,7 @@ fn response_headers_dict<'py>(
 }
 
 #[cfg(test)]
-mod tests {
+pub(crate) mod tests {
     use super::{
         _DriverTransportError, _UnsupportedQueryFeatureError, attach_attempt_payload,
         attempt_payload_or_error, backend_response_tuple_from_feed_error_parts,
@@ -1107,7 +1110,7 @@ mod tests {
     use super::super::diagnostics::{BINDING_ATTEMPT_COUNT, BINDING_RETRY_COUNT};
     use std::sync::atomic::Ordering;
 
-    async fn create_read_and_conflict() -> (CosmosResponse, CosmosResponse, CosmosError) {
+    pub(crate) async fn create_read_and_conflict() -> (CosmosResponse, CosmosResponse, CosmosError) {
         use azure_data_cosmos_driver::{
             in_memory_emulator::{InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion},
             models::{
@@ -2335,17 +2338,23 @@ def record_unraisable(args):
                 status_codes::TRANSPORT_CONNECTION_FAILED,
             ] {
                 for message in ["opaque detail", "408/20008 ClientOperationTimeout"] {
-                    for feed in [false, true] {
-                        let error = CosmosError::builder()
-                            .with_status(status)
-                            .with_message(message)
-                            .build();
-                        let error = if feed {
-                            tuple_from_feed_result(py, Err(error))
-                        } else {
-                            tuple_from_result(py, Err(error))
-                        }
-                        .unwrap_err();
+                    let error = CosmosError::builder()
+                        .with_status(status)
+                        .with_message(message)
+                        .build();
+                    for result in [
+                        tuple_from_result(py, Err(error.clone())),
+                        tuple_from_feed_result(py, Err(error.clone())),
+                        tuple_from_database_feed_result(py, Err(error.clone())),
+                        tuple_from_query_databases_result(py, Err(error.clone())),
+                        tuple_from_container_feed_result(py, Err(error.clone())),
+                        tuple_from_query_containers_result(py, Err(error.clone())),
+                        tuple_from_database_feed_result_with_attempts(py, Err(error.clone())),
+                        tuple_from_query_databases_result_with_attempts(py, Err(error.clone())),
+                        tuple_from_container_feed_result_with_attempts(py, Err(error.clone())),
+                        tuple_from_query_containers_result_with_attempts(py, Err(error.clone())),
+                    ] {
+                        let error = result.unwrap_err();
                         assert_eq!(
                             error.is_instance_of::<PyTimeoutError>(py),
                             status == timeout
@@ -2378,11 +2387,23 @@ def record_unraisable(args):
                 .unwrap()
                 .eq(expected)
                 .unwrap());
-            let expected_feed = tuple_from_feed_result(py, Err(conflict)).unwrap();
-            assert!(tuple_from_feed_result(py, Err(attached))
+            let expected_feed = tuple_from_feed_result(py, Err(conflict.clone())).unwrap();
+            assert!(tuple_from_feed_result(py, Err(attached.clone()))
                 .unwrap()
                 .eq(expected_feed)
                 .unwrap());
+            for convert in [
+                tuple_from_database_feed_result,
+                tuple_from_query_databases_result,
+                tuple_from_container_feed_result,
+                tuple_from_query_containers_result,
+            ] {
+                let expected = convert(py, Err(conflict.clone())).unwrap();
+                assert!(convert(py, Err(attached.clone()))
+                    .unwrap()
+                    .eq(expected)
+                    .unwrap());
+            }
 
             let error = CosmosError::builder()
                 .with_status(timeout)

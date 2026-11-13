@@ -135,7 +135,7 @@ class TestAccessConditionPassthroughUnit(unittest.TestCase):
             "etag-value",
         )
 
-    def test_access_condition_does_not_force_a_legacy_fallback_rust(self):
+    def test_access_condition_does_not_force_a_core_python_fallback_rust(self):
         """Rust honors the header, so a guarded call stays on the Rust path."""
         options = {"accessCondition": {"type": "IfMatch", "condition": "etag-value"}}
         self.assertTrue(is_delete_database_rust_eligible(options, {}))

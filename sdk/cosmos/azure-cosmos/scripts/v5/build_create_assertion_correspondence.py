@@ -132,7 +132,7 @@ def disposition(path, symbol, kind, node):
     name = function.name.removesuffix("_async")
     asynchronous = path.endswith("_async.py")
     surface = "aio" if asynchronous else "sync"
-    replacement = f"tests\\create_item\\{surface}\\test_legacy_contracts.py"
+    replacement = f"tests\\create_item\\{surface}\\test_contracts.py"
     row = {
         "disposition": "unresolved",
         "rationale": "Observation retained for explicit review; no assertion-equivalent replacement established.",
@@ -318,7 +318,7 @@ def disposition(path, symbol, kind, node):
                        "ID using implicit client suppression, explicit suppression, explicit response override. Current "
                        "replacement persists THREE with explicit no_response values; exact original default/override "
                        "four-write sequence remains unmapped.",
-                       assertions("tests\\create_item\\_legacy_contracts.py", "assert_stored_sequence"),
+                       assertions("tests\\create_item\\_contract_cases.py", "assert_stored_sequence"),
                        partial=True, pending=("exact-four-write-implicit-and-explicit-suppression-sequence",))
             elif suppressed_composite and ("self.assertDictEqual(created_document, {})" in text or kind == "create-call"):
                 mapped("Suppression and response override exist in the three-write replacement, but this original "
@@ -339,7 +339,7 @@ def disposition(path, symbol, kind, node):
                 mapped("Fresh-container stored-ID/field/count sequence proves one item per successful create. "
                        "Original count can be one/two/three creates; replacement uses three explicit modes. "
                        "Read-all paging itself is not claimed equivalent.",
-                       assertions("tests\\create_item\\_legacy_contracts.py", "assert_stored_sequence"),
+                       assertions("tests\\create_item\\_contract_cases.py", "assert_stored_sequence"),
                        partial=asynchronous or suppressed_composite)
             elif "no_response" in text:
                 mapped("Suppressed auto-ID create returns empty mapping and remains part of stored three-item sequence.",
@@ -348,7 +348,7 @@ def disposition(path, symbol, kind, node):
                 mapped("Generated and explicit IDs preserve original customer fields, with real create observation. "
                        "Per-call assertions and shared field helper are both pinned.",
                        assertions(replacement, symbol2, "assert_fields") +
-                       assertions("tests\\create_item\\_legacy_variants.py", "assert_fields"))
+                       assertions("tests\\create_item\\_input_variants.py", "assert_fields"))
         else:
             other("Query functionality, conditional replace, read-after-replace and delete assertions are not create.")
     elif "test_fault_injection_transport" in path:
@@ -493,7 +493,7 @@ def disposition(path, symbol, kind, node):
             test = "test_document_crud_response_payload_on_write_disabled_rust"
         contexts.add((replacement, test))
         contexts.add((replacement, "_contract_client_fixture"))
-        contexts.add(("tests\\create_item\\_legacy_variants.py", "observe_native_create"))
+        contexts.add(("tests\\create_item\\_input_variants.py", "observe_native_create"))
     if row["replacements"] and "test_fault_injection_transport" in path:
         if "throws_injected" in name:
             target = "tests\\fault_injection\\sync\\test_delayed_create_fault.py"
@@ -512,7 +512,7 @@ def disposition(path, symbol, kind, node):
 def annotation_audit(scope, rows):
     """Keep annotation preservation distinct from assertion correspondence."""
     infrastructure = {
-        "tests\\create_item\\_legacy_variants.py": [
+        "tests\\create_item\\_input_variants.py": [
             "_variant_database_fixture", "_make_variant_container_fixture", "observe_native_create",
         ],
         "tests\\read_item\\test_read_item_contract_unit.py": ["point_read"],
@@ -649,8 +649,8 @@ def annotation_audit(scope, rows):
                                  "tests\\test_cosmos_responses.py", "tests\\test_cosmos_responses_async.py"],
                 "replacement_paths": ["tests\\create_item\\sync\\test_headers.py",
                                       "tests\\create_item\\aio\\test_headers.py",
-                                      "tests\\create_item\\sync\\test_legacy_contracts.py",
-                                      "tests\\create_item\\aio\\test_legacy_contracts.py"],
+                                      "tests\\create_item\\sync\\test_contracts.py",
+                                      "tests\\create_item\\aio\\test_contracts.py"],
             },
             {
                 "id": "AN-02",
@@ -885,7 +885,7 @@ def create_copy_annotation_audit(rows):
             "token_lane_enabled", "skip_unless_token_auth", "make_sync_token_credential", "make_async_token_credential",
             "have_real_aad", "_is_emulator_host",
         ],
-        "tests\\create_item\\_legacy_variants.py": [
+        "tests\\create_item\\_input_variants.py": [
             "_variant_database_fixture", "_make_variant_container_fixture", "observe_native_create",
         ],
         "tests\\config\\clients.py": [
@@ -902,8 +902,8 @@ def create_copy_annotation_audit(rows):
         "tests\\create_item\\_routing.py": [
             "CREATE_ITEM_TEST_DATA", "WRITE_LOCATION", "READ_LOCATION", "THIRD_LOCATION", "DEFAULT_LOCATION",
         ],
-        "tests\\create_item\\_legacy_contracts.py": ["INVALID_IDS", "INCOMPLETE_KEYS", "EMOJI_CASES"],
-        "tests\\create_item\\_legacy_variants.py": [
+        "tests\\create_item\\_contract_cases.py": ["INVALID_IDS", "INCOMPLETE_KEYS", "EMOJI_CASES"],
+        "tests\\create_item\\_input_variants.py": [
             "CASES", "RESPONSE_MODES", "ENCODING_CASES", "UNICODE_KEY", "UNICODE_CONTENT",
         ],
         "tests\\auth\\_token_credentials.py": ["_AAD_ENV"],
@@ -938,8 +938,8 @@ def create_copy_annotation_audit(rows):
         "infrastructure_functions": refs,
         "vector_sources": vectors,
         "vector_files": [{
-            "path": "tests\\create_item\\legacy_partition_key_cases.json",
-            "sha256": hashlib.sha256((ROOT / "tests" / "create_item" / "legacy_partition_key_cases.json").read_bytes()).hexdigest(),
+            "path": "tests\\create_item\\partition_key_reference_cases.json",
+            "sha256": hashlib.sha256((ROOT / "tests" / "create_item" / "partition_key_reference_cases.json").read_bytes()).hexdigest(),
         }],
         "remaining_differences": [
             "Marker preservation is verified independently of live credential availability and service execution.",

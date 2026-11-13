@@ -24,7 +24,7 @@ import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import _retry_utility
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes
+from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
 
@@ -145,25 +145,6 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
         self.key_client.delete_database(db1.id)
         self.key_client.delete_database(db2.id)
-
-    def test_database_account_functionality(self):
-        # Validate database account functionality.
-        database_account = self.key_client.get_database_account()
-        self.assertEqual(database_account.DatabasesLink, '/dbs/')
-        self.assertEqual(database_account.MediaLink, '/media/')
-        if (HttpHeaders.MaxMediaStorageUsageInMB in
-                self.key_client.client_connection.last_response_headers):
-            self.assertEqual(
-                database_account.MaxMediaStorageUsageInMB,
-                self.key_client.client_connection.last_response_headers[
-                    HttpHeaders.MaxMediaStorageUsageInMB])
-        if (HttpHeaders.CurrentMediaStorageUsageInMB in
-                self.key_client.client_connection.last_response_headers):
-            self.assertEqual(
-                database_account.CurrentMediaStorageUsageInMB,
-                self.key_client.client_connection.last_response_headers[
-                    HttpHeaders.CurrentMediaStorageUsageInMB])
-        self.assertIsNotNone(database_account.ConsistencyPolicy['defaultConsistencyLevel'])
 
     def test_id_validation(self):
         # Id shouldn't end with space.

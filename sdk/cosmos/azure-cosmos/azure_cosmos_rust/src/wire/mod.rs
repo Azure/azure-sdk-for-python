@@ -5,7 +5,7 @@
 //!
 //! For example, a request for "order-42" carries "dbs/sales/colls/orders",
 //! a typed partition key, and request settings. These binding helpers obtain the
-//! CosmosDriver object named by the driver handle and prepare its operation.
+//! CosmosDriver object owned by the driver handle and prepare its operation.
 //! Tokio runs the asynchronous Rust work; the Rust driver contacts the service
 //! backend. Local feed-range comparisons are a separate path without service I/O.
 //!
@@ -18,12 +18,6 @@
 //! in a feed cursor; no feed cursor is created by a tuple conversion.
 //! Errors without an attached response do not prove that no service work occurred.
 //! See docs/V5/VOCABULARY.md for the shared terminology.
-
-use std::sync::Arc;
-
-use pyo3::prelude::*;
-
-use azure_data_cosmos_driver::driver::CosmosDriver;
 
 // Extracted sub-modules --------------------------------------------------
 mod container_metadata;
@@ -39,7 +33,9 @@ mod response;
 pub use errors::{_DriverResponseError, _DriverTransportError, _UnsupportedQueryFeatureError};
 
 // Diagnostics counter re-exports (pub(crate) so lib.rs can register them) ---
-pub(crate) use container_metadata::{get_container_metadata, get_container_metadata_async};
+pub(crate) use container_metadata::{
+    get_container_metadata, get_container_metadata_async, metadata_error,
+};
 pub(crate) use diagnostics::{attempt_count, operation_count, retry_count};
 
 // Request-side re-exports ------------------------------------------------
@@ -51,7 +47,7 @@ pub(crate) use request::{
     extract_read_feed_ranges_force_refresh, extract_required_item_id, RequestHeadersAndOptions,
 };
 // ---------------------------------------------------------------------------
-// Shared driver lookup and task cancellation
+// Task cancellation and driver ownership
 // ---------------------------------------------------------------------------
 
 /// Request task cancellation when the owning Rust bridge future drops this guard.
@@ -65,24 +61,19 @@ impl Drop for AbortOnDrop {
     }
 }
 
-/// Retain the exact driver owned by the supplied handle, independently of cache eviction.
-/// The Python wrapper rejects new operations on a closed adapter.
-fn lookup_driver(driver_handle: &crate::runtime::DriverHandle) -> PyResult<Arc<CosmosDriver>> {
-    Ok(driver_handle.driver())
-}
-
 #[cfg(test)]
 mod handle_ownership_tests {
-    use super::*;
     use crate::driver_runtime::RuntimeHandle;
     use crate::runtime::{acquire_driver_handle, drivers, release_driver_handle, runtime_context};
     use azure_data_cosmos_driver::in_memory_emulator::{
         InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion,
     };
+    use pyo3::prelude::*;
+    use std::sync::Arc;
     use url::Url;
 
     #[test]
-    fn handle_retains_original_driver_before_lookup_across_close_and_recreation() {
+    fn handle_retains_original_driver_across_close_and_recreation() {
         crate::test_support::prepare_python();
         let endpoint = Url::parse("https://owning-handle.emulator.local").unwrap();
         let config = VirtualAccountConfig::new(vec![
@@ -103,7 +94,7 @@ mod handle_ownership_tests {
             let original = Arc::downgrade(&first.driver());
             assert!(Arc::ptr_eq(&first.driver(), &second.driver()));
 
-            // Python dispatch already copied the handle, but native lookup has not run.
+            // Python dispatch retained the handle; native operation preparation has not run.
             let first = Py::new(py, first).unwrap();
             let pending_call = first.clone_ref(py);
             release_driver_handle(&first.borrow(py)).unwrap();
@@ -115,10 +106,10 @@ mod handle_ownership_tests {
             assert!(!drivers().read().contains_key(&key));
             assert!(original.upgrade().is_some());
 
-            let before_recreation = lookup_driver(&pending_call.borrow(py)).unwrap();
+            let before_recreation = pending_call.borrow(py).driver();
             let replacement = acquire();
             assert_eq!(replacement.cache_key(), key);
-            let after_recreation = lookup_driver(&pending_call.borrow(py)).unwrap();
+            let after_recreation = pending_call.borrow(py).driver();
             assert!(Arc::ptr_eq(&before_recreation, &after_recreation));
             assert!(!Arc::ptr_eq(&after_recreation, &replacement.driver()));
 
@@ -172,10 +163,7 @@ pub(crate) use offers::{
     run_get_throughput_operation, run_get_throughput_operation_async, run_replace_throughput_operation,
     run_replace_throughput_operation_async,
 };
-pub(crate) use query::{
-    run_query_operation, run_query_operation_async, run_read_all_items_operation,
-    run_read_all_items_operation_async,
-};
+pub(crate) use query::{run_query_operation, run_query_operation_async};
 
 #[cfg(test)]
 mod tests {
@@ -191,7 +179,7 @@ mod tests {
     // without exposing it outside the binding.
 
     #[test]
-    fn feed_range_special_case_empty_sentinel_matches_legacy_minimum_range() {
+    fn feed_range_special_case_empty_sentinel_matches_core_python_minimum_range() {
         let definitions = [
             PartitionKeyDefinition::from("/pk").with_version(PartitionKeyVersion::V1),
             PartitionKeyDefinition::from("/pk").with_version(PartitionKeyVersion::V2),
@@ -213,7 +201,7 @@ mod tests {
     }
 
     #[test]
-    fn feed_range_special_case_explicit_empty_sequence_matches_legacy_routing() {
+    fn feed_range_special_case_explicit_empty_sequence_matches_core_python_routing() {
         let hash_v2 = PartitionKeyDefinition::from("/pk")
             .with_kind(PartitionKeyKind::Hash)
             .with_version(PartitionKeyVersion::V2);

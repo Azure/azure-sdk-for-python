@@ -656,7 +656,7 @@ class TestFeedRangeMultiPartitionAsync:
         finally:
             await client.close()
 
-    async def test_legacy_opaque_token_compat_async(self, caplog):
+    async def test_service_token_compat_async(self, caplog):
         """Use an opaque continuation token and verify restart behavior."""
         client = _client()
         try:

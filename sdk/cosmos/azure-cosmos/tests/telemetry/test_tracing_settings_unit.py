@@ -31,7 +31,7 @@ from telemetry.test_rust_telemetry_unit import (
 # pylint: enable=wrong-import-position
 
 
-def test_legacy_namer_receives_actual_request_and_per_call_override(recording):
+def test_core_python_namer_receives_actual_request_and_per_call_override(recording):
     request = HttpRequest(
         "GET",
         "https://alpha-bank.invalid/dbs/sales/colls/orders/docs/order-42",
@@ -289,7 +289,7 @@ def test_concurrent_calls_keep_their_own_attribute_values(native, recording):
         assert attempt.attributes["bank.call"] == operations[attempt.parent.span_id].attributes["bank.call"]
 
 
-def test_legacy_operation_does_not_inherit_rust_attribute_defaults(recording):
+def test_core_python_operation_does_not_inherit_rust_attribute_defaults(recording):
     owner = SimpleNamespace(
         _item_context=SimpleNamespace(
             adapter=SimpleNamespace(name="core-python"),

@@ -218,7 +218,7 @@ class TestParityWithExistingHeaderBuilder(unittest.TestCase):
             return json.dumps(list(normalized), separators=(",", ":"))
         return json.dumps([pk_value], separators=(",", ":"))
 
-    def test_parity_against_legacy_for_full_input_table_rust(self):
+    def test_parity_against_core_python_for_full_input_table_rust(self):
         """For every documented input shape, helper output == legacy output."""
         for value in [
             "customerA",

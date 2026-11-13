@@ -226,7 +226,7 @@ def test_original_status_filter_accepts_native_error_summary_rust(native):
     assert record.diagnostics == error.value.headers[HEADER] == SUMMARY
 
 
-def test_legacy_and_native_share_error_filter_not_http_record_shape_rust(native):
+def test_core_python_and_native_share_error_filter_not_http_record_shape_rust(native):
     legacy_logger, legacy_capture = make_logger()
     legacy_capture.addFilter(FilterStatusCode())
     native.capture.addFilter(FilterStatusCode())

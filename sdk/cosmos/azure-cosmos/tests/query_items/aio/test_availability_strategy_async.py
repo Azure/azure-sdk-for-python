@@ -4,7 +4,7 @@
 """Rust-path copies of the async availability-strategy tests that reach query_items.
 
 The originals inject faults through a custom Python transport, read the account
-regions with ``_get_database_account()``, enable ``multiple_write_locations`` and
+regions through internal account discovery, enable ``multiple_write_locations`` and
 check contacted regions from azure-core ``Request URL:`` log records. On the Rust
 path the transport becomes ``_fault_injection_rules`` built from the same predicate
 and error lambdas, regions come from the configured WRITE_LOCATION/READ_LOCATION
@@ -77,7 +77,7 @@ def _has_threshold_steps(availability_strategy):
 
 
 def _configured_regions():
-    # Known gap 24: Account information is internal and cannot be returned to Python (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-24). _get_database_account() raises NotImplementedError on Rust, so the regions come from the configured WRITE_LOCATION/READ_LOCATION settings.
+    # Account inspection is excluded from the client API; use configured test regions.
     write_locations = [loc for loc in [TestSettings.WRITE_LOCATION] if loc]
     read_locations = [loc for loc in [TestSettings.READ_LOCATION] if loc]
     return write_locations, read_locations
@@ -185,7 +185,7 @@ def availability_strategy_resources(request):
     # The originals use conftest-provisioned shared containers; the copy owns its database.
     write_locations, read_locations = _configured_regions()
     if not write_locations or _select_primary_and_failover_region(write_locations, read_locations)[1] is None:
-        pytest.skip("environment-gap: availability strategy tests need two distinct regions in WRITE_LOCATION/READ_LOCATION; Rust cannot discover account regions (known gap 24).")
+        pytest.skip("environment-gap: availability strategy tests need two distinct regions in WRITE_LOCATION/READ_LOCATION.")
     setup_client = create_setup_client(_backend="rust")
     database = setup_client.create_database("availability_strategy_async_query_rust_" + uuid.uuid4().hex)
     try:
@@ -215,7 +215,7 @@ async def setup(availability_strategy_resources):
     if region_2 is None:
         await test_client.close()
         logger.removeHandler(TestAsyncAvailabilityStrategy.MOCK_HANDLER)
-        pytest.skip("environment-gap: availability strategy tests need two distinct regions in WRITE_LOCATION/READ_LOCATION; Rust cannot discover account regions (known gap 24).")
+        pytest.skip("environment-gap: availability strategy tests need two distinct regions in WRITE_LOCATION/READ_LOCATION.")
 
     # Use first writable location as primary region and second as failover
     account_location_with_client = {

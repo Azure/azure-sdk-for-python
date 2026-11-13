@@ -13,6 +13,60 @@ import pytest
 from get_latest_session_token import _split_support as support
 
 
+@pytest.fixture(autouse=True)
+def clear_ci_split_selection(monkeypatch):
+    monkeypatch.delenv("TF_BUILD", raising=False)
+    monkeypatch.delenv("TESTMARKARGUMENT", raising=False)
+
+
+@pytest.mark.parametrize("lane", ["cosmosSplit", "cosmosAADSplit", "cosmosEmulator", "cosmosSplit or cosmosEmulator"])
+@pytest.mark.parametrize("ci", ["true", "false"])
+def test_only_dedicated_ci_split_lanes_authorize_throughput_rust(monkeypatch, lane, ci):
+    monkeypatch.delenv(support.REAL_SPLIT_ENV, raising=False)
+    monkeypatch.setenv("TF_BUILD", ci)
+    monkeypatch.setenv("TESTMARKARGUMENT", lane)
+    monkeypatch.setenv("ACCOUNT_HOST", "unused")
+    monkeypatch.setenv("ACCOUNT_KEY", "unused")
+    if ci == "true" and lane in ("cosmosSplit", "cosmosAADSplit"):
+        support.require_real_split()
+    else:
+        with pytest.raises(unittest.SkipTest, match="explicit approval"):
+            support.require_real_split()
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+@pytest.mark.parametrize("bounds", [
+    [("", "80"), ("80", "FF")],
+    [("", "70"), ("80", "FF")],
+    [("", "90"), ("80", "FF")],
+    [("", "80"), ("80", "FE")],
+])
+def test_public_range_polling_requires_two_adjacent_children_rust(monkeypatch, asynchronous, bounds):
+    ranges = [{"Range": {"min": low, "max": high}} for low, high in bounds]
+    parent = {"Range": {"min": "", "max": "FF"}}
+    monkeypatch.setattr(support.time, "monotonic", lambda: 1)
+
+    async def async_ranges(**kwargs):
+        for item in ranges:
+            yield item
+
+    container = SimpleNamespace(read_feed_ranges=Mock(
+        side_effect=async_ranges if asynchronous else lambda **kwargs: iter(ranges),
+    ))
+
+    def poll():
+        if asynchronous:
+            return asyncio.run(support.wait_for_feed_range_split_async(container, parent, 0))
+        return support.wait_for_feed_range_split(container, parent, 0)
+
+    if bounds == [("", "80"), ("80", "FF")]:
+        poll()
+    else:
+        with pytest.raises(AssertionError, match="did not converge"):
+            poll()
+    container.read_feed_ranges.assert_called_once_with(force_refresh=True)
+
+
 @pytest.mark.parametrize("surface", ["sync", "aio"])
 @pytest.mark.parametrize("opt_in", [None, "", "0", "true"])
 def test_real_split_setup_rejects_missing_explicit_approval_before_clients_rust(monkeypatch, surface, opt_in):
@@ -74,7 +128,7 @@ def test_rust_routing_internals_are_explicitly_excluded_without_touching_python_
     restore()
 
 
-def test_legacy_snapshot_retains_warm_cache_assertion_and_scoped_restore_rust(monkeypatch):
+def test_python_cache_snapshot_retains_warm_cache_assertion_and_scoped_restore_rust(monkeypatch):
     monkeypatch.setattr(support._base, "GetResourceIdOrFullNameFromLink", lambda link: "name")
     cache = {}
     container = SimpleNamespace(

@@ -8,8 +8,8 @@ separate backend object. A throughput read that works on the sync path proves
 nothing about the async path. Customers running async apps read a database's
 shared RU/s the same way, and Rust must report the same number there.
 
-These copies retain the throughput assertions from the original async database
-CRUD and manual-throughput tests, with owned fixtures and ``_backend="rust"``.
+These copies retain the full original async database CRUD sequence and the
+manual-throughput checks, with owned fixtures and ``_backend="rust"``.
 The CRUD copy checks that get-or-create preserves existing 5000 RU/s despite
 a later 6000 RU/s creation argument. The manual copy reads 1000 RU/s and
 checks a replacement result of 2000 RU/s.
@@ -33,6 +33,8 @@ import pytest
 
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos import exceptions
+from azure.cosmos.http_constants import StatusCodes
+from config import settings
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -60,10 +62,24 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
     @pytest.mark.cosmosLong
     async def test_database_crud_async_rust(self):
-        """Keep the original CRUD test's shared-throughput assertions."""
+        """Keep the original create/query/read/delete and shared-throughput checks."""
         # Source: tests/test_crud_database_async.py::TestCRUDDatabaseOperationsAsync.test_database_crud_async
-        database_id = "get_db_crud_a_" + uuid.uuid4().hex
+        database_id = settings.unique_database_id()
         self._created_db_ids.append(database_id)
+        created_db = await self.key_client.create_database(database_id)
+        assert created_db.id == database_id
+        databases = [
+            database
+            async for database in self.key_client.query_databases(
+                query="SELECT * FROM root r WHERE r.id=@id", parameters=[{"name": "@id", "value": database_id}]
+            )
+        ]
+        assert len(databases) > 0
+        self.key_client.get_database_client(created_db.id)
+        await created_db.read()
+        await self.key_client.delete_database(created_db.id)
+        read_db = self.key_client.get_database_client(created_db.id)
+        await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND, read_db.read)
         database_proxy = await self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         assert database_id == database_proxy.id
         db_throughput = await database_proxy.get_throughput()
@@ -72,6 +88,16 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert database_id == database_proxy.id
         db_throughput = await database_proxy.get_throughput()
         assert 5000 == db_throughput.offer_throughput
+
+        await self.key_client.delete_database(database_id)
+        self._created_db_ids.remove(database_id)
+
+    async def __assert_http_failure_with_status(self, status_code, func, *args, **kwargs):
+        try:
+            await func(*args, **kwargs)
+            self.fail("function should fail.")
+        except exceptions.CosmosHttpResponseError as inst:
+            assert inst.status_code == status_code
 
     @pytest.mark.cosmosEmulator
     async def test_database_level_offer_throughput_async_rust(self):

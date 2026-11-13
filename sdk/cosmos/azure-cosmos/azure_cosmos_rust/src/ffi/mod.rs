@@ -44,7 +44,7 @@ use crate::wire::{
     run_is_feed_range_subset_operation, run_is_feed_range_subset_operation_async,
     run_list_databases_operation, run_list_databases_operation_async,
     run_query_databases_operation, run_query_databases_operation_async, run_query_operation,
-    run_query_operation_async, run_read_all_items_operation, run_read_all_items_operation_async,
+    run_query_operation_async,
     run_read_database_operation, run_read_database_operation_async, run_read_feed_ranges_operation,
     run_read_feed_ranges_operation_async, run_get_throughput_operation, run_get_throughput_operation_async,
     run_replace_throughput_operation, run_replace_throughput_operation_async, RequestHeadersAndOptions,
@@ -78,7 +78,6 @@ type ItemBodyInputs = (
 );
 type BodyInputs = (String, BindingPartitionKey, RequestHeadersAndOptions, Vec<u8>);
 type OfferReplaceInputs = (RequestHeadersAndOptions, String, Vec<u8>);
-type ReadAllInputs = (String, BindingPartitionKey, RequestHeadersAndOptions);
 type ReadFeedRangesInputs = (String, bool);
 type FeedRangeFromPartitionKeyInputs = (String, BindingPartitionKey);
 
@@ -158,11 +157,6 @@ fn extract_replace_throughput_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<Of
     Ok((modifiers, offer_id, body_bytes))
 }
 
-/// Extract the container link, typed partition key, and settings for read-all.
-fn extract_read_all_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<ReadAllInputs> {
-    extract_common_prepared_inputs(prepared)
-}
-
 /// Fields for `read_feed_ranges` (container link + force-refresh flag).
 fn extract_read_feed_ranges_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<ReadFeedRangesInputs> {
     crate::wire::settings::validate_request_protocol(prepared)?;
@@ -218,4 +212,4 @@ pub(crate) use items::{
     read_item, read_item_async, replace_item, replace_item_async, upsert_item, upsert_item_async,
 };
 pub(crate) use offers::{get_throughput, get_throughput_async, replace_throughput, replace_throughput_async};
-pub(crate) use query::{query_items, query_items_async, read_all_items, read_all_items_async};
+pub(crate) use query::{query_items, query_items_async};

@@ -30,7 +30,7 @@ from azure.core.settings import settings
 from azure.cosmos import _telemetry as telemetry
 from azure.cosmos._backend import binding_adapter as sync_binding
 from azure.cosmos.aio._backend import binding_adapter as async_binding
-from azure.cosmos._backend.errors import BindingProtocolError
+from azure.cosmos._backend.errors import BindingProtocolError, PagePreflightError
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 
 # pylint: enable=wrong-import-position
@@ -70,7 +70,7 @@ def read_all_setup(recording, feed, monkeypatch):  # pylint: disable=unused-argu
                 h.error._cosmos_attempt_payload = payload
             raise h.error
         response = original(handle, prepared, cursor, timeout_seconds=timeout_seconds)
-        if h.local_exhaustion and prepared.settings.query.continuation == "c1.c":
+        if h.local_exhaustion and not cursor.has_more:
             response, payload = (200, 0, {}, b'{"Documents":[]}', None), None
         value = h.transform((response, payload))
         return value if include_attempts else value[0]
@@ -169,7 +169,8 @@ def test_internal_fetch_owns_diagnostics_and_final_hook(
         parents.append(consumer.get_span_context().span_id)
     assert len(h.calls) == 4 and len(hooks) == 3
     assert pages.state.token is None
-    assert pages.continuation_token == "c1.c"
+    with pytest.raises(NotImplementedError, match="cannot be bookmarked"):
+        _ = pages.continuation_token
     with pytest.raises(StopAsyncIteration if f.async_mode else StopIteration):
         f.next_page(pages)
     assert len(h.calls) == 4
@@ -306,7 +307,8 @@ def test_diagnostics_failure_does_not_change_paging(reading, recording, monkeypa
                 telemetry.CompletionHandler(h.seen.append),
             ),
         )
-    pages = f.proxy.read_all_items().by_page("c1.b")
+    f.pages = [[{"id": "b"}]]
+    pages = f.proxy.read_all_items().by_page()
     if detail == "invalid-response":
         with pytest.raises(BindingProtocolError):
             f.next_page(pages)
@@ -328,16 +330,15 @@ def test_replay_pins_backend_and_handlers_but_uses_consumption_settings(reading,
     settings.tracing_enabled = True
     pages = iterable.by_page()
     assert f.next_page(pages) == [{"id": "a", "nested": [1]}]
-    token = pages.continuation_token
     assert f.next_page(pages) == [{"id": "b"}]
-    assert f.next_page(iterable.by_page(token)) == [{"id": "b"}]
-    assert len(h.calls) == len(h.seen) == len(fetch_spans(recording)) == 5
+    assert f.next_page(iterable.by_page()) == [{"id": "a", "nested": [1]}]
+    assert len(h.calls) == len(h.seen) == len(fetch_spans(recording)) == 4
     assert h.calls[0][1] is not h.calls[3][1]
-    assert [c.diagnostics.complete for c in h.seen] == [False, True, True, False, True]
+    assert [c.diagnostics.complete for c in h.seen] == [False, True, True, False]
     assert all(state.backend is f.backend and state.closed for state in h.states)
     settings.tracing_enabled = False
     assert f.next_page(iterable.by_page()) == [{"id": "a", "nested": [1]}]
-    assert not h.calls[-1][2] and len(fetch_spans(recording)) == 5
+    assert not h.calls[-1][2] and len(fetch_spans(recording)) == 4
 
 
 def test_disabled_recording_does_not_import_opentelemetry(reading, monkeypatch):
@@ -357,7 +358,7 @@ def test_disabled_recording_does_not_import_opentelemetry(reading, monkeypatch):
 
 def test_partial_iteration_does_not_record_each_returned_item(reading, recording):
     h, f = reading, reading.feed
-    f.pages[0] = ([{"id": "a"}, {"id": "b"}], "c1.a")
+    f.pages[0] = [{"id": "a"}, {"id": "b"}]
     iterable = f.proxy.read_all_items()
     first = asyncio.run(iterable.__anext__()) if f.async_mode else next(iterable)
     assert first == {"id": "a"}
@@ -368,26 +369,25 @@ def test_partial_iteration_does_not_record_each_returned_item(reading, recording
     assert len(h.calls) == len(h.seen) == len(fetch_spans(recording)) == 1
 
 
-def test_stateless_binding_does_not_receive_attempt_flag(reading):
+def test_read_all_requires_retained_binding(reading):
     f = reading.feed
     pages = f.proxy.read_all_items().by_page()
     assert f.next_page(pages) == [{"id": "a", "nested": [1]}]
     prepared = replace(pages.state.config.prepared(None, pages.state.cursor, None), cursor=None)
-    response = (200, 0, {}, b'{"Documents":[]}', None)
     binding = f.binding.read_all_items_async if f.async_mode else f.binding.read_all_items
-    binding.return_value = response
 
     async def fetch():
         return [page async for page in f.backend.execute_pages(prepared)]
 
     with telemetry._operation_scope(f.proxy, "outer", {}, "read_all_items"):
         outer = telemetry._OPERATION.get()
-        if f.async_mode:
-            asyncio.run(fetch())
-        else:
-            list(f.backend.execute_pages(prepared))
+        with pytest.raises(PagePreflightError):
+            if f.async_mode:
+                asyncio.run(fetch())
+            else:
+                list(f.backend.execute_pages(prepared))
         assert outer.collector.contributions == 0
-    assert "include_attempts" not in binding.call_args.kwargs
+    binding.assert_not_called()
 
 
 def test_nested_hook_does_not_contribute_to_outer_fetch(reading, recording):
@@ -401,7 +401,7 @@ def test_nested_hook_does_not_contribute_to_outer_fetch(reading, recording):
 
     def hook(_headers, _body):
         outer = telemetry._OPERATION.get()
-        assert f.next_page(f.proxy.read_all_items().by_page("c1.b")) == [{"id": "b"}]
+        assert f.next_page(f.proxy.read_all_items().by_page()) == [{"id": "a", "nested": [1]}]
         assert telemetry._OPERATION.get() is outer and not outer.closed
 
     assert f.next_page(f.proxy.read_all_items(response_hook=hook).by_page()) == [{"id": "a", "nested": [1]}]

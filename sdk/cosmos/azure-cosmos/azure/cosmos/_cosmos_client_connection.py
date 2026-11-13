@@ -28,9 +28,9 @@ methods that depend on it. This is a Python wrapper object, not a single
 network connection or a CosmosDriver. Legacy means the Python request
 implementation that predates the Rust driver.
 
-Construction creates the Python HTTP pipeline. For a Rust-backed client,
-it leaves legacy account setup until a retained legacy request needs it.
-The explicit legacy path performs that setup during construction.
+Rust-backed clients construct the Python HTTP pipeline and perform legacy
+account setup only if a retained legacy request needs them. The explicit
+legacy path creates the pipeline and performs setup during construction.
 
 A migrated Rust operation uses the binding and Rust driver instead of
 this legacy account setup. Retaining this object does not mean that
@@ -47,6 +47,7 @@ import os
 import threading
 import uuid
 from concurrent.futures.thread import ThreadPoolExecutor
+from functools import cached_property
 from typing import Callable, Any, Dict, Mapping, NoReturn, Optional, Sequence, Tuple, Union, cast
 from typing_extensions import TypedDict
 from urllib3.util.retry import Retry
@@ -88,7 +89,6 @@ from ._backend.operations import (
     OP_QUERY_CONTAINERS,
     OP_QUERY_DATABASES,
     OP_QUERY_ITEMS,
-    OP_READ_ALL_ITEMS,
 )
 from ._backend.contracts import PreparedPageRequest
 from ._backend.capabilities import OperationRouting, reject_removed_options
@@ -101,9 +101,8 @@ from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
-from ._query_rust_routing import build_list_containers_prepared_page_request, build_list_databases_prepared_page_request, build_query_containers_prepared_page_request, build_query_databases_prepared_page_request, build_read_all_items_prepared_page_request, build_query_items_prepared_page_request, can_use_rust_backend_for_list_containers_page, can_use_rust_backend_for_list_databases_page, can_use_rust_backend_for_query_containers_page, can_use_rust_backend_for_query_databases_page, can_use_rust_backend_for_query_page, can_use_rust_backend_for_read_all_items_page, process_query_page
+from ._query_rust_routing import build_list_containers_prepared_page_request, build_list_databases_prepared_page_request, build_query_containers_prepared_page_request, build_query_databases_prepared_page_request, build_query_items_prepared_page_request, can_use_rust_backend_for_list_containers_page, can_use_rust_backend_for_list_databases_page, can_use_rust_backend_for_query_containers_page, can_use_rust_backend_for_query_databases_page, can_use_rust_backend_for_query_page, process_query_page
 from ._range_partition_resolver import RangePartitionResolver
-from ._read_items_helper import ReadItemsHelperSync
 from ._request_object import RequestObject
 from ._retry_utility import ConnectionRetryPolicy
 from ._routing import routing_map_provider
@@ -301,10 +300,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         kwargs.pop("user_agent", None)
         kwargs.pop("user_agent_overwrite", None)
 
-        self.pipeline_client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(
-            base_url=url_connection,
-            policies=policies
-        )
+        self._pipeline_policies = policies
+        self._pipeline_lock = threading.Lock()
+        if not is_rust_backend(self._backend):
+            _ = self.pipeline_client
 
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when
@@ -324,6 +323,20 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # A retained legacy operation initializes this state before using it.
         if not is_rust_backend(self._backend):
             self._setup()
+
+    @cached_property
+    def pipeline_client(self) -> PipelineClient[HttpRequest, HttpResponse]:
+        """Construct one retained Python pipeline on demand, even across threads."""
+        with self._pipeline_lock:
+            pipeline: Optional[PipelineClient[HttpRequest, HttpResponse]] = vars(self).get("pipeline_client")
+            if pipeline is None:
+                pipeline = PipelineClient(
+                    base_url=self.url_connection,
+                    policies=self._pipeline_policies,
+                )
+                # Publish before unlocking rather than relying on cached_property's cache write.
+                vars(self)["pipeline_client"] = pipeline
+            return pipeline
 
     def _setup(self) -> None:
         """Read account information and prepare this connection for legacy requests.
@@ -736,69 +749,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(database_link)
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         self.DeleteResource(path, http_constants.ResourceType.Database, database_id, None, options, **kwargs)
-
-    def read_items(
-            self,
-            collection_link: str,
-            items: Sequence[Tuple[str, PartitionKeyType]],
-            options: Optional[Mapping[str, Any]] = None,
-            *,
-            executor: Optional[ThreadPoolExecutor] = None,
-            **kwargs: Any
-    ) -> CosmosList:
-        """Reads many items.
-
-        :param str collection_link: The link to the document collection.
-        :param items: A list of tuples, where each tuple contains an item's ID and partition key.
-        :type items: Sequence[Tuple[str, _PartitionKeyType]]
-        :param dict options: The request options for the request.
-        :keyword executor: Optional ThreadPoolExecutor for thread management
-        :paramtype executor: Optional[ThreadPoolExecutor]
-        :return: The list of read items.
-        :rtype: CosmosList
-        """
-        if options is None:
-            options = {}
-        if not items:
-            return CosmosList([], response_headers=CaseInsensitiveDict())
-
-        partition_key_definition = self._get_partition_key_definition(collection_link, options)
-        if not partition_key_definition:
-            raise ValueError("Could not find partition key definition for collection.")
-
-        # Extract and remove max_concurrency from kwargs
-        max_concurrency = kwargs.pop('max_concurrency', None)
-
-        helper = ReadItemsHelperSync(
-            client=self,
-            collection_link=collection_link,
-            items=items,
-            options=options,
-            partition_key_definition=partition_key_definition,
-            executor=executor,
-            max_concurrency=max_concurrency,
-            **kwargs)
-        return helper.read_items()
-
-    def ReadItems(
-        self,
-        collection_link: str,
-        feed_options: Optional[Mapping[str, Any]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
-        **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
-        """Reads all documents in a collection.
-        :param str collection_link: The link to the document collection.
-        :param dict feed_options: The additional options for the operation.
-        :param response_hook: A callable invoked with the response metadata.
-        :type response_hook: Callable[[Mapping[str, Any], dict[str, Any]]
-        :return: Query Iterable of Documents.
-        :rtype: query_iterable.QueryIterable
-        """
-        if feed_options is None:
-            feed_options = {}
-
-        return self.QueryItems(collection_link, None, feed_options, response_hook=response_hook, **kwargs)
 
     def QueryItems(
         self,
@@ -2199,7 +2149,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         if options is None:
             options = {}
-        page_backend = kwargs.pop("_read_all_backend", self._backend)
+        page_backend = kwargs.pop("_feed_backend", self._backend)
         deadline = options.get("_item_operation_deadline")
         if deadline is not None:
             options = legacy_deadline_options(options, deadline)
@@ -2335,25 +2285,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     return prepared
                 build_request_page = _build_list_containers_page
             else:
-                page_op = OP_READ_ALL_ITEMS
-                rust_eligible = can_use_rust_backend_for_read_all_items_page(
-                    options=options,
-                    kwargs=kwargs,
-                    is_query_plan=is_query_plan,
-                    resource_type=resource_type,
-                    partition_key_range_id=partition_key_range_id,
-                )
-
-                def _build_read_all_items_page():
-                    nonlocal rust_request_headers
-                    prepared = build_read_all_items_prepared_page_request(
-                        path=path,
-                        options=options,
-                        req_headers=self.default_headers,
-                    )
-                    rust_request_headers = prepared.headers
-                    return prepared
-                build_request_page = _build_read_all_items_page
+                return _run_legacy_read_feed()
 
             def _parse_rust_page(page):
                 parsed_page = process_query_page(

@@ -286,7 +286,7 @@ def test_incompatible_schema_fails_before_driver_acquisition_rust(monkeypatch, a
             backend.close()
 
 
-def test_missing_settings_schema_does_not_block_legacy_imports_rust():
+def test_missing_settings_schema_does_not_block_core_python_imports_rust():
     """An out-of-date Rust module must not stop a customer who is not using the Rust path.
 
     A separate process loads the real Rust module, removes the function that reports its

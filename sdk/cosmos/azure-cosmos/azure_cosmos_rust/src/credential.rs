@@ -387,7 +387,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn account_scope_policy_matches_legacy_for_sync_and_async_credentials() {
+    async fn account_scope_policy_matches_core_python_for_sync_and_async_credentials() {
         use azure_core::credentials::TokenCredential;
         crate::test_support::prepare_python();
         for async_bridge in [false, true] {

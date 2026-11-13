@@ -100,7 +100,7 @@ class TestAsyncContainerPatchItemRouting(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(backend.prepared.op, OP_PATCH_ITEM)
         self.assertEqual(backend.prepared.item_id, "patch_item")
 
-    async def test_filter_predicate_patch_uses_rust_without_legacy_rust(self):
+    async def test_filter_predicate_patch_uses_rust_without_core_python_rust(self):
         """Filtered patches use the selected backend without legacy replay."""
         proxy, cc = _make_async_proxy()
         backend = _CapturingAsyncBackend()

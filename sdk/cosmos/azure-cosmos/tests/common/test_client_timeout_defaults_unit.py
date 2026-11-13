@@ -49,6 +49,8 @@ def cold_async_client(monkeypatch):
     native = SimpleNamespace(
         acquire_driver_handle=MagicMock(side_effect=acquire),
         release_driver_handle=MagicMock(),
+        _DriverResponseError=type("_DriverResponseError", (RuntimeError,), {}),
+        _DriverTransportError=type("_DriverTransportError", (RuntimeError,), {}),
     )
     monkeypatch.setattr(async_binding, "_rust_module", native)
     yield SimpleNamespace(client=client, entered=entered, finish=finish, handle=handle, native=native)

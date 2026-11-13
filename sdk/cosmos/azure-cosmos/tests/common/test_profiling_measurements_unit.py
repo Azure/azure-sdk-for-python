@@ -34,6 +34,42 @@ def modules(monkeypatch):
     )}
 
 
+@pytest.mark.parametrize("concurrency", [1, 2])
+@pytest.mark.parametrize("failure", [False, True])
+def test_bounded_owned_maintenance_refills_and_drains_rust(modules, monkeypatch, concurrency, failure):
+    isolation = importlib.import_module("workload_isolation")
+    monkeypatch.setattr(isolation.config, "WORKLOAD_MAINTENANCE_CONCURRENCY", concurrency)
+
+    async def scenario():
+        active = 0
+        peak = 0
+        started = []
+        finished = []
+
+        async def operation(item):
+            nonlocal active, peak
+            active += 1
+            peak = max(peak, active)
+            started.append(item)
+            try:
+                await asyncio.sleep(0)
+                if failure and item == 0:
+                    raise RuntimeError("maintenance failure")
+                await asyncio.sleep(0)
+                finished.append(item)
+            finally:
+                active -= 1
+
+        with pytest.raises(RuntimeError, match="maintenance failure") if failure else nullcontext():
+            await isolation._run_maintenance(range(6), operation)
+        assert active == 0
+        assert peak == concurrency
+        assert started == list(range(concurrency if failure else 6))
+        assert finished == (list(range(1, concurrency)) if failure else list(range(6)))
+
+    asyncio.run(scenario())
+
+
 class Rows:
     def __init__(self, rows=()):
         self.rows = list(rows)
@@ -231,6 +267,8 @@ def test_bounded_point_start_reporter_defers_thread_and_results_client_rust(modu
     monkeypatch.setattr(workload, "WORKLOAD_MEASUREMENT_SECONDS", 60)
     monkeypatch.setattr(workload, "WORKLOAD_READ_MEASUREMENT_SECONDS", 0)
     monkeypatch.setattr(workload, "WORKLOAD_OPERATIONS", {operation})
+    monkeypatch.setattr(workload, "CONCURRENT_REQUESTS", 4 if operation == "delete" else 1)
+    monkeypatch.setenv("WORKLOAD_ITEM_NAMESPACE", "a" * 32)
     monkeypatch.setenv("PERF_ENABLED", "true")
     monkeypatch.setattr(workload, "get_perf_config", lambda: {
         "enabled": True, "results_endpoint": "https://unused.invalid",
@@ -240,6 +278,10 @@ def test_bounded_point_start_reporter_defers_thread_and_results_client_rust(modu
     assert reporter._config["measurement_operation"] == operation
     assert reporter._config["measurement_seconds"] == 60
     assert reporter._thread is None and reporter._client is None
+    metadata = reporter._measurement_metadata()
+    assert metadata["measurement_concurrency"] == (4 if operation == "delete" else 1)
+    assert metadata["measurement_scheduling"] == ("continuous_refill" if operation == "delete" else "serial")
+    assert metadata["measurement_includes_inflight_drain"]
 
 
 @pytest.mark.parametrize("failure", [None, "warmup", "interrupt", "cleanup"])
@@ -514,6 +556,7 @@ def test_bounded_point_lifecycle_isolates_service_work_rust(
         setattr(Client, name + "_item", sdk_method(name))
     for name, value in {
         "AsyncClient": Client, "WORKLOAD_MEASUREMENT_SECONDS": 60,
+        "CONCURRENT_REQUESTS": 1,
         "WORKLOAD_READ_MEASUREMENT_SECONDS": 0, "WORKLOAD_OPERATIONS": {operation},
         "WORKLOAD_MANAGE_CLIENT_LIFECYCLE": True, "WORKLOAD_USE_PROXY": False,
         "WORKLOAD_LOOP_LAG_MONITOR": False, "_start_reporter": lambda: (stats, reporter),
@@ -592,6 +635,121 @@ def test_bounded_point_configuration_rejects_unsafe_modes_rust(modules, monkeypa
         monkeypatch.setenv(name, value)
     with pytest.raises(ValueError):
         runpy.run_path(str(WORKLOADS / "workload_configs.py"))
+
+
+@pytest.mark.parametrize("concurrency,pool,valid", [
+    ("1", "4", True), ("4", "7", True), ("4", "6", False),
+    ("0", "7", False), (None, "30000", False),
+])
+def test_bounded_delete_concurrency_requires_explicit_capacity_rust(
+    modules, monkeypatch, concurrency, pool, valid,
+):
+    for name, value in {
+        "WORKLOAD_MEASUREMENT_SECONDS": "15", "WORKLOAD_READ_MEASUREMENT_SECONDS": "0",
+        "WORKLOAD_OPERATIONS": "delete", "WORKLOAD_NUM_CLIENTS": "1",
+        "WORKLOAD_ARRIVAL_RATE": "0", "WORKLOAD_USE_SYNC": "false", "WORKLOAD_USE_PROXY": "false",
+        "WORKLOAD_MANAGE_CLIENT_LIFECYCLE": "true", "WORKLOAD_MIX": "",
+        "WORKLOAD_DOC_PROFILE": "orders", "WORKLOAD_ITEM_NAMESPACE": "a" * 32,
+        "WORKLOAD_MEASUREMENT_MANIFEST": "ownership.json", "WORKLOAD_DELETE_ITEM_COUNT": pool,
+        "COSMOS_PARTITION_KEY": "id",
+    }.items():
+        monkeypatch.setenv(name, value)
+    if concurrency is None:
+        monkeypatch.delenv("COSMOS_CONCURRENT_REQUESTS", raising=False)
+    else:
+        monkeypatch.setenv("COSMOS_CONCURRENT_REQUESTS", concurrency)
+    if valid:
+        config = runpy.run_path(str(WORKLOADS / "workload_configs.py"))
+        assert config["CONCURRENT_REQUESTS"] == int(concurrency)
+    else:
+        with pytest.raises(ValueError):
+            runpy.run_path(str(WORKLOADS / "workload_configs.py"))
+
+
+@pytest.mark.parametrize("ending", ["deadline", "interrupt", "pool", "failed_call", "cancel"])
+def test_bounded_delete_refills_and_drains_before_freeze_rust(modules, monkeypatch, ending):
+    from unittest.mock import Mock
+
+    workload = importlib.import_module("workload")
+    isolation = importlib.import_module("workload_isolation")
+    stats = modules["perf_stats"].Stats()
+    reporter = Mock()
+    issued, finished, timers = [], [], []
+    active, peak = [0], [0]
+    monkeypatch.setattr(workload, "WORKLOAD_MEASUREMENT_SECONDS", 15)
+    monkeypatch.setattr(workload, "WORKLOAD_READ_MEASUREMENT_SECONDS", 0)
+    monkeypatch.setattr(workload, "CONCURRENT_REQUESTS", 2)
+    monkeypatch.setattr(workload, "WORKLOAD_LOOP_LAG_MONITOR", False)
+    monkeypatch.setattr(workload, "_maybe_freeze_gc", lambda logger: None)
+
+    async def run():
+        stop, release, refill, both_started = (asyncio.Event() for _ in range(4))
+        loop = asyncio.get_running_loop()
+        monkeypatch.setattr(loop, "call_later", lambda seconds, callback: timers.append(callback) or Mock())
+        owner = None
+
+        class Container:
+            async def delete_item(self, item, partition_key, **kwargs):
+                assert partition_key == item and item not in issued
+                issued.append(item)
+                if len(issued) <= 3:
+                    assert not timers
+                    return
+                active[0] += 1
+                peak[0] = max(peak[0], active[0])
+                try:
+                    if item == "4":
+                        both_started.set()
+                        await release.wait()
+                    elif item == "3":
+                        await both_started.wait()
+                        if ending == "pool":
+                            refill.set()
+                    else:
+                        # Slot 3 refills while slot 4 is still waiting: not a wave.
+                        assert item == "5" and "4" not in finished
+                        refill.set()
+                        if ending == "deadline":
+                            timers[0]()
+                        elif ending == "interrupt":
+                            stop.set()
+                        elif ending == "cancel":
+                            owner.cancel()
+                            await asyncio.sleep(0)
+                        else:
+                            raise RuntimeError("service failed")
+                finally:
+                    active[0] -= 1
+                    finished.append(item)
+
+        point = isolation.PointMeasurement(Container(), "delete")
+        point.items = [str(i) for i in range(5 if ending == "pool" else 20)]
+        point.expected_items = len(point.items)
+
+        def freeze():
+            assert active[0] == 0 and "4" in finished
+        reporter.finish_measurement.side_effect = freeze
+        owner = asyncio.create_task(workload._run_bounded_operations(point, stats, reporter, stop, Mock()))
+        await refill.wait()
+        await asyncio.sleep(0)
+        assert not reporter.finish_measurement.called
+        if ending != "cancel":
+            assert not owner.done()
+        release.set()
+        if ending == "deadline":
+            await owner
+            reporter.finish_measurement.assert_called_once()
+            assert point.expected_items == 14
+        else:
+            error = asyncio.CancelledError if ending == "cancel" else RuntimeError
+            with pytest.raises(error):
+                await owner
+            reporter.finish_measurement.assert_not_called()
+        assert active[0] == 0 and peak[0] == 2
+        assert len(issued) == (5 if ending == "pool" else 6)
+        assert point.delete_index == len(issued)
+
+    asyncio.run(run())
 
 
 @pytest.fixture
@@ -776,7 +934,7 @@ def test_query_workload_consumes_real_sdk_pager_and_hooks_rust(modules, query_su
     rust_query.connection.QueryItems.assert_not_called()
 
 
-def test_query_aggregate_passes_legacy_planning_gate_and_merges_partitions_rust(
+def test_query_aggregate_passes_core_python_planning_gate_and_merges_partitions_rust(
     query_suite,
     monkeypatch,
 ):
@@ -1533,7 +1691,7 @@ def test_partial_unknown_binding_or_wrong_runtime_does_not_pass_rust(modules):
     assert not validator.check_backend_execution(Rows([wrong]), "baseline-", STAMP)[0]
 
 
-def test_legacy_actual_class_name_is_accepted_rust(modules):
+def test_concrete_class_name_is_accepted_rust(modules):
     row = measurement(modules, config_backend="core-python", runtime_backend="AsyncLegacyBackend",
                       rust_execute_calls=0, binding_calls=0)
     assert modules["perf_validate"].check_backend_execution(Rows([row]), "baseline-", STAMP)[0]

@@ -29,6 +29,7 @@ OP_REPLACE_CONTAINER = "replace_container"
 OP_DELETE_ITEM = "delete_item"
 OP_READ_DATABASE = "read_database"
 OP_READ_ITEM = "read_item"
+OP_READ_ITEMS = "read_items"
 OP_UPSERT_ITEM = "upsert_item"
 OP_REPLACE_ITEM = "replace_item"
 OP_PATCH_ITEM = "patch_item"
@@ -83,7 +84,6 @@ OP_TO_BINDING_FUNCTION_NAME = {
 # token. Requests with a feed cursor use the retained-paging table below.
 STATELESS_PAGE_BINDING_FUNCTION_NAMES = {
     OP_QUERY_ITEMS: "query_items",
-    OP_READ_ALL_ITEMS: "read_all_items",
     OP_LIST_DATABASES: "list_databases",
     OP_QUERY_DATABASES: "query_databases",
     OP_LIST_CONTAINERS: "list_containers",
@@ -91,6 +91,7 @@ STATELESS_PAGE_BINDING_FUNCTION_NAMES = {
 }
 
 RETAINED_PAGE_BINDING_FUNCTION_NAMES = {
+    OP_READ_ITEMS: "fetch_page_with_cursor",
     OP_READ_ALL_ITEMS: "fetch_page_with_cursor",
     OP_QUERY_ITEMS: "fetch_page_with_cursor",
     OP_QUERY_ITEMS_CHANGE_FEED: "fetch_page_with_cursor",

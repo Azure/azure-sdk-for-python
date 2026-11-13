@@ -247,7 +247,7 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
             ]},
         )
 
-    def test_filter_predicate_patch_uses_rust_without_legacy_rust(self):
+    def test_filter_predicate_patch_uses_rust_without_core_python_rust(self):
         """Filtered patches reach the selected backend with the condition intact."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
@@ -262,7 +262,7 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
         self.assertTrue(backend.executed)
         cc.PatchItem.assert_not_called()
 
-    def test_version_guarded_patch_uses_rust_without_legacy_rust(self):
+    def test_version_guarded_patch_uses_rust_without_core_python_rust(self):
         """With a Rust backend wired, a guarded patch goes to it and never falls through.
 
         The rest of this file pins the legacy fall-through. This test is the

@@ -95,7 +95,7 @@ class TestAsyncReplaceItem(unittest.TestCase):
         self.assertEqual(call.kwargs["new_document"], body)
         self.assertIs(call.kwargs["options"]["disableAutomaticIdGeneration"], True)
 
-    def test_async_backend_dispatch_parses_response_and_skips_legacy_rust(self):
+    def test_async_backend_dispatch_parses_response_and_skips_core_python_rust(self):
         """When the backend returns a ``BackendResponse`` (Rust path), the
         helper parses it into a ``CosmosDict`` and never awaits the legacy
         ``ReplaceItem``."""

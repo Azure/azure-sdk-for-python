@@ -15,7 +15,7 @@ import pytest
 from azure.cosmos import CosmosClient as SyncCosmosClient, exceptions
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
-from common._rust_checks import run_on_rust_async
+from common._rust_checks import assert_live_page_headers, run_on_rust_async
 
 pytestmark = [pytest.mark.asyncio]
 
@@ -69,14 +69,22 @@ async def test_one_container_per_page_returns_every_container_async_rust(populat
     """With ``max_item_count=1`` each page holds one container and the pages together hold all of them."""
     async with _rust_client() as client:
         database = client.get_database_client(populated_database_id)
+        snapshots = []
 
         async def target():
             return [
                 [item async for item in page]
-                async for page in database.list_containers(max_item_count=1).by_page()
+                async for page in database.list_containers(
+                    max_item_count=1,
+                    timeout=10,
+                    initial_headers={"x-company-trace": "list-containers"},
+                    response_hook=lambda headers, _results: snapshots.append(dict(headers)),
+                ).by_page()
             ]
 
         pages = await run_on_rust_async(client, target)
+    assert_live_page_headers(snapshots)
+    assert len(snapshots) == len(pages)
     assert len(pages) == CONTAINER_COUNT
     assert all(len(page) == 1 for page in pages)
     assert sorted(item["id"] for page in pages for item in page) == EXPECTED_IDS

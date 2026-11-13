@@ -959,7 +959,7 @@ class TestFeedRangeMultiPartition:
     # ------------------------------------------------------------------ #
     # Legacy opaque token compatibility
     # ------------------------------------------------------------------ #
-    def test_legacy_opaque_token_compat(self, caplog):
+    def test_service_token_compat(self, caplog):
         """Use an opaque continuation token (not base64 JSON, not v=1).
         The query restarts from the beginning.
 

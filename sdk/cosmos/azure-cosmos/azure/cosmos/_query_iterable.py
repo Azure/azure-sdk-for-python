@@ -90,11 +90,9 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
 
     def _unpack(self, block):
         continuation = None
-        headers = self._options.get("_read_all_response_headers", self._client.last_response_headers)
+        headers = self._client.last_response_headers
         if headers:
-            continuation = headers.get("x-ms-continuation")
-            if "_read_all_response_headers" not in self._options:
-                continuation = continuation or headers.get('etag')
+            continuation = headers.get("x-ms-continuation") or headers.get('etag')
         if block:
             self._did_a_call_already = False
         return continuation, block

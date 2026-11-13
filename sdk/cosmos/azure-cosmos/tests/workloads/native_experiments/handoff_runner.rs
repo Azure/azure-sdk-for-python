@@ -16,7 +16,7 @@ where
 {
     use crate::handoff_experiment::mark;
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
+    let driver = driver_handle.driver();
     let future = prepare(driver)?;
     let runtime_ctx = require_runtime_context("handoff_experiment")?;
     let join = runtime_ctx.tokio_rt.spawn(async move {

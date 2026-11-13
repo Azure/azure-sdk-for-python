@@ -11,7 +11,7 @@ import uuid
 import pytest
 
 from azure.cosmos import CosmosClient
-
+from config.settings import unique_database_id
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
 KEY = os.environ.get(
@@ -58,3 +58,46 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         offer = created_db.replace_throughput(new_offer_throughput)
         self.assertEqual(offer.offer_throughput, new_offer_throughput)
         self.key_client.delete_database(created_db.id)
+
+
+@pytest.mark.cosmosLong
+class TestDatabaseIdValidation(unittest.TestCase):
+    def setUp(self):
+        self.key_client = CosmosClient(HOST, KEY, _backend="rust")
+        self.addCleanup(self.key_client.close)
+
+    def test_id_validation_rust(self):
+        # Source: tests/test_crud_database.py::TestCRUDDatabaseOperations.test_id_validation
+        try:
+            self.key_client.create_database(id="id_with_space ")
+            self.assertFalse(True)
+        except ValueError as e:
+            self.assertEqual("Id ends with a space or newline.", e.args[0])
+
+        try:
+            self.key_client.create_database(id="id_with_illegal/_char")
+            self.assertFalse(True)
+        except ValueError as e:
+            self.assertEqual("Id contains illegal chars.", e.args[0])
+
+        try:
+            self.key_client.create_database(id="id_with_illegal\\_char")
+            self.assertFalse(True)
+        except ValueError as e:
+            self.assertEqual("Id contains illegal chars.", e.args[0])
+
+        try:
+            self.key_client.create_database(id="id_with_illegal?_char")
+            self.assertFalse(True)
+        except ValueError as e:
+            self.assertEqual("Id contains illegal chars.", e.args[0])
+
+        try:
+            self.key_client.create_database(id="id_with_illegal#_char")
+            self.assertFalse(True)
+        except ValueError as e:
+            self.assertEqual("Id contains illegal chars.", e.args[0])
+
+        db = self.key_client.create_database(id=" " + unique_database_id("id-begin-space"))
+        self.addCleanup(self.key_client.delete_database, db.id)
+        self.assertTrue(True)

@@ -7,8 +7,8 @@ share. A customer reads that number with ``get_throughput`` and puts it into
 cost and capacity dashboards. If Rust returned a different RU/s here, a
 customer would size their database against a wrong figure.
 
-These copies retain the throughput assertions from the original database CRUD
-and manual-throughput tests. Owned fixtures and ``_backend="rust"`` isolate
+These copies retain the full original database CRUD sequence and the
+manual-throughput checks. Owned fixtures and ``_backend="rust"`` isolate
 execution; ``get_throughput`` replaces the removed ``read_offer`` alias.
 The CRUD copy checks that get-or-create preserves existing 5000 RU/s despite
 a later 6000 RU/s creation argument. The manual copy reads 1000 RU/s and
@@ -32,6 +32,8 @@ import uuid
 import pytest
 
 from azure.cosmos import CosmosClient, exceptions
+from azure.cosmos.http_constants import StatusCodes
+from config import settings
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -59,16 +61,38 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
 
     @pytest.mark.cosmosLong
     def test_database_crud_rust(self):
-        """Keep the original CRUD test's shared-throughput assertions."""
+        """Keep the original create/query/read/delete and shared-throughput checks."""
         # Source: tests/test_crud_database.py::TestCRUDDatabaseOperations.test_database_crud
-        database_id = "get_db_crud_" + uuid.uuid4().hex
+        database_id = settings.unique_database_id()
         self._created_db_ids.append(database_id)
+        created_db = self.key_client.create_database(database_id)
+        self.assertEqual(created_db.id, database_id)
+        databases = list(
+            self.key_client.query_databases(
+                {"query": "SELECT * FROM root r WHERE r.id=@id", "parameters": [{"name": "@id", "value": database_id}]}
+            )
+        )
+        self.assertTrue(databases, "number of results for the query should be > 0")
+        self.key_client.get_database_client(created_db.id).read()
+        self.key_client.delete_database(created_db.id)
+        read_db = self.key_client.get_database_client(created_db.id)
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND, read_db.read)
         database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         self.assertEqual(database_id, database_proxy.id)
         self.assertEqual(5000, database_proxy.get_throughput().offer_throughput)
         database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         self.assertEqual(database_id, database_proxy.id)
         self.assertEqual(5000, database_proxy.get_throughput().offer_throughput)
+
+        self.key_client.delete_database(database_id)
+        self._created_db_ids.remove(database_id)
+
+    def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
+        try:
+            func(*args, **kwargs)
+            self.assertFalse(True, "function should fail.")
+        except exceptions.CosmosHttpResponseError as inst:
+            self.assertEqual(inst.status_code, status_code)
 
     @pytest.mark.cosmosEmulator
     def test_database_level_offer_throughput_rust(self):

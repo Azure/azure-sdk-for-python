@@ -94,17 +94,17 @@ pub(crate) struct RuntimeContext {
 /// retain authentication and settings. Keying only by endpoint would incorrectly
 /// share those values between differently configured clients.
 ///
-/// Acquisition adds one reference; release removes one and evicts at zero.
-/// Callers must balance these calls. This count does not include operation-held
-/// `Arc`s, which can keep the driver alive independently of the cache.
+/// Each acquisition increases the count by one; releasing it decreases the count.
+/// At zero, the cache entry is removed. Handles and operations may still keep
+/// the driver alive independently of the cache.
 pub(crate) struct DriverEntry {
     pub(crate) driver: Arc<CosmosDriver>,
     fault_rules: HashMap<String, Arc<FaultInjectionRule>>,
-    refcount: usize,
+    acquisition_count: usize,
 }
 
-/// One cache acquisition and an owning reference to its exact driver generation.
-/// Releasing the cache acquisition does not revoke references already handed to calls.
+/// Tracks one cache acquisition and keeps its driver alive.
+/// Releasing the acquisition does not remove driver references already held by calls.
 #[pyclass(frozen, module = "azure.cosmos._rust", name = "_DriverHandle")]
 pub(crate) struct DriverHandle {
     key: String,
@@ -157,12 +157,11 @@ impl Drop for DriverHandle {
     }
 }
 
-/// Compute a `DriverEntry`'s next refcount and whether to evict it. Split out of
-/// `release_driver_handle` so the drop-one / evict-at-zero rule can be tested without a real
-/// `CosmosDriver`. Saturation prevents underflow, not duplicate-release errors:
-/// an extra close on a shared handle still removes another acquisition's count.
-fn apply_close(refcount: usize) -> (usize, bool) {
-    let next = refcount.saturating_sub(1);
+/// Calculate the count after one release and whether to remove the cache entry.
+/// Zero stays zero. `DriverHandle::release` ensures that each handle
+/// decreases the count at most once.
+fn apply_close(acquisition_count: usize) -> (usize, bool) {
+    let next = acquisition_count.saturating_sub(1);
     (next, next == 0)
 }
 
@@ -170,7 +169,7 @@ fn apply_close(refcount: usize) -> (usize, bool) {
 // Cache key: (endpoint, credential, config, runtime identity)
 // ---------------------------------------------------------------------------
 //
-// * Account keys use process-salted SHA-256. Handles remain private identifiers,
+// * Account keys use process-salted SHA-256. Cache keys remain private identifiers,
 //   not authorization tokens or a reason to log credential-derived values.
 // * A token credential is keyed by its Python object identity. The cache holds a
 //   reference to it, so its address can't be reused by another live credential while
@@ -386,37 +385,37 @@ impl Drop for DriverCreation {
     }
 }
 
-fn acquire_cached_driver(handle: &str) -> bool {
+fn acquire_cached_driver(key: &str) -> bool {
     let mut cache = drivers().write();
-    if let Some(entry) = cache.get_mut(handle) {
-        entry.refcount += 1;
+    if let Some(entry) = cache.get_mut(key) {
+        entry.acquisition_count += 1;
         return true;
     }
     false
 }
 
-fn acquire_driver_handle_with(
+fn acquire_driver_key_with(
     py: Python<'_>,
-    handle: String,
+    key: String,
     create: impl FnOnce() -> PyResult<DriverEntry>,
 ) -> PyResult<String> {
-    if acquire_cached_driver(&handle) {
-        return Ok(handle);
+    if acquire_cached_driver(&key) {
+        return Ok(key);
     }
 
-    let creation = driver_creation(&handle);
+    let creation = driver_creation(&key);
     // Release the GIL while waiting: the current creator may need Python callbacks.
     // The borrowed guard drops before `creation`, keeping its registry entry alive.
     let _guard = py.allow_threads(|| runtime_context().tokio_rt.block_on(creation.lock.lock()));
-    if acquire_cached_driver(&handle) {
-        return Ok(handle);
+    if acquire_cached_driver(&key) {
+        return Ok(key);
     }
 
     // Failure leaves no cache entry or acquisition count. Unlocking lets a waiter retry.
     // Only this key is locked during creation; unrelated keys and releases can proceed.
     let entry = create()?;
-    drivers().write().insert(handle.clone(), entry);
-    Ok(handle)
+    drivers().write().insert(key.clone(), entry);
+    Ok(key)
 }
 
 pub(crate) fn runtime_context() -> &'static RuntimeContext {
@@ -503,13 +502,13 @@ pub(crate) fn acquire_driver_handle(
         None => py.allow_threads(|| runtime_ctx.tokio_rt.block_on(default_runtime()))?,
     };
 
-    let driver_handle = format!(
+    let key = format!(
         "{}:runtime-{}",
         driver_identity(endpoint, master_key, config, credential)?,
         selected_runtime.id
     );
 
-    let key = acquire_driver_handle_with(py, driver_handle, || {
+    let key = acquire_driver_key_with(py, key, || {
         // Python clients default to no hedging, even when no config was prepared.
         let operation_options = operation_options_from_config(config)?;
         let (preferred_regions, user_agent_suffix, fault_rules) = match config {
@@ -576,7 +575,7 @@ pub(crate) fn acquire_driver_handle(
             .map_err(|join_error| {
                 PyRuntimeError::new_err(format!("driver init task failed: {join_error}"))
             })?
-            .map_err(|e| PyRuntimeError::new_err(format!("driver init failed: {e}")))?;
+            .map_err(|error| crate::wire::metadata_error(py, error))?;
 
         Ok(DriverEntry {
             driver,
@@ -584,7 +583,7 @@ pub(crate) fn acquire_driver_handle(
                 .into_iter()
                 .map(|rule| (rule.id().to_string(), rule))
                 .collect(),
-            refcount: 1,
+            acquisition_count: 1,
         })
     })?;
     DriverHandle::from_acquired_key(key)
@@ -694,14 +693,15 @@ fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultI
         let item = item?;
         let id: String = item.getattr("id")?.extract()?;
         let operation_name: String = item.getattr("operation_type")?.extract()?;
-        let operation_type = operation_name.parse::<FaultOperationType>().map_err(|e| {
-            PyValueError::new_err(format!(
-                "fault rule {id:?} has invalid operation_type {operation_name:?}: {e}"
-            ))
-        })?;
-
-        let mut condition =
-            FaultInjectionConditionBuilder::new().with_operation_type(operation_type);
+        let mut condition = FaultInjectionConditionBuilder::new();
+        if operation_name != "All" {
+            let operation_type = operation_name.parse::<FaultOperationType>().map_err(|e| {
+                PyValueError::new_err(format!(
+                    "fault rule {id:?} has invalid operation_type {operation_name:?}: {e}"
+                ))
+            })?;
+            condition = condition.with_operation_type(operation_type);
+        }
         if let Some(container_id) = item.getattr("container_id")?.extract::<Option<String>>()? {
             condition = condition.with_container_id(container_id);
         }
@@ -946,14 +946,14 @@ pub(crate) fn release_driver_handle(driver_handle: &DriverHandle) -> PyResult<()
 }
 
 fn release_cached_driver(key: &str, expected: Option<&Arc<CosmosDriver>>) {
-    // Remove the entry under the lock, then drop its Arc outside the lock.
-    // This drop need not be the driver's final reference.
+    // Remove the cache entry while holding the lock, then release the lock before
+    // dropping the entry. Other handles or operations may still keep the driver alive.
     let evicted: Option<DriverEntry> = {
         let mut cache = drivers().write();
         let evict = match cache.get_mut(key) {
             Some(entry) if expected.is_none_or(|driver| Arc::ptr_eq(driver, &entry.driver)) => {
-                let (next, evict) = apply_close(entry.refcount);
-                entry.refcount = next;
+                let (next, evict) = apply_close(entry.acquisition_count);
+                entry.acquisition_count = next;
                 evict
             }
             _ => false,
@@ -1042,6 +1042,48 @@ mod tests {
                 assert_eq!(throttle.max_retry_count, Some(5));
                 assert_eq!(throttle.max_retry_wait_time, Some(Duration::from_millis(milliseconds)));
             }
+        });
+    }
+
+    #[test]
+    fn fault_all_operations_is_explicit_and_preserves_other_filters() {
+        crate::test_support::prepare_python();
+        Python::with_gil(|py| {
+            let module = PyModule::from_code_bound(
+                py,
+                r#"
+from types import SimpleNamespace
+rule = SimpleNamespace(
+    id="all-operations", operation_type="All", status_code=429, sub_status=0,
+    container_id="orders", region=None, delay_ms=5000, probability=1.0,
+    hit_limit=None, enabled=False)
+config = SimpleNamespace(fault_injection_rules=(rule,))
+"#,
+                "fault_all.py",
+                "fault_all",
+            )
+            .unwrap();
+            let config = module.getattr("config").unwrap();
+            let rule = module.getattr("rule").unwrap();
+            let fingerprint = super::config_fingerprint(Some(&config)).unwrap();
+            let rules = super::fault_rules_from_config(&config).unwrap();
+            assert!(rules[0].condition().operation_type().is_none());
+            assert_eq!(rules[0].condition().container_id(), Some("orders"));
+            assert!(!rules[0].is_enabled());
+            assert_eq!(rules[0].result().delay(), Some(Duration::from_secs(5)));
+            rule.setattr("operation_type", "ReadItem").unwrap();
+            let rules = super::fault_rules_from_config(&config).unwrap();
+            assert!(rules[0].condition().operation_type().is_some());
+            assert_ne!(
+                fingerprint,
+                super::config_fingerprint(Some(&config)).unwrap()
+            );
+            for invalid in ["", "all", "ReadDatabases"] {
+                rule.setattr("operation_type", invalid).unwrap();
+                assert!(super::fault_rules_from_config(&config).is_err());
+            }
+            rule.setattr("operation_type", py.None()).unwrap();
+            assert!(super::fault_rules_from_config(&config).is_err());
         });
     }
 
@@ -1320,20 +1362,18 @@ class ExplicitNone:
         );
     }
 
-    // Test the count/eviction decision in isolation, not a live cache or driver
-    // destructor. The count belongs to one exact handle, not an entire endpoint.
+    // Only test the count and removal decision; no cache entry or driver is dropped.
     #[test]
-    fn apply_close_drops_one_reference_and_evicts_only_at_zero() {
+    fn apply_close_decrements_acquisition_count_and_reports_zero() {
         // One release from a count of two leaves one acquisition.
         assert_eq!(apply_close(2), (1, false));
-        // Releasing the final count requests eviction.
+        // Releasing the last acquisition requests removal.
         assert_eq!(apply_close(1), (0, true));
     }
 
     #[test]
-    fn apply_close_on_zero_is_a_saturating_no_op_evict() {
-        // Saturation at zero prevents underflow. It does not make duplicate
-        // releases safe while another acquisition still contributes to the count.
+    fn apply_close_keeps_zero_and_requests_removal() {
+        // DriverHandle prevents repeated releases; this test only checks a zero count.
         assert_eq!(apply_close(0), (0, true));
     }
 
@@ -1383,19 +1423,19 @@ class ExplicitNone:
                 rule
             })
             .collect();
-        let handle = "fault-rule-toggle-scoping-test";
+        let key = "fault-rule-toggle-scoping-test";
         super::drivers().write().insert(
-            handle.into(),
+            key.into(),
             super::DriverEntry {
                 driver,
                 fault_rules: rules
                     .iter()
                     .map(|rule| (rule.id().to_owned(), Arc::clone(rule)))
                     .collect::<HashMap<_, _>>(),
-                refcount: 1,
+                acquisition_count: 1,
             },
         );
-        let handle = super::DriverHandle::from_acquired_key(handle.to_owned()).unwrap();
+        let handle = super::DriverHandle::from_acquired_key(key.to_owned()).unwrap();
         for enabled in [true, true, false, false] {
             super::_debug_set_fault_injection_rule_enabled(&handle, "selected", enabled).unwrap();
             assert_eq!(rules[0].is_enabled(), enabled);
@@ -1430,28 +1470,28 @@ class ExplicitNone:
             .await
             .unwrap();
         let weak_driver = Arc::downgrade(&driver);
-        let handle = "close-reference-lifetime-test";
+        let key = "close-reference-lifetime-test";
         super::drivers().write().insert(
-            handle.to_string(),
+            key.to_string(),
             super::DriverEntry {
                 driver,
                 fault_rules: HashMap::new(),
-                refcount: 2,
+                acquisition_count: 2,
             },
         );
 
-        super::release_driver_key(handle).unwrap();
+        super::release_driver_key(key).unwrap();
         let operation_driver = {
             let cache = super::drivers().read();
-            let entry = cache.get(handle).unwrap();
-            assert_eq!(entry.refcount, 1);
+            let entry = cache.get(key).unwrap();
+            assert_eq!(entry.acquisition_count, 1);
             Arc::clone(&entry.driver)
         };
-        super::release_driver_key(handle).unwrap();
-        assert!(!super::drivers().read().contains_key(handle));
+        super::release_driver_key(key).unwrap();
+        assert!(!super::drivers().read().contains_key(key));
         assert!(weak_driver.upgrade().is_some());
 
-        super::release_driver_key(handle).unwrap();
+        super::release_driver_key(key).unwrap();
         assert!(weak_driver.upgrade().is_some());
         drop(operation_driver);
         assert!(weak_driver.upgrade().is_none());
@@ -1822,7 +1862,7 @@ class Config:
     #[test]
     fn master_key_fingerprint_does_not_leak_the_key() {
         // The sample key is not embedded verbatim. This is not a guarantee that
-        // a credential-derived handle is safe to log.
+        // a credential-derived fingerprint is safe to log.
         let key = "super-secret-master-key";
         let fp = master_key_fingerprint(key).unwrap();
         assert!(fp.starts_with("mk:"));
@@ -1991,7 +2031,7 @@ class Config:
 
     mod driver_creation_tests {
         use super::super::{
-            acquire_driver_handle_with, driver_creation, driver_creations, drivers,
+            acquire_driver_key_with, driver_creation, driver_creations, drivers,
             release_driver_key, runtime_context, DriverCreation, DriverEntry,
         };
         use azure_data_cosmos_driver::{
@@ -2038,7 +2078,7 @@ class Config:
             DriverEntry {
                 driver,
                 fault_rules: HashMap::new(),
-                refcount: 1,
+                acquisition_count: 1,
             }
         }
 
@@ -2102,14 +2142,14 @@ class Config:
             let second_entry = DriverEntry {
                 driver: Arc::clone(&first_entry.driver),
                 fault_rules: HashMap::new(),
-                refcount: 1,
+                acquisition_count: 1,
             };
             let calls = Arc::new(AtomicUsize::new(0));
             let first_calls = Arc::clone(&calls);
             let (started, first_started) = mpsc::channel();
             let (resume, first_resume) = mpsc::channel();
             let first = spawn_acquisition(move |py| {
-                let result = acquire_driver_handle_with(py, key.to_owned(), || {
+                let result = acquire_driver_key_with(py, key.to_owned(), || {
                     first_calls.fetch_add(1, Ordering::SeqCst);
                     started.send(()).unwrap();
                     py.allow_threads(move || first_resume.recv_timeout(WAIT))
@@ -2129,7 +2169,7 @@ class Config:
             first_started.recv_timeout(WAIT).unwrap();
             let second_calls = Arc::clone(&calls);
             let second = spawn_acquisition(move |py| {
-                acquire_driver_handle_with(py, key.to_owned(), || {
+                acquire_driver_key_with(py, key.to_owned(), || {
                     second_calls.fetch_add(1, Ordering::SeqCst);
                     Ok(second_entry)
                 })
@@ -2140,19 +2180,19 @@ class Config:
             if matches!(first_action, FirstAcquisition::Retain) {
                 let other_entry = entry();
                 let other = spawn_acquisition(move |py| {
-                    acquire_driver_handle_with(py, "independent-driver-key".to_owned(), || {
+                    acquire_driver_key_with(py, "independent-driver-key".to_owned(), || {
                         Ok(other_entry)
                     })
                 });
-                let other_handle = finish(other).unwrap();
-                release_driver_key(&other_handle).unwrap();
-                assert!(!driver_creations().read().contains_key(&other_handle));
+                let other_key = finish(other).unwrap();
+                release_driver_key(&other_key).unwrap();
+                assert!(!driver_creations().read().contains_key(&other_key));
             }
 
             resume.send(()).unwrap();
             let first_result = finish(first);
-            let second_handle = finish(second).unwrap();
-            assert_eq!(second_handle, key);
+            let second_key = finish(second).unwrap();
+            assert_eq!(second_key, key);
             if matches!(first_action, FirstAcquisition::Fail) {
                 assert_eq!(
                     first_result.unwrap_err().to_string(),
@@ -2167,25 +2207,25 @@ class Config:
                 if retained_first { 1 } else { 2 }
             );
             assert_eq!(
-                drivers().read().get(key).unwrap().refcount,
+                drivers().read().get(key).unwrap().acquisition_count,
                 if retained_first { 2 } else { 1 }
             );
             assert!(!driver_creations().read().contains_key(key));
 
             Python::with_gil(|py| {
-                let reused = acquire_driver_handle_with(py, key.to_owned(), || {
+                let reused_key = acquire_driver_key_with(py, key.to_owned(), || {
                     panic!("a cache hit must not invoke the factory")
                 })
                 .unwrap();
-                assert_eq!(reused, key);
-                release_driver_key(&reused).unwrap();
+                assert_eq!(reused_key, key);
+                release_driver_key(&reused_key).unwrap();
             });
             if retained_first {
                 release_driver_key(key).unwrap();
             }
             let operation_driver = Arc::clone(&drivers().read().get(key).unwrap().driver);
-            assert_eq!(drivers().read().get(key).unwrap().refcount, 1);
-            release_driver_key(&second_handle).unwrap();
+            assert_eq!(drivers().read().get(key).unwrap().acquisition_count, 1);
+            release_driver_key(&second_key).unwrap();
             assert!(!drivers().read().contains_key(key));
             assert!(weak_driver.upgrade().is_some());
             drop(operation_driver);
@@ -2212,7 +2252,7 @@ class Config:
             let next_entry = entry();
             let key = "driver-creation-failure-cleanup";
             Python::with_gil(|py| {
-                let error = acquire_driver_handle_with(py, key.to_owned(), || {
+                let error = acquire_driver_key_with(py, key.to_owned(), || {
                     Err(PyRuntimeError::new_err("injected failure"))
                 })
                 .unwrap_err();
@@ -2222,17 +2262,17 @@ class Config:
             assert!(!driver_creations().read().contains_key(key));
             let panicked = std::panic::catch_unwind(|| {
                 Python::with_gil(|py| {
-                    acquire_driver_handle_with(py, key.to_owned(), || panic!("injected panic"))
+                    acquire_driver_key_with(py, key.to_owned(), || panic!("injected panic"))
                 })
             });
             assert!(panicked.is_err());
             assert!(!drivers().read().contains_key(key));
             assert!(!driver_creations().read().contains_key(key));
             Python::with_gil(|py| {
-                let handle =
-                    acquire_driver_handle_with(py, key.to_owned(), || Ok(next_entry)).unwrap();
-                assert_eq!(drivers().read().get(key).unwrap().refcount, 1);
-                release_driver_key(&handle).unwrap();
+                let acquired_key =
+                    acquire_driver_key_with(py, key.to_owned(), || Ok(next_entry)).unwrap();
+                assert_eq!(drivers().read().get(key).unwrap().acquisition_count, 1);
+                release_driver_key(&acquired_key).unwrap();
             });
             assert!(!drivers().read().contains_key(key));
             assert!(!driver_creations().read().contains_key(key));
@@ -2295,7 +2335,14 @@ class Config:
             let c = acquire(&second);
             assert!(Arc::ptr_eq(&a.driver, &b.driver));
             assert!(!Arc::ptr_eq(&a.driver, &c.driver));
-            assert_eq!(super::drivers().read().get(&a.key).unwrap().refcount, 2);
+            assert_eq!(
+                super::drivers()
+                    .read()
+                    .get(&a.key)
+                    .unwrap()
+                    .acquisition_count,
+                2
+            );
             drop(first);
             assert!(weak_first.upgrade().is_some());
             let operation_driver = a.driver();
@@ -2375,7 +2422,11 @@ second = Credential()
             let b = acquire(&second);
             assert_eq!(Arc::ptr_eq(&a.driver, &b.driver), shared_credential);
             assert_eq!(
-                super::drivers().read().get(&a.key).unwrap().refcount,
+                super::drivers()
+                    .read()
+                    .get(&a.key)
+                    .unwrap()
+                    .acquisition_count,
                 if shared_credential { 2 } else { 1 },
             );
 
@@ -2387,7 +2438,7 @@ second = Credential()
                     .get(&b.key)
                     .expect("the second acquisition must remain live");
                 assert!(Arc::ptr_eq(&entry.driver, &b.driver));
-                assert_eq!(entry.refcount, 1);
+                assert_eq!(entry.acquisition_count, 1);
                 if !shared_credential {
                     assert!(!cache.contains_key(&a.key));
                 }

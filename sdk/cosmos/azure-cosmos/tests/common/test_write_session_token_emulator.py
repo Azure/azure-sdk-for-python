@@ -37,7 +37,7 @@ def _client_options(backend):
 def orders():
     key = os.environ["COSMOS_EMULATOR_KEY"]
     with CosmosClient(HOST, key, **_client_options("core-python")) as setup:
-        account = setup.get_database_account()
+        account = setup.client_connection.GetDatabaseAccount()
         assert not account._EnableMultipleWritableLocations
         assert len(account.WritableLocations) <= 1
         database_id = "write-token-review-" + uuid.uuid4().hex

@@ -184,7 +184,7 @@ def test_write_failure_is_never_a_recovery_signal_rust(read):
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-def test_outer_legacy_retry_preserves_inner_missing_offer_rust(asynchronous):
+def test_outer_core_python_retry_preserves_inner_missing_offer_rust(asynchronous):
     from azure.cosmos import _retry_utility
     from azure.cosmos.aio import _retry_utility_async
     from azure.cosmos.documents import ConnectionPolicy
@@ -207,7 +207,7 @@ def test_outer_legacy_retry_preserves_inner_missing_offer_rust(asynchronous):
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-def test_empty_legacy_container_page_with_continuation_is_not_not_found_rust(monkeypatch, asynchronous):
+def test_empty_core_python_container_page_with_continuation_is_not_not_found_rust(monkeypatch, asynchronous):
     from azure.cosmos import _retry_utility, _container_recreate_retry_policy
     from azure.cosmos.aio import _retry_utility_async
     from azure.cosmos.documents import ConnectionPolicy

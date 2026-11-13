@@ -117,15 +117,20 @@ azure-sdk-for-python\sdk\cosmos\azure-cosmos
 ### How the build obtains the Rust driver
 
 The SDK team does not maintain a second copy of the driver in the Python
-repository. The prototype tells Cargo to fetch a specific **Git revision**,
-which identifies a particular saved state of the driver's source.
-Selecting that revision is called **pinning** the dependency.
+repository. This local-development configuration uses a **path dependency**
+on the neighboring `azure-sdk-for-rust` checkout. Each rebuild compiles its
+current driver source, including uncommitted changes, with the binding.
+Cargo does not pull that repository automatically.
 
-Cargo downloads the selected source and compiles it with the binding. Editing
-a neighboring Rust checkout does not change the extension already installed
-in Python. To use a different driver revision, the SDK team must change the
-dependency selection, rebuild, and install the new extension. Section 5
-explains how the build records that selection.
+Pulling or editing the Rust checkout does not change an already-built Python
+extension. Rebuild and install it, then restart Python processes that loaded
+the previous binary. `Cargo.lock` does not freeze local driver source.
+
+This configuration requires both repositories in the expected layout.
+Before release or standalone CI/source builds, replace the local path with
+an approved portable source, such as a pinned Git revision or published
+version, and regenerate the lock. The current local setup is not a
+self-contained release configuration.
 
 For the final release, our plan calls for an approved driver version published
 on **crates.io**, the public registry from which Cargo downloads Rust source
@@ -469,7 +474,7 @@ second member of this Python repository's workspace.
 
 The package-level file provides settings that the binding can reuse:
 
-- The driver's source location and selected Git revision.
+- The driver's source location (currently a neighboring local checkout).
 - Dependency version requirements.
 - The declared minimum Rust compiler version.
 - Information such as the license and authors.
@@ -565,7 +570,7 @@ selections rather than independently choose versions.
 
 A lock file does not promise byte-for-byte identical builds. Compiler versions,
 target platforms, and other inputs still matter. Nor does it freeze files in
-a developer's local path override: those source files can still change.
+a developer's local path dependency: those source files can still change.
 
 ### How we prevent a build from silently changing dependencies
 
@@ -980,7 +985,19 @@ For the current configuration, the developer needs:
 - The operating system's required compiler/linker tools.
 - Access to the selected driver and other Rust dependency sources.
 
-The package configuration does not require a neighboring Rust repository.
+The current package configuration requires this neighboring checkout layout:
+
+```text
+repos\
+  azure-sdk-for-python\
+    sdk\cosmos\azure-cosmos\
+  azure-sdk-for-rust\
+    sdk\cosmos\azure_data_cosmos_driver\
+```
+
+Pull the intended Rust changes before rebuilding. If its dependency
+requirements changed, run `cargo update -p azure_data_cosmos_driver` and
+review the lock changes before the locked build.
 
 Activate the intended virtual environment, then run these commands from the
 package source directory:
@@ -989,12 +1006,29 @@ package source directory:
 python -m pip install "maturin==1.15.0"
 maturin --version
 Get-Command maturin
-maturin develop --release
+$env:PATH = "$env:USERPROFILE\.msrustup\multiplexers\bin;$env:PATH"
+$env:RUSTUP_TOOLCHAIN = $null
+Get-Command cargo, rustc
+cargo -V
+rustc -V
+$driverRoot = (Resolve-Path '..\..\..\..\azure-sdk-for-rust').Path
+$env:AZURE_COSMOS_BUILD_PYTHON_COMMIT = git rev-parse HEAD
+$env:AZURE_COSMOS_BUILD_RUST_DRIVER_COMMIT = git -C $driverRoot rev-parse HEAD
+maturin develop --release --locked
 ```
+
+An existing terminal can have an older process `PATH` than the user `PATH`
+configured by the installer. The commands above put the installed Microsoft
+multiplexers first for this process and clear any public-toolchain override.
+Confirm that both tools report the Microsoft build selected by
+`rust-toolchain.toml` before rebuilding. Do not substitute public Rust merely
+because the current terminal cannot find `msrustup`.
 
 The current build configuration selects Maturin `1.15.0`. Confirm that the
 command resolves to that version in the intended environment. Installing a
 tool into one environment does not ensure a different shell finds it.
+The two commit labels identify the checked-out commits; they do not capture
+uncommitted source changes. Refresh them each time you rebuild.
 
 `--release` requests optimized Rust code. It does not mean the SDK is being
 published or approved for production.
@@ -2005,8 +2039,9 @@ For our package, `rust-toolchain.toml` selects `ms-prod-1.97`. That answers
 download it**. Neither setting replaces the other.
 
 The Cargo feed does not select the compiler version. It also does not replace
-the driver Git revision configured in `Cargo.toml`; that driver source still
-requires access to its Git repository.
+the driver source configured in `Cargo.toml`; the current local path requires
+the neighboring Rust checkout. Release builds need an approved portable
+driver source instead.
 
 ### Choosing a toolchain feed
 
@@ -2240,7 +2275,7 @@ multi-platform Azure SDK pipeline.**
 | Maturin | Needed during the build; pip normally installs the declared version into build isolation |
 | Cargo and `rustc` | A compatible Rust toolchain must be available |
 | Platform compiler/linker and required libraries | Needed as appropriate for the target and native dependencies |
-| Rust dependency sources | Must be accessible; the prototype's Git-pinned driver also requires access to its Git source |
+| Rust dependency sources | Must be accessible; the current local driver path must be replaced with an approved portable source before supporting standalone source installation |
 | QueryPlanInterop files | Needed if this source-build path promises that particular provider |
 | `cibuildwheel` | Not needed to build just the customer's local wheel |
 | Python `build` package | Not required merely to run `pip install`; pip can call the SDK package builder |
@@ -2393,6 +2428,15 @@ Rust backend setting, strict skip checks, and separate results. Its selected
 modules, including operation-specific files outside `tests/telemetry`, do not
 run again in the general offline suite. `toxiproxy-tests.yml` retains the proxy
 installation and required network-failure checks.
+
+Thirteen additional Rust-behavior files have been consolidated into existing
+unit suites: eight list/query response-hook files, two feed-range header files,
+two client-policy files, and one deprecated-delete-option file. Their Python
+checks now run without creating service resources. Real page activity IDs,
+request charges, diagnostics, returned resources, and continuation replay stay
+in the existing paging service tests; fake responses do not prove those
+service behaviors. No new YAML or marker is needed for the consolidated
+`test_*_unit.py` coverage.
 
 **Service-test scope is unchanged.** Unmarked service tests and tests selected
 only by other markers are not automatically included in the emulator job.

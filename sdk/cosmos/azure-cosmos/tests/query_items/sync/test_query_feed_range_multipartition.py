@@ -28,7 +28,7 @@ from azure.cosmos import CosmosClient, PartitionKey, documents, http_constants
 from azure.cosmos._routing.feed_range_continuation import _decode_token
 from config.clients import create_setup_client
 from config.settings import unique_database_id
-from query_items import _legacy_feed_range_helpers as test_config
+from query_items import _feed_range_helpers as test_config
 
 
 @pytest.mark.cosmosQuery
@@ -117,6 +117,7 @@ class TestFeedRangeMultiPartition(unittest.TestCase):
 
     def test_prefix_partition_key_query_cross_partition_disabled_rust(self):
         """A prefix query with cross-partition disabled returns the prefix items, as on legacy."""
+        # Source: (new) Explicit False with a hierarchical key prefix; legacy prefix paging omits this option.
         db = self.database
         created_container = db.create_container_if_not_exists(
             id="FeedRangeMultiPartitionPrefixPKDisabled-" + str(uuid.uuid4()),
@@ -1035,7 +1036,7 @@ class TestFeedRangeMultiPartitionRust:
             f"missing={len(ground_truth - unique)}, "
             f"unexpected={len(unique - ground_truth)}.")
 
-    def test_legacy_opaque_token_compat_rust(self, caplog):
+    def test_service_token_compat_rust(self, caplog):
         """Use an opaque continuation token; the query restarts from the beginning."""
         # pylint: disable-next=line-too-long
         # Source: tests/test_query_feed_range_multipartition.py::TestFeedRangeMultiPartition.test_legacy_opaque_token_compat

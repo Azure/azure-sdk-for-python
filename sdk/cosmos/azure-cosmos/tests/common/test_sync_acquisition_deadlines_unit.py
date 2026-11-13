@@ -10,6 +10,7 @@ threads establish waiter timing and ownership, not live driver cancellation.
 """
 
 import contextvars
+import logging
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -39,6 +40,8 @@ def cold_client(monkeypatch):
     native = SimpleNamespace(
         acquire_driver_handle=MagicMock(side_effect=acquire),
         release_driver_handle=MagicMock(),
+        _DriverResponseError=type("_DriverResponseError", (RuntimeError,), {}),
+        _DriverTransportError=type("_DriverTransportError", (RuntimeError,), {}),
     )
     monkeypatch.setattr(binding_adapter, "_rust_module", native)
     yield SimpleNamespace(client=client, entered=entered, finish=finish, handle=handle, native=native)
@@ -133,14 +136,33 @@ def test_sync_auxiliary_paths_bound_acquisition_rust(cold_client, path, expired)
             case.finish.set()
 
 
-def test_sync_waiters_share_acquisition_but_not_deadlines_rust(cold_client):
+def test_sync_waiters_share_acquisition_but_not_deadlines_rust(cold_client, monkeypatch):
     case = cold_client
     ensure = case.client._adapter._ensure_driver_handle
+    original_wait = binding_adapter.wait
+    both_waiting = threading.Event()
+    wait_lock = threading.Lock()
+    waiters = {}
+
+    def observed_wait(futures, timeout=None):
+        with wait_lock:
+            waiters[threading.get_ident()] = tuple(futures)
+            if len(waiters) == 2:
+                both_waiting.set()
+        assert both_waiting.wait(2), "both callers must join the pending acquisition"
+        return original_wait(futures, timeout=timeout)
+
+    monkeypatch.setattr(binding_adapter, "wait", observed_wait)
     with ThreadPoolExecutor(max_workers=2) as pool:
-        first = pool.submit(ensure, deadline=time.monotonic() + 0.1)
+        first = pool.submit(ensure, deadline=time.monotonic() + 1)
         try:
             assert case.entered.wait(2)
             survivor = pool.submit(ensure, deadline=time.monotonic() + 3)
+            assert both_waiting.wait(2), "second caller did not join the pending acquisition"
+            with wait_lock:
+                first_wait, second_wait = waiters.values()
+            assert len(first_wait) == len(second_wait) == 1
+            assert first_wait[0] is second_wait[0] is case.client._adapter._init_future
             with pytest.raises(CosmosClientTimeoutError):
                 first.result(timeout=2)
             assert not survivor.done()
@@ -254,8 +276,10 @@ def test_sync_close_preserves_inputs_of_pending_acquisition_rust(cold_client, mo
 def test_sync_late_acquisition_failure_allows_retry_rust(cold_client, caplog):
     case = cold_client
     error = RuntimeError("private acquisition details")
+    workers = []
 
     def fail(*_args, **_kwargs):
+        workers.append(threading.current_thread())
         case.entered.set()
         assert case.finish.wait(5)
         raise error
@@ -269,6 +293,12 @@ def test_sync_late_acquisition_failure_allows_retry_rust(cold_client, caplog):
         finally:
             case.finish.set()
         assert pending.exception(timeout=2) is error
+        # The future completes before the worker logs its failure.
+        workers[0].join(timeout=2)
+        assert not workers[0].is_alive(), "acquisition worker did not finish"
+    assert (
+        binding_adapter.__name__, logging.DEBUG, "Rust driver initialization failed"
+    ) in caplog.record_tuples
     assert "private acquisition details" not in caplog.text
     case.native.acquire_driver_handle.side_effect = None
     case.native.acquire_driver_handle.return_value = case.handle

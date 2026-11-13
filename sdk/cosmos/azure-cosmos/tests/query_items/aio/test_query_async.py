@@ -33,8 +33,8 @@ from azure.cosmos import PartitionKey, http_constants, _endpoint_discovery_retry
 from azure.cosmos._retry_options import RetryOptions
 from azure.cosmos._routing.feed_range_continuation import _decode_token
 from azure.cosmos.aio import CosmosClient
-from query_items._legacy_distinct_helpers import DistinctConfig, distinct_query_diagnostics
-from query_items._legacy_feed_range_helpers import create_feed_range_in_dict, create_range
+from query_items._distinct_helpers import DistinctConfig, distinct_query_diagnostics
+from query_items._feed_range_helpers import create_feed_range_in_dict, create_range
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -64,7 +64,7 @@ class _QueryConfig(DistinctConfig):
         assert list(map(lambda doc: doc['pk'], [item async for item in query_iterable])) == results
 
 
-class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
+class _QueryTestCase(unittest.IsolatedAsyncioTestCase):
     config = _QueryConfig
 
     async def asyncSetUp(self):
@@ -85,7 +85,16 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.delete_database(self._db_id)
         print(f"\nDeleted owned async query database: {self._db_id}")
 
-    @pytest.mark.cosmosEmulator
+    async def _create_multi_partition_container(self):
+        return await self.database.create_container(
+            id="multi_partition_" + uuid.uuid4().hex[:8], partition_key=PartitionKey(path="/pk"),
+            offer_throughput=11000)
+
+
+@pytest.mark.cosmosCircuitBreaker
+@pytest.mark.cosmosQuery
+@pytest.mark.cosmosAADQuery
+class TestQueryAsync(_QueryTestCase):
     @pytest.mark.asyncio
     async def test_populate_query_metrics_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_populate_query_metrics_async
@@ -120,7 +129,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.database.delete_container(container_id)
 
-    @pytest.mark.cosmosEmulator
     async def test_populate_index_metrics_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_populate_index_metrics_async
         container_id = self._container_id
@@ -165,7 +173,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.database.delete_container(container_id)
 
-    @pytest.mark.cosmosEmulator
     # Known gap 36: query advice is dropped by the driver's response headers on both transports (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-advice-response-header).
     @pytest.mark.skip(
         reason=(
@@ -262,7 +269,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.database.delete_container(container_id)
 
-    @pytest.mark.cosmosEmulator
     @pytest.mark.skip(
         reason="driver-gap: Gap 30 - Rust rejects MAX queries without a partition key "
         "(HTTP 400/1004). Re-enable when the driver supports this aggregate query."
@@ -282,7 +288,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert len(item_list) == 1
         assert item_list[0] == 3
 
-    @pytest.mark.cosmosEmulator
     @pytest.mark.skip(
         reason="driver-gap: Gap 30 - For SELECT DISTINCT c[\"value\"] with ORDER BY and "
         "OFFSET LIMIT, Rust returns rows with a '$1' field instead of the requested "
@@ -332,7 +337,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.database.delete_container(container_id)
 
-    @pytest.mark.cosmosEmulator
     async def test_distinct_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_distinct_async
         distinct_field = 'distinct_field'
@@ -397,7 +401,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.database.delete_container(container_id)
 
-    @pytest.mark.cosmosEmulator
     async def test_partition_scoped_count_is_index_only_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_partition_scoped_count_is_index_only_async
         created_collection = self.container
@@ -450,7 +453,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             for item_id, item_partition_key in created_items:
                 await created_collection.delete_item(item_id, item_partition_key)
 
-    @pytest.mark.cosmosEmulator
     async def test_paging_with_continuation_token_async_rust(self):
         """A continuation token replays the page that follows it.
 
@@ -487,7 +489,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         assert second_page['id'] == second_page_fetched_with_continuation_token['id']
 
-    @pytest.mark.cosmosEmulator
     async def test_continuation_token_size_limit_query_async_rust(self):
         """Preserve the original async one-kilobyte token assertions on owned data."""
         # Source: tests/test_query_async.py::TestQueryAsync.test_continuation_token_size_limit_query_async
@@ -505,78 +506,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         token = pager.continuation_token
         assert len(token.encode('utf-8')) <= 1024
 
-    @pytest.mark.cosmosEmulator
-    async def test_continuation_token_limit_preserves_broad_scope_and_resume_async_rust(
-        self,
-    ):
-        """Forward the service limit without imposing a size cap on the SDK token."""
-        container = await self._create_multi_partition_container()
-        ranges = [feed_range async for feed_range in container.read_feed_ranges()]
-        self.assertGreater(len(ranges), 1)
-        expected = {f"token-limit-{i}" for i in range(7)}
-        for i in range(7):
-            await container.create_item(
-                {"id": f"token-limit-{i}", "pk": f"customer-{i % 3}"}
-            )
-        full_range = {
-            "Range": {
-                "min": "",
-                "max": "FF",
-                "isMinInclusive": True,
-                "isMaxInclusive": False,
-            }
-        }
-        for scope in ({}, {"feed_range": full_range}):
-            with self.subTest(scope=scope):
-                options = dict(
-                    query="SELECT * FROM c",
-                    max_item_count=1,
-                    continuation_token_limit=1,
-                    enable_cross_partition_query=True,
-                    **scope,
-                )
-                pages = container.query_items(**options).by_page()
-                first = [row async for row in await pages.__anext__()]
-                token = pages.continuation_token
-                self.assertTrue(first)
-                self.assertTrue(token)
-                resumed = container.query_items(**options).by_page(
-                    continuation_token=token
-                )
-                rows = first + [row async for page in resumed async for row in page]
-                self.assertEqual(len(rows), len(expected))
-                self.assertEqual({row["id"] for row in rows}, expected)
-
-    @pytest.mark.cosmosEmulator
-    async def test_cross_partition_disabled_without_partition_key_matches_legacy_async_rust(self):
-        """Without partition_key, False runs only a query that the filter pins to one key."""
-        container = await self._create_multi_partition_container()
-        ranges = [feed_range async for feed_range in container.read_feed_ranges()]
-        self.assertGreater(len(ranges), 1)
-        for order_id, customer in (("order-1", "c-501"), ("order-2", "c-501"), ("order-3", "c-502")):
-            await container.create_item({"id": order_id, "pk": customer})
-
-        async def ids(query, **scope):
-            return sorted([row["id"] async for row in container.query_items(
-                query=query, enable_cross_partition_query=False, **scope)])
-
-        self.assertEqual(await ids("SELECT c.id FROM c WHERE c.pk = 'c-501'"), ["order-1", "order-2"])
-        self.assertEqual(await ids("SELECT c.id FROM c WHERE c.pk = 'c-501' ORDER BY c.id DESC"),
-                         ["order-1", "order-2"])
-        feed_range = await container.feed_range_from_partition_key("c-501")
-        self.assertEqual(await ids("SELECT c.id FROM c", feed_range=feed_range), ["order-1", "order-2"])
-        for query in (
-            "SELECT c.id FROM c",
-            "SELECT c.id FROM c WHERE c.id = 'order-1'",
-            "SELECT c.id FROM c WHERE c.pk IN ('c-501', 'c-502')",
-        ):
-            with self.subTest(query=query):
-                with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
-                    await ids(query)
-                self.assertEqual(caught.exception.status_code, 400)
-                self.assertIn("Cross partition query is required but disabled", caught.exception.message)
-
-    @pytest.mark.cosmosEmulator
     async def test_cross_partition_query_with_continuation_token_async_rust(self):
         """Original async cross-partition replay, without an explicit enable flag."""
         # Source: tests/test_query_async.py::TestQueryAsync.test_cross_partition_query_with_continuation_token_async
@@ -619,14 +548,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         # Source helper: tests/test_query_async.py::TestQueryAsync._delete_container_for_test
         await self.database.delete_container(container_id)
 
-    async def _create_multi_partition_container(self):
-        return await self.database.create_container(
-            id="multi_partition_" + uuid.uuid4().hex[:8], partition_key=PartitionKey(path="/pk"),
-            offer_throughput=11000)
-
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     async def test_first_and_last_slashes_trimmed_for_query_string_async_rust(self):
         # pylint: disable-next=line-too-long
         # Source: tests/test_query_async.py::TestQueryAsync.test_first_and_last_slashes_trimmed_for_query_string_async
@@ -647,9 +568,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self._delete_container_for_test(container_id)
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     @pytest.mark.skip(reason="internals-only: the original is unconditionally skipped and counts requests by "
                              "patching legacy _retry_utility_async.ExecuteFunctionAsync, which Rust never calls.")
     async def test_max_item_count_honored_in_order_by_query_async_rust(self):
@@ -698,9 +616,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         self.count += 1
         return await self.OriginalExecuteFunction(function, *args, **kwargs)
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     async def test_unsupported_queries_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_unsupported_queries_async
         # Known gap 30 item 9: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30
@@ -719,19 +634,13 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             except exceptions.CosmosHttpResponseError as e:
                 assert e.status_code == 400
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     async def test_query_with_non_overlapping_pk_ranges_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_query_with_non_overlapping_pk_ranges_async
         created_collection = await self._create_multi_partition_container()
         query_iterable = created_collection.query_items("select * from c where c.pk='1' or c.pk='2'")
         assert [item async for item in query_iterable] == []
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
-    async def test_full_pk_continuation_emits_legacy_by_default_async_rust(self):
+    async def test_full_pk_continuation_emits_service_token_by_default_async_rust(self):
         """Full partition-key queries return legacy continuation tokens by default."""
         # Source: tests/test_query_async.py::TestQueryAsync.test_full_pk_continuation_emits_legacy_by_default_async
         created_collection = await self._create_multi_partition_container()
@@ -750,10 +659,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert token is not None
         assert _decode_token(token) is None
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
-    async def test_full_pk_legacy_replay_resumes_same_page_async_rust(self):
+    async def test_full_pk_service_token_replay_resumes_same_page_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_full_pk_legacy_replay_resumes_same_page_async
         created_collection = await self._create_multi_partition_container()
         await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
@@ -776,9 +682,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         replay_second_page = [item async for item in await replay_pager.__anext__()][0]
         assert second_page['id'] == replay_second_page['id']
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     async def test_cross_partition_query_with_none_partition_key_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_cross_partition_query_with_none_partition_key_async
         created_collection = await self._create_multi_partition_container()
@@ -794,9 +697,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         assert len([item async for item in query_iterable]) >= 2
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     async def test_cosmos_query_retryable_error_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_cosmos_query_retryable_error_async
         async def query_items(database):
@@ -850,9 +750,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         self.client.client_connection.connection_policy.RetryOptions = old_retry
         await self._delete_container_for_test("query_retryable_error_test")
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     async def test_query_request_params_none_retry_policy_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_query_request_params_none_retry_policy_async
         container_id = "query_request_params_none_retry_policy_" + str(uuid.uuid4())
@@ -945,9 +842,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
                 raise ex_to_raise
         return await self.OriginalExecuteFunction(function, *args, **kwargs)
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     async def test_partitioned_query_response_hook_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_partitioned_query_response_hook_async
         container_id = "query_response_hook_test" + str(uuid.uuid4())
@@ -971,9 +865,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert response_hook.count == 1
         await self._delete_container_for_test(container_id)
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     async def test_query_pagination_with_max_item_count_async_rust(self):
         """Test pagination showing per-page limits and total results counting."""
         # Source: tests/test_query_async.py::TestQueryAsync.test_query_pagination_with_max_item_count_async
@@ -1017,9 +908,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self._delete_container_for_test(container_id)
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     async def test_query_pagination_without_max_item_count_async_rust(self):
         """Test pagination behavior without specifying max_item_count."""
         # Source: tests/test_query_async.py::TestQueryAsync.test_query_pagination_without_max_item_count_async
@@ -1048,9 +936,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self._delete_container_for_test(container_id)
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     async def test_query_items_with_parameters_none_async_rust(self):
         """Test that query_items handles parameters=None correctly (issue #43662)."""
         # Source: tests/test_query_async.py::TestQueryAsync.test_query_items_with_parameters_none_async
@@ -1101,9 +986,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self._delete_container_for_test(container_id)
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     async def test_query_items_parameters_none_with_options_async_rust(self):
         """Test parameters=None works with various query options."""
         # Source: tests/test_query_async.py::TestQueryAsync.test_query_items_parameters_none_with_options_async
@@ -1169,9 +1051,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             _asynchronous_request, "_PipelineRunFunction", side_effect=_wrapper,
         )
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     async def test_outer_timeout_propagates_through_by_page_paging_async_rust(self):
         # pylint: disable-next=line-too-long
         # Source: tests/test_query_async.py::TestQueryAsync.test_outer_timeout_propagates_through_by_page_paging_async
@@ -1208,9 +1087,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self._delete_container_for_test(container_id)
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     async def test_connection_timeout_propagates_through_by_page_paging_async_rust(self):
         # pylint: disable-next=line-too-long
         # Source: tests/test_query_async.py::TestQueryAsync.test_connection_timeout_propagates_through_by_page_paging_async
@@ -1244,9 +1120,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self._delete_container_for_test(container_id)
 
-    @pytest.mark.cosmosCircuitBreaker
-    @pytest.mark.cosmosQuery
-    @pytest.mark.cosmosAADQuery
     async def test_avg_aggregate_by_page_raises_value_error_cross_partition_async_rust(self):
         # pylint: disable-next=line-too-long
         # Source: tests/test_query_async.py::TestQueryAsync.test_avg_aggregate_by_page_raises_value_error_cross_partition_async
@@ -1298,6 +1171,80 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(len(single_result), 1)
         finally:
             await self._delete_container_for_test(container_id)
+
+
+@pytest.mark.cosmosEmulator
+class TestQueryRegressionsAsync(_QueryTestCase):
+    async def test_continuation_token_limit_preserves_broad_scope_and_resume_async_rust(
+        self,
+    ):
+        """Forward the service limit without imposing a size cap on the SDK token."""
+        # Source: (new) Broad-scope token-limit replay; not the legacy single-key token-size assertion.
+        container = await self._create_multi_partition_container()
+        ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+        self.assertGreater(len(ranges), 1)
+        expected = {f"token-limit-{i}" for i in range(7)}
+        for i in range(7):
+            await container.create_item(
+                {"id": f"token-limit-{i}", "pk": f"customer-{i % 3}"}
+            )
+        full_range = {
+            "Range": {
+                "min": "",
+                "max": "FF",
+                "isMinInclusive": True,
+                "isMaxInclusive": False,
+            }
+        }
+        for scope in ({}, {"feed_range": full_range}):
+            with self.subTest(scope=scope):
+                options = dict(
+                    query="SELECT * FROM c",
+                    max_item_count=1,
+                    continuation_token_limit=1,
+                    enable_cross_partition_query=True,
+                    **scope,
+                )
+                pages = container.query_items(**options).by_page()
+                first = [row async for row in await pages.__anext__()]
+                token = pages.continuation_token
+                self.assertTrue(first)
+                self.assertTrue(token)
+                resumed = container.query_items(**options).by_page(
+                    continuation_token=token
+                )
+                rows = first + [row async for page in resumed async for row in page]
+                self.assertEqual(len(rows), len(expected))
+                self.assertEqual({row["id"] for row in rows}, expected)
+
+    async def test_cross_partition_disabled_without_partition_key_matches_core_python_async_rust(self):
+        """Without partition_key, False runs only a query that the filter pins to one key."""
+        # Source: (new) Explicit False without partition_key: inferred-key/feed-range success and fan-out rejection.
+        container = await self._create_multi_partition_container()
+        ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+        self.assertGreater(len(ranges), 1)
+        for order_id, customer in (("order-1", "c-501"), ("order-2", "c-501"), ("order-3", "c-502")):
+            await container.create_item({"id": order_id, "pk": customer})
+
+        async def ids(query, **scope):
+            return sorted([row["id"] async for row in container.query_items(
+                query=query, enable_cross_partition_query=False, **scope)])
+
+        self.assertEqual(await ids("SELECT c.id FROM c WHERE c.pk = 'c-501'"), ["order-1", "order-2"])
+        self.assertEqual(await ids("SELECT c.id FROM c WHERE c.pk = 'c-501' ORDER BY c.id DESC"),
+                         ["order-1", "order-2"])
+        feed_range = await container.feed_range_from_partition_key("c-501")
+        self.assertEqual(await ids("SELECT c.id FROM c", feed_range=feed_range), ["order-1", "order-2"])
+        for query in (
+            "SELECT c.id FROM c",
+            "SELECT c.id FROM c WHERE c.id = 'order-1'",
+            "SELECT c.id FROM c WHERE c.pk IN ('c-501', 'c-502')",
+        ):
+            with self.subTest(query=query):
+                with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
+                    await ids(query)
+                self.assertEqual(caught.exception.status_code, 400)
+                self.assertIn("Cross partition query is required but disabled", caught.exception.message)
 
 
 class ResponseHookCaller:

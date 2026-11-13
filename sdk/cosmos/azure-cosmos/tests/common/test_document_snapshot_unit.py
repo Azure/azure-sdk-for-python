@@ -81,7 +81,7 @@ def arguments(operation, body):
         "literal \\ud800 and \u00e9",
     ],
 )
-def test_encoding_matches_legacy_rust(operation, compact, text):
+def test_encoding_matches_core_python_rust(operation, compact, text):
     """The bytes are identical to the older encoder's, for text and numbers that are easy
     to get wrong.
 
@@ -263,7 +263,7 @@ def test_snapshot_once_before_execute_and_async_yield_rust(
 
 
 @pytest.mark.parametrize("operation", WRITES)
-def test_wrapper_does_not_deepcopy_documents_or_call_legacy_rust(operation, monkeypatch):
+def test_wrapper_does_not_deepcopy_documents_or_call_core_python_rust(operation, monkeypatch):
     """Nothing copies the item body, and none of the older preparation code runs.
 
     Copying was the obvious way to stop the caller changing a body in flight, and it

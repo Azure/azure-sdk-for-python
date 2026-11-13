@@ -19,7 +19,7 @@ from azure.cosmos._constants import _Constants
 from _client_transport import create_client_with_transport
 
 
-def test_unmodified_legacy_policy_retains_three_waits_as_characterization():
+def test_unmodified_core_python_policy_retains_three_waits_as_characterization():
     from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPolicy
 
     policy = ResourceThrottleRetryPolicy(5, 0, 2.5)

@@ -61,7 +61,7 @@ def test_constructor_rejects_user_agent_controls_before_backend_creation(
 
 @pytest.mark.parametrize("name,value", UNSUPPORTED_SETTINGS)
 @pytest.mark.parametrize("location", ["keyword", "request_options", "feed_options"])
-def test_user_agent_rejection_depends_on_presence_and_preserves_legacy_options(name, value, location):
+def test_user_agent_rejection_depends_on_presence_and_preserves_core_python_options(name, value, location):
     options = {name: value}
     kwargs = options if location == "keyword" else {location: options}
     with pytest.raises(TypeError, match=f"{name} is not supported by Rust-backed APIs"):
@@ -92,7 +92,7 @@ def test_public_operations_reject_user_agent_before_work(native, name, operation
 @pytest.mark.parametrize("name,value", UNSUPPORTED_SETTINGS)
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize("backend", ["core-python", None])
-def test_legacy_constructor_retains_user_agent_controls(
+def test_core_python_constructor_retains_user_agent_controls(
     construct_client, client_module, name, value, from_connection_string, backend
 ):
     construct_client(

@@ -45,13 +45,13 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import CaseInsensitiveDict
 
 from ._backend.cosmos_backend import CosmosBackend
+from ._backend.constants import is_rust_backend
 from ._backend.credentials import validate_credential
 from ._backend.client_config import _resolve_hedging
 from ._helpers._item_context import ItemClientContext, ItemClientDefaults
 from ._utils import _validate_enable_compact_utf8_item_writes, get_user_agent
 from ._inference_client import InferenceClient, InferenceClientSettings
 from ._inference_service import _InferenceService
-from ._backend.errors import raise_account_read_unsupported
 from ._backend.factory import make_backend, resolve_backend_name
 from ._backend.transport_settings import resolve_client_connection_timeout, validate_client_runtime_settings
 from .runtime import CosmosRuntime
@@ -74,7 +74,7 @@ from ._telemetry import trace_operation
 from ._diagnostic_logging import DiagnosticLogging
 from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy, _get_database_link
-from .documents import ConnectionPolicy, DatabaseAccount
+from .documents import ConnectionPolicy
 from ._helpers._database_operations import DatabaseHelper
 
 if TYPE_CHECKING:
@@ -415,7 +415,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     def __enter__(self):
         try:
-            self.client_connection.pipeline_client.__enter__()
+            if not is_rust_backend(self._adapter):
+                self.client_connection.pipeline_client.__enter__()
         except BaseException:
             try:
                 self.close()
@@ -426,7 +427,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     def __exit__(self, *args):
         try:
-            return self.client_connection.pipeline_client.__exit__(*args)
+            pipeline = vars(self.client_connection).get("pipeline_client")
+            if pipeline is not None:
+                return pipeline.__exit__(*args)
+            return None
         finally:
             try:
                 self._adapter.close()
@@ -771,6 +775,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ``etag``, and ``match_condition`` do not apply to this operation and raise
         ``TypeError``, including when set to ``None``.
 
+        Database IDs use the same format validation as ``create_database``
+        before the existence read. For example, ``"sales/"`` raises
+        ``ValueError`` even when ``"sales"`` exists.
+
         If another caller creates the database between the read and creation
         attempt, read it once more and return it without changing its settings.
         Any error from that follow-up read is propagated.
@@ -942,8 +950,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         use the same range checks; a non-``None`` named count takes precedence.
         A non-callable hook raises ``TypeError`` before any request.
 
+        ``enable_cross_partition_query`` has been removed for database queries.
+        Omit it rather than passing ``True``, ``False``, or ``None``; these raise
+        ``TypeError``, as does its ``enableCrossPartitionQuery`` settings entry.
+        This does not change the cross-partition option on ``ContainerProxy.query_items``.
+
         ``session_token``, ``populate_query_metrics``, ``availability_strategy``,
-        ``enable_cross_partition_query``, ``no_response``, and ``content_type`` are
+        ``no_response``, and ``content_type`` are
         rejected with ``TypeError``, including explicit ``None``/``False`` and nested equivalents.
         Unsupported Rust page options fail without switching to the legacy transport.
 
@@ -1018,26 +1031,3 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         if response_hook is not None:
             response_hook(CaseInsensitiveDict(self.client_connection.last_response_headers))
-
-    @distributed_trace
-    def get_database_account(
-            self,
-            *,
-            response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
-            **kwargs) -> DatabaseAccount:
-        """Retrieve the database account information.
-
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any]], None]
-        :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
-        :rtype: ~azure.cosmos.DatabaseAccount
-        """
-        prepare_operation_kwargs(self, kwargs)
-        # Reading account properties has not moved to the Rust path yet. On a
-        # Rust-backed client, raise rather than quietly falling back to the
-        # legacy connection, which would hide that this is still missing.
-        raise_account_read_unsupported(self._adapter)
-        result = self.client_connection.GetDatabaseAccount(**kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers)
-        return result

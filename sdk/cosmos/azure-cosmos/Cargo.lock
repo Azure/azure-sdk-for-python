@@ -150,7 +150,6 @@ dependencies = [
 [[package]]
 name = "azure_data_cosmos_driver"
 version = "1.1.0-beta.3"
-source = "git+https://github.com/Azure/azure-sdk-for-rust?rev=5ba864be8f128a6faf3f736ae0043f60d5911235#5ba864be8f128a6faf3f736ae0043f60d5911235"
 dependencies = [
  "arc-swap",
  "async-lock",
@@ -181,7 +180,6 @@ dependencies = [
 [[package]]
 name = "azure_data_cosmos_macros"
 version = "1.1.0-beta.3"
-source = "git+https://github.com/Azure/azure-sdk-for-rust?rev=5ba864be8f128a6faf3f736ae0043f60d5911235#5ba864be8f128a6faf3f736ae0043f60d5911235"
 dependencies = [
  "proc-macro2",
  "quote",

@@ -29,14 +29,15 @@ import pytest_asyncio
 
 from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient
-from query_items import _legacy_feed_range_helpers as test_config
+from query_items import _feed_range_helpers as test_config
 
 PK_VALUES = ('pk1', 'pk2', 'pk3')
 RUN_MARKER_FIELD = "_run_marker"
 RUN_MARKER_VALUE = str(uuid.uuid4())
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosQuery
+@pytest.mark.cosmosAADSplit
 class TestQueryFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")

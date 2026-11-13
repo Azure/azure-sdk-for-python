@@ -160,7 +160,8 @@ def test_query_payload_and_lazy_resumable_pages_rust(query_case, form):
 
 
 @pytest.mark.parametrize("empty", ["first", "all", "neither"])
-def test_page_hooks_are_lazy_independent_and_honor_false_callables_rust(query_case, empty):
+@pytest.mark.parametrize("timeout", [None, 10])
+def test_page_hooks_are_lazy_independent_and_honor_false_callables_rust(query_case, empty, timeout):
     """The hook runs once per page with that page's own headers, including for pages
     that matched nothing.
 
@@ -174,7 +175,8 @@ def test_page_hooks_are_lazy_independent_and_honor_false_callables_rust(query_ca
     needs to see them.
 
     The hook reports itself as false and still runs. Its headers are its own
-    copy: it writes a marker and nothing reaches the client's record.
+    copy: it writes a marker and nothing reaches the client's record. This holds
+    with and without a timeout.
     """
     case = query_case
     if empty != "neither":
@@ -192,7 +194,7 @@ def test_page_hooks_are_lazy_independent_and_honor_false_callables_rust(query_ca
             snapshots.append(headers)
             headers["x-local"] = "mutation"
 
-    pager = case.database.query_containers(SQL, response_hook=Hook())
+    pager = case.database.query_containers(SQL, response_hook=Hook(), timeout=timeout)
     assert snapshots == [] and case.requests == []
     rows = _drain(case, pager)
     assert rows == ([] if empty == "all" else [{"id": "c2"}] if empty == "first"
@@ -420,7 +422,7 @@ def test_service_error_does_not_call_success_hook_rust(query_case, status):
 @pytest.mark.parametrize("error", [
     PagePreflightError("unsupported"), ValueError("binding failure"), asyncio.CancelledError(),
 ])
-def test_binding_failure_never_replays_on_legacy_rust(query_case, error):
+def test_binding_failure_never_replays_on_core_python_rust(query_case, error):
     """A failure inside the Rust engine, including cancellation, ends the walk after
     one request.
 

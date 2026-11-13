@@ -55,9 +55,8 @@ async def demonstrate_read_items(container: ContainerProxy) -> None:
     for item in read_results:
         print(f"  - Read item with id: {item.get('id')}")
 
-    print("\n--- 2. Reading a large number of items to show concurrency ---")
-    # This demonstrates how read_items handles concurrency and query chunking.
-    # The SDK will split the 1500 items into multiple backend queries.
+    print("\n--- 2. Reading a large selection of known items ---")
+    # Rust groups the selection and the SDK collects every result page.
     large_items_list = await create_items(container, 1100)
     large_read_results = await container.read_items(items=large_items_list)
     print(f"Successfully read {len(large_read_results)} items.")
@@ -86,12 +85,12 @@ async def demonstrate_read_items(container: ContainerProxy) -> None:
     print(f"Response hook was called {hook_captured_data.get('call_count', 0)} time(s).")
     if 'headers' in hook_captured_data:
         print(f"Aggregated request charge from hook: {hook_captured_data['headers'].get('x-ms-request-charge')}")
-    print(f"Result list from hook is the same as returned list: {hook_captured_data['results'] is hook_results}")
+    print(f"Hook receives an independent result snapshot: {hook_captured_data['results'] is not hook_results}")
 
 
 async def run_sample():
     """An asynchronous sample for the read_items API."""
-    client = CosmosClient(HOST, {'masterKey': MASTER_KEY})
+    client = CosmosClient(HOST, MASTER_KEY, _backend="rust")
     db = None
     try:
         # Create a database

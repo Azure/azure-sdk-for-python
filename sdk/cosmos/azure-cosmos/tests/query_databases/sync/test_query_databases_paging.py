@@ -6,9 +6,10 @@
 # Rust behavior test
 """Live ``query_databases`` continuation behavior on the Rust backend.
 
-The account is shared; the module creates three databases so at least that
-many pages exist, and tolerates any others.
+The account is shared; the query selects only the three databases this module
+creates.
 """
+
 from __future__ import annotations
 
 import os
@@ -18,7 +19,9 @@ import pytest
 
 from azure.cosmos import CosmosClient
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
-from common._rust_checks import run_on_rust
+from common._rust_checks import assert_live_page_headers, run_on_rust
+
+pytestmark = [pytest.mark.cosmosEmulator]
 
 
 def _rust_client():
@@ -47,13 +50,37 @@ def test_continuation_token_replays_second_page_rust(database_ids):
     assert len(database_ids) == 3
     client = _rust_client()
     try:
+        snapshots = []
+
+        def consume(page):
+            rows = list(page)
+            assert (
+                snapshots[-1]["x-ms-activity-id"] == client.client_connection.last_response_headers["x-ms-activity-id"]
+            )
+            return rows
 
         def target():
-            iterable = client.query_databases(query="SELECT * FROM root r", max_item_count=1)
+            iterable = client.query_databases(
+                query="SELECT * FROM root r WHERE r.id IN (@id0, @id1, @id2)",
+                parameters=[
+                    {"name": "@id{}".format(index), "value": database_id}
+                    for index, database_id in enumerate(database_ids)
+                ],
+                max_item_count=1,
+                timeout=10,
+                throughput_bucket=1,
+                initial_headers={"x-query-databases-test": "sync"},
+                response_hook=lambda headers: snapshots.append(dict(headers)),
+            )
             pager = iterable.by_page()
-            first_page = list(next(pager))
+            first_page = consume(next(pager))
             continuation = pager.continuation_token
-            second_page = list(next(pager))
+            second_page = consume(next(pager))
+            remaining_pages = [consume(page) for page in pager]
+            rows = first_page + second_page + [row for page in remaining_pages for row in page]
+            assert sorted(row["id"] for row in rows) == sorted(database_ids)
+            assert len(snapshots) == 2 + len(remaining_pages) >= 3
+            assert_live_page_headers(snapshots)
             replay_page = list(next(iterable.by_page(continuation)))
             return first_page, continuation, second_page, replay_page
 

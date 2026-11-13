@@ -41,7 +41,7 @@ class TestQuery(unittest.TestCase):
         cls.addClassCleanup(cls.client.close)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
-    def test_full_pk_continuation_emits_legacy_by_default_rust(self):
+    def test_full_pk_continuation_emits_service_token_by_default_rust(self):
         # Source: tests/test_query.py::TestQuery.test_full_pk_continuation_emits_legacy_by_default
         # A full-partition-key query must still hand back the legacy (opaque) continuation
         # token, not the new feed-range token: _decode_token returns None only for the legacy
@@ -63,7 +63,7 @@ class TestQuery(unittest.TestCase):
         self.assertIsNotNone(token)
         self.assertIsNone(_decode_token(token))
 
-    def test_full_pk_legacy_replay_resumes_same_page_rust(self):
+    def test_full_pk_service_token_replay_resumes_same_page_rust(self):
         # Source: tests/test_query.py::TestQuery.test_full_pk_legacy_replay_resumes_same_page
         # Replaying that legacy continuation token must resume on the same next page. Without
         # this, a regression in legacy-token replay would drop or repeat results for customers

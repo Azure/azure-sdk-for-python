@@ -188,18 +188,10 @@ def test_prototype_wheel_targets_rust():
 
 
 def test_driver_source_and_features_are_preserved_rust():
-    """The driver is taken from a fixed published revision, never from a local folder.
+    """Local development builds use the neighboring driver checkout, not a stale Git pin.
 
-    The check for no local path is the important one. Pointing at a folder on disk is the
-    normal thing to do while working on both projects at once, and it is easy to commit by
-    accident. When that happens the build either fails on a machine that lacks the folder
-    or, worse, succeeds using whatever uncommitted state that folder happened to contain.
-
-    The revision must be a full forty-character identifier, not a branch name, so it
-    cannot move underneath the build. The recorded dependency list is checked to point at
-    the same revision, since those two disagreeing means the build uses one and the
-    recorded state describes the other.
-
+    Both dependency groups inherit the same source. The lock must not retain a
+    second, Git-sourced driver. Release builds need a portable source selection.
     The optional features are listed explicitly because they change what the driver can
     do. Three are on for normal use; a separate one is on only for the driver's own tests,
     which is what keeps a built-in test service out of what customers receive.
@@ -207,9 +199,9 @@ def test_driver_source_and_features_are_preserved_rust():
     workspace = _read_toml(PACKAGE_ROOT / "Cargo.toml")
     binding = _read_toml(PACKAGE_ROOT / "azure_cosmos_rust" / "Cargo.toml")
     driver = workspace["workspace"]["dependencies"]["azure_data_cosmos_driver"]
-    assert driver["git"] == "https://github.com/Azure/azure-sdk-for-rust"
-    assert len(driver["rev"]) == 40
-    assert "path" not in driver
+    assert driver == {
+        "path": r"..\..\..\..\azure-sdk-for-rust\sdk\cosmos\azure_data_cosmos_driver",
+    }
     for group in ("dependencies", "dev-dependencies"):
         dependency = binding[group]["azure_data_cosmos_driver"]
         assert dependency["workspace"] is True
@@ -224,8 +216,9 @@ def test_driver_source_and_features_are_preserved_rust():
         "extension-module", "abi3-py310", "generate-import-lib"
     }
     lock = _read_toml(PACKAGE_ROOT / "Cargo.lock")
-    locked_driver = next(package for package in lock["package"] if package["name"] == "azure_data_cosmos_driver")
-    assert locked_driver["source"] == f"git+{driver['git']}?rev={driver['rev']}#{driver['rev']}"
+    locked_drivers = [package for package in lock["package"] if package["name"] == "azure_data_cosmos_driver"]
+    assert len(locked_drivers) == 1
+    assert "source" not in locked_drivers[0]
 
 
 def test_windows_cross_build_has_target_and_import_library_inputs_rust():

@@ -221,6 +221,11 @@ class PerfReporter:
             "reporting_mode": "after_load",
             "latency_population": "post_warmup",
             "measurement_target_seconds": self._config["measurement_seconds"],
+            "measurement_concurrency": self._config.get("measurement_concurrency", 1),
+            "measurement_scheduling": (
+                "continuous_refill" if self._config.get("measurement_concurrency", 1) > 1 else "serial"
+            ),
+            "measurement_includes_inflight_drain": True,
             "warmup_operation": operation,
             "warmup_count": len(self._warmup_ms),
             "warmup_ms": self._warmup_ms,
@@ -231,6 +236,9 @@ class PerfReporter:
             metadata["query_measurement"] = self._config["query_measurement"]
         else:
             metadata["measurement_item_namespace"] = os.environ["WORKLOAD_ITEM_NAMESPACE"]
+            if operation == "delete":
+                metadata["measurement_delete_pool"] = self._config.get("measurement_delete_pool", 0)
+                metadata["measurement_maintenance_concurrency"] = self._config.get("measurement_maintenance_concurrency", 1)
         return metadata
 
     def _run(self):

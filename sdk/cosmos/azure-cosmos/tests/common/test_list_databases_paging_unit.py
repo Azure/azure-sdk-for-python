@@ -28,18 +28,17 @@ import asyncio
 import json
 import time
 from copy import deepcopy
-from types import MethodType
-from unittest.mock import MagicMock
+from types import SimpleNamespace
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos import _rust
 from azure.cosmos._backend import binding_adapter as sync_rust
 from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos._backend.contracts import BackendResponse
-from azure.cosmos._backend._binding_adapter_shared import BindingAdapterShared
 from azure.cosmos._backend.errors import BindingProtocolError
+from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 from query_items.test_query_backend_routing_unit import (
     listing_client,
@@ -476,7 +475,7 @@ async def test_explicit_none_clears_nested_timeout_rust(listing):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("setup_seconds", [2, 4.75, 6])
+@pytest.mark.parametrize("setup_seconds", [2, 4.75, 5, 6])
 async def test_real_rust_backend_deducts_setup_before_binding_rust(listing_client, monkeypatch, setup_seconds):
     """Time spent starting the driver comes out of the caller's limit, and if it uses the
     limit up the call is abandoned before any request is sent.
@@ -492,34 +491,51 @@ async def test_real_rust_backend_deducts_setup_before_binding_rust(listing_clien
     The real code path is used here rather than a stand-in, so this is where the
     subtraction actually happens.
     """
-    client, _, backend, is_async = listing_client
+    client, connection, _, is_async = listing_client
     clock = [100.0]
     monkeypatch.setattr(time, "monotonic", lambda: clock[0])
     module = async_rust if is_async else sync_rust
-    captured = []
-    def acquire():
+    backend_type = module.AsyncBindingAdapter if is_async else module.BindingAdapter
+    backend = backend_type("https://listing.invalid", master_key="unused")
+    client._adapter = connection._backend = backend
+    client._item_context = ItemClientContext(backend, response_state=connection._response_state)
+    driver_handle = object()
+
+    def acquire(*, deadline=None):
         clock[0] += setup_seconds
-        return "offline"
-    async def acquire_async():
-        return acquire()
+        return driver_handle
+
     def dispatch(handle, prepared, *, timeout_seconds):
-        captured.append(timeout_seconds)
+        assert handle is driver_handle
+        assert prepared.op == "list_databases"
         return 200, 0, {}, b'{"Databases":[{"id":"sales"}]}'
-    async def dispatch_async(handle, prepared, *, timeout_seconds):
-        return dispatch(handle, prepared, timeout_seconds=timeout_seconds)
-    backend._ensure_driver_handle = acquire_async if is_async else acquire
-    backend._request_deadline = MethodType(BindingAdapterShared._request_deadline, backend)
-    execute = module.AsyncBindingAdapter.execute_pages if is_async else module.BindingAdapter.execute_pages
-    backend.execute_pages = lambda prepared, deadline=None: execute(backend, prepared, deadline=deadline)
-    monkeypatch.setattr(module, "_binding_function_by_name", lambda method: dispatch_async if is_async else dispatch)
+
+    mock = AsyncMock if is_async else MagicMock
+    acquisition = mock(side_effect=acquire)
+    native = mock(side_effect=dispatch)
+    monkeypatch.setattr(backend, "_ensure_driver_handle", acquisition)
+    monkeypatch.setattr(
+        module,
+        "_rust_module",
+        SimpleNamespace(**{"list_databases_async" if is_async else "list_databases": native}),
+    )
     pager = client.list_databases(timeout=5).by_page()
     if setup_seconds >= 5:
         with pytest.raises(CosmosClientTimeoutError):
             await _next_listing_page(pager, is_async)
-        assert captured == []
+        native.assert_not_called()
     else:
-        await _next_listing_page(pager, is_async)
-        assert captured == [5 - setup_seconds]
+        assert await _next_listing_page(pager, is_async) == [{"id": "sales"}]
+        native.assert_called_once()
+        assert native.call_args.kwargs["timeout_seconds"] == 5 - setup_seconds
+        if is_async:
+            native.assert_awaited_once()
+    if is_async:
+        acquisition.assert_awaited_once_with()
+    else:
+        acquisition.assert_called_once_with(deadline=105)
+    connection._CosmosClientConnection__Get.assert_not_called()
+    connection._CosmosClientConnection__Post.assert_not_called()
 
 
 @pytest.mark.asyncio
@@ -561,32 +577,6 @@ async def test_async_cancellation_drains_page_work_rust(listing_client):
     assert hooks == []
     with pytest.raises(RuntimeError, match="pager failed"):
         await _next_listing_page(pager, True)
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("seconds", [None, 0.25, 2])
-async def test_native_listing_accepts_remaining_duration_rust(listing_client, seconds):
-    """The driver's own listing entry point accepts the remaining time in the forms Python
-    will hand it.
-
-    Three are covered: no limit at all, a fraction of a second, and a whole
-    number of seconds. Fractions arise naturally once earlier time has been
-    subtracted, so the entry point must take them rather than only whole
-    seconds.
-
-    An unknown client handle is used on purpose, so the call is refused for that
-    reason after the arguments have been read. Reaching that refusal is the
-    proof: a value the entry point could not accept would fail earlier and
-    differently.
-    """
-    client, _, _, is_async = listing_client
-    config = client.list_databases().by_page().state.config
-    prepared = sync_rust.build_binding_request_from_page(config.prepared(None, None))
-    function = _rust.list_databases_async if is_async else _rust.list_databases
-    with pytest.raises(RuntimeError, match="(?i)driver"):
-        result = function("unregistered-listing-review", prepared, timeout_seconds=seconds)
-        if is_async:
-            await result
 
 
 @pytest.mark.asyncio

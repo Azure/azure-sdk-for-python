@@ -137,6 +137,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             os.environ["AZURE_COSMOS_HYBRID_SEARCH_MAX_ITEMS"] = "1000"
 
     async def test_hybrid_search_default_limit_async_rust(self):
+        # Source: (new) Default/overridden hybrid limits and real results; legacy env test only sets max to zero.
         item = await self.test_container.read_item("50", "1")
         item_vector = item["vector"]
         missing_limit = (

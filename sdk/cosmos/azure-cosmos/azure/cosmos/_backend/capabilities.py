@@ -281,10 +281,6 @@ CAPABILITIES: dict[str, OpCapability] = {
             "The comparison will not run through legacy Python."
         ),
     ),
-    ops.OP_READ_ALL_ITEMS: OpCapability(
-        frozenset({ops.OP_READ_ALL_ITEMS}),
-        fallback_allowed=True,
-    ),
     ops.OP_QUERY_ITEMS: OpCapability(
         frozenset({ops.OP_QUERY_ITEMS}),
         fallback_allowed=True,

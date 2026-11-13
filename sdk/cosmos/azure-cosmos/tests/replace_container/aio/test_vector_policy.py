@@ -7,7 +7,7 @@ import uuid
 import pytest
 from azure.cosmos import PartitionKey, exceptions
 from azure.cosmos.aio import CosmosClient
-from replace_container._legacy_setup import AsyncReplacementCase
+from replace_container._container_setup import AsyncReplacementCase
 
 @pytest.mark.cosmosSearchQuery
 class TestVectorPolicyAsync(AsyncReplacementCase):

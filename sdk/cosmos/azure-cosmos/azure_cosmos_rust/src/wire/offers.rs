@@ -30,7 +30,7 @@ use super::response::{
     tuple_from_offer_feed_result, tuple_from_result, tuple_from_result_with_attempts,
     with_attempt_diagnostics,
 };
-use super::{lookup_driver, AbortOnDrop};
+use super::AbortOnDrop;
 use crate::runtime::require_runtime_context;
 
 /// Complete the offer query and return its binding response tuple.
@@ -46,7 +46,7 @@ pub(crate) fn run_get_throughput_operation<'py>(
 ) -> PyResult<Bound<'py, PyTuple>> {
     let timeout = parse_remaining_timeout(timeout_seconds)?;
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
+    let driver = driver_handle.driver();
     let runtime_ctx = require_runtime_context(op_name)?;
 
     let timed = with_timeout(
@@ -71,7 +71,7 @@ pub(crate) fn run_get_throughput_operation_async<'py>(
 ) -> PyResult<Bound<'py, PyAny>> {
     let timeout = parse_remaining_timeout(timeout_seconds)?;
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
+    let driver = driver_handle.driver();
     let runtime_ctx = require_runtime_context(op_name)?;
 
     let timed = with_timeout(
@@ -118,7 +118,7 @@ pub(crate) fn run_replace_throughput_operation<'py>(
 ) -> PyResult<Bound<'py, PyTuple>> {
     let timeout = parse_remaining_timeout(timeout_seconds)?;
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
+    let driver = driver_handle.driver();
     let runtime_ctx = require_runtime_context(op_name)?;
 
     let timed = with_timeout(
@@ -150,7 +150,7 @@ pub(crate) fn run_replace_throughput_operation_async<'py>(
 ) -> PyResult<Bound<'py, PyAny>> {
     let timeout = parse_remaining_timeout(timeout_seconds)?;
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(driver_handle)?;
+    let driver = driver_handle.driver();
     let runtime_ctx = require_runtime_context(op_name)?;
 
     let timed = with_timeout(

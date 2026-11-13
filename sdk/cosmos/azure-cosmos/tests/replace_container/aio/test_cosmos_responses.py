@@ -8,7 +8,7 @@ import pytest
 
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
-from replace_container._legacy_setup import AsyncReplacementCase
+from replace_container._container_setup import AsyncReplacementCase
 
 
 @pytest.mark.cosmosEmulator

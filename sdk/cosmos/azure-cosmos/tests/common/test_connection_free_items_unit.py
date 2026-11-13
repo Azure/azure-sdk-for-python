@@ -43,8 +43,6 @@ from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
 from azure.cosmos.aio._helpers._item_operations import build_item_request as async_execute_item_builder
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from azure.cosmos.partition_key import NonePartitionKeyValue, NullPartitionKeyValue
-from azure.cosmos._read_items_helper import ReadItemsHelperSync
-from azure.cosmos.aio._read_items_helper_async import ReadItemsHelperAsync
 
 
 def response(body=None, status=200, headers=None):
@@ -764,7 +762,7 @@ def test_public_context_and_compatibility_bridge_rust(monkeypatch, async_mode, c
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("via_database", [False, True])
-def test_direct_proxy_compatibility_is_explicit_legacy_only_rust(async_mode, via_database):
+def test_direct_proxy_compatibility_is_explicit_core_python_only_rust(async_mode, via_database):
     """A container built directly from a connection keeps working on the legacy path, and
     refuses to use a Rust backend it was never given a context for.
 
@@ -813,54 +811,36 @@ def test_direct_proxy_compatibility_is_explicit_legacy_only_rust(async_mode, via
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("with_context", [False, True])
-def test_read_many_point_leg_never_recovers_rust_backend_rust(async_mode, with_context):
-    """Reading many items falls back to single reads, and that fallback follows the same
-    rule as every other item call.
+def test_read_many_never_recovers_backend_from_connection_rust(async_mode, with_context):
+    """Read-many uses only its client-owned context, including response publication."""
+    from read_items._helpers import make_proxy, page
 
-    Without a context it refuses, even though a Rust backend is sitting on the
-    connection where it could be found. Taking it from there is exactly the
-    shortcut this forbids -- it would work, and it would bypass the client's
-    defaults and its published headers.
-
-    With a context supplied, that context wins over unrelated state on the
-    connection, and the read goes through it, with its headers recorded where
-    the context publishes them.
-
-    This path is easy to overlook because it is a helper rather than a container
-    method, and it is where a customer reading a batch of items would be
-    affected.
-    """
-    backend = AsyncBackend() if async_mode else Backend()
+    proxy, backend = make_proxy(async_mode, [page([{"id": "x", "pk": "p"}], 2)])
     connection = MagicMock()
-    connection._backend = backend
-    context = ItemClientContext(backend) if with_context else None
-    helper = (ReadItemsHelperAsync if async_mode else ReadItemsHelperSync)(
-        connection, "dbs/d/colls/c", [("x", "p")], {}, {"paths": ["/pk"], "kind": "Hash"},
-        _item_context=context,
-    )
+    connection._backend = ASYNC_LEGACY_BACKEND if async_mode else LEGACY_BACKEND
+    proxy.client_connection = connection
     if not with_context:
-        with pytest.raises(RuntimeError, match="context supplied by CosmosClient"):
-            result = helper._execute_point_read("x", "p", {})
+        proxy._item_context = None
+        with pytest.raises(NotImplementedError, match="client-owned Rust context"):
+            result = proxy.read_items([("x", "p")])
             if async_mode:
                 asyncio.run(result)
-        assert backend.events == []
+        assert backend.calls == []
         return
-    # The independently supplied context wins over unrelated connection state.
-    connection._backend = ASYNC_LEGACY_BACKEND if async_mode else LEGACY_BACKEND
-    result = helper._execute_point_read("x", "p", {})
+    result = proxy.read_items([("x", "p")])
     if async_mode:
         result = asyncio.run(result)
-    item, headers = result
-    assert item["id"] == "x"
-    assert headers == context.response_state.last_response_headers
-    assert backend.events[-1].op == "read_item"
+    assert result == [{"id": "x", "pk": "p"}]
+    assert result.get_response_headers() == proxy._item_context.response_state.last_response_headers
+    assert backend.calls[-1].op == "read_items"
+    assert connection.mock_calls == []
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("op,method", [("create_item", "CreateItem"), ("read_item", "ReadItem"),
                                      ("delete_item", "DeleteItem"), ("upsert_item", "UpsertItem"),
                                      ("replace_item", "ReplaceItem"), ("patch_item", "PatchItem")])
-def test_explicit_parity_adapter_keeps_legacy_call_rust(async_mode, op, method):
+def test_explicit_parity_adapter_keeps_core_python_call_rust(async_mode, op, method):
     """A container told explicitly to use the legacy backend still makes the old call,
     container id and all.
 

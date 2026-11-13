@@ -31,11 +31,10 @@ from azure.cosmos._routing.feed_range_continuation import _decode_token
 from azure.cosmos.aio import CosmosClient
 from config.clients import create_data_client_async
 from config.settings import TestSettings, unique_database_id
-from query_items import _legacy_feed_range_helpers as test_config
+from query_items import _feed_range_helpers as test_config
 
 
-@pytest.mark.cosmosQuery
-class TestFeedRangeMultiPartitionAsync(unittest.IsolatedAsyncioTestCase):
+class _PrefixQueryTestCase(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
         self.addAsyncCleanup(self.client.close)
@@ -49,6 +48,10 @@ class TestFeedRangeMultiPartitionAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.delete_database(self.database_id)
         print(f"Deleted owned async prefix query database: {self.database_id}")
 
+
+@pytest.mark.cosmosQuery
+@pytest.mark.cosmosAADQuery
+class TestFeedRangeMultiPartitionAsync(_PrefixQueryTestCase):
     async def test_prefix_partition_key_query_pagination_resume_async_rust(self):
         """Prefix query resumes all matching items and preserves the COUNT result."""
         # pylint: disable-next=line-too-long
@@ -133,8 +136,12 @@ class TestFeedRangeMultiPartitionAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await db.delete_container(created_container.id)
 
+
+@pytest.mark.cosmosQuery
+class TestFeedRangeMultiPartitionRegressionsAsync(_PrefixQueryTestCase):
     async def test_prefix_partition_key_query_cross_partition_disabled_async_rust(self):
         """A prefix query with cross-partition disabled returns the prefix items, as on legacy."""
+        # Source: (new) Explicit False with a hierarchical key prefix; legacy prefix paging omits this option.
         db = self.database
         created_container = await db.create_container_if_not_exists(
             id="FeedRangeMultiPartitionAsyncPrefixPKDisabled-" + str(uuid.uuid4()),
@@ -883,7 +890,7 @@ class TestFeedRangeMultiPartitionAsyncRust:
         finally:
             await client.close()
 
-    async def test_legacy_opaque_token_compat_async_rust(self, caplog):
+    async def test_service_token_compat_async_rust(self, caplog):
         """Use an opaque continuation token and verify restart behavior."""
         # pylint: disable-next=line-too-long
         # Source: tests/test_query_feed_range_multipartition_async.py::TestFeedRangeMultiPartitionAsync.test_legacy_opaque_token_compat_async

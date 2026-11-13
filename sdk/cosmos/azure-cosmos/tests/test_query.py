@@ -299,7 +299,7 @@ class TestQuery(unittest.TestCase):
 
         self._delete_container_for_test(created_collection.id)
 
-    def test_full_pk_continuation_emits_legacy_by_default(self):
+    def test_full_pk_continuation_emits_service_token_by_default(self):
         # A full-partition-key query must still hand back the legacy (opaque) continuation
         # token, not the new feed-range token: _decode_token returns None only for the legacy
         # form. Without this, changing the default token format could break customers who
@@ -321,7 +321,7 @@ class TestQuery(unittest.TestCase):
         self.assertIsNone(_decode_token(token))
 
 
-    def test_full_pk_legacy_replay_resumes_same_page(self):
+    def test_full_pk_service_token_replay_resumes_same_page(self):
         # Replaying that legacy continuation token must resume on the same next page. Without
         # this, a regression in legacy-token replay would drop or repeat results for customers
         # who page through query results.

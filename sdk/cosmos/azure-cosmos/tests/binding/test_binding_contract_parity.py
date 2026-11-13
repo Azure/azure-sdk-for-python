@@ -134,17 +134,22 @@ def prepared_request(account, operation, resource_id=None):
     )
 
 
-def invoke(account, operation, prepared, asynchronous, timeout=None, attempts=False):
+def invoke(account, operation, prepared, asynchronous, timeout=None, attempts=False, cursor=None):
     """Call sync/async binding exports with an acquired handle."""
-    function = getattr(_rust, operation + ("_async" if asynchronous else ""))
+    retained = operation == "read_all_items"
+    name = "fetch_page_with_cursor" if retained else operation
+    function = getattr(_rust, name + ("_async" if asynchronous else ""))
+    args = (account.handle, prepared)
+    if retained:
+        args += (cursor if cursor is not None else _rust._ItemFeedCursor(),)
     kwargs = {"timeout_seconds": timeout}
     if "include_attempts" in inspect.signature(function).parameters:
         kwargs["include_attempts"] = attempts
 
     async def run():
-        return await function(account.handle, prepared, **kwargs)
+        return await function(*args, **kwargs)
 
-    return asyncio.run(run()) if asynchronous else function(account.handle, prepared, **kwargs)
+    return asyncio.run(run()) if asynchronous else function(*args, **kwargs)
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
@@ -226,6 +231,26 @@ def test_binding_point_operations_return_service_results(account, asynchronous, 
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("seconds", [None, 0.25, 2])
+def test_native_listing_accepts_remaining_duration_rust(account, asynchronous, seconds):
+    """Move the offline listing regression here, not a copy of a legacy SDK test.
+
+    A real handle lets both native exports reach timeout parsing and return a
+    service page for no limit, fractional seconds, and whole seconds. A string
+    handle would fail before that parsing and prove nothing about durations.
+    """
+    prepared = prepared_request(account, "list_databases")
+    status, _, headers, body, _ = invoke(
+        account, "list_databases", prepared, asynchronous, timeout=seconds
+    )
+    assert status == 200
+    assert headers["x-ms-activity-id"]
+    rows = json.loads(body)["Databases"]
+    assert isinstance(rows, list) and rows
+    assert all({"id", "_rid", "_etag", "_ts", "_self"}.issubset(row) for row in rows)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("operation", PAGE_OPERATIONS)
 def test_binding_pages_return_service_results(account, asynchronous, operation):
     field = (
@@ -239,9 +264,12 @@ def test_binding_pages_return_service_results(account, asynchronous, operation):
         else dict(account.container.read()) if field == "DocumentCollections" else account.item
     )
     prepared = prepared_request(account, operation)
+    cursor = _rust._ItemFeedCursor() if operation == "read_all_items" else None
     seen_tokens = set()
     while True:
-        status, _, headers, body, _ = invoke(account, operation, prepared, asynchronous, timeout=30)
+        status, _, headers, body, _ = invoke(
+            account, operation, prepared, asynchronous, timeout=30, cursor=cursor
+        )
         assert status == 200
         values = json.loads(body)[field]
         matches = [value for value in values if value["id"] == expected["id"]]
@@ -249,6 +277,10 @@ def test_binding_pages_return_service_results(account, asynchronous, operation):
             assert matches == [expected]
             break
         token = headers.get("x-ms-continuation")
+        if cursor is not None:
+            assert token is None and not cursor.continuation_supported
+            assert cursor.has_more, "Owned resource was missing from the live feed"
+            continue
         assert token, "Owned resource was missing from the service feed"
         assert token not in seen_tokens, "Service feed repeated a continuation token"
         seen_tokens.add(token)
@@ -258,7 +290,7 @@ def test_binding_pages_return_service_results(account, asynchronous, operation):
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
-def test_binding_metadata_matches_legacy_container(account, asynchronous):
+def test_binding_metadata_matches_core_python_container(account, asynchronous):
     properties = account.container.read()
     result = invoke(account, "get_container_metadata", account.container.container_link, asynchronous, timeout=30)
     assert result == (
@@ -273,7 +305,7 @@ def test_binding_metadata_matches_legacy_container(account, asynchronous):
 @pytest.mark.parametrize("level", [None, "Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
 @pytest.mark.parametrize("raw_header", [False, True])
 @pytest.mark.parametrize("saved_address", [False, True])
-def test_binding_read_address_and_consistency_match_legacy(account, asynchronous, level, raw_header, saved_address):
+def test_binding_read_address_and_consistency_match_core_python(account, asynchronous, level, raw_header, saved_address):
     """Compare the same stored document; account restrictions are not successful reads."""
     options = {} if level is None else {"consistencyLevel": level}
     headers = {"x-ms-consistency-level": level} if raw_header and level is not None else {}

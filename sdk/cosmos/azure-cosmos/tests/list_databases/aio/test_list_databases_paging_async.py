@@ -19,9 +19,9 @@ import pytest
 from azure.cosmos import CosmosClient as SyncCosmosClient
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
-from common._rust_checks import run_on_rust_async
+from common._rust_checks import assert_live_page_headers, run_on_rust_async
 
-pytestmark = [pytest.mark.asyncio]
+pytestmark = [pytest.mark.asyncio, pytest.mark.cosmosEmulator]
 
 
 def _rust_client():
@@ -48,11 +48,30 @@ def database_ids():
 async def test_listed_databases_include_created_ones_with_system_properties_async_rust(database_ids):
     """Every created database is listed with its id, _rid, _self, _etag and _ts properties."""
     async with _rust_client() as client:
+        snapshots = []
 
         async def target():
-            return [row async for row in client.list_databases()]
+            rows = []
+            page_count = 0
+            async for page in client.list_databases(
+                max_item_count=2,
+                timeout=10,
+                throughput_bucket=1,
+                initial_headers={"x-list-databases-test": "async"},
+                response_hook=lambda headers: snapshots.append(dict(headers)),
+            ).by_page():
+                rows.extend([row async for row in page])
+                page_count += 1
+                assert len(snapshots) == page_count
+                assert (
+                    snapshots[-1]["x-ms-activity-id"]
+                    == client.client_connection.last_response_headers["x-ms-activity-id"]
+                )
+            assert page_count >= 2
+            return rows
 
         rows = await run_on_rust_async(client, target)
+    assert_live_page_headers(snapshots)
     selected = [row for row in rows if row.get("id") in database_ids]
     assert sorted(row["id"] for row in selected) == sorted(database_ids)
     for row in selected:

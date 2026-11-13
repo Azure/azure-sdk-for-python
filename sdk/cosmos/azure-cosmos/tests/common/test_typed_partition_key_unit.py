@@ -206,7 +206,7 @@ def test_unicode_normalization_preserves_key_shapes_and_bookmarks_rust(value, ex
 @pytest.mark.parametrize("key_shape", ["scalar", "hierarchical", "query"])
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.asyncio
-async def test_native_unicode_key_extraction_matches_legacy_rust(key_shape, async_mode):
+async def test_native_unicode_key_extraction_matches_core_python_rust(key_shape, async_mode):
     """The Rust side accepts such a key, whether built directly or read back from old text.
 
     Two keys are tried for each shape: one built from the value as the caller gave it, and
@@ -464,7 +464,7 @@ def test_native_consumers_reject_untyped_components_before_io_rust(method, async
     ],
 )
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_old_request_envelope_fails_before_reading_its_legacy_header_rust(
+def test_old_request_envelope_fails_before_reading_its_core_python_header_rust(
     method, async_mode
 ):
     """An older request that still carries the key as text is refused on the version alone.
