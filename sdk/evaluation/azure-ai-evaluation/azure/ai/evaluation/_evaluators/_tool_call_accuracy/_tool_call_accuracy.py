@@ -1,23 +1,26 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import logging
 import math
 import os
-import logging
 import re
-from typing import Dict, List, Union, TypeVar, Optional
+from typing import Dict, List, Optional, TypeVar, Union
+
 from typing_extensions import overload, override
+
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._evaluators._common import LikertScoring, PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy
-from azure.ai.evaluation._evaluators._common._validators import ToolCallsValidator, ValidatorInterface
-from azure.ai.evaluation._exceptions import (
-    ErrorBlame,
-    ErrorCategory,
-    ErrorTarget,
-    EvaluationException,
+from azure.ai.evaluation._evaluators._common._prompty_strategy import (
+    NO_VALID_SCORE,
+    judge_output_diagnostic,
+    log_judge_output_diagnostic,
 )
+from azure.ai.evaluation._evaluators._common._validators import ToolCallsValidator, ValidatorInterface
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+
 from ..._common.utils import check_score_is_valid
-from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
 
@@ -286,8 +289,10 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE,
                 ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE,
             ):
+                diagnostic = judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)
+                log_judge_output_diagnostic(diagnostic)
                 raise EvaluationException(
-                    message=f"Invalid score value: {score}. Expected a number in range [{ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE}, {ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE}].",
+                    message=f"Invalid score value: {score}. Expected a number in range [{ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE}, {ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE}]. {diagnostic}",
                     internal_message="Invalid score value.",
                     category=ErrorCategory.FAILED_EXECUTION,
                     target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
@@ -325,8 +330,10 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return response_dict
 
         else:
+            diagnostic = judge_output_diagnostic(prompty_output_dict)
+            log_judge_output_diagnostic(diagnostic)
             raise EvaluationException(
-                message="Evaluator returned invalid output.",
+                message=f"Evaluator returned invalid output. {diagnostic}",
                 blame=ErrorBlame.SYSTEM_ERROR,
                 category=ErrorCategory.FAILED_EXECUTION,
                 target=ErrorTarget.EVALUATE,

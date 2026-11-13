@@ -4,14 +4,15 @@
 
 # cspell:ignore apng, retriable, RDONLY, osfhandle
 
+import base64
 import copy
+import json
 import logging
 import os
 import re
 import stat
-import json
-import base64
-from dataclasses import dataclass, is_dataclass, fields
+import sys
+from dataclasses import dataclass, fields, is_dataclass
 from logging import Logger
 from pathlib import Path, PureWindowsPath
 from typing import (
@@ -36,17 +37,11 @@ from typing import (
 from jinja2 import TemplateError
 from jinja2.exceptions import SecurityError
 from jinja2.sandbox import SandboxedEnvironment
-from openai import AsyncStream
+from openai import APIConnectionError, APIStatusError, APITimeoutError, AsyncStream, OpenAIError
 from openai.types.chat import ChatCompletion, ChatCompletionChunk, ChatCompletionUserMessageParam
-from openai import APIConnectionError, APIStatusError, APITimeoutError, OpenAIError
 
 from azure.ai.evaluation._constants import DefaultOpenEncoding
-from azure.ai.evaluation._legacy.prompty._exceptions import (
-    InvalidInputError,
-    JinjaTemplateError,
-    PromptyException,
-)
-
+from azure.ai.evaluation._legacy.prompty._exceptions import InvalidInputError, JinjaTemplateError, PromptyException
 from azure.ai.evaluation._legacy.prompty._yaml_utils import load_yaml
 
 logger = logging.getLogger(__name__)
@@ -605,6 +600,76 @@ def prepare_open_ai_request_params(
     return params
 
 
+_KNOWN_FINISH_REASONS = ("stop", "length", "content_filter", "tool_calls", "function_call")
+
+
+@dataclass(frozen=True)
+class _LLMOutputDiagnosticMetadata:
+    finish_reason: Any
+    output_tokens: Any
+    model: Any
+
+
+class _LLMOutput(dict):
+    diagnostic_metadata: Optional[_LLMOutputDiagnosticMetadata]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.diagnostic_metadata = None
+
+
+def llm_output_diagnostic(cause: str, finish_reason: Any = None, output_tokens: Any = None, model: Any = None) -> str:
+    """Describe why a model response was unusable from its metadata only, never from its content.
+
+    :param cause: A fixed description of the problem. Must not contain model output.
+    :type cause: str
+    :param finish_reason: The completion finish reason. A truncated or filtered response adds a likely reason.
+    :type finish_reason: Any
+    :param output_tokens: The completion token count.
+    :type output_tokens: Any
+    :param model: The model name.
+    :type model: Any
+    :return: The diagnostic text.
+    :rtype: str
+    """
+    if finish_reason == "length":
+        cause += ", possibly because it was truncated at the output token limit"
+    elif finish_reason == "content_filter":
+        cause += ", possibly because it was blocked by the content filter"
+    if finish_reason not in _KNOWN_FINISH_REASONS:
+        finish_reason = "unknown"
+    if not isinstance(output_tokens, int) or isinstance(output_tokens, bool) or output_tokens < 0:
+        output_tokens = "unknown"
+    if not isinstance(model, str) or not model.strip():
+        model = "unknown"
+    return f"Cause: {cause} (finish_reason={finish_reason}, output_tokens={output_tokens}, model={model})."
+
+
+def log_invalid_llm_output(diagnostic: str) -> None:
+    """Log an unusable model response, without its content or the triggering exception.
+
+    :param diagnostic: Text built by ``llm_output_diagnostic``.
+    :type diagnostic: str
+    """
+    try:
+        logger.warning("Model returned invalid output. %s", diagnostic)
+    except Exception:
+        # A broken logging handler must not replace an evaluator or parsing error.
+        try:
+            sys.stderr.write(f"Model returned invalid output. {diagnostic}\n")
+        except (OSError, ValueError):
+            pass
+
+
+def _append_diagnostic_to_exception(exc: Exception, diagnostic: str) -> None:
+    if isinstance(exc, json.JSONDecodeError):
+        message = f"{exc}. {diagnostic}"
+        exc.args = (message,)
+        exc.doc = "".join("\n" if character == "\n" else " " for character in exc.doc)
+    else:
+        exc.args = (f"{exc}. {diagnostic}",)
+
+
 async def format_llm_response(
     response: OpenAIChatResponseType,
     is_first_choice: bool,
@@ -642,21 +707,39 @@ async def format_llm_response(
     :rtype: Union[str, dict, Response]
     """
 
-    def format_choice(item: str) -> Union[str, Mapping[str, Any]]:
+    def format_choice(
+        item: str, finish_reason: str = "", output_tokens: Optional[int] = None, model: str = ""
+    ) -> Union[str, Mapping[str, Any]]:
         # response_format is one of text or json_object.
         # https://platform.openai.com/docs/api-reference/chat/create#chat-create-response_format
         if not is_json_format:
             return item
 
-        result_dict = json.loads(item)
+        try:
+            result_dict = json.loads(item)
+        except (ValueError, TypeError, RecursionError) as exc:
+            empty = item is None or (isinstance(item, str) and not item.strip())
+            cause = "the model returned an empty response" if empty else "the model response was not valid JSON"
+            diagnostic = llm_output_diagnostic(cause, finish_reason, output_tokens, model)
+            log_invalid_llm_output(diagnostic)
+            _append_diagnostic_to_exception(exc, diagnostic)
+            raise
         if not outputs:
             return result_dict
 
+        if not isinstance(result_dict, dict):
+            log_invalid_llm_output(
+                llm_output_diagnostic("the model response was not a JSON object", finish_reason, output_tokens, model)
+            )
         # return the keys in outputs
         output_results = {}
         for key in outputs:
             if key not in result_dict:
-                raise InvalidInputError(f"Cannot find '{key}' in response {list(result_dict.keys())}")
+                diagnostic = llm_output_diagnostic(
+                    "the model response was missing a requested output field", finish_reason, output_tokens, model
+                )
+                log_invalid_llm_output(diagnostic)
+                raise InvalidInputError(f"Cannot find '{key}' in response {list(result_dict.keys())}. {diagnostic}")
             output_results[key] = result_dict[key]
         return output_results
 
@@ -670,16 +753,18 @@ async def format_llm_response(
                     return
                 yield chunk.choices[0].delta.content
 
-    to_ret = {
-        "llm_output": None,
-        "input_token_count": 0,
-        "output_token_count": 0,
-        "total_token_count": 0,
-        "finish_reason": "",
-        "model_id": "",
-        "sample_input": "",
-        "sample_output": "",
-    }
+    to_ret = _LLMOutput(
+        {
+            "llm_output": None,
+            "input_token_count": 0,
+            "output_token_count": 0,
+            "total_token_count": 0,
+            "finish_reason": "",
+            "model_id": "",
+            "sample_input": "",
+            "sample_output": "",
+        }
+    )
 
     if not is_first_choice:
         to_ret["llm_output"] = response
@@ -703,6 +788,15 @@ async def format_llm_response(
             response.choices[0].finish_reason if response.choices and response.choices[0].finish_reason else ""
         )
         model_id = response.model if response.model else ""
+        # Unlike output_token_count, missing usage stays None so the diagnostic reports it as unknown.
+        reported_output_tokens = response.usage.completion_tokens if response.usage else None
+        to_ret.diagnostic_metadata = _LLMOutputDiagnosticMetadata(finish_reason, reported_output_tokens, model_id)
+        if not response.choices:
+            log_invalid_llm_output(
+                llm_output_diagnostic(
+                    "the model response contained no choices", finish_reason, reported_output_tokens, model_id
+                )
+            )
         sample_output_list = (
             [{"role": response.choices[0].message.role, "content": response.choices[0].message.content}]
             if (response.choices and response.choices[0].message.content and response.choices[0].message.role)
@@ -727,7 +821,7 @@ async def format_llm_response(
         response_content = response.model_dump()["choices"][0]["message"]
     else:
         response_content = getattr(response.choices[0].message, "content", "")
-    result = format_choice(response_content)
+    result = format_choice(response_content, finish_reason, reported_output_tokens, model_id)
     to_ret["llm_output"] = result
     to_ret["input_token_count"] = input_token_count
     to_ret["output_token_count"] = output_token_count
