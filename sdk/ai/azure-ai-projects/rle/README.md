@@ -26,7 +26,7 @@ Version selection follows `--version`, then `AZURE_AI_PROJECTS_VERSION`, then
 the manifest's `latest`. Pin an exact version listed in the manifest with:
 
 ```powershell
-python install_rle_sdk.py --version 2.7.10b1
+python install_rle_sdk.py --version 2.7.13b1
 ```
 
 Unavailable versions and checksum mismatches fail installation; there is no
@@ -326,3 +326,32 @@ All eleven published registry entries and wheels are preserved, and `latest`
 remains `2.7.10b1`. Select `--version 2.7.11b1` explicitly after this artifact
 PR is merged. This is not a PyPI publication, backend deployment or consumer
 image rebuild.
+
+## Version 2.7.13b1
+
+This preview increases shared rollout-client admission to **128 concurrent calls
+per client**, and the default V4 HTTP result-download budget to **64 MiB
+(67,108,864 bytes)**. The existing 90-minute default post-admission timeout,
+explicit timeout/response-size overrides, authentication, original-ID recovery
+and no-execution-replay behavior are preserved. Legacy/V3 response budgets and
+the 8 MiB WebSocket frame limit are unchanged.
+
+The wheel is built from merged source commit
+[`122db8d9d508c058832939a21223b0c557c912d5`](https://github.com/sujit-kamireddy/azure-sdk-for-python/commit/122db8d9d508c058832939a21223b0c557c912d5)
+in [source PR #22](https://github.com/sujit-kamireddy/azure-sdk-for-python/pull/22),
+with only the staged package version overridden to `2.7.13b1`.
+It retains the changes already included in 2.7.10b1/2.7.11b1, without including
+the unmerged optional `group_number` change. Version `2.7.12b1` is reserved by
+[a separate release PR](https://github.com/Azure/azure-sdk-for-python/pull/49997).
+
+SHA-256:
+`96f21104f215da6486dcec4fb9ba9203186f28bbfbc40824441b677e1e7d3324`.
+An isolated installation passed 527 offline rollout/release-tool tests. All
+63 packaged Python files match the merged source except for the release version,
+dependency requirements are unchanged, and all 13 registry wheels pass integrity
+and checksum validation. All 12 historical entries and wheels are preserved.
+
+Merging this artifact change into `rle-releases` selects `2.7.13b1` as `latest`.
+This is an RLE preview distribution, not a PyPI publication, backend deployment
+or live training qualification. Existing environments and consumer images must
+install this wheel to receive the new defaults.
