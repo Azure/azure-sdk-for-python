@@ -16,9 +16,8 @@ from packaging.version import Version
 class TestAioExtrasPackaging(unittest.TestCase):
 
     def test_aio_extras_declared_in_distribution_metadata(self):
-        # The installed package must advertise the aio extra and pin it to
-        # azure-core with the aio extra at version 1.30.0 or newer, so
-        # installing with the aio extra pulls in the async transport.
+        # Inspect installed metadata for the aio extra and azure-core[aio].
+        # This does not install dependencies or exercise an async transport.
         try:
             dist = importlib_metadata.distribution("azure-cosmos")
         except importlib_metadata.PackageNotFoundError:
@@ -38,9 +37,8 @@ class TestAioExtrasPackaging(unittest.TestCase):
         self.assertIn("azure-core", joined)
         self.assertIn("[aio]", joined)
 
-        # Check the azure-core[aio] requirement allows version 1.30.0 or newer.
-        # Asking the specifier whether an older version is allowed keeps the
-        # check valid across future version bumps and catches any regression.
+        # Reject this particular older version. The assertion does not prove
+        # that every older version is excluded or that 1.30.0 is accepted.
         core_req_str = next(
             req for req in aio_reqs if "azure-core" in req.lower()
         )

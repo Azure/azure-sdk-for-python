@@ -6,10 +6,26 @@
 # ------------------------------------
 # pylint:disable=missing-docstring
 
-import re
-import os
+# Shared metadata must match pyproject.toml; Maturin does not read setup.py.
 from io import open
-from setuptools import find_packages, setup
+from setuptools import Distribution, find_packages, setup
+from setuptools.errors import SetupError
+from azure_cosmos_build_metadata import validate_version_metadata
+
+
+class MetadataOnlyDistribution(Distribution):
+    def run_commands(self):
+        unsupported = set(self.commands) - {"egg_info", "dist_info"}
+        if unsupported:
+            raise SetupError(
+                "setup.py is metadata-only for the Rust-backed SDK; "
+                f"unsupported commands: {', '.join(sorted(unsupported))}. "
+                "Use python -m build --wheel or python -m build --sdist "
+                "to invoke the Maturin backend, or python -m pip install -e . "
+                "for development."
+            )
+        super().run_commands()
+
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-cosmos"
@@ -20,13 +36,7 @@ PACKAGE_FOLDER_PATH = PACKAGE_NAME.replace("-", "/")
 # a-b-c => a.b.c
 NAMESPACE_NAME = PACKAGE_NAME.replace("-", ".")
 
-# Version extraction inspired from 'requests'
-with open(os.path.join(PACKAGE_FOLDER_PATH, '_version.py'), 'r') as fd:
-    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
-                        fd.read(), re.MULTILINE).group(1)
-
-if not version:
-    raise RuntimeError("Cannot find version information")
+version = validate_version_metadata()
 
 with open("README.md", encoding="utf-8") as f:
     readme = f.read()
@@ -41,6 +51,7 @@ exclude_packages = [
 ]
 
 setup(
+    distclass=MetadataOnlyDistribution,
     name=PACKAGE_NAME,
     version=version,
     include_package_data=True,
@@ -62,7 +73,6 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
@@ -72,10 +82,10 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     package_data={
-        "azure.cosmos": ["py.typed"],
+        "azure.cosmos": ["py.typed", "_rust.pyi"],
         "azure.cosmos._query_advisor": ["query_advice_rules.json"],
     },
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     install_requires=[
         "azure-core>=1.30.0",
         "typing-extensions>=4.6.0"

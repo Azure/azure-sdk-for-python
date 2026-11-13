@@ -1,0 +1,196 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
+"""Unit coverage for replace_throughput dispatch on the Rust path.
+
+These lock in the throughput-dispatch behavior: the public ``ContainerProxy.replace_throughput``
+holds no engine logic. It delegates to the throughput coordinator, which routes the
+read-modify-write (read the offer, then replace it) to the Rust backend when the call
+is eligible, and rejects unsupported inputs without legacy fallback.
+No network: the
+backend and the client connection are test doubles.
+"""
+from __future__ import annotations
+
+from types import SimpleNamespace
+from typing import Any, Dict, List
+
+import pytest
+
+from azure.cosmos._constants import _Constants as Constants
+from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
+from azure.cosmos.container import ContainerProxy as SyncContainerProxy
+
+
+def _offer(throughput: int = 400) -> Dict[str, Any]:
+    """Return a minimal offer document with the given ``offerThroughput`` value."""
+    return {
+        "id": "off-1",
+        "_rid": "AAAAAA==",
+        "_self": "offers/AAAAAA==/",
+        "content": {"offerThroughput": throughput},
+    }
+
+
+def test_sync_replace_throughput_routes_to_rust_when_supported_rust(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Rust route (sync): when the eligibility gate says yes, both get_throughput and
+    replace_throughput run through the backend and the legacy QueryOffers/ReplaceOffer
+    are never called. Also checks the end-to-end timeout is lifted into options and
+    no stray kwargs reach the gate. Without this, a regression could quietly keep
+    throughput writes on the legacy path or drop the timeout.
+    """
+    container = SyncContainerProxy.__new__(SyncContainerProxy)
+    container.container_link = "dbs/db/colls/coll"
+    container._get_properties = lambda **kwargs: {"_self": "dbs/db/colls/coll", "_rid": "collRid"}
+
+    gate_inputs: Dict[str, Any] = {}
+    query_offers_called = False
+    replace_throughput_called = False
+
+    class _Backend:
+        """A backend stub that records every ``run_operation`` call it receives."""
+
+        name = "rust"
+
+        def __init__(self) -> None:
+            """Initialise the call log."""
+            self.calls: List[str] = []
+
+        def run_operation(self, *, routing: Any, legacy_call: Any, **_kwargs: Any) -> Any:
+            """Assert Rust eligibility, record the operation name, and return a canned offer."""
+            assert routing.supported is True
+            self.calls.append(routing.op)
+            return [_offer()] if routing.op == "get_throughput" else _offer(500)
+
+    backend = _Backend()
+
+    def _query_offers(*_args: Any, **_kwargs: Any) -> List[Dict[str, Any]]:
+        """Flag that the legacy ``QueryOffers`` path was reached and return a canned offer."""
+        nonlocal query_offers_called
+        query_offers_called = True
+        return [_offer()]
+
+    def _replace_throughput(*_args: Any, **_kwargs: Any) -> Dict[str, Any]:
+        """Flag that the legacy ``ReplaceOffer`` path was reached and return a canned offer."""
+        nonlocal replace_throughput_called
+        replace_throughput_called = True
+        return _offer(500)
+
+    container.client_connection = SimpleNamespace(
+        _backend=backend,
+        QueryOffers=_query_offers,
+        ReplaceOffer=_replace_throughput,
+        last_response_headers={},
+    )
+
+    def _gate(*, backend: Any, options: Dict[str, Any], kwargs: Dict[str, Any]) -> bool:
+        """Capture gate inputs for assertion and always approve Rust eligibility."""
+        gate_inputs["backend"] = backend
+        gate_inputs["options"] = dict(options)
+        gate_inputs["kwargs"] = dict(kwargs)
+        return True
+
+    monkeypatch.setattr("azure.cosmos._helpers._container_throughput.can_use_rust_backend_for_replace_throughput", _gate)
+
+    result = container.replace_throughput(500, timeout=9)
+
+    assert result.offer_throughput == 500
+    assert query_offers_called is False
+    assert replace_throughput_called is False
+    assert gate_inputs["kwargs"] == {}
+    assert gate_inputs["options"][Constants.Kwargs.TIMEOUT] == 9
+    assert backend.calls == ["get_throughput", "replace_throughput"]
+
+
+
+
+@pytest.mark.asyncio
+async def test_async_replace_throughput_routes_to_rust_when_supported_rust(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Async twin of the Rust-route test: same guarantee on the async proxy -- both
+    offer operations go through the backend, legacy is untouched, timeout is lifted,
+    and no stray kwargs reach the gate.
+    """
+    container = AsyncContainerProxy.__new__(AsyncContainerProxy)
+    container.container_link = "dbs/db/colls/coll"
+
+    async def _get_properties(**kwargs: Any) -> Dict[str, Any]:
+        """Return canned container properties including ``_self`` and ``_rid``."""
+        return {"_self": "dbs/db/colls/coll", "_rid": "collRid"}
+
+    container._get_properties = _get_properties
+
+    gate_inputs: Dict[str, Any] = {}
+    query_offers_called = False
+    replace_throughput_called = False
+
+    class _Backend:
+        """A backend stub that records every ``run_operation`` call it receives."""
+
+        name = "rust"
+
+        def __init__(self) -> None:
+            """Initialise the call log."""
+            self.calls: List[str] = []
+
+        async def run_operation(
+            self, *, routing: Any, legacy_call: Any, **_kwargs: Any
+        ) -> Any:
+            """Assert Rust eligibility, record the operation name, and return a canned offer."""
+            assert routing.supported is True
+            self.calls.append(routing.op)
+            return [_offer()] if routing.op == "get_throughput" else _offer(500)
+
+    backend = _Backend()
+
+    def _query_offers(*_args: Any, **_kwargs: Any) -> Any:
+        """Flag that the legacy ``QueryOffers`` path was reached and return an empty async iterator."""
+        nonlocal query_offers_called
+        query_offers_called = True
+
+        class _EmptyAsyncIterator:
+            """Yield nothing, standing in for a database that has no offer."""
+
+            def __aiter__(self) -> "_EmptyAsyncIterator":
+                """Return self as the async iterator."""
+                return self
+
+            async def __anext__(self) -> Dict[str, Any]:
+                """Immediately signal exhaustion."""
+                raise StopAsyncIteration
+
+        return _EmptyAsyncIterator()
+
+    async def _replace_throughput(*_args: Any, **_kwargs: Any) -> Dict[str, Any]:
+        """Flag that the legacy ``ReplaceOffer`` path was reached and return a canned offer."""
+        nonlocal replace_throughput_called
+        replace_throughput_called = True
+        return _offer(500)
+
+    container.client_connection = SimpleNamespace(
+        _backend=backend,
+        QueryOffers=_query_offers,
+        ReplaceOffer=_replace_throughput,
+        last_response_headers={},
+    )
+
+    def _gate(*, backend: Any, options: Dict[str, Any], kwargs: Dict[str, Any]) -> bool:
+        """Capture gate inputs for assertion and always approve Rust eligibility."""
+        gate_inputs["backend"] = backend
+        gate_inputs["options"] = dict(options)
+        gate_inputs["kwargs"] = dict(kwargs)
+        return True
+
+    monkeypatch.setattr("azure.cosmos._helpers._container_throughput.can_use_rust_backend_for_replace_throughput", _gate)
+
+    result = await container.replace_throughput(500, timeout=11)
+
+    assert result.offer_throughput == 500
+    assert query_offers_called is False
+    assert replace_throughput_called is False
+    assert gate_inputs["kwargs"] == {}
+    assert gate_inputs["options"][Constants.Kwargs.TIMEOUT] == 11
+    assert backend.calls == ["get_throughput", "replace_throughput"]

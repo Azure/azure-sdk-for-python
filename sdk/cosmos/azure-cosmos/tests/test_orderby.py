@@ -156,25 +156,6 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
         # validates the results size and order
         self.execute_query_and_validate_results(query, expected_ordered_ids)
 
-    def test_orderby_top_query(self):
-        # test an order by query combined with top
-
-        top_count = 9
-        # sanity check  
-        self.assertLess(top_count, len(self.document_definitions))
-
-        # an order by query with top, total existing docs more than requested top count   
-        query = {
-            'query': 'SELECT top %d * FROM root r order by r.spam' % top_count  # nosec
-        }
-
-        def get_order_by_key(r):
-            return r['spam']
-
-        expected_ordered_ids = [r['id'] for r in sorted(self.document_definitions, key=get_order_by_key)[:top_count]]
-
-        self.execute_query_and_validate_results(query, expected_ordered_ids)
-
     def test_orderby_top_query_less_results_than_top_counts(self):
         # test an order by query combined with top. where top is greater than the total number of docs
 

@@ -1,14 +1,29 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
+"""Temporary compatibility for original tests; maintained tests use config and common."""
+
+from config.settings import TestSettings, RESOURCE_PREFIX, RUN_ID, _build_run_id, unique_database_id
+from config import resources
+from config.resources import (
+    CONTROL_PLANE_MAX_ATTEMPTS, CONTROL_PLANE_MAX_BACKOFF_SECONDS, CONTROL_PLANE_RETRY_STATUS_CODES,
+    _control_plane_backoff, _should_retry_control_plane, retry_control_plane, retry_control_plane_async,
+)
+from common._test_helpers import (
+    get_vector_indexing_policy, get_vector_embedding_policy, ResponseHookCaller, MockHandler,
+)
 
 import collections
 import asyncio
-import logging
 import os
 import random
 import time
 import unittest
 import uuid
+from contextlib import contextmanager
+from copy import copy
+from inspect import iscoroutinefunction
+from unittest.mock import patch
+from urllib.parse import urlsplit
 
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError, ClientAuthenticationError
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryPolicy
@@ -16,6 +31,7 @@ from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._retry_utility import _has_database_account_header, _has_read_retryable_headers, _configure_timeout
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos.cosmos_client import CosmosClient
+from _client_transport import create_client_with_transport
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import StatusCodes, HttpHeaders
 from azure.cosmos.partition_key import (PartitionKey, _PartitionKeyKind, _PartitionKeyVersion, _Undefined,
@@ -35,39 +51,6 @@ except:
 
 SPLIT_TIMEOUT = 60*10  # timeout test at 10 minutes
 SLEEP_TIME = 30  # sleep for 30 seconds
-
-# The live tests run against fixed, long-lived accounts that are shared with other
-# language SDKs and with concurrent runs of this suite. Databases are the only
-# account-scoped namespace we control, so every database this suite creates carries a
-# prefix identifying the run that owns it. That keeps concurrent runs from colliding and
-# lets cleanup delete only what a given run created.
-RESOURCE_PREFIX = "PythonSDKTest"
-
-
-def _build_run_id():
-    # Build.BuildId is shared by every matrix leg of one pipeline run, which is what an
-    # out-of-band janitor matches on; the random suffix keeps parallel legs distinct.
-    build_id = os.getenv('BUILD_BUILDID')
-    suffix = uuid.uuid4().hex[:8]
-    return "{}-{}".format(build_id, suffix) if build_id else suffix
-
-
-RUN_ID = _build_run_id()
-
-
-def unique_database_id(label=""):
-    """Build a database id owned by this test run.
-
-    Format: ``PythonSDKTest-<run id>-<label>-<random>``. Callers that need particular
-    characters in the id (unicode, leading spaces) can embed this in a larger id; only
-    the prefix is required for ownership.
-    """
-    parts = [RESOURCE_PREFIX, RUN_ID]
-    if label:
-        parts.append(label)
-    parts.append(uuid.uuid4().hex)
-    return "-".join(parts)
-
 
 def set_environment_variables(**overrides):
     """Apply environment variable overrides and return the values they replaced.
@@ -94,84 +77,13 @@ def restore_environment_variables(previous):
             os.environ[name] = value
 
 
-# The live-test accounts are long lived and shared with concurrent runs of this suite and
-# with other language SDKs' CI, so the account control plane is a contended resource:
-# creating or deleting a database or container can fail purely because someone else is
-# busy on the same account. The SDK's own throttle retry gives up after ~30s, which is not
-# enough headroom for suite setup and teardown on a busy account.
-CONTROL_PLANE_MAX_ATTEMPTS = 20
-CONTROL_PLANE_MAX_BACKOFF_SECONDS = 15
-# Retried: request timeout, throttled, retry-with, internal error, service unavailable.
-# Deliberately absent: 400, 401, 403, 404, 409. Those describe the request itself, so
-# negative tests that assert on them must keep failing fast.
-CONTROL_PLANE_RETRY_STATUS_CODES = frozenset({408, 429, 449, 500, 503})
-
-
-def _control_plane_backoff(attempt, error):
-    """Seconds to wait before retrying, preferring the service's own hint."""
-    headers = getattr(error, "headers", None) or {}
-    for header in (HttpHeaders.RetryAfterInMilliseconds, HttpHeaders.RetryAfter):
-        raw = headers.get(header)
-        if raw is None:
-            continue
-        try:
-            hinted = float(raw) / 1000 if header == HttpHeaders.RetryAfterInMilliseconds else float(raw)
-        except (TypeError, ValueError):
-            continue
-        return min(max(hinted, 0.1), CONTROL_PLANE_MAX_BACKOFF_SECONDS)
-    backoff = min(0.5 * (2 ** attempt), CONTROL_PLANE_MAX_BACKOFF_SECONDS)
-    # Jitter so that parallel matrix legs retrying the same account don't stay in lockstep.
-    return backoff * (0.5 + random.random() / 2)
-
-
-def _should_retry_control_plane(error, attempt):
-    return (error.status_code in CONTROL_PLANE_RETRY_STATUS_CODES
-            and attempt < CONTROL_PLANE_MAX_ATTEMPTS - 1)
-
-
-def retry_control_plane(operation, *args, **kwargs):
-    """Run a control-plane operation, retrying transient service-side failures."""
-    for attempt in range(CONTROL_PLANE_MAX_ATTEMPTS):
-        try:
-            return operation(*args, **kwargs)
-        except exceptions.CosmosHttpResponseError as error:
-            if not _should_retry_control_plane(error, attempt):
-                raise
-            time.sleep(_control_plane_backoff(attempt, error))
-    raise AssertionError("unreachable")  # pragma: no cover
-
-
-async def retry_control_plane_async(operation, *args, **kwargs):
-    """Async counterpart of :func:`retry_control_plane`."""
-    for attempt in range(CONTROL_PLANE_MAX_ATTEMPTS):
-        try:
-            return await operation(*args, **kwargs)
-        except exceptions.CosmosHttpResponseError as error:
-            if not _should_retry_control_plane(error, attempt):
-                raise
-            await asyncio.sleep(_control_plane_backoff(attempt, error))
-    raise AssertionError("unreachable")  # pragma: no cover
-
-
-class TestConfig(object):
-    local_host = 'https://localhost:8081/'
-    # [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
-    masterKey = os.getenv('ACCOUNT_KEY',
-                          'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
-    host = os.getenv('ACCOUNT_HOST', local_host)
-    connection_str = os.getenv('ACCOUNT_CONNECTION_STR', 'AccountEndpoint={};AccountKey={};'.format(host, masterKey))
+class TestConfig(TestSettings):
+    """Keep legacy factories and helpers without generating a second set of resource IDs."""
 
     connectionPolicy = documents.ConnectionPolicy()
-    connectionPolicy.DisableSSLVerification = True
-    is_emulator = host == local_host
-    is_live._cache = True if not is_emulator else False
-    credential = masterKey if is_emulator else get_credential()
-    credential_async = masterKey if is_emulator else get_credential(is_async=True)
-    data_auth_mode = os.getenv('COSMOS_TEST_DATA_AUTH_MODE', 'key').strip().lower()
-    if data_auth_mode not in ('key', 'aad'):
-        raise ValueError(
-            "Unknown COSMOS_TEST_DATA_AUTH_MODE: {!r}. Expected 'key' or 'aad'.".format(data_auth_mode)
-        )
+    is_live._cache = not TestSettings.is_emulator
+    credential = TestSettings.masterKey if TestSettings.is_emulator else get_credential()
+    credential_async = TestSettings.masterKey if TestSettings.is_emulator else get_credential(is_async=True)
 
     @classmethod
     def create_data_client(cls, **kwargs):
@@ -182,8 +94,8 @@ class TestConfig(object):
         can opt in without bypassing the AAD/key selector.
         """
         if cls.data_auth_mode == 'aad':
-            return CosmosClient(cls.host, cls.credential, **kwargs)
-        return CosmosClient(cls.host, cls.masterKey, **kwargs)
+            return create_client_with_transport(CosmosClient, cls.host, cls.credential, **kwargs)
+        return create_client_with_transport(CosmosClient, cls.host, cls.masterKey, **kwargs)
 
     @classmethod
     def create_data_client_for_endpoint(cls, endpoint, **kwargs):
@@ -195,8 +107,8 @@ class TestConfig(object):
         """
         resolved_endpoint = endpoint or cls.host
         if cls.data_auth_mode == 'aad':
-            return CosmosClient(resolved_endpoint, cls.credential, **kwargs)
-        return CosmosClient(resolved_endpoint, cls.masterKey, **kwargs)
+            return create_client_with_transport(CosmosClient, resolved_endpoint, cls.credential, **kwargs)
+        return create_client_with_transport(CosmosClient, resolved_endpoint, cls.masterKey, **kwargs)
 
     @classmethod
     def create_data_client_async(cls, **kwargs):
@@ -222,8 +134,8 @@ class TestConfig(object):
         from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 
         if cls.data_auth_mode == 'aad':
-            return AsyncCosmosClient(cls.host, cls.credential_async, **kwargs)
-        return AsyncCosmosClient(cls.host, cls.masterKey, **kwargs)
+            return create_client_with_transport(AsyncCosmosClient, cls.host, cls.credential_async, **kwargs)
+        return create_client_with_transport(AsyncCosmosClient, cls.host, cls.masterKey, **kwargs)
 
     @classmethod
     def create_data_client_async_for_endpoint(cls, endpoint, **kwargs):
@@ -237,8 +149,8 @@ class TestConfig(object):
 
         resolved_endpoint = endpoint or cls.host
         if cls.data_auth_mode == 'aad':
-            return AsyncCosmosClient(resolved_endpoint, cls.credential_async, **kwargs)
-        return AsyncCosmosClient(resolved_endpoint, cls.masterKey, **kwargs)
+            return create_client_with_transport(AsyncCosmosClient, resolved_endpoint, cls.credential_async, **kwargs)
+        return create_client_with_transport(AsyncCosmosClient, resolved_endpoint, cls.masterKey, **kwargs)
 
     @classmethod
     def create_test_clients(cls, database_id, **kwargs):
@@ -252,8 +164,8 @@ class TestConfig(object):
 
         Extra ``**kwargs`` are forwarded to BOTH client constructors (use-cases:
         ``multiple_write_locations=True`` for circuit-breaker tests). For per-client
-        construction options (e.g. custom ``transport`` for fault injection), construct
-        the clients manually instead of using this factory.
+        fault-injection senders, use ``create_client_with_transport`` instead of
+        sharing one sender between these clients.
         """
         key_client = CosmosClient(cls.host, cls.masterKey, **kwargs)
         key_db = key_client.get_database_client(database_id)
@@ -278,108 +190,50 @@ class TestConfig(object):
         data_db = data_client.get_database_client(database_id)
         return key_client, key_db, data_client, data_db
 
-    global_host = os.getenv('GLOBAL_ACCOUNT_HOST', host)
-    write_location_host = os.getenv('WRITE_LOCATION_HOST', host)
-    read_location_host = os.getenv('READ_LOCATION_HOST', host)
-    read_location2_host = os.getenv('READ_LOCATION_HOST2', host)
-    global_masterKey = os.getenv('GLOBAL_ACCOUNT_KEY', masterKey)
 
-    write_location = os.getenv('WRITE_LOCATION', host)
-    read_location = os.getenv('READ_LOCATION', host)
-    read_location2 = os.getenv('READ_LOCATION2', host)
 
-    THROUGHPUT_FOR_5_PARTITIONS = 30000
-    THROUGHPUT_FOR_2_PARTITIONS = 12000
-    THROUGHPUT_FOR_1_PARTITION = 400
 
-    TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', unique_database_id("Shared"))
 
-    TEST_SINGLE_PARTITION_CONTAINER_ID = "SinglePartitionTestContainer-" + str(uuid.uuid4())
-    TEST_MULTI_PARTITION_CONTAINER_ID = "MultiPartitionTestContainer-" + str(uuid.uuid4())
-    TEST_SINGLE_PARTITION_PREFIX_PK_CONTAINER_ID = "SinglePartitionWithPrefixPKTestContainer-" + str(uuid.uuid4())
-    TEST_MULTI_PARTITION_PREFIX_PK_CONTAINER_ID = "MultiPartitionWithPrefixPKTestContainer-" + str(uuid.uuid4())
 
-    TEST_CONTAINER_PARTITION_KEY = "pk"
-    TEST_CONTAINER_PREFIX_PARTITION_KEY = ["pk1", "pk2"]
-    TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH = ['/pk1', '/pk2']
 
     # these will be populated by the get_account_info method
-    WRITE_LOCATION = ""
     # some default value that is needed for emulator tests
-    READ_LOCATION = "West US"
 
     @classmethod
     def get_account_info(cls, client: CosmosClient):
-        account_info = client.get_database_account()
+        """Read internal discovery metadata for the retained legacy test setup."""
+        account_info = client.client_connection.GetDatabaseAccount()
         cls.WRITE_LOCATION = account_info.WritableLocations[0]["name"]
         if len(account_info.ReadableLocations) > 1:
             cls.READ_LOCATION = account_info.ReadableLocations[1]["name"]
 
     @classmethod
     def create_database_if_not_exist(cls, client):
-        # type: (CosmosClient) -> DatabaseProxy
-        test_database = retry_control_plane(client.create_database_if_not_exists,
-                                            cls.TEST_DATABASE_ID,
-                                            offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
-        return test_database
+        return resources.create_database_if_not_exist(client, settings=cls)
 
     @classmethod
     def create_single_partition_container_if_not_exist(cls, client):
-        # type: (CosmosClient) -> ContainerProxy
-        database = cls.create_database_if_not_exist(client)
-        document_collection = retry_control_plane(
-            database.create_container_if_not_exists,
-            id=cls.TEST_SINGLE_PARTITION_CONTAINER_ID,
-            partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash'),
-            offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
-        return document_collection
+        return resources.create_single_partition_container_if_not_exist(client, settings=cls)
 
     @classmethod
     def create_multi_partition_container_if_not_exist(cls, client):
-        # type: (CosmosClient) -> ContainerProxy
-        database = cls.create_database_if_not_exist(client)
-        document_collection = retry_control_plane(
-            database.create_container_if_not_exists,
-            id=cls.TEST_MULTI_PARTITION_CONTAINER_ID,
-            partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash'),
-            offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS)
-        return document_collection
+        return resources.create_multi_partition_container_if_not_exist(client, settings=cls)
 
     @classmethod
     def create_single_partition_prefix_pk_container_if_not_exist(cls, client):
-        # type: (CosmosClient) -> ContainerProxy
-        database = cls.create_database_if_not_exist(client)
-        document_collection = retry_control_plane(
-            database.create_container_if_not_exists,
-            id=cls.TEST_SINGLE_PARTITION_PREFIX_PK_CONTAINER_ID,
-            partition_key=PartitionKey(path=cls.TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH, kind='MultiHash'),
-            offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
-        return document_collection
+        return resources.create_single_partition_prefix_pk_container_if_not_exist(client, settings=cls)
 
     @classmethod
     def create_multi_partition_prefix_pk_container_if_not_exist(cls, client):
-        # type: (CosmosClient) -> ContainerProxy
-        database = cls.create_database_if_not_exist(client)
-        document_collection = retry_control_plane(
-            database.create_container_if_not_exists,
-            id=cls.TEST_MULTI_PARTITION_PREFIX_PK_CONTAINER_ID,
-            partition_key=PartitionKey(path=cls.TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH, kind='MultiHash'),
-            offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS)
-        return document_collection
+        return resources.create_multi_partition_prefix_pk_container_if_not_exist(client, settings=cls)
 
     @classmethod
     def try_delete_database(cls, client):
-        # type: (CosmosClient) -> None
-        cls.try_delete_database_with_id(client, cls.TEST_DATABASE_ID)
+        return resources.try_delete_database(client, settings=cls)
 
     @classmethod
     def try_delete_database_with_id(cls, client, database_id):
-        # type: (CosmosClient, str) -> None
-        try:
-            retry_control_plane(client.delete_database, database_id)
-        except exceptions.CosmosHttpResponseError as e:
-            if e.status_code != StatusCodes.NOT_FOUND:
-                raise e
+        return resources.try_delete_database_with_id(client, database_id)
 
     @classmethod
     async def _validate_distinct_on_different_types_and_field_orders(cls, collection, query, expected_results):
@@ -494,28 +348,8 @@ class TestConfig(object):
         print("Split in session token helpers has completed")
 
 
-def get_vector_indexing_policy(embedding_type):
-    return {
-        "indexingMode": "consistent",
-        "includedPaths": [{"path": "/*"}],
-        'excludedPaths': [{'path': '/"_etag"/?'}],
-        "vectorIndexes": [
-            {"path": "/embedding", "type": f"{embedding_type}"}
-        ]
-    }
 
 
-def get_vector_embedding_policy(distance_function, data_type, dimensions):
-    return {
-        "vectorEmbeddings": [
-            {
-                "path": "/embedding",
-                "dataType": f"{data_type}",
-                "dimensions": dimensions,
-                "distanceFunction": f"{distance_function}"
-            }
-        ]
-    }
 
 
 def get_full_text_indexing_policy(path):
@@ -566,12 +400,6 @@ def post_split_hook(response):
     assert session_token.count(':') == 2
     assert session_token.count(',') == 1
 
-class ResponseHookCaller:
-    def __init__(self):
-        self.count = 0
-
-    def __call__(self, *args, **kwargs):
-        self.count += 1
 
 
 class FakeResponse:
@@ -597,12 +425,44 @@ class FakeHttpResponse:
     def body(self):
         return None
 
-def no_token_response_hook(raw_response):
-    request_headers = raw_response.http_request.headers
+@contextmanager
+def capture_requests(client, resource_type="docs"):
+    """Snapshot outgoing requests without exposing instrumentation as SDK options."""
+    transport = client.client_connection.pipeline_client._pipeline._transport
+    original_send = transport.send
+    requests = []
+
+    def capture(request):
+        if request.headers.get(HttpHeaders.IsQueryPlanRequest):
+            return
+        segments = urlsplit(request.url).path.strip("/").split("/")
+        # Container metadata reads must not count as container operations when
+        # the operation under test targets a different resource.
+        if segments[::2][-1] != resource_type:
+            return
+        snapshot = copy(request)
+        snapshot.headers = request.headers.copy()
+        requests.append(snapshot)
+
+    def send(request, **kwargs):
+        capture(request)
+        return original_send(request, **kwargs)
+
+    async def send_async(request, **kwargs):
+        capture(request)
+        return await original_send(request, **kwargs)
+
+    with patch.object(transport, "send", side_effect=send_async if iscoroutinefunction(original_send) else send):
+        yield requests
+    assert requests, "The operation did not send a matching request"
+
+
+def assert_no_session_token(request):
+    request_headers = request.headers
     assert request_headers.get(HttpHeaders.SessionToken) is None
 
-def token_response_hook(raw_response):
-    request_headers = raw_response.http_request.headers
+def assert_session_token(request):
+    request_headers = request.headers
     assert request_headers.get(HttpHeaders.SessionToken) is not None
 
 
@@ -836,14 +696,12 @@ def create_feed_range_in_dict(feed_range):
     return FeedRangeInternalEpk(feed_range).to_dict()
 
 
-class MockHandler(logging.Handler):
 
-    def __init__(self):
-        super(MockHandler, self).__init__()
-        self.messages = []
 
-    def reset(self):
-        self.messages = []
-
-    def emit(self, record):
-        self.messages.append(record)
+def initialize_legacy_account_info():
+    """Temporary account-metadata setup for selected original tests only."""
+    client = CosmosClient(TestConfig.host, TestConfig.masterKey, _backend="core-python")
+    try:
+        TestConfig.get_account_info(client)
+    finally:
+        client.close()

@@ -41,6 +41,11 @@ ENV_DIR/
 .assets/
 /.github/aw/logs/
 
+# Local Cosmos diagnostic and test artifacts
+/ART/list-db-marker-fix.xml
+/sdk/cosmos/azure-cosmos/local-driver-cargo-metadata.stderr.txt
+/sdk/cosmos/azure-cosmos/local-driver-lock-diff-summary.txt
+
 # Perf test profiling
 cProfile-*.pstats
 

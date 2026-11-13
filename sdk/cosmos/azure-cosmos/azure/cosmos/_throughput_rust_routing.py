@@ -1,0 +1,167 @@
+# The MIT License (MIT)
+# Copyright (c) 2014 Microsoft Corporation
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+"""Prepare offer requests and parse their responses for throughput methods.
+
+Eligibility checks tell the caller whether its selected Python backend and
+options can use the Rust path. They do not perform an operation or choose
+fallback after an execution error.
+
+Builders copy connection defaults into prepared requests. The Python backend
+executes them through the binding; these helpers then parse backend responses.
+For example, a decoded {"Offers": [...]} body becomes a CosmosList whose own
+response headers belong to that operation.
+"""
+
+from __future__ import annotations
+
+from typing import Any, Mapping, cast
+from copy import deepcopy
+from azure.core.utils import CaseInsensitiveDict
+
+from ._backend.constants import is_rust_backend
+from ._backend.contracts import PreparedRequest
+from ._constants import _Constants as Constants
+from ._cosmos_responses import CosmosDict, CosmosList
+from ._helpers._request_settings import overrides_driver_owned_header
+from ._helpers._request_throughput import build_get_throughput_request, build_replace_throughput_request
+from ._helpers._response_parse import process_backend_response
+
+
+def can_use_rust_backend_for_get_throughput(*, backend: Any, options: Mapping[str, Any], kwargs: Mapping[str, Any]) -> bool:
+    """Check the selected Python backend and options before reading an offer.
+
+    False means this call cannot use the Rust path as supplied. The caller
+    applies migration policy; this check does not run the legacy operation.
+    """
+    if not is_rust_backend(backend):
+        return False
+    if options.get(Constants.Kwargs.AVAILABILITY_STRATEGY) is not None:
+        return False
+    if overrides_driver_owned_header(options):
+        return False
+    return all(name in ("tracing_options", "tracing_attributes") for name in kwargs)
+
+
+def build_get_throughput_from_connection(
+    *,
+    client_connection: Any,
+    container_link: str,
+    offer_query: Mapping[str, Any],
+    options: Mapping[str, Any],
+) -> PreparedRequest:
+    """Build a prepared request using connection headers and the supplied offer query.
+
+    build_get_throughput_request prepares the inputs; it does not send the request.
+    """
+    return build_get_throughput_request(
+        resource_link=container_link,
+        offer_query=offer_query,
+        request_options=options,
+        default_headers=client_connection.default_headers,
+    )
+
+
+
+
+def process_get_throughput_response(backend_response: Any, *, client_connection: Any) -> list[dict[str, Any]]:
+    """Parse a backend response into a CosmosList and update the connection's headers.
+
+    The list retains this response's headers so later operations on the same
+    connection cannot replace the headers read from this result.
+    """
+    parsed = process_backend_response(
+        backend_response,
+        client_connection=client_connection,
+        response_hook=None,
+    )
+    return CosmosList(
+        parse_get_throughput_payload(cast(Mapping[str, Any], parsed)),
+        response_headers=parsed.get_response_headers(),
+    )
+
+
+def offer_response_headers(result: Any, client_connection: Any) -> CaseInsensitiveDict:
+    """Copy headers from this result when available, not another operation's result.
+
+    A legacy plain list has no response headers of its own. Results that are
+    not CosmosDict or CosmosList use the connection's last_response_headers.
+    """
+    if isinstance(result, (CosmosDict, CosmosList)):
+        return deepcopy(result.get_response_headers())
+    return CaseInsensitiveDict(deepcopy(client_connection.last_response_headers))
+
+
+def parse_get_throughput_payload(payload: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Return copied offer dictionaries from a decoded {"Offers": [...]} response body.
+
+    Check that Offers is a list and each entry is a mapping. Converting these
+    records to throughput properties is the caller's next step.
+    """
+    raw_offers = payload.get("Offers")
+    if not isinstance(raw_offers, list):
+        raise ValueError("get_throughput Rust payload must include a list field 'Offers'.")
+    offers: list[dict[str, Any]] = []
+    for index, offer in enumerate(raw_offers):
+        if not isinstance(offer, Mapping):
+            raise ValueError("get_throughput Rust payload entry at index {} must be an object.".format(index))
+        offers.append(dict(offer))
+    return offers
+
+
+def can_use_rust_backend_for_replace_throughput(
+    *,
+    backend: Any,
+    options: Mapping[str, Any],
+    kwargs: Mapping[str, Any],
+) -> bool:
+    """Apply the read-offer eligibility check before replacing throughput.
+
+    The caller first reads the current offer and then replaces it. This shared
+    check does not execute either step; the caller performs two separate operations.
+    """
+    return can_use_rust_backend_for_get_throughput(backend=backend, options=options, kwargs=kwargs)
+
+
+def build_replace_throughput_from_connection(
+    *,
+    client_connection: Any,
+    container_link: str,
+    offer: Mapping[str, Any],
+    options: Mapping[str, Any],
+) -> PreparedRequest:
+    """Build a prepared replacement request using connection headers and the offer body."""
+    return build_replace_throughput_request(
+        resource_link=container_link,
+        offer_body=offer,
+        request_options=options,
+        default_headers=client_connection.default_headers,
+    )
+
+
+
+
+def process_replace_throughput_response(backend_response: Any, *, client_connection: Any) -> Any:
+    """Parse the backend response and update the connection's latest response headers."""
+    return process_backend_response(
+        backend_response,
+        client_connection=client_connection,
+        response_hook=None,
+    )

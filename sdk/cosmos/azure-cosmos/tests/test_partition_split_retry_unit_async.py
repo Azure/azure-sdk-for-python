@@ -20,6 +20,8 @@ from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from azure.cosmos.aio import CosmosClient  # noqa: F401 - needed to resolve circular imports
 from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
+from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.feed_range_continuation import (
@@ -127,6 +129,8 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
     @staticmethod
     def _create_minimal_connection() -> CosmosClientConnection:
         client = CosmosClientConnection.__new__(CosmosClientConnection)
+        client._response_state = ClientLastResponseHeaders()
+        client._backend = ASYNC_LEGACY_BACKEND
         client.default_headers = {}
         client.last_response_headers = {}
         client._UpdateSessionIfRequired = lambda *args, **kwargs: None
@@ -1050,6 +1054,8 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         # Build the connection without running __init__; only the attributes
         # used by the no-query (read-feed) branch of async __QueryFeed are needed.
         conn = object.__new__(CosmosClientConnection)
+        conn._response_state = ClientLastResponseHeaders()
+        conn._backend = ASYNC_LEGACY_BACKEND
         conn.default_headers = {}
         conn.last_response_headers = {}
         conn.availability_strategy = None
@@ -1313,7 +1319,7 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         assert seen_headers[0][HttpHeaders.ReadFeedKeyType] == "EffectivePartitionKeyRange"
         assert client._routing_map_provider.get_overlapping_ranges.await_count >= 2
 
-    async def test_queryfeed_feed_range_legacy_inbound_single_partition_honors_and_emits_legacy_async(self):
+    async def test_queryfeed_feed_range_service_token_inbound_single_partition_honors_and_emits_service_token_async(self):
         """Async: legacy inbound continuation is honored when feed_range maps to one partition."""
         client = self._create_minimal_connection()
         client._query_compatibility_mode = client._QueryCompatibilityMode.Default
@@ -1361,7 +1367,7 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         assert seen_request_continuations == ["legacy-inbound-token"]
         assert headers.get(HttpHeaders.Continuation) == "legacy-next-token"
 
-    async def test_queryfeed_feed_range_legacy_inbound_multi_partition_restarts_and_emits_v1_async(self):
+    async def test_queryfeed_feed_range_service_token_inbound_multi_partition_restarts_and_emits_v1_async(self):
         """Async: legacy inbound continuation is ignored when scope is multi-partition; outbound becomes v=1."""
         client = self._create_minimal_connection()
         client._query_compatibility_mode = client._QueryCompatibilityMode.Default

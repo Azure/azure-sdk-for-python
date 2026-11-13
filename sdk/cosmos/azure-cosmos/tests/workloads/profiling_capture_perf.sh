@@ -1,0 +1,236 @@
+#!/usr/bin/env bash
+# Capture functions executing on every thread plus whole-process CPU, memory,
+# disk, page-fault, and context-switch measurements. Then stop and validate the
+# workload left running by profiling_capture_py_spy.sh.
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  echo "ERROR: source this file in the terminal that ran profiling_capture_py_spy.sh:" >&2
+  echo "    source ./profiling_capture_perf.sh" >&2
+  exit 2
+fi
+
+_perf_here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "${_perf_here}" || return 1
+source ./profiling_common.sh || return 2
+
+_perf_failed=0
+
+if [[ ! "${WORKLOAD_PID:-}" =~ ^[0-9]+$ ]]; then
+  echo "ERROR: WORKLOAD_PID is missing or invalid." >&2
+  echo "       First run: source ./profiling_capture_py_spy.sh" >&2
+  _perf_failed=1
+elif ! declare -F workload_is_running >/dev/null || ! workload_is_running; then
+  echo "ERROR: workload PID ${WORKLOAD_PID} is not running." >&2
+  _perf_failed=1
+fi
+
+if [[ -z "${PROFILING_SESSION_DIR:-}" || ! -d "${PROFILING_SESSION_DIR}" ]]; then
+  echo "ERROR: PROFILING_SESSION_DIR does not name an existing profiling-session directory." >&2
+  _perf_failed=1
+elif [[ ! -s "${PROFILING_SESSION_DIR}/smaps-before.txt" ]]; then
+  echo "ERROR: ${PROFILING_SESSION_DIR}/smaps-before.txt is missing or empty." >&2
+  echo "       The before/after memory comparison requires the py-spy capture first." >&2
+  _perf_failed=1
+fi
+
+if [[ ! "${PROFILING_CAPTURE_ID:-}" =~ ^[0-9]{8}-[0-9]{9}$ ]]; then
+  echo "ERROR: PROFILING_CAPTURE_ID is missing or invalid." >&2
+  echo "       Source profiling_capture_py_spy.sh in this terminal first." >&2
+  _perf_failed=1
+fi
+
+if ! declare -F cleanup_workload >/dev/null 2>&1; then
+  echo "ERROR: cleanup_workload is unavailable." >&2
+  echo "       Source profiling_capture_py_spy.sh in this terminal first." >&2
+  _perf_failed=1
+fi
+
+for _perf_command in sudo perf pidstat c++filt ps tee grep cat python3; do
+  if ! command -v "${_perf_command}" >/dev/null 2>&1; then
+    echo "ERROR: required command '${_perf_command}' is not installed." >&2
+    _perf_failed=1
+  fi
+done
+
+PERF_CAPTURE_DURATION="${PERF_CAPTURE_DURATION:-60}"
+PERF_SAMPLE_FREQUENCY="${PERF_SAMPLE_FREQUENCY:-199}"
+SYSTEM_CAPTURE_DURATION="${SYSTEM_CAPTURE_DURATION:-60}"
+PERF_CAPTURE_SCHED="${PERF_CAPTURE_SCHED:-false}"
+PERF_SCHED_DURATION="${PERF_SCHED_DURATION:-30}"
+
+if [[ ! "${PERF_CAPTURE_DURATION}" =~ ^[1-9][0-9]*$ ]]; then
+  echo "ERROR: PERF_CAPTURE_DURATION must be a positive whole number." >&2
+  _perf_failed=1
+fi
+if [[ ! "${PERF_SAMPLE_FREQUENCY}" =~ ^[1-9][0-9]*$ ]]; then
+  echo "ERROR: PERF_SAMPLE_FREQUENCY must be a positive whole number." >&2
+  _perf_failed=1
+fi
+if [[ ! "${SYSTEM_CAPTURE_DURATION}" =~ ^[1-9][0-9]*$ ]]; then
+  echo "ERROR: SYSTEM_CAPTURE_DURATION must be a positive whole number." >&2
+  _perf_failed=1
+fi
+if [[ "${PERF_CAPTURE_SCHED}" != "true" && "${PERF_CAPTURE_SCHED}" != "false" ]]; then
+  echo "ERROR: PERF_CAPTURE_SCHED must be true or false." >&2
+  _perf_failed=1
+fi
+if [[ ! "${PERF_SCHED_DURATION}" =~ ^[1-9][0-9]*$ ]]; then
+  echo "ERROR: PERF_SCHED_DURATION must be a positive whole number." >&2
+  _perf_failed=1
+fi
+
+if [[ "${_perf_failed}" -eq 0 ]] && ! sudo -n perf --version; then
+  echo "ERROR: non-interactive sudo permission is required for Linux perf." >&2
+  echo "       Authorize perf before starting the capture; no password prompt is attempted." >&2
+  _perf_failed=1
+fi
+
+if [[ "${_perf_failed}" -eq 0 ]]; then
+  echo "=== Recording all workload threads for ${PERF_CAPTURE_DURATION}s ==="
+  sudo -n perf record \
+    --event cpu-clock \
+    --pid "${WORKLOAD_PID}" \
+    --freq "${PERF_SAMPLE_FREQUENCY}" \
+    --call-graph dwarf \
+    --output "${PROFILING_SESSION_DIR}/perf.data" \
+    -- sleep "${PERF_CAPTURE_DURATION}" \
+    2>&1 | tee "${PROFILING_SESSION_DIR}/perf-record.log"
+  _perf_record_rc=("${PIPESTATUS[@]}")
+  if [[ "${_perf_record_rc[*]}" != "0 0" ]]; then
+    echo "ERROR: perf record or its log write failed: ${_perf_record_rc[*]}." >&2
+    _perf_failed=1
+  elif [[ ! -s "${PROFILING_SESSION_DIR}/perf.data" ]]; then
+    echo "ERROR: perf record produced no data." >&2
+    _perf_failed=1
+  elif ! workload_is_running; then
+    echo "ERROR: the workload stopped during perf record." >&2
+    _perf_failed=1
+  fi
+fi
+
+if [[ "${_perf_failed}" -eq 0 ]]; then
+  echo "=== Writing a readable all-thread report ==="
+  sudo -n perf report \
+    --stdio \
+    --input "${PROFILING_SESSION_DIR}/perf.data" \
+    --sort comm,dso,symbol \
+    2>"${PROFILING_SESSION_DIR}/perf-report.log" \
+    | c++filt >"${PROFILING_SESSION_DIR}/perf-report.txt"
+  _perf_report_status=("${PIPESTATUS[@]}")
+  _perf_report_rc=${_perf_report_status[0]}
+  _perf_demangle_rc=${_perf_report_status[1]}
+  if [[ "${_perf_report_rc}" -ne 0 || "${_perf_demangle_rc}" -ne 0 ]]; then
+    echo "ERROR: perf report or c++filt failed; see perf-report.log." >&2
+    _perf_failed=1
+  elif [[ ! -s "${PROFILING_SESSION_DIR}/perf-report.txt" ]]; then
+    echo "ERROR: perf report produced no readable text." >&2
+    _perf_failed=1
+  elif ! grep -Eqi 'tokio|azure_cosmos_driver|_rust\.abi3|python3' \
+    "${PROFILING_SESSION_DIR}/perf-report.txt"; then
+    echo "ERROR: perf report contains no recognizable workload symbols." >&2
+    _perf_failed=1
+  fi
+fi
+
+if [[ "${_perf_failed}" -eq 0 && "${PERF_CAPTURE_SCHED}" == "true" ]]; then
+  echo "=== Recording scheduler states for ${PERF_SCHED_DURATION}s ==="
+  sudo -n perf sched record \
+    --all-cpus \
+    --output "${PROFILING_SESSION_DIR}/perf-sched.data" \
+    -- sleep "${PERF_SCHED_DURATION}" \
+    2>&1 | tee "${PROFILING_SESSION_DIR}/perf-sched-record.log"
+  _perf_sched_record_rc=("${PIPESTATUS[@]}")
+  if [[ "${_perf_sched_record_rc[*]}" != "0 0" ]]; then
+    echo "ERROR: scheduler capture or its log write failed: ${_perf_sched_record_rc[*]}." >&2
+    _perf_failed=1
+  elif ! sudo -n perf sched timehist \
+    --input "${PROFILING_SESSION_DIR}/perf-sched.data" \
+    --pid "${WORKLOAD_PID}" \
+    >"${PROFILING_SESSION_DIR}/perf-sched-timehist.txt" \
+    2>"${PROFILING_SESSION_DIR}/perf-sched-timehist.log"; then
+    echo "ERROR: perf sched timehist failed; see perf-sched-timehist.log." >&2
+    _perf_failed=1
+  elif [[ ! -s "${PROFILING_SESSION_DIR}/perf-sched-timehist.txt" ]]; then
+    echo "ERROR: perf sched produced no workload scheduling timeline." >&2
+    _perf_failed=1
+  elif ! workload_is_running; then
+    echo "ERROR: the workload stopped during perf sched." >&2
+    _perf_failed=1
+  fi
+fi
+
+if [[ "${_perf_failed}" -eq 0 ]]; then
+  echo "=== Recording whole-process CPU, memory, disk, fault, and switch measurements for ${SYSTEM_CAPTURE_DURATION}s ==="
+  pidstat -rudw -p "${WORKLOAD_PID}" 1 "${SYSTEM_CAPTURE_DURATION}" \
+    | tee "${PROFILING_SESSION_DIR}/pidstat.txt"
+  _perf_pidstat_rc=("${PIPESTATUS[@]}")
+  if [[ "${_perf_pidstat_rc[*]}" != "0 0" ]]; then
+    echo "ERROR: pidstat or its log write failed: ${_perf_pidstat_rc[*]}." >&2
+    _perf_failed=1
+  elif [[ ! -s "${PROFILING_SESSION_DIR}/pidstat.txt" ]]; then
+    echo "ERROR: pidstat produced no whole-process measurements." >&2
+    _perf_failed=1
+  elif ! workload_is_running; then
+    echo "ERROR: the workload stopped during pidstat." >&2
+    _perf_failed=1
+  elif ! cat "/proc/${WORKLOAD_PID}/smaps_rollup" >"${PROFILING_SESSION_DIR}/smaps-after.txt"; then
+    echo "ERROR: could not capture final process memory totals." >&2
+    _perf_failed=1
+  elif ! ps -L -p "${WORKLOAD_PID}" -o pid,tid,psr,pcpu,rss,comm \
+    >"${PROFILING_SESSION_DIR}/threads-after.txt"; then
+    echo "ERROR: could not capture the final thread list." >&2
+    _perf_failed=1
+  fi
+fi
+
+# Stop immediately even when a profiler fails. The health report covers the
+# workload's entire lifetime, so leaving it running would change the result.
+if declare -F cleanup_workload >/dev/null 2>&1; then
+  cleanup_workload
+fi
+if [[ "${WORKLOAD_RC:-unknown}" != "0" ]]; then
+  echo "ERROR: workload did not stop cleanly: ${WORKLOAD_RC:-unknown}" >&2
+  _perf_failed=1
+fi
+trap - EXIT INT TERM
+
+if [[ -n "${PROFILING_SESSION_DIR:-}" && -d "${PROFILING_SESSION_DIR}" ]]; then
+  printf 'profile_workload_rc=%s\n' "${WORKLOAD_RC:-unknown}" \
+    | tee -a "${PROFILING_SESSION_DIR}/run.txt"
+fi
+
+if [[ "${_perf_failed}" -eq 0 ]]; then
+  echo "=== Checking completed reads, errors, 429 responses, and Rust retries ==="
+  python3 latency_report.py --prefix profile- --run-id "${PROFILING_CAPTURE_ID}" --workload-health \
+    | tee "${PROFILING_SESSION_DIR}/profile-health.txt"
+  _perf_health_rc=("${PIPESTATUS[@]}")
+  if [[ "${_perf_health_rc[*]}" != "0 0" ]]; then
+    echo "ERROR: health report or its log write failed: ${_perf_health_rc[*]}." >&2
+    _perf_failed=1
+  fi
+  python3 perf_validate.py --prefix profile- --run-id "${PROFILING_CAPTURE_ID}" \
+    --required-backends rust --log-dir "${PROFILING_SESSION_DIR}" \
+    >"${PROFILING_SESSION_DIR}/profile-integrity.txt" 2>&1 || _perf_failed=1
+fi
+
+if [[ "${_perf_failed}" -ne 0 ]]; then
+  unset _perf_here _perf_command _perf_failed _perf_record_rc _perf_report_rc \
+    _perf_demangle_rc _perf_report_status _perf_sched_record_rc \
+    _perf_pidstat_rc _perf_health_rc
+  return 1
+fi
+
+echo "=== perf, process measurements, and workload health PASSED ==="
+echo "    CPU data       : ${PROFILING_SESSION_DIR}/perf.data"
+echo "    readable report: ${PROFILING_SESSION_DIR}/perf-report.txt"
+echo "    process metrics: ${PROFILING_SESSION_DIR}/pidstat.txt"
+echo "    memory after   : ${PROFILING_SESSION_DIR}/smaps-after.txt"
+echo "    workload health: ${PROFILING_SESSION_DIR}/profile-health.txt"
+if [[ "${PERF_CAPTURE_SCHED}" == "true" ]]; then
+  echo "    scheduler trace: ${PROFILING_SESSION_DIR}/perf-sched-timehist.txt"
+fi
+
+unset _perf_here _perf_command _perf_failed _perf_record_rc _perf_report_rc \
+  _perf_demangle_rc _perf_report_status _perf_sched_record_rc \
+  _perf_pidstat_rc _perf_health_rc
+return 0

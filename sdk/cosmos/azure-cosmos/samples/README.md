@@ -12,12 +12,37 @@ urlFragment: cosmos-db-samples
 
 The following are code samples that show common scenario operations with the Azure Cosmos DB SQL API client library. Note that the samples use the terms 'Document' and 'Item' interchangably.
 
+These samples target the Rust-backed SDK. Stored-procedure management and
+execution, trigger management and invocation, and UDF definition management
+are not exposed by either the synchronous or asynchronous client. Samples
+for those operations have been retired, not left waiting for Rust parity.
+
+`query_items` can still call an already-deployed UDF in its SQL expression.
+Deploying the function is separate from querying items; this exception does
+not restore `ContainerProxy.scripts` or UDF-management methods.
+
+Authentication samples use an account key or Microsoft Entra ID (AAD).
+Resource-token authentication and Cosmos user/permission management are
+removed from both clients; selecting the legacy backend does not restore
+them. Entra identities and role assignments are separate from Cosmos users
+and resource permissions, so the AAD samples remain.
+
+* [client_from_connection_string.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/client_from_connection_string.py) and
+  [client_from_connection_string_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/client_from_connection_string_async.py) -
+  Create a client from a connection string, read an existing order, and close
+  the client using `with` or `async with`. These examples target the Rust-default
+  SDK and do not select a backend.
+
+* `runtime_configuration.py` - Explicitly initialize and share a custom Rust
+  runtime, configure connection and HTTP-request timeouts, and apply a separate
+  overall timeout. Run with `--async` for asynchronous initialization. Other
+  samples normally omit `runtime` and use the default process singleton.
+
 * [examples.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/examples.py) - Examples of common tasks:
     * Create Database
     * Create Container
     * CRUD operations on Items in Container
     * Query a Container for Items
-    * Create a Database user
 
 * [database_management.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/database_management.py) - Example demonstrating:
     * Basic CRUD operations on a Database resource
@@ -47,9 +72,6 @@ The following are code samples that show common scenario operations with the Azu
     * Comparing queries scoped to feed ranges with `partition_key`-based queries
     * Consuming change feed scoped to a feed range
     * Parallel change feed processing using feed ranges
-
-* [access_cosmos_with_resource_token.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/access_cosmos_with_resource_token.py) - Example demontrating how to get and use resource token that allows restricted access to data.
-
 
 * [multi-master operations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/MultiMasterOperations) - Example demonstrating multi-master operations.
 
@@ -83,6 +105,22 @@ pip install azure-cosmos
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
 3. Follow the usage described in the file, e.g. `python database_management.py`
+
+### Connection-string samples
+
+Set `AZURE_COSMOS_CONNECTION_STRING` to a string containing `AccountEndpoint`
+and `AccountKey`. The `sales` database and `orders` container must already
+contain an item with ID `order-42` and partition key value `customer-17`.
+These samples only read that item; they do not create or delete resources.
+
+Run `python client_from_connection_string.py` or
+`python client_from_connection_string_async.py`.
+
+The connection string supplies the account and key. Pass optional client
+settings, such as `consistency_level="Session"`, as keyword arguments, not
+inside the connection string. A separate `credential` is not accepted.
+For Microsoft Entra authentication, use `CosmosClient(endpoint, credential=...)`
+instead.
 
 ## Next steps
 

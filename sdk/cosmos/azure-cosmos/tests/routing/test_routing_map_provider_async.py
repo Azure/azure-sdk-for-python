@@ -109,26 +109,26 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         return SmartRoutingMapProvider(client)
 
 
-    async def test_full_range_async(self):
+    async def test_full_range_async_rust(self):
         pkRange = routing_range.Range("", "FF", True, False)
         overlapping = await self.smart_routing_map_provider.get_overlapping_ranges(
             "dbs/db/colls/container", [pkRange])
         self.assertEqual(len(overlapping), len(self.partition_key_ranges))
         self.assertEqual(overlapping, self.partition_key_ranges)
 
-    async def test_empty_ranges_async(self):
+    async def test_empty_ranges_async_rust(self):
         overlapping = await self.smart_routing_map_provider.get_overlapping_ranges(
             "dbs/db/colls/container", [])
         self.assertEqual(len(overlapping), 0)
 
-    async def test_bad_overlapping_query_ranges_async(self):
+    async def test_bad_overlapping_query_ranges_async_rust(self):
         r1 = routing_range.Range("", "AA", True, True)
         r2 = routing_range.Range("AA", "FF", True, False)
         with self.assertRaises(ValueError):
             await self.smart_routing_map_provider.get_overlapping_ranges(
                 "sample collection id", [r1, r2])
 
-    async def test_empty_ranges_are_thrown_away_async(self):
+    async def test_empty_ranges_are_thrown_away_async_rust(self):
         e1 = routing_range.Range("", "", True, False)
         r1 = routing_range.Range("", "AB", True, False)
         e2 = routing_range.Range("AB", "AB", True, False)
@@ -144,13 +144,13 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(overlapping_all,
                          self.cached_collection_routing_map.get_overlapping_ranges([e1, r1, e2, r2, e3, e4]))
 
-    async def test_simple_async(self):
+    async def test_simple_async_rust(self):
         r = routing_range.Range("AB", "AC", True, False)
         overlapping = await self.smart_routing_map_provider.get_overlapping_ranges(
             "dbs/db/colls/container", [r])
         self.assertEqual(overlapping, self.cached_collection_routing_map.get_overlapping_ranges([r]))
 
-    async def test_simple_boundary_async(self):
+    async def test_simple_boundary_async_rust(self):
         ranges = [
             routing_range.Range("05C1C9CD673398", "05C1D9CD673398", True, False),
         ]
@@ -160,7 +160,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                          self.cached_collection_routing_map.get_overlapping_ranges(ranges))
         self.assertEqual(overlapping, self.partition_key_ranges[1:2])
 
-    async def test_two_adjacent_boundary_async(self):
+    async def test_two_adjacent_boundary_async_rust(self):
         ranges = [
             # self.partition_key_ranges[1]
             routing_range.Range("05C1C9CD673398", "05C1D9CD673398", True, False),
@@ -173,7 +173,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                          self.cached_collection_routing_map.get_overlapping_ranges(ranges))
         self.assertEqual(overlapping, self.partition_key_ranges[1:3])
 
-    async def test_two_ranges_in_one_partition_key_range_async(self):
+    async def test_two_ranges_in_one_partition_key_range_async_rust(self):
         # two ranges fall in the same partition key range
         ranges = [
             routing_range.Range("05C1C9CD673400", "05C1C9CD673401", True, False),
@@ -185,7 +185,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                          self.cached_collection_routing_map.get_overlapping_ranges(ranges))
         self.assertEqual(overlapping, self.partition_key_ranges[1:2])
 
-    async def test_complex_async(self):
+    async def test_complex_async_rust(self):
         ranges = [
             routing_range.Range("05C1C9CD673398", "05C1D9CD673391", True, False),
             routing_range.Range("05C1D9CD673391", "05C1D9CD673392", True, False),
@@ -201,7 +201,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(overlapping, expected)
 
 
-    async def test_get_routing_map_caches_on_first_call_async(self):
+    async def test_get_routing_map_caches_on_first_call_async_rust(self):
         """Initial call to get_routing_map fetches from service and caches the result."""
         provider = PartitionKeyRangeCache(
             TestRoutingMapProviderAsync.MockedCosmosClientConnection(self.partition_key_ranges)
@@ -215,7 +215,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
         self.assertIn(collection_id, provider._collection_routing_map_by_item)
 
-    async def test_fetch_routing_map_preserves_user_response_hook_and_internal_etag_capture_async(self):
+    async def test_fetch_routing_map_preserves_user_response_hook_and_internal_etag_capture_async_rust(self):
         """User response_hook should still fire while internal header capture sets map ETag."""
         hook_calls = []
         expected_internal_etag = '"internal-etag"'
@@ -250,7 +250,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.change_feed_etag, expected_internal_etag)
         self.assertEqual(hook_calls, ['"user-hook-etag"', '"user-hook-etag"'])
 
-    async def test_get_routing_map_returns_cached_on_second_call_async(self):
+    async def test_get_routing_map_returns_cached_on_second_call_async_rust(self):
         """Second call returns the same cached object without re-fetching."""
         call_count = {'count': 0}
         original_ranges = self.partition_key_ranges
@@ -277,7 +277,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         self.assertIs(result1, result2, "Second call should return the exact same cached object")
         self.assertEqual(call_count['count'], 2, "Service should only be called once (data page + 304)")
 
-    async def test_get_routing_map_force_refresh_async(self):
+    async def test_get_routing_map_force_refresh_async_rust(self):
         """force_refresh=True causes a re-fetch even when cache is populated.
 
         The force_refresh path passes the previous routing map as the base for an
@@ -327,7 +327,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         # Verify the split was applied: should now have 6 ranges (original 5 minus '0' plus '5' and '6')
         self.assertEqual(len(list(result2._orderedPartitionKeyRanges)), 6)
 
-    async def test_is_cache_stale_etag_logic_async(self):
+    async def test_is_cache_stale_etag_logic_async_rust(self):
         """_is_cache_stale returns correct results for all ETag scenarios."""
         provider = PartitionKeyRangeCache(
             TestRoutingMapProviderAsync.MockedCosmosClientConnection(self.partition_key_ranges)
@@ -354,7 +354,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         mock_map2.change_feed_etag = cached_map.change_feed_etag
         self.assertFalse(provider._is_cache_stale(collection_id, mock_map2))
 
-    async def test_fetch_routing_map_full_load_with_incomplete_ranges_surfaces_503_async(self):
+    async def test_fetch_routing_map_full_load_with_incomplete_ranges_surfaces_503_async_rust(self):
         """When a full load (previous_routing_map=None) repeatedly returns
         gapped ranges, the retry budget should be exhausted and the provider
         should surface a retryable HTTP 503."""
@@ -397,7 +397,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         # Each retry drains to a literal 304: data + 304 = 2 calls per attempt.
         self.assertEqual(call_count['count'], _TRANSIENT_SNAPSHOT_RETRY_MAX_ATTEMPTS * 2)
 
-    async def test_fetch_routing_map_incremental_with_parents_async(self):
+    async def test_fetch_routing_map_incremental_with_parents_async_rust(self):
         """Incremental update correctly merges child ranges that reference a parent."""
         initial_ranges = [
             {'id': '0', 'minInclusive': '', 'maxExclusive': '80'},
@@ -444,7 +444,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(ranges[1]['id'], '3')
         self.assertEqual(ranges[2]['id'], '1')
 
-    async def test_fetch_routing_map_cleans_if_none_match_on_fallback_async(self):
+    async def test_fetch_routing_map_cleans_if_none_match_on_fallback_async_rust(self):
         """When falling back from incremental to full load, stale IfNoneMatch is removed."""
         initial_ranges = [
             {'id': '0', 'minInclusive': '', 'maxExclusive': 'FF'}
@@ -507,7 +507,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         # Call 5 (full-load fallback) must clear stale IfNoneMatch.
         self.assertNotIn(http_constants.HttpHeaders.IfNoneMatch, captured_headers_list[4])
 
-    async def test_fetch_routing_map_merge_parents0_evicted_later_parent_cached_async(self):
+    async def test_fetch_routing_map_merge_parents0_evicted_later_parent_cached_async_rust(self):
         """Merge where parents[0] is an evicted grandparent but a later parent IS in cache.
 
         Scenario:
@@ -565,7 +565,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         ids = [r['id'] for r in ranges]
         self.assertEqual(ids, ['0', '3', '2'])
 
-    async def test_fetch_routing_map_merge_all_parents_cached_async(self):
+    async def test_fetch_routing_map_merge_all_parents_cached_async_rust(self):
         """Merge where all parents are in cache — validates first-match range_info inheritance.
 
         Scenario:
@@ -621,7 +621,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         # Stable range '2' should keep its original range_info
         self.assertEqual(result._orderedPartitionInfo[1], 'info_2')
 
-    async def test_fetch_routing_map_two_rapid_splits_all_parents_missing_async(self):
+    async def test_fetch_routing_map_two_rapid_splits_all_parents_missing_async_rust(self):
         """Two rapid splits where the intermediate range was never cached.
 
         Scenario:
@@ -696,7 +696,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         ids = [r['id'] for r in ranges]
         self.assertEqual(ids, ['0', '1A-i', '1A-ii', '1B', '2'])
 
-    async def test_fetch_routing_map_merge_range_info_from_correct_parent_async(self):
+    async def test_fetch_routing_map_merge_range_info_from_correct_parent_async_rust(self):
         """Verifies range_info is inherited from the first CACHED parent, not necessarily parents[0].
 
         Scenario:
@@ -756,7 +756,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         # range_info for '3' should come from '1A' (first cached parent), not '1' (evicted)
         self.assertEqual(result._orderedPartitionInfo[1], 'info_1A')
 
-    async def test_force_refresh_without_previous_map_triggers_targeted_fetch_async(self):
+    async def test_force_refresh_without_previous_map_triggers_targeted_fetch_async_rust(self):
         """force_refresh=True without previous_routing_map should still trigger a targeted fetch.
 
         This guards the 410 path where collection_link is known but previous_routing_map
@@ -799,7 +799,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         )
         self.assertIsNotNone(result2)
 
-    async def test_concurrent_refresh_serialized_by_lock_async(self):
+    async def test_concurrent_refresh_serialized_by_lock_async_rust(self):
         """Under concurrent force_refresh calls, the per-collection lock serializes refreshes.
 
         Verifies that coroutines don't corrupt the cache and all get a valid result.
@@ -851,7 +851,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
         for i, r in enumerate(results):
             self.assertIsNotNone(r, f"Coroutine {i} got None")
 
-    async def test_cache_never_none_during_refresh_async(self):
+    async def test_cache_never_none_during_refresh_async_rust(self):
         """Fast-path readers should never see None in the cache during a refresh.
 
         The cache entry is atomically replaced, never deleted.
@@ -988,7 +988,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
             _shared_locks_locks.clear()
             _shared_cache_refcounts.clear()
 
-    async def test_smart_provider_does_not_leak_overlap_value_error_on_persistent_inconsistency_async(self):
+    async def test_smart_provider_does_not_leak_overlap_value_error_on_persistent_inconsistency_async_rust(self):
         """A persistent overlap or gap snapshot must raise 503 with sub_status
         21015 from SmartRoutingMapProvider.get_overlapping_ranges, not a bare
         ValueError or AssertionError."""
@@ -1023,7 +1023,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                 finally:
                     self._reset_shared_cache_state(provider)
 
-    async def test_smart_provider_recovers_through_full_stack_after_transient_overlap_async(self):
+    async def test_smart_provider_recovers_through_full_stack_after_transient_overlap_async_rust(self):
         """A bad overlap response followed by a good one must return the
         expected ranges from get_overlapping_ranges."""
         full_range = routing_range.Range("", "FF", True, False)

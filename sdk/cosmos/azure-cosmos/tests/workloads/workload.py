@@ -1,51 +1,340 @@
 #!/usr/bin/env python3
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Unified Cosmos DB workload — operations, proxy, and sync/async controlled by env vars.
+"""Unified Cosmos DB workload — operations and sync/async controlled by env vars.
 
 Environment variables:
-  WORKLOAD_OPERATIONS  comma-separated list of operations (default: read,write,query)
+  WORKLOAD_OPERATIONS  comma-separated operations (default: read,create,upsert,replace,delete,patch)
   WORKLOAD_USE_PROXY   route through Envoy proxy (default: false)
-  WORKLOAD_USE_SYNC    use sync client instead of async (default: false)
+  WORKLOAD_USE_SYNC    use the sync client instead of async (default: false)
+  WORKLOAD_READ_MEASUREMENT_SECONDS  opt-in serial async read duration after 3
+                                    warm-up reads; report only after load (default: 0)
+  WORKLOAD_MEASUREMENT_SECONDS  equivalent mode for any single operation;
+                               writes require a saved ownership manifest (default: 0)
+  WORKLOAD_MEASUREMENT_MANIFEST  ownership file created by profiling_restore_orders.py --initialize
+  WORKLOAD_ITEM_NAMESPACE  namespace from that manifest; must be empty before a bounded write run
+  WORKLOAD_DELETE_ITEM_COUNT  items prepared before bounded deletes, including warm-up (required for delete)
+  COSMOS_CONCURRENT_REQUESTS  bounded deletes continuously refill this many slots;
+                              other bounded operations require 1
+  WORKLOAD_MAINTENANCE_CONCURRENCY  owned delete preparation/cleanup concurrency,
+                                   outside measurement (default: 1)
+  WORKLOAD_QUERY_MANIFEST  versioned query suite with policies, parameters and expected results
+  WORKLOAD_QUERY_SCENARIO  cross_partition, aggregate, full_text, vector or hybrid (bounded async only)
 """
 
+import asyncio
+import gc
 import logging
 import os
-import asyncio
+import signal
+import threading
 import time
 
 from azure.cosmos.aio import CosmosClient as AsyncClient
 from azure.cosmos import CosmosClient as SyncClient, documents
 from azure.core.pipeline.transport import AioHttpTransport
 
-from workload_utils import *
-from workload_configs import *
+import perf_backend_counters as backend_counters
+from workload_configs import (
+    CLIENT_EXCLUDED_LOCATIONS,
+    CONCURRENT_QUERIES,
+    CONCURRENT_REQUESTS,
+    COSMOS_CONTAINER,
+    COSMOS_CREDENTIAL,
+    COSMOS_DATABASE,
+    COSMOS_URI,
+    ENABLE_DIAGNOSTICS_LOGGING,
+    PREFERRED_LOCATIONS,
+    REQUEST_EXCLUDED_LOCATIONS,
+    USE_MULTIPLE_WRITABLE_LOCATIONS,
+    WORKLOAD_ARRIVAL_RATE,
+    WORKLOAD_GC_FREEZE,
+    WORKLOAD_LOOP_LAG_MONITOR,
+    WORKLOAD_MAX_INFLIGHT,
+    WORKLOAD_MIX,
+    WORKLOAD_NUM_CLIENTS,
+    WORKLOAD_OPERATIONS,
+    WORKLOAD_MANAGE_CLIENT_LIFECYCLE,
+    WORKLOAD_READ_MEASUREMENT_SECONDS,
+    WORKLOAD_MEASUREMENT_SECONDS,
+    WORKLOAD_DELETE_ITEM_COUNT,
+    WORKLOAD_MAINTENANCE_CONCURRENCY,
+    WORKLOAD_QUERY_MANIFEST,
+    WORKLOAD_QUERY_SCENARIO,
+    WORKLOAD_USE_PROXY,
+    WORKLOAD_USE_SYNC,
+)
+from workload_utils import (
+    _loop_lag_monitor,
+    create_custom_session,
+    create_item,
+    create_item_concurrently,
+    create_logger,
+    delete_item,
+    delete_item_concurrently,
+    get_user_agent_suffix,
+    mixed_wave_concurrently,
+    patch_item,
+    patch_item_concurrently,
+    query_items,
+    query_items_concurrently,
+    read_item,
+    read_item_concurrently,
+    replace_item,
+    replace_item_concurrently,
+    run_fixed_rate,
+    upsert_item,
+    upsert_item_concurrently,
+)
+
+# Perf reporting is optional: it needs hdrhistogram and psutil. If they are not
+# installed the import fails and the workload still runs, just without reporting.
+try:
+    from perf_reporting_config import get_perf_config
+    from perf_stats import Stats
+    from perf_reporter import PerfReporter
+    _PERF_IMPORT_ERROR = None
+except ImportError as exc:
+    get_perf_config = Stats = PerfReporter = None
+    _PERF_IMPORT_ERROR = exc
 
 
-async def run_workload_async(client_id, client_logger, stats=None, reporter=None):
+_gc_frozen = False
+
+
+def _measurement_seconds():
+    return WORKLOAD_MEASUREMENT_SECONDS or WORKLOAD_READ_MEASUREMENT_SECONDS
+
+
+def _measurement_operation():
+    return "read" if WORKLOAD_READ_MEASUREMENT_SECONDS else next(iter(WORKLOAD_OPERATIONS))
+
+
+def _start_reporter(query_scenario=None):
+    """Return a started (Stats, PerfReporter) pair, or (None, None).
+
+    Returns (None, None) when the optional perf dependencies are missing or when
+    reporting is disabled or has no results endpoint configured.
+    """
+    if _measurement_seconds() and os.environ.get("PERF_ENABLED", "true").lower() != "true":
+        raise ValueError("Bounded measurements require PERF_ENABLED=true")
+    if get_perf_config is None:
+        if os.environ.get("PERF_ENABLED", "true").lower() == "true":
+            raise RuntimeError("Performance reporting dependencies are missing") from _PERF_IMPORT_ERROR
+        return None, None
+    perf_reporting_config = get_perf_config()
+    if _measurement_seconds():
+        perf_reporting_config.update(
+            report_after_load=True, measurement_seconds=_measurement_seconds(),
+            measurement_operation=_measurement_operation(),
+            measurement_concurrency=CONCURRENT_REQUESTS if _measurement_operation() == "delete" else 1,
+            measurement_delete_pool=WORKLOAD_DELETE_ITEM_COUNT,
+            measurement_maintenance_concurrency=WORKLOAD_MAINTENANCE_CONCURRENCY,
+        )
+        if _measurement_operation() == "query":
+            from workload_queries import build_identity, load_scenario
+            query_scenario = query_scenario or load_scenario(WORKLOAD_QUERY_MANIFEST, WORKLOAD_QUERY_SCENARIO)
+            query_scenario.validate_results_target(perf_reporting_config)
+            perf_reporting_config["query_measurement"] = {
+                **query_scenario.metadata(),
+                "build": build_identity(query_scenario.manifest["expected_driver_commit"]),
+            }
+    if perf_reporting_config["enabled"] and perf_reporting_config["results_endpoint"]:
+        stats = Stats()
+        reporter = PerfReporter(stats, perf_reporting_config)
+        reporter.start()
+        return stats, reporter
+    if perf_reporting_config["enabled"]:
+        raise ValueError("PERF_ENABLED=true requires RESULTS_COSMOS_URI")
+    if _measurement_seconds():
+        raise ValueError("Bounded measurements require PERF_ENABLED=true")
+    return None, None
+
+
+def _wrap_backend_for_counting(client, is_async, client_logger):
+    """Check the backend's name against configuration and record its class.
+
+    Wrap non-core execute calls to increment a process-wide Python counter
+    after each normal return. The wrapper does not inspect the response;
+    a normal return is not itself proof of native or successful service work.
+    Exceptions do not increment this counter.
+    """
+
+    backend = client._adapter
+    runtime_name = type(backend).__name__
+    backend_counters.set_runtime_backend(runtime_name)
+
+    labeled = os.environ.get("COSMOS_BACKEND", "core-python").strip().lower()
+    if labeled in ("", "core_python", "core-python", "python"):
+        labeled = "core-python"
+    actual = backend.name
+    if labeled != actual:
+        raise RuntimeError(
+            "backend mismatch: COSMOS_BACKEND="
+            f"{labeled!r} but the client actually built {actual!r} "
+            f"({runtime_name}). Refusing to run -- the results would be "
+            "mislabeled. Check the _rust extension is built/importable on this "
+            "host and COSMOS_BACKEND is set correctly."
+        )
+    client_logger.info(
+        "backend check: label=%s runtime_backend=%s", labeled, runtime_name
+    )
+    if actual == "core-python":
+        return
+
+    if is_async and _measurement_seconds() and _measurement_operation() == "query":
+        orig_execute_pages = backend.execute_pages
+
+        async def _counting_pages(prepared, *, deadline=None):
+            pages = orig_execute_pages(prepared, deadline=deadline)
+            try:
+                async for page in pages:
+                    backend_counters.record_page_fetch()
+                    yield page
+            finally:
+                await pages.aclose()
+        backend.execute_pages = _counting_pages
+
+    orig_execute = backend.execute
+    if is_async:
+        async def _counting_execute(prepared, *, deadline=None):
+            response = await orig_execute(prepared, deadline=deadline)
+            backend_counters.record_execute()
+            return response
+    else:
+        def _counting_execute(prepared, *, deadline=None):
+            response = orig_execute(prepared, deadline=deadline)
+            backend_counters.record_execute()
+            return response
+    backend.execute = _counting_execute
+
+
+def _maybe_freeze_gc(client_logger):
+    """Freeze the GC once per process, after warmup, when WORKLOAD_GC_FREEZE is set.
+
+    gc.freeze() stops existing objects from being rescanned, which keeps GC pauses
+    out of the latency tail. Off by default so a normal run measures the SDK with
+    GC included. The module flag makes this run only once when clients share a process.
+    """
+    global _gc_frozen
+    if WORKLOAD_GC_FREEZE and not _gc_frozen:
+        _gc_frozen = True
+        gc.freeze()
+        client_logger.info("GC frozen after warmup (WORKLOAD_GC_FREEZE=true)")
+
+
+def _install_async_stop(stop_event):
+    """Handle SIGINT/SIGTERM by setting stop_event for a graceful stop.
+
+    The load loops never finish on their own; the run is bounded externally by
+    ``timeout --signal=INT``. Without a handler that signal raises KeyboardInterrupt
+    at a random await, which can abandon the client's async close half-done and
+    leave the Rust runtime threads alive so the process never exits. The handler
+    just sets the event; the loops poll it between waves and exit normally, so the
+    finally blocks close the client cleanly.
+
+    add_signal_handler works only on the POSIX main thread. Elsewhere it is
+    unavailable, so we return False and the caller keeps the KeyboardInterrupt fallback.
+    """
+    loop = asyncio.get_running_loop()
+    installed = False
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        try:
+            loop.add_signal_handler(sig, stop_event.set)
+            installed = True
+        except (NotImplementedError, RuntimeError, ValueError):
+            # Not the main thread of a POSIX process (e.g. Windows Proactor loop).
+            pass
+    return installed
+
+
+async def _run_bounded_operations(point, stats, reporter, stop_event, client_logger):
+    name = point.operation.capitalize()
+    warmup = Stats()
+    for _ in range(3):
+        if stop_event.is_set():
+            raise RuntimeError(f"{name} measurement interrupted during warm-up")
+        await point.run(warmup)
+    summaries, errors = warmup.drain_all()
+    if (errors or len(summaries) != 1 or summaries[0]["errors"]
+            or summaries[0]["count"] != 3):
+        raise RuntimeError(f"{name} warm-up failed; refusing to start measurement")
+    if stop_event.is_set():
+        raise RuntimeError(f"{name} measurement interrupted during warm-up")
+    _maybe_freeze_gc(client_logger)
+    reporter.begin_measurement(warmup.first_ms_snapshot()[point.label])
+    duration_elapsed = False
+
+    def end_load():
+        nonlocal duration_elapsed
+        duration_elapsed = True
+
+    loop = asyncio.get_running_loop()
+    deadline = loop.time() + _measurement_seconds()
+    timer = loop.call_later(_measurement_seconds(), end_load)
+    monitor = asyncio.create_task(_loop_lag_monitor(stats)) if WORKLOAD_LOOP_LAG_MONITOR else None
+    concurrency = CONCURRENT_REQUESTS if point.operation == "delete" else 1
+    failed = False
+
+    async def worker():
+        nonlocal failed
+        try:
+            while not stop_event.is_set() and not duration_elapsed and not failed and loop.time() < deadline:
+                succeeded = await point.run(stats)
+                if concurrency > 1 and succeeded is False:
+                    raise RuntimeError("Concurrent delete failed; measurement is incomplete")
+        except BaseException:
+            # Stop refilling other slots, but let their issued calls finish before cleanup.
+            failed = True
+            raise
+
+    try:
+        if concurrency == 1:
+            await worker()
+        else:
+            workers = [asyncio.create_task(worker()) for _ in range(concurrency)]
+            try:
+                await asyncio.gather(*workers)
+            finally:
+                await asyncio.gather(*workers, return_exceptions=True)
+        if stop_event.is_set():
+            raise RuntimeError(f"{name} measurement interrupted; discard this run and restart")
+        reporter.finish_measurement()
+    finally:
+        timer.cancel()
+        if monitor is not None:
+            monitor.cancel()
+            try:
+                await monitor
+            except asyncio.CancelledError:
+                pass
+
+
+async def run_workload_async(client_id, client_logger, stats=None, reporter=None,
+                             stop_event=None):
     """Async workload loop — default mode."""
     ops = WORKLOAD_OPERATIONS
     use_proxy = WORKLOAD_USE_PROXY
+    query_scenario = None
+    if _measurement_seconds() and _measurement_operation() == "query":
+        from workload_queries import load_scenario
+        query_scenario = load_scenario(WORKLOAD_QUERY_MANIFEST, WORKLOAD_QUERY_SCENARIO)
 
     owns_reporter = False
-    if stats is None:
-        try:
-            from perf_config import get_perf_config
+    if stats is None and stop_event is None:
+        stats, reporter = _start_reporter(query_scenario) if query_scenario else _start_reporter()
+        owns_reporter = stats is not None
 
-            perf_config = get_perf_config()
-            if perf_config["enabled"] and perf_config["results_endpoint"]:
-                from perf_stats import Stats
-                from perf_reporter import PerfReporter
-
-                stats = Stats()
-                reporter = PerfReporter(stats, perf_config)
-                reporter.start()
-                owns_reporter = True
-        except ImportError as e:
-            logging.getLogger(__name__).info("Perf reporting disabled: %s", e)
+    # A None stop_event means the single-client path, so install the handler here.
+    # Multi-client mode passes in one shared event with the handler already set, so
+    # one signal stops every client (a per-client handler would overwrite the others).
+    if stop_event is None:
+        stop_event = asyncio.Event()
+        _install_async_stop(stop_event)
 
     session = None
     transport = None
+    measurement_finished = False
     try:
         if use_proxy:
             session = create_custom_session()
@@ -54,9 +343,9 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
         client_kwargs = dict(
             preferred_locations=PREFERRED_LOCATIONS,
             excluded_locations=CLIENT_EXCLUDED_LOCATIONS,
-            enable_diagnostics_logging=True,
+            enable_diagnostics_logging=ENABLE_DIAGNOSTICS_LOGGING,
             logger=client_logger,
-            user_agent=get_user_agent(client_id),
+            user_agent_suffix=get_user_agent_suffix(client_id),
         )
         if use_proxy and transport:
             client_kwargs["transport"] = transport
@@ -64,42 +353,119 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
             client_kwargs["multiple_write_locations"] = True
 
         client = AsyncClient(COSMOS_URI, COSMOS_CREDENTIAL, **client_kwargs)
-        if not WORKLOAD_SKIP_CLOSE:
+        if WORKLOAD_MANAGE_CLIENT_LIFECYCLE:
             await client.__aenter__()
 
         try:
             db = client.get_database_client(COSMOS_DATABASE)
             cont = db.get_container_client(COSMOS_CONTAINER)
             await asyncio.sleep(1)
+            _wrap_backend_for_counting(client, is_async=True, client_logger=client_logger)
+            if not _measurement_seconds():
+                _maybe_freeze_gc(client_logger)
 
-            while True:
-                try:
-                    if "write" in ops:
-                        await upsert_item_concurrently(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                        )
-                    if "read" in ops:
-                        await read_item_concurrently(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                        )
-                    if "query" in ops:
-                        await query_items_concurrently(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
-                        )
-                except Exception as e:
-                    client_logger.info("Exception in application layer")
-                    client_logger.error(e)
-        finally:
-            if not WORKLOAD_SKIP_CLOSE:
-                await client.__aexit__(None, None, None)
-    finally:
-        if reporter and owns_reporter:
+            # One loop-lag monitor per process. Only the single-client path starts
+            # it here; multi-client mode starts one in run_multi_client_async.
+            monitor_task = None
+            if (owns_reporter and WORKLOAD_LOOP_LAG_MONITOR and stats is not None
+                    and not _measurement_seconds()):
+                monitor_task = asyncio.create_task(_loop_lag_monitor(stats))
+
             try:
+                if _measurement_seconds():
+                    if query_scenario is not None:
+                        from workload_queries import QueryMeasurement
+                        point = QueryMeasurement(cont, query_scenario)
+                    else:
+                        from workload_isolation import PointMeasurement
+                        point = PointMeasurement(cont, _measurement_operation())
+                    try:
+                        await point.prepare(stop_event)
+                        await _run_bounded_operations(point, stats, reporter, stop_event, client_logger)
+                    finally:
+                        await point.cleanup()
+                elif WORKLOAD_ARRIVAL_RATE > 0:
+                    # Fixed-rate load at WORKLOAD_ARRIVAL_RATE ops/sec per client. It
+                    # does not wait between waves and times each op from its intended
+                    # start, so the tail includes time spent waiting to be issued.
+                    await run_fixed_rate(
+                        cont, REQUEST_EXCLUDED_LOCATIONS, stats, ops,
+                        WORKLOAD_ARRIVAL_RATE, WORKLOAD_MAX_INFLIGHT, stop_event,
+                    )
+                else:
+                    # Send-and-wait load: each op launches CONCURRENT_REQUESTS calls and
+                    # waits for the whole wave before the next op runs. A wave does not
+                    # refill as calls finish, so in-flight decays from N toward 0, and
+                    # the enabled ops run one phase at a time. Read achieved req/s from
+                    # the rows as count / interval_duration_seconds, not from concurrency / latency.
+                    #
+                    # The loop runs until stop_event is set between waves, so the run
+                    # ends by falling out of the loop. KeyboardInterrupt is only the
+                    # fallback when the signal handler could not be installed; we catch
+                    # it and break so the finally blocks close the client cleanly.
+                    try:
+                        while not stop_event.is_set():
+                            try:
+                                if WORKLOAD_MIX:
+                                    # Blended wave: one process issues a weighted mix
+                                    # of ops all in flight together (realistic app
+                                    # traffic), instead of one op type per phase.
+                                    await mixed_wave_concurrently(
+                                        cont, REQUEST_EXCLUDED_LOCATIONS,
+                                        CONCURRENT_REQUESTS, WORKLOAD_MIX, stats,
+                                    )
+                                else:
+                                    if "create" in ops:
+                                        await create_item_concurrently(
+                                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                        )
+                                    if "upsert" in ops:
+                                        await upsert_item_concurrently(
+                                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                        )
+                                    if "replace" in ops:
+                                        await replace_item_concurrently(
+                                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                        )
+                                    if "read" in ops:
+                                        await read_item_concurrently(
+                                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                        )
+                                    if "patch" in ops:
+                                        await patch_item_concurrently(
+                                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                        )
+                                    if "delete" in ops:
+                                        await delete_item_concurrently(
+                                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                        )
+                                    if "query" in ops:
+                                        await query_items_concurrently(
+                                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
+                                        )
+                            except Exception:
+                                client_logger.exception("Workload scheduling failed")
+                                raise
+                    except KeyboardInterrupt:
+                        client_logger.info("Stop signal received; shutting down cleanly.")
+            finally:
+                if monitor_task is not None:
+                    monitor_task.cancel()
+                    try:
+                        await monitor_task
+                    except Exception:
+                        pass
+        finally:
+            if WORKLOAD_MANAGE_CLIENT_LIFECYCLE:
+                await client.__aexit__(None, None, None)
+        measurement_finished = True
+    finally:
+        try:
+            if reporter and owns_reporter and (not _measurement_seconds() or measurement_finished):
                 reporter.stop()
-            except Exception:
-                pass
-        if session:
-            await session.close()
+        finally:
+            if session:
+                await session.close()
 
 
 def run_workload_sync(client_id, client_logger):
@@ -109,23 +475,32 @@ def run_workload_sync(client_id, client_logger):
                            "Set WORKLOAD_USE_SYNC=false or WORKLOAD_USE_PROXY=false.")
     ops = WORKLOAD_OPERATIONS
 
-    stats = None
-    perf_config = None
-    reporter = None
+    # Blended traffic is an async, concurrent concept; sync mode is fully serial
+    # (real concurrency 1), so a "blend" here would just be per-op phases mislabeled.
+    # Fail fast rather than silently ignore the mix and publish misleading numbers.
+    if WORKLOAD_MIX:
+        raise RuntimeError(
+            "WORKLOAD_MIX (blended traffic) is not supported in sync mode "
+            "(WORKLOAD_USE_SYNC=true); sync mode is fully serial. Run blended "
+            "workloads in async mode (WORKLOAD_USE_SYNC=false)."
+        )
+
+    # The sync loop has no event loop, so a signal handler sets a threading flag the
+    # loop polls between waves. It does not raise, so a signal cannot interrupt the
+    # client close; the loop falls through and the context manager closes cleanly.
+    stop_flag = threading.Event()
+
+    def _on_signal(signum, frame):
+        stop_flag.set()
 
     try:
-        from perf_config import get_perf_config
+        signal.signal(signal.SIGINT, _on_signal)
+        signal.signal(signal.SIGTERM, _on_signal)
+    except (ValueError, OSError):
+        # Not the main thread: fall back to default KeyboardInterrupt handling.
+        pass
 
-        perf_config = get_perf_config()
-        if perf_config["enabled"] and perf_config["results_endpoint"]:
-            from perf_stats import Stats
-            from perf_reporter import PerfReporter
-
-            stats = Stats()
-            reporter = PerfReporter(stats, perf_config)
-            reporter.start()
-    except ImportError as e:
-        logging.getLogger(__name__).info("Perf reporting disabled: %s", e)
+    stats, reporter = _start_reporter()
 
     try:
         connection_policy = documents.ConnectionPolicy()
@@ -137,67 +512,111 @@ def run_workload_sync(client_id, client_logger):
             connection_policy=connection_policy,
             preferred_locations=PREFERRED_LOCATIONS,
             excluded_locations=CLIENT_EXCLUDED_LOCATIONS,
-            enable_diagnostics_logging=True,
+            enable_diagnostics_logging=ENABLE_DIAGNOSTICS_LOGGING,
             logger=client_logger,
-            user_agent=get_user_agent(client_id),
+            user_agent_suffix=get_user_agent_suffix(client_id),
         ) as client:
             db = client.get_database_client(COSMOS_DATABASE)
             cont = db.get_container_client(COSMOS_CONTAINER)
             time.sleep(1)
+            _wrap_backend_for_counting(client, is_async=False, client_logger=client_logger)
+            _maybe_freeze_gc(client_logger)
 
-            while True:
+            # Sync mode is fully serial: each op runs its CONCURRENT_REQUESTS calls
+            # one at a time, so real concurrency is 1 and throughput is about
+            # 1 / mean latency. Use async mode to drive real concurrency.
+            while not stop_flag.is_set():
                 try:
-                    if "write" in ops:
+                    if "create" in ops:
+                        create_item(
+                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                        )
+                    if "upsert" in ops:
                         upsert_item(
+                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                        )
+                    if "replace" in ops:
+                        replace_item(
                             cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
                         )
                     if "read" in ops:
                         read_item(
                             cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
                         )
+                    if "patch" in ops:
+                        patch_item(
+                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                        )
+                    if "delete" in ops:
+                        delete_item(
+                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                        )
                     if "query" in ops:
                         query_items(
                             cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
                         )
-                except Exception as e:
-                    client_logger.info("Exception in application layer")
-                    client_logger.error(e)
+                except Exception:
+                    client_logger.exception("Workload scheduling failed")
+                    raise
     finally:
         if reporter:
-            try:
-                reporter.stop()
-            except Exception:
-                pass
+            reporter.stop()
 
 
 async def run_multi_client_async(prefix, client_logger):
     """Spawn multiple async clients in a single process with shared metrics."""
-    stats = None
-    reporter = None
-    try:
-        from perf_config import get_perf_config
-        perf_config = get_perf_config()
-        if perf_config["enabled"] and perf_config["results_endpoint"]:
-            from perf_stats import Stats
-            from perf_reporter import PerfReporter
-            stats = Stats()
-            reporter = PerfReporter(stats, perf_config)
-            reporter.start()
-    except ImportError as e:
-        logging.getLogger(__name__).info("Perf reporting disabled: %s", e)
+    stats, reporter = _start_reporter()
 
     try:
+        # One shared stop_event for every client: install the handler once and pass
+        # the event to each client, so one signal stops them all.
+        stop_event = asyncio.Event()
+        _install_async_stop(stop_event)
+
         tasks = []
+        client_ids = []
         for i in range(WORKLOAD_NUM_CLIENTS):
             client_id = f"{prefix}-c{i}"
-            tasks.append(run_workload_async(client_id, client_logger, stats=stats, reporter=reporter))
-        await asyncio.gather(*tasks)
+            client_ids.append(client_id)
+            tasks.append(run_workload_async(
+                client_id, client_logger, stats=stats, reporter=reporter,
+                stop_event=stop_event,
+            ))
+        # One loop-lag monitor for all clients sharing this loop (the per-client
+        # path skips it because owns_reporter is False here).
+        monitor_task = None
+        if WORKLOAD_LOOP_LAG_MONITOR and stats is not None:
+            monitor_task = asyncio.create_task(_loop_lag_monitor(stats))
+        try:
+            # return_exceptions=True so one client failing does not stop the others
+            # in this process. We then inspect the results: a client that dies early
+            # would otherwise hide behind the aggregate numbers. Surface every
+            # per-client failure and fail the process so a partially dead run is not
+            # read as a clean one. (Cancellation on graceful stop is expected.)
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            failures = [
+                (cid, r)
+                for cid, r in zip(client_ids, results)
+                if isinstance(r, BaseException)
+                and not isinstance(r, asyncio.CancelledError)
+            ]
+            for cid, r in failures:
+                client_logger.error("client %s failed: %r", cid, r)
+            if failures:
+                raise RuntimeError(
+                    f"{len(failures)}/{WORKLOAD_NUM_CLIENTS} client(s) failed: "
+                    + ", ".join(cid for cid, _ in failures)
+                )
+        finally:
+            if monitor_task is not None:
+                monitor_task.cancel()
+                try:
+                    await monitor_task
+                except Exception:
+                    pass
     finally:
         if reporter:
-            try:
-                reporter.stop()
-            except Exception:
-                pass
+            reporter.stop()
 
 
 if __name__ == "__main__":

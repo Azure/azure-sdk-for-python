@@ -41,7 +41,6 @@ class TestStreamingFailOver(unittest.TestCase):
         _retry_utility.ExecuteFunction = self._MockExecuteFunctionEndpointDiscover
         connection_policy = documents.ConnectionPolicy()
         connection_policy.PreferredLocations = self.preferred_regional_endpoints
-        connection_policy.DisableSSLVerification = True
 
         client = cosmos_client.CosmosClient(self.DEFAULT_ENDPOINT, self.MASTER_KEY,
                                             consistency_level=documents.ConsistencyLevel.Eventual,
@@ -129,7 +128,6 @@ class TestStreamingFailOver(unittest.TestCase):
         _retry_utility.ExecuteFunction = self._MockExecuteFunctionEndpointDiscover
         connection_policy = documents.ConnectionPolicy()
         connection_policy.PreferredLocations = self.preferred_regional_endpoints
-        connection_policy.DisableSSLVerification = True
 
         client = cosmos_client.CosmosClient(self.DEFAULT_ENDPOINT, self.MASTER_KEY,
                                             consistency_level=documents.ConsistencyLevel.Eventual,

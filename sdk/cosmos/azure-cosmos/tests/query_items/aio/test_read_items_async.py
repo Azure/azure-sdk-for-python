@@ -1,0 +1,150 @@
+# -*- coding: utf-8 -*-
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
+"""Rust-path copy of the async read_items multi-partition test that exercises query_items.
+
+The original creates a multi-partition container, checks item distribution with a
+query per physical range, then calls ``read_items`` with a response hook.
+Public feed ranges replace legacy routing internals. The hook result is now an
+independent snapshot; original data, distribution and result assertions remain.
+"""
+
+import asyncio
+import os
+import unittest
+import uuid
+
+import pytest
+
+import azure.cosmos.exceptions as exceptions
+from azure.cosmos import PartitionKey
+from azure.cosmos.aio import CosmosClient
+
+
+@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAADLong
+class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
+    """Rust-path copies of tests/test_read_items_async.py::TestReadItemsAsync."""
+
+    host = os.environ.get("ACCOUNT_HOST")
+    masterKey = os.environ.get("ACCOUNT_KEY")
+
+    async def asyncSetUp(self):
+        self.TEST_DATABASE_ID = "query_items_read_items_async_" + uuid.uuid4().hex
+        # key-auth client for control-plane operations, and a separate data-plane client,
+        # like the original create_test_clients_async pair.
+        self.key_client = CosmosClient(self.host, self.masterKey, _backend="rust")
+        self.client = CosmosClient(self.host, self.masterKey, _backend="rust")
+        await self.key_client.__aenter__()
+        await self.client.__aenter__()
+        self.key_database = None
+        try:
+            self.key_database = await self.key_client.create_database(self.TEST_DATABASE_ID)
+        except BaseException:
+            await self.asyncTearDown()
+            raise
+        self.database = self.client.get_database_client(self.TEST_DATABASE_ID)
+
+    async def asyncTearDown(self):
+        try:
+            if self.key_database is not None:
+                await self.key_client.delete_database(self.TEST_DATABASE_ID)
+        finally:
+            await self.client.close()
+            await self.key_client.close()
+
+    async def test_read_items_multiple_physical_partitions_and_hook_async_rust(self):
+        # Source: tests/test_read_items_async.py::TestReadItemsAsync.test_read_items_multiple_physical_partitions_and_hook_async
+        """Tests async read_items on a container with multiple physical partitions and verifies response_hook."""
+        # Create a container with high throughput to force multiple physical partitions
+        # control-plane container creation
+        container_ref = await self.key_database.create_container(
+            id='multi_partition_container_async_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=11000
+        )
+        multi_partition_container = self.database.get_container_client(container_ref.id)
+        try:
+            # 1. Verify that we have more than one physical partition
+            # We must consume the async iterator to get the list of partition key ranges.
+            pk_ranges = [
+                pk_range async for pk_range in
+                multi_partition_container.read_feed_ranges()
+            ]
+            self.assertGreater(len(pk_ranges), 1, "Container should have multiple physical partitions.")
+
+
+            # 2. Create items across different logical partitions
+            creation_tasks = []
+            items_to_read = []
+            all_item_ids = set()
+            for i in range(200):
+                doc_id = f"item_{i}_{uuid.uuid4()}"
+                pk = i % 2
+                all_item_ids.add(doc_id)
+                task = multi_partition_container.create_item({'id': doc_id, 'pk': pk, 'data': i})
+                creation_tasks.append(task)
+                items_to_read.append((doc_id, pk))
+            await asyncio.gather(*creation_tasks)
+
+            # 3. Check item distribution across physical partitions
+            partition_item_map = {}
+            for pk_range_id, pk_range in enumerate(pk_ranges):
+                # Query items within this specific physical partition
+                items_in_partition = [
+                    item async for item in multi_partition_container.query_items(
+                        "SELECT c.id FROM c",
+                        feed_range=pk_range
+                    )
+                ]
+                if items_in_partition:
+                    partition_item_map[pk_range_id] = {item['id'] for item in items_in_partition}
+
+            # Assert that items were created on more than one physical partition
+            self.assertGreater(len(partition_item_map), 1,
+                               "Items were not distributed across multiple physical partitions.")
+
+            # 3. Set up a response hook to capture both headers and results
+            hook_captured_data = {}
+
+            def response_hook(headers, results_list):
+                hook_captured_data['headers'] = headers
+                hook_captured_data['results'] = results_list
+                hook_captured_data['call_count'] = hook_captured_data.get('call_count', 0) + 1
+
+            # 4. Execute read_items with the hook
+            read_items_result = await multi_partition_container.read_items(
+                items=items_to_read,
+                response_hook=response_hook
+            )
+
+            # 5. Verify the response_hook was called correctly
+            self.assertEqual(hook_captured_data.get('call_count'), 1,
+                             "Response hook should be called exactly once.")
+
+            # Verify the headers passed to the hook
+            hook_headers = hook_captured_data.get('headers', {})
+            self.assertIn('x-ms-request-charge', hook_headers)
+            self.assertGreater(float(hook_headers['x-ms-request-charge']), 0)
+
+            # Verify the CosmosList passed to the hook
+            hook_results = hook_captured_data.get('results')
+            self.assertIsNotNone(hook_results, "CosmosList should be passed to the hook.")
+            self.assertIsInstance(hook_results, list)  # CosmosList inherits from list
+            self.assertEqual(len(hook_results), len(items_to_read))
+            hook_read_ids = {item['id'] for item in hook_results}
+            self.assertSetEqual(hook_read_ids, all_item_ids)
+
+            self.assertEqual(read_items_result, hook_results)
+            self.assertIsNot(read_items_result, hook_results)
+
+        finally:
+            try:
+                await self.key_database.delete_container(container_ref.id)  # control-plane
+            except exceptions.CosmosHttpResponseError as e:
+                if e.status_code != 404:
+                    raise
+
+
+if __name__ == '__main__':
+    unittest.main()

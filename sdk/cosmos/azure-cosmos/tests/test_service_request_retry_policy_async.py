@@ -39,7 +39,7 @@ class TestServiceRequestRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
     async def test_write_failover_to_global_with_service_request_error_async(self):
         # 1. Get write regions and ensure there are at least 2 for this test.
         endpoint_manager = self.client.client_connection._global_endpoint_manager
-        db_account = await self.client._get_database_account()
+        db_account = await self.client.client_connection.GetDatabaseAccount()
         endpoint_manager.refresh_endpoint_list(db_account)
 
         write_locations_map = endpoint_manager.location_cache.account_locations_by_write_endpoints
@@ -96,5 +96,4 @@ class TestServiceRequestRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
 

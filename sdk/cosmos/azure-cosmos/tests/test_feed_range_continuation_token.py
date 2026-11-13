@@ -1699,7 +1699,7 @@ class TestCheckpointRoundTripOnException:
 class TestWriteQueryOutboundContinuation:
     """Outbound continuation format selection should match request scope policy."""
 
-    def test_single_partition_scope_emits_legacy(self):
+    def test_single_partition_scope_emits_service_token(self):
         state = _FeedRangePaginationState.from_single_feedrange_with_continuation(
             _HEAD_FEEDRANGE,
             _BACKEND_CONT,
@@ -1738,7 +1738,7 @@ class TestWriteQueryOutboundContinuation:
         assert decoded is not None
         assert decoded[_FIELD_VERSION] == _TOKEN_VERSION
 
-    def test_emit_legacy_with_multi_entry_queue_falls_through_to_structured(self, caplog):
+    def test_emit_service_token_with_multi_entry_queue_falls_through_to_structured(self, caplog):
         """Defense in depth: a stale single-partition cache after a mid-page
         split could set ``emit_legacy_for_single_partition=True`` on a
         multi-entry queue. The writer must not silently drop the tail
@@ -1783,7 +1783,7 @@ class TestLegacyBridgeDecision:
             ("legacy", None, False, False),
         ],
     )
-    def test_should_bridge_legacy_continuation_policy(
+    def test_should_bridge_service_token_continuation_policy(
         self,
         inbound_serialized_continuation,
         inbound_token_payload,

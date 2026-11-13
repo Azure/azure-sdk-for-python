@@ -40,7 +40,7 @@ class TestSharedPartitionKeyRangeCache(unittest.TestCase):
     def tearDown(self):
         _reset_shared_cache_state()
 
-    def test_same_endpoint_shares_cache(self):
+    def test_same_endpoint_shares_cache_rust(self):
         c1 = MockClient("https://account1.documents.azure.com:443/")
         c2 = MockClient("https://account1.documents.azure.com:443/")
         cache1 = PartitionKeyRangeCache(c1)
@@ -48,7 +48,7 @@ class TestSharedPartitionKeyRangeCache(unittest.TestCase):
         self.assertIs(cache1._collection_routing_map_by_item,
                       cache2._collection_routing_map_by_item)
 
-    def test_different_endpoints_isolated(self):
+    def test_different_endpoints_isolated_rust(self):
         c1 = MockClient("https://account1.documents.azure.com:443/")
         c2 = MockClient("https://account2.documents.azure.com:443/")
         cache1 = PartitionKeyRangeCache(c1)
@@ -56,7 +56,7 @@ class TestSharedPartitionKeyRangeCache(unittest.TestCase):
         self.assertIsNot(cache1._collection_routing_map_by_item,
                          cache2._collection_routing_map_by_item)
 
-    def test_shared_cache_populated_by_first_client(self):
+    def test_shared_cache_populated_by_first_client_rust(self):
         c1 = MockClient("https://account1.documents.azure.com:443/")
         c2 = MockClient("https://account1.documents.azure.com:443/")
         cache1 = PartitionKeyRangeCache(c1)
@@ -69,7 +69,7 @@ class TestSharedPartitionKeyRangeCache(unittest.TestCase):
         self.assertIn("test-collection", cache2._collection_routing_map_by_item)
         self.assertIs(cache2._collection_routing_map_by_item["test-collection"], crm)
 
-    def test_clear_cache_resets_for_endpoint(self):
+    def test_clear_cache_resets_for_endpoint_rust(self):
         c1 = MockClient("https://account1.documents.azure.com:443/")
         c2 = MockClient("https://account1.documents.azure.com:443/")
         cache1 = PartitionKeyRangeCache(c1)
@@ -82,7 +82,7 @@ class TestSharedPartitionKeyRangeCache(unittest.TestCase):
         self.assertIs(cache1._collection_routing_map_by_item, original_dict)
         self.assertIs(cache2._collection_routing_map_by_item, original_dict)
 
-    def test_clear_cache_does_not_affect_other_endpoints(self):
+    def test_clear_cache_does_not_affect_other_endpoints_rust(self):
         c1 = MockClient("https://account1.documents.azure.com:443/")
         c2 = MockClient("https://account2.documents.azure.com:443/")
         cache1 = PartitionKeyRangeCache(c1)
@@ -94,7 +94,7 @@ class TestSharedPartitionKeyRangeCache(unittest.TestCase):
         self.assertIn("coll2", cache2._collection_routing_map_by_item)
 
 
-    def test_pkrange_dict_access(self):
+    def test_pkrange_dict_access_rust(self):
         """PKRange supports dict-style [key] access."""
         pkr = PKRange(id="1", minInclusive="00", maxExclusive="FF", parents=("0",))
         self.assertEqual(pkr["id"], "1")
@@ -104,7 +104,7 @@ class TestSharedPartitionKeyRangeCache(unittest.TestCase):
         self.assertIn("id", pkr)
         self.assertNotIn("_rid", pkr)
 
-    def test_pkrange_contains_truthy_presence_for_parents(self):
+    def test_pkrange_contains_truthy_presence_for_parents_rust(self):
         """``"parents" in pkr`` follows truthy-presence semantics.
 
         The most common production case is a PKR that has never split
@@ -118,7 +118,7 @@ class TestSharedPartitionKeyRangeCache(unittest.TestCase):
         pkr_with_parents = PKRange(id="2", minInclusive="40", maxExclusive="80", parents=("0", "1"))
         self.assertIn("parents", pkr_with_parents)
 
-    def test_pkrange_status_and_throughput_fraction_fields_roundtrip(self):
+    def test_pkrange_status_and_throughput_fraction_fields_roundtrip_rust(self):
         """``status`` and ``throughputFraction`` are the non-routing PKR fields
         retained in the cache for forward-compat (e.g. filtering non-online
         ranges or future RU-share-aware logic).
@@ -143,7 +143,7 @@ class TestSharedPartitionKeyRangeCache(unittest.TestCase):
         self.assertEqual(pkr_online["throughputFraction"], 0.5)
         self.assertIn("throughputFraction", pkr_online)
 
-    def test_pkrange_in_collection_routing_map(self):
+    def test_pkrange_in_collection_routing_map_rust(self):
         """CollectionRoutingMap works with PKRange namedtuples."""
         pk_ranges = [
             PKRange(id="0", minInclusive="", maxExclusive="80", parents=()),
@@ -156,19 +156,19 @@ class TestSharedPartitionKeyRangeCache(unittest.TestCase):
         overlapping = crm.get_overlapping_ranges(Range("", "FF", True, False))
         self.assertEqual(len(overlapping), 2)
 
-    def test_range_has_slots(self):
+    def test_range_has_slots_rust(self):
         r = Range("00", "FF", True, False)
         # __slots__ is verified by the absence of __dict__. sys.getsizeof() is
         # intentionally not asserted because it is not a stable cross-version
         # / cross-platform contract.
         self.assertFalse(hasattr(r, "__dict__"))
 
-    def test_range_skips_upper_when_already_uppercase(self):
+    def test_range_skips_upper_when_already_uppercase_rust(self):
         original = "05C1C9CD673398"
         r = Range(original, original, True, False)
         self.assertIs(r.min, original)
 
-    def test_range_applies_upper_when_lowercase(self):
+    def test_range_applies_upper_when_lowercase_rust(self):
         r = Range("05c1c9cd", "05c1d9cd", True, False)
         self.assertEqual(r.min, "05C1C9CD")
 
@@ -183,7 +183,7 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
     def _refcount(self, endpoint):
         return _shared_cache_refcounts.get(endpoint, 0)
 
-    def test_construct_increments_refcount(self):
+    def test_construct_increments_refcount_rust(self):
         ep = "https://lifecycle1.documents.azure.com:443/"
         self.assertEqual(self._refcount(ep), 0)
         c1 = PartitionKeyRangeCache(MockClient(ep))
@@ -194,7 +194,7 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
         # observe the constructed-but-not-released state.
         _ = (c1, c2)
 
-    def test_release_decrements_refcount(self):
+    def test_release_decrements_refcount_rust(self):
         ep = "https://lifecycle2.documents.azure.com:443/"
         c1 = PartitionKeyRangeCache(MockClient(ep))
         c2 = PartitionKeyRangeCache(MockClient(ep))
@@ -204,7 +204,7 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
         c2.release()
         self.assertEqual(self._refcount(ep), 0)
 
-    def test_release_evicts_at_zero(self):
+    def test_release_evicts_at_zero_rust(self):
         ep = "https://lifecycle3.documents.azure.com:443/"
         c1 = PartitionKeyRangeCache(MockClient(ep))
         # All four dicts have an entry for the endpoint.
@@ -219,7 +219,7 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
         self.assertNotIn(ep, _shared_locks_locks)
         self.assertNotIn(ep, _shared_cache_refcounts)
 
-    def test_release_does_not_evict_with_other_clients(self):
+    def test_release_does_not_evict_with_other_clients_rust(self):
         ep = "https://lifecycle4.documents.azure.com:443/"
         c1 = PartitionKeyRangeCache(MockClient(ep))
         c2 = PartitionKeyRangeCache(MockClient(ep))
@@ -231,7 +231,7 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
         self.assertIs(c2._collection_routing_map_by_item,
                       _shared_routing_map_cache[ep])
 
-    def test_release_is_idempotent(self):
+    def test_release_is_idempotent_rust(self):
         """Sequential double-release on the same instance does not double-decrement."""
         ep = "https://lifecycle5.documents.azure.com:443/"
         c1 = PartitionKeyRangeCache(MockClient(ep))
@@ -246,7 +246,7 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
         # Keep c2 alive until the assertion above runs.
         _ = c2
 
-    def test_concurrent_release_does_not_double_decrement(self):
+    def test_concurrent_release_does_not_double_decrement_rust(self):
         """TOCTOU regression: two threads racing release() decrement at most once.
 
         Without the fix to move the ``_released`` check inside the shared
@@ -281,7 +281,7 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
         self.assertIs(c_keep._collection_routing_map_by_item,
                       _shared_routing_map_cache[ep])
 
-    def test_del_fallback_releases(self):
+    def test_del_fallback_releases_rust(self):
         """``__del__`` decrements refcount when client teardown was skipped."""
         ep = "https://lifecycle7.documents.azure.com:443/"
         c1 = PartitionKeyRangeCache(MockClient(ep))
@@ -292,7 +292,7 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
         self.assertEqual(self._refcount(ep), 0)
         self.assertNotIn(ep, _shared_routing_map_cache)
 
-    def test_clear_cache_does_not_change_refcount(self):
+    def test_clear_cache_does_not_change_refcount_rust(self):
         ep = "https://lifecycle8.documents.azure.com:443/"
         c1 = PartitionKeyRangeCache(MockClient(ep))
         before = self._refcount(ep)
@@ -301,7 +301,7 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
         # Endpoint still present.
         self.assertIn(ep, _shared_routing_map_cache)
 
-    def test_reentrant_release_during_init_does_not_deadlock(self):
+    def test_reentrant_release_during_init_does_not_deadlock_rust(self):
         """Acquires ``_shared_cache_lock`` on a single thread and calls
         ``release()`` from inside that critical section. A non-reentrant
         ``Lock`` would deadlock here; an ``RLock`` returns cleanly.
@@ -342,7 +342,7 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
         self.assertEqual(self._refcount(ep), 0)
         self.assertNotIn(ep, _shared_routing_map_cache)
 
-    def test_init_under_gc_triggered_by_dict_op_does_not_deadlock(self):
+    def test_init_under_gc_triggered_by_dict_op_does_not_deadlock_rust(self):
         """Reproduces the GC re-entry chain that requires
         ``_shared_cache_lock`` to be an ``RLock``.
 

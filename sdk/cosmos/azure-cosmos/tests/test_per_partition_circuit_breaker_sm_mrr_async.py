@@ -16,7 +16,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 from test_per_partition_circuit_breaker_mm_async import perform_write_operation, cleanup_method, perform_read_operation
 from test_per_partition_circuit_breaker_mm import create_doc, write_operations_and_errors, operations, REGION_1, \
-    REGION_2, PK_VALUE, READ, validate_stats, CREATE, user_agent_hook
+    REGION_2, PK_VALUE, READ, validate_stats, CREATE, assert_circuit_breaker_user_agent
 from test_per_partition_circuit_breaker_sm_mrr import validate_unhealthy_partitions
 
 COLLECTION = "created_collection"
@@ -246,8 +246,10 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
         try:
             container = custom_setup['col']
             # Create a document to check the response headers
-            await container.upsert_item(body={'id': str(uuid.uuid4()), 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'},
-                                                  raw_response_hook=user_agent_hook)
+            with test_config.capture_requests(container, resource_type='docs') as requests:
+                await container.upsert_item(body={'id': str(uuid.uuid4()), 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'})
+            for request in requests:
+                assert_circuit_breaker_user_agent(request)
         finally:
             await self.cleanup_method(custom_setup)
 

@@ -57,8 +57,6 @@ class FeedRangeInternalPartitionKey(FeedRangeInternal):
             pk_value: Union[str, int, float, bool, list[Union[str, int, float, bool]], _Empty, _Undefined],
             feed_range: Range) -> None:  # pylint: disable=line-too-long
 
-        if pk_value is None:
-            raise ValueError("PartitionKey cannot be None")
         if feed_range is None:
             raise ValueError("Feed range cannot be None")
 
@@ -80,9 +78,9 @@ class FeedRangeInternalPartitionKey(FeedRangeInternal):
 
     @classmethod
     def from_json(cls, data: dict[str, Any], feed_range: Range) -> 'FeedRangeInternalPartitionKey':
-        if data.get(cls.type_property_name):
+        if cls.type_property_name in data:
             pk_value = data.get(cls.type_property_name)
-            if not pk_value:
+            if pk_value == []:
                 return cls(_Empty(), feed_range)
             if pk_value == [{}]:
                 return cls(_Undefined(), feed_range)
