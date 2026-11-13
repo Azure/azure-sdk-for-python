@@ -1,16 +1,224 @@
 ```py
 namespace azure.batch
 
-    class azure.batch.BatchClient(_BatchClientOperationsMixin): implements ContextManager 
+    class azure.batch.BatchClient(GenerateBatchClient): implements ContextManager 
 
         def __init__(
                 self, 
                 endpoint: str, 
-                credential: TokenCredential, 
+                credential: Union[AzureNamedKeyCredential, TokenCredential], 
                 *, 
                 api_version: str = ..., 
-                **kwargs: Any
+                **kwargs
             ) -> None: ...
+
+        @distributed_trace
+        def begin_deallocate_node(
+                self, 
+                pool_id: str, 
+                node_id: str, 
+                options: Optional[BatchNodeDeallocateOptions] = None, 
+                *, 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def begin_delete_job(
+                self, 
+                job_id: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                force: Optional[bool] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def begin_delete_job_schedule(
+                self, 
+                job_schedule_id: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def begin_delete_pool(
+                self, 
+                pool_id: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def begin_disable_job(
+                self, 
+                job_id: str, 
+                disable_options: BatchJobDisableOptions, 
+                *, 
+                etag: Optional[str] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def begin_enable_job(
+                self, 
+                job_id: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def begin_reboot_node(
+                self, 
+                pool_id: str, 
+                node_id: str, 
+                options: Optional[BatchNodeRebootOptions] = None, 
+                *, 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def begin_reimage_node(
+                self, 
+                pool_id: str, 
+                node_id: str, 
+                options: Optional[BatchNodeReimageOptions] = None, 
+                *, 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def begin_remove_nodes(
+                self, 
+                pool_id: str, 
+                remove_options: BatchNodeRemoveOptions, 
+                *, 
+                etag: Optional[str] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def begin_resize_pool(
+                self, 
+                pool_id: str, 
+                resize_options: BatchPoolResizeOptions, 
+                *, 
+                etag: Optional[str] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def begin_start_node(
+                self, 
+                pool_id: str, 
+                node_id: str, 
+                *, 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def begin_stop_pool_resize(
+                self, 
+                pool_id: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def begin_terminate_job(
+                self, 
+                job_id: str, 
+                options: Optional[BatchJobTerminateOptions] = None, 
+                *, 
+                etag: Optional[str] = ..., 
+                force: Optional[bool] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def begin_terminate_job_schedule(
+                self, 
+                job_schedule_id: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                force: Optional[bool] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
 
         def close(self) -> None: ...
 
@@ -75,6 +283,18 @@ namespace azure.batch
                 *, 
                 ocp_date: Optional[datetime] = ..., 
                 service_timeout: Optional[timedelta] = ..., 
+                **kwargs: Any
+            ) -> BatchCreateTaskCollectionResult: ...
+
+        @distributed_trace
+        def create_tasks(
+                self, 
+                job_id: str, 
+                task_collection: List[BatchTaskCreateOptions], 
+                *, 
+                max_concurrency: Optional[int] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                service_timeout: Optional[int] = ..., 
                 **kwargs: Any
             ) -> BatchCreateTaskCollectionResult: ...
 
@@ -178,7 +398,7 @@ namespace azure.batch
                 if_unmodified_since: Optional[datetime] = ..., 
                 ocp_date: Optional[datetime] = ..., 
                 ocp_range: Optional[str] = ..., 
-                service_timeout: Optional[timedelta] = ..., 
+                service_timeout: Optional[Union[int, timedelta]] = ..., 
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
 
@@ -193,7 +413,7 @@ namespace azure.batch
                 if_unmodified_since: Optional[datetime] = ..., 
                 ocp_date: Optional[datetime] = ..., 
                 ocp_range: Optional[str] = ..., 
-                service_timeout: Optional[timedelta] = ..., 
+                service_timeout: Optional[Union[int, timedelta]] = ..., 
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
 
@@ -326,6 +546,20 @@ namespace azure.batch
             ) -> BatchNodeVMExtension: ...
 
         @distributed_trace
+        def get_node_file_properties(
+                self, 
+                pool_id: str, 
+                node_id: str, 
+                file_path: str, 
+                *, 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> BatchFileProperties: ...
+
+        @distributed_trace
         def get_node_remote_login_settings(
                 self, 
                 pool_id: str, 
@@ -368,6 +602,20 @@ namespace azure.batch
                 service_timeout: Optional[timedelta] = ..., 
                 **kwargs: Any
             ) -> BatchTask: ...
+
+        @distributed_trace
+        def get_task_file_properties(
+                self, 
+                job_id: str, 
+                task_id: str, 
+                file_path: str, 
+                *, 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> BatchFileProperties: ...
 
         @distributed_trace
         def job_schedule_exists(
@@ -743,16 +991,224 @@ namespace azure.batch
 
 namespace azure.batch.aio
 
-    class azure.batch.aio.BatchClient(_BatchClientOperationsMixin): implements AsyncContextManager 
+    class azure.batch.aio.BatchClient(GenerateBatchClient): implements AsyncContextManager 
 
         def __init__(
                 self, 
                 endpoint: str, 
-                credential: AsyncTokenCredential, 
+                credential: Union[AzureNamedKeyCredential, AsyncTokenCredential], 
                 *, 
                 api_version: str = ..., 
-                **kwargs: Any
+                **kwargs
             ) -> None: ...
+
+        @distributed_trace
+        async def begin_deallocate_node(
+                self, 
+                pool_id: str, 
+                node_id: str, 
+                options: Optional[BatchNodeDeallocateOptions] = None, 
+                *, 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace
+        async def begin_delete_job(
+                self, 
+                job_id: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                force: Optional[bool] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace
+        async def begin_delete_job_schedule(
+                self, 
+                job_schedule_id: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace
+        async def begin_delete_pool(
+                self, 
+                pool_id: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace
+        async def begin_disable_job(
+                self, 
+                job_id: str, 
+                disable_options: BatchJobDisableOptions, 
+                *, 
+                etag: Optional[str] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace
+        async def begin_enable_job(
+                self, 
+                job_id: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace
+        async def begin_reboot_node(
+                self, 
+                pool_id: str, 
+                node_id: str, 
+                options: Optional[BatchNodeRebootOptions] = None, 
+                *, 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace
+        async def begin_reimage_node(
+                self, 
+                pool_id: str, 
+                node_id: str, 
+                options: Optional[BatchNodeReimageOptions] = None, 
+                *, 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace
+        async def begin_remove_nodes(
+                self, 
+                pool_id: str, 
+                remove_options: BatchNodeRemoveOptions, 
+                *, 
+                etag: Optional[str] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace
+        async def begin_resize_pool(
+                self, 
+                pool_id: str, 
+                resize_options: BatchPoolResizeOptions, 
+                *, 
+                etag: Optional[str] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace
+        async def begin_start_node(
+                self, 
+                pool_id: str, 
+                node_id: str, 
+                *, 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace
+        async def begin_stop_pool_resize(
+                self, 
+                pool_id: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace
+        async def begin_terminate_job(
+                self, 
+                job_id: str, 
+                options: Optional[BatchJobTerminateOptions] = None, 
+                *, 
+                etag: Optional[str] = ..., 
+                force: Optional[bool] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace
+        async def begin_terminate_job_schedule(
+                self, 
+                job_schedule_id: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                force: Optional[bool] = ..., 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                polling_interval: int = 5, 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
 
         async def close(self) -> None: ...
 
@@ -817,6 +1273,18 @@ namespace azure.batch.aio
                 *, 
                 ocp_date: Optional[datetime] = ..., 
                 service_timeout: Optional[timedelta] = ..., 
+                **kwargs: Any
+            ) -> BatchCreateTaskCollectionResult: ...
+
+        @distributed_trace
+        async def create_tasks(
+                self, 
+                job_id: str, 
+                task_collection: List[BatchTaskCreateOptions], 
+                *, 
+                max_concurrency: Optional[int] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                service_timeout: Optional[int] = ..., 
                 **kwargs: Any
             ) -> BatchCreateTaskCollectionResult: ...
 
@@ -909,7 +1377,7 @@ namespace azure.batch.aio
                 **kwargs: Any
             ) -> None: ...
 
-        @distributed_trace_async
+        @distributed_trace
         async def download_node_file(
                 self, 
                 pool_id: str, 
@@ -920,11 +1388,11 @@ namespace azure.batch.aio
                 if_unmodified_since: Optional[datetime] = ..., 
                 ocp_date: Optional[datetime] = ..., 
                 ocp_range: Optional[str] = ..., 
-                service_timeout: Optional[timedelta] = ..., 
+                service_timeout: Optional[Union[int, timedelta]] = ..., 
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
 
-        @distributed_trace_async
+        @distributed_trace
         async def download_task_file(
                 self, 
                 job_id: str, 
@@ -935,7 +1403,7 @@ namespace azure.batch.aio
                 if_unmodified_since: Optional[datetime] = ..., 
                 ocp_date: Optional[datetime] = ..., 
                 ocp_range: Optional[str] = ..., 
-                service_timeout: Optional[timedelta] = ..., 
+                service_timeout: Optional[Union[int, timedelta]] = ..., 
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
 
@@ -1067,6 +1535,20 @@ namespace azure.batch.aio
                 **kwargs: Any
             ) -> BatchNodeVMExtension: ...
 
+        @distributed_trace
+        async def get_node_file_properties(
+                self, 
+                pool_id: str, 
+                node_id: str, 
+                file_path: str, 
+                *, 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> BatchFileProperties: ...
+
         @distributed_trace_async
         async def get_node_remote_login_settings(
                 self, 
@@ -1110,6 +1592,20 @@ namespace azure.batch.aio
                 service_timeout: Optional[timedelta] = ..., 
                 **kwargs: Any
             ) -> BatchTask: ...
+
+        @distributed_trace
+        async def get_task_file_properties(
+                self, 
+                job_id: str, 
+                task_id: str, 
+                file_path: str, 
+                *, 
+                if_modified_since: Optional[datetime] = ..., 
+                if_unmodified_since: Optional[datetime] = ..., 
+                ocp_date: Optional[datetime] = ..., 
+                service_timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> BatchFileProperties: ...
 
         @distributed_trace_async
         async def job_schedule_exists(
@@ -1788,6 +2284,28 @@ namespace azure.batch.models
     class azure.batch.models.BatchErrorSourceCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         SERVER_ERROR = "servererror"
         USER_ERROR = "usererror"
+
+
+    class azure.batch.models.BatchFileProperties:
+        content_length: int
+        content_type: Optional[str]
+        creation_time: Optional[datetime]
+        file_mode: Optional[str]
+        is_directory: Optional[bool]
+        last_modified: datetime
+        url: Optional[str]
+
+        def __init__(
+                self, 
+                *, 
+                content_length: int, 
+                content_type: Optional[str] = ..., 
+                creation_time: Optional[datetime] = ..., 
+                file_mode: Optional[str] = ..., 
+                is_directory: Optional[bool] = ..., 
+                last_modified: datetime, 
+                url: Optional[str] = ...
+            ) -> None: ...
 
 
     class azure.batch.models.BatchInboundNatPool(_Model):
@@ -4060,6 +4578,16 @@ namespace azure.batch.models
     class azure.batch.models.ContainerWorkingDirectory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CONTAINER_IMAGE_DEFAULT = "containerImageDefault"
         TASK_WORKING_DIRECTORY = "taskWorkingDirectory"
+
+
+    class azure.batch.models.CreateTasksError(HttpResponseError):
+
+        def __init__(
+                self, 
+                pending_tasks: Optional[List[BatchTaskCreateOptions]] = None, 
+                failure_tasks: Optional[List[BatchTaskCreateResult]] = None, 
+                errors: Optional[List[Exception]] = None
+            ) -> None: ...
 
 
     class azure.batch.models.DataDisk(_Model):

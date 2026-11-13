@@ -537,6 +537,40 @@ on GitHub or see [Batch](https://docs.microsoft.com/python/api/overview/azure/ba
 on docs.microsoft.com.
 
 
+## Maintaining generated-code customizations
+
+The handwritten client, model, and operation patches and the synchronous/asynchronous
+polling modules must be preserved during regeneration. They provide Shared Key signing,
+Batch-specific error handling, bulk task submission, typed file properties, and public
+long-running-operation methods. The service specification declares OAuth authentication
+and keeps several Python operations internal in anticipation of these wrappers; generated
+output alone does not replace this SDK behavior.
+
+The generation inputs for service API `2026-10-01` are recorded in
+[`tsp-location.yaml`](tsp-location.yaml) and [`_metadata.json`](_metadata.json):
+specification commit `0b01059c3d95a84bc84ff16a4bb0fd10f66f3abd`, emitter version
+`0.63.10`, and HTTP client Python version `0.39.0`. The existing customizations were
+recovered from SDK commit `c143a045142bf8e56416b6023f25230d301f56b3` and adapted
+to the relocated serialization utilities and generated duration parameters, preserving
+integer-seconds timeouts on the handwritten operations.
+
+This restores existing SDK-specific behavior, not a new workaround for a confirmed
+emitter defect. The generation pipeline step that discarded the customizations has not
+been established; future generation should verify that these files and their public
+exports remain intact. Intentional service API removals are documented separately in
+the [release notes](CHANGELOG.md).
+
+No service code regeneration was performed for this repair. The original generation
+command is not recorded in the package metadata, so its exact invocation remains
+unverified; consult the original SDK-generation pipeline before reproducing that step.
+
+For network-free regression coverage, run from the `tests` directory in an environment
+with the package and its test dependencies installed:
+
+```text
+python -m unittest test_response_handlers test_customization_regressions -v
+```
+
 # Provide Feedback
 
 If you encounter any bugs or have suggestions, please file an issue in the
