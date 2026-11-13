@@ -1,5 +1,199 @@
 # Release History
 
+## 15.1.0b1 (2026-11-13)
+
+### Features Added
+
+  - Client `CognitiveServicesManagementClient` added operation group `account_cost_controls`
+  - Client `CognitiveServicesManagementClient` added operation group `adapter_deployments`
+  - Client `CognitiveServicesManagementClient` added operation group `arc_deployments`
+  - Client `CognitiveServicesManagementClient` added operation group `attached_aks_clusters`
+  - Client `CognitiveServicesManagementClient` added operation group `compute_operations`
+  - Client `CognitiveServicesManagementClient` added operation group `computes`
+  - Client `CognitiveServicesManagementClient` added operation group `managed_compute_deployments`
+  - Client `CognitiveServicesManagementClient` added operation group `managed_compute_usages_operation_group`
+  - Client `CognitiveServicesManagementClient` added operation group `project_cost_controls`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_bindings`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_regos`
+  - Client `CognitiveServicesManagementClient` added operation group `workbenches`
+  - Model `AccountProperties` added property `agent_hosting_configurations`
+  - Model `AccountProperties` added property `capability_settings`
+  - Model `AccountProperties` added property `cost_control_connections`
+  - Model `AccountProperties` added property `foundry_auto_upgrade`
+  - Enum `ConnectionCategory` added member `OPEN_API`
+  - Model `DeploymentProperties` added property `speculative_decoding`
+  - Model `ProjectProperties` added property `capability_settings`
+  - Model `ProjectProperties` added property `tool_controls`
+  - Enum `ProvisioningState` added member `EXTENSION_UNREACHABLE`
+  - Enum `RaiPolicyContentSource` added member `AGENT_SHUTDOWN`
+  - Enum `RaiPolicyContentSource` added member `AGENT_STARTUP`
+  - Enum `RaiPolicyContentSource` added member `POST_MODEL_CALL`
+  - Enum `RaiPolicyContentSource` added member `PRE_MODEL_CALL`
+  - Model `RaiPolicyProperties` added property `acs`
+  - Model `RaiPolicyProperties` added property `acs_regos`
+  - Model `RaiPolicyProperties` added property `custom_external_safety_providers`
+  - Model `RaiPolicyProperties` added property `format`
+  - Added model `AccountCostControl`
+  - Added model `AdapterDeployment`
+  - Added model `AdapterDeploymentLastOperation`
+  - Added enum `AdapterDeploymentOperationState`
+  - Added enum `AdapterDeploymentOperationType`
+  - Added model `AdapterDeploymentProperties`
+  - Added model `AgentHostingConfiguration`
+  - Added enum `AgentHostingType`
+  - Added model `ArcDeployment`
+  - Added enum `ArcDeploymentComputeType`
+  - Added model `ArcDeploymentCpuMemoryResourceRequirements`
+  - Added model `ArcDeploymentKubernetesResources`
+  - Added model `ArcDeploymentModel`
+  - Added model `ArcDeploymentPatchCpuMemoryResourceRequirements`
+  - Added model `ArcDeploymentPatchKubernetesResources`
+  - Added model `ArcDeploymentProperties`
+  - Added model `ArcDeploymentProvisioningDetails`
+  - Added model `ArcDeploymentResourceRequirements`
+  - Added enum `ArcDeploymentRuntime`
+  - Added model `ArcDeploymentSku`
+  - Added enum `ArcDeploymentSkuName`
+  - Added model `ArcDeploymentUpdate`
+  - Added model `ArcDeploymentUpdateProperties`
+  - Added model `ArcDeploymentVllmParameters`
+  - Added model `AttachedAksCluster`
+  - Added model `AttachedAksClusterAccountIdentityStatus`
+  - Added model `AttachedAksClusterAiManagerStatus`
+  - Added enum `AttachedAksClusterCapability`
+  - Added model `AttachedAksClusterCapabilityStatus`
+  - Added model `AttachedAksClusterConnectorRegistration`
+  - Added model `AttachedAksClusterExtensionConfiguration`
+  - Added enum `AttachedAksClusterExtensionInstallationMode`
+  - Added model `AttachedAksClusterExtensionProfile`
+  - Added model `AttachedAksClusterHealthComponent`
+  - Added model `AttachedAksClusterHealthReason`
+  - Added enum `AttachedAksClusterHealthState`
+  - Added model `AttachedAksClusterHealthStatus`
+  - Added model `AttachedAksClusterIdentityStatus`
+  - Added model `AttachedAksClusterIntegrationResourceStatus`
+  - Added model `AttachedAksClusterListItem`
+  - Added model `AttachedAksClusterListProperties`
+  - Added model `AttachedAksClusterProjectBinding`
+  - Added enum `AttachedAksClusterProjectBindingStage`
+  - Added model `AttachedAksClusterProperties`
+  - Added enum `AttachedAksClusterProvisioningStage`
+  - Added model `AttachedAksClusterReadinessStatus`
+  - Added model `AttachedAksClusterRoleAssignmentStatus`
+  - Added model `AttachedAksClusterStatus`
+  - Added model `CapabilitySettings`
+  - Added model `ClusterComputeProperties`
+  - Added model `Compute`
+  - Added model `ComputeOperationStatus`
+  - Added model `ComputeOperationStatusProperties`
+  - Added enum `ComputeOperationStatusType`
+  - Added model `ComputeProperties`
+  - Added enum `ComputeProvisioningState`
+  - Added enum `ComputeType`
+  - Added model `ConnectivityEndpoints`
+  - Added model `ContainerInstanceComputeProperties`
+  - Added model `CostControlAction`
+  - Added model `CostControlActionPatch`
+  - Added model `CostControlAdditionalInfoFilter`
+  - Added enum `CostControlCategory`
+  - Added model `CostControlConnections`
+  - Added model `CostControlFilter`
+  - Added enum `CostControlFilterName`
+  - Added model `CostControlGrouping`
+  - Added enum `CostControlGroupingName`
+  - Added model `CostControlNotification`
+  - Added model `CostControlNotificationPatch`
+  - Added model `CostControlPatch`
+  - Added model `CostControlPatchProperties`
+  - Added model `CostControlProperties`
+  - Added model `CostControlProviderProperties`
+  - Added model `CostControlProviderPropertiesPatch`
+  - Added enum `CostControlThresholdType`
+  - Added enum `CostControlTimeGrain`
+  - Added model `CostControlTimePeriod`
+  - Added model `CostControlTimePeriodPatch`
+  - Added model `DeploymentPolicyEvaluationResult`
+  - Added model `DeploymentSpeculativeDecoding`
+  - Added model `EvaluateDeploymentPoliciesDeployment`
+  - Added model `EvaluateDeploymentPoliciesDeploymentProperties`
+  - Added model `EvaluateDeploymentPoliciesRequest`
+  - Added model `EvaluateDeploymentPoliciesResponse`
+  - Added model `FoundryAutoUpgrade`
+  - Added enum `FoundryAutoUpgradeMode`
+  - Added model `GatedModelAccessProperties`
+  - Added model `ManagedClusterAgentHostingConfiguration`
+  - Added model `ManagedComputeDeployment`
+  - Added model `ManagedComputeDeploymentInfo`
+  - Added model `ManagedComputeDeploymentProperties`
+  - Added model `ManagedComputeDeploymentProvisioningDetails`
+  - Added model `ManagedComputeDeploymentRoutes`
+  - Added model `ManagedComputeUsage`
+  - Added model `PatchResourceSku`
+  - Added model `PolicyAssignmentEvaluationDetails`
+  - Added enum `PolicyEvaluationOutcome`
+  - Added model `PolicyExpressionEvaluationDetails`
+  - Added model `Pool`
+  - Added model `ProjectCostControl`
+  - Added model `RaiAcsAgentShutdownInterventionPoint`
+  - Added model `RaiAcsAgentStartupInterventionPoint`
+  - Added model `RaiAcsAnnotationBinding`
+  - Added model `RaiAcsAnnotatorDefinition`
+  - Added enum `RaiAcsAnnotatorType`
+  - Added enum `RaiAcsHarmCategory`
+  - Added model `RaiAcsHarmConfiguration`
+  - Added model `RaiAcsInterventionPoint`
+  - Added model `RaiAcsInterventionPoints`
+  - Added model `RaiAcsManifest`
+  - Added model `RaiAcsModerationBindingExtension`
+  - Added enum `RaiAcsModerationSubjectFormat`
+  - Added model `RaiAcsPolicyBinding`
+  - Added enum `RaiAcsPolicyDefinitionType`
+  - Added enum `RaiAcsPolicyTarget`
+  - Added enum `RaiAcsPolicyTargetKind`
+  - Added model `RaiAcsPostModelCallInterventionPoint`
+  - Added model `RaiAcsPreModelCallInterventionPoint`
+  - Added model `RaiAcsRegoPolicyDefinition`
+  - Added model `RaiAcsToolDefinition`
+  - Added model `RaiAcsToolInterventionPoint`
+  - Added enum `RaiAcsToolNameSelector`
+  - Added model `RaiBinding`
+  - Added model `RaiBindingProperties`
+  - Added model `RaiPolicyCustomExternalSafetyProviderReference`
+  - Added enum `RaiPolicyFormat`
+  - Added model `RaiRego`
+  - Added enum `RaiRegoEncoding`
+  - Added model `RaiRegoProperties`
+  - Added model `RaiRegoReference`
+  - Added model `SshSettings`
+  - Added model `ToolControlEntry`
+  - Added enum `ToolControlType`
+  - Added model `ToolControls`
+  - Added enum `ToolControlsDefaultAction`
+  - Added enum `VmPriority`
+  - Added model `Workbench`
+  - Added model `WorkbenchProperties`
+  - Added enum `WorkbenchProvisioningState`
+  - Added enum `WorkbenchStatus`
+  - Added model `WorkbenchUpdate`
+  - Added model `WorkbenchUpdateProperties`
+  - Model `AccountsOperations` added method `evaluate_deployment_policies`
+  - Model `RaiPoliciesOperations` added parameter `etag` in method `begin_delete`
+  - Model `RaiPoliciesOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `RaiPoliciesOperations` added parameter `etag` in method `create_or_update`
+  - Model `RaiPoliciesOperations` added parameter `match_condition` in method `create_or_update`
+  - Added operation group `AccountCostControlsOperations`
+  - Added operation group `AdapterDeploymentsOperations`
+  - Added operation group `ArcDeploymentsOperations`
+  - Added operation group `AttachedAksClustersOperations`
+  - Added operation group `ComputeOperationsOperations`
+  - Added operation group `ComputesOperations`
+  - Added operation group `ManagedComputeDeploymentsOperations`
+  - Added operation group `ManagedComputeUsagesOperationGroupOperations`
+  - Added operation group `ProjectCostControlsOperations`
+  - Added operation group `RaiBindingsOperations`
+  - Added operation group `RaiRegosOperations`
+  - Added operation group `WorkbenchesOperations`
+
 ## 15.0.0 (2026-11-11)
 
 ### Features Added
