@@ -162,6 +162,7 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
         container: Union["SearchIndexerDataContainer", "_types.SearchIndexerDataContainer"],
         description: Optional[str] = None,
         identity: Optional[Union["SearchIndexerDataIdentity", "_types.SearchIndexerDataIdentity"]] = None,
+        indexer_permission_options: Optional[List[Union[str, "IndexerPermissionOption"]]] = None,
         data_change_detection_policy: Optional[
             Union["DataChangeDetectionPolicy", "_types.DataChangeDetectionPolicy"]
         ] = None,
@@ -170,7 +171,6 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
         ] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional[Union["SearchResourceEncryptionKey", "_types.SearchResourceEncryptionKey"]] = None,
-        indexer_permission_options: Optional[List[Union[str, "IndexerPermissionOption"]]] = None,
     ) -> None: ...
 
     @overload
@@ -183,6 +183,7 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
         container: Union["SearchIndexerDataContainer", "_types.SearchIndexerDataContainer"],
         description: Optional[str] = None,
         identity: Optional[Union["SearchIndexerDataIdentity", "_types.SearchIndexerDataIdentity"]] = None,
+        indexer_permission_options: Optional[List[Union[str, "IndexerPermissionOption"]]] = None,
         data_change_detection_policy: Optional[
             Union["DataChangeDetectionPolicy", "_types.DataChangeDetectionPolicy"]
         ] = None,
@@ -191,7 +192,6 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
         ] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional[Union["SearchResourceEncryptionKey", "_types.SearchResourceEncryptionKey"]] = None,
-        indexer_permission_options: Optional[List[Union[str, "IndexerPermissionOption"]]] = None,
     ) -> None: ...
 
     @overload
