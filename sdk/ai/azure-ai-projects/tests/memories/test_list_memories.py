@@ -58,7 +58,9 @@ class _AsyncTransport(AsyncHttpTransport):
         pass
 
 
-@pytest.mark.parametrize("kwargs", [{"scope": "user-123"}, {"body": {"scope": "user-123"}}])
+@pytest.mark.parametrize(
+    "kwargs", [{"scope": "user-123"}, {"body": {"scope": "user-123"}}]
+)
 def test_list_memories_sends_scope(kwargs: dict[str, Any]) -> None:
     with AIProjectClient(
         endpoint="https://example.services.ai.azure.com/api/projects/test",
@@ -71,7 +73,9 @@ def test_list_memories_sends_scope(kwargs: dict[str, Any]) -> None:
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("kwargs", [{"scope": "user-123"}, {"body": {"scope": "user-123"}}])
+@pytest.mark.parametrize(
+    "kwargs", [{"scope": "user-123"}, {"body": {"scope": "user-123"}}]
+)
 async def test_list_memories_sends_scope_async(kwargs: dict[str, Any]) -> None:
     async with AsyncAIProjectClient(
         endpoint="https://example.services.ai.azure.com/api/projects/test",
