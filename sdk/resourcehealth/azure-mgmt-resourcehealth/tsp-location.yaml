@@ -1,4 +1,4 @@
 directory: specification/resourcehealth/resource-manager/Microsoft.ResourceHealth/ResourceHealth
-commit: 88976ab9ea9fb7f69533fbd465540060bd1f225a
+commit: cd1e3be9d1e6861bce41a7ecfbbaccb68c9bc25a
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 
