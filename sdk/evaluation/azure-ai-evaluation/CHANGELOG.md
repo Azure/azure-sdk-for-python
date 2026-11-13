@@ -1,5 +1,17 @@
 # Release History
 
+## 1.18.13 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed `TaskAdherenceEvaluator` silently dropping the `system_message` and `tool_calls` keyword arguments. Both are now accepted as optional inputs and passed to the evaluation prompt, so callers using plain-string `query`/`response` no longer get evaluated without their system instructions or tool calls.
+
+### Other Changes
+
 ## 1.18.12 (2026-11-09)
 
 ### Bugs Fixed
