@@ -409,6 +409,13 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint: disable=protected-access
         if handler is None:
             raise RuntimeError("handler is not initialized and cannot complete the message")
+        link = getattr(handler, "_link", None)
+        if link is None or link._is_closed or link.state != constants.LinkState.ATTACHED:
+            # The service detached the receive link (e.g. link idle timeout or an entity update);
+            # let the caller settle with the lock token over the management link instead.
+            raise RuntimeError("Receiver link is closed; settle via the management link.") from getattr(
+                link, "_error", None
+            )
         try:
             if settle_operation == MESSAGE_COMPLETE:
                 return await handler.settle_messages_async(

@@ -531,6 +531,8 @@ def test_settle_messages_does_not_leak_the_new_keywords_into_the_outcome():
 
 def _handler_raising(exc, is_async=False):
     handler = MagicMock(name="handler")
+    handler._link._is_closed = False
+    handler._link.state = LinkState.ATTACHED
     if is_async:
         handler.settle_messages_async = AsyncMock(name="settle", side_effect=exc)
     else:
