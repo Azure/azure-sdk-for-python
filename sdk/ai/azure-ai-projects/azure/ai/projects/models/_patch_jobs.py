@@ -284,6 +284,7 @@ def _from_rest_pipeline_job(rest_obj: Union[_RestJob, _RestPipelineJobResource])
     """Flatten a Pipeline Job resource envelope into the public PipelineJob model.
 
     :param rest_obj: The deserialized Pipeline Job resource response.
+    :type rest_obj: ~azure.ai.projects.models.Job or ~azure.ai.projects.models.PipelineJobResource
     :returns: A PipelineJob with its resource metadata populated.
     :rtype: ~azure.ai.projects.models.PipelineJob
     """
