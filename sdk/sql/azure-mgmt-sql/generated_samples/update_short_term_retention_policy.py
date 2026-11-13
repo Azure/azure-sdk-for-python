@@ -35,11 +35,11 @@ def main():
         server_name="testsvr",
         database_name="testdb",
         policy_name="default",
-        parameters={"properties": {"diffBackupIntervalInHours": 24, "retentionDays": 7}},
+        parameters={"properties": {"diffBackupIntervalInHours": 24, "lockImmutability": False, "retentionDays": 7}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/UpdateShortTermRetentionPolicy.json
+# x-ms-original-file: 2026-08-01-preview/UpdateShortTermRetentionPolicy.json
 if __name__ == "__main__":
     main()

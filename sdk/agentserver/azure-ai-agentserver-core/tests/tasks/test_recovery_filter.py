@@ -14,6 +14,7 @@ C-FLT-1.
 
 from __future__ import annotations
 
+import asyncio
 import datetime
 from pathlib import Path
 
@@ -164,3 +165,84 @@ async def test_recovery_does_not_pick_up_foreign_typed_task(captured_local) -> N
         mgr_mod._manager = None
     # Silence unused-arg warning on the helper.
     _ = foreign_record
+
+
+@pytest.mark.parametrize("recovery_path", ["startup", "periodic", "inline"])
+@pytest.mark.asyncio
+async def test_disabled_recovery_does_not_mutate_task(
+    captured_local, monkeypatch: pytest.MonkeyPatch, recovery_path: str
+) -> None:
+    from azure.ai.agentserver.core.tasks import _decorator
+    from azure.ai.agentserver.core.tasks._manager import _SCHEMA_VERSION, _SCHEMA_VERSION_KEY
+
+    monkeypatch.setattr(_decorator, "_REGISTERED_DESCRIPTORS", [])
+    monkeypatch.setattr(mgr_mod, "_manager", None)
+    if recovery_path == "periodic":
+        monkeypatch.setattr(mgr_mod, "_PERIODIC_RECOVERY_INTERVAL_SECONDS", 0.01)
+    eligible_ran = asyncio.Event()
+    excluded_calls = []
+
+    @task(name="protocol_disabled")
+    async def excluded(ctx: TaskContext[str]) -> str:
+        excluded_calls.append(ctx.input)
+        return "must not execute"
+
+    @task(name="protocol_enabled")
+    async def eligible(ctx: TaskContext[str]) -> str:
+        eligible_ran.set()
+        return "recovered"
+
+    manager = TaskManager(config=_config_stub(), provider=captured_local)
+    manager._disable_recovery_for(excluded.name)
+    started = False
+    try:
+        if recovery_path != "startup":
+            await manager.startup()
+            started = True
+        for primitive in (excluded, eligible):
+            info = await captured_local.create(
+                TaskCreateRequest(
+                    id=primitive.name,
+                    agent_name="test-agent",
+                    session_id="test-session",
+                    status="in_progress",
+                    title=primitive.name,
+                    payload={"input": "persisted", _SCHEMA_VERSION_KEY: _SCHEMA_VERSION},
+                    tags={"task_name": primitive.name},
+                    source=TaskManager._build_source(primitive.name),
+                    lease_owner="test-agent|session:test-session",
+                    lease_instance_id="interrupted-instance",
+                    lease_duration_seconds=60,
+                )
+            )
+            info.lease.expires_at = (
+                datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(minutes=10)
+            ).isoformat()
+            captured_local._delegate._write_task(info)
+        before = await captured_local.get(excluded.name)
+        captured_local.update_calls.clear()
+        if recovery_path == "startup":
+            await manager.startup()
+            started = True
+        elif recovery_path == "inline":
+            assert await manager.get_active_run(excluded.name) is None
+            assert await manager.get_active_run(eligible.name) is not None
+        await asyncio.wait_for(eligible_ran.wait(), timeout=5)
+        if recovery_path == "periodic":
+
+            async def wait_for_another_scan():
+                while len(captured_local.list_calls) < 3:
+                    await asyncio.sleep(0.01)
+
+            await asyncio.wait_for(wait_for_another_scan(), timeout=5)
+        after = await captured_local.get(excluded.name)
+        assert excluded_calls == []
+        assert after.status == before.status == "in_progress"
+        assert after.etag == before.etag
+        assert after.lease.instance_id == before.lease.instance_id == "interrupted-instance"
+        assert after.lease.generation == before.lease.generation
+        assert after.payload == before.payload
+        assert not [call for call in captured_local.update_calls if call[0] == excluded.name]
+    finally:
+        if started:
+            await manager.shutdown()

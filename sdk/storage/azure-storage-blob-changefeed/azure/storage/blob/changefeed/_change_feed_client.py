@@ -66,6 +66,8 @@ class ChangeFeedClient:
         ] = None,
         **kwargs: Any
     ) -> None:
+        if kwargs.get("max_single_get_size") is None:
+            kwargs["max_single_get_size"] = 32 * 1024 * 1024
         self._blob_service_client = BlobServiceClient(account_url, credential, **kwargs)
 
     @classmethod

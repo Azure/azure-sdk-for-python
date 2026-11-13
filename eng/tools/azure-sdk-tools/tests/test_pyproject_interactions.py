@@ -76,6 +76,76 @@ def test_environment_override(check_name, environment_value, expected_result):
         assert result == expected_result
 
 
+@pytest.fixture
+def apistub_package(tmp_path, monkeypatch):
+    package = tmp_path / "azure-test"
+    package.mkdir()
+    for check in ("APISTUB", "PYLINT", "CI_ENABLED"):
+        monkeypatch.delenv(f"AZURE_TEST_{check}", raising=False)
+    monkeypatch.setattr("ci_tools.environment_exclusions.in_public", lambda: False)
+    monkeypatch.setattr("ci_tools.environment_exclusions.in_analyze_weekly", lambda: False)
+    return package
+
+
+@pytest.mark.parametrize("config", ["", "[tool.azure-sdk-build]\n", "[tool.azure-sdk-build]\napistub = true\n"])
+def test_apistub_enabled(apistub_package, config):
+    if config:
+        (apistub_package / "pyproject.toml").write_text(config)
+
+    assert is_check_enabled(str(apistub_package), "apistub") is True
+
+
+@pytest.mark.parametrize("check", ["apistub", " APISTUB "])
+@pytest.mark.parametrize("target", ["folder", "setup.py", "."])
+def test_apistub_opt_out_rejected(apistub_package, monkeypatch, check, target):
+    (apistub_package / "pyproject.toml").write_text("[tool.azure-sdk-build]\napistub = false\n")
+    if target == ".":
+        monkeypatch.chdir(apistub_package)
+        package_path = "."
+    elif target == "setup.py":
+        package_path = str(apistub_package / "setup.py")
+    else:
+        package_path = str(apistub_package)
+
+    with pytest.raises(ValueError, match="apistub is required") as error:
+        is_check_enabled(package_path, check)
+
+    assert str(apistub_package) in str(error.value)
+    assert "apistub = false" in str(error.value)
+    assert "[tool.azure-sdk-build]" in str(error.value)
+
+
+def test_apistub_environment_opt_out_rejected(apistub_package, monkeypatch):
+    (apistub_package / "pyproject.toml").write_text("[tool.azure-sdk-build]\napistub = true\n")
+    monkeypatch.setenv("AZURE_TEST_APISTUB", "false")
+
+    with pytest.raises(ValueError, match="APISTUB environment override"):
+        is_check_enabled(str(apistub_package), "apistub")
+
+
+def test_other_check_opt_out_preserved(apistub_package):
+    (apistub_package / "pyproject.toml").write_text("[tool.azure-sdk-build]\npylint = false\n")
+
+    assert is_check_enabled(str(apistub_package), "pylint") is False
+    assert is_check_enabled(str(apistub_package), "black", default=False) is False
+
+
+@pytest.mark.parametrize("build_mode", ["internal", "public", "weekly"])
+@pytest.mark.parametrize("apistub_enabled", [True, False])
+def test_apistub_ci_enabled_behavior_preserved(apistub_package, monkeypatch, build_mode, apistub_enabled):
+    (apistub_package / "pyproject.toml").write_text(
+        f"[tool.azure-sdk-build]\nci_enabled = false\napistub = {str(apistub_enabled).lower()}\n"
+    )
+    monkeypatch.setattr("ci_tools.environment_exclusions.in_public", lambda: build_mode == "public")
+    monkeypatch.setattr("ci_tools.environment_exclusions.in_analyze_weekly", lambda: build_mode == "weekly")
+
+    if build_mode != "internal" and not apistub_enabled:
+        with pytest.raises(ValueError, match="apistub is required"):
+            is_check_enabled(str(apistub_package), "apistub")
+    else:
+        assert is_check_enabled(str(apistub_package), "apistub") is (build_mode != "internal")
+
+
 def test_pyproject_update_check_override():
     with tempfile.TemporaryDirectory() as temp_dir:
         new_path = shutil.copy(pyproject_file, temp_dir)

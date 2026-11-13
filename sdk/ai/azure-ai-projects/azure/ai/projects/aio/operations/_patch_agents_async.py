@@ -11,17 +11,16 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Union, Optional, Any, IO, cast, overload
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import AsyncNoPolling, AsyncPollingMethod
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from ._operations import (
     AgentsOperations as GeneratedAgentsOperations,
-    BetaAgentsOperations as BetaAgentsOperationsGenerated,
     JSON,
     _Unset,
 )
 from ... import models as _models
 from ..._utils.model_base import _deserialize
+from ..._utils.polling import AsyncAIProjectsLROBasePolling
 from ...models import AsyncAgentOptimizationLROPoller
 from ...operations._patch_agents import _compute_sha256_from_stream
 from ...models._patch import (
@@ -416,7 +415,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+                AsyncAIProjectsLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
@@ -433,7 +432,3 @@ class AgentsOperations(GeneratedAgentsOperations):
         return AsyncAgentOptimizationLROPoller(  # type: ignore
             self._client, raw_result, get_long_running_output, polling_method
         )
-
-
-class BetaAgentsOperations(BetaAgentsOperationsGenerated):
-    """Custom async operations for beta agents."""

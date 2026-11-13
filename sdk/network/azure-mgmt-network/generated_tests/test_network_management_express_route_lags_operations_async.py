@@ -25,7 +25,7 @@ class TestNetworkManagementExpressRouteLagsOperationsAsync(AzureMgmtRecordedTest
         response = await self.client.express_route_lags.get(
             resource_group_name=resource_group.name,
             express_route_lag_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -51,6 +51,19 @@ class TestNetworkManagementExpressRouteLagsOperationsAsync(AzureMgmtRecordedTest
                     "name": "str",
                     "properties": {
                         "allocationDate": "str",
+                        "authorizations": [
+                            {
+                                "etag": "str",
+                                "id": "str",
+                                "name": "str",
+                                "properties": {
+                                    "authorizationUseStatus": "str",
+                                    "circuitResourceUri": "str",
+                                    "provisioningState": "str",
+                                },
+                                "type": "str",
+                            }
+                        ],
                         "bandwidthInGbps": 0,
                         "billingType": "str",
                         "circuits": [{"id": "str"}],
@@ -105,7 +118,7 @@ class TestNetworkManagementExpressRouteLagsOperationsAsync(AzureMgmtRecordedTest
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2026-01-01",
+                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -127,7 +140,7 @@ class TestNetworkManagementExpressRouteLagsOperationsAsync(AzureMgmtRecordedTest
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -140,7 +153,7 @@ class TestNetworkManagementExpressRouteLagsOperationsAsync(AzureMgmtRecordedTest
             await self.client.express_route_lags.begin_delete(
                 resource_group_name=resource_group.name,
                 express_route_lag_name="str",
-                api_version="2026-01-01",
+                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -152,7 +165,7 @@ class TestNetworkManagementExpressRouteLagsOperationsAsync(AzureMgmtRecordedTest
     async def test_express_route_lags_list_by_resource_group(self, resource_group):
         response = self.client.express_route_lags.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -162,7 +175,7 @@ class TestNetworkManagementExpressRouteLagsOperationsAsync(AzureMgmtRecordedTest
     @recorded_by_proxy_async
     async def test_express_route_lags_list(self, resource_group):
         response = self.client.express_route_lags.list(
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -175,7 +188,7 @@ class TestNetworkManagementExpressRouteLagsOperationsAsync(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             express_route_lag_name="str",
             body={"customerName": "str", "members": ["str"]},
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -188,7 +201,7 @@ class TestNetworkManagementExpressRouteLagsOperationsAsync(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             express_route_lag_name="str",
             link_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -200,7 +213,7 @@ class TestNetworkManagementExpressRouteLagsOperationsAsync(AzureMgmtRecordedTest
         response = self.client.express_route_lags.links_list(
             resource_group_name=resource_group.name,
             express_route_lag_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -214,7 +227,7 @@ class TestNetworkManagementExpressRouteLagsOperationsAsync(AzureMgmtRecordedTest
             express_route_lag_name="str",
             link_name="str",
             member_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -227,7 +240,7 @@ class TestNetworkManagementExpressRouteLagsOperationsAsync(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             express_route_lag_name="str",
             link_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

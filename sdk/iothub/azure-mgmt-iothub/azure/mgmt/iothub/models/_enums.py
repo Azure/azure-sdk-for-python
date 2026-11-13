@@ -65,6 +65,15 @@ class Capabilities(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DeviceManagement."""
 
 
+class ConnectionProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The connection profile that the IoT hub uses for device connections."""
+
+    CLASSIC = "Classic"
+    """Classic connection profile."""
+    MQTT_V5 = "MqttV5"
+    """MQTT v5 connection profile."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -85,6 +94,28 @@ class DefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Deny."""
     ALLOW = "Allow"
     """Allow."""
+
+
+class DeviceRegistryIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the identity."""
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """Use a system-assigned managed identity to manage the ADR namespace."""
+    USER_ASSIGNED = "UserAssigned"
+    """Use a user-assigned managed identity to manage the ADR namespace."""
+
+
+class DeviceRegistryLinkingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether the IoT Hub is linked with an Azure Device Registry."""
+
+    IN_PROGRESS = "InProgress"
+    """The IoT Hub linking with an Azure Device Registry is in progress."""
+    SUCCESS = "Success"
+    """The IoT Hub is successfully linked with an Azure Device Registry."""
+    ORPHANED = "Orphaned"
+    """The linked Azure Device Registry is no longer associated with the IoT Hub."""
+    FAILED = "Failed"
+    """The IoT Hub failed to link with an Azure Device Registry."""
 
 
 class EndpointHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -249,6 +280,15 @@ class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """factoryResetDevice."""
     FIRMWARE_UPDATE = "firmwareUpdate"
     """firmwareUpdate."""
+
+
+class MessagePayloadFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported formats for message payloads delivered to routing endpoints."""
+
+    DO_OBSERVATION_V1 = "DOObservationV1"
+    """Formats the message as a com.do.telemetry.observation.v1 payload."""
+    NONE = "None"
+    """Preserves the original message payload."""
 
 
 class NetworkRuleIPAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):

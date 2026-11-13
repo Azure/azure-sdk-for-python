@@ -1,49 +1,35 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Explicit opt-in switch for the resilient task subsystem.
+"""Explicit task-runtime opt-in for the Invocations protocol.
 
-The resilient ``TaskManager`` is constructed by ``AgentServerHost`` **only when
-this switch is on**. It is the single source of truth for the durable task
-subsystem: when the switch is off, no ``TaskManager`` is installed, so
-``get_task_manager()`` raises
-:class:`~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized` and
-``.run()`` / ``.start()`` cannot run a task. When on, the manager is
-constructed and the startup crash-recovery scan (plus the periodic recovery
-loop) runs.
+The switch defaults to ``False`` and is evaluated before Invocations lifespan
+startup. Declaring ``@task`` or ``@multi_turn_task`` does not enable execution.
+The low-level ``AgentServerHost`` also uses this switch when no protocol has
+provided its own activation requirements.
 
-Recovery — and durable tasks as a whole — is therefore strictly opt-in. Merely
-declaring a durable task (``@task`` / ``@multi_turn_task``) does **not** turn
-the subsystem on; you must set this switch (directly, or via a protocol option
-that maps to it, e.g. the responses ``resilient_background`` server option).
+Responses does not read or change this switch. Its task runtime is enabled by
+``ResponsesServerOptions.resilient_background`` or ``steerable_conversations``.
+Protocol request scopes prevent one protocol's opt-in from enabling another.
 
-The switch is process-global and defaults to ``False``. Set it before
-``AgentServerHost`` lifespan startup (typically at import time)::
+Set the switch before Invocations lifespan startup::
 
     from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 
     set_resilient_tasks_enabled(True)
 """
 
-from azure.ai.agentserver.core._experimental import experimental
-
 _RESILIENT_TASKS_ENABLED: bool = False
 
 
-@experimental
 def set_resilient_tasks_enabled(value: bool = True) -> None:
-    """Opt in to (or clear) the resilient task subsystem process-wide.
+    """Enable or disable task execution for Invocations hosts.
 
-    This gates whether ``AgentServerHost`` constructs the ``TaskManager`` at
-    lifespan startup. Setting it to ``True`` constructs the manager, runs the
-    startup crash-recovery scan, and starts the periodic recovery loop. When it
-    is ``False`` no manager is installed: ``get_task_manager()`` raises
-    :class:`~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized` and a
-    durable task cannot run (callers such as the responses ``store=true`` path
-    swallow that and degrade to non-durable in-process execution).
-
-    Must be called before ``AgentServerHost`` lifespan startup (typically at
-    import time) to take effect. Defaults to enabling when called with no
+    Enabled hosts initialize a persistent task manager, perform startup recovery
+    and run the periodic recovery loop. Set this before lifespan startup.
+    Responses hosts use their own feature options independently, including on
+    cooperative multi-protocol hosts. This setting remains process-global for
+    Invocations configuration and defaults to enabling when called without an
     argument.
 
     :param value: ``True`` to enable the resilient task subsystem, ``False`` to
@@ -54,13 +40,10 @@ def set_resilient_tasks_enabled(value: bool = True) -> None:
     _RESILIENT_TASKS_ENABLED = bool(value)
 
 
-@experimental
 def resilient_tasks_enabled() -> bool:
-    """Return whether the resilient task subsystem is enabled.
+    """Return the Invocations task-runtime opt-in setting.
 
-    This is the authoritative gate: a ``False`` return means no ``TaskManager``
-    is constructed and durable tasks / crash recovery are inactive (declaring a
-    task does NOT change this — the subsystem is opt-in).
+    This does not report whether a Responses host has enabled its own runtime.
 
     :return: ``True`` if :func:`set_resilient_tasks_enabled` turned it on.
     :rtype: bool

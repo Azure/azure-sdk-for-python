@@ -165,15 +165,18 @@ async def test_with_keep_alive__emits_heartbeat_while_source_idle_from_start() -
     await stream.aclose()
 
 
-async def test_with_keep_alive__propagates_source_error() -> None:
+@pytest.mark.parametrize("error_type", [RuntimeError, asyncio.CancelledError])
+async def test_with_keep_alive__propagates_source_error(
+    error_type: type[BaseException],
+) -> None:
     """An error raised by the source surfaces to the consumer after buffered items."""
 
     async def source() -> AsyncIterator[str]:
         yield "a"
-        raise RuntimeError("boom")
+        raise error_type("boom")
 
     collected: List[str] = []
-    with pytest.raises(RuntimeError, match="boom"):
+    with pytest.raises(error_type, match="boom"):
         async for item in with_keep_alive(source(), 5):
             collected.append(item)
 

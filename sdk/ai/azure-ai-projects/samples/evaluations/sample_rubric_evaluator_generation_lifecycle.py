@@ -114,20 +114,14 @@ with (
     )
 
     # Retrieve the persisted generation job using the id returned in the LRO result.
-    assert (
-        evaluator.generation_job_id is not None
-    ), "Expected the generated evaluator to include a generation job id."
-    replay_job = project_client.evaluators.get_generation_job(
-        evaluator.generation_job_id
-    )
+    assert evaluator.generation_job_id is not None, "Expected the generated evaluator to include a generation job id."
+    replay_job = project_client.evaluators.get_generation_job(evaluator.generation_job_id)
     assert replay_job.id == evaluator.generation_job_id
 
     # 2. List the 5 most recent generation jobs in this project.
     #    `limit` controls the page size; use `itertools.islice` to cap the total.
     print("Recent generation jobs:")
-    for entry in itertools.islice(
-        project_client.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC), 5
-    ):
+    for entry in itertools.islice(project_client.evaluators.list_generation_jobs(limit=5, order=PageOrder.DESC), 5):
         print(
             f"  - id=`{entry.id}` status=`{cast(JobStatus, entry.status).value}` "
             f"evaluator_name=`{entry.evaluator_name}`"
@@ -139,9 +133,7 @@ with (
     # 4. Clean up. `delete_version` cascades to the generation job record, so
     # the explicit delete below may return 404.
     print("Cleaning up.")
-    project_client.evaluators.delete_version(
-        name=evaluator.name, version=evaluator.version
-    )
+    project_client.evaluators.delete_version(name=evaluator.name, version=evaluator.version)
     try:
         project_client.evaluators.delete_generation_job(evaluator.generation_job_id)
     except ResourceNotFoundError:

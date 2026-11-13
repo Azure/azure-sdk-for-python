@@ -157,6 +157,7 @@ def build_create_span_tags(
     tags: dict[str, Any] = {
         "service.name": _SERVICE_NAME,
         "gen_ai.provider.name": _PROVIDER_NAME,
+        "microsoft.foundry": _MICROSOFT_FOUNDRY_VALUE,
         "gen_ai.system": "responses",
         "gen_ai.operation.name": "invoke_agent",
         "gen_ai.response.id": ctx.response_id,
@@ -181,6 +182,7 @@ def build_create_span_tags(
 
 _SERVICE_NAME = "azure.ai.agentserver"
 _PROVIDER_NAME = "AzureAI Hosted Agents"
+_MICROSOFT_FOUNDRY_VALUE = "True"
 _MAX_REQUEST_ID_LEN = 256
 
 
@@ -197,6 +199,7 @@ def _initial_create_span_tags() -> dict[str, Any]:
     return {
         "service.name": _SERVICE_NAME,
         "gen_ai.provider.name": _PROVIDER_NAME,
+        "microsoft.foundry": _MICROSOFT_FOUNDRY_VALUE,
         "gen_ai.system": "responses",
         "gen_ai.operation.name": "invoke_agent",
     }
@@ -256,6 +259,7 @@ def build_create_otel_attrs(
     attrs: dict[str, Any] = {
         "gen_ai.response.id": ctx.response_id,
         "gen_ai.provider.name": _PROVIDER_NAME,
+        "microsoft.foundry": _MICROSOFT_FOUNDRY_VALUE,
         "service.name": _SERVICE_NAME,
         "gen_ai.operation.name": "invoke_agent",
         "gen_ai.request.model": ctx.model or "",

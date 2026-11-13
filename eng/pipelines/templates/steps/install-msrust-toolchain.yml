@@ -1,0 +1,98 @@
+parameters:
+  # Use an organization-local mirror; the job token cannot authenticate directly to DevDiv.
+  # See https://aka.ms/rustinado.
+  - name: ToolchainFeed
+    type: string
+    default: ''
+  # Directory containing rust-toolchain.toml, which selects the compiler version.
+  - name: WorkingDirectory
+    type: string
+    default: ''
+  - name: AdditionalTargets
+    type: string
+    default: ''
+  # Mirror crates.io for network-isolated builds; ~force-auth makes Cargo authenticate upstream requests.
+  - name: CratesIoFeed
+    type: string
+    default: 'sparse+https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-rust-public~force-auth/Cargo/index/'
+  - name: Condition
+    type: string
+    default: succeeded()
+
+steps:
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      if (-not $env:RUST_TOOLCHAIN_FEED) {
+        throw 'An organization-local Rust toolchain feed must be configured.'
+      }
+      if (-not $env:RUST_WORKING_DIRECTORY) {
+        throw 'The directory containing rust-toolchain.toml must be configured.'
+      }
+      if (-not (Test-Path (Join-Path $env:RUST_WORKING_DIRECTORY 'rust-toolchain.toml') -PathType Leaf)) {
+        throw "No rust-toolchain.toml found in $env:RUST_WORKING_DIRECTORY"
+      }
+    displayName: 'Validate Rust build configuration'
+    condition: ${{ parameters.Condition }}
+    env:
+      RUST_TOOLCHAIN_FEED: ${{ parameters.ToolchainFeed }}
+      RUST_WORKING_DIRECTORY: ${{ parameters.WorkingDirectory }}
+
+  # Installs the host toolchain; Linux build containers bootstrap their own.
+  - task: RustInstaller@1
+    displayName: 'Install internal Rust toolchain'
+    condition: ${{ parameters.Condition }}
+    inputs:
+      toolchainFeed: ${{ parameters.ToolchainFeed }}
+      workingDirectory: ${{ parameters.WorkingDirectory }}
+      ${{ if ne(parameters.AdditionalTargets, '') }}:
+        additionalTargets: ${{ parameters.AdditionalTargets }}
+
+  # Configure Cargo after RustInstaller defines CARGO_HOME.
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      Write-Host "##vso[task.setvariable variable=MSRUSTUP_FEED_URL]$env:RUST_TOOLCHAIN_FEED"
+      $cargoHome = $env:CARGO_HOME
+      if (-not $cargoHome) {
+        $cargoHome = [System.IO.Path]::Combine($HOME, '.cargo')
+      }
+      New-Item -ItemType Directory -Force -Path $cargoHome | Out-Null
+      $configPath = Join-Path $cargoHome 'config.toml'
+      if (Test-Path $configPath) {
+        throw "Refusing to overwrite an existing Cargo configuration: $configPath"
+      }
+
+      # Keep the registry name aligned with the forwarded CARGO_REGISTRIES_* variables.
+      # Use the Git CLI so dependency fetches honor the agent's Git configuration.
+      @"
+      [registries]
+      azure-sdk-for-rust-public = { index = "$env:CARGO_FEED_URL" }
+
+      [source.crates-io]
+      replace-with = "azure-sdk-for-rust-public"
+
+      [net]
+      git-fetch-with-cli = true
+      "@ | Set-Content -Path $configPath -Encoding utf8
+
+      Write-Host "##vso[task.setvariable variable=CargoConfigPath]$configPath"
+      # Linux containers cannot see this config; the registry environment variable does not replace sources.
+      # Package hooks must write their own Cargo source replacement.
+      Write-Host "##vso[task.setvariable variable=CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_INDEX]$env:CARGO_FEED_URL"
+    displayName: 'Configure Rust build feeds'
+    condition: ${{ parameters.Condition }}
+    env:
+      RUST_TOOLCHAIN_FEED: ${{ parameters.ToolchainFeed }}
+      CARGO_FEED_URL: ${{ parameters.CratesIoFeed }}
+
+  - task: NuGetAuthenticate@1
+    displayName: 'Acquire an Azure Artifacts token'
+    condition: ${{ parameters.Condition }}
+
+  # CargoAuthenticate reads SYSTEM_ACCESSTOKEN; use the token acquired by NuGetAuthenticate.
+  - task: CargoAuthenticate@0
+    displayName: 'Authenticate cargo to the Azure Artifacts feed'
+    condition: ${{ parameters.Condition }}
+    inputs:
+      configFile: $(CargoConfigPath)
+    env:
+      SYSTEM_ACCESSTOKEN: $(VSS_NUGET_ACCESSTOKEN)

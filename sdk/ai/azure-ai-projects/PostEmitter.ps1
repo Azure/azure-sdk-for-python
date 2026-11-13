@@ -131,15 +131,48 @@ foreach ($f in $files) {
 }
 
 # Fix Sphinx docutils warnings in get_session_log_stream docstrings (sync + async).
-# The emitter wraps bullet/code-block lines with insufficient indentation.
+# The pinned TypeSpec docs have correct indentation; the producing emitter version is unverified.
+# Follow up by reporting the wrapping to microsoft/typespec with the tsp-location.yaml inputs.
+# Remove this workaround when the emitter preserves bullet continuations and SSE data lines.
+function Repair-SessionLogDocstring {
+    param([string]$Content)
+
+    $pattern = '(?ms)^    (?:async )?def get_session_log_stream\(.*?^        """.*?^        """'
+    [regex]::Replace($Content, $pattern, {
+        param($docstring)
+
+        $newLine = if ($docstring.Value.Contains("`r`n")) { "`r`n" } else { "`n" }
+        $out = [System.Collections.Generic.List[string]]::new()
+        $bulletIndent = $null
+        $dataIndent = $null
+        foreach ($line in [regex]::Split($docstring.Value, '\r?\n')) {
+            $trimmed = $line.TrimStart()
+            $indent = $line.Length - $trimmed.Length
+            if (-not $trimmed -or $trimmed -match '^(?:\*\s|\.\.\s|:\w|"""|event:|data:)') {
+                $bulletIndent = $null
+                $dataIndent = $null
+            }
+            if ($null -ne $dataIndent -and $indent -lt $dataIndent) {
+                $out[$out.Count - 1] += ' ' + $trimmed
+                continue
+            }
+            $dataIndent = if ($trimmed.StartsWith('data: ')) { $indent } else { $null }
+            if ($trimmed -match '^\*\s') {
+                $bulletIndent = $indent
+            }
+            elseif ($null -ne $bulletIndent -and $indent -lt $bulletIndent + 2) {
+                $line = (' ' * ($bulletIndent + 2)) + $trimmed
+            }
+            $out.Add($line)
+        }
+        $out -join $newLine
+    })
+}
+
 $files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
 foreach ($f in $files) {
     $c = Get-Content $f -Raw
-    $c = $c -replace 'schema\r?\n\s+is not contractual and may include additional keys or change format\r?\n\s+over time [^\r\n]*clients should treat it as an opaque string\)', 'schema is not contractual and may include additional keys or change format over time; clients should treat it as an opaque string)'
-    $c = $c -replace '(message\":\"Starting)\r?\n\s+(FoundryCBAgent server on port 8088\"})', '$1 $2'
-    $c = $c -replace '(message\":\"INFO: Application)\r?\n\s+(startup complete\.\"})', '$1 $2'
-    $c = $c -replace '(message\":\"Successfully)\r?\n\s+(connected to container\"})', '$1 $2'
-    $c = $c -replace '(message\":\"No logs since)\r?\n\s+(last 60 seconds\"})', '$1 $2'
+    $c = Repair-SessionLogDocstring -Content $c
     Set-Content $f $c -NoNewline
 }
 
@@ -192,51 +225,20 @@ foreach ($f in $files) {
     Set-Content $f $out
 }
 
-# Remove duplicate top-level variable declarations from generated _unions.py.
-# Keep the first declaration for each name and remove any later declarations, including multiline aliases.
-$unionsFile = Resolve-Path 'azure\ai\projects\_unions.py'
-$deduplicateUnionsScript = @'
-import ast
-import sys
-from pathlib import Path
+# Repair same-module references to the preceding EvalItemContentItem alias.
+# The OpenAI schema permits one item or a list; no schema change is needed.
+# The producing emitter version is unverified. Report with tsp-location.yaml inputs to
+# microsoft/typespec and remove this workaround once unpatched output passes the regression test.
+function Repair-EvalItemContentAlias {
+    param([string]$Content)
 
-path = Path(sys.argv[1])
-source = path.read_text(encoding="utf-8-sig")
-tree = ast.parse(source, filename=str(path))
-seen = set()
-duplicate_ranges = []
-
-for statement in tree.body:
-    names = []
-    if isinstance(statement, ast.Assign) and len(statement.targets) == 1 and isinstance(statement.targets[0], ast.Name):
-        names = [statement.targets[0].id]
-    elif isinstance(statement, ast.AnnAssign) and isinstance(statement.target, ast.Name):
-        names = [statement.target.id]
-
-    duplicate_names = [name for name in names if name in seen]
-    if duplicate_names:
-        duplicate_ranges.append((statement.lineno, statement.end_lineno))
-    else:
-        seen.update(names)
-
-if duplicate_ranges:
-    lines = source.splitlines(keepends=True)
-    for start, end in reversed(duplicate_ranges):
-        del lines[start - 1 : end]
-    path.write_text("".join(lines), encoding="utf-8")
-'@
-
-$deduplicateUnionsScriptFile = Join-Path ([System.IO.Path]::GetTempPath()) ("azure-ai-projects-deduplicate-unions-{0}.py" -f [guid]::NewGuid().ToString('N'))
-Set-Content $deduplicateUnionsScriptFile $deduplicateUnionsScript -Encoding utf8
-try {
-    & (Get-Command python -ErrorAction Stop).Source $deduplicateUnionsScriptFile $unionsFile
-    if ($LASTEXITCODE -ne 0) {
-        throw "Duplicate union cleanup failed with exit code $LASTEXITCODE."
-    }
+    $Content -replace '(["''])_unions\.EvalItemContentItem\1', 'EvalItemContentItem'
 }
-finally {
-    Remove-Item $deduplicateUnionsScriptFile -ErrorAction SilentlyContinue
-}
+
+$f = 'azure\ai\projects\_unions.py'
+$c = Get-Content $f -Raw -ErrorAction Stop
+$c = Repair-EvalItemContentAlias -Content $c
+Set-Content $f $c -NoNewline -ErrorAction Stop
 
 # Regenerate API review artifacts and the public method inventory.
 $pythonExecutable = (Get-Command python -ErrorAction Stop).Source

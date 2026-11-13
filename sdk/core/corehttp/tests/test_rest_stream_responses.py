@@ -38,6 +38,7 @@ def test_iter_raw_on_iterable(port, transport):
         assert raw == b"Hello, world!"
 
 
+@pytest.mark.skip(reason="1ES network-isolation proxy can return HTTP errors for unknown hosts instead of DNS errors.")
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
 def test_iter_with_error(port, transport):
     request = HttpRequest("GET", "/errors/403")

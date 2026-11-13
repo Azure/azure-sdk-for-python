@@ -6,44 +6,27 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates reading a persisted voice conversation back over
-    the read-only conversation API exposed by `project_client.beta.voice_agents.conversations`:
-    the conversation envelope, its responses (model inference turns), and its
-    ordered items (the transcript). Conversations are created and written by
-    the voice orchestrator during a live session; this client can only read
-    them, and only when the agent was configured with `store=True` (see
-    sample_voice_agent_basic.py).
+    Read a stored Realtime conversation, its model replies, and its transcript
+    through project_client.voice_agents.conversations.
 
-    Runs with no setup beyond the endpoint: if FOUNDRY_VOICE_CONVERSATION_ID is
-    not set, this sample creates a temporary voice agent, holds one short
-    realtime text turn to produce a real conversation, reads it back, then
-    deletes the agent version it created. Set FOUNDRY_VOICE_AGENT_NAME to hold
-    that conversation against your own existing agent instead -- it is never
-    created, modified, or deleted by this sample. Additionally set
-    FOUNDRY_VOICE_CONVERSATION_ID to skip holding a new conversation entirely
-    and just read back one your agent already produced.
+    With no conversation ID, send one text message to create a conversation.
+    With no agent name, also create a temporary agent and delete its version
+    afterward. An existing agent is not changed or deleted. Conversations
+    created on an existing agent remain stored.
 
 USAGE:
     python sample_voice_agent_read_conversation.py
 
-    Before running the sample:
+    pip install "azure-ai-projects[voice]>=2.11.0" python-dotenv
 
-    pip install "azure-ai-projects[voice]>=2.7.0" python-dotenv
-
-    Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
-    2) FOUNDRY_VOICE_AGENT_NAME - Optional. The name of an existing voice agent
-       (configured with `store=True`) to hold or read a conversation on.
-       Defaults to a temporary agent, created and deleted by this sample, when
-       unset.
-    3) FOUNDRY_VOICE_CONVERSATION_ID - Optional. The id of a persisted
-       conversation owned by FOUNDRY_VOICE_AGENT_NAME. If unset, this sample
-       holds one short realtime text turn to produce one; see
-       voice_sample_util.py in this folder and
-       sample_voice_agent_realtime_text_conversation.py for a full interactive
-       version.
-    4) FOUNDRY_VOICE_AGENT_MODEL - Optional. The managed (service-hosted) realtime model
-       identifier, used only when creating the temporary agent. Defaults to "gpt-realtime".
+    Environment variables:
+    1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
+    2) FOUNDRY_VOICE_AGENT_NAME (optional) - Existing agent with store=True;
+       omit to create a temporary agent.
+    3) FOUNDRY_VOICE_CONVERSATION_ID (optional) - Completed conversation from
+       that agent. Omit to create a conversation with a text message.
+    4) FOUNDRY_VOICE_AGENT_MODEL (optional) - Model for a temporary agent;
+       defaults to "gpt-realtime".
 """
 
 import os
@@ -76,9 +59,9 @@ agent_name = agent_name or "sample-read-conversation-agent"
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
-    conversations = project_client.beta.voice_agents.conversations
+    conversations = project_client.voice_agents.conversations
     created_version = None
     try:
         if not conversation_id:
@@ -110,15 +93,19 @@ with (
         print("Responses:")
         for response in conversations.list_responses(agent_name, conversation_id):
             print(f"  - {response.id}: status={response.status}")
+            response_id = response.id
+            if not response_id:
+                print("      No response ID available; skipping response details.")
+                continue
 
             # Read a single response back, with its output and token usage.
-            detail = conversations.get_response(agent_name, conversation_id, response.id)
+            detail = conversations.get_response(agent_name, conversation_id, response_id)
             print(f"      usage={detail.usage}")
 
             # The items produced by this specific response. Conversation items
             # belong to an open union, so on read they surface as mappings
             # keyed by their wire fields (``type``, ``id``, ...).
-            for response_item in conversations.list_response_items(agent_name, conversation_id, response.id):
+            for response_item in conversations.list_response_items(agent_name, conversation_id, response_id):
                 print(f"      item {response_item.get('type')} id={response_item.get('id')}")
 
         # The ordered conversation items -- the full transcript (user + assistant + tool events).
@@ -134,8 +121,8 @@ with (
 
         # Deleting a conversation removes it and all of its responses, items, and audio.
         # This is destructive, so it is shown but not run by default. Uncomment to enable.
-        # deleted = conversations.delete(agent_name, conversation_id)
-        # print(f"Deleted conversation {deleted.id}: deleted={deleted.deleted}")
+        # conversations.delete(agent_name, conversation_id)
+        # print(f"Deleted conversation {conversation_id}")
     except HttpResponseError as e:
         # 404 typically means the conversation was not persisted (agent ran with `store=False`).
         print(f"Service responded with an error: {e.status_code} {e.reason}")

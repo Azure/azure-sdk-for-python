@@ -1,0 +1,51 @@
+parameters:
+  - name: languageRepoResource
+    type: string
+  - name: toolsRef
+    type: string
+  - name: languageToolsRef
+    type: string
+  - name: poolName
+    type: string
+    default: 'azsdk-pool'
+  - name: imageOverride
+    type: string
+    default: 'ubuntu-24.04'
+
+jobs:
+  - template: /eng/common/pipelines/templates/jobs/apireview-hub-build-tools-base.yml
+    parameters:
+      languageRepoResource: ${{ parameters.languageRepoResource }}
+      toolsRef: ${{ parameters.toolsRef }}
+      languageToolsRef: ${{ parameters.languageToolsRef }}
+      poolName: ${{ parameters.poolName }}
+      imageOverride: ${{ parameters.imageOverride }}
+      stepList:
+        - bash: |
+            set -Eeuo pipefail
+
+            required_files=(
+              "eng/apiview_reqs.txt"
+              "eng/common/scripts/Export-APIViewMarkdown.ps1"
+              "eng/scripts/extract_apiview_metadata.py"
+            )
+            for relative_path in "${required_files[@]}"; do
+              source_path="$LANGUAGE_TOOLS_SOURCE_DIRECTORY/$relative_path"
+              if [ ! -f "$source_path" ]; then
+                echo "Expected Python API review tool file was not found at $source_path" >&2
+                exit 1
+              fi
+              install -D "$source_path" "$BIN_OUTPUT_DIRECTORY/$relative_path"
+            done
+
+            tools_package="$LANGUAGE_TOOLS_SOURCE_DIRECTORY/eng/tools/azure-sdk-tools"
+            if [ ! -d "$tools_package" ]; then
+              echo "Expected Python SDK tools package was not found at $tools_package" >&2
+              exit 1
+            fi
+            mkdir -p "$BIN_OUTPUT_DIRECTORY/eng/tools/azure-sdk-tools"
+            cp -R "$tools_package/." "$BIN_OUTPUT_DIRECTORY/eng/tools/azure-sdk-tools/"
+          displayName: Stage Python API review tools
+          env:
+            LANGUAGE_TOOLS_SOURCE_DIRECTORY: $(LanguageToolsSourceDirectory)
+            BIN_OUTPUT_DIRECTORY: $(BinOutputDirectory)

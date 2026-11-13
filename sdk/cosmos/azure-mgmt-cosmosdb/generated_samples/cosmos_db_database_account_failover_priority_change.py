@@ -42,6 +42,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-04-01-preview/CosmosDBDatabaseAccountFailoverPriorityChange.json
+# x-ms-original-file: 2026-07-15/CosmosDBDatabaseAccountFailoverPriorityChange.json
 if __name__ == "__main__":
     main()

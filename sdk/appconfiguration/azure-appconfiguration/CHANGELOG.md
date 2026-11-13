@@ -1,12 +1,16 @@
 # Release History
 
-## 1.9.1 (Unreleased)
+## 1.10.1 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.10.0 (2026-10-08)
 
 ### Other Changes
 

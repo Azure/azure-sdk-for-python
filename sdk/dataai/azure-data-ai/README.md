@@ -1,21 +1,20 @@
 # Azure Data AI client library for Python
 
-`azure-data-ai` provides access to **Azure Data AI**, hosted by Azure Inference Service. This initial preview
+`azure-data-ai` provides access to **Azure Data AI**, hosted by Azure Inference Service. It
 supports semantic reranking: rank caller-supplied documents by their relevance to a
 query, optionally returning the documents and sentence-level scores.
 
-The package uses the `2026-09-01-preview` service API.
+The package uses the `2026-10-30` service API.
 
 ## Getting started
 
 ### Install the package
 
 ```bash
-python -m pip install --pre azure-data-ai
+python -m pip install azure-data-ai
 ```
 
-For local development before this preview is published, run `python -m pip install -e .`
-from this package directory instead.
+For local development, run `python -m pip install -e .` from this package directory instead.
 
 ### Prerequisites
 
@@ -131,7 +130,7 @@ for score in result.scores or []:
 | `batchSize`           | `int`       | Optional. Number of documents processed per batch, from 1 to 2147483647.                                                                               |
 | `sort`                | `bool`      | Optional. Return scores sorted by relevance.                                                                                                           |
 | `documentType`        | `str`       | Optional document format, such as `text` or `json`. JSON documents are JSON-encoded strings.                                                           |
-| `targetPaths`         | `str`       | Required for JSON documents. Use dot notation for nested properties, such as `meta.content`, and commas for multiple paths, such as `meta.content,id`. |
+| `targetPaths`         | `list[str]` | Required for JSON documents. Up to 100 paths in dot notation, such as `["meta.content", "id"]`. The model's `target_paths` also takes a list.           |
 | `returnSentenceScore` | `bool`      | Optional. Include sentence-level scores.                                                                                                               |
 
 Put these options inside the request dictionary, not in method keyword arguments.
@@ -175,7 +174,7 @@ result = client.semantic_rerank(
         ],
         "model": "semantic-reranker-v1",
         "documentType": "json",
-        "targetPaths": "description",
+        "targetPaths": ["description"],
         "topK": 1,
         "batchSize": 2,
         "sort": True,
