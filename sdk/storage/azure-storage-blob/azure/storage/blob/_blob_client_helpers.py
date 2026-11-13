@@ -18,6 +18,7 @@ from typing import (
     Iterable,
     List,
     Optional,
+    Sequence,
     Tuple,
     Union,
     TYPE_CHECKING,
@@ -760,7 +761,7 @@ class _OrderedBlockLookupList(BlockLookupList):
     mixes states must keep each block in its original position.
     """
 
-    def __init__(self, block_list: List[Union[BlobBlock, str]]) -> None:
+    def __init__(self, block_list: Sequence[Union[BlobBlock, str]]) -> None:
         super().__init__(committed=[], uncommitted=[], latest=[])
         runs: List[Tuple[str, List[str]]] = []
         for block in block_list:
