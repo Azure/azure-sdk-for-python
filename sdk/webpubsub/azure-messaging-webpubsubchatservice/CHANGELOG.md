@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b2 (2026-11-13)
 
 ### Features Added
 
@@ -11,7 +11,6 @@
 
   - Changed the default service API version from `2026-02-01-preview` to `2026-08-01-preview` for both existing and newly added Chat operations
   - Clarified that message IDs are pagination cursors for `list_messages`. The pager follows the service's `nextLink`; resume with `by_page(continuation_token=...)`.
-  - Replaced standalone generated samples with handwritten operation examples and Model/TypedDict request-body examples.
 
 ### Breaking Changes
 
