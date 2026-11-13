@@ -9,7 +9,7 @@
 ### Bugs Fixed
 
 - Fixed a regression in 7.15.0 where a management operation (lock renewal, settlement over the management link, peek, session state, scheduling) on a connection whose links the service had already detached, for example with `amqp:link:detach-forced`, raised a non-retryable `ServiceBusError` wrapping `ValueError("Management Operation error occurred.")` instead of retrying. A broken management link now raises its AMQP cause: transient detaches and connection closes surface as a retryable `ServiceBusConnectionError` and reconnect, while `amqp:unauthorized-access` stays a non-retryable `ServiceBusAuthorizationError`. This also stops `AutoLockRenewer` from giving up on the lock after such a detach.
-- Fixed a hang where a management operation waited indefinitely when the `$cbs` authentication link had been detached; it now raises the link's AMQP cause, or a retryable error when the service gave none.
+- Fixed a hang where a management operation waited indefinitely when the `$cbs` authentication link had already been detached; it now raises the link's AMQP cause, or a retryable error when the service gave none.
 
 ### Other Changes
 

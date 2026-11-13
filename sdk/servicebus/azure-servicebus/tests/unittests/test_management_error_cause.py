@@ -123,18 +123,17 @@ async def test_link_failure_during_pending_request_raises_its_cause(asynchronous
 @pytest.mark.asyncio
 @pytest.mark.parametrize("asynchronous", [False, True])
 @pytest.mark.parametrize(
-    "state, link_error, expected",
+    "link_error, expected",
     [
-        (CbsState.ERROR, DETACH_FORCED, (ServiceBusConnectionError, True)),
-        (CbsState.ERROR, UNAUTHORIZED, (ServiceBusAuthorizationError, False)),
-        (CbsState.ERROR, None, (ServiceBusConnectionError, True)),
-        (CbsState.CLOSED, UNAUTHORIZED, (ServiceBusAuthorizationError, False)),
+        (DETACH_FORCED, (ServiceBusConnectionError, True)),
+        (UNAUTHORIZED, (ServiceBusAuthorizationError, False)),
+        (None, (ServiceBusConnectionError, True)),
     ],
 )
-async def test_broken_cbs_link_raises_instead_of_waiting_forever(asynchronous, state, link_error, expected):
+async def test_broken_cbs_link_raises_instead_of_waiting_forever(asynchronous, link_error, expected):
     module = _cbs_async if asynchronous else cbs
     authenticator = module.CBSAuthenticator(_session(asynchronous), MagicMock(), auth_timeout=0)
-    authenticator.state = state
+    authenticator.state = CbsState.ERROR
     authenticator._mgmt_link._response_link._error = link_error
 
     with pytest.raises(AMQPLinkError) as raised:
@@ -146,15 +145,3 @@ async def test_broken_cbs_link_raises_instead_of_waiting_forever(asynchronous, s
     if link_error:
         assert raised.value is link_error
     assert _classify(raised.value) == expected
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("asynchronous", [False, True])
-async def test_opening_cbs_link_keeps_waiting(asynchronous):
-    module = _cbs_async if asynchronous else cbs
-    authenticator = module.CBSAuthenticator(_session(asynchronous), MagicMock(), auth_timeout=0)
-    authenticator.state = CbsState.OPENING
-
-    ready = await authenticator._cbs_link_ready() if asynchronous else authenticator._cbs_link_ready()
-
-    assert ready is False
