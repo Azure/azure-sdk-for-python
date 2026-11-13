@@ -93,6 +93,8 @@ class ColumnDataTypeHintEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     /subscriptions/{...}/resourceGroups/{...}/providers/Microsoft.{...}/{...}/{...}/{...}..."""
     IP = "ip"
     """A standard V4/V6 ip address following the standard shape, x.x.x.x/y:y:y:y:y:y:y:y."""
+    VECTOR16 = "vector16"
+    """A vector of single-precision floating-point values used for semantic / similarity search."""
 
 
 class ColumnTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -430,6 +432,16 @@ class StorageInsightState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ERROR."""
 
 
+class SummaryLogsIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity."""
+
+    NONE = "None"
+    """The default identity type. summary logs do not have a managed identity."""
+    USER_ASSIGNED = "UserAssigned"
+    """summary logs is associated with a user assigned managed identity. User assigned identities are
+    created as separate Azure resources and can be shared across multiple summary logs."""
+
+
 class SummaryLogsProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Table's current provisioning state. If set to 'updating', indicates a resource lock due to
     ongoing operation, forbidding any update to the table until the ongoing operation is concluded.
@@ -457,6 +469,16 @@ class TablePlanEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """High-value logs used for continuous monitoring, real-time detection, and performance analytics."""
     AUXILIARY = "Auxiliary"
     """Low-touch logs, such as verbose logs, and data required for auditing and compliance."""
+
+
+class TableProtectionLevelEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The protection level of the table. Determines the default data access isolation behavior."""
+
+    GENERAL = "General"
+    """The default protection level. Table data is accessible through standard permissions."""
+    PROTECTED = "Protected"
+    """Table data is isolated by default. Accessing or exporting data requires explicit, scoped
+    authorization."""
 
 
 class TableSubTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
