@@ -1145,7 +1145,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements,too-man
             nonce_counter += 1
 
         # Read the caller requested data from the decrypted content
-        return decrypted_content[start_offset:end_offset]
+        return bytes(decrypted_content[start_offset:end_offset])
 
     raise ValueError("Specified encryption version is not supported.")
 
