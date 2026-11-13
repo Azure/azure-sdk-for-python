@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/OpenAI_GetStatus.json
+# x-ms-original-file: 2026-03-15-preview/OpenAI_GetStatus.json
 if __name__ == "__main__":
     main()

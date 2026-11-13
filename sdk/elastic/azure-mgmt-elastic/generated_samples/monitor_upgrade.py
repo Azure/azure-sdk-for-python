@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-06-01/Monitor_Upgrade.json
+# x-ms-original-file: 2026-03-15-preview/Monitor_Upgrade.json
 if __name__ == "__main__":
     main()
