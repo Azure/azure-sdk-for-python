@@ -17,6 +17,19 @@ from ._operations import BackupInstancesOperations  # type: ignore
 from ._operations import BackupVaultOperationResultsOperations  # type: ignore
 from ._operations import DeletedBackupVaultsOperations  # type: ignore
 from ._operations import ResourceGuardsOperations  # type: ignore
+from ._operations import DppCrossTenantVaultMappingsOperations  # type: ignore
+from ._operations import DppCrossTenantVaultMappingStatusOperations  # type: ignore
+from ._operations import BackupInstancesFromDppCrossTenantVaultOperations  # type: ignore
+from ._operations import BackupInstanceFromDppCrossTenantVaultOperations  # type: ignore
+from ._operations import RestoresFromDppCrossTenantVaultOperations  # type: ignore
+from ._operations import ValidateRestoreFromDppCrossTenantVaultOperations  # type: ignore
+from ._operations import RestorableTimeRangesFromDppCrossTenantVaultOperations  # type: ignore
+from ._operations import RecoveryPointsFromDppCrossTenantVaultOperations  # type: ignore
+from ._operations import RecoveryPointFromDppCrossTenantVaultOperations  # type: ignore
+from ._operations import BackupJobsFromDppCrossTenantVaultOperations  # type: ignore
+from ._operations import JobFromDppCrossTenantVaultOperations  # type: ignore
+from ._operations import BackupInstanceOperationStatusFromDppCrossTenantVaultOperations  # type: ignore
+from ._operations import BackupInstanceOperationResultFromDppCrossTenantVaultOperations  # type: ignore
 from ._operations import BackupVaultsOperations  # type: ignore
 from ._operations import OperationStatusBackupVaultContextOperations  # type: ignore
 from ._operations import ExportJobsOperations  # type: ignore
@@ -46,6 +59,19 @@ __all__ = [
     "BackupVaultOperationResultsOperations",
     "DeletedBackupVaultsOperations",
     "ResourceGuardsOperations",
+    "DppCrossTenantVaultMappingsOperations",
+    "DppCrossTenantVaultMappingStatusOperations",
+    "BackupInstancesFromDppCrossTenantVaultOperations",
+    "BackupInstanceFromDppCrossTenantVaultOperations",
+    "RestoresFromDppCrossTenantVaultOperations",
+    "ValidateRestoreFromDppCrossTenantVaultOperations",
+    "RestorableTimeRangesFromDppCrossTenantVaultOperations",
+    "RecoveryPointsFromDppCrossTenantVaultOperations",
+    "RecoveryPointFromDppCrossTenantVaultOperations",
+    "BackupJobsFromDppCrossTenantVaultOperations",
+    "JobFromDppCrossTenantVaultOperations",
+    "BackupInstanceOperationStatusFromDppCrossTenantVaultOperations",
+    "BackupInstanceOperationResultFromDppCrossTenantVaultOperations",
     "BackupVaultsOperations",
     "OperationStatusBackupVaultContextOperations",
     "ExportJobsOperations",
