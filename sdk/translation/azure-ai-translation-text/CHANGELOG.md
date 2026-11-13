@@ -1,5 +1,17 @@
 # Release History
 
+## 2.0.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed `TextTranslationClient` using a custom `audience` verbatim as the token scope. `/.default` is now appended to the audience when not already present, so that `audience="api://my-app"` requests a token for `api://my-app/.default`.
+
+### Other Changes
+
 ## 2.0.0 (2026-06-06)
 
 ### Features Added
