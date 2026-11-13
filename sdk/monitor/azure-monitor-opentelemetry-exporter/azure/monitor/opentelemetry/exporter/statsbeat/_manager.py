@@ -1,15 +1,23 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import logging
+import os
 import threading
-from typing import Callable, Iterable, List, Optional, Any, Dict
+from typing import Callable, Iterable, List, Optional, Any, Dict, TYPE_CHECKING
 
 from opentelemetry.metrics import CallbackOptions, Observation
-from opentelemetry.sdk.metrics import MeterProvider
-from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk.metrics import MeterProvider, MetricsTimeoutError
+from opentelemetry.sdk.metrics.export import (
+    MetricExporter,
+    MetricExportResult,
+    MetricsData,
+    PeriodicExportingMetricReader,
+)
 from opentelemetry.sdk.resources import Resource
 
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
+from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
+from azure.monitor.opentelemetry.exporter._constants import _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatMetrics
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     is_statsbeat_enabled,
@@ -20,12 +28,93 @@ from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     _get_stats_long_export_interval,
     _get_stats_short_export_interval,
     _get_connection_string_for_region_from_config,
+    _get_region_from_endpoint,
 )
 from azure.monitor.opentelemetry.exporter._utils import Singleton
+
+if TYPE_CHECKING:
+    from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
 
 logger = logging.getLogger(__name__)
 
 _STATSBEAT_INITIAL_EXPORT_WARMUP_SECONDS = 15  # 15 second warmup delay
+
+
+class _StatsbeatExporter(MetricExporter):
+    """Keep the metric reader alive while replacing its destination."""
+
+    def __init__(self, exporter: "AzureMonitorMetricExporter") -> None:
+        super().__init__(
+            preferred_temporality=exporter._preferred_temporality,  # pylint: disable=protected-access
+            preferred_aggregation=exporter._preferred_aggregation,  # pylint: disable=protected-access
+        )
+        self._exporter = exporter
+        self._lock = threading.RLock()
+        self._shutdown = False
+
+    def export(self, metrics_data: MetricsData, timeout_millis: float = 10_000, **kwargs: Any) -> MetricExportResult:
+        with self._lock:
+            if self._shutdown:
+                return MetricExportResult.FAILURE
+            return self._exporter.export(metrics_data, timeout_millis=timeout_millis, **kwargs)
+
+    def force_flush(self, timeout_millis: float = 10_000) -> bool:
+        with self._lock:
+            return not self._shutdown and self._exporter.force_flush(timeout_millis)
+
+    def shutdown(self, timeout_millis: float = 30_000, **kwargs: Any) -> None:
+        with self._lock:
+            if not self._shutdown:
+                self._shutdown = True
+                try:
+                    self._exporter.shutdown(timeout_millis=timeout_millis, **kwargs)
+                finally:
+                    self._exporter.client.close()
+
+    def update_connection_string(self, config: "StatsbeatConfig") -> None:
+        # The caller holds _lock through the corresponding dimension/config update.
+        from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
+
+        replacement = AzureMonitorMetricExporter(
+            connection_string=config.connection_string,
+            disable_offline_storage=True,
+            is_sdkstats=True,
+        )
+        try:
+            self._exporter.shutdown()
+            self._exporter.client.close()
+        except Exception:
+            replacement.shutdown()
+            replacement.client.close()
+            raise
+        self._exporter = replacement
+
+
+class _StatsbeatMetricReader(PeriodicExportingMetricReader):
+    """Keep observable collection and export on the same Statsbeat route."""
+
+    def __init__(self, exporter: _StatsbeatExporter, export_interval_millis: float) -> None:
+        self._collection_lock = exporter._lock  # pylint: disable=protected-access
+        super().__init__(exporter, export_interval_millis=export_interval_millis)
+
+    # MetricReader.collect is final, so synchronize its periodic and flush entry points.
+    def _ticker(self) -> None:
+        interval_seconds = self._export_interval_millis / 1000
+        while not self._shutdown_event.wait(interval_seconds):
+            self._collect_and_export(self._export_timeout_millis)
+        self._collect_and_export(self._export_interval_millis)
+
+    def _collect_and_export(self, timeout_millis: float) -> None:
+        try:
+            with self._collection_lock:
+                self.collect(timeout_millis=timeout_millis)
+        except MetricsTimeoutError:
+            logger.warning("Statsbeat metric collection timed out.", exc_info=True)
+
+    def force_flush(self, timeout_millis: float = 10_000) -> bool:
+        with self._collection_lock:
+            flushed: bool = super().force_flush(timeout_millis=timeout_millis)
+            return flushed
 
 
 class StatsbeatConfig:
@@ -34,7 +123,7 @@ class StatsbeatConfig:
     def __init__(
         self,
         endpoint: str,
-        region: str,
+        region: Optional[str],
         instrumentation_key: str,
         disable_offline_storage: bool = False,
         credential: Optional[Any] = None,
@@ -78,13 +167,9 @@ class StatsbeatConfig:
         if not hasattr(exporter, "_endpoint") or not exporter._endpoint:
             logger.warning("Exporter is missing a valid endpoint.")
             return None
-        if not hasattr(exporter, "_region") or not exporter._region:
-            logger.warning("Exporter is missing a valid region.")
-            return None
-
         return cls(
             endpoint=exporter._endpoint,
-            region=exporter._region,
+            region=getattr(exporter, "_region", None),
             instrumentation_key=exporter._instrumentation_key,
             # Carry the user's setting only to report the DISK_RETRY feature bit. Statsbeat's own
             # exporter never persists to disk (see _do_initialize), regardless of the user's setting.
@@ -113,14 +198,11 @@ class StatsbeatConfig:
         if not base_config.instrumentation_key:
             logger.warning("Base configuration is missing a valid instrumentation key.")
             return None
-        if not base_config.region:
-            logger.warning("Base configuration is missing a valid region.")
-            return None
         if not base_config.endpoint:
             logger.warning("Base configuration is missing a valid endpoint.")
             return None
 
-        connection_string = _get_connection_string_for_region_from_config(base_config.region, config_dict)
+        connection_string = _get_connection_string_for_region_from_config(base_config.region or "", config_dict)
         if connection_string is None:
             # If something went wrong in fetching connection string, fall back to the original
             connection_string = base_config.connection_string
@@ -150,16 +232,21 @@ class StatsbeatConfig:
         return hash((str(self.connection_string), self.disable_offline_storage))
 
 
-class StatsbeatManager(metaclass=Singleton):
+class StatsbeatManager(metaclass=Singleton):  # pylint: disable=too-many-instance-attributes
     """Thread-safe singleton manager for Statsbeat metrics collection with dynamic reconfiguration support."""
 
     def __init__(self) -> None:
         # Initialize instance attributes. Called only once due to Singleton metaclass.
         self._lock = threading.Lock()
+        self._configuration_lock = threading.RLock()
+        self._shutdown_generation = 0
+        self._shutdown_in_progress = False
         self._initialized: bool = False  # type: ignore
         self._metrics: Optional[_StatsbeatMetrics] = None  # type: ignore
         self._meter_provider: Optional[MeterProvider] = None  # type: ignore
         self._warmup_timer: Optional[threading.Timer] = None
+        self._exporter: Optional[_StatsbeatExporter] = None
+        self._redirected = False
 
         # Set during first initialization, preserved in shutdown for potential re-initialization
         self._config: Optional[StatsbeatConfig] = None  # type: ignore
@@ -211,30 +298,41 @@ class StatsbeatManager(metaclass=Singleton):
             return False
         if not config.endpoint:
             return False
-        if not config.region:
-            return False
         if not config.connection_string:
             return False
         return True
 
     def initialize(self, config: StatsbeatConfig) -> bool:  # pyright: ignore
-        # Initialize statsbeat collection with thread safety.
-        if not is_statsbeat_enabled():
-            return False
+        with self._configuration_lock:
+            return self._initialize(config)
 
-        # Validate config before proceeding
-        if not self._validate_config(config):
+    def _initialize(self, config: StatsbeatConfig) -> bool:
+        # Initialize statsbeat collection with thread safety.
+        if not is_statsbeat_enabled() or not self._validate_config(config):
             return False
 
         with self._lock:
+            if self._shutdown_in_progress:
+                return False
             if self._initialized:
+                # Another telemetry exporter may still have the original
+                # connection string; it must not undo an accepted route.
+                if (
+                    self._redirected
+                    and self._config
+                    and config.instrumentation_key == self._config.instrumentation_key
+                    and config.endpoint != self._config.endpoint
+                ):
+                    return True
                 # If already initialized with the same config, return True
                 if self._config and self._config == config:
                     return True
-                # If config is different, reconfigure
-                return self._reconfigure(config)
+            else:
+                return self._do_initialize(config)
 
-            return self._do_initialize(config)
+        # Never wait for an export while holding the manager lock: a failed
+        # Statsbeat export can itself request manager shutdown.
+        return self._reconfigure(config)
 
     def _do_initialize(self, config: StatsbeatConfig) -> bool:
         # Internal initialization method.
@@ -252,10 +350,11 @@ class StatsbeatManager(metaclass=Singleton):
                 disable_offline_storage=True,
                 is_sdkstats=True,
             )
+            self._exporter = _StatsbeatExporter(statsbeat_exporter)
 
             # Create metric reader
-            reader = PeriodicExportingMetricReader(
-                statsbeat_exporter,
+            reader = _StatsbeatMetricReader(
+                self._exporter,
                 export_interval_millis=_get_stats_short_export_interval() * 1000,  # 15m by default
             )
 
@@ -300,6 +399,46 @@ class StatsbeatManager(metaclass=Singleton):
             self._cleanup()
             return False
 
+    def _update_endpoint(self, endpoint: str) -> None:
+        """Apply an accepted customer ingestion route without resetting collection.
+
+        :param endpoint: Accepted customer ingestion endpoint.
+        :type endpoint: str
+        """
+        with self._configuration_lock:
+            with self._lock:
+                exporter = self._exporter
+            if exporter is None:
+                return
+
+            # Collection and export (including storage replay) must finish before the
+            # old destination is retired. Do not hold the manager lock while waiting.
+            with exporter._lock:  # pylint: disable=protected-access
+                with self._lock:
+                    if not self._initialized or self._exporter is not exporter or not self._config or not self._metrics:
+                        return
+                    region = _get_region_from_endpoint(endpoint)
+                    connection_string = os.environ.get(_APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME)
+                    config_manager = get_configuration_manager()
+                    if not connection_string and config_manager:
+                        connection_string = _get_connection_string_for_region_from_config(
+                            region or "", config_manager.get_settings()
+                        )
+                    config = StatsbeatConfig(
+                        endpoint=endpoint,
+                        region=region,
+                        instrumentation_key=self._config.instrumentation_key,
+                        disable_offline_storage=self._config.disable_offline_storage,
+                        credential=self._config.credential,
+                        distro_version=self._config.distro_version,
+                        connection_string=connection_string,
+                    )
+                    if config.connection_string != self._config.connection_string:
+                        exporter.update_connection_string(config)
+                    self._metrics.update_endpoint(endpoint)
+                    self._config = config
+                    self._redirected = True
+
     def _schedule_initial_export_flush(self) -> None:
         def _flush() -> None:
             meter_provider = self._meter_provider
@@ -330,59 +469,64 @@ class StatsbeatManager(metaclass=Singleton):
         # We leave config intact for potential re-initialization
         self._meter_provider = None
         self._metrics = None
+        self._exporter = None
         self._initialized = False
 
     def shutdown(self) -> bool:
         # Shutdown statsbeat collection with thread safety.
         with self._lock:
+            self._shutdown_generation += 1
             if not self._initialized:
                 return False
+            self._shutdown_in_progress = True
+            meter_provider = self._meter_provider
+            self._cleanup(shutdown_meter_provider=False)
 
-            shutdown_success = False
-            try:
-                if self._meter_provider is not None:
-                    self._meter_provider.shutdown()
-                    shutdown_success = True
-            except Exception:  # pylint: disable=broad-except
-                pass
-            finally:
-                self._cleanup(shutdown_meter_provider=False)
-
-            if shutdown_success:
-                set_statsbeat_shutdown(True)  # Use the proper setter function
-
-            return shutdown_success
+        try:
+            if meter_provider is not None:
+                meter_provider.shutdown()
+                with self._lock:
+                    if not self._initialized:
+                        set_statsbeat_shutdown(True)
+                return True
+        except Exception:  # pylint: disable=broad-except
+            logger.warning("Failed to shut down statsbeat.", exc_info=True)
+        finally:
+            with self._lock:
+                self._shutdown_in_progress = False
+        return False
 
     def _reconfigure(self, new_config: StatsbeatConfig) -> bool:
-        # Internal reconfiguration method.
-        # Shutdown current instance with timeout
-        if self._meter_provider:
+        with self._lock:
+            meter_provider = self._meter_provider
+            shutdown_generation = self._shutdown_generation
+            self._cleanup(shutdown_meter_provider=False)
+        if meter_provider:
             try:
                 # Force flush before shutdown to ensure data is sent
-                self._meter_provider.force_flush(timeout_millis=5000)
+                meter_provider.force_flush(timeout_millis=5000)
             except Exception as e:  # pylint: disable=broad-except
                 logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                     "Failed to flush meter provider during reconfiguration: %s", e
                 )
 
             try:
-                self._meter_provider.shutdown(timeout_millis=5000)
+                meter_provider.shutdown(timeout_millis=5000)
             except Exception as e:  # pylint: disable=broad-except
                 logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                     "Failed to shutdown meter provider during reconfiguration: %s", e
                 )
 
-        # Reset state but keep initialized=True
-        self._meter_provider = None
-        self._metrics = None
-
-        # Initialize with new config
-        success: bool = self._do_initialize(new_config)
+        with self._lock:
+            if self._shutdown_generation != shutdown_generation:
+                return False
+            if self._initialized:
+                return self._config == new_config
+            success: bool = self._do_initialize(new_config)
 
         if not success:
             # If reinitialization failed, mark as not initialized
             logger.error("Failed to reinitialize statsbeat with new configuration.")
-            self._initialized = False
         else:
             logger.info("Statsbeat successfully reconfigured with new settings.")
 
