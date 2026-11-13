@@ -26,6 +26,10 @@ python -m pip install azure-identity
 - The project endpoint supplied for the service, for example
   `https://<account>.services.ai.azure.com/api/projects/<project>`.
 
+Preview access does not grant approval for restricted operations. This guide
+covers service-side checkpoint saves, metadata inspection, and resume;
+additional allowlisted operations require separate explicit service approval.
+
 ### Authenticate and create a session
 
 Use an Azure Identity credential such as `DefaultAzureCredential`.
@@ -195,58 +199,6 @@ or `None`. Omission or `None` preserves the model default. Unsupported values
 are rejected before submission. Text-only sampling does not support prompt
 log-probabilities, caller-selected stopping criteria, or `response_format`.
 Installing the SDK does not enable these capabilities or grant model access.
-
-### Download checkpoint files
-
-`client.checkpoints.download_weights(session_id, checkpoint_id, output_path)`
-and its async counterpart prepare an authorized checkpoint export, validate the
-complete file inventory, and stream its files to
-`output_path/<session_id>/<checkpoint_id>`. They return `None` only after all
-advertised files are complete locally.
-
-```python
-client.checkpoints.download_weights(
-    session_id="session_example",
-    checkpoint_id="sampler_checkpoint",
-    output_path="./checkpoints",
-)
-```
-
-For an asynchronous client, await the same method:
-
-```python
-await async_client.checkpoints.download_weights(
-    session_id="session_example",
-    checkpoint_id="sampler_checkpoint",
-    output_path="./checkpoints",
-)
-```
-
-The checkpoint directory must be empty or absent; parent directories may contain
-unrelated files. Session/checkpoint identifiers must be portable directory names.
-Paths are checked before preparation and rechecked before writing. File creation
-rejects existing entries and symlinks/reparse points below the resolved output root.
-On Linux and macOS, new directories are opened in protected same-filesystem
-staging and published atomically without replacing an existing entry. This
-requires a writable ancestor owned by the current account, without group/other
-write access or extended ACLs. Unsupported staging or no-replace publication
-fails explicitly; the SDK does not fall back to unsafe directory creation.
-Private staging is not a security boundary against malicious processes running
-with the same operating-system credentials.
-Each file is requested through the service API with its advertised strong ETag,
-then checked against the exact advertised byte count. File reads do not follow
-redirects, retry, or resume automatically.
-
-Failures or async cancellation retain any partial directories and files. Inspect
-the output and choose a new empty destination, or explicitly remove the partial
-checkpoint before retrying. The SDK never deletes or overwrites existing entries.
-An unsuccessful directory publication can also retain an empty
-`.finetuning-checkpoint-*` staging directory under the protected ancestor.
-
-Downloading requires service support, an eligible model and authorized checkpoint
-access. It does not grant access to base-model weights or enable download
-eligibility. Preparation failure, unknown states, invalid inventories, file
-identity/size mismatches and HTTP/transport errors are surfaced explicitly.
 
 ### Raw operations and convenience methods
 
