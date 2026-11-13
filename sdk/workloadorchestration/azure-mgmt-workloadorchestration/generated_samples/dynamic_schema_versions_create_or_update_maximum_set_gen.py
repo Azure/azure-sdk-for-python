@@ -34,12 +34,12 @@ def main():
         resource_group_name="rgconfigurationmanager",
         schema_name="testname",
         dynamic_schema_name="testname",
-        schema_version_name="1.0.0",
-        resource={"properties": {"value": "uiaqdwsi"}},
+        dynamic_schema_version_name="1.0.0",
+        resource={"properties": {"value": "gjohcqdzm"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/DynamicSchemaVersions_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/DynamicSchemaVersions_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -33,11 +33,11 @@ def main():
     response = client.schemas.update(
         resource_group_name="rgconfigurationmanager",
         schema_name="testname",
-        properties={"properties": {}, "tags": {"key6760": "lknwkzihsmzbzkezkartwgsv"}},
+        properties={"properties": {}, "tags": {}},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/Schemas_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/Schemas_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

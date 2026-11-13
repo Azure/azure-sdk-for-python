@@ -32,6 +32,72 @@ class TestWorkloadOrchestrationMgmtConfigTemplateVersionsOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_config_template_versions_begin_create_or_update(self, resource_group):
+        response = self.client.config_template_versions.begin_create_or_update(
+            resource_group_name=resource_group.name,
+            config_template_name="str",
+            config_template_version_name="str",
+            resource={
+                "eTag": "str",
+                "id": "str",
+                "name": "str",
+                "properties": {"configurations": "str", "provisioningState": "str"},
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+            },
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_config_template_versions_update(self, resource_group):
+        response = self.client.config_template_versions.update(
+            resource_group_name=resource_group.name,
+            config_template_name="str",
+            config_template_version_name="str",
+            properties={
+                "eTag": "str",
+                "id": "str",
+                "name": "str",
+                "properties": {"configurations": "str", "provisioningState": "str"},
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_config_template_versions_begin_delete(self, resource_group):
+        response = self.client.config_template_versions.begin_delete(
+            resource_group_name=resource_group.name,
+            config_template_name="str",
+            config_template_version_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_config_template_versions_list_by_config_template(self, resource_group):
         response = self.client.config_template_versions.list_by_config_template(
             resource_group_name=resource_group.name,

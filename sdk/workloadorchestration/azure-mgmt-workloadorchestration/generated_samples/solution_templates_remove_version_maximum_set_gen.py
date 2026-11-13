@@ -33,10 +33,10 @@ def main():
     client.solution_templates.begin_remove_version(
         resource_group_name="rgconfigurationmanager",
         solution_template_name="testname",
-        body={"version": "ghtvdzgmzncaifrnuumg"},
+        body={"version": "nipqereqmxeiv"},
     ).result()
 
 
-# x-ms-original-file: 2025-06-01/SolutionTemplates_RemoveVersion_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/SolutionTemplates_RemoveVersion_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -42,7 +42,12 @@ class TestWorkloadOrchestrationMgmtConfigTemplatesOperationsAsync(AzureMgmtRecor
                     "eTag": "str",
                     "id": "str",
                     "name": "str",
-                    "properties": {"description": "str", "latestVersion": "str", "provisioningState": "str"},
+                    "properties": {
+                        "description": "str",
+                        "latestVersion": "str",
+                        "provisioningState": "str",
+                        "uniqueIdentifier": "str",
+                    },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -66,24 +71,36 @@ class TestWorkloadOrchestrationMgmtConfigTemplatesOperationsAsync(AzureMgmtRecor
         response = await self.client.config_templates.update(
             resource_group_name=resource_group.name,
             config_template_name="str",
-            properties={
-                "location": "str",
-                "eTag": "str",
-                "id": "str",
-                "name": "str",
-                "properties": {"description": "str", "latestVersion": "str", "provisioningState": "str"},
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "tags": {"str": "str"},
-                "type": "str",
-            },
+            properties={"properties": {"description": "str"}, "tags": {"str": "str"}},
         )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_config_templates_begin_link_to_hierarchies(self, resource_group):
+        response = await (
+            await self.client.config_templates.begin_link_to_hierarchies(
+                resource_group_name=resource_group.name,
+                config_template_name="str",
+                body={"contextId": "str", "hierarchyIds": ["str"], "level": "str"},
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_config_templates_begin_un_link_from_hierarchies(self, resource_group):
+        response = await (
+            await self.client.config_templates.begin_un_link_from_hierarchies(
+                resource_group_name=resource_group.name,
+                config_template_name="str",
+                body={"contextId": "str", "hierarchyIds": ["str"], "level": "str"},
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

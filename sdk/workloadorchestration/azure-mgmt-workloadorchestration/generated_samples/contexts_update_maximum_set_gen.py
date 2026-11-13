@@ -35,17 +35,15 @@ def main():
         context_name="testname",
         properties={
             "properties": {
-                "capabilities": [
-                    {"description": "banbenutsngwytoqh", "name": "tpylinjcmlnycfpofpxjtqmt", "state": "active"}
-                ],
-                "hierarchies": [{"description": "vg", "name": "upqe"}],
+                "capabilities": [{"description": "hnwcxjwfecxnwsqkoac", "name": "alufbbxccup", "state": "active"}],
+                "hierarchies": [{"description": "nlrpsglqgbdmwpantk", "name": "fz"}],
             },
-            "tags": {"key9545": "dhxykbzgliyqxxizttbjhuruhhv"},
+            "tags": {},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/Contexts_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/Contexts_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

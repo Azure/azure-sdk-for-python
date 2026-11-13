@@ -33,11 +33,11 @@ def main():
     response = client.schemas.begin_create_version(
         resource_group_name="rgconfigurationmanager",
         schema_name="testname",
-        body={"schemaVersion": {"properties": {"value": "uiaqdwsi"}}, "updateType": "Major", "version": "1.0.0"},
+        body={"schemaVersion": {"properties": {"value": "gjohcqdzm"}}, "updateType": "Major", "version": "1.0.0"},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/Schemas_CreateVersion_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/Schemas_CreateVersion_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
