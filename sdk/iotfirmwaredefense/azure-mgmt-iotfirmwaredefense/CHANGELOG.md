@@ -1,5 +1,37 @@
 # Release History
 
+## 2.1.0b1 (2026-08-21)
+
+### Features Added
+
+  - Client `IoTFirmwareDefenseMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `IoTFirmwareDefenseMgmtClient` added operation group `unsafe_function_calls`
+  - Model `CveResult` added property `cwes`
+  - Model `CveResult` added property `effective_exploit_maturity`
+  - Model `CveResult` added property `effective_vector_string`
+  - Model `CveResult` added property `epss`
+  - Model `CveResult` added property `fixed_in_versions`
+  - Model `CveResult` added property `kev`
+  - Model `CvssScore` added property `exploit_maturity`
+  - Model `CvssScore` added property `vector_string`
+  - Enum `SummaryType` added member `CVE`
+  - Enum `SummaryType` added member `PASSWORD_HASH`
+  - Enum `SummaryType` added member `SBOM`
+  - Enum `SummaryType` added member `UNSAFE_FUNCTION_CALLS`
+  - Added model `CveSummaryResource`
+  - Added model `CweProperties`
+  - Added model `EpssProperties`
+  - Added enum `ExploitMaturityLevel`
+  - Added model `FunctionCall`
+  - Added model `KevProperties`
+  - Added model `PasswordHashSummaryResource`
+  - Added enum `RansomwareCampaignUse`
+  - Added model `SbomSummaryResource`
+  - Added model `UnsafeFunctionCallsResource`
+  - Added model `UnsafeFunctionCallsResult`
+  - Added model `UnsafeFunctionCallsSummaryResource`
+  - Added operation group `UnsafeFunctionCallsOperations`
+
 ## 2.0.0 (2025-09-04)
 
 ### Features Added
