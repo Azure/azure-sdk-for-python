@@ -1102,6 +1102,7 @@ class TestPyamqpManagementRequestReadiness:
         operation._mgmt_link = mgmt_link
         operation._responses = {}
         operation._mgmt_error = None
+        operation._mgmt_link_failed = False
         operation._connection = MagicMock()
         operation._connection.listen.side_effect = TimeoutError("transport timed out")
 
@@ -1254,6 +1255,7 @@ class TestPyamqpManagementRequestReadiness:
         operation._mgmt_link = mgmt_link
         operation._responses = {}
         operation._mgmt_error = None
+        operation._mgmt_link_failed = False
         operation._network_trace_params = {}
         operation._connection = MagicMock()
         operation._connection.listen = listen

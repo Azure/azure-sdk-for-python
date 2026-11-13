@@ -251,6 +251,18 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
         except ValueError:
             pass
 
+    def failure_cause(self) -> Optional[AMQPException]:
+        """The AMQP error that broke this link pair, if the peer or connection recorded one.
+
+        Read when the failure is raised, not in the state callback: a connection records its
+        Close error only after its links have already changed state.
+
+        :return: The link error, else the connection error, else None.
+        :rtype: ~pyamqp.error.AMQPException or None
+        """
+        # pylint: disable=protected-access
+        return self._request_link._error or self._response_link._error or self._session._connection._error
+
     async def close(self):
         if self.state != ManagementLinkState.IDLE:
             self.state = ManagementLinkState.CLOSING

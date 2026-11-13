@@ -35,6 +35,7 @@ class ManagementOperation(object):
         )
         self._responses = {}
         self._mgmt_error = None
+        self._mgmt_link_failed = False
 
     def _on_amqp_management_open_complete(self, result):
         """Callback run when the send/receive links are open and ready
@@ -47,8 +48,14 @@ class ManagementOperation(object):
 
     def _on_amqp_management_error(self):
         """Callback run if an error occurs in the send/receive links."""
-        # TODO: This probably shouldn't be ValueError
-        self._mgmt_error = ValueError("Management Operation error occurred.")
+        self._mgmt_link_failed = True
+
+    def _link_failure(self):
+        # Resolved at raise time so a connection Close error recorded after the link state change is
+        # still found. Without a recorded cause, fail like a link detached without an error: retryable.
+        return self._mgmt_link.failure_cause() or AMQPLinkError(
+            condition=ErrorCondition.UnknownError, description="Management link failed.", retryable=True
+        )
 
     def _on_execute_operation_complete(
         self, operation_id, operation_result, status_code, status_description, raw_message, error=None
@@ -93,7 +100,7 @@ class ManagementOperation(object):
                 type=operation_type,
             )
 
-            while not self._responses[operation_id] and not self._mgmt_error:
+            while not self._responses[operation_id] and not self._mgmt_error and not self._mgmt_link_failed:
                 if timeout and timeout > 0:
                     now = time.monotonic()
                     if (now - start_time) >= timeout:
@@ -102,6 +109,8 @@ class ManagementOperation(object):
 
             if self._mgmt_error:
                 raise self._mgmt_error
+            if not self._responses[operation_id]:
+                raise self._link_failure()
 
             return self._responses[operation_id]
         finally:
@@ -119,13 +128,17 @@ class ManagementOperation(object):
             raise self._mgmt_error
         except TypeError:
             pass
+        if self._mgmt_link_failed:
+            raise self._link_failure()
 
         if self._mgmt_link_open_status == ManagementOpenResult.OPENING:
             return False
         if self._mgmt_link_open_status == ManagementOpenResult.OK:
             return True
         # ManagementOpenResult.ERROR or CANCELLED
-        # TODO: update below with correct status code + info
+        cause = self._mgmt_link.failure_cause()
+        if cause:
+            raise cause
         raise AMQPLinkError(
             condition=ErrorCondition.ClientError,
             description="Failed to open mgmt link, management link status: {}".format(self._mgmt_link_open_status),
