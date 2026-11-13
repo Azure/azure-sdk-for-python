@@ -61,7 +61,7 @@ class BatchJobActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disable the Job. This is equivalent to calling the disable Job API, with a disableTasks value
     of requeue."""
     TERMINATE = "terminate"
-    """Terminate the Job. The terminationReason in the Job's executionInfo is set to "TaskFailed"."""
+    """Terminate the Job. The terminationReason in the Job's executionInfo is set to \"TaskFailed\"."""
 
 
 class BatchJobDefaultOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -155,11 +155,6 @@ class BatchNodeDeallocateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TASK_COMPLETION = "taskcompletion"
     """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Deallocate the
     Compute Node when all Tasks have completed."""
-    RETAINED_DATA = "retaineddata"
-    """Deprecated, we encourage you to upload task data to Azure Storage in your task and use
-    ``TaskCompletion`` instead. Allow currently running Tasks to complete, then wait for all Task
-    data retention periods to expire. Schedule no new Tasks while waiting. Deallocate the Compute
-    Node when all Task retention periods have expired."""
 
 
 class BatchNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -174,11 +169,6 @@ class BatchNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TASK_COMPLETION = "taskcompletion"
     """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Remove Compute
     Nodes when all Tasks have completed."""
-    RETAINED_DATA = "retaineddata"
-    """Deprecated, we encourage you to upload task data to Azure Storage in your task and use
-    ``TaskCompletion`` instead. Allow currently running Tasks to complete, then wait for all Task
-    data retention periods to expire. Schedule no new Tasks while waiting. Remove Compute Nodes
-    when all Task retention periods have expired."""
 
 
 class BatchNodeDisableSchedulingOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -229,11 +219,6 @@ class BatchNodeRebootKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TASK_COMPLETION = "taskcompletion"
     """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Restart the
     Compute Node when all Tasks have completed."""
-    RETAINED_DATA = "retaineddata"
-    """Deprecated, we encourage you to upload task data to Azure Storage in your task and use
-    ``TaskCompletion`` instead. Allow currently running Tasks to complete, then wait for all Task
-    data retention periods to expire. Schedule no new Tasks while waiting. Restart the Compute Node
-    when all Task retention periods have expired."""
 
 
 class BatchNodeReimageOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -249,11 +234,6 @@ class BatchNodeReimageOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TASK_COMPLETION = "taskcompletion"
     """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Reimage the
     Compute Node when all Tasks have completed."""
-    RETAINED_DATA = "retaineddata"
-    """Deprecated, we encourage you to upload task data to Azure Storage in your task and use
-    ``TaskCompletion`` instead. Allow currently running Tasks to complete, then wait for all Task
-    data retention periods to expire. Schedule no new Tasks while waiting. Reimage the Compute Node
-    when all Task retention periods have expired."""
 
 
 class BatchNodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -697,3 +677,25 @@ class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The existing instances in a scale set are brought down in batches to be upgraded. Once the
     upgraded batch is complete, the instances will begin taking traffic again and the next batch
     will begin. This continues until all instances brought up-to-date."""
+
+
+class VirtualMachineSkuAllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the allocation strategy that the Fungible Compute Platform uses to select VM sizes
+    from the vmSkuProfile when allocating Compute Nodes for an Instance Mix Pool.
+    """
+
+    LOWEST_PRICE = "lowestPrice"
+    """Select the cheapest available SKU in the region. This is the default strategy."""
+    CAPACITY_OPTIMIZED = "capacityOptimized"
+    """Select the SKU with the most regional physical capacity."""
+    PRIORITIZED = "prioritized"
+    """Follow the customer-defined ranking via the 0-based rank, falling back to the next rank when a
+    preferred SKU is unavailable."""
+
+
+class ZonePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The zone placement policy for Compute Nodes in a Pool."""
+
+    AUTO = "Auto"
+    """The Virtual Machine Scale Set automatically selects availability zones and balances instances
+    across them."""

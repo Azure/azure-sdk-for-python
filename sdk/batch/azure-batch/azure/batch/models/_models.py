@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AutomaticOsUpgradePolicy(_Model):
+class AutomaticOsUpgradePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration parameters used for performing automatic OS upgrade.
 
     :ivar disable_automatic_rollback: Whether OS image rollback feature should be disabled.
@@ -80,7 +80,7 @@ class AutomaticOsUpgradePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoScaleRun(_Model):
+class AutoScaleRun(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The results and errors from an execution of a Pool autoscale formula.
 
     :ivar timestamp: The time at which the autoscale formula was last evaluated. Required.
@@ -128,7 +128,7 @@ class AutoScaleRun(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoScaleRunError(_Model):
+class AutoScaleRunError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error that occurred when executing or evaluating a Pool autoscale formula.
 
     :ivar code: An identifier for the autoscale error. Codes are invariant and are intended to be
@@ -172,7 +172,7 @@ class AutoScaleRunError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoUserSpecification(_Model):
+class AutoUserSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the options for the auto user that runs an Azure Batch Task.
 
     :ivar scope: The scope for the auto user. The default value is pool. If the pool is running
@@ -217,7 +217,7 @@ class AutoUserSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBlobFileSystemConfiguration(_Model):
+class AzureBlobFileSystemConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information used to connect to an Azure Storage Container using Blobfuse.
 
     :ivar account_name: The Azure Storage Account name. Required.
@@ -296,7 +296,7 @@ class AzureBlobFileSystemConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFileShareConfiguration(_Model):
+class AzureFileShareConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information used to connect to an Azure Fileshare.
 
     :ivar account_name: The Azure Storage account name. Required.
@@ -355,7 +355,7 @@ class AzureFileShareConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchAffinityInfo(_Model):
+class BatchAffinityInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A locality hint that can be used by the Batch service to select a Compute Node on which to
     start a Task.
 
@@ -391,7 +391,7 @@ class BatchAffinityInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchApplication(_Model):
+class BatchApplication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about an application in an Azure Batch Account.
 
     :ivar id: A string that uniquely identifies the application within the Account. Required.
@@ -429,7 +429,7 @@ class BatchApplication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchApplicationPackageReference(_Model):
+class BatchApplicationPackageReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A reference to an Package to be deployed to Compute Nodes.
 
     :ivar application_id: The ID of the application to deploy. When creating a pool, the package's
@@ -476,7 +476,7 @@ class BatchApplicationPackageReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchAutoPoolSpecification(_Model):
+class BatchAutoPoolSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies characteristics for a temporary 'auto pool'. The Batch service will create this auto
     Pool when the Job is submitted.
 
@@ -543,7 +543,7 @@ class BatchAutoPoolSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchContainerConfiguration(_Model):
+class BatchContainerConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration for container-enabled Pools.
 
     :ivar type: The container technology to be used. Required. Known values are: "dockerCompatible"
@@ -595,7 +595,7 @@ class BatchContainerConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchCreateTaskCollectionResult(_Model):
+class BatchCreateTaskCollectionResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of creating a collection of Tasks to a Job.
 
     :ivar result_values: The results of the create Task collection operation.
@@ -625,7 +625,7 @@ class BatchCreateTaskCollectionResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchDiffDiskSettings(_Model):
+class BatchDiffDiskSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the ephemeral Disk Settings for the operating system disk used by the compute node
     (VM).
 
@@ -674,7 +674,7 @@ class BatchDiffDiskSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchError(_Model):
+class BatchError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response received from the Azure Batch service.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -720,7 +720,7 @@ class BatchError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchErrorDetail(_Model):
+class BatchErrorDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An item of additional information included in an Azure Batch error response.
 
     :ivar key: An identifier specifying the meaning of the Value property.
@@ -753,7 +753,7 @@ class BatchErrorDetail(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchErrorMessage(_Model):
+class BatchErrorMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error message received in an Azure Batch error response.
 
     :ivar lang: The language code of the error message.
@@ -786,7 +786,7 @@ class BatchErrorMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchInboundNatPool(_Model):
+class BatchInboundNatPool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A inbound NAT Pool that can be used to address specific ports on Compute Nodes in a Batch Pool
     externally.
 
@@ -886,7 +886,7 @@ class BatchInboundNatPool(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJob(_Model):
+class BatchJob(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Batch Job.
 
     :ivar id: A string that uniquely identifies the Job within the Account. The ID is
@@ -1119,7 +1119,7 @@ class BatchJob(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobConstraints(_Model):
+class BatchJobConstraints(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The execution constraints for a Job.
 
     :ivar max_wall_clock_time: The maximum elapsed time that the Job may run, measured from the
@@ -1176,7 +1176,7 @@ class BatchJobConstraints(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobCreateOptions(_Model):
+class BatchJobCreateOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for creating an Azure Batch Job.
 
     :ivar id: A string that uniquely identifies the Job within the Account. The ID can contain any
@@ -1394,7 +1394,7 @@ class BatchJobCreateOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobDisableOptions(_Model):
+class BatchJobDisableOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for disabling an Azure Batch Job.
 
     :ivar disable_tasks: What to do with active Tasks associated with the Job. Required. Known
@@ -1426,7 +1426,7 @@ class BatchJobDisableOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobExecutionInfo(_Model):
+class BatchJobExecutionInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about the execution of a Job in the Azure Batch service.
 
     :ivar start_time: The start time of the Job. This is the time at which the Job was created.
@@ -1513,7 +1513,7 @@ class BatchJobExecutionInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobManagerTask(_Model):
+class BatchJobManagerTask(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies details of a Job Manager Task. The Job Manager Task is automatically started when the
     Job is created. The Batch service tries to schedule the Job Manager Task before any other Tasks
     in the Job. When shrinking a Pool, the Batch service tries to preserve Nodes where Job Manager
@@ -1746,7 +1746,7 @@ class BatchJobManagerTask(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobNetworkConfiguration(_Model):
+class BatchJobNetworkConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """(This property is not available by default. Please contact support for more information) The
     network configuration for the Job.
 
@@ -1824,7 +1824,7 @@ class BatchJobNetworkConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobPreparationAndReleaseTaskStatus(_Model):
+class BatchJobPreparationAndReleaseTaskStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The status of the Job Preparation and Job Release Tasks on a Compute Node.
 
     :ivar pool_id: The ID of the Pool containing the Compute Node to which this entry refers.
@@ -1881,7 +1881,7 @@ class BatchJobPreparationAndReleaseTaskStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobPreparationTask(_Model):
+class BatchJobPreparationTask(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Job Preparation Task to run before any Tasks of the Job on any given Compute Node. You can
     use Job Preparation to prepare a Node to run Tasks for the Job. Activities commonly performed
     in Job Preparation include: Downloading common resource files used by all the Tasks in the Job.
@@ -2066,7 +2066,7 @@ class BatchJobPreparationTask(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobPreparationTaskExecutionInfo(_Model):
+class BatchJobPreparationTaskExecutionInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about the execution of a Job Preparation Task on a Compute Node.
 
     :ivar start_time: The time at which the Task started running. If the Task has been restarted or
@@ -2207,7 +2207,7 @@ class BatchJobPreparationTaskExecutionInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobReleaseTask(_Model):
+class BatchJobReleaseTask(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Job Release Task to run on Job completion on any Compute Node where the Job has run. The Job
     Release Task runs when the Job ends, because of one of the following: The user calls the
     Terminate Job API, or the Delete Job API while the Job is still active, the Job's maximum wall
@@ -2362,7 +2362,7 @@ class BatchJobReleaseTask(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobReleaseTaskExecutionInfo(_Model):
+class BatchJobReleaseTaskExecutionInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about the execution of a Job Release Task on a Compute Node.
 
     :ivar start_time: The time at which the Task started running. If the Task has been restarted or
@@ -2472,7 +2472,7 @@ class BatchJobReleaseTaskExecutionInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobSchedule(_Model):
+class BatchJobSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Job Schedule that allows recurring Jobs by specifying when to run Jobs and a specification
     used to create each Job.
 
@@ -2602,7 +2602,7 @@ class BatchJobSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobScheduleConfiguration(_Model):
+class BatchJobScheduleConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The schedule according to which Jobs will be created. All times are fixed respective to UTC and
     are not impacted by daylight saving time.
 
@@ -2706,7 +2706,7 @@ class BatchJobScheduleConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobScheduleCreateOptions(_Model):
+class BatchJobScheduleCreateOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for creating an Azure Batch Job Schedule.
 
     :ivar id: A string that uniquely identifies the schedule within the Account. The ID can contain
@@ -2774,7 +2774,7 @@ class BatchJobScheduleCreateOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobScheduleExecutionInfo(_Model):
+class BatchJobScheduleExecutionInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about Jobs that have been and will be run under a Job Schedule.
 
     :ivar next_run_time: The next time at which a Job will be created under this schedule. This
@@ -2828,7 +2828,7 @@ class BatchJobScheduleExecutionInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobScheduleStatistics(_Model):
+class BatchJobScheduleStatistics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource usage statistics for a Job Schedule.
 
     :ivar url: The URL of the statistics. Required.
@@ -2988,7 +2988,7 @@ class BatchJobScheduleStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobScheduleUpdateOptions(_Model):
+class BatchJobScheduleUpdateOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for updating an Azure Batch Job Schedule.
 
     :ivar schedule: The schedule according to which Jobs will be created. All times are fixed
@@ -3042,7 +3042,7 @@ class BatchJobScheduleUpdateOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobSchedulingError(_Model):
+class BatchJobSchedulingError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error encountered by the Batch service when scheduling a Job.
 
     :ivar category: The category of the Job scheduling error. Required. Known values are:
@@ -3095,7 +3095,7 @@ class BatchJobSchedulingError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobSpecification(_Model):
+class BatchJobSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies details of the Jobs to be created on a schedule.
 
     :ivar priority: The priority of Jobs created under this schedule. Priority values can range
@@ -3306,7 +3306,7 @@ class BatchJobSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobStatistics(_Model):
+class BatchJobStatistics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource usage statistics for a Job.
 
     :ivar url: The URL of the statistics. Required.
@@ -3455,7 +3455,7 @@ class BatchJobStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobTerminateOptions(_Model):
+class BatchJobTerminateOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for terminating an Azure Batch Job.
 
     :ivar termination_reason: The text you want to appear as the Job's TerminationReason. The
@@ -3486,7 +3486,7 @@ class BatchJobTerminateOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobUpdateOptions(_Model):
+class BatchJobUpdateOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for updating an Azure Batch Job.
 
     :ivar priority: The priority of the Job. Priority values can range from -1000 to 1000, with
@@ -3610,7 +3610,7 @@ class BatchJobUpdateOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchMetadataItem(_Model):
+class BatchMetadataItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Batch service does not assign any meaning to this metadata; it is solely for the use of
     user code.
 
@@ -3682,6 +3682,18 @@ class BatchNode(_Model):
      reclaimed and could be reused for new Compute Nodes. This property will not be present if the
      Pool is not configured for IPv6. Required.
     :vartype ipv6_address: str
+    :ivar public_ip_address: The public IPv4 address (load balancer front-end VIP) used to reach
+     this Compute Node from outside the virtual network. For Pools that use the Batch-managed or
+     User-managed public load balancer, this is the load balancer's front-end public IPv4 address.
+     The value is present regardless of whether SSH or RDP remote access is enabled, so callers can
+     perform IP-based validation even when remote login is disabled. The property is omitted when
+     the Pool is configured with no public IP addresses (for example, private link or BYO VNet with
+     NoPublicIPAddresses).
+    :vartype public_ip_address: str
+    :ivar public_ipv6_address: The public IPv6 address (load balancer front-end VIP) used to reach
+     this Compute Node from outside the virtual network. Populated only when the Pool is configured
+     for IPv6 / dual-stack public networking. The property is omitted otherwise.
+    :vartype public_ipv6_address: str
     :ivar affinity_id: An identifier which can be passed when adding a Task to request that the
      Task be scheduled on this Compute Node. Note that this is just a soft affinity. If the target
      Compute Node is busy or unavailable at the time the Task is scheduled, then the Task will be
@@ -3768,6 +3780,18 @@ class BatchNode(_Model):
      removed from a Pool, all of its local files are deleted, and the IP address is reclaimed and
      could be reused for new Compute Nodes. This property will not be present if the Pool is not
      configured for IPv6. Required."""
+    public_ip_address: Optional[str] = rest_field(name="publicIPAddress", visibility=["read"])
+    """The public IPv4 address (load balancer front-end VIP) used to reach this Compute Node from
+     outside the virtual network. For Pools that use the Batch-managed or User-managed public load
+     balancer, this is the load balancer's front-end public IPv4 address. The value is present
+     regardless of whether SSH or RDP remote access is enabled, so callers can perform IP-based
+     validation even when remote login is disabled. The property is omitted when the Pool is
+     configured with no public IP addresses (for example, private link or BYO VNet with
+     NoPublicIPAddresses)."""
+    public_ipv6_address: Optional[str] = rest_field(name="publicIPv6Address", visibility=["read"])
+    """The public IPv6 address (load balancer front-end VIP) used to reach this Compute Node from
+     outside the virtual network. Populated only when the Pool is configured for IPv6 / dual-stack
+     public networking. The property is omitted otherwise."""
     affinity_id: str = rest_field(name="affinityId", visibility=["read"])
     """An identifier which can be passed when adding a Task to request that the Task be scheduled on
      this Compute Node. Note that this is just a soft affinity. If the target Compute Node is busy
@@ -3815,7 +3839,7 @@ class BatchNode(_Model):
     """Info about the current state of the virtual machine. Required."""
 
 
-class BatchNodeAgentInfo(_Model):
+class BatchNodeAgentInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Batch Compute Node agent is a program that runs on each Compute Node in the Pool and
     provides Batch capability on the Compute Node.
 
@@ -3860,7 +3884,7 @@ class BatchNodeAgentInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeCounts(_Model):
+class BatchNodeCounts(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The number of Compute Nodes in each Compute Node state.
 
     :ivar creating: The number of Compute Nodes in the creating state. Required.
@@ -3973,27 +3997,26 @@ class BatchNodeCounts(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeDeallocateOptions(_Model):
+class BatchNodeDeallocateOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Options for deallocating a Compute Node.
 
     :ivar node_deallocate_option: When to deallocate the Compute Node and what to do with currently
-     running Tasks. The default value is requeue. Known values are: "requeue", "terminate",
-     "taskcompletion", and "retaineddata".
+     running Tasks. The default value is requeue. Known values are: "requeue", "terminate", and
+     "taskcompletion".
     :vartype node_deallocate_option: str or ~azure.batch.models.BatchNodeDeallocateOption
     """
 
-    node_deallocate_option: Optional[Union[str, "_models._enums.BatchNodeDeallocateOption"]] = rest_field(
+    node_deallocate_option: Optional[Union[str, "_models.BatchNodeDeallocateOption"]] = rest_field(
         name="nodeDeallocateOption", visibility=["read", "create", "update", "delete", "query"]
     )
     """When to deallocate the Compute Node and what to do with currently running Tasks. The default
-     value is requeue. Known values are: \"requeue\", \"terminate\", \"taskcompletion\", and
-     \"retaineddata\"."""
+     value is requeue. Known values are: \"requeue\", \"terminate\", and \"taskcompletion\"."""
 
     @overload
     def __init__(
         self,
         *,
-        node_deallocate_option: Optional[Union[str, "_models._enums.BatchNodeDeallocateOption"]] = None,
+        node_deallocate_option: Optional[Union[str, "_models.BatchNodeDeallocateOption"]] = None,
     ) -> None: ...
 
     @overload
@@ -4007,7 +4030,7 @@ class BatchNodeDeallocateOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeDisableSchedulingOptions(_Model):
+class BatchNodeDisableSchedulingOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for disabling scheduling on an Azure Batch Compute Node.
 
     :ivar node_disable_scheduling_option: What to do with currently running Tasks when disabling
@@ -4041,7 +4064,7 @@ class BatchNodeDisableSchedulingOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeEndpointConfiguration(_Model):
+class BatchNodeEndpointConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The endpoint configuration for the Compute Node.
 
     :ivar inbound_endpoints: The list of inbound endpoints that are accessible on the Compute Node.
@@ -4072,7 +4095,7 @@ class BatchNodeEndpointConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeError(_Model):
+class BatchNodeError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error encountered by a Compute Node.
 
     :ivar code: An identifier for the Compute Node error. Codes are invariant and are intended to
@@ -4116,7 +4139,7 @@ class BatchNodeError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeFile(_Model):
+class BatchNodeFile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a file or directory on a Compute Node.
 
     :ivar name: The file path.
@@ -4163,7 +4186,7 @@ class BatchNodeFile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeIdentityReference(_Model):
+class BatchNodeIdentityReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The reference to a user assigned identity associated with the Batch pool which a compute node
     will use.
 
@@ -4194,7 +4217,7 @@ class BatchNodeIdentityReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeInfo(_Model):
+class BatchNodeInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the Compute Node on which a Task ran.
 
     :ivar affinity_id: An identifier for the Node on which the Task ran, which can be passed when
@@ -4255,7 +4278,7 @@ class BatchNodeInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodePlacementConfiguration(_Model):
+class BatchNodePlacementConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """For regional placement, nodes in the pool will be allocated in the same region. For zonal
     placement, nodes in the pool will be spread across different zones with best effort balancing.
 
@@ -4290,27 +4313,26 @@ class BatchNodePlacementConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeRebootOptions(_Model):
+class BatchNodeRebootOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for rebooting an Azure Batch Compute Node.
 
     :ivar node_reboot_kind: When to reboot the Compute Node and what to do with currently running
-     Tasks. The default value is requeue. Known values are: "requeue", "terminate",
-     "taskcompletion", and "retaineddata".
+     Tasks. The default value is requeue. Known values are: "requeue", "terminate", and
+     "taskcompletion".
     :vartype node_reboot_kind: str or ~azure.batch.models.BatchNodeRebootKind
     """
 
-    node_reboot_kind: Optional[Union[str, "_models._enums.BatchNodeRebootKind"]] = rest_field(
+    node_reboot_kind: Optional[Union[str, "_models.BatchNodeRebootKind"]] = rest_field(
         name="nodeRebootOption", visibility=["read", "create", "update", "delete", "query"]
     )
     """When to reboot the Compute Node and what to do with currently running Tasks. The default value
-     is requeue. Known values are: \"requeue\", \"terminate\", \"taskcompletion\", and
-     \"retaineddata\"."""
+     is requeue. Known values are: \"requeue\", \"terminate\", and \"taskcompletion\"."""
 
     @overload
     def __init__(
         self,
         *,
-        node_reboot_kind: Optional[Union[str, "_models._enums.BatchNodeRebootKind"]] = None,
+        node_reboot_kind: Optional[Union[str, "_models.BatchNodeRebootKind"]] = None,
     ) -> None: ...
 
     @overload
@@ -4324,27 +4346,26 @@ class BatchNodeRebootOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeReimageOptions(_Model):
+class BatchNodeReimageOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for reimaging an Azure Batch Compute Node.
 
     :ivar node_reimage_option: When to reimage the Compute Node and what to do with currently
-     running Tasks. The default value is requeue. Known values are: "requeue", "terminate",
-     "taskcompletion", and "retaineddata".
+     running Tasks. The default value is requeue. Known values are: "requeue", "terminate", and
+     "taskcompletion".
     :vartype node_reimage_option: str or ~azure.batch.models.BatchNodeReimageOption
     """
 
-    node_reimage_option: Optional[Union[str, "_models._enums.BatchNodeReimageOption"]] = rest_field(
+    node_reimage_option: Optional[Union[str, "_models.BatchNodeReimageOption"]] = rest_field(
         name="nodeReimageOption", visibility=["read", "create", "update", "delete", "query"]
     )
     """When to reimage the Compute Node and what to do with currently running Tasks. The default value
-     is requeue. Known values are: \"requeue\", \"terminate\", \"taskcompletion\", and
-     \"retaineddata\"."""
+     is requeue. Known values are: \"requeue\", \"terminate\", and \"taskcompletion\"."""
 
     @overload
     def __init__(
         self,
         *,
-        node_reimage_option: Optional[Union[str, "_models._enums.BatchNodeReimageOption"]] = None,
+        node_reimage_option: Optional[Union[str, "_models.BatchNodeReimageOption"]] = None,
     ) -> None: ...
 
     @overload
@@ -4358,7 +4379,7 @@ class BatchNodeReimageOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeRemoteLoginSettings(_Model):
+class BatchNodeRemoteLoginSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The remote login settings for a Compute Node.
 
     :ivar ipv6_remote_login_ip_address: The IPv6 address used for remote login to the Compute Node.
@@ -4410,7 +4431,7 @@ class BatchNodeRemoteLoginSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeRemoveOptions(_Model):
+class BatchNodeRemoveOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for removing nodes from an Azure Batch Pool.
 
     :ivar node_ids: A list containing the IDs of the Compute Nodes to be removed from the specified
@@ -4423,7 +4444,7 @@ class BatchNodeRemoveOptions(_Model):
     :vartype resize_timeout: ~datetime.timedelta
     :ivar node_deallocation_option: Determines what to do with a Compute Node and its running
      task(s) after it has been selected for deallocation. The default value is requeue. Known values
-     are: "requeue", "terminate", "taskcompletion", and "retaineddata".
+     are: "requeue", "terminate", and "taskcompletion".
     :vartype node_deallocation_option: str or ~azure.batch.models.BatchNodeDeallocationOption
     """
 
@@ -4442,7 +4463,7 @@ class BatchNodeRemoveOptions(_Model):
     )
     """Determines what to do with a Compute Node and its running task(s) after it has been selected
      for deallocation. The default value is requeue. Known values are: \"requeue\", \"terminate\",
-     \"taskcompletion\", and \"retaineddata\"."""
+     and \"taskcompletion\"."""
 
     @overload
     def __init__(
@@ -4464,7 +4485,7 @@ class BatchNodeRemoveOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeUserCreateOptions(_Model):
+class BatchNodeUserCreateOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for creating a user account for RDP or SSH access on an Azure Batch Compute Node.
 
     :ivar name: The user name of the Account. Required.
@@ -4530,7 +4551,7 @@ class BatchNodeUserCreateOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeUserReplaceOptions(_Model):
+class BatchNodeUserReplaceOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for updating a user account for RDP or SSH access on an Azure Batch Compute Node.
 
     :ivar password: The password of the Account. The password is required for Windows Compute
@@ -4587,7 +4608,7 @@ class BatchNodeUserReplaceOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeVMExtension(_Model):
+class BatchNodeVMExtension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration for virtual machine extension instance view.
 
     :ivar provisioning_state: The provisioning state of the virtual machine extension.
@@ -4631,7 +4652,7 @@ class BatchNodeVMExtension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchOsDisk(_Model):
+class BatchOsDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for the operating system disk of the compute node (VM).
 
     :ivar ephemeral_os_disk_settings: Specifies the ephemeral Disk Settings for the operating
@@ -4696,7 +4717,7 @@ class BatchOsDisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPool(_Model):
+class BatchPool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Pool in the Azure Batch service.
 
     :ivar id: A string that uniquely identifies the Pool within the Account. The ID can contain any
@@ -4740,6 +4761,10 @@ class BatchPool(_Model):
     :ivar virtual_machine_configuration: The virtual machine configuration for the Pool. This
      property must be specified.
     :vartype virtual_machine_configuration: ~azure.batch.models.VirtualMachineConfiguration
+    :ivar vm_sku_profile: Specifies the profile of VM sizes and the allocation strategy used to
+     allocate Compute Nodes for an Instance Mix Pool. When specified, vmSize must be 'Mix'. This
+     property can only be changed while the Pool has no Compute Nodes.
+    :vartype vm_sku_profile: ~azure.batch.models.VirtualMachineSkuProfile
     :ivar resize_timeout: The timeout for allocation of Compute Nodes to the Pool. This is the
      timeout for the most recent resize operation. (The initial sizing when the Pool is created
      counts as a resize.) The default value is 15 minutes. The time duration is specified in ISO
@@ -4867,6 +4892,10 @@ class BatchPool(_Model):
         name="virtualMachineConfiguration", visibility=["read"]
     )
     """The virtual machine configuration for the Pool. This property must be specified."""
+    vm_sku_profile: Optional["_models.VirtualMachineSkuProfile"] = rest_field(name="vmSkuProfile", visibility=["read"])
+    """Specifies the profile of VM sizes and the allocation strategy used to allocate Compute Nodes
+     for an Instance Mix Pool. When specified, vmSize must be 'Mix'. This property can only be
+     changed while the Pool has no Compute Nodes."""
     resize_timeout: Optional[datetime.timedelta] = rest_field(name="resizeTimeout", visibility=["read"])
     """The timeout for allocation of Compute Nodes to the Pool. This is the timeout for the most
      recent resize operation. (The initial sizing when the Pool is created counts as a resize.) The
@@ -4974,7 +5003,7 @@ class BatchPool(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolCreateOptions(_Model):
+class BatchPoolCreateOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for creating an Azure Batch Pool.
 
     :ivar id: A string that uniquely identifies the Pool within the Account. The ID can contain any
@@ -4996,6 +5025,10 @@ class BatchPoolCreateOptions(_Model):
     :ivar virtual_machine_configuration: The virtual machine configuration for the Pool. This
      property must be specified.
     :vartype virtual_machine_configuration: ~azure.batch.models.VirtualMachineConfiguration
+    :ivar vm_sku_profile: Specifies the profile of VM sizes and the allocation strategy used to
+     allocate Compute Nodes for an Instance Mix Pool. When specified, vmSize must be 'Mix'. This
+     property can only be changed while the Pool has no Compute Nodes.
+    :vartype vm_sku_profile: ~azure.batch.models.VirtualMachineSkuProfile
     :ivar resize_timeout: The timeout for allocation of Compute Nodes to the Pool. This timeout
      applies only to manual scaling; it has no effect when enableAutoScale is set to true. The
      default value is 15 minutes. The minimum value is 5 minutes. If you specify a value less than 5
@@ -5092,6 +5125,12 @@ class BatchPoolCreateOptions(_Model):
         name="virtualMachineConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The virtual machine configuration for the Pool. This property must be specified."""
+    vm_sku_profile: Optional["_models.VirtualMachineSkuProfile"] = rest_field(
+        name="vmSkuProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the profile of VM sizes and the allocation strategy used to allocate Compute Nodes
+     for an Instance Mix Pool. When specified, vmSize must be 'Mix'. This property can only be
+     changed while the Pool has no Compute Nodes."""
     resize_timeout: Optional[datetime.timedelta] = rest_field(
         name="resizeTimeout", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5200,6 +5239,7 @@ class BatchPoolCreateOptions(_Model):
         vm_size: str,
         display_name: Optional[str] = None,
         virtual_machine_configuration: Optional["_models.VirtualMachineConfiguration"] = None,
+        vm_sku_profile: Optional["_models.VirtualMachineSkuProfile"] = None,
         resize_timeout: Optional[datetime.timedelta] = None,
         target_dedicated_nodes: Optional[int] = None,
         target_low_priority_nodes: Optional[int] = None,
@@ -5229,7 +5269,7 @@ class BatchPoolCreateOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolEnableAutoScaleOptions(_Model):
+class BatchPoolEnableAutoScaleOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for enabling automatic scaling on an Azure Batch Pool.
 
     :ivar auto_scale_formula: The formula for the desired number of Compute Nodes in the Pool. The
@@ -5292,7 +5332,7 @@ class BatchPoolEnableAutoScaleOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolEndpointConfiguration(_Model):
+class BatchPoolEndpointConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The endpoint configuration for a Pool.
 
     :ivar inbound_nat_pools: A list of inbound NAT Pools that can be used to address specific ports
@@ -5329,7 +5369,7 @@ class BatchPoolEndpointConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolEvaluateAutoScaleOptions(_Model):
+class BatchPoolEvaluateAutoScaleOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for evaluating an automatic scaling formula on an Azure Batch Pool.
 
     :ivar auto_scale_formula: The formula for the desired number of Compute Nodes in the Pool. The
@@ -5369,7 +5409,7 @@ class BatchPoolEvaluateAutoScaleOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolIdentity(_Model):
+class BatchPoolIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The identity of the Batch pool, if configured.
 
     :ivar type: The identity of the Batch pool, if configured. The list of user identities
@@ -5417,7 +5457,7 @@ class BatchPoolIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolIdentityReference(_Model):
+class BatchPoolIdentityReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The reference of one of the pool identities to encrypt Disk. This identity will be used to
     access the key vault.
 
@@ -5450,7 +5490,7 @@ class BatchPoolIdentityReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolInfo(_Model):
+class BatchPoolInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies how a Job should be assigned to a Pool.
 
     :ivar pool_id: The ID of an existing Pool. All the Tasks of the Job will run on the specified
@@ -5507,7 +5547,7 @@ class BatchPoolInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolNodeCounts(_Model):
+class BatchPoolNodeCounts(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The number of Compute Nodes in each state for a Pool.
 
     :ivar pool_id: The ID of the Pool. Required.
@@ -5549,7 +5589,7 @@ class BatchPoolNodeCounts(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolReplaceOptions(_Model):
+class BatchPoolReplaceOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for replacing properties on an Azure Batch Pool.
 
     :ivar start_task: A Task to run on each Compute Node as it joins the Pool. The Task runs when
@@ -5614,7 +5654,7 @@ class BatchPoolReplaceOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolResizeOptions(_Model):
+class BatchPoolResizeOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for changing the size of an Azure Batch Pool.
 
     :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool.
@@ -5630,7 +5670,7 @@ class BatchPoolResizeOptions(_Model):
     :vartype resize_timeout: ~datetime.timedelta
     :ivar node_deallocation_option: Determines what to do with a Compute Node and its running
      task(s) if the Pool size is decreasing. The default value is requeue. Known values are:
-     "requeue", "terminate", "taskcompletion", and "retaineddata".
+     "requeue", "terminate", and "taskcompletion".
     :vartype node_deallocation_option: str or ~azure.batch.models.BatchNodeDeallocationOption
     """
 
@@ -5653,8 +5693,8 @@ class BatchPoolResizeOptions(_Model):
         name="nodeDeallocationOption", visibility=["read", "create", "update", "delete", "query"]
     )
     """Determines what to do with a Compute Node and its running task(s) if the Pool size is
-     decreasing. The default value is requeue. Known values are: \"requeue\", \"terminate\",
-     \"taskcompletion\", and \"retaineddata\"."""
+     decreasing. The default value is requeue. Known values are: \"requeue\", \"terminate\", and
+     \"taskcompletion\"."""
 
     @overload
     def __init__(
@@ -5677,7 +5717,7 @@ class BatchPoolResizeOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolResourceStatistics(_Model):
+class BatchPoolResourceStatistics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Statistics related to resource consumption by Compute Nodes in a Pool.
 
     :ivar start_time: The start time of the time range covered by the statistics. Required.
@@ -5743,13 +5783,9 @@ class BatchPoolResourceStatistics(_Model):
     """The average used disk space in GiB across all Compute Nodes in the Pool. Required."""
     peak_disk_gib: float = rest_field(name="peakDiskGiB", visibility=["read", "create", "update", "delete", "query"])
     """The peak used disk space in GiB across all Compute Nodes in the Pool. Required."""
-    disk_read_iops: int = rest_field(
-        name="diskReadIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
-    )
+    disk_read_iops: int = rest_field(name="diskReadIOps", visibility=["read", "create", "update", "delete", "query"])
     """The total number of disk read operations across all Compute Nodes in the Pool. Required."""
-    disk_write_iops: int = rest_field(
-        name="diskWriteIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
-    )
+    disk_write_iops: int = rest_field(name="diskWriteIOps", visibility=["read", "create", "update", "delete", "query"])
     """The total number of disk write operations across all Compute Nodes in the Pool. Required."""
     disk_read_gib: float = rest_field(name="diskReadGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total amount of data in GiB of disk reads across all Compute Nodes in the Pool. Required."""
@@ -5796,7 +5832,7 @@ class BatchPoolResourceStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolSpecification(_Model):
+class BatchPoolSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specification for creating a new Pool.
 
     :ivar display_name: The display name for the Pool. The display name need not be unique and can
@@ -6032,7 +6068,7 @@ class BatchPoolSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolStatistics(_Model):
+class BatchPoolStatistics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains utilization and resource usage statistics for the lifetime of a Pool.
 
     :ivar url: The URL for the statistics. Required.
@@ -6042,8 +6078,6 @@ class BatchPoolStatistics(_Model):
     :ivar last_update_time: The time at which the statistics were last updated. All statistics are
      limited to the range between startTime and lastUpdateTime. Required.
     :vartype last_update_time: ~datetime.datetime
-    :ivar usage_statistics: Statistics related to Pool usage, such as the amount of core-time used.
-    :vartype usage_statistics: ~azure.batch.models.BatchPoolUsageStatistics
     :ivar resource_statistics: Statistics related to resource consumption by Compute Nodes in the
      Pool.
     :vartype resource_statistics: ~azure.batch.models.BatchPoolResourceStatistics
@@ -6060,10 +6094,6 @@ class BatchPoolStatistics(_Model):
     )
     """The time at which the statistics were last updated. All statistics are limited to the range
      between startTime and lastUpdateTime. Required."""
-    usage_statistics: Optional["_models.BatchPoolUsageStatistics"] = rest_field(
-        name="usageStats", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Statistics related to Pool usage, such as the amount of core-time used."""
     resource_statistics: Optional["_models.BatchPoolResourceStatistics"] = rest_field(
         name="resourceStats", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6076,7 +6106,6 @@ class BatchPoolStatistics(_Model):
         url: str,
         start_time: datetime.datetime,
         last_update_time: datetime.datetime,
-        usage_statistics: Optional["_models.BatchPoolUsageStatistics"] = None,
         resource_statistics: Optional["_models.BatchPoolResourceStatistics"] = None,
     ) -> None: ...
 
@@ -6091,7 +6120,7 @@ class BatchPoolStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolUpdateOptions(_Model):
+class BatchPoolUpdateOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for updating an Azure Batch Pool.
 
     :ivar display_name: The display name for the Pool. The display name need not be unique and can
@@ -6131,6 +6160,10 @@ class BatchPoolUpdateOptions(_Model):
     :ivar virtual_machine_configuration: The virtual machine configuration for the Pool. This
      property must be specified.<br /><br />This field can be updated only when the pool is empty.
     :vartype virtual_machine_configuration: ~azure.batch.models.VirtualMachineConfiguration
+    :ivar vm_sku_profile: Specifies the profile of VM sizes and the allocation strategy used to
+     allocate Compute Nodes for an Instance Mix Pool. When specified, vmSize must be 'Mix'.<br /><br
+     />This field can be updated only when the pool is empty.
+    :vartype vm_sku_profile: ~azure.batch.models.VirtualMachineSkuProfile
     :ivar task_slots_per_node: The number of task slots that can be used to run concurrent tasks on
      a single compute node in the pool. The default value is 1. The maximum value is the smaller of
      4 times the number of cores of the vmSize of the pool or 256.<br /><br />This field can be
@@ -6200,6 +6233,12 @@ class BatchPoolUpdateOptions(_Model):
     )
     """The virtual machine configuration for the Pool. This property must be specified.<br /><br
      />This field can be updated only when the pool is empty."""
+    vm_sku_profile: Optional["_models.VirtualMachineSkuProfile"] = rest_field(
+        name="vmSkuProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the profile of VM sizes and the allocation strategy used to allocate Compute Nodes
+     for an Instance Mix Pool. When specified, vmSize must be 'Mix'.<br /><br />This field can be
+     updated only when the pool is empty."""
     task_slots_per_node: Optional[int] = rest_field(
         name="taskSlotsPerNode", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6244,6 +6283,7 @@ class BatchPoolUpdateOptions(_Model):
         application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = None,
         metadata: Optional[list["_models.BatchMetadataItem"]] = None,
         virtual_machine_configuration: Optional["_models.VirtualMachineConfiguration"] = None,
+        vm_sku_profile: Optional["_models.VirtualMachineSkuProfile"] = None,
         task_slots_per_node: Optional[int] = None,
         task_scheduling_policy: Optional["_models.BatchTaskSchedulingPolicy"] = None,
         network_configuration: Optional["_models.NetworkConfiguration"] = None,
@@ -6263,117 +6303,7 @@ class BatchPoolUpdateOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolUsageMetrics(_Model):
-    """Usage metrics for a Pool across an aggregation interval.
-
-    :ivar pool_id: The ID of the Pool whose metrics are aggregated in this entry. Required.
-    :vartype pool_id: str
-    :ivar start_time: The start time of the aggregation interval covered by this entry. Required.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: The end time of the aggregation interval covered by this entry. Required.
-    :vartype end_time: ~datetime.datetime
-    :ivar vm_size: The size of virtual machines in the Pool. All VMs in a Pool are the same size.
-     For information about available sizes of virtual machines in Pools, see Choose a VM size for
-     Compute Nodes in an Azure Batch Pool
-     (`https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes
-     <https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes>`_). Required.
-    :vartype vm_size: str
-    :ivar total_core_hours: The total core hours used in the Pool during this aggregation interval.
-     Required.
-    :vartype total_core_hours: float
-    """
-
-    pool_id: str = rest_field(name="poolId", visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the Pool whose metrics are aggregated in this entry. Required."""
-    start_time: datetime.datetime = rest_field(
-        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The start time of the aggregation interval covered by this entry. Required."""
-    end_time: datetime.datetime = rest_field(
-        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The end time of the aggregation interval covered by this entry. Required."""
-    vm_size: str = rest_field(name="vmSize", visibility=["read", "create", "update", "delete", "query"])
-    """The size of virtual machines in the Pool. All VMs in a Pool are the same size. For information
-     about available sizes of virtual machines in Pools, see Choose a VM size for Compute Nodes in
-     an Azure Batch Pool (`https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes
-     <https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes>`_). Required."""
-    total_core_hours: float = rest_field(
-        name="totalCoreHours", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The total core hours used in the Pool during this aggregation interval. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        pool_id: str,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        vm_size: str,
-        total_core_hours: float,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BatchPoolUsageStatistics(_Model):
-    """Statistics related to Pool usage information.
-
-    :ivar start_time: The start time of the time range covered by the statistics. Required.
-    :vartype start_time: ~datetime.datetime
-    :ivar last_update_time: The time at which the statistics were last updated. All statistics are
-     limited to the range between startTime and lastUpdateTime. Required.
-    :vartype last_update_time: ~datetime.datetime
-    :ivar dedicated_core_time: The aggregated wall-clock time of the dedicated Compute Node cores
-     being part of the Pool. The time duration is specified in ISO 8601 format. Required.
-    :vartype dedicated_core_time: ~datetime.timedelta
-    """
-
-    start_time: datetime.datetime = rest_field(
-        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The start time of the time range covered by the statistics. Required."""
-    last_update_time: datetime.datetime = rest_field(
-        name="lastUpdateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The time at which the statistics were last updated. All statistics are limited to the range
-     between startTime and lastUpdateTime. Required."""
-    dedicated_core_time: datetime.timedelta = rest_field(
-        name="dedicatedCoreTime", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The aggregated wall-clock time of the dedicated Compute Node cores being part of the Pool. The
-     time duration is specified in ISO 8601 format. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        start_time: datetime.datetime,
-        last_update_time: datetime.datetime,
-        dedicated_core_time: datetime.timedelta,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BatchPublicIpAddressConfiguration(_Model):
+class BatchPublicIpAddressConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The public IP Address configuration of the networking configuration of a Pool.
 
     :ivar ip_address_provisioning_type: The provisioning type for Public IP Addresses for the Pool.
@@ -6443,7 +6373,7 @@ class BatchPublicIpAddressConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchStartTask(_Model):
+class BatchStartTask(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Batch will retry Tasks when a recovery operation is triggered on a Node. Examples of recovery
     operations include (but are not limited to) when an unhealthy Node is rebooted or a Compute
     Node disappeared due to host failure. Retries due to recovery operations are independent of and
@@ -6592,7 +6522,7 @@ class BatchStartTask(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchStartTaskInfo(_Model):
+class BatchStartTaskInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a StartTask running on a Compute Node.
 
     :ivar state: The state of the StartTask on the Compute Node. Required. Known values are:
@@ -6717,7 +6647,7 @@ class BatchStartTaskInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchSubtask(_Model):
+class BatchSubtask(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about an Azure Batch subtask.
 
     :ivar id: The ID of the subtask.
@@ -6849,7 +6779,7 @@ class BatchSubtask(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchSupportedImage(_Model):
+class BatchSupportedImage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A reference to the Azure Virtual Machines Marketplace Image and additional information about
     the Image.
 
@@ -6925,7 +6855,7 @@ class BatchSupportedImage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTask(_Model):
+class BatchTask(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Batch will retry Tasks when a recovery operation is triggered on a Node. Examples of recovery
     operations include (but are not limited to) when an unhealthy Node is rebooted or a Compute
     Node disappeared due to host failure. Retries due to recovery operations are independent of and
@@ -7171,7 +7101,7 @@ class BatchTask(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskConstraints(_Model):
+class BatchTaskConstraints(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Execution constraints to apply to a Task.
 
     :ivar max_wall_clock_time: The maximum elapsed time that the Task may run, measured from the
@@ -7243,7 +7173,7 @@ class BatchTaskConstraints(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskContainerExecutionInfo(_Model):
+class BatchTaskContainerExecutionInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about the container which a Task is executing.
 
     :ivar container_id: The ID of the container.
@@ -7289,7 +7219,7 @@ class BatchTaskContainerExecutionInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskContainerSettings(_Model):
+class BatchTaskContainerSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The container settings for a Task.
 
     :ivar container_run_options: Additional options to the container create command. These
@@ -7363,7 +7293,7 @@ class BatchTaskContainerSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskCounts(_Model):
+class BatchTaskCounts(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Task counts for a Job.
 
     :ivar active: The number of Tasks in the active state. Required.
@@ -7415,7 +7345,7 @@ class BatchTaskCounts(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskCountsResult(_Model):
+class BatchTaskCountsResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Task and TaskSlot counts for a Job.
 
     :ivar task_counts: The number of Tasks per state. Required.
@@ -7452,7 +7382,7 @@ class BatchTaskCountsResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskCreateOptions(_Model):
+class BatchTaskCreateOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for creating an Azure Batch Task.
 
     :ivar id: A string that uniquely identifies the Task within the Job. The ID can contain any
@@ -7668,7 +7598,7 @@ class BatchTaskCreateOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskCreateResult(_Model):
+class BatchTaskCreateResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result for a single Task created as part of an add Task collection operation.
 
     :ivar status: The status of the add Task request. Required. Known values are: "success",
@@ -7733,7 +7663,7 @@ class BatchTaskCreateResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskDependencies(_Model):
+class BatchTaskDependencies(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies any dependencies of a Task. Any Task that is explicitly specified or within a
     dependency range must complete before the dependant Task will be scheduled.
 
@@ -7781,7 +7711,7 @@ class BatchTaskDependencies(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskExecutionInfo(_Model):
+class BatchTaskExecutionInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the execution of a Task.
 
     :ivar start_time: The time at which the Task started running. 'Running' corresponds to the
@@ -7921,7 +7851,7 @@ class BatchTaskExecutionInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskFailureInfo(_Model):
+class BatchTaskFailureInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a Task failure.
 
     :ivar category: The category of the Task error. Required. Known values are: "usererror" and
@@ -7972,7 +7902,7 @@ class BatchTaskFailureInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskGroup(_Model):
+class BatchTaskGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of Azure Batch Tasks to add.
 
     :ivar task_values: The collection of Tasks to add. The maximum count of Tasks is 100. The total
@@ -8008,7 +7938,7 @@ class BatchTaskGroup(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskIdRange(_Model):
+class BatchTaskIdRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The start and end of the range are inclusive. For example, if a range has start 9 and end 12,
     then it represents Tasks '9', '10', '11' and '12'.
 
@@ -8042,7 +7972,7 @@ class BatchTaskIdRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskInfo(_Model):
+class BatchTaskInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a Task running on a Compute Node.
 
     :ivar task_url: The URL of the Task.
@@ -8101,7 +8031,7 @@ class BatchTaskInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskSchedulingPolicy(_Model):
+class BatchTaskSchedulingPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies how Tasks should be distributed across Compute Nodes.
 
     :ivar job_default_order: The order for scheduling tasks from different jobs with the same
@@ -8142,7 +8072,7 @@ class BatchTaskSchedulingPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskSlotCounts(_Model):
+class BatchTaskSlotCounts(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The TaskSlot counts for a Job.
 
     :ivar active: The number of TaskSlots for active Tasks. Required.
@@ -8190,7 +8120,7 @@ class BatchTaskSlotCounts(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskStatistics(_Model):
+class BatchTaskStatistics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource usage statistics for a Task.
 
     :ivar url: The URL of the statistics. Required.
@@ -8304,7 +8234,7 @@ class BatchTaskStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchUefiSettings(_Model):
+class BatchUefiSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the security settings like secure boot and vTPM used while creating the virtual
     machine.
 
@@ -8343,7 +8273,7 @@ class BatchUefiSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchUserAssignedIdentity(_Model):
+class BatchUserAssignedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The user assigned Identity.
 
     :ivar resource_id: The ARM resource id of the user assigned identity. Required.
@@ -8379,7 +8309,7 @@ class BatchUserAssignedIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchVmDiskSecurityProfile(_Model):
+class BatchVmDiskSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the security profile settings for the managed disk. **Note**: It can only be set for
     Confidential VMs and required when using Confidential VMs.
 
@@ -8418,7 +8348,7 @@ class BatchVmDiskSecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchVmImageReference(_Model):
+class BatchVmImageReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A reference to an Azure Virtual Machines Marketplace Image or a Azure Compute Gallery Image. To
     get the list of all Azure Marketplace Image references verified by Azure Batch, see the ' List
     Supported Images ' operation.
@@ -8527,7 +8457,7 @@ class BatchVmImageReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CifsMountConfiguration(_Model):
+class CifsMountConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information used to connect to a CIFS file system.
 
     :ivar username: The user to use for authentication against the CIFS file system. Required.
@@ -8585,7 +8515,7 @@ class CifsMountConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerHostBatchBindMountEntry(_Model):
+class ContainerHostBatchBindMountEntry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The entry of path and mount mode you want to mount into task container.
 
     :ivar source: The path which be mounted to container customer can select. Known values are:
@@ -8631,7 +8561,7 @@ class ContainerHostBatchBindMountEntry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerRegistryReference(_Model):
+class ContainerRegistryReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private container registry.
 
     :ivar username: The user name to log into the registry server.
@@ -8680,7 +8610,7 @@ class ContainerRegistryReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataDisk(_Model):
+class DataDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings which will be used by the data disks associated to Compute Nodes in the Pool. When
     using attached data disks, you need to mount and format the disks from within a VM to use them.
 
@@ -8740,7 +8670,7 @@ class DataDisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskCustomerManagedKey(_Model):
+class DiskCustomerManagedKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Customer Managed Key reference to encrypt the Disk.
 
     :ivar identity_reference: The reference of one of the pool identities to encrypt Disk. This
@@ -8788,7 +8718,7 @@ class DiskCustomerManagedKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskEncryptionConfiguration(_Model):
+class DiskEncryptionConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The disk encryption configuration applied on compute nodes in the pool. Disk encryption
     configuration is not supported on Linux pool created with Azure Compute Gallery Image.
 
@@ -8834,7 +8764,7 @@ class DiskEncryptionConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskEncryptionSetParameters(_Model):
+class DiskEncryptionSetParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ARM resource id of the disk encryption set.
 
     :ivar id: The ARM resource id of the disk encryption set. The resource must be in the same
@@ -8864,7 +8794,7 @@ class DiskEncryptionSetParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnvironmentSetting(_Model):
+class EnvironmentSetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An environment variable to be set on a Task process.
 
     :ivar name: The name of the environment variable. Required.
@@ -8897,7 +8827,7 @@ class EnvironmentSetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExitCodeMapping(_Model):
+class ExitCodeMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """How the Batch service should respond if a Task exits with a particular exit code.
 
     :ivar code: A process exit code. Required.
@@ -8933,7 +8863,7 @@ class ExitCodeMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExitCodeRangeMapping(_Model):
+class ExitCodeRangeMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A range of exit codes and how the Batch service should respond to exit codes within that range.
 
     :ivar start: The first exit code in the range. Required.
@@ -8975,7 +8905,7 @@ class ExitCodeRangeMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExitConditions(_Model):
+class ExitConditions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies how the Batch service should respond when the Task completes.
 
     :ivar exit_codes: A list of individual Task exit codes and how the Batch service should respond
@@ -9048,7 +8978,7 @@ class ExitConditions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExitOptions(_Model):
+class ExitOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies how the Batch service responds to a particular exit condition.
 
     :ivar job_action: An action to take on the Job containing the Task, if the Task completes with
@@ -9102,7 +9032,7 @@ class ExitOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileProperties(_Model):
+class FileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a file on a Compute Node.
 
     :ivar creation_time: The file creation time. The creation time is not returned for files on
@@ -9161,7 +9091,38 @@ class FileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HostEndpointSettings(_Model):
+class HardwareProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies the hardware settings for the Compute Nodes.
+
+    :ivar vm_size_properties: Specifies the properties for customizing the size of the virtual
+     machine.
+    :vartype vm_size_properties: ~azure.batch.models.VMSizeProperties
+    """
+
+    vm_size_properties: Optional["_models.VMSizeProperties"] = rest_field(
+        name="vmSizeProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the properties for customizing the size of the virtual machine."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        vm_size_properties: Optional["_models.VMSizeProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HostEndpointSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies particular host endpoint settings.
 
     :ivar in_vm_access_control_profile_reference_id: Specifies the reference to the
@@ -9203,7 +9164,7 @@ class HostEndpointSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InboundEndpoint(_Model):
+class InboundEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An inbound endpoint on a Compute Node.
 
     :ivar name: The name of the endpoint. Required.
@@ -9260,7 +9221,7 @@ class InboundEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstanceViewStatus(_Model):
+class InstanceViewStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view status.
 
     :ivar code: The status code.
@@ -9314,7 +9275,7 @@ class InstanceViewStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IPTag(_Model):
+class IPTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the IP tag associated with the public IP address.
 
     :ivar ip_tag_type: The IP Tag type. Example: FirstPartyUsage.
@@ -9349,7 +9310,7 @@ class IPTag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinuxUserConfiguration(_Model):
+class LinuxUserConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties used to create a user Account on a Linux Compute Node.
 
     :ivar uid: The user ID of the user Account. The uid and gid properties must be specified
@@ -9404,7 +9365,7 @@ class LinuxUserConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedDisk(_Model):
+class ManagedDisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The managed disk parameters.
 
     :ivar disk_encryption_set: Specifies the customer managed disk encryption set resource id for
@@ -9452,7 +9413,43 @@ class ManagedDisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MountConfiguration(_Model):
+class MaxInstancePercentPerZonePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The policy that limits the percentage of Pool instances that may be allocated in a single
+    availability zone.
+
+    :ivar enabled: Whether the maximum instance percentage policy is enabled.
+    :vartype enabled: bool
+    :ivar value: The maximum percentage of Pool instances that may be allocated in a single
+     availability zone. Required.
+    :vartype value: int
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the maximum instance percentage policy is enabled."""
+    value: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The maximum percentage of Pool instances that may be allocated in a single availability zone.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: int,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MountConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The file system to mount on each node.
 
     :ivar azure_blob_file_system_configuration: The Azure Storage Container to mount using blob
@@ -9512,7 +9509,7 @@ class MountConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MultiInstanceSettings(_Model):
+class MultiInstanceSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Multi-instance Tasks are commonly used to support MPI Tasks. In the MPI case, if any of the
     subtasks fail (for example due to exiting with a non-zero exit code) the entire multi-instance
     Task fails. The multi-instance Task is then terminated and retried, up to its retry limit.
@@ -9581,7 +9578,7 @@ class MultiInstanceSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NameValuePair(_Model):
+class NameValuePair(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a name-value pair.
 
     :ivar name: The name in the name-value pair.
@@ -9614,7 +9611,7 @@ class NameValuePair(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkConfiguration(_Model):
+class NetworkConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The network configuration for a Pool.
 
     :ivar subnet_id: The ARM resource identifier of the virtual network subnet which the Compute
@@ -9715,7 +9712,7 @@ class NetworkConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityGroupRule(_Model):
+class NetworkSecurityGroupRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A network security group rule to apply to an inbound endpoint.
 
     :ivar priority: The priority for this rule. Priorities within a Pool must be unique and are
@@ -9789,7 +9786,7 @@ class NetworkSecurityGroupRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NfsMountConfiguration(_Model):
+class NfsMountConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information used to connect to an NFS file system.
 
     :ivar source: The URI of the file system to mount. Required.
@@ -9837,10 +9834,7 @@ class NfsMountConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-# TODO: Open Sphinx issue that needs to be addressed through TypeSpec.
-# See: https://github.com/microsoft/typespec/issues/8654
-# Revert any changes made here with `*` and `\`.
-class OutputFile(_Model):
+class OutputFile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """On every file uploads, Batch service writes two log files to the compute node,
     'fileuploadout.txt' and 'fileuploaderr.txt'. These log files are used to learn more about a
     specific failure.
@@ -9848,14 +9842,14 @@ class OutputFile(_Model):
     :ivar file_pattern: A pattern indicating which file(s) to upload. Both relative and absolute
      paths are supported. Relative paths are relative to the Task working directory. The following
      wildcards are supported: * matches 0 or more characters (for example pattern abc* would match
-     abc or abcdef), \\*\\* matches any directory, ? matches any single character, [abc] matches one
+     abc or abcdef), ** matches any directory, ? matches any single character, [abc] matches one
      character in the brackets, and [a-c] matches one character in the range. Brackets can include a
      negation to match any character not specified (for example [!abc] matches any character but a,
      b, or c). If a file name starts with "." it is ignored by default but may be matched by
      specifying it explicitly (for example *.gif will not match .a.gif, but .*.gif will). A simple
-     example: \\*\\*\\\\*.txt matches any file that does not start in '.' and ends with .txt in the Task
+     example: **\\*.txt matches any file that does not start in '.' and ends with .txt in the Task
      working directory or any subdirectory. If the filename contains a wildcard character it can be
-     escaped using brackets (for example abc[*] would match a file named abc*). Note that both \\\\
+     escaped using brackets (for example abc[*] would match a file named abc*). Note that both \\
      and / are treated as directory separators on Windows, but only / is on Linux. Environment
      variables (%var% on Windows or $var on Linux) are expanded prior to the pattern being applied.
      Required.
@@ -9868,20 +9862,19 @@ class OutputFile(_Model):
     """
 
     file_pattern: str = rest_field(name="filePattern", visibility=["read", "create", "update", "delete", "query"])
-    """A pattern indicating which file(s) to upload. Both relative and absolute
-     paths are supported. Relative paths are relative to the Task working directory. The following
-     wildcards are supported: * matches 0 or more characters (for example pattern abc* would match
-     abc or abcdef), \\*\\* matches any directory, ? matches any single character, [abc] matches one
-     character in the brackets, and [a-c] matches one character in the range. Brackets can include a
-     negation to match any character not specified (for example [!abc] matches any character but a,
-     b, or c). If a file name starts with "." it is ignored by default but may be matched by
-     specifying it explicitly (for example *.gif will not match .a.gif, but .*.gif will). A simple
-     example: \\*\\*\\\\*.txt matches any file that does not start in '.' and ends with .txt in the Task
-     working directory or any subdirectory. If the filename contains a wildcard character it can be
-     escaped using brackets (for example abc[*] would match a file named abc*). Note that both \\\\
-     and / are treated as directory separators on Windows, but only / is on Linux. Environment
-     variables (%var% on Windows or $var on Linux) are expanded prior to the pattern being applied.
-     Required."""
+    """A pattern indicating which file(s) to upload. Both relative and absolute paths are supported.
+     Relative paths are relative to the Task working directory. The following wildcards are
+     supported: * matches 0 or more characters (for example pattern abc* would match abc or abcdef),
+     ** matches any directory, ? matches any single character, [abc] matches one character in the
+     brackets, and [a-c] matches one character in the range. Brackets can include a negation to
+     match any character not specified (for example [!abc] matches any character but a, b, or c). If
+     a file name starts with \".\" it is ignored by default but may be matched by specifying it
+     explicitly (for example *.gif will not match .a.gif, but .*.gif will). A simple example:
+     **\\*.txt matches any file that does not start in '.' and ends with .txt in the Task working
+     directory or any subdirectory. If the filename contains a wildcard character it can be escaped
+     using brackets (for example abc[*] would match a file named abc*). Note that both \\ and / are
+     treated as directory separators on Windows, but only / is on Linux. Environment variables
+     (%var% on Windows or $var on Linux) are expanded prior to the pattern being applied. Required."""
     destination: "_models.OutputFileDestination" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9912,7 +9905,7 @@ class OutputFile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OutputFileBlobContainerDestination(_Model):
+class OutputFileBlobContainerDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies a file upload destination within an Azure blob storage container.
 
     :ivar path: The destination blob or virtual directory within the Azure Storage container. If
@@ -9984,7 +9977,7 @@ class OutputFileBlobContainerDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OutputFileDestination(_Model):
+class OutputFileDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The destination to which a file should be uploaded.
 
     :ivar container: A location in Azure blob storage to which files are uploaded.
@@ -10014,7 +10007,7 @@ class OutputFileDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OutputFileUploadConfiguration(_Model):
+class OutputFileUploadConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Options for an output file upload operation, including under what conditions to perform the
     upload.
 
@@ -10049,7 +10042,7 @@ class OutputFileUploadConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OutputFileUploadHeader(_Model):
+class OutputFileUploadHeader(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An HTTP header name-value pair.
 
     :ivar name: The case-insensitive name of the header to be used while uploading output files.
@@ -10083,7 +10076,39 @@ class OutputFileUploadHeader(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProxyAgentSettings(_Model):
+class Placement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The placement policy for Compute Nodes in a Pool.
+
+    :ivar zone_placement_policy: The zone placement policy. Auto delegates zone selection and
+     balancing to the Virtual Machine Scale Set. Required. "Auto"
+    :vartype zone_placement_policy: str or ~azure.batch.models.ZonePlacementPolicyType
+    """
+
+    zone_placement_policy: Union[str, "_models.ZonePlacementPolicyType"] = rest_field(
+        name="zonePlacementPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The zone placement policy. Auto delegates zone selection and balancing to the Virtual Machine
+     Scale Set. Required. \"Auto\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        zone_placement_policy: Union[str, "_models.ZonePlacementPolicyType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ProxyAgentSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies ProxyAgent settings while creating the virtual machine.
 
     :ivar enabled: Specifies whether Metadata Security Protocol feature should be enabled on the
@@ -10127,7 +10152,7 @@ class ProxyAgentSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecentBatchJob(_Model):
+class RecentBatchJob(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the most recent Job to run under the Job Schedule.
 
     :ivar id: The ID of the Job.
@@ -10160,7 +10185,38 @@ class RecentBatchJob(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResizeError(_Model):
+class ResiliencyPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The resiliency policy for Compute Nodes in a Pool.
+
+    :ivar zone_allocation_policy: The policy that controls allocation across availability zones.
+     Required.
+    :vartype zone_allocation_policy: ~azure.batch.models.ZoneAllocationPolicy
+    """
+
+    zone_allocation_policy: "_models.ZoneAllocationPolicy" = rest_field(
+        name="zoneAllocationPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy that controls allocation across availability zones. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        zone_allocation_policy: "_models.ZoneAllocationPolicy",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResizeError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error that occurred when resizing a Pool.
 
     :ivar code: An identifier for the Pool resize error. Codes are invariant and are intended to be
@@ -10204,7 +10260,7 @@ class ResizeError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceFile(_Model):
+class ResourceFile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single file or multiple files to be downloaded to a Compute Node.
 
     :ivar auto_storage_container_name: The storage container name in the auto storage Account. The
@@ -10324,13 +10380,14 @@ class ResourceFile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RollingUpgradePolicy(_Model):
+class RollingUpgradePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration parameters used while performing a rolling upgrade.
 
     :ivar enable_cross_zone_upgrade: Allow VMSS to ignore AZ boundaries when constructing upgrade
      batches. Take into consideration the Update Domain and maxBatchInstancePercent to determine the
-     batch size. This field is able to be set to true or false only when using
-     NodePlacementConfiguration as Zonal.
+     batch size. This field can be set to true or false only when nodePlacementConfiguration.policy
+     is Zonal or placement.zonePlacementPolicy is Auto. Auto placement is supported starting with
+     API version 2026-10-01.
     :vartype enable_cross_zone_upgrade: bool
     :ivar max_batch_instance_percent: The maximum percent of total virtual machine instances that
      will be upgraded simultaneously by the rolling upgrade in one batch. As this is a maximum,
@@ -10369,8 +10426,10 @@ class RollingUpgradePolicy(_Model):
         name="enableCrossZoneUpgrade", visibility=["read", "create", "update", "delete", "query"]
     )
     """Allow VMSS to ignore AZ boundaries when constructing upgrade batches. Take into consideration
-     the Update Domain and maxBatchInstancePercent to determine the batch size. This field is able
-     to be set to true or false only when using NodePlacementConfiguration as Zonal."""
+     the Update Domain and maxBatchInstancePercent to determine the batch size. This field can be
+     set to true or false only when nodePlacementConfiguration.policy is Zonal or
+     placement.zonePlacementPolicy is Auto. Auto placement is supported starting with API version
+     2026-10-01."""
     max_batch_instance_percent: Optional[int] = rest_field(
         name="maxBatchInstancePercent", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10435,7 +10494,7 @@ class RollingUpgradePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityProfile(_Model):
+class SecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the security profile settings for the virtual machine or virtual machine scale set.
 
     :ivar encryption_at_host: This property can be used by user in the request to enable or disable
@@ -10502,7 +10561,7 @@ class SecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceArtifactReference(_Model):
+class ServiceArtifactReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the service artifact reference id used to set same image version for all virtual
     machines in the scale set when using 'latest' image version.
 
@@ -10537,7 +10596,7 @@ class ServiceArtifactReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpgradePolicy(_Model):
+class UpgradePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an upgrade policy - automatic, manual, or rolling.
 
     :ivar mode: Specifies the mode of an upgrade to virtual machines in the scale set.<br /><br />
@@ -10592,7 +10651,7 @@ class UpgradePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UploadBatchServiceLogsOptions(_Model):
+class UploadBatchServiceLogsOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Azure Batch service log files upload parameters for a Compute Node.
 
     :ivar container_url: The URL of the container within Azure Blob Storage to which to upload the
@@ -10666,7 +10725,7 @@ class UploadBatchServiceLogsOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UploadBatchServiceLogsResult(_Model):
+class UploadBatchServiceLogsResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of uploading Batch service log files from a specific Compute Node.
 
     :ivar virtual_directory_name: The virtual directory within Azure Blob Storage container to
@@ -10708,7 +10767,7 @@ class UploadBatchServiceLogsResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserAccount(_Model):
+class UserAccount(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties used to create a user used to execute Tasks on an Azure Batch Compute Node.
 
     :ivar name: The name of the user Account. Names can contain any Unicode characters up to a
@@ -10773,7 +10832,7 @@ class UserAccount(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserIdentity(_Model):
+class UserIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of the user identity under which the Task is run. Specify either the userName or
     autoUser property, but not both.
 
@@ -10813,7 +10872,7 @@ class UserIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineConfiguration(_Model):
+class VirtualMachineConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration for Compute Nodes in a Pool based on the Azure Virtual Machines
     infrastructure.
 
@@ -10848,8 +10907,11 @@ class VirtualMachineConfiguration(_Model):
     :ivar license_type: This only applies to Images that contain the Windows operating system, and
      should only be used when you hold valid on-premises licenses for the Compute
      Nodes which will be deployed. If omitted, no on-premises licensing discount is
-     applied. Values are: Windows_Server (the on-premises license is for Windows
-     Server) and Windows_Client (the on-premises license is for Windows Client).
+     applied. Values are:
+
+      Windows_Server - The on-premises license is for Windows
+     Server.
+      Windows_Client - The on-premises license is for Windows Client.
     :vartype license_type: str
     :ivar container_configuration: The container configuration for the Pool. If specified, setup is
      performed on each Compute Node in the Pool to allow Tasks to run in containers. All regular
@@ -10875,6 +10937,22 @@ class VirtualMachineConfiguration(_Model):
      service artifact reference id in the form of
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
     :vartype service_artifact_reference: ~azure.batch.models.ServiceArtifactReference
+    :ivar hardware_profile: Specifies the hardware settings for the Compute Nodes. This property is
+     not supported for pools created via auto-pool (as part of a job or job schedule); the request
+     will be rejected if it is specified in that context.
+    :vartype hardware_profile: ~azure.batch.models.HardwareProfile
+    :ivar placement: The availability zone placement policy for Compute Nodes in the Pool. Set
+     zonePlacementPolicy to Auto to delegate availability zone selection and balancing to the
+     Virtual Machine Scale Set. On Pool creation, if placement is omitted, Batch uses
+     nodePlacementConfiguration when it is specified; otherwise, the Pool uses Regional placement,
+     which provides no availability zone distribution guarantee. This property cannot be combined
+     with nodePlacementConfiguration. On PATCH, omitting placement preserves the existing placement
+     policy, including when virtualMachineConfiguration is supplied.
+    :vartype placement: ~azure.batch.models.Placement
+    :ivar resiliency_policy: The resiliency policy for Compute Nodes in the Pool. This property
+     requires placement.zonePlacementPolicy to be Auto. On PATCH, omitting resiliencyPolicy
+     preserves the existing resiliency policy independently of whether placement is supplied.
+    :vartype resiliency_policy: ~azure.batch.models.ResiliencyPolicy
     """
 
     image_reference: "_models.BatchVmImageReference" = rest_field(
@@ -10919,6 +10997,7 @@ class VirtualMachineConfiguration(_Model):
      Nodes which will be deployed. If omitted, no on-premises licensing discount is
      applied. Values are:
      
+      Windows_Server - The on-premises license is for Windows
      Server.
       Windows_Client - The on-premises license is for Windows Client."""
     container_configuration: Optional["_models.BatchContainerConfiguration"] = rest_field(
@@ -10957,6 +11036,26 @@ class VirtualMachineConfiguration(_Model):
      machines in the scale set when using 'latest' image version. The service artifact reference id
      in the form of
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}."""
+    hardware_profile: Optional["_models.HardwareProfile"] = rest_field(
+        name="hardwareProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the hardware settings for the Compute Nodes. This property is not supported for pools
+     created via auto-pool (as part of a job or job schedule); the request will be rejected if it is
+     specified in that context."""
+    placement: Optional["_models.Placement"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The availability zone placement policy for Compute Nodes in the Pool. Set zonePlacementPolicy
+     to Auto to delegate availability zone selection and balancing to the Virtual Machine Scale Set.
+     On Pool creation, if placement is omitted, Batch uses nodePlacementConfiguration when it is
+     specified; otherwise, the Pool uses Regional placement, which provides no availability zone
+     distribution guarantee. This property cannot be combined with nodePlacementConfiguration. On
+     PATCH, omitting placement preserves the existing placement policy, including when
+     virtualMachineConfiguration is supplied."""
+    resiliency_policy: Optional["_models.ResiliencyPolicy"] = rest_field(
+        name="resiliencyPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resiliency policy for Compute Nodes in the Pool. This property requires
+     placement.zonePlacementPolicy to be Auto. On PATCH, omitting resiliencyPolicy preserves the
+     existing resiliency policy independently of whether placement is supplied."""
 
     @overload
     def __init__(
@@ -10974,6 +11073,9 @@ class VirtualMachineConfiguration(_Model):
         os_disk: Optional["_models.BatchOsDisk"] = None,
         security_profile: Optional["_models.SecurityProfile"] = None,
         service_artifact_reference: Optional["_models.ServiceArtifactReference"] = None,
+        hardware_profile: Optional["_models.HardwareProfile"] = None,
+        placement: Optional["_models.Placement"] = None,
+        resiliency_policy: Optional["_models.ResiliencyPolicy"] = None,
     ) -> None: ...
 
     @overload
@@ -10987,7 +11089,7 @@ class VirtualMachineConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInfo(_Model):
+class VirtualMachineInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Info about the current state of the virtual machine.
 
     :ivar image_reference: The reference to the Azure Virtual Machine's Marketplace Image.
@@ -11027,7 +11129,91 @@ class VirtualMachineInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMExtension(_Model):
+class VirtualMachineSkuProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies the set of VM sizes and the allocation strategy used to allocate Compute Nodes for an
+    Instance Mix Pool.
+
+    :ivar vm_sizes: The list of VM sizes (up to 5) that may be allocated for the Pool. VM sizes may
+     span the supported A, B, D, E, and F VM families, but must have the same vCPU count and CPU
+     architecture and compatible VM capabilities. This must be specified when the vmSkuProfile is
+     provided during Pool creation.
+    :vartype vm_sizes: list[~azure.batch.models.VirtualMachineSkuProfileVmSize]
+    :ivar allocation_strategy: The allocation strategy used to select VM sizes from vmSizes.
+     Defaults to lowestPrice when not specified. Known values are: "lowestPrice",
+     "capacityOptimized", and "prioritized".
+    :vartype allocation_strategy: str or ~azure.batch.models.VirtualMachineSkuAllocationStrategy
+    """
+
+    vm_sizes: Optional[list["_models.VirtualMachineSkuProfileVmSize"]] = rest_field(
+        name="vmSizes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of VM sizes (up to 5) that may be allocated for the Pool. VM sizes may span the
+     supported A, B, D, E, and F VM families, but must have the same vCPU count and CPU architecture
+     and compatible VM capabilities. This must be specified when the vmSkuProfile is provided during
+     Pool creation."""
+    allocation_strategy: Optional[Union[str, "_models.VirtualMachineSkuAllocationStrategy"]] = rest_field(
+        name="allocationStrategy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The allocation strategy used to select VM sizes from vmSizes. Defaults to lowestPrice when not
+     specified. Known values are: \"lowestPrice\", \"capacityOptimized\", and \"prioritized\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        vm_sizes: Optional[list["_models.VirtualMachineSkuProfileVmSize"]] = None,
+        allocation_strategy: Optional[Union[str, "_models.VirtualMachineSkuAllocationStrategy"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualMachineSkuProfileVmSize(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies a single VM size that may be allocated for an Instance Mix Pool.
+
+    :ivar name: The name of the VM size (for example, 'Standard_D8s_v5'). Required.
+    :vartype name: str
+    :ivar rank: The 0-based rank (a.k.a. priority) associated with this VM size. Lower values
+     indicate higher priority. Rank is required only when the allocation strategy is 'prioritized'
+     and must be omitted otherwise.
+    :vartype rank: int
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the VM size (for example, 'Standard_D8s_v5'). Required."""
+    rank: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The 0-based rank (a.k.a. priority) associated with this VM size. Lower values indicate higher
+     priority. Rank is required only when the allocation strategy is 'prioritized' and must be
+     omitted otherwise."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        rank: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VMExtension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration for virtual machine extensions.
 
     :ivar name: The name of the virtual machine extension. Required.
@@ -11115,7 +11301,7 @@ class VMExtension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMExtensionInstanceView(_Model):
+class VMExtensionInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The vm extension instance view.
 
     :ivar name: The name of the vm extension instance view.
@@ -11157,7 +11343,52 @@ class VMExtensionInstanceView(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsConfiguration(_Model):
+class VMSizeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies the properties for customizing the size of the virtual machine.
+
+    :ivar v_cpus_available: Specifies the number of vCPUs available for the VM. When this property
+     is not specified in the request body the default behavior is to set it to the value of vCPUs
+     available for that VM size.
+    :vartype v_cpus_available: int
+    :ivar v_cpus_per_core: Specifies the vCPU to physical core ratio. When this property is not
+     specified in the request body the default behavior is set to the value of vCPUsPerCore for the
+     VM Size. Setting this property to 1 also means that hyper-threading is disabled.
+    :vartype v_cpus_per_core: int
+    """
+
+    v_cpus_available: Optional[int] = rest_field(
+        name="vCPUsAvailable", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the number of vCPUs available for the VM. When this property is not specified in the
+     request body the default behavior is to set it to the value of vCPUs available for that VM
+     size."""
+    v_cpus_per_core: Optional[int] = rest_field(
+        name="vCPUsPerCore", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the vCPU to physical core ratio. When this property is not specified in the request
+     body the default behavior is set to the value of vCPUsPerCore for the VM Size. Setting this
+     property to 1 also means that hyper-threading is disabled."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        v_cpus_available: Optional[int] = None,
+        v_cpus_per_core: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class WindowsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Windows operating system settings to apply to the virtual machine.
 
     :ivar enable_automatic_updates: Whether automatic updates are enabled on the virtual machine.
@@ -11189,7 +11420,7 @@ class WindowsConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsUserConfiguration(_Model):
+class WindowsUserConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties used to create a user Account on a Windows Compute Node.
 
     :ivar login_mode: The login mode for the user. The default is 'batch'. Known values are:
@@ -11208,6 +11439,48 @@ class WindowsUserConfiguration(_Model):
         self,
         *,
         login_mode: Optional[Union[str, "_models.LoginMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ZoneAllocationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The policy that controls allocation across availability zones.
+
+    :ivar max_zone_count: The maximum number of availability zones that may be used. The value
+     cannot exceed the number of zones supported by the region.
+    :vartype max_zone_count: int
+    :ivar max_instance_percent_per_zone_policy: The policy that limits the percentage of Pool
+     instances that may be allocated in a single availability zone.
+    :vartype max_instance_percent_per_zone_policy:
+     ~azure.batch.models.MaxInstancePercentPerZonePolicy
+    """
+
+    max_zone_count: Optional[int] = rest_field(
+        name="maxZoneCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum number of availability zones that may be used. The value cannot exceed the number
+     of zones supported by the region."""
+    max_instance_percent_per_zone_policy: Optional["_models.MaxInstancePercentPerZonePolicy"] = rest_field(
+        name="maxInstancePercentPerZonePolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy that limits the percentage of Pool instances that may be allocated in a single
+     availability zone."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_zone_count: Optional[int] = None,
+        max_instance_percent_per_zone_policy: Optional["_models.MaxInstancePercentPerZonePolicy"] = None,
     ) -> None: ...
 
     @overload

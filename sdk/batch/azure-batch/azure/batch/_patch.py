@@ -26,7 +26,7 @@ from azure.core.pipeline import PipelineResponse, PipelineRequest
 
 from ._client import BatchClient as GenerateBatchClient
 from . import models as _models
-from ._serialization import (
+from ._utils.serialization import (
     Serializer,
     TZ_UTC,
 )

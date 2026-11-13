@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
-from typing import Any, Callable, cast, Deque, Dict, List, Optional, Iterable, Iterator, TypeVar
+from typing import Any, Callable, cast, Deque, Dict, List, Optional, Iterable, Iterator, TypeVar, Union
 import collections
 import logging
 import threading
@@ -52,6 +52,19 @@ _LOGGER = logging.getLogger(__name__)
 __all__: List[str] = [
     "_BatchClientOperationsMixin",
 ]  # Add all objects you want publicly available to users at this package level
+
+
+def _to_timedelta(value: Optional[Union[int, datetime.timedelta]]) -> Optional[datetime.timedelta]:
+    """Convert integer seconds to a timedelta, passing through None and timedelta values.
+
+    :param value: The timeout in seconds, or an existing timedelta.
+    :type value: int or ~datetime.timedelta or None
+    :return: The timeout as a timedelta, or None.
+    :rtype: ~datetime.timedelta or None
+    """
+    if value is None or isinstance(value, datetime.timedelta):
+        return value
+    return datetime.timedelta(seconds=value)
 
 
 class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
@@ -123,7 +136,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._delete_job_internal(
                 job_id,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -212,7 +225,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             self._disable_job_internal(
                 job_id,
                 disable_options=disable_options,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -289,7 +302,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._enable_job_internal(
                 job_id,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -365,7 +378,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._delete_job_schedule_internal(
                 job_schedule_id,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -449,7 +462,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._delete_pool_internal(
                 pool_id,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -511,7 +524,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 pool_id,
                 node_id,
                 options=options,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 cls=capture_pipeline_response,
                 **kwargs,
@@ -569,7 +582,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 pool_id,
                 node_id,
                 options=options,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 cls=capture_pipeline_response,
                 **kwargs,
@@ -631,7 +644,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 pool_id,
                 node_id,
                 options=options,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 cls=capture_pipeline_response,
                 **kwargs,
@@ -706,7 +719,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             self._remove_nodes_internal(
                 pool_id,
                 remove_options=remove_options,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -789,7 +802,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             self._resize_pool_internal(
                 pool_id,
                 resize_options=resize_options,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -847,7 +860,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             self._start_node_internal(
                 pool_id,
                 node_id,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 cls=capture_pipeline_response,
                 **kwargs,
@@ -922,7 +935,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._stop_pool_resize_internal(
                 pool_id,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -1008,7 +1021,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             self._terminate_job_internal(
                 job_id,
                 options=options,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -1085,7 +1098,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._terminate_job_schedule_internal(
                 job_schedule_id,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -1152,7 +1165,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.batch.custom.CreateTasksError:
         """
 
-        kwargs.update({"service_timeout": service_timeout, "ocp_date": ocp_date})
+        kwargs.update({"service_timeout": _to_timedelta(service_timeout), "ocp_date": ocp_date})
 
         # deque operations(append/pop) are thread-safe
         results_queue: Deque[_models.BatchTaskCreateResult] = collections.deque()
@@ -1195,7 +1208,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         node_id: str,
         file_path: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[Union[int, datetime.timedelta]] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -1238,7 +1251,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [pool_id, node_id, file_path]
         kwargs.update(
             {
-                "service_timeout": service_timeout,
+                "service_timeout": _to_timedelta(service_timeout),
                 "ocp_date": ocp_date,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
@@ -1306,7 +1319,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             pool_id,
             node_id,
             file_path,
-            service_timeout=service_timeout,
+            service_timeout=_to_timedelta(service_timeout),
             ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -1374,7 +1387,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             job_id,
             task_id,
             file_path,
-            service_timeout=service_timeout,
+            service_timeout=_to_timedelta(service_timeout),
             ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -1391,7 +1404,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         task_id: str,
         file_path: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[Union[int, datetime.timedelta]] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -1435,7 +1448,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [job_id, task_id, file_path]
         kwargs.update(
             {
-                "service_timeout": service_timeout,
+                "service_timeout": _to_timedelta(service_timeout),
                 "ocp_date": ocp_date,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,

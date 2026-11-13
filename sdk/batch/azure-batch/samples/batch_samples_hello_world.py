@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: 
+FILE:
     batch_samples_hello_world.py
 
 DESCRIPTION:
-    Azure Batch sample. 
+    Azure Batch sample.
 
-USAGE: 
+USAGE:
     python batch_samples_hello_world.py
 """
 

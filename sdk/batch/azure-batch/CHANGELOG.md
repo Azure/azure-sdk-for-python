@@ -1,5 +1,23 @@
 # Release History
 
+## 16.0.0 (2026-11-06)
+
+### Features Added
+
+- Added hardware profiles and virtual machine SKU allocation strategies for pools.
+- Added availability-zone allocation and resiliency policies for pools.
+
+### Breaking Changes
+
+- Removed `BatchClient.list_pool_usage_metrics` and its asynchronous counterpart, along with the `BatchPoolUsageMetrics` and `BatchPoolUsageStatistics` models, to align with service API version `2026-10-01`.
+- Removed `BatchPoolStatistics.usage_statistics`.
+- Removed `RETAINED_DATA` from `BatchNodeDeallocationOption`, `BatchNodeDeallocateOption`, `BatchNodeRebootKind`, and `BatchNodeReimageOption`. Upload task data to Azure Storage and use `TASK_COMPLETION` instead. `TASK_COMPLETION` waits for tasks to finish, but does not wait for their data retention periods to expire.
+- Dropped support for Python 3.9. Python 3.10 or later is required.
+
+### Other Changes
+
+- Updated the default service API version to `2026-10-01`.
+
 ## 15.1.0 (2026-03-06)
 
 ### Other Changes

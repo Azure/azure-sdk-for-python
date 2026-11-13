@@ -45,17 +45,13 @@ def create_pool_explicit_image():
     # Create an ImageReference which specifies the Marketplace
     # virtual machine image to install on the nodes
     ir = models.BatchVmImageReference(
-        publisher="canonical",
-        offer="0001-com-ubuntu-server-focal",
-        sku="20_04-lts",
-        version="latest")
+        publisher="canonical", offer="0001-com-ubuntu-server-focal", sku="20_04-lts", version="latest"
+    )
 
     # Create the VirtualMachineConfiguration, specifying
     # the VM image reference and the Batch node agent
     # to install on the node
-    vmc = models.VirtualMachineConfiguration(
-        image_reference=ir,
-        node_agent_sku_id="batch.node.ubuntu 20.04")
+    vmc = models.VirtualMachineConfiguration(image_reference=ir, node_agent_sku_id="batch.node.ubuntu 20.04")
 
     # Create the unbound pool
     new_pool = models.BatchPoolCreateOptions(
@@ -80,20 +76,25 @@ def vm_config_from_supported_images(client: BatchClient):
     # Obtain the desired image reference
     image = None
     for img in images:
-        if (img.image_reference.publisher and img.image_reference.publisher.lower() == "canonical" and
-                img.image_reference.offer and img.image_reference.offer.lower() == "0001-com-ubuntu-server-focal" and
-                img.image_reference.sku and img.image_reference.sku.lower() == "20_04-lts"):
+        if (
+            img.image_reference.publisher
+            and img.image_reference.publisher.lower() == "canonical"
+            and img.image_reference.offer
+            and img.image_reference.offer.lower() == "0001-com-ubuntu-server-focal"
+            and img.image_reference.sku
+            and img.image_reference.sku.lower() == "20_04-lts"
+        ):
             image = img
             break
 
     if image is None:
-        raise RuntimeError('invalid image reference for desired configuration')
+        raise RuntimeError("invalid image reference for desired configuration")
 
     # Create the VirtualMachineConfiguration, specifying the VM image
     # reference and the Batch node agent to be installed on the node
     vmc = models.VirtualMachineConfiguration(
-        image_reference=image.image_reference,
-        node_agent_sku_id=image.node_agent_sku_id)
+        image_reference=image.image_reference, node_agent_sku_id=image.node_agent_sku_id
+    )
     # [END linux_nodes_image_reference_python]
     return vmc
 
@@ -101,16 +102,16 @@ def vm_config_from_supported_images(client: BatchClient):
 def ssh_create_user_demo_inputs():
     # [START linux_nodes_ssh_user_python]
     # Specify your own account credentials
-    batch_account_name = ''
-    batch_account_key = ''
-    batch_account_url = ''
+    batch_account_name = ""
+    batch_account_key = ""
+    batch_account_url = ""
 
     # Specify the ID of an existing pool containing Linux nodes
     # currently in the 'idle' state
-    pool_id = ''
+    pool_id = ""
 
     # Specify the username and prompt for a password
-    username = 'linuxuser'
+    username = "linuxuser"
     password = getpass.getpass()
 
     # Create a BatchClient
@@ -131,5 +132,7 @@ def ssh_create_user_demo_inputs():
     for node in nodes:
         batch_client.create_node_user(pool_id=pool_id, node_id=node.id, user=user)
         login_settings = batch_client.get_node_remote_login_settings(pool_id=pool_id, node_id=node.id)
-        print(f"{node.id}: ssh {username}@{login_settings.remote_login_ip_address} -p {login_settings.remote_login_port}")
+        print(
+            f"{node.id}: ssh {username}@{login_settings.remote_login_ip_address} -p {login_settings.remote_login_port}"
+        )
     # [END linux_nodes_ssh_user_python]
