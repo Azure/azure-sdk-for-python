@@ -40,7 +40,33 @@ class TestAIGatewayMgmtAiGatewayResourcesOperations(AzureMgmtRecordedTestCase):
                 "properties": {
                     "backend": {"subnet": {"id": "str"}},
                     "frontend": {"defaultHostname": "str"},
+                    "privateEndpointConnections": [
+                        {
+                            "id": "str",
+                            "name": "str",
+                            "properties": {
+                                "privateLinkServiceConnectionState": {
+                                    "actionsRequired": "str",
+                                    "description": "str",
+                                    "status": "str",
+                                },
+                                "groupIds": ["str"],
+                                "privateEndpoint": {"id": "str"},
+                                "provisioningState": "str",
+                            },
+                            "systemData": {
+                                "createdAt": "2020-02-20 00:00:00",
+                                "createdBy": "str",
+                                "createdByType": "str",
+                                "lastModifiedAt": "2020-02-20 00:00:00",
+                                "lastModifiedBy": "str",
+                                "lastModifiedByType": "str",
+                            },
+                            "type": "str",
+                        }
+                    ],
                     "provisioningState": "str",
+                    "publicNetworkAccess": "str",
                 },
                 "eTag": "str",
                 "id": "str",
@@ -81,6 +107,7 @@ class TestAIGatewayMgmtAiGatewayResourcesOperations(AzureMgmtRecordedTestCase):
                     "tenantId": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
+                "properties": {"backend": {"subnet": {"id": "str"}}, "publicNetworkAccess": "str"},
                 "sku": {"capacity": 0, "family": "str", "name": "str", "size": "str", "tier": "str"},
                 "tags": {"str": "str"},
             },

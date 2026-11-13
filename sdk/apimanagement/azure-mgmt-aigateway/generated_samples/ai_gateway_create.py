@@ -42,15 +42,16 @@ def main():
                     "subnet": {
                         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-rg/providers/Microsoft.Network/virtualNetworks/example-vnet/subnets/example-subnet"
                     }
-                }
+                },
+                "publicNetworkAccess": "Enabled",
             },
-            "sku": {"name": "AIGateway"},
+            "sku": {"name": "Standard"},
             "tags": {"environment": "development"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-09-01-preview/AiGatewayCreate.json
+# x-ms-original-file: 2026-11-01/AiGatewayCreate.json
 if __name__ == "__main__":
     main()
