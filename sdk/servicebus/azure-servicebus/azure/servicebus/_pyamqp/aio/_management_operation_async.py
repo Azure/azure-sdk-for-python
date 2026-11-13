@@ -103,10 +103,12 @@ class ManagementOperation(object):
                         raise TimeoutError("Failed to receive mgmt response in {} seconds".format(timeout))
                 await self._connection.listen()
 
+            # Check the link first: closing a failed link completes the other pending operations with
+            # a generic LINK_CLOSED error that would hide the cause.
+            if not self._responses[operation_id] and self._mgmt_link_failed:
+                raise self._link_failure()
             if self._mgmt_error:
                 raise self._mgmt_error
-            if not self._responses[operation_id]:
-                raise self._link_failure()
 
             return self._responses[operation_id]
         finally:

@@ -14,8 +14,14 @@ import pytest
 
 from azure.servicebus._pyamqp import cbs, client, management_operation
 from azure.servicebus._pyamqp.aio import _cbs_async, _client_async, _management_operation_async
-from azure.servicebus._pyamqp.constants import CbsState, LinkState, ManagementLinkState, ManagementOpenResult
-from azure.servicebus._pyamqp.error import AMQPConnectionError, AMQPLinkError, ErrorCondition
+from azure.servicebus._pyamqp.constants import (
+    CbsState,
+    LinkState,
+    ManagementExecuteOperationResult,
+    ManagementLinkState,
+    ManagementOpenResult,
+)
+from azure.servicebus._pyamqp.error import AMQPConnectionError, AMQPException, AMQPLinkError, ErrorCondition
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 from azure.servicebus.exceptions import (
     ServiceBusAuthorizationError,
@@ -106,27 +112,35 @@ async def test_broken_management_link_raises_its_cause(asynchronous, link_error,
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("asynchronous", [False, True])
-async def test_link_failure_during_pending_request_raises_its_cause(asynchronous):
+@pytest.mark.parametrize("closed_by_another_request", [False, True])
+async def test_link_failure_during_pending_request_raises_its_cause(asynchronous, closed_by_another_request):
     module = _management_operation_async if asynchronous else management_operation
     session = _session(asynchronous)
     operation = module.ManagementOperation(session)
     link = operation._mgmt_link
+    link.execute_operation = AsyncMock(return_value=None) if asynchronous else MagicMock(return_value=None)
 
     def detach_while_waiting(*_, **__):
+        """Returns the callbacks' coroutines for the async link, None for the sync one."""
         link._request_link._error = DETACH_FORCED
-        return _break_link_pair(link)
+        pending = [_break_link_pair(link)]
+        if closed_by_another_request:
+            # Another request evicted and closed the link, which completes this operation generically.
+            on_complete = link.execute_operation.call_args[0][1]
+            closed = AMQPException(condition=ErrorCondition.ClientError, description="Management link already closed.")
+            pending.append(on_complete(ManagementExecuteOperationResult.LINK_CLOSED, None, None, None, closed))
+        return pending
 
     if asynchronous:
-        link.execute_operation = AsyncMock(return_value=None)
 
         async def detach_while_waiting_async(*_, **__):
-            await detach_while_waiting()
+            for coroutine in detach_while_waiting():
+                await coroutine
 
         session._connection.listen = AsyncMock(side_effect=detach_while_waiting_async)
         with pytest.raises(AMQPLinkError) as raised:
             await operation.execute(MagicMock(), timeout=5)
     else:
-        link.execute_operation = MagicMock(return_value=None)
         session._connection.listen.side_effect = detach_while_waiting
         with pytest.raises(AMQPLinkError) as raised:
             operation.execute(MagicMock(), timeout=5)
