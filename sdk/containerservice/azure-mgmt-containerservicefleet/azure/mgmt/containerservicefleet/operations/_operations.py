@@ -52,7 +52,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -73,7 +73,7 @@ def build_cluster_mesh_profiles_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -110,7 +110,7 @@ def build_cluster_mesh_profiles_create_or_update_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -154,7 +154,7 @@ def build_cluster_mesh_profiles_delete_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/clusterMeshProfiles/{clusterMeshProfileName}"
     path_format_arguments = {
@@ -186,7 +186,7 @@ def build_cluster_mesh_profiles_list_by_fleet_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -221,7 +221,7 @@ def build_cluster_mesh_profiles_apply_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -256,7 +256,7 @@ def build_fleets_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -291,7 +291,7 @@ def build_fleets_begin_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -334,7 +334,7 @@ def build_fleets_begin_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -376,7 +376,7 @@ def build_fleets_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}"
     path_format_arguments = {
@@ -407,7 +407,7 @@ def build_fleets_list_by_resource_group_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -436,7 +436,7 @@ def build_fleets_list_by_subscription_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -466,7 +466,7 @@ def build_fleets_list_credentials_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -494,7 +494,7 @@ def build_fleet_members_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -531,7 +531,7 @@ def build_fleet_members_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -576,7 +576,7 @@ def build_fleet_members_begin_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -620,7 +620,7 @@ def build_fleet_members_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/members/{fleetMemberName}"
     path_format_arguments = {
@@ -659,7 +659,7 @@ def build_fleet_members_list_by_fleet_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -693,7 +693,7 @@ def build_fleet_managed_namespaces_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -730,7 +730,7 @@ def build_fleet_managed_namespaces_create_or_update_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -774,7 +774,7 @@ def build_fleet_managed_namespaces_delete_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/managedNamespaces/{managedNamespaceName}"
     path_format_arguments = {
@@ -806,7 +806,7 @@ def build_fleet_managed_namespaces_list_by_fleet_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -842,7 +842,7 @@ def build_fleet_managed_namespaces_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -879,7 +879,7 @@ def build_gates_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -916,7 +916,7 @@ def build_gates_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -960,7 +960,7 @@ def build_gates_list_by_fleet_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -994,7 +994,7 @@ def build_update_runs_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1031,7 +1031,7 @@ def build_update_runs_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1075,7 +1075,7 @@ def build_update_runs_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/updateRuns/{updateRunName}"
     path_format_arguments = {
@@ -1113,7 +1113,7 @@ def build_update_runs_list_by_fleet_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1152,7 +1152,7 @@ def build_update_runs_start_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1194,7 +1194,7 @@ def build_update_runs_stop_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1237,7 +1237,7 @@ def build_update_runs_skip_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1274,7 +1274,7 @@ def build_fleet_update_strategies_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1311,7 +1311,7 @@ def build_fleet_update_strategies_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1355,7 +1355,7 @@ def build_fleet_update_strategies_delete_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/updateStrategies/{updateStrategyName}"
     path_format_arguments = {
@@ -1393,7 +1393,7 @@ def build_fleet_update_strategies_list_by_fleet_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1425,7 +1425,7 @@ def build_auto_upgrade_profiles_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1462,7 +1462,7 @@ def build_auto_upgrade_profiles_create_or_update_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1506,7 +1506,7 @@ def build_auto_upgrade_profiles_delete_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/fleets/{fleetName}/autoUpgradeProfiles/{autoUpgradeProfileName}"
     path_format_arguments = {
@@ -1544,7 +1544,7 @@ def build_auto_upgrade_profiles_list_by_fleet_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1576,7 +1576,7 @@ def build_auto_upgrade_profile_operations_generate_update_run_request(  # pylint
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1743,7 +1743,7 @@ class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview", "2026-11-01"],
     )
     def get(
         self, resource_group_name: str, fleet_name: str, cluster_mesh_profile_name: str, **kwargs: Any
@@ -1834,7 +1834,7 @@ class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview", "2026-11-01"],
     )
     def _create_or_update_initial(
         self,
@@ -2056,7 +2056,7 @@ class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview", "2026-11-01"],
     )
     def begin_create_or_update(
         self,
@@ -2161,7 +2161,7 @@ class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview", "2026-11-01"],
     )
     def _delete_initial(
         self,
@@ -2254,7 +2254,7 @@ class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview", "2026-11-01"],
     )
     def begin_delete(
         self,
@@ -2337,7 +2337,7 @@ class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
         },
-        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview", "2026-11-01"],
     )
     def list_by_fleet(
         self, resource_group_name: str, fleet_name: str, **kwargs: Any
@@ -2455,7 +2455,7 @@ class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview", "2026-11-01"],
     )
     def _apply_initial(
         self,
@@ -2549,7 +2549,7 @@ class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview", "2026-11-01"],
     )
     def begin_apply(
         self,
@@ -3027,6 +3027,7 @@ class FleetsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def _begin_update_initial(
@@ -3249,6 +3250,7 @@ class FleetsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def begin_update(
@@ -4169,6 +4171,7 @@ class FleetMembersOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def _begin_update_initial(
@@ -4403,6 +4406,7 @@ class FleetMembersOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def begin_update(
@@ -4805,6 +4809,7 @@ class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-par
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def get(
@@ -4902,6 +4907,7 @@ class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-par
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def _create_or_update_initial(
@@ -5133,6 +5139,7 @@ class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-par
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def begin_create_or_update(
@@ -5244,6 +5251,7 @@ class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-par
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def _delete_initial(
@@ -5343,6 +5351,7 @@ class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-par
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def begin_delete(
@@ -5432,6 +5441,7 @@ class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-par
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def list_by_fleet(
@@ -5551,7 +5561,7 @@ class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-par
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-06-02-preview", "2026-11-01"],
     )
     def _update_initial(
         self,
@@ -5774,7 +5784,7 @@ class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-par
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-06-02-preview", "2026-11-01"],
     )
     def begin_update(
         self,
@@ -5906,6 +5916,7 @@ class GatesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def get(self, resource_group_name: str, fleet_name: str, gate_name: str, **kwargs: Any) -> _models.Gate:
@@ -6002,6 +6013,7 @@ class GatesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def _update_initial(
@@ -6226,6 +6238,7 @@ class GatesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def begin_update(
@@ -6338,6 +6351,7 @@ class GatesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def list_by_fleet(
@@ -6506,6 +6520,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def get(self, resource_group_name: str, fleet_name: str, update_run_name: str, **kwargs: Any) -> _models.UpdateRun:
@@ -6610,6 +6625,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def _create_or_update_initial(
@@ -6844,6 +6860,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def begin_create_or_update(
@@ -6963,6 +6980,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def _delete_initial(
@@ -7071,6 +7089,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def begin_delete(
@@ -7177,6 +7196,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def list_by_fleet(
@@ -7322,6 +7342,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def _start_initial(
@@ -7431,6 +7452,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def begin_start(
@@ -7543,6 +7565,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def _stop_initial(
@@ -7652,6 +7675,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def begin_stop(
@@ -7761,6 +7785,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def _skip_initial(
@@ -7992,6 +8017,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def begin_skip(
@@ -8129,6 +8155,7 @@ class FleetUpdateStrategiesOperations:  # pylint: disable=docstring-missing-para
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def get(
@@ -8233,6 +8260,7 @@ class FleetUpdateStrategiesOperations:  # pylint: disable=docstring-missing-para
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def _create_or_update_initial(
@@ -8468,6 +8496,7 @@ class FleetUpdateStrategiesOperations:  # pylint: disable=docstring-missing-para
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def begin_create_or_update(
@@ -8586,6 +8615,7 @@ class FleetUpdateStrategiesOperations:  # pylint: disable=docstring-missing-para
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def _delete_initial(
@@ -8656,6 +8686,9 @@ class FleetUpdateStrategiesOperations:  # pylint: disable=docstring-missing-para
         response_headers = {}
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -8692,6 +8725,7 @@ class FleetUpdateStrategiesOperations:  # pylint: disable=docstring-missing-para
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def begin_delete(
@@ -8796,6 +8830,7 @@ class FleetUpdateStrategiesOperations:  # pylint: disable=docstring-missing-para
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def list_by_fleet(
@@ -8955,6 +8990,7 @@ class AutoUpgradeProfilesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def get(
@@ -9055,6 +9091,7 @@ class AutoUpgradeProfilesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def _create_or_update_initial(
@@ -9289,6 +9326,7 @@ class AutoUpgradeProfilesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def begin_create_or_update(
@@ -9403,6 +9441,7 @@ class AutoUpgradeProfilesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def _delete_initial(
@@ -9505,6 +9544,7 @@ class AutoUpgradeProfilesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def begin_delete(
@@ -9605,6 +9645,7 @@ class AutoUpgradeProfilesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def list_by_fleet(
@@ -9762,6 +9803,7 @@ class AutoUpgradeProfileOperationsOperations:  # pylint: disable=docstring-missi
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def _generate_update_run_initial(
@@ -9850,6 +9892,7 @@ class AutoUpgradeProfileOperationsOperations:  # pylint: disable=docstring-missi
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def begin_generate_update_run(
