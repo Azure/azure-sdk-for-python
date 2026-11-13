@@ -38,7 +38,14 @@ from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _deserialize_xml, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
+from ..._validation import api_version_validation
 from ...operations._operations import (
+    build_ai_gateways_create_or_update_request,
+    build_ai_gateways_delete_request,
+    build_ai_gateways_get_request,
+    build_ai_gateways_list_by_resource_group_request,
+    build_ai_gateways_list_by_subscription_request,
+    build_ai_gateways_patch_request,
     build_app_service_environments_approve_or_reject_private_endpoint_connection_request,
     build_app_service_environments_change_vnet_request,
     build_app_service_environments_create_or_update_multi_role_pool_request,
@@ -114,6 +121,8 @@ from ...operations._operations import (
     build_app_service_plans_reboot_worker_request,
     build_app_service_plans_recycle_managed_instance_worker_request,
     build_app_service_plans_restart_web_apps_request,
+    build_app_service_plans_start_web_apps_request,
+    build_app_service_plans_stop_web_apps_request,
     build_app_service_plans_update_request,
     build_app_service_plans_update_vnet_gateway_request,
     build_app_service_plans_update_vnet_route_request,
@@ -158,6 +167,12 @@ from ...operations._operations import (
     build_kube_environments_list_by_resource_group_request,
     build_kube_environments_list_by_subscription_request,
     build_kube_environments_update_request,
+    build_last_known_good_resources_get_last_known_good_request,
+    build_last_known_good_resources_list_last_known_goods_request,
+    build_last_known_good_resources_mark_last_known_good_request,
+    build_managed_traffic_config_resources_get_managed_traffic_config_request,
+    build_managed_traffic_config_resources_list_managed_traffic_configs_request,
+    build_managed_traffic_config_resources_update_managed_traffic_config_request,
     build_provider_get_available_stacks_on_prem_request,
     build_provider_get_available_stacks_request,
     build_provider_get_function_app_stacks_for_location_request,
@@ -186,6 +201,12 @@ from ...operations._operations import (
     build_resource_health_metadata_list_by_site_request,
     build_resource_health_metadata_list_by_site_slot_request,
     build_resource_health_metadata_list_request,
+    build_server_farm_silo_resources_create_or_update_server_farm_silo_request,
+    build_server_farm_silo_resources_delete_server_farm_silo_request,
+    build_server_farm_silo_resources_get_server_farm_silo_request,
+    build_server_farm_silo_resources_get_server_farm_silo_vnet_integrations_request,
+    build_server_farm_silo_resources_list_server_farm_silos_request,
+    build_server_farm_silo_resources_update_server_farm_silo_request,
     build_site_certificates_create_or_update_request,
     build_site_certificates_create_or_update_slot_request,
     build_site_certificates_delete_request,
@@ -196,7 +217,22 @@ from ...operations._operations import (
     build_site_certificates_list_slot_request,
     build_site_certificates_update_request,
     build_site_certificates_update_slot_request,
+    build_site_silo_resources_create_or_update_site_silo_request,
+    build_site_silo_resources_delete_site_silo_request,
+    build_site_silo_resources_get_site_silo_request,
+    build_site_silo_resources_list_site_silos_request,
+    build_site_silo_resources_refresh_site_silos_request,
+    build_site_silo_resources_update_site_silo_request,
+    build_site_silo_virtual_network_connections_create_or_update_site_silo_vnet_connection_request,
+    build_site_silo_virtual_network_connections_delete_site_silo_vnet_connection_request,
+    build_site_silo_virtual_network_connections_get_site_silo_vnet_connection_request,
+    build_site_silo_virtual_network_connections_list_site_silo_vnet_connections_request,
+    build_site_silo_virtual_network_connections_update_site_silo_vnet_connection_request,
+    build_sites_get_network_security_perimeter_configuration_request,
+    build_sites_list_network_security_perimeter_configurations_request,
     build_static_sites_approve_or_reject_private_endpoint_connection_request,
+    build_static_sites_async_operations_get_operation_result_request,
+    build_static_sites_async_operations_get_operation_status_request,
     build_static_sites_create_or_update_basic_auth_request,
     build_static_sites_create_or_update_build_database_connection_request,
     build_static_sites_create_or_update_database_connection_request,
@@ -739,7 +775,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-methods
+class AppServiceEnvironmentsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6858,7 +6894,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RecommendationsOperations:
+class RecommendationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8133,7 +8169,7 @@ class RecommendationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class StaticSitesOperations:  # pylint: disable=too-many-public-methods
+class StaticSitesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18581,7 +18617,7 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class WebAppsOperations:  # pylint: disable=too-many-public-methods
+class WebAppsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -67744,7 +67780,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
+class AppServicePlansOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -68955,6 +68991,134 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             name=name,
             subscription_id=self._config.subscription_id,
             soft_restart=soft_restart,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-15",
+        params_added_on={"2026-07-15": ["api_version", "subscription_id", "resource_group_name", "name"]},
+        api_versions_list=["2026-07-15", "2026-08-01"],
+    )
+    async def start_web_apps(self, resource_group_name: str, name: str, **kwargs: Any) -> None:
+        """Start all apps in an App Service plan.
+
+        Description for Start all apps in an App Service plan.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the App Service plan. Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_app_service_plans_start_web_apps_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-15",
+        params_added_on={"2026-07-15": ["api_version", "subscription_id", "resource_group_name", "name"]},
+        api_versions_list=["2026-07-15", "2026-08-01"],
+    )
+    async def stop_web_apps(self, resource_group_name: str, name: str, **kwargs: Any) -> None:
+        """Stop all apps in an App Service plan.
+
+        Description for Stop all apps in an App Service plan.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the App Service plan. Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_app_service_plans_stop_web_apps_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -70828,7 +70992,7 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class CertificatesOperations:
+class CertificatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -71533,7 +71697,7 @@ class CertificatesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SiteCertificatesOperations:
+class SiteCertificatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -72851,7 +73015,7 @@ class SiteCertificatesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GlobalOperations:
+class GlobalOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -73065,7 +73229,7 @@ class GlobalOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
+class DiagnosticsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -75230,7 +75394,7 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class KubeEnvironmentsOperations:
+class KubeEnvironmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -76064,7 +76228,1230 @@ class KubeEnvironmentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WorkflowRunsOperations:
+class SitesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.web.aio.WebSiteManagementClient`'s
+        :attr:`sites` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: WebSiteManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-15",
+        params_added_on={"2026-03-15": ["api_version", "subscription_id", "resource_group_name", "name", "accept"]},
+        api_versions_list=["2026-03-15", "2026-07-15", "2026-08-01"],
+    )
+    def list_network_security_perimeter_configurations(  # pylint: disable=name-too-long
+        self, resource_group_name: str, name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.NetworkSecurityPerimeterConfiguration"]:
+        """Lists all Network Security Perimeter Association Configurations for the site.
+
+        Description for Gets all Network Security Perimeter Association Configurations for the site.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :return: An iterator like instance of NetworkSecurityPerimeterConfiguration
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.models.NetworkSecurityPerimeterConfiguration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.NetworkSecurityPerimeterConfiguration]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_sites_list_network_security_perimeter_configurations_request(
+                    resource_group_name=resource_group_name,
+                    name=name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.NetworkSecurityPerimeterConfiguration],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-15",
+        params_added_on={
+            "2026-03-15": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "name",
+                "network_security_perimeter_reference",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-15", "2026-07-15", "2026-08-01"],
+    )
+    async def get_network_security_perimeter_configuration(  # pylint: disable=name-too-long
+        self, resource_group_name: str, name: str, network_security_perimeter_reference: str, **kwargs: Any
+    ) -> _models.NetworkSecurityPerimeterConfiguration:
+        """Gets the Network Security Perimeter Association Configuration for the site for the specified
+        Network Security Perimeter Association reference.
+
+        Description for Gets the Network Security Perimeter Association Configuration for the site for
+        the specified Network Security Perimeter Association reference.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param network_security_perimeter_reference: AssociationName and PerimeterGuid of the Network
+         Security Perimeter Association. Required.
+        :type network_security_perimeter_reference: str
+        :return: NetworkSecurityPerimeterConfiguration. The NetworkSecurityPerimeterConfiguration is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.NetworkSecurityPerimeterConfiguration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.NetworkSecurityPerimeterConfiguration] = kwargs.pop("cls", None)
+
+        _request = build_sites_get_network_security_perimeter_configuration_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            network_security_perimeter_reference=network_security_perimeter_reference,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.NetworkSecurityPerimeterConfiguration, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class StaticSitesAsyncOperationsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.web.aio.WebSiteManagementClient`'s
+        :attr:`static_sites_async_operations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: WebSiteManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-15",
+        params_added_on={"2026-03-15": ["api_version", "subscription_id", "location", "operation_id", "accept"]},
+        api_versions_list=["2026-03-15", "2026-07-15", "2026-08-01"],
+    )
+    async def get_operation_status(
+        self, location: str, operation_id: str, **kwargs: Any
+    ) -> _models.StaticSitesOperationStatus:
+        """Gets the status of a static site async operation.
+
+        Gets the status of a static site async operation.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param operation_id: The ID of an ongoing async operation. Required.
+        :type operation_id: str
+        :return: StaticSitesOperationStatus. The StaticSitesOperationStatus is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.web.models.StaticSitesOperationStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.StaticSitesOperationStatus] = kwargs.pop("cls", None)
+
+        _request = build_static_sites_async_operations_get_operation_status_request(
+            location=location,
+            operation_id=operation_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.StaticSitesOperationStatus, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-15",
+        params_added_on={"2026-03-15": ["api_version", "subscription_id", "location", "operation_id", "accept"]},
+        api_versions_list=["2026-03-15", "2026-07-15", "2026-08-01"],
+    )
+    async def _get_operation_result_initial(
+        self, location: str, operation_id: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_static_sites_async_operations_get_operation_result_request(
+            location=location,
+            operation_id=operation_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-15",
+        params_added_on={"2026-03-15": ["api_version", "subscription_id", "location", "operation_id", "accept"]},
+        api_versions_list=["2026-03-15", "2026-07-15", "2026-08-01"],
+    )
+    async def begin_get_operation_result(self, location: str, operation_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
+        """Gets the result of a static site async operation.
+
+        Gets the result of a static site async operation.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param operation_id: The ID of an ongoing async operation. Required.
+        :type operation_id: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._get_operation_result_initial(
+                location=location,
+                operation_id=operation_id,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class AiGatewaysOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.web.aio.WebSiteManagementClient`'s
+        :attr:`ai_gateways` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: WebSiteManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "name", "accept"]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-03-15", "2026-07-15", "2026-08-01"],
+    )
+    async def get(self, resource_group_name: str, name: str, **kwargs: Any) -> _models.AiGateway:
+        """Get a AiGateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: The name of the AI gateway. Required.
+        :type name: str
+        :return: AiGateway. The AiGateway is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.AiGateway
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AiGateway] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateways_get_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGateway, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        name: str,
+        resource: _models.AiGateway,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGateway:
+        """Create a AiGateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: The name of the AI gateway. Required.
+        :type name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.web.models.AiGateway
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGateway. The AiGateway is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.AiGateway
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        name: str,
+        resource: _types.AiGateway,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGateway:
+        """Create a AiGateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: The name of the AI gateway. Required.
+        :type name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.web.types.AiGateway
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGateway. The AiGateway is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.AiGateway
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGateway:
+        """Create a AiGateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: The name of the AI gateway. Required.
+        :type name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGateway. The AiGateway is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.AiGateway
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-03-15", "2026-07-15", "2026-08-01"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        name: str,
+        resource: Union[_models.AiGateway, _types.AiGateway, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.AiGateway:
+        """Create a AiGateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: The name of the AI gateway. Required.
+        :type name: str
+        :param resource: Resource create parameters. Is either a AiGateway type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.web.models.AiGateway or ~azure.mgmt.web.types.AiGateway or
+         IO[bytes]
+        :return: AiGateway. The AiGateway is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.AiGateway
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGateway] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateways_create_or_update_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGateway, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def patch(
+        self,
+        resource_group_name: str,
+        name: str,
+        properties: _models.AiGatewayTagsUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGateway:
+        """Update a AiGateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: The name of the AI gateway. Required.
+        :type name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.web.models.AiGatewayTagsUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGateway. The AiGateway is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.AiGateway
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def patch(
+        self,
+        resource_group_name: str,
+        name: str,
+        properties: _types.AiGatewayTagsUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGateway:
+        """Update a AiGateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: The name of the AI gateway. Required.
+        :type name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.web.types.AiGatewayTagsUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGateway. The AiGateway is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.AiGateway
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def patch(
+        self,
+        resource_group_name: str,
+        name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGateway:
+        """Update a AiGateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: The name of the AI gateway. Required.
+        :type name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGateway. The AiGateway is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.AiGateway
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-03-15", "2026-07-15", "2026-08-01"],
+    )
+    async def patch(
+        self,
+        resource_group_name: str,
+        name: str,
+        properties: Union[_models.AiGatewayTagsUpdate, _types.AiGatewayTagsUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.AiGateway:
+        """Update a AiGateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: The name of the AI gateway. Required.
+        :type name: str
+        :param properties: The resource properties to be updated. Is either a AiGatewayTagsUpdate type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.web.models.AiGatewayTagsUpdate or
+         ~azure.mgmt.web.types.AiGatewayTagsUpdate or IO[bytes]
+        :return: AiGateway. The AiGateway is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.AiGateway
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGateway] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateways_patch_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGateway, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={"2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "name"]},
+        api_versions_list=["2026-03-01-preview", "2026-03-15", "2026-07-15", "2026-08-01"],
+    )
+    async def delete(self, resource_group_name: str, name: str, **kwargs: Any) -> None:
+        """Delete a AiGateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: The name of the AI gateway. Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateways_delete_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={"2026-03-01-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-03-01-preview", "2026-03-15", "2026-07-15", "2026-08-01"],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.AiGateway"]:
+        """List AiGateway resources by subscription ID.
+
+        :return: An iterator like instance of AiGateway
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.models.AiGateway]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AiGateway]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_ai_gateways_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AiGateway],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "top",
+                "skip",
+                "maxpagesize",
+                "filter",
+                "select",
+                "expand",
+                "orderby",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-03-15", "2026-07-15", "2026-08-01"],
+    )
+    def list_by_resource_group(
+        self,
+        resource_group_name: str,
+        *,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        filter: Optional[str] = None,
+        select: Optional[List[str]] = None,
+        expand: Optional[List[str]] = None,
+        orderby: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.AiGateway"]:
+        """List AiGateway resources by resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
+        :keyword select: Select the specified fields to be included in the response. Default value is
+         None.
+        :paramtype select: list[str]
+        :keyword expand: Expand the indicated resources into the response. Default value is None.
+        :paramtype expand: list[str]
+        :keyword orderby: Expressions that specify the order of returned results. Default value is
+         None.
+        :paramtype orderby: list[str]
+        :return: An iterator like instance of AiGateway
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.models.AiGateway]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[List[_models.AiGateway]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_ai_gateways_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    filter=filter,
+                    select=select,
+                    expand=expand,
+                    orderby=orderby,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AiGateway],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class WorkflowRunsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -76344,7 +77731,7 @@ class WorkflowRunsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class WorkflowRunActionsOperations:
+class WorkflowRunActionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -76677,7 +78064,7 @@ class WorkflowRunActionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WorkflowRunActionScopeRepetitionsOperations:  # pylint: disable=name-too-long
+class WorkflowRunActionScopeRepetitionsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -76899,7 +78286,7 @@ class WorkflowRunActionScopeRepetitionsOperations:  # pylint: disable=name-too-l
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WorkflowTriggersOperations:
+class WorkflowTriggersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -77398,7 +78785,7 @@ class WorkflowTriggersOperations:
         return deserialized  # type: ignore
 
 
-class WorkflowTriggerHistoriesOperations:
+class WorkflowTriggerHistoriesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -77771,7 +79158,7 @@ class WorkflowTriggerHistoriesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class WorkflowVersionsOperations:
+class WorkflowVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -77975,7 +79362,3162 @@ class WorkflowVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ProviderOperations:
+class SiteSiloResourcesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.web.aio.WebSiteManagementClient`'s
+        :attr:`site_silo_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: WebSiteManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "accept"]},
+        api_versions_list=["2026-08-01"],
+    )
+    def list_site_silos(self, resource_group_name: str, name: str, **kwargs: Any) -> AsyncItemPaged["_models.SiteSilo"]:
+        """Gets all silos for a Web App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :return: An iterator like instance of SiteSilo
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.models.SiteSilo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.SiteSilo]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_site_silo_resources_list_site_silos_request(
+                    resource_group_name=resource_group_name,
+                    name=name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.SiteSilo],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={
+            "2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "silo_name", "accept"]
+        },
+        api_versions_list=["2026-08-01"],
+    )
+    async def get_site_silo(
+        self, resource_group_name: str, name: str, silo_name: str, **kwargs: Any
+    ) -> _models.SiteSilo:
+        """Gets a specific silo for a Web App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: The name of the SiteSilo. Required.
+        :type silo_name: str
+        :return: SiteSilo. The SiteSilo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.SiteSilo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SiteSilo] = kwargs.pop("cls", None)
+
+        _request = build_site_silo_resources_get_site_silo_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            silo_name=silo_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SiteSilo, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={
+            "2026-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "name",
+                "silo_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-01"],
+    )
+    async def _create_or_update_site_silo_initial(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        resource: Union[_models.SiteSilo, _types.SiteSilo, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_site_silo_resources_create_or_update_site_silo_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            silo_name=silo_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update_site_silo(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        resource: _models.SiteSilo,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SiteSilo]:
+        """Creates or updates a silo for a Web App. Returns 202 with polling headers when background work
+        is queued, or 200 when no update is needed.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: The name of the SiteSilo. Required.
+        :type silo_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.web.models.SiteSilo
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SiteSilo. The SiteSilo is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.SiteSilo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update_site_silo(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        resource: _types.SiteSilo,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SiteSilo]:
+        """Creates or updates a silo for a Web App. Returns 202 with polling headers when background work
+        is queued, or 200 when no update is needed.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: The name of the SiteSilo. Required.
+        :type silo_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.web.types.SiteSilo
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SiteSilo. The SiteSilo is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.SiteSilo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update_site_silo(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SiteSilo]:
+        """Creates or updates a silo for a Web App. Returns 202 with polling headers when background work
+        is queued, or 200 when no update is needed.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: The name of the SiteSilo. Required.
+        :type silo_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SiteSilo. The SiteSilo is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.SiteSilo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={
+            "2026-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "name",
+                "silo_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-01"],
+    )
+    async def begin_create_or_update_site_silo(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        resource: Union[_models.SiteSilo, _types.SiteSilo, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SiteSilo]:
+        """Creates or updates a silo for a Web App. Returns 202 with polling headers when background work
+        is queued, or 200 when no update is needed.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: The name of the SiteSilo. Required.
+        :type silo_name: str
+        :param resource: Resource create parameters. Is either a SiteSilo type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.web.models.SiteSilo or ~azure.mgmt.web.types.SiteSilo or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns SiteSilo. The SiteSilo is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.SiteSilo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SiteSilo] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_site_silo_initial(
+                resource_group_name=resource_group_name,
+                name=name,
+                silo_name=silo_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.SiteSilo, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.SiteSilo].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.SiteSilo](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @overload
+    async def update_site_silo(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        properties: _models.SiteSiloTagsUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SiteSilo:
+        """Updates only the tags of a Web App silo. Silo configuration and provisioning state are not
+        modified.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: The name of the SiteSilo. Required.
+        :type silo_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.web.models.SiteSiloTagsUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SiteSilo. The SiteSilo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.SiteSilo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_site_silo(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        properties: _types.SiteSiloTagsUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SiteSilo:
+        """Updates only the tags of a Web App silo. Silo configuration and provisioning state are not
+        modified.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: The name of the SiteSilo. Required.
+        :type silo_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.web.types.SiteSiloTagsUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SiteSilo. The SiteSilo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.SiteSilo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_site_silo(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SiteSilo:
+        """Updates only the tags of a Web App silo. Silo configuration and provisioning state are not
+        modified.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: The name of the SiteSilo. Required.
+        :type silo_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SiteSilo. The SiteSilo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.SiteSilo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={
+            "2026-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "name",
+                "silo_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-01"],
+    )
+    async def update_site_silo(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        properties: Union[_models.SiteSiloTagsUpdate, _types.SiteSiloTagsUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.SiteSilo:
+        """Updates only the tags of a Web App silo. Silo configuration and provisioning state are not
+        modified.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: The name of the SiteSilo. Required.
+        :type silo_name: str
+        :param properties: The resource properties to be updated. Is either a SiteSiloTagsUpdate type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.web.models.SiteSiloTagsUpdate or
+         ~azure.mgmt.web.types.SiteSiloTagsUpdate or IO[bytes]
+        :return: SiteSilo. The SiteSilo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.SiteSilo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SiteSilo] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_site_silo_resources_update_site_silo_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            silo_name=silo_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SiteSilo, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "silo_name"]},
+        api_versions_list=["2026-08-01"],
+    )
+    async def _delete_site_silo_initial(
+        self, resource_group_name: str, name: str, silo_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_site_silo_resources_delete_site_silo_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            silo_name=silo_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "silo_name"]},
+        api_versions_list=["2026-08-01"],
+    )
+    async def begin_delete_site_silo(
+        self, resource_group_name: str, name: str, silo_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes a silo for a Web App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: The name of the SiteSilo. Required.
+        :type silo_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_site_silo_initial(
+                resource_group_name=resource_group_name,
+                name=name,
+                silo_name=silo_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name"]},
+        api_versions_list=["2026-08-01"],
+    )
+    async def refresh_site_silos(self, resource_group_name: str, name: str, **kwargs: Any) -> None:
+        """Forces a fresh revision for an Active Backup primary Web App and re-syncs all of its silos. The
+        refresh request is recorded synchronously; silos then converge asynchronously — track progress
+        through each silo's revisionNumber.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_site_silo_resources_refresh_site_silos_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
+class SiteSiloVirtualNetworkConnectionsOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.web.aio.WebSiteManagementClient`'s
+        :attr:`site_silo_virtual_network_connections` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: WebSiteManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={
+            "2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "silo_name", "accept"]
+        },
+        api_versions_list=["2026-08-01"],
+    )
+    def list_site_silo_vnet_connections(
+        self, resource_group_name: str, name: str, silo_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.SwiftVirtualNetwork"]:
+        """Lists the virtual network connections of a Web App silo. Returns the singleton virtualNetwork
+        connection when configured, or an empty collection otherwise.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: The name of the SiteSilo. Required.
+        :type silo_name: str
+        :return: An iterator like instance of SwiftVirtualNetwork
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.models.SwiftVirtualNetwork]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.SwiftVirtualNetwork]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_site_silo_virtual_network_connections_list_site_silo_vnet_connections_request(
+                    resource_group_name=resource_group_name,
+                    name=name,
+                    silo_name=silo_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.SwiftVirtualNetwork],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={
+            "2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "silo_name", "accept"]
+        },
+        api_versions_list=["2026-08-01"],
+    )
+    async def get_site_silo_vnet_connection(
+        self, resource_group_name: str, name: str, silo_name: str, **kwargs: Any
+    ) -> _models.SwiftVirtualNetwork:
+        """Gets the virtual network the silo is connected to.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: Name of the silo. Required.
+        :type silo_name: str
+        :return: SwiftVirtualNetwork. The SwiftVirtualNetwork is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.SwiftVirtualNetwork
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SwiftVirtualNetwork] = kwargs.pop("cls", None)
+
+        _request = build_site_silo_virtual_network_connections_get_site_silo_vnet_connection_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            silo_name=silo_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SwiftVirtualNetwork, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update_site_silo_vnet_connection(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        resource: _models.SwiftVirtualNetwork,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SwiftVirtualNetwork:
+        """Adds a virtual network connection to a silo, or updates the connection properties.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: Name of the silo. Required.
+        :type silo_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.web.models.SwiftVirtualNetwork
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SwiftVirtualNetwork. The SwiftVirtualNetwork is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.SwiftVirtualNetwork
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update_site_silo_vnet_connection(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        resource: _types.SwiftVirtualNetwork,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SwiftVirtualNetwork:
+        """Adds a virtual network connection to a silo, or updates the connection properties.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: Name of the silo. Required.
+        :type silo_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.web.types.SwiftVirtualNetwork
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SwiftVirtualNetwork. The SwiftVirtualNetwork is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.SwiftVirtualNetwork
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update_site_silo_vnet_connection(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SwiftVirtualNetwork:
+        """Adds a virtual network connection to a silo, or updates the connection properties.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: Name of the silo. Required.
+        :type silo_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SwiftVirtualNetwork. The SwiftVirtualNetwork is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.SwiftVirtualNetwork
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={
+            "2026-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "name",
+                "silo_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-01"],
+    )
+    async def create_or_update_site_silo_vnet_connection(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        resource: Union[_models.SwiftVirtualNetwork, _types.SwiftVirtualNetwork, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.SwiftVirtualNetwork:
+        """Adds a virtual network connection to a silo, or updates the connection properties.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: Name of the silo. Required.
+        :type silo_name: str
+        :param resource: Resource create parameters. Is either a SwiftVirtualNetwork type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.web.models.SwiftVirtualNetwork or
+         ~azure.mgmt.web.types.SwiftVirtualNetwork or IO[bytes]
+        :return: SwiftVirtualNetwork. The SwiftVirtualNetwork is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.SwiftVirtualNetwork
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SwiftVirtualNetwork] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_site_silo_virtual_network_connections_create_or_update_site_silo_vnet_connection_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            silo_name=silo_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SwiftVirtualNetwork, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update_site_silo_vnet_connection(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        properties: _models.SwiftVirtualNetwork,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SwiftVirtualNetwork:
+        """Updates the properties of a virtual network connection on a silo.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: Name of the silo. Required.
+        :type silo_name: str
+        :param properties: Resource create parameters. Required.
+        :type properties: ~azure.mgmt.web.models.SwiftVirtualNetwork
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SwiftVirtualNetwork. The SwiftVirtualNetwork is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.SwiftVirtualNetwork
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_site_silo_vnet_connection(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        properties: _types.SwiftVirtualNetwork,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SwiftVirtualNetwork:
+        """Updates the properties of a virtual network connection on a silo.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: Name of the silo. Required.
+        :type silo_name: str
+        :param properties: Resource create parameters. Required.
+        :type properties: ~azure.mgmt.web.types.SwiftVirtualNetwork
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SwiftVirtualNetwork. The SwiftVirtualNetwork is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.SwiftVirtualNetwork
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_site_silo_vnet_connection(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SwiftVirtualNetwork:
+        """Updates the properties of a virtual network connection on a silo.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: Name of the silo. Required.
+        :type silo_name: str
+        :param properties: Resource create parameters. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SwiftVirtualNetwork. The SwiftVirtualNetwork is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.SwiftVirtualNetwork
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={
+            "2026-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "name",
+                "silo_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-01"],
+    )
+    async def update_site_silo_vnet_connection(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        properties: Union[_models.SwiftVirtualNetwork, _types.SwiftVirtualNetwork, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.SwiftVirtualNetwork:
+        """Updates the properties of a virtual network connection on a silo.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: Name of the silo. Required.
+        :type silo_name: str
+        :param properties: Resource create parameters. Is either a SwiftVirtualNetwork type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.web.models.SwiftVirtualNetwork or
+         ~azure.mgmt.web.types.SwiftVirtualNetwork or IO[bytes]
+        :return: SwiftVirtualNetwork. The SwiftVirtualNetwork is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.SwiftVirtualNetwork
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SwiftVirtualNetwork] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_site_silo_virtual_network_connections_update_site_silo_vnet_connection_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            silo_name=silo_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SwiftVirtualNetwork, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "silo_name"]},
+        api_versions_list=["2026-08-01"],
+    )
+    async def delete_site_silo_vnet_connection(
+        self, resource_group_name: str, name: str, silo_name: str, **kwargs: Any
+    ) -> None:
+        """Deletes the virtual network connection from a silo.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param silo_name: Name of the silo. Required.
+        :type silo_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_site_silo_virtual_network_connections_delete_site_silo_vnet_connection_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            silo_name=silo_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
+class ServerFarmSiloResourcesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.web.aio.WebSiteManagementClient`'s
+        :attr:`server_farm_silo_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: WebSiteManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "accept"]},
+        api_versions_list=["2026-08-01"],
+    )
+    def list_server_farm_silos(
+        self, resource_group_name: str, name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ServerFarmSilo"]:
+        """Gets all silos for an App Service plan.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the App Service plan. Required.
+        :type name: str
+        :return: An iterator like instance of ServerFarmSilo
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.models.ServerFarmSilo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ServerFarmSilo]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_server_farm_silo_resources_list_server_farm_silos_request(
+                    resource_group_name=resource_group_name,
+                    name=name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ServerFarmSilo],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={
+            "2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "silo_name", "accept"]
+        },
+        api_versions_list=["2026-08-01"],
+    )
+    async def get_server_farm_silo(
+        self, resource_group_name: str, name: str, silo_name: str, **kwargs: Any
+    ) -> _models.ServerFarmSilo:
+        """Gets a specific silo for an App Service plan.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the App Service plan. Required.
+        :type name: str
+        :param silo_name: The name of the ServerFarmSilo. Required.
+        :type silo_name: str
+        :return: ServerFarmSilo. The ServerFarmSilo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.ServerFarmSilo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ServerFarmSilo] = kwargs.pop("cls", None)
+
+        _request = build_server_farm_silo_resources_get_server_farm_silo_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            silo_name=silo_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ServerFarmSilo, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={
+            "2026-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "name",
+                "silo_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-01"],
+    )
+    async def _create_or_update_server_farm_silo_initial(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        resource: Union[_models.ServerFarmSilo, _types.ServerFarmSilo, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_server_farm_silo_resources_create_or_update_server_farm_silo_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            silo_name=silo_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update_server_farm_silo(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        resource: _models.ServerFarmSilo,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ServerFarmSilo]:
+        """Creates or updates a silo for an App Service plan. Returns 202 with polling headers when
+        background work is queued, or 200 when no update is needed.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the App Service plan. Required.
+        :type name: str
+        :param silo_name: The name of the ServerFarmSilo. Required.
+        :type silo_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.web.models.ServerFarmSilo
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ServerFarmSilo. The ServerFarmSilo is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.ServerFarmSilo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update_server_farm_silo(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        resource: _types.ServerFarmSilo,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ServerFarmSilo]:
+        """Creates or updates a silo for an App Service plan. Returns 202 with polling headers when
+        background work is queued, or 200 when no update is needed.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the App Service plan. Required.
+        :type name: str
+        :param silo_name: The name of the ServerFarmSilo. Required.
+        :type silo_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.web.types.ServerFarmSilo
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ServerFarmSilo. The ServerFarmSilo is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.ServerFarmSilo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update_server_farm_silo(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ServerFarmSilo]:
+        """Creates or updates a silo for an App Service plan. Returns 202 with polling headers when
+        background work is queued, or 200 when no update is needed.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the App Service plan. Required.
+        :type name: str
+        :param silo_name: The name of the ServerFarmSilo. Required.
+        :type silo_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ServerFarmSilo. The ServerFarmSilo is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.ServerFarmSilo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={
+            "2026-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "name",
+                "silo_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-01"],
+    )
+    async def begin_create_or_update_server_farm_silo(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        resource: Union[_models.ServerFarmSilo, _types.ServerFarmSilo, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ServerFarmSilo]:
+        """Creates or updates a silo for an App Service plan. Returns 202 with polling headers when
+        background work is queued, or 200 when no update is needed.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the App Service plan. Required.
+        :type name: str
+        :param silo_name: The name of the ServerFarmSilo. Required.
+        :type silo_name: str
+        :param resource: Resource create parameters. Is either a ServerFarmSilo type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.web.models.ServerFarmSilo or ~azure.mgmt.web.types.ServerFarmSilo
+         or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ServerFarmSilo. The ServerFarmSilo is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.web.models.ServerFarmSilo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ServerFarmSilo] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_server_farm_silo_initial(
+                resource_group_name=resource_group_name,
+                name=name,
+                silo_name=silo_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ServerFarmSilo, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ServerFarmSilo].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ServerFarmSilo](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @overload
+    async def update_server_farm_silo(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        properties: _models.ServerFarmSiloTagsUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ServerFarmSilo:
+        """Updates only the tags of an App Service plan silo. Silo configuration and provisioning state
+        are not modified.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the App Service plan. Required.
+        :type name: str
+        :param silo_name: The name of the ServerFarmSilo. Required.
+        :type silo_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.web.models.ServerFarmSiloTagsUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ServerFarmSilo. The ServerFarmSilo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.ServerFarmSilo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_server_farm_silo(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        properties: _types.ServerFarmSiloTagsUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ServerFarmSilo:
+        """Updates only the tags of an App Service plan silo. Silo configuration and provisioning state
+        are not modified.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the App Service plan. Required.
+        :type name: str
+        :param silo_name: The name of the ServerFarmSilo. Required.
+        :type silo_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.web.types.ServerFarmSiloTagsUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ServerFarmSilo. The ServerFarmSilo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.ServerFarmSilo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_server_farm_silo(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ServerFarmSilo:
+        """Updates only the tags of an App Service plan silo. Silo configuration and provisioning state
+        are not modified.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the App Service plan. Required.
+        :type name: str
+        :param silo_name: The name of the ServerFarmSilo. Required.
+        :type silo_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ServerFarmSilo. The ServerFarmSilo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.ServerFarmSilo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={
+            "2026-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "name",
+                "silo_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-01"],
+    )
+    async def update_server_farm_silo(
+        self,
+        resource_group_name: str,
+        name: str,
+        silo_name: str,
+        properties: Union[_models.ServerFarmSiloTagsUpdate, _types.ServerFarmSiloTagsUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.ServerFarmSilo:
+        """Updates only the tags of an App Service plan silo. Silo configuration and provisioning state
+        are not modified.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the App Service plan. Required.
+        :type name: str
+        :param silo_name: The name of the ServerFarmSilo. Required.
+        :type silo_name: str
+        :param properties: The resource properties to be updated. Is either a ServerFarmSiloTagsUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.web.models.ServerFarmSiloTagsUpdate or
+         ~azure.mgmt.web.types.ServerFarmSiloTagsUpdate or IO[bytes]
+        :return: ServerFarmSilo. The ServerFarmSilo is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.ServerFarmSilo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ServerFarmSilo] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_server_farm_silo_resources_update_server_farm_silo_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            silo_name=silo_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ServerFarmSilo, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "silo_name"]},
+        api_versions_list=["2026-08-01"],
+    )
+    async def _delete_server_farm_silo_initial(
+        self, resource_group_name: str, name: str, silo_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_server_farm_silo_resources_delete_server_farm_silo_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            silo_name=silo_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "silo_name"]},
+        api_versions_list=["2026-08-01"],
+    )
+    async def begin_delete_server_farm_silo(
+        self, resource_group_name: str, name: str, silo_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes a silo for an App Service plan.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the App Service plan. Required.
+        :type name: str
+        :param silo_name: The name of the ServerFarmSilo. Required.
+        :type silo_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_server_farm_silo_initial(
+                resource_group_name=resource_group_name,
+                name=name,
+                silo_name=silo_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={
+            "2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "silo_name", "accept"]
+        },
+        api_versions_list=["2026-08-01"],
+    )
+    async def get_server_farm_silo_vnet_integrations(
+        self, resource_group_name: str, name: str, silo_name: str, **kwargs: Any
+    ) -> _models.ServerFarmSiloVnetIntegrationsResult:
+        """Gets the virtual network integrations associated with an App Service plan silo.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the App Service plan. Required.
+        :type name: str
+        :param silo_name: The name of the ServerFarmSilo. Required.
+        :type silo_name: str
+        :return: ServerFarmSiloVnetIntegrationsResult. The ServerFarmSiloVnetIntegrationsResult is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.ServerFarmSiloVnetIntegrationsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ServerFarmSiloVnetIntegrationsResult] = kwargs.pop("cls", None)
+
+        _request = build_server_farm_silo_resources_get_server_farm_silo_vnet_integrations_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            silo_name=silo_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ServerFarmSiloVnetIntegrationsResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ManagedTrafficConfigResourcesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.web.aio.WebSiteManagementClient`'s
+        :attr:`managed_traffic_config_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: WebSiteManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={
+            "2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "expand", "accept"]
+        },
+        api_versions_list=["2026-08-01"],
+    )
+    def list_managed_traffic_configs(
+        self, resource_group_name: str, name: str, *, expand: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ManagedTrafficConfigResource"]:
+        """Lists managed traffic configuration resources for a Web App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :keyword expand: Set to ``endpoints`` to return the endpoint collection without projection,
+         including both weight and priority for every endpoint. Default value is None.
+        :paramtype expand: str
+        :return: An iterator like instance of ManagedTrafficConfigResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.models.ManagedTrafficConfigResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ManagedTrafficConfigResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_managed_traffic_config_resources_list_managed_traffic_configs_request(
+                    resource_group_name=resource_group_name,
+                    name=name,
+                    subscription_id=self._config.subscription_id,
+                    expand=expand,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ManagedTrafficConfigResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "accept"]},
+        api_versions_list=["2026-08-01"],
+    )
+    async def get_managed_traffic_config(
+        self, resource_group_name: str, name: str, **kwargs: Any
+    ) -> _models.ManagedTrafficConfigResource:
+        """Gets managed traffic configuration for a Web App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :return: ManagedTrafficConfigResource. The ManagedTrafficConfigResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.web.models.ManagedTrafficConfigResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ManagedTrafficConfigResource] = kwargs.pop("cls", None)
+
+        _request = build_managed_traffic_config_resources_get_managed_traffic_config_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ManagedTrafficConfigResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update_managed_traffic_config(
+        self,
+        resource_group_name: str,
+        name: str,
+        resource: _models.ManagedTrafficConfigResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ManagedTrafficConfigResource:
+        """Updates managed traffic configuration for a Web App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.web.models.ManagedTrafficConfigResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ManagedTrafficConfigResource. The ManagedTrafficConfigResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.web.models.ManagedTrafficConfigResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_managed_traffic_config(
+        self,
+        resource_group_name: str,
+        name: str,
+        resource: _types.ManagedTrafficConfigResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ManagedTrafficConfigResource:
+        """Updates managed traffic configuration for a Web App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.web.types.ManagedTrafficConfigResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ManagedTrafficConfigResource. The ManagedTrafficConfigResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.web.models.ManagedTrafficConfigResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_managed_traffic_config(
+        self,
+        resource_group_name: str,
+        name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ManagedTrafficConfigResource:
+        """Updates managed traffic configuration for a Web App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ManagedTrafficConfigResource. The ManagedTrafficConfigResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.web.models.ManagedTrafficConfigResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={
+            "2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "content_type", "accept"]
+        },
+        api_versions_list=["2026-08-01"],
+    )
+    async def update_managed_traffic_config(
+        self,
+        resource_group_name: str,
+        name: str,
+        resource: Union[_models.ManagedTrafficConfigResource, _types.ManagedTrafficConfigResource, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.ManagedTrafficConfigResource:
+        """Updates managed traffic configuration for a Web App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :param resource: Resource create parameters. Is either a ManagedTrafficConfigResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.web.models.ManagedTrafficConfigResource or
+         ~azure.mgmt.web.types.ManagedTrafficConfigResource or IO[bytes]
+        :return: ManagedTrafficConfigResource. The ManagedTrafficConfigResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.web.models.ManagedTrafficConfigResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ManagedTrafficConfigResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_managed_traffic_config_resources_update_managed_traffic_config_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ManagedTrafficConfigResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class LastKnownGoodResourcesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.web.aio.WebSiteManagementClient`'s
+        :attr:`last_known_good_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: WebSiteManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "accept"]},
+        api_versions_list=["2026-08-01"],
+    )
+    def list_last_known_goods(
+        self, resource_group_name: str, name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.LastKnownGoodResource"]:
+        """Lists the last known good revision state for a Web App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :return: An iterator like instance of LastKnownGoodResource
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.web.models.LastKnownGoodResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.LastKnownGoodResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_last_known_good_resources_list_last_known_goods_request(
+                    resource_group_name=resource_group_name,
+                    name=name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.LastKnownGoodResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.DefaultErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "accept"]},
+        api_versions_list=["2026-08-01"],
+    )
+    async def get_last_known_good(
+        self, resource_group_name: str, name: str, **kwargs: Any
+    ) -> _models.LastKnownGoodResource:
+        """Gets the last known good revision state for a Web App.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :return: LastKnownGoodResource. The LastKnownGoodResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.LastKnownGoodResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.LastKnownGoodResource] = kwargs.pop("cls", None)
+
+        _request = build_last_known_good_resources_get_last_known_good_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.LastKnownGoodResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={"2026-08-01": ["api_version", "subscription_id", "resource_group_name", "name", "accept"]},
+        api_versions_list=["2026-08-01"],
+    )
+    async def mark_last_known_good(
+        self, resource_group_name: str, name: str, **kwargs: Any
+    ) -> _models.LastKnownGoodResource:
+        """Marks the current Web App state as last known good.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param name: Name of the app. Required.
+        :type name: str
+        :return: LastKnownGoodResource. The LastKnownGoodResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.web.models.LastKnownGoodResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.LastKnownGoodResource] = kwargs.pop("cls", None)
+
+        _request = build_last_known_good_resources_mark_last_known_good_request(
+            resource_group_name=resource_group_name,
+            name=name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.DefaultErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.LastKnownGoodResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ProviderOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -78698,7 +83240,7 @@ class ProviderOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DeletedWebAppsOperations:
+class DeletedWebAppsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -78982,7 +83524,7 @@ class DeletedWebAppsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ResourceHealthMetadataOperations:
+class ResourceHealthMetadataOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -79561,7 +84103,7 @@ class ResourceHealthMetadataOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WorkflowsOperations:
+class WorkflowsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -79919,7 +84461,7 @@ class WorkflowsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class WorkflowRunActionRepetitionsOperations:
+class WorkflowRunActionRepetitionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -80262,7 +84804,7 @@ class WorkflowRunActionRepetitionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WorkflowRunActionRepetitionsRequestHistoriesOperations:  # pylint: disable=name-too-long
+class WorkflowRunActionRepetitionsRequestHistoriesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -80496,7 +85038,7 @@ class WorkflowRunActionRepetitionsRequestHistoriesOperations:  # pylint: disable
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GetUsagesInLocationOperations:
+class GetUsagesInLocationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

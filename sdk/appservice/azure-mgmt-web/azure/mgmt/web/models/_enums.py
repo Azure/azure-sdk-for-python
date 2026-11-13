@@ -189,7 +189,7 @@ class BuildStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class BuiltInAuthenticationProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default authentication provider to use when multiple providers are configured. This setting
     is only needed if multiple providers are configured and the unauthenticated client action is
-    set to "RedirectToLoginPage".
+    set to \"RedirectToLoginPage\".
     """
 
     AZURE_ACTIVE_DIRECTORY = "AzureActiveDirectory"
@@ -903,6 +903,17 @@ class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SECURE_OBJECT."""
 
 
+class PlatformReleaseChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The platform release channel for the site."""
+
+    LATEST = "Latest"
+    """Latest receives updates earliest."""
+    STANDARD = "Standard"
+    """Standard receives updates after Latest."""
+    EXTENDED = "Extended"
+    """Extended receives updates last with extended support."""
+
+
 class ProviderOsTypeSelected(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ProviderOsTypeSelected."""
 
@@ -1144,6 +1155,8 @@ class RuntimeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """POWERSHELL."""
     PYTHON = "python"
     """PYTHON."""
+    GO = "go"
+    """GO."""
     CUSTOM = "custom"
     """CUSTOM."""
 
@@ -1179,6 +1192,35 @@ class ScmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VSO."""
     VSTSRM = "VSTSRM"
     """VSTSRM."""
+
+
+class SiloFailOverMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Traffic routing mode for silo failover."""
+
+    ACTIVE = "Active"
+    """Silo is in active mode."""
+    PASSIVE = "Passive"
+    """Silo is in passive mode."""
+    UNKNOWN = "Unknown"
+    """Silo failover mode is unknown."""
+
+
+class SiloProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines provisioning states for silo resources."""
+
+    IN_PROGRESS = "InProgress"
+    """Provisioning is in progress."""
+    SUCCEEDED = "Succeeded"
+    """Provisioning succeeded."""
+    FAILED = "Failed"
+    """Provisioning failed."""
+    CANCELED = "Canceled"
+    """Provisioning was canceled."""
+    DELETING = "Deleting"
+    """Resource is being deleted asynchronously."""
+    DEGRADED = "Degraded"
+    """Silo is routable and serving its previous revision, but the last background sync failed to
+    converge. Distinct from Failed, which means there is no usable silo."""
 
 
 class SiteAvailabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
