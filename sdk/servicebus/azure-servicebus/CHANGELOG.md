@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue where the synchronous `AutoLockRenewer` could silently stop renewing message or session locks when a renewal took longer than the dispatcher's idle timeout with multiple workers. ([#49809](https://github.com/Azure/azure-sdk-for-python/issues/49809))
+
 ### Other Changes
 
 ## 7.15.0 (2026-10-06)
