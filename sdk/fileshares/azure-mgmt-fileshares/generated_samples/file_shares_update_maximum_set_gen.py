@@ -35,7 +35,23 @@ def main():
         resource_group_name="rgfileshares",
         resource_name="fileshare",
         properties={
+            "identity": {
+                "type": "SystemAssigned,UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/0590b445-524e-4caa-9870-2e2461d23434/resourceGroups/fiddler-mfs-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity": {}
+                },
+            },
             "properties": {
+                "encryption": {
+                    "customerManagedKeyEncryption": {
+                        "keyEncryptionKeyIdentity": {
+                            "identityType": "userAssignedIdentity",
+                            "userAssignedIdentityResourceId": "/subscriptions/0590b445-524e-4caa-9870-2e2461d23434/resourceGroups/fiddler-mfs-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity",
+                        },
+                        "keyEncryptionKeyUrl": "https://myvault.vault.azure.net/keys/myfilesharekey",
+                    },
+                    "infrastructureEncryption": "enabled",
+                },
                 "nfsProtocolProperties": {"encryptionInTransitRequired": "Enabled", "rootSquash": "NoRootSquash"},
                 "provisionedIOPerSec": 1,
                 "provisionedStorageGiB": 7,
@@ -53,6 +69,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-06-01/FileShares_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-01/FileShares_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
