@@ -52,6 +52,46 @@ def test_analysis_checkout_has_history_for_api_comparison():
     }
 
 
+def test_autorest_legacy_tests_install_only_the_declared_test_server():
+    pipeline = yaml.safe_load((REPO_ROOT / "eng" / "pipelines" / "autorest_checks.yml").read_text())
+    steps = pipeline["jobs"][0]["steps"]
+    assert steps[0]["template"].endswith("create-authenticated-npmrc.yml")
+    prepare = next(step["script"] for step in steps if step.get("displayName") == "Prepare Environment")
+    assert prepare.startswith("set -euo pipefail\n")
+    assert "git clone $(auto_rest_clone_url)" in prepare
+    assert "devDependencies['@microsoft.azure/autorest.testserver']" in prepare
+    assert (
+        "npm install --ignore-scripts --no-audit --no-fund "
+        '"@microsoft.azure/autorest.testserver@$test_server_version"'
+    ) in prepare
+    assert 'ln -s "$test_server_directory/node_modules"' in prepare
+    assert "pnpm install" not in prepare
+
+
+@pytest.mark.parametrize("kind", ["Vanilla", "Azure"])
+def test_autorest_legacy_requirements_cannot_replace_the_pr_packages(kind):
+    pipeline = yaml.safe_load((REPO_ROOT / "eng" / "pipelines" / "autorest_checks.yml").read_text())
+    step = next(
+        step for step in pipeline["jobs"][0]["steps"] if step.get("displayName", "").endswith(f"Test {kind} Legacy")
+    )
+    assert step["script"].startswith("set -euo pipefail\n")
+    commands = step["script"].splitlines()
+    requirements = commands.index("python -m pip install -r requirements.txt")
+    local_packages = next(
+        index
+        for index, command in enumerate(commands)
+        if command.startswith("python -m pip install $(Build.SourcesDirectory)")
+    )
+    assert requirements < local_packages
+    assert "$(source_path_azure_core)" in commands[local_packages]
+    if kind == "Azure":
+        assert "$(source_path_azure_mgmt_core)" in commands[local_packages]
+    suite = kind.lower()
+    assert commands[-1] == (
+        f"pytest $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/{suite}/legacy"
+    )
+
+
 def test_rust_support_is_disabled_by_default_and_forwarded():
     archetype = load_template("stages/archetype-sdk-client.yml")
     jobs = load_template("jobs/ci.yml")
@@ -134,15 +174,54 @@ def test_windows_provisioning_configuration(tmp_path, rust):
 
 
 def test_dev_requirements_share_selected_target_provisioning(tmp_path):
-    steps = [step for step in load_template("jobs/live.tests.yml")["jobs"][0]["steps"] if isinstance(step, dict)]
+    template = "prepare-native-test-dependencies.yml"
+    for job in ("ci.tests.yml", "live.tests.yml"):
+        steps = [step for step in load_template(f"jobs/{job}")["jobs"][0]["steps"] if isinstance(step, dict)]
+        test_index = next(i for i, step in enumerate(steps) if step.get("template", "").endswith("build-test.yml"))
+        if job == "live.tests.yml":
+            configure = next(
+                step for step in steps if step.get("displayName") == "Configure cibuildwheel for dev requirement builds"
+            )
+            assert configure["condition"] == ("and(succeeded(), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))")
+            provision = next(
+                step for step in steps if step.get("displayName") == "Pre-provision CPython for cibuildwheel"
+            )
+            authenticate = next(step for step in steps if step.get("task") == "NuGetAuthenticate@1")
+            assert (
+                authenticate["condition"]
+                == provision["condition"]
+                == (
+                    "and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), "
+                    "eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))"
+                )
+            )
+            assert steps.index(configure) < steps.index(authenticate) < steps.index(provision) < test_index
+            result = run_powershell(configure["pwsh"], RUST_ENVIRONMENT_PASS="")
+            assert result.returncode == 0, result.stderr
+            for variable in ("CIBW_ARCHS]native", "CIBW_SKIP]pp* *musllinux*", "CIBW_TEST_SKIP]*"):
+                assert "variable=" + variable in result.stdout
+            assert "variable=CIBW_ENVIRONMENT_PASS_LINUX]PIP_INDEX_URL" in result.stdout
+        else:
+            configure_index = next(i for i, step in enumerate(steps) if step.get("template", "").endswith(template))
+            assert configure_index < test_index
+            assert "parameters" not in steps[configure_index]
+
+    preparation = load_template(f"steps/{template}")
+    assert preparation["parameters"][0]["default"] == "succeeded()"
+    steps = preparation["steps"]
     provision = next(step for step in steps if step.get("displayName") == "Pre-provision CPython for cibuildwheel")
-    assert provision["condition"] == (
-        "and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))"
-    )
+    assert provision["condition"] == ("and(${{ parameters.Condition }}, eq(variables['Agent.OS'], 'Windows_NT'))")
+    authenticate = next(step for step in steps if step.get("task") == "NuGetAuthenticate@1")
+    assert authenticate["condition"] == provision["condition"]
     configure = next(
         step for step in steps if step.get("displayName") == "Configure cibuildwheel for dev requirement builds"
     )
-    assert "variable=CIBW_ARCHS]native" in configure["pwsh"]
+    assert configure["condition"] == "${{ parameters.Condition }}"
+    result = run_powershell(configure["pwsh"])
+    assert result.returncode == 0, result.stderr
+    assert "variable=CIBW_ARCHS]native" in result.stdout
+    assert "variable=CIBW_ENVIRONMENT_PASS_LINUX]PIP_INDEX_URL" in result.stdout
+    assert "variable=CIBW_ENVIRONMENT]" not in result.stdout
     assert "nuget install" not in provision["pwsh"]
     assert "3.10.11" not in provision["pwsh"]
     result = run_powershell(provision["pwsh"].replace("$(Agent.TempDirectory)", str(tmp_path)))
@@ -308,6 +387,7 @@ def test_cargo_feed_configuration_uses_default_cargo_home(tmp_path):
         CARGO_HOME="",
         CARGO_FEED_URL=feed,
         HOME=str(tmp_path),
+        USERPROFILE=str(tmp_path),
         RUST_TOOLCHAIN_FEED="example-feed",
     )
 
@@ -321,6 +401,7 @@ def test_build_powershell_scripts_parse():
     for template_path in (
         "steps/install-msrust-toolchain.yml",
         "steps/build-package-artifacts.yml",
+        "steps/prepare-native-test-dependencies.yml",
         "steps/resolve-build-platforms.yml",
         "jobs/live.tests.yml",
     ):

@@ -1,0 +1,27 @@
+parameters:
+  - name: Condition
+    type: string
+    default: succeeded()
+
+steps:
+  - pwsh: |
+      Write-Host "##vso[task.setvariable variable=CIBW_ARCHS]native"
+      Write-Host "##vso[task.setvariable variable=CIBW_SKIP]pp* *musllinux*"
+      Write-Host "##vso[task.setvariable variable=CIBW_TEST_SKIP]*"
+      # Forward the authenticated pip index without replacing package CFLAGS.
+      Write-Host "##vso[task.setvariable variable=CIBW_ENVIRONMENT_PASS_LINUX]PIP_INDEX_URL"
+    displayName: 'Configure cibuildwheel for dev requirement builds'
+    condition: ${{ parameters.Condition }}
+
+  - task: NuGetAuthenticate@1
+    displayName: 'Authenticate to NuGet feed'
+    condition: and(${{ parameters.Condition }}, eq(variables['Agent.OS'], 'Windows_NT'))
+
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $feed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
+      $cache = Join-Path "$(Agent.TempDirectory)" "cibw-cache"
+      Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
+      Write-Host "##vso[task.setvariable variable=AZURESDK_PYTHON_NUGET_FEED]$feed"
+    displayName: 'Pre-provision CPython for cibuildwheel'
+    condition: and(${{ parameters.Condition }}, eq(variables['Agent.OS'], 'Windows_NT'))

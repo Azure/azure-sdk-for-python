@@ -41,24 +41,32 @@ jobs:
           versionSpec: $(PythonVersion)
 
       - script: |
-          npm install -g pnpm
+          set -euo pipefail
           git clone $(auto_rest_clone_url)
-          cd autorest.python
-          pnpm install
+          # Legacy clients are checked in; they need the test server, not the generator workspace.
+          test_server_version=$(node -p "require('$(Build.SourcesDirectory)/autorest.python/packages/autorest.python/package.json').devDependencies['@microsoft.azure/autorest.testserver']")
+          test_server_directory="$(Agent.TempDirectory)/autorest-testserver"
+          mkdir -p "$test_server_directory"
+          cd "$test_server_directory"
+          npm init --yes
+          npm install --ignore-scripts --no-audit --no-fund "@microsoft.azure/autorest.testserver@$test_server_version"
+          ln -s "$test_server_directory/node_modules" "$(Build.SourcesDirectory)/autorest.python/packages/autorest.python/node_modules"
         displayName: 'Prepare Environment'
 
       - script: |
+          set -euo pipefail
           cd $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/vanilla/legacy
-          python -m pip install $(Build.SourcesDirectory)/$(source_path_azure_core)
           python -m pip install -r requirements.txt
+          python -m pip install $(Build.SourcesDirectory)/$(source_path_azure_core)
           pip freeze
           pytest $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/vanilla/legacy
         displayName: 'Install azure-core and Test Vanilla Legacy'
 
       - script: |
+          set -euo pipefail
           cd $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/azure/legacy
-          python -m pip install $(Build.SourcesDirectory)/$(source_path_azure_mgmt_core)
           python -m pip install -r requirements.txt
+          python -m pip install $(Build.SourcesDirectory)/$(source_path_azure_core) $(Build.SourcesDirectory)/$(source_path_azure_mgmt_core)
           pip freeze
           pytest $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/azure/legacy
         displayName: 'Install azure-mgmt-core and Test Azure Legacy'
