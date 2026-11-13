@@ -177,7 +177,11 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if isinstance(tool_calls, str):
             agent_response_with_tools = tool_calls
         else:
-            agent_response_with_tools = reformat_agent_response(response, include_tool_messages=True)
+            # Only the tool calls and their results: the prompt's "Tool Calls Made" section is what the judge checks
+            # for something to evaluate, and assistant text such as the final answer there can make it skip.
+            agent_response_with_tools = reformat_agent_response(
+                response, include_tool_messages=True, include_text=False
+            )
 
         return {
             "query": query,

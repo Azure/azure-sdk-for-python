@@ -3014,7 +3014,7 @@
     "inputs": {
      "query": "SYSTEM_PROMPT:\n  You are a weather assistant.\n\nUser turn 1:\n  What is the weather in Paris?\n\n",
      "timeout": 600,
-     "tool_calls": "[TOOL_CALL] fetch_weather(location=\"Paris\")\n[TOOL_RESULT] {\"temperature\": \"20C\", \"sky\": \"sunny\"}\nIt is 20C and sunny in Paris.",
+     "tool_calls": "[TOOL_CALL] fetch_weather(location=\"Paris\")\n[TOOL_RESULT] {\"temperature\": \"20C\", \"sky\": \"sunny\"}",
      "tool_definitions": [
       {
        "description": "Fetches the weather for a location.",
@@ -3068,7 +3068,7 @@
     "inputs": {
      "query": "SYSTEM_PROMPT:\n  You are a weather assistant.\n\nUser turn 1:\n  What is the weather in Paris?\n\n",
      "timeout": 600,
-     "tool_calls": "[TOOL_CALL] fetch_weather(location=\"Paris\")\n[TOOL_RESULT] {\"temperature\": \"20C\", \"sky\": \"sunny\"}\nIt is 20C and sunny in Paris.",
+     "tool_calls": "[TOOL_CALL] fetch_weather(location=\"Paris\")\n[TOOL_RESULT] {\"temperature\": \"20C\", \"sky\": \"sunny\"}",
      "tool_definitions": [
       {
        "description": "Fetches the weather for a location.",
