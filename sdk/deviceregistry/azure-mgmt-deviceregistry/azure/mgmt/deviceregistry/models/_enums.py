@@ -30,16 +30,40 @@ class AuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The user authentication method is a username and password."""
 
 
-class BringYourOwnRootStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the Bring Your Own Root configuration."""
+class CertificateAuthorityIssuerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The issuer type for an intermediate Certificate Authority."""
+
+    MICROSOFT = "Microsoft"
+    """The intermediate Certificate Authority is issued by Microsoft."""
+    EXTERNAL = "External"
+    """The intermediate Certificate Authority is issued by an external Certificate Authority."""
+
+
+class CertificateAuthorityKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported Certificate Authority key types."""
+
+    ECC = "ECC"
+    """Indicate the ECC key type."""
+
+
+class CertificateAuthorityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the Certificate Authority certificate lifecycle."""
 
     PENDING_ACTIVATION = "PendingActivation"
-    """The CSR has been generated and is waiting for the customer to provide the signed certificate."""
+    """The CSR has been generated and is waiting for activation."""
     ACTIVE = "Active"
-    """The signed certificate has been successfully uploaded and validated, and the CA is active."""
+    """The Certificate Authority is active."""
     ACTIVE_BUT_PENDING_RENEWAL = "ActiveButPendingRenewal"
-    """The certificate is nearing expiration (within renewal window) or has expired. A new CSR has
-    been generated and is waiting for the customer to provide a new signed certificate."""
+    """The Certificate Authority is active but requires renewal."""
+
+
+class CertificateAuthorityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported Certificate Authority types."""
+
+    ROOT = "Root"
+    """Self-signed, service-managed root Certificate Authority."""
+    ICA = "ICA"
+    """Intermediate Certificate Authority signed by another Certificate Authority."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -106,6 +130,45 @@ class Format(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """JSON Schema version draft 7 format."""
     DELTA1_0 = "Delta/1.0"
     """Delta format."""
+    JSON_LD1_1 = "JsonLD/1.1"
+    """W3C Web of Things JSON-LD format."""
+
+
+class HealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the health state of the resource."""
+
+    UNKNOWN = "Unknown"
+    """Resource state is unknown."""
+    AVAILABLE = "Available"
+    """Resource is Available and functioning as expected."""
+    DEGRADED = "Degraded"
+    """Resource health is degraded."""
+    UNAVAILABLE = "Unavailable"
+    """Resource is not functioning as expected."""
+
+
+class InboundCallerIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity used for inbound calls to the ADR namespace."""
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System-assigned managed identity."""
+    USER_ASSIGNED = "UserAssigned"
+    """User-assigned managed identity."""
+
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    """No managed identity."""
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned managed identity."""
+    USER_ASSIGNED = "UserAssigned"
+    """User assigned managed identity."""
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+    """System and user assigned managed identity."""
 
 
 class ManagementActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -117,6 +180,15 @@ class ManagementActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Read action type."""
     WRITE = "Write"
     """Write action type."""
+
+
+class MessagingEndpointAvailability(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The availability status of a messaging endpoint."""
+
+    AVAILABLE = "Available"
+    """The messaging endpoint is available."""
+    DISABLED = "Disabled"
+    """The messaging endpoint is disabled."""
 
 
 class MqttDestinationQos(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -139,6 +211,17 @@ class NamespaceDiscoveredManagementActionType(str, Enum, metaclass=CaseInsensiti
     """Write action type."""
 
 
+class NamespaceLinkingStateValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The linking state values for namespace endpoint entries."""
+
+    IN_PROGRESS = "InProgress"
+    """Linking is in progress."""
+    SUCCEEDED = "Succeeded"
+    """Linking succeeded."""
+    FAILED = "Failed"
+    """Linking failed."""
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
@@ -150,6 +233,22 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a system."""
     USER_SYSTEM = "user,system"
     """Indicates the operation is initiated by a user or system."""
+
+
+class OutboundIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity used for outbound calls from the ADR namespace."""
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System-assigned managed identity."""
+    USER_ASSIGNED = "UserAssigned"
+    """User-assigned managed identity."""
+
+
+class ProvisioningEndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of provisioning resource that can be linked to a namespace."""
+
+    DPS = "Microsoft.Devices/provisioningServices"
+    """Azure Device Provisioning Service."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -167,11 +266,24 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource is deleting."""
 
 
+class RegistryDeviceEnablementState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the enablement state of a device."""
+
+    ENABLED = "Enabled"
+    """The device is enabled."""
+    DISABLED = "Disabled"
+    """The device is disabled. All PUT/PATCH/POST APIs on the child resources will be blocked."""
+
+
 class SchemaType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the schema type."""
 
     MESSAGE_SCHEMA = "MessageSchema"
     """Message Schema schema type."""
+    THING_MODEL = "ThingModel"
+    """W3C Web of Things Thing Model document."""
+    THING_DESCRIPTION = "ThingDescription"
+    """W3C Web of Things Thing Description document."""
 
 
 class Scope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -188,22 +300,6 @@ class StreamDestinationTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MQTT target."""
     STORAGE = "Storage"
     """Storage target."""
-
-
-class SupportedKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Supported key types."""
-
-    ECC = "ECC"
-    """Indicates the ECC key type."""
-
-
-class SystemAssignedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of managed service identity (either system assigned, or none)."""
-
-    NONE = "None"
-    """No managed system identity."""
-    SYSTEM_ASSIGNED = "SystemAssigned"
-    """System assigned managed system identity."""
 
 
 class TopicRetainType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

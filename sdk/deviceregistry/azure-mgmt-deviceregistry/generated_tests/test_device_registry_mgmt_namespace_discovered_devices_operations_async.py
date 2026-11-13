@@ -138,8 +138,8 @@ class TestDeviceRegistryMgmtNamespaceDiscoveredDevicesOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_namespace_discovered_devices_list_by_resource_group(self, resource_group):
-        response = self.client.namespace_discovered_devices.list_by_resource_group(
+    async def test_namespace_discovered_devices_list_by_namespace(self, resource_group):
+        response = self.client.namespace_discovered_devices.list_by_namespace(
             resource_group_name=resource_group.name,
             namespace_name="str",
         )

@@ -32,11 +32,11 @@ def main():
 
     response = client.namespaces.get(
         resource_group_name="myResourceGroup",
-        namespace_name="adr-namespace-gbk0925-n01",
+        namespace_name="mynamespace",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-03-01-preview/Get_Namespace.json
+# x-ms-original-file: 2026-11-01/Get_Namespace.json
 if __name__ == "__main__":
     main()
