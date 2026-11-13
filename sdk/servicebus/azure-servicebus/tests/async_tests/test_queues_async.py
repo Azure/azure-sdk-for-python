@@ -3143,7 +3143,8 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                         received_messages.append(message)
                 assert len(received_messages) == 6
 
-                batch_message = await sender.create_message_batch(max_size_in_bytes=73)
+                # Fits one message, including the envelope properties copied from it, but not two.
+                batch_message = await sender.create_message_batch(max_size_in_bytes=150)
                 for _ in range(2):
                     try:
                         batch_message.add_message(message_dict)

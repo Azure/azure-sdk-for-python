@@ -688,9 +688,23 @@ class ServiceBusMessageBatch(object):
             outgoing_sb_message._message  # pylint: disable=protected-access
         )
 
+        size_before_add = self._size
+        if self._count == 0:
+            # The first message's message_id, session_id and partition_key are copied onto the batch envelope
+            # below, so they are part of the encoded batch. Measure them on a scratch envelope so that a
+            # rejected message leaves the batch unchanged.
+            envelope = self._amqp_transport.build_batch_message([])
+            self._amqp_transport.set_batch_envelope_properties(
+                envelope,
+                outgoing_sb_message.message_id,
+                outgoing_sb_message.session_id,
+                outgoing_sb_message.partition_key,
+            )
+            size_before_add = self._amqp_transport.get_batch_message_encoded_size(envelope)
+
         # For a ServiceBusMessageBatch, if the encoded_message_size of message is < 256, then the overhead cost to
         # encode that message into the ServiceBusMessageBatch would be 5 bytes, if >= 256, it would be 8 bytes.
-        size_after_add = self._size + message_size + _BATCH_MESSAGE_OVERHEAD_COST[0 if (message_size < 256) else 1]
+        size_after_add = size_before_add + message_size + _BATCH_MESSAGE_OVERHEAD_COST[0 if (message_size < 256) else 1]
 
         if size_after_add > self.max_size_in_bytes:
             raise MessageSizeExceededError(

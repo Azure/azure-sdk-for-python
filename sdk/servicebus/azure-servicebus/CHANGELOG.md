@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed `ServiceBusMessageBatch.size_in_bytes` and the `max_size_in_bytes` check leaving out the `message_id`, `session_id` and `partition_key` that are copied from the first message onto the batch envelope. A batch that the client reported as within the limit could be rejected by the service with `MessageSizeExceededError`. ([#49865](https://github.com/Azure/azure-sdk-for-python/issues/49865))
+
 ### Other Changes
 
 ## 7.15.0 (2026-10-06)
