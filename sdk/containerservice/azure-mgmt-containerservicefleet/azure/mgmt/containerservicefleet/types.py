@@ -27,6 +27,8 @@ if TYPE_CHECKING:
         FleetUpdateStrategyProvisioningState,
         GateState,
         GateType,
+        IdentityBindingLabelSelectorOperator,
+        IdentityBindingProfileProvisioningState,
         LabelSelectorOperator,
         ManagedClusterUpgradeType,
         ManagedServiceIdentityType,
@@ -84,6 +86,34 @@ class AgentProfile(TypedDict, total=False):
      vnet and subnet will be generated and used."""
     vmSize: str
     """The virtual machine size of the Fleet hub."""
+
+
+class AllowedSubject(TypedDict, total=False):
+    """A subject authorized to use the identity binding for token exchange. The namespace selector is
+    required and must be non-empty. The service account selector is optional; when omitted, all
+    service accounts in matching namespaces are authorized. Selectors within a single
+    AllowedSubject are AND'd; multiple AllowedSubjects on an identity binding profile are OR'd.
+
+    :ivar namespaceSelector: Label selector matching the namespaces in which this identity may be
+     used. Must be non-empty: an empty selector would match every namespace and is rejected to
+     prevent overly permissive bindings. Use the built-in ``kubernetes.io/metadata.name`` label to
+     target specific namespaces by name. Required.
+    :vartype namespaceSelector: "IdentityBindingLabelSelector"
+    :ivar serviceAccountSelector: Optional label selector matching the service accounts (within the
+     namespaces matched by ``namespaceSelector``) that may use this identity. When omitted, all
+     service accounts in matching namespaces are authorized. When provided, it must be non-empty.
+    :vartype serviceAccountSelector: "IdentityBindingLabelSelector"
+    """
+
+    namespaceSelector: Required["IdentityBindingLabelSelector"]
+    """Label selector matching the namespaces in which this identity may be used. Must be non-empty:
+     an empty selector would match every namespace and is rejected to prevent overly permissive
+     bindings. Use the built-in ``kubernetes.io/metadata.name`` label to target specific namespaces
+     by name. Required."""
+    serviceAccountSelector: "IdentityBindingLabelSelector"
+    """Optional label selector matching the service accounts (within the namespaces matched by
+     ``namespaceSelector``) that may use this identity. When omitted, all service accounts in
+     matching namespaces are authorized. When provided, it must be non-empty."""
 
 
 class APIServerAccessProfile(TypedDict, total=False):
@@ -1068,6 +1098,195 @@ class GatePatchProperties(TypedDict, total=False):
     """The state of the Gate. Required. Known values are: \"Pending\", \"Skipped\", and \"Completed\"."""
 
 
+class IdentityBindingLabelSelector(TypedDict, total=False):
+    """A label selector is a label query over a set of resources. The result of matchLabels and
+    matchExpressions are ANDed. An empty label selector matches all objects. A null label selector
+    matches no objects.
+
+    :ivar matchLabels: matchLabels is an array of {key=value} pairs. A single {key=value} in the
+     matchLabels map is equivalent to an element of matchExpressions, whose key field is ``key``,
+     the operator is ``In``, and the values array contains only ``value``. The requirements are
+     ANDed.
+    :vartype matchLabels: list[str]
+    :ivar matchExpressions: matchExpressions is a list of label selector requirements. The
+     requirements are ANDed.
+    :vartype matchExpressions: list["IdentityBindingLabelSelectorRequirement"]
+    """
+
+    matchLabels: list[str]
+    """matchLabels is an array of {key=value} pairs. A single {key=value} in the matchLabels map is
+     equivalent to an element of matchExpressions, whose key field is ``key``, the operator is
+     ``In``, and the values array contains only ``value``. The requirements are ANDed."""
+    matchExpressions: list["IdentityBindingLabelSelectorRequirement"]
+    """matchExpressions is a list of label selector requirements. The requirements are ANDed."""
+
+
+class IdentityBindingLabelSelectorRequirement(TypedDict, total=False):
+    """A label selector requirement is a selector that contains values, a key, and an operator that
+    relates the key and values.
+
+    :ivar key: key is the label key that the selector applies to.
+    :vartype key: str
+    :ivar operator: operator represents a key's relationship to a set of values. Valid operators
+     are In, NotIn, Exists and DoesNotExist. Known values are: "In", "NotIn", "Exists", and
+     "DoesNotExist".
+    :vartype operator: Union[str, "IdentityBindingLabelSelectorOperator"]
+    :ivar values: values is an array of string values. For In or NotIn, the array must be
+     non-empty. For Exists or DoesNotExist, the array must be empty or omitted.
+    :vartype values: list[str]
+    """
+
+    key: str
+    """key is the label key that the selector applies to."""
+    operator: Union[str, "IdentityBindingLabelSelectorOperator"]
+    """operator represents a key's relationship to a set of values. Valid operators are In, NotIn,
+     Exists and DoesNotExist. Known values are: \"In\", \"NotIn\", \"Exists\", and \"DoesNotExist\"."""
+    values: list[str]
+    """values is an array of string values. For In or NotIn, the array must be non-empty. For Exists
+     or DoesNotExist, the array must be empty or omitted."""
+
+
+class IdentityBindingManagedIdentityProfile(TypedDict, total=False):
+    """Managed identity profile for the identity binding.
+
+    :ivar resourceId: The resource ID of the user-assigned managed identity. Required.
+    :vartype resourceId: str
+    :ivar objectId: The object ID of the managed identity.
+    :vartype objectId: str
+    :ivar clientId: The client ID of the managed identity.
+    :vartype clientId: str
+    :ivar tenantId: The tenant ID of the managed identity.
+    :vartype tenantId: str
+    """
+
+    resourceId: Required[str]
+    """The resource ID of the user-assigned managed identity. Required."""
+    objectId: str
+    """The object ID of the managed identity."""
+    clientId: str
+    """The client ID of the managed identity."""
+    tenantId: str
+    """The tenant ID of the managed identity."""
+
+
+class IdentityBindingOidcIssuerProfile(TypedDict, total=False):
+    """The OIDC issuer profile of the identity binding profile.
+
+    :ivar oidcIssuerUrl: The OIDC issuer URL of the identity binding profile.
+    :vartype oidcIssuerUrl: str
+    """
+
+    oidcIssuerUrl: str
+    """The OIDC issuer URL of the identity binding profile."""
+
+
+class IdentityBindingProfile(ProxyResource):
+    """A fleet identity binding profile.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "IdentityBindingProfileProperties"
+    :ivar eTag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype eTag: str
+    """
+
+    properties: "IdentityBindingProfileProperties"
+    """The resource-specific properties for this resource."""
+    eTag: str
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+
+class IdentityBindingProfileProperties(TypedDict, total=False):
+    """The properties of an identity binding profile.
+
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Applying".
+    :vartype provisioningState: Union[str, "IdentityBindingProfileProvisioningState"]
+    :ivar memberSelector: Select the fleet members that this identity binding profile is applied
+     to.
+
+     * Only key/value pairs with the `=` operator are accepted in the label selector.
+     * If empty or not specified, no fleet members will be selected.
+    :vartype memberSelector: "MemberSelector"
+    :ivar identityBindingProperties: The identity binding properties applied to each selected fleet
+     member. Required.
+    :vartype identityBindingProperties: "IdentityBindingProperties"
+    :ivar status: The identity binding profile status.
+    :vartype status: "IdentityBindingProfileStatus"
+    """
+
+    provisioningState: Union[str, "IdentityBindingProfileProvisioningState"]
+    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     and \"Applying\"."""
+    memberSelector: "MemberSelector"
+    """Select the fleet members that this identity binding profile is applied to.
+ 
+      * Only key/value pairs with the `=` operator are accepted in the label selector.
+      * If empty or not specified, no fleet members will be selected."""
+    identityBindingProperties: Required["IdentityBindingProperties"]
+    """The identity binding properties applied to each selected fleet member. Required."""
+    status: "IdentityBindingProfileStatus"
+    """The identity binding profile status."""
+
+
+class IdentityBindingProfileStatus(TypedDict, total=False):
+    """Status of the identity binding profile.
+
+    :ivar lastOperationId: The last operation ID for the identity binding profile.
+    :vartype lastOperationId: str
+    :ivar lastOperationError: The last operation error of the identity binding profile.
+    :vartype lastOperationError: "ErrorDetail"
+    """
+
+    lastOperationId: str
+    """The last operation ID for the identity binding profile."""
+    lastOperationError: "ErrorDetail"
+    """The last operation error of the identity binding profile."""
+
+
+class IdentityBindingProperties(TypedDict, total=False):
+    """The properties of the identity bindings created on each selected fleet member.
+
+    :ivar managedIdentity: Managed identity profile for the identity binding. Required.
+    :vartype managedIdentity: "IdentityBindingManagedIdentityProfile"
+    :ivar allowedSubjects: Optional list of subjects authorized to use this identity binding for
+     token exchange. Each entry pairs a required namespace label selector with an optional service
+     account label selector; selectors within an entry are AND'd, and multiple entries are OR'd.
+     When omitted or empty, authorization falls back exclusively to ClusterRole/ClusterRoleBinding
+     evaluation. Maximum 100 entries.
+    :vartype allowedSubjects: list["AllowedSubject"]
+    :ivar oidcIssuer: The OIDC issuer profile of the identity binding profile.
+    :vartype oidcIssuer: "IdentityBindingOidcIssuerProfile"
+    """
+
+    managedIdentity: Required["IdentityBindingManagedIdentityProfile"]
+    """Managed identity profile for the identity binding. Required."""
+    allowedSubjects: list["AllowedSubject"]
+    """Optional list of subjects authorized to use this identity binding for token exchange. Each
+     entry pairs a required namespace label selector with an optional service account label
+     selector; selectors within an entry are AND'd, and multiple entries are OR'd. When omitted or
+     empty, authorization falls back exclusively to ClusterRole/ClusterRoleBinding evaluation.
+     Maximum 100 entries."""
+    oidcIssuer: "IdentityBindingOidcIssuerProfile"
+    """The OIDC issuer profile of the identity binding profile."""
+
+
 class LabelSelector(TypedDict, total=False):
     """A label selector is a label query over a set of resources. The result of matchLabels and
     matchExpressions are ANDed. An empty label selector matches all objects. A null label selector
@@ -1785,6 +2004,15 @@ class UpdateGroup(TypedDict, total=False):
     :ivar name: Name of the group. It must match a group name of an existing fleet member.
      Required.
     :vartype name: str
+    :ivar maxAllowedFailures: Limits the number of member (cluster) upgrade failures tolerated
+     within this group. Failures are evaluated over members within this group only. Accepts either:
+     • A fixed count n, where n >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at
+     stage start using: resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and
+     N is the number of members in this group at scope start. Examples: • "3"   --> up to 3 member
+     upgrade failures are tolerated within this group. The 4th failure causes the group to fail. •
+     "25%" --> up to 25% of the members in this group can fail their upgrade before the group is
+     considered failed.
+    :vartype maxAllowedFailures: str
     :ivar maxConcurrency: The max number of upgrades that can run concurrently in this specific
      group. Acts as a ceiling (and not a quota) for the number of concurrent upgrades within the
      group you want to tolerate at a time. Actual concurrency may be lower depending on stage-level
@@ -1812,6 +2040,14 @@ class UpdateGroup(TypedDict, total=False):
 
     name: Required[str]
     """Name of the group. It must match a group name of an existing fleet member. Required."""
+    maxAllowedFailures: str
+    """Limits the number of member (cluster) upgrade failures tolerated within this group. Failures
+     are evaluated over members within this group only. Accepts either: • A fixed count n, where n
+     >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at stage start using:
+     resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and N is the number of
+     members in this group at scope start. Examples: • \"3\"   --> up to 3 member upgrade failures
+     are tolerated within this group. The 4th failure causes the group to fail. • \"25%\" --> up to
+     25% of the members in this group can fail their upgrade before the group is considered failed."""
     maxConcurrency: str
     """The max number of upgrades that can run concurrently in this specific group. Acts as a ceiling
      (and not a quota) for the number of concurrent upgrades within the group you want to tolerate
@@ -1844,6 +2080,11 @@ class UpdateGroupStatus(TypedDict, total=False):
     :vartype status: "UpdateStatus"
     :ivar name: The name of the UpdateGroup.
     :vartype name: str
+    :ivar failureCount: The total member upgrade failures within the group.
+    :vartype failureCount: int
+    :ivar maxAllowedFailures: The max number of member upgrade failures allowed within this group,
+     resolved from the UpdateStrategy.UpdateGroup.maxAllowedFailures value.
+    :vartype maxAllowedFailures: int
     :ivar maxConcurrency:   The max number of upgrades that can run concurrently in this group,
      resolved from the UpdateStrategy.UpdateGroup.maxConcurrency value. If no value was provided,
      this value defaults to "1".
@@ -1860,6 +2101,11 @@ class UpdateGroupStatus(TypedDict, total=False):
     """The status of the UpdateGroup."""
     name: str
     """The name of the UpdateGroup."""
+    failureCount: int
+    """The total member upgrade failures within the group."""
+    maxAllowedFailures: int
+    """The max number of member upgrade failures allowed within this group, resolved from the
+     UpdateStrategy.UpdateGroup.maxAllowedFailures value."""
     maxConcurrency: int
     """The max number of upgrades that can run concurrently in this group, resolved from the
      UpdateStrategy.UpdateGroup.maxConcurrency value. If no value was provided, this value defaults
@@ -2005,6 +2251,8 @@ class UpdateRunStatus(TypedDict, total=False):
     :ivar nodeImageSelection: The node image upgrade specs for the update run. It is only set in
      update run when ``NodeImageSelection.type`` is ``Consistent``.
     :vartype nodeImageSelection: "NodeImageSelectionStatus"
+    :ivar failureCount: Total member upgrade failures across the entire UpdateRun.
+    :vartype failureCount: int
     """
 
     status: "UpdateStatus"
@@ -2014,6 +2262,8 @@ class UpdateRunStatus(TypedDict, total=False):
     nodeImageSelection: "NodeImageSelectionStatus"
     """The node image upgrade specs for the update run. It is only set in update run when
      ``NodeImageSelection.type`` is ``Consistent``."""
+    failureCount: int
+    """Total member upgrade failures across the entire UpdateRun."""
 
 
 class UpdateRunStrategy(TypedDict, total=False):
@@ -2053,6 +2303,15 @@ class UpdateStage(TypedDict, total=False):
     :ivar afterStageWaitInSeconds: The time in seconds to wait at the end of this stage before
      starting the next one. Defaults to 0 seconds if unspecified.
     :vartype afterStageWaitInSeconds: int
+    :ivar maxAllowedFailures: Limits the number of member (cluster) upgrade failures tolerated
+     within this stage. Failures are evaluated over all members within all groups within this stage.
+     Accepts either: • A fixed count n, where n >= 0 • A percentage p%, where 0 <= p <= 100
+     Percentage resolves at stage start using: resolvedThreshold = ceil(p * N), where p is the
+     percentage as a decimal and N is the number of members in this stage at scope start. Examples:
+     • "3"   --> up to 3 member upgrade failures are tolerated within this stage. The 4th failure
+     would cause the entire stage to fail. • "25%" --> up to 25% of the members in this stage can
+     fail their upgrade before the stage is considered failed.
+    :vartype maxAllowedFailures: str
     :ivar maxConcurrency: The max number of upgrades that can run concurrently across all groups in
      this stage. Acts as a ceiling (and not a quota) for the number of concurrent upgrades within
      the stage you want to tolerate at a time. Actual concurrency may be lower depending on
@@ -2086,6 +2345,15 @@ class UpdateStage(TypedDict, total=False):
     afterStageWaitInSeconds: int
     """The time in seconds to wait at the end of this stage before starting the next one. Defaults to
      0 seconds if unspecified."""
+    maxAllowedFailures: str
+    """Limits the number of member (cluster) upgrade failures tolerated within this stage. Failures
+     are evaluated over all members within all groups within this stage. Accepts either: • A fixed
+     count n, where n >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at stage start
+     using: resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and N is the
+     number of members in this stage at scope start. Examples: • \"3\"   --> up to 3 member upgrade
+     failures are tolerated within this stage. The 4th failure would cause the entire stage to fail.
+     • \"25%\" --> up to 25% of the members in this stage can fail their upgrade before the stage is
+     considered failed."""
     maxConcurrency: str
     """The max number of upgrades that can run concurrently across all groups in this stage. Acts as a
      ceiling (and not a quota) for the number of concurrent upgrades within the stage you want to
@@ -2110,6 +2378,11 @@ class UpdateStageStatus(TypedDict, total=False):
     :vartype status: "UpdateStatus"
     :ivar name: The name of the UpdateStage.
     :vartype name: str
+    :ivar failureCount: The total member upgrade failures within the stage.
+    :vartype failureCount: int
+    :ivar maxAllowedFailures: The max number of member upgrade failures allowed within this stage,
+     resolved from the UpdateStrategy.UpdateStage.maxAllowedFailures value.
+    :vartype maxAllowedFailures: int
     :ivar maxConcurrency: The max number of upgrades that can run concurrently across all groups in
      this stage, resolved from the UpdateStrategy.UpdateStage.maxConcurrency value.
     :vartype maxConcurrency: int
@@ -2127,6 +2400,11 @@ class UpdateStageStatus(TypedDict, total=False):
     """The status of the UpdateStage."""
     name: str
     """The name of the UpdateStage."""
+    failureCount: int
+    """The total member upgrade failures within the stage."""
+    maxAllowedFailures: int
+    """The max number of member upgrade failures allowed within this stage, resolved from the
+     UpdateStrategy.UpdateStage.maxAllowedFailures value."""
     maxConcurrency: int
     """The max number of upgrades that can run concurrently across all groups in this stage, resolved
      from the UpdateStrategy.UpdateStage.maxConcurrency value."""
