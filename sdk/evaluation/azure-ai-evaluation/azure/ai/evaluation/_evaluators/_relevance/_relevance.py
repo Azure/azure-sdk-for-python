@@ -4,21 +4,26 @@
 import logging
 import math
 import os
-from typing import Dict, Union, List
+from typing import Dict, List, Union
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from ..._common.utils import reformat_conversation_history, reformat_agent_response
-
-from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase, hoist_messages_to_conversation
 from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy
+from azure.ai.evaluation._evaluators._common._prompty_strategy import (
+    judge_output_diagnostic,
+    log_judge_output_diagnostic,
+    parse_judge_score,
+)
 from azure.ai.evaluation._evaluators._common._validators import (
     ConversationValidator,
     MessagesOrQueryResponseInputValidator,
     ValidatorInterface,
 )
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._model_configurations import Conversation
+
+from ..._common.utils import reformat_agent_response, reformat_conversation_history
 
 logger = logging.getLogger(__name__)
 
@@ -251,7 +256,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
                 reason = llm_output.get("reason", "")
                 return self._return_not_applicable_result(reason, self._threshold)
 
-            score = float(llm_output.get("score", math.nan))
+            score = parse_judge_score(llm_output.get("score", math.nan), result, missing="score" not in llm_output)
             reason = llm_output.get("reason", "")
             llm_properties = llm_output.get("properties", {}) or {}
             score_result = self._get_binary_result(score)
@@ -267,8 +272,10 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
                 f"{self._result_key}_properties": llm_properties,
             }
 
+        diagnostic = judge_output_diagnostic(result)
+        log_judge_output_diagnostic(diagnostic)
         raise EvaluationException(
-            message="Evaluator returned invalid output.",
+            message=f"Evaluator returned invalid output. {diagnostic}",
             blame=ErrorBlame.SYSTEM_ERROR,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.EVALUATE,
