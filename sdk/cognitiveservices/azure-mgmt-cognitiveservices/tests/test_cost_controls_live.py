@@ -29,15 +29,14 @@ class TestCostControlsLive(AzureMgmtRecordedTestCase):
             api_version="2026-11-15-preview",
         )
 
-    @recorded_by_proxy
-    def test_account_cost_control_lifecycle(self, variables=None):
-        return self._cost_control_lifecycle("account", variables)
+    def test_account_cost_control_lifecycle(self):
+        self._cost_control_lifecycle("account")
+
+    def test_project_cost_control_lifecycle(self):
+        self._cost_control_lifecycle("project")
 
     @recorded_by_proxy
-    def test_project_cost_control_lifecycle(self, variables=None):
-        return self._cost_control_lifecycle("project", variables)
-
-    def _cost_control_lifecycle(self, scope, variables):
+    def _cost_control_lifecycle(self, scope, variables=None):
         if self.is_live:
             now = datetime.now(timezone.utc).replace(microsecond=0)
         else:
