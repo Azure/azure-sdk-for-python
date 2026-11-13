@@ -15,7 +15,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
     pip install azure-identity
     pip install azure-mgmt-cognitiveservices
 # USAGE
-    python list_workbenches.py
+    python get_account_with_trusted_certificate_sources.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.workbenches.list(
-        resource_group_name="rgcognitiveservices",
+    response = client.accounts.get(
+        resource_group_name="myResourceGroup",
         account_name="myAccount",
-        project_name="myProject",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: 2026-09-15-preview/ListWorkbenches.json
+# x-ms-original-file: 2026-11-01/GetAccountWithTrustedCertificateSources.json
 if __name__ == "__main__":
     main()

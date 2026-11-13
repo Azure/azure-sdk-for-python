@@ -15,7 +15,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
     pip install azure-identity
     pip install azure-mgmt-cognitiveservices
 # USAGE
-    python restart_workbench.py
+    python update_account_clear_trusted_certificate_sources.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.workbenches.begin_restart(
-        resource_group_name="rgcognitiveservices",
+    response = client.accounts.begin_update(
+        resource_group_name="myResourceGroup",
         account_name="myAccount",
-        project_name="myProject",
-        workbench_name="myWorkbench",
+        account={"properties": {"trustedCertificateSources": []}},
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-09-15-preview/RestartWorkbench.json
+# x-ms-original-file: 2026-11-01/UpdateAccountClearTrustedCertificateSources.json
 if __name__ == "__main__":
     main()

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
     pip install azure-identity
     pip install azure-mgmt-cognitiveservices
 # USAGE
-    python get_legacy.py
+    python update_account_rotate_trusted_certificate_sources.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +31,27 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.cost_controls.get(
-        resource_group_name="foundry-resource-group",
-        account_name="foundry-account",
-        cost_control_name="legacy-budget",
-    )
+    response = client.accounts.begin_update(
+        resource_group_name="myResourceGroup",
+        account_name="myAccount",
+        account={
+            "properties": {
+                "trustedCertificateSources": [
+                    {
+                        "certificateBundleReferences": [
+                            {"secretName": "corporate-ca-bundle", "secretVersion": "33333333333333333333333333333333"},
+                            {"secretName": "partner-ca-bundle", "secretVersion": "22222222222222222222222222222222"},
+                        ],
+                        "resourceId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/myResourceGroup/providers/Microsoft.KeyVault/vaults/myKeyVault",
+                        "type": "AzureKeyVault",
+                    }
+                ]
+            }
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-09-15-preview/CostControl/getLegacy.json
+# x-ms-original-file: 2026-11-01/UpdateAccountRotateTrustedCertificateSources.json
 if __name__ == "__main__":
     main()
