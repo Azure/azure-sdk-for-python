@@ -4,7 +4,79 @@
 # ------------------------------------
 """Deterministic typed configurations used by preview wrapper tests."""
 
+import json
+import os
+from pathlib import Path
+
 from _capabilities import require_capability
+
+
+def compatible_embedding_index_configuration(index_name, *, is_live):
+    require_capability(
+        "azure.search.documents.indexes.models.OpenAICompatibleVectorizer",
+        "azure.search.documents.indexes.models.OpenAICompatibleVectorizerParameters",
+    )
+    from azure.search.documents.indexes.models import (
+        ExhaustiveKnnAlgorithmConfiguration,
+        OpenAICompatibleVectorizer,
+        OpenAICompatibleVectorizerParameters,
+        SearchField,
+        SearchIndex,
+        SearchableField,
+        SimpleField,
+        VectorSearch,
+        VectorSearchProfile,
+    )
+
+    uri = (
+        "https://fake-openai.openai.azure.com/openai/deployments/"
+        "text-embedding-ada-002/embeddings?api-version=2024-02-01"
+    )
+    key = "fake-provider-key"
+    if is_live:
+        uri = os.environ["SEARCH_COMPATIBLE_EMBEDDING_URI"]
+        key = os.environ["SEARCH_COMPATIBLE_EMBEDDING_API_KEY"]
+    data = Path(__file__).resolve().parents[1] / "samples" / "data" / "hotels_compatible_ada002.json"
+    documents = json.loads(data.read_text(encoding="utf-8"))["documents"]
+    return (
+        SearchIndex(
+            name=index_name,
+            fields=[
+                SimpleField(name="HotelId", type="Edm.String", key=True),
+                SearchableField(name="HotelName", type="Edm.String"),
+                SearchableField(name="Description", type="Edm.String"),
+                SearchField(
+                    name="DescriptionVector",
+                    type="Collection(Edm.Single)",
+                    searchable=True,
+                    vector_search_dimensions=1536,
+                    vector_search_profile_name="compatible-profile",
+                ),
+            ],
+            vector_search=VectorSearch(
+                algorithms=[ExhaustiveKnnAlgorithmConfiguration(name="exact")],
+                profiles=[
+                    VectorSearchProfile(
+                        name="compatible-profile",
+                        algorithm_configuration_name="exact",
+                        vectorizer_name="compatible",
+                    )
+                ],
+                vectorizers=[
+                    OpenAICompatibleVectorizer(
+                        vectorizer_name="compatible",
+                        open_ai_compatible_parameters=OpenAICompatibleVectorizerParameters(
+                            uri=uri,
+                            model_name="text-embedding-ada-002",
+                            dimensions=1536,
+                            headers={"api-key": key},
+                        ),
+                    )
+                ],
+            ),
+        ),
+        documents,
+    )
 
 
 def knowledge_base_tool_documents():

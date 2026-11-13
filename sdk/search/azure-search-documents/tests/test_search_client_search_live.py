@@ -6,8 +6,10 @@
 
 from __future__ import annotations
 
+from azure.core import MatchConditions
 from devtools_testutils import AzureRecordedTestCase, remove_batch_sanitizers
 from devtools_testutils.helpers import get_recording_id
+from devtools_testutils.sanitizers import add_body_key_sanitizer
 
 from _capabilities import require_capability
 from _search_helpers import (
@@ -34,6 +36,60 @@ def _assert_budget_results(results):
 
 
 class TestSearchClientSearch(AzureRecordedTestCase):
+    @live_test()
+    def test_search_openai_compatible_vectorizer_returns_expected_neighbor(self, endpoint):
+        require_capability(
+            "azure.search.documents.indexes.models.OpenAICompatibleVectorizer",
+            "azure.search.documents.indexes.models.OpenAICompatibleVectorizerParameters",
+        )
+        from azure.search.documents.models import VectorizableTextQuery, VectorizedQuery
+        from _preview_helpers import compatible_embedding_index_configuration
+
+        add_body_key_sanitizer(json_path="$..headers['api-key']", value="fake-provider-key", function_scoped=True)
+        index_name = self.get_resource_name("index-search-compatible-vectorizer")
+        index, documents = compatible_embedding_index_configuration(index_name, is_live=self.is_live)
+        with make_index_client(endpoint) as indexes:
+            created = None
+            try:
+                created = indexes.create_index(index)
+                with make_search_client(endpoint, index_name) as search:
+                    upload_documents(search, documents)
+                    wait_for_document_count(self, search, len(documents))
+                    control = list(
+                        search.search(
+                            vector_queries=[
+                                VectorizedQuery(
+                                    vector=documents[0]["DescriptionVector"],
+                                    fields="DescriptionVector",
+                                    k_nearest_neighbors=3,
+                                    exhaustive=True,
+                                )
+                            ],
+                            select=["HotelId"],
+                            top=3,
+                        )
+                    )
+                    generated = list(
+                        search.search(
+                            vector_queries=[
+                                VectorizableTextQuery(
+                                    text="Relaxing hotel with a pool and spa treatments.",
+                                    fields="DescriptionVector",
+                                    k_nearest_neighbors=3,
+                                    exhaustive=True,
+                                )
+                            ],
+                            select=["HotelId"],
+                            top=3,
+                        )
+                    )
+                    assert control and generated
+                    assert control[0]["HotelId"] == generated[0]["HotelId"] == "spa"
+                    assert {item["HotelId"] for item in generated} == {item["HotelId"] for item in documents}
+            finally:
+                if created is not None:
+                    indexes.delete_index(created, match_condition=MatchConditions.IfNotModified)
+
     @live_test()
     def test_search_agentic_returns_documents_and_reasoning_usage(self, endpoint):
         require_capability(
