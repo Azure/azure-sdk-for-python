@@ -76,6 +76,35 @@ async def flow_side_effect(timeout, **kwargs):
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
 class TestToolCallAccuracyEvaluator:
+    def test_reasoning_items_are_accepted_and_not_sent_to_the_judge(self, mock_model_config):
+        # Reasoning models add reasoning items to assistant messages (GitHub issue #49957).
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+        reasoning = {"type": "reasoning", "content": "private chain of thought"}
+        query = [
+            {"role": "user", "content": [{"type": "text", "text": "Hi"}]},
+            {"role": "assistant", "content": [reasoning, {"type": "text", "text": "Hello! How can I help?"}]},
+            {"role": "user", "content": [{"type": "text", "text": "What's the weather in Paris?"}]},
+        ]
+        response = [
+            {
+                "role": "assistant",
+                "content": [
+                    reasoning,
+                    {"type": "tool_call", "tool_call_id": "call_good", "name": "fetch_weather", "arguments": {}},
+                ],
+            },
+            {"role": "assistant", "content": [reasoning, {"type": "text", "text": "It is sunny."}]},
+        ]
+        tool_definitions = [{"name": "fetch_weather", "description": "Fetch weather.", "parameters": {}}]
+
+        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+
+        assert result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}"] == 5
+        judge_inputs = evaluator._flow.call_args.kwargs
+        assert "private chain of thought" not in str(judge_inputs["query"])
+        assert "private chain of thought" not in str(judge_inputs["tool_calls"])
+
     def test_evaluate_tools_valid1(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)

@@ -270,6 +270,13 @@ class TestToolCallSuccessWithoutToolCalls:
                     "content": [{"type": "mcp_approval_response", "approve": False}],
                 },
             ],
+            [
+                {
+                    "role": "assistant",
+                    "content": [{"type": "reasoning", "content": ""}, {"type": "output_text", "text": "Hello."}],
+                }
+            ],
+            [{"role": "assistant", "content": [{"type": "reasoning", "content": ""}]}],
             [{"role": "assistant", "content": "Hello.", "tool_calls": None}],
             [{"role": "assistant", "content": [{"type": "text", "text": "Hello."}], "tool_calls": []}],
             [{"role": "assistant", "content": "Hello.", "function_call": None}],
@@ -301,6 +308,8 @@ class TestToolCallSuccessWithoutToolCalls:
             "string-content",
             "every-text-role",
             "mcp-approval-only",
+            "reasoning-beside-text",
+            "reasoning-only",
             "null-tool-calls",
             "empty-tool-calls",
             "null-function-call",
@@ -692,6 +701,14 @@ class TestToolCallSuccessWithoutToolCalls:
     @pytest.mark.parametrize("value", [None, "", [], {}], ids=["none", "empty-string", "empty-list", "empty-dict"])
     def test_a_call_field_that_holds_nothing_counts_as_absent(self, key, value):
         assert _has_no_tool_calls([{"role": "assistant", "content": "Hello.", key: value}]) is True
+
+    def test_reasoning_items_are_not_tool_calls_but_a_tool_call_beside_one_is(self):
+        reasoning = {"type": "reasoning", "content": ""}
+        text = {"type": "output_text", "text": "Searching."}
+        tool_call = {"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}
+
+        assert _has_no_tool_calls([{"role": "assistant", "content": [reasoning, text]}])
+        assert not _has_no_tool_calls([{"role": "assistant", "content": [reasoning, tool_call]}])
 
     def test_mcp_approvals_are_not_tool_calls_but_a_tool_call_beside_one_is(self):
         approval = {"type": "mcp_approval_request", "name": "search", "arguments": "{}"}

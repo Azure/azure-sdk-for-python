@@ -215,6 +215,9 @@ class ConversationValidator(ValidatorInterface):
                 ContentType.FUNCTION_CALL,
                 ContentType.MCP_APPROVAL_REQUEST,
                 ContentType.OPENAPI_CALL,
+                # Reasoning models emit these alongside text and tool calls. Evaluators only read text and tool
+                # call items, so a reasoning item is accepted here and ignored by preprocessing.
+                ContentType.REASONING,
             ]
             valid_assistant_content_types_as_strings = [t.value for t in valid_assistant_content_types]
             for content_item in content:
