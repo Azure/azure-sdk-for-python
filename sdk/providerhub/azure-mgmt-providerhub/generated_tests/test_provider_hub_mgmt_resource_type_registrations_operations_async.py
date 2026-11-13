@@ -65,7 +65,6 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                         "defaultApiVersion": "str",
                         "disallowedActionVerbs": ["str"],
                         "disallowedEndUserOperations": ["str"],
-                        "dstsConfiguration": {"serviceName": "str", "serviceDnsName": "str"},
                         "enableAsyncOperation": bool,
                         "enableThirdPartyS2S": bool,
                         "endpoints": [
@@ -73,7 +72,6 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                                 "apiVersion": "str",
                                 "apiVersions": ["str"],
                                 "dataBoundary": "str",
-                                "dstsConfiguration": {"serviceName": "str", "serviceDnsName": "str"},
                                 "enabled": bool,
                                 "endpointType": "str",
                                 "endpointUri": "str",
@@ -112,6 +110,7 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                             "disallowedConditions": [{"disallowedLegacyOperations": ["str"], "feature": "str"}],
                             "disallowedLegacyOperations": ["str"],
                         },
+                        "lifecycleInfo": {"lifecycleStage": "str"},
                         "linkedAccessChecks": [
                             {
                                 "actionName": "str",
@@ -157,6 +156,7 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                             "errorResponseMessageOptions": {"serverFailureResponseMessageType": "str"},
                             "expeditedRolloutMetadata": {"enabled": bool, "expeditedRolloutIntent": "str"},
                             "expeditedRolloutSubmitters": ["str"],
+                            "featureApprovalClaims": ["str"],
                             "featureManagementOwners": ["str"],
                             "incidentContactEmail": "str",
                             "incidentRoutingService": "str",
@@ -167,7 +167,6 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                             "resourceAccessPolicy": "str",
                             "resourceAccessRoles": [{"actions": ["str"], "allowedGroupClaims": ["str"]}],
                             "schemaOwners": ["str"],
-                            "serviceTreeInfos": [{"componentId": "str", "readiness": "str", "serviceId": "str"}],
                         },
                         "manifestLink": "str",
                         "marketplaceOptions": {"addOnPlanConversionAllowed": bool},
@@ -238,7 +237,6 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                         "resourceValidation": "str",
                         "routingRule": {"hostResourceType": "str"},
                         "routingType": "str",
-                        "serviceTreeInfos": [{"componentId": "str", "readiness": "str", "serviceId": "str"}],
                         "skuLink": "str",
                         "subscriptionLifecycleNotificationSpecifications": {
                             "softDeleteTTL": "1 day, 0:00:00",
@@ -247,7 +245,13 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                         "subscriptionStateRules": [{"allowedActions": ["str"], "state": "str"}],
                         "superScaleEnabled": bool,
                         "supportsTags": bool,
-                        "swaggerSpecifications": [{"apiVersions": ["str"], "swaggerSpecFolderUri": "str"}],
+                        "swaggerSpecifications": [
+                            {
+                                "apiVersions": ["str"],
+                                "lifecycleInfo": {"lifecycleStage": "str"},
+                                "swaggerSpecFolderUri": "str",
+                            }
+                        ],
                         "templateDeploymentOptions": {"preflightOptions": ["str"], "preflightSupported": bool},
                         "templateDeploymentPolicy": {
                             "capabilities": "str",
@@ -307,5 +311,293 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
             provider_namespace="str",
         )
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_resource_type_registrations_get_nested_resource_type_first(self, resource_group):
+        response = await self.client.resource_type_registrations.get_nested_resource_type_first(
+            provider_namespace="str",
+            resource_type="str",
+            nested_resource_type_first="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_resource_type_registrations_begin_create_or_update_nested_resource_type_first(self, resource_group):
+        response = await (
+            await self.client.resource_type_registrations.begin_create_or_update_nested_resource_type_first(
+                provider_namespace="str",
+                resource_type="str",
+                nested_resource_type_first="str",
+                properties={
+                    "id": "str",
+                    "kind": "str",
+                    "name": "str",
+                    "properties": {
+                        "addResourceListTargetLocations": bool,
+                        "additionalOptions": "str",
+                        "allowEmptyRoleAssignments": bool,
+                        "allowedResourceNames": [{"getActionVerb": "str", "name": "str"}],
+                        "allowedTemplateDeploymentReferenceActions": ["str"],
+                        "allowedUnauthorizedActions": ["str"],
+                        "allowedUnauthorizedActionsExtensions": [{"action": "str", "intent": "str"}],
+                        "apiProfiles": [{"apiVersion": "str", "profileVersion": "str"}],
+                        "asyncOperationResourceTypeName": "str",
+                        "asyncTimeoutRules": [{"actionName": "str", "timeout": "str"}],
+                        "authorizationActionMappings": [{"desired": "str", "original": "str"}],
+                        "availabilityZoneRule": {"availabilityZonePolicy": "str"},
+                        "capacityRule": {"capacityPolicy": "str", "skuAlias": "str"},
+                        "category": "str",
+                        "checkNameAvailabilitySpecifications": {
+                            "enableDefaultValidation": bool,
+                            "resourceTypesWithCustomValidation": ["str"],
+                        },
+                        "commonApiVersions": ["str"],
+                        "crossTenantTokenValidation": "str",
+                        "defaultApiVersion": "str",
+                        "disallowedActionVerbs": ["str"],
+                        "disallowedEndUserOperations": ["str"],
+                        "enableAsyncOperation": bool,
+                        "enableThirdPartyS2S": bool,
+                        "endpoints": [
+                            {
+                                "apiVersion": "str",
+                                "apiVersions": ["str"],
+                                "dataBoundary": "str",
+                                "enabled": bool,
+                                "endpointType": "str",
+                                "endpointUri": "str",
+                                "extensions": [
+                                    {"endpointUri": "str", "extensionCategories": ["str"], "timeout": "1 day, 0:00:00"}
+                                ],
+                                "featuresRule": {"requiredFeaturesPolicy": "str"},
+                                "kind": "str",
+                                "locations": ["str"],
+                                "requiredFeatures": ["str"],
+                                "skuLink": "str",
+                                "timeout": "1 day, 0:00:00",
+                                "tokenAuthConfiguration": {
+                                    "authenticationScheme": "str",
+                                    "disableCertificateAuthenticationFallback": bool,
+                                    "signedRequestScope": "str",
+                                },
+                                "zones": ["str"],
+                            }
+                        ],
+                        "extendedLocations": [{"supportedPolicy": "str", "type": "str"}],
+                        "extensionOptions": {"resourceCreationBegin": {"request": ["str"], "response": ["str"]}},
+                        "featuresRule": {"requiredFeaturesPolicy": "str"},
+                        "frontdoorRequestMode": "str",
+                        "groupingTag": "str",
+                        "identityManagement": {
+                            "applicationId": "str",
+                            "applicationIds": ["str"],
+                            "delegationAppIds": ["str"],
+                            "type": "str",
+                        },
+                        "isPureProxy": bool,
+                        "legacyName": "str",
+                        "legacyNames": ["str"],
+                        "legacyPolicy": {
+                            "disallowedConditions": [{"disallowedLegacyOperations": ["str"], "feature": "str"}],
+                            "disallowedLegacyOperations": ["str"],
+                        },
+                        "lifecycleInfo": {"lifecycleStage": "str"},
+                        "linkedAccessChecks": [
+                            {
+                                "actionName": "str",
+                                "linkedAction": "str",
+                                "linkedActionVerb": "str",
+                                "linkedProperty": "str",
+                                "linkedType": "str",
+                                "options": "str",
+                            }
+                        ],
+                        "linkedNotificationRules": [
+                            {
+                                "actions": ["str"],
+                                "actionsOnFailedOperation": ["str"],
+                                "fastPathActions": ["str"],
+                                "fastPathActionsOnFailedOperation": ["str"],
+                                "linkedNotificationTimeout": "1 day, 0:00:00",
+                            }
+                        ],
+                        "linkedOperationRules": [
+                            {"linkedAction": "str", "linkedOperation": "str", "dependsOnTypes": ["str"]}
+                        ],
+                        "loggingRules": [
+                            {
+                                "action": "str",
+                                "detailLevel": "str",
+                                "direction": "str",
+                                "hiddenPropertyPaths": {
+                                    "hiddenPathsOnRequest": ["str"],
+                                    "hiddenPathsOnResponse": ["str"],
+                                },
+                            }
+                        ],
+                        "managedResourceGroupConfiguration": {
+                            "applicationIds": ["str"],
+                            "denyAssignmentConfiguration": {"enabled": bool, "notActions": ["str"]},
+                            "enabled": bool,
+                            "resourceGroupLocationOverride": "str",
+                        },
+                        "management": {
+                            "authorizationOwners": ["str"],
+                            "canaryManifestOwners": ["str"],
+                            "errorResponseMessageOptions": {"serverFailureResponseMessageType": "str"},
+                            "expeditedRolloutMetadata": {"enabled": bool, "expeditedRolloutIntent": "str"},
+                            "expeditedRolloutSubmitters": ["str"],
+                            "featureApprovalClaims": ["str"],
+                            "featureManagementOwners": ["str"],
+                            "incidentContactEmail": "str",
+                            "incidentRoutingService": "str",
+                            "incidentRoutingTeam": "str",
+                            "manifestOwners": ["str"],
+                            "pcCode": "str",
+                            "profitCenterProgramId": "str",
+                            "resourceAccessPolicy": "str",
+                            "resourceAccessRoles": [{"actions": ["str"], "allowedGroupClaims": ["str"]}],
+                            "schemaOwners": ["str"],
+                        },
+                        "manifestLink": "str",
+                        "marketplaceOptions": {"addOnPlanConversionAllowed": bool},
+                        "marketplaceType": "str",
+                        "metadata": {"str": {}},
+                        "notifications": [{"notificationType": "str", "skipNotifications": "str"}],
+                        "onBehalfOfTokens": {"actionName": "str", "lifeTime": "str"},
+                        "openApiConfiguration": {"validation": {"allowNoncompliantCollectionResponse": bool}},
+                        "policyExecutionType": "str",
+                        "privateEndpointConfiguration": {
+                            "groupConnectivityInformation": [
+                                {
+                                    "groupId": "str",
+                                    "requiredMembers": ["str"],
+                                    "requiredZoneNames": ["str"],
+                                    "redirectMapId": "str",
+                                }
+                            ],
+                            "minApiVersion": "str",
+                        },
+                        "provisioningState": "str",
+                        "quotaRule": {
+                            "locationRules": [{"location": "str", "policy": "str", "quotaId": "str"}],
+                            "quotaPolicy": "str",
+                            "requiredFeatures": ["str"],
+                        },
+                        "regionality": "str",
+                        "requestHeaderOptions": {"optInHeaders": "str", "optOutHeaders": "str"},
+                        "requiredFeatures": ["str"],
+                        "resourceCache": {"enableResourceCache": bool, "resourceCacheExpirationTimespan": "str"},
+                        "resourceConcurrencyControlOptions": {"str": {"policy": "str"}},
+                        "resourceDeletionPolicies": [
+                            {
+                                "policyName": "str",
+                                "properties": {
+                                    "maximumRetentionTime": "1 day, 0:00:00",
+                                    "minimumRetentionTime": "1 day, 0:00:00",
+                                },
+                            }
+                        ],
+                        "resourceDeletionPolicy": "str",
+                        "resourceGraphConfiguration": {"apiVersion": "str", "enabled": bool},
+                        "resourceManagementOptions": {
+                            "batchProvisioningSupport": {
+                                "actionConfigurations": [{"authorizationAction": "str", "maxBatchSize": 0}],
+                                "batchContractVersion": "str",
+                                "maxBatchSize": 0,
+                                "maxNestedBatchSize": 0,
+                                "requiredFeatures": ["str"],
+                                "supportedOperations": "str",
+                            },
+                            "deleteDependencies": [
+                                {"linkedProperty": "str", "linkedType": "str", "requiredFeatures": ["str"]}
+                            ],
+                            "nestedProvisioningSupport": {"minimumApiVersion": "str"},
+                        },
+                        "resourceMovePolicy": {
+                            "crossResourceGroupMoveEnabled": bool,
+                            "crossSubscriptionMoveEnabled": bool,
+                            "validationRequired": bool,
+                        },
+                        "resourceProviderAuthorizationRules": {
+                            "asyncOperationPollingRules": {"additionalOptions": "str", "authorizationActions": ["str"]}
+                        },
+                        "resourceQueryManagement": {"filterOption": "str"},
+                        "resourceSubType": "str",
+                        "resourceTypeCommonAttributeManagement": {"commonApiVersionsMergeMode": "str"},
+                        "resourceValidation": "str",
+                        "routingRule": {"hostResourceType": "str"},
+                        "routingType": "str",
+                        "skuLink": "str",
+                        "subscriptionLifecycleNotificationSpecifications": {
+                            "softDeleteTTL": "1 day, 0:00:00",
+                            "subscriptionStateOverrideActions": [{"action": "str", "state": "str"}],
+                        },
+                        "subscriptionStateRules": [{"allowedActions": ["str"], "state": "str"}],
+                        "superScaleEnabled": bool,
+                        "supportsTags": bool,
+                        "swaggerSpecifications": [
+                            {
+                                "apiVersions": ["str"],
+                                "lifecycleInfo": {"lifecycleStage": "str"},
+                                "swaggerSpecFolderUri": "str",
+                            }
+                        ],
+                        "templateDeploymentOptions": {"preflightOptions": ["str"], "preflightSupported": bool},
+                        "templateDeploymentPolicy": {
+                            "capabilities": "str",
+                            "preflightOptions": "str",
+                            "preflightNotifications": "str",
+                        },
+                        "throttlingRules": [
+                            {
+                                "action": "str",
+                                "metrics": [
+                                    {"limit": 0, "type": "str", "bucketSize": "str", "interval": "1 day, 0:00:00"}
+                                ],
+                                "applicationId": ["str"],
+                                "requiredFeatures": ["str"],
+                            }
+                        ],
+                        "tokenAuthConfiguration": {
+                            "authenticationScheme": "str",
+                            "disableCertificateAuthenticationFallback": bool,
+                            "signedRequestScope": "str",
+                        },
+                        "writeLock": {"state": "str"},
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "type": "str",
+                },
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_resource_type_registrations_begin_delete_nested_resource_type_first(self, resource_group):
+        response = await (
+            await self.client.resource_type_registrations.begin_delete_nested_resource_type_first(
+                provider_namespace="str",
+                resource_type="str",
+                nested_resource_type_first="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...

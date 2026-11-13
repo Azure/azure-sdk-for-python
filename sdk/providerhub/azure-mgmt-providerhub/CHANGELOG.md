@@ -1,5 +1,73 @@
 # Release History
 
+## 3.0.0 (2026-10-22)
+
+### Features Added
+
+  - Client `ProviderHubMgmtClient` added operation group `endpoint_registrations`
+  - Model `AppliedManifestInfo` added property `root_provider_namespace`
+  - Model `CheckinManifestParams` added property `checkin_comment`
+  - Model `CheckinManifestParams` added property `swagger_uri`
+  - Model `CustomRolloutPropertiesSpecification` added property `rollout_orchestration_metadata`
+  - Model `CustomRolloutSpecification` added property `rollout_orchestration_metadata`
+  - Enum `OptInHeaderType` added member `AUXILIARY_USER_CONTEXT`
+  - Enum `OptInHeaderType` added member `USER_CONTEXT`
+  - Model `ProviderRegistrationProperties` added property `lifecycle_info`
+  - Model `ResourceProviderManagement` added property `feature_approval_claims`
+  - Model `ResourceProviderManifestManagement` added property `feature_approval_claims`
+  - Model `ResourceProviderManifestPropertiesManagement` added property `feature_approval_claims`
+  - Model `ResourceTypeRegistrationProperties` added property `lifecycle_info`
+  - Model `ResourceTypeRegistrationPropertiesManagement` added property `feature_approval_claims`
+  - Model `SwaggerSpecification` added property `lifecycle_info`
+  - Added model `EndpointRegistration`
+  - Added model `EndpointRegistrationProperties`
+  - Added enum `IsolationType`
+  - Added enum `LifecycleStage`
+  - Added enum `PartnerCategory`
+  - Added model `ResourceProviderLifecycleInfo`
+  - Added model `ResourceTypeLifecycleInfo`
+  - Added model `RolloutOrchestrationMetadata`
+  - Added model `SwaggerSpecificationLifecycleInfo`
+  - Operation group `ResourceTypeRegistrationsOperations` added method `begin_create_or_update_nested_resource_type_first`
+  - Operation group `ResourceTypeRegistrationsOperations` added method `begin_delete_nested_resource_type_first`
+  - Operation group `ResourceTypeRegistrationsOperations` added method `get_nested_resource_type_first`
+  - Added operation group `EndpointRegistrationsOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `ProviderHubMgmtClient.new_region_frontload_release`
+  - Model `FanoutLinkedNotificationRule` deleted or renamed its instance variable `dsts_configuration`
+  - Model `ProviderRegistrationProperties` deleted or renamed its instance variable `dsts_configuration`
+  - Deleted or renamed enum value `ResourceAccessPolicy.ACIS_ACTION_ALLOWED`
+  - Deleted or renamed enum value `ResourceAccessPolicy.ACIS_READ_ALLOWED`
+  - Model `ResourceProviderManagement` deleted or renamed its instance variable `service_tree_infos`
+  - Model `ResourceProviderManifestManagement` deleted or renamed its instance variable `service_tree_infos`
+  - Model `ResourceProviderManifestProperties` deleted or renamed its instance variable `dsts_configuration`
+  - Model `ResourceProviderManifestPropertiesManagement` deleted or renamed its instance variable `service_tree_infos`
+  - Model `ResourceType` deleted or renamed its instance variable `service_tree_infos`
+  - Model `ResourceTypeEndpoint` deleted or renamed its instance variable `dsts_configuration`
+  - Model `ResourceTypeRegistrationProperties` deleted or renamed its instance variable `dsts_configuration`
+  - Model `ResourceTypeRegistrationProperties` deleted or renamed its instance variable `service_tree_infos`
+  - Model `ResourceTypeRegistrationPropertiesManagement` deleted or renamed its instance variable `service_tree_infos`
+  - Deleted or renamed model `AvailableCheckInManifestEnvironment`
+  - Deleted or renamed model `DstsConfiguration`
+  - Deleted or renamed model `FanoutLinkedNotificationRuleDstsConfiguration`
+  - Deleted or renamed model `FrontloadPayload`
+  - Deleted or renamed model `FrontloadPayloadProperties`
+  - Deleted or renamed model `FrontloadPayloadPropertiesOverrideEndpointLevelFields`
+  - Deleted or renamed model `FrontloadPayloadPropertiesOverrideManifestLevelFields`
+  - Deleted or renamed model `ManifestLevelPropertyBag`
+  - Deleted or renamed model `Readiness`
+  - Deleted or renamed model `ResourceProviderManifestPropertiesDstsConfiguration`
+  - Deleted or renamed model `ResourceTypeEndpointBase`
+  - Deleted or renamed model `ResourceTypeEndpointBaseDstsConfiguration`
+  - Deleted or renamed model `ResourceTypeEndpointBaseFeaturesRule`
+  - Deleted or renamed model `ResourceTypeEndpointDstsConfiguration`
+  - Deleted or renamed model `ResourceTypeRegistrationPropertiesDstsConfiguration`
+  - Deleted or renamed model `ServiceFeatureFlagAction`
+  - Deleted or renamed model `ServiceTreeInfo`
+  - Deleted or renamed model `NewRegionFrontloadReleaseOperations`
+
 ## 2.0.0 (2026-08-25)
 
 ### Features Added
