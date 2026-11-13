@@ -33,11 +33,11 @@ def main():
     response = client.namespaces.begin_update(
         resource_group_name="examplerg",
         namespace_name="exampleNamespaceName1",
-        namespace_update_parameters={"tags": {"tag1": "value1Updated"}},
+        namespace_update_parameters={"properties": {"ipAddressType": "DualStack"}, "tags": {"tag1": "value1Updated"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-07-15-preview/Namespaces_Update.json
+# x-ms-original-file: 2026-06-15-preview/Namespaces_Update.json
 if __name__ == "__main__":
     main()
