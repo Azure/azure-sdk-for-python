@@ -633,7 +633,6 @@ def _classify_http_error(
             effective.get("message")
             or (body.get("detail") if isinstance(body.get("detail"), str) else None)
             or effective.get("error")
-            or "The model's engine has died"
         )
         error_code = effective.get("error_code") or effective.get("code")
         debug_ref = effective.get("debug_ref")
@@ -643,7 +642,7 @@ def _classify_http_error(
             or (isinstance(msg, str) and any(kw in msg.lower() for kw in ("engine", "dead", "died", "crashed")))
         ):
             return TrainingEngineError(
-                msg,
+                msg or "The model's engine has died",
                 session_id=session_id,
                 error_code=error_code or "engine_dead",
                 debug_ref=debug_ref,

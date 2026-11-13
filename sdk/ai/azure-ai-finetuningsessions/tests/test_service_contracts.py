@@ -4,6 +4,7 @@
 
 import ast
 from copy import deepcopy
+from datetime import datetime, timezone
 import inspect
 import json
 from types import SimpleNamespace
@@ -14,7 +15,7 @@ import pytest
 
 from azure.ai.finetuningsessions import FineTuningSession, _unions, models
 from azure.ai.finetuningsessions._patch import _SdkJSONEncoder
-from azure.ai.finetuningsessions._utils.model_base import SdkJSONEncoder
+from azure.ai.finetuningsessions._utils.model_base import SdkJSONEncoder, _deserialize
 from azure.ai.finetuningsessions.aio import FineTuningSessionClient
 from azure.ai.finetuningsessions.models import (
     CreateSessionRequest,
@@ -45,6 +46,52 @@ def _model_type_hints(model):
     # Generated base classes use TYPE_CHECKING-only imports. Supply their real
     # namespaces while resolving all inherited annotations; do not skip fields.
     return get_type_hints(model, localns={"_models": models, "_unions": _unions})
+
+
+@pytest.mark.parametrize("save_status", ["pending", "failed", "completed"])
+def test_checkpoint_list_decodes_nullable_completion_and_publication_state(save_status):
+    assert _model_type_hints(models.Checkpoint)["time"] == datetime | None
+    timestamp = "2026-01-01T00:00:00Z"
+    result = _deserialize(
+        models.CheckpointList,
+        {
+            "checkpoints": [
+                {"checkpoint_id": "legacy", "checkpoint_type": "training", "time": timestamp},
+                {
+                    "checkpoint_id": "protected",
+                    "checkpoint_type": "sampler",
+                    "time": timestamp if save_status == "completed" else None,
+                    "status": save_status,
+                    "publication_required": True,
+                    "deployment_eligible": False,
+                    "publication": {
+                        "operation_id": "publication-test",
+                        "status": "failed" if save_status == "failed" else "pending",
+                        "phase": "publication_blocked" if save_status == "failed" else "waiting_for_safety",
+                    },
+                },
+            ],
+        },
+    )
+
+    legacy, protected = result.checkpoints
+    assert isinstance(legacy, models.Checkpoint)
+    assert legacy.time == datetime(2026, 1, 1, tzinfo=timezone.utc)
+    assert legacy.status is None
+    assert legacy.publication_required is None
+    assert legacy.publication is None
+    assert legacy.deployment_eligible is None
+    assert isinstance(protected, models.Checkpoint)
+    assert protected.time == (legacy.time if save_status == "completed" else None)
+    assert protected.status == save_status
+    assert protected.publication_required is True
+    assert protected.deployment_eligible is False
+    assert isinstance(protected.publication, models.CheckpointPublicationState)
+    assert protected.publication.status == ("failed" if save_status == "failed" else "pending")
+    assert json.loads(json.dumps(result, cls=SdkJSONEncoder))["checkpoints"][1]["time"] == (
+        timestamp if save_status == "completed" else None
+    )
+    assert _wire(protected) == {}
 
 
 def _creation_options(method):

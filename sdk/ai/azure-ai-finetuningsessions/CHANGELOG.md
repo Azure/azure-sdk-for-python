@@ -1,5 +1,24 @@
 # Release History
 
+## 1.0.0b3 (Unreleased)
+
+### Features Added
+
+- Add capability-negotiated completion-feed observation for synchronous and asynchronous convenience sampling. Notifications trigger authoritative result retrieval; services and sessions without exact enablement retain legacy polling.
+- Add the async-only `connection_pool_limit` client option to size the default connection pool without changing sampling concurrency or caller-supplied transports.
+- Expose checkpoint save status, typed `CheckpointPublicationState`, publication requirements, and deployment eligibility when returned by the service.
+
+### Breaking Changes
+
+- `Checkpoint.time` can be `None` for pending or failed checkpoint saves. Handle missing completion timestamps before formatting, comparing, or sorting checkpoints. Completed saves retain their timestamps.
+
+### Bugs Fixed
+
+- Preserve completion-feed cursor progress across reconnects, honor bounded server retry hints, and recover missed notifications through sparse result retrieval.
+- Drain completion observers during client shutdown and let idle streams finish their bounded window so newly submitted sampling work can reuse the stream.
+- Report sampling progress using final call outcomes rather than intermediate notifications or retry attempts.
+- Preserve typed terminal errors and canonical session identifiers when session close fails, including `engine_dead` HTTP 409 responses. Unrecognized or malformed conflicts remain HTTP errors rather than being inferred as engine death.
+
 ## 1.0.0b2 (2026-11-12)
 
 ### Features Added

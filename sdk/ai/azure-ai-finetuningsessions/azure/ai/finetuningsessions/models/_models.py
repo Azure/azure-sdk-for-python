@@ -164,8 +164,18 @@ class Checkpoint(_Model):
     :ivar checkpoint_type: Type of checkpoint, such as training state or sampler-compatible
      weights. Required. Known values are: "training" and "sampler".
     :vartype checkpoint_type: str or ~azure.ai.finetuningsessions.models.CheckpointType
-    :ivar time: Timestamp when the checkpoint was saved. Required.
+    :ivar time: Timestamp when the checkpoint was saved, or null if saving has not completed.
     :vartype time: ~datetime.datetime
+    :ivar status: Save status: pending, completed, or failed. This is not safety approval.
+    :vartype status: str
+    :ivar publication: Publication progress for a protected checkpoint, when available.
+    :vartype publication: ~azure.ai.finetuningsessions.models.CheckpointPublicationState
+    :ivar publication_required: Whether publication is required before this checkpoint can be
+     deployed.
+    :vartype publication_required: bool
+    :ivar deployment_eligible: Canonical deployment eligibility; null for an unprotected legacy
+     checkpoint.
+    :vartype deployment_eligible: bool
     """
 
     checkpoint_id: str = rest_field(visibility=["read"])
@@ -173,8 +183,16 @@ class Checkpoint(_Model):
     checkpoint_type: Union[str, "_models.CheckpointType"] = rest_field(visibility=["read"])
     """Type of checkpoint, such as training state or sampler-compatible weights. Required. Known
      values are: \"training\" and \"sampler\"."""
-    time: datetime.datetime = rest_field(visibility=["read"], format="rfc3339")
-    """Timestamp when the checkpoint was saved. Required."""
+    time: Optional[datetime.datetime] = rest_field(visibility=["read"], format="rfc3339")
+    """Timestamp when the checkpoint was saved, or null if saving has not completed."""
+    status: Optional[str] = rest_field(visibility=["read"])
+    """Save status: pending, completed, or failed. This is not safety approval."""
+    publication: Optional["_models.CheckpointPublicationState"] = rest_field(visibility=["read"])
+    """Publication progress for a protected checkpoint, when available."""
+    publication_required: Optional[bool] = rest_field(visibility=["read"])
+    """Whether publication is required before this checkpoint can be deployed."""
+    deployment_eligible: Optional[bool] = rest_field(visibility=["read"])
+    """Canonical deployment eligibility; null for an unprotected legacy checkpoint."""
 
 
 class CheckpointInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -242,6 +260,45 @@ class CheckpointList(_Model):  # pylint: disable=docstring-keyword-should-match-
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class CheckpointPublicationState(_Model):
+    """Public publication progress, distinct from checkpoint save completion.
+
+    :ivar operation_id: Opaque identifier of the publication operation. Required.
+    :vartype operation_id: str
+    :ivar status: Publication status: pending, completed, or failed. Required.
+    :vartype status: str
+    :ivar phase: Current publication phase. Required.
+    :vartype phase: str
+    :ivar reason: Sanitized reason for the current publication state.
+    :vartype reason: str
+    :ivar error_code: Sanitized failure code, when available.
+    :vartype error_code: str
+    :ivar message: Sanitized progress or failure message, when available.
+    :vartype message: str
+    :ivar debug_ref: Opaque diagnostic reference, when available.
+    :vartype debug_ref: str
+    :ivar should_retry: Whether retrying the publication operation is recommended.
+    :vartype should_retry: bool
+    """
+
+    operation_id: str = rest_field(visibility=["read"])
+    """Opaque identifier of the publication operation. Required."""
+    status: str = rest_field(visibility=["read"])
+    """Publication status: pending, completed, or failed. Required."""
+    phase: str = rest_field(visibility=["read"])
+    """Current publication phase. Required."""
+    reason: Optional[str] = rest_field(visibility=["read"])
+    """Sanitized reason for the current publication state."""
+    error_code: Optional[str] = rest_field(visibility=["read"])
+    """Sanitized failure code, when available."""
+    message: Optional[str] = rest_field(visibility=["read"])
+    """Sanitized progress or failure message, when available."""
+    debug_ref: Optional[str] = rest_field(visibility=["read"])
+    """Opaque diagnostic reference, when available."""
+    should_retry: Optional[bool] = rest_field(visibility=["read"])
+    """Whether retrying the publication operation is recommended."""
 
 
 class CreateSessionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only

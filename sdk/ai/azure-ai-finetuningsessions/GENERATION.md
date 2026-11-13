@@ -20,6 +20,8 @@ The repository's shared `eng/emitter-package.json` and
 `eng/emitter-package-lock.json` are authoritative. Exact copies are archived
 under this package's `eng/generation/` directory for standalone verification.
 Do not upgrade a package-local dependency independently of the shared pair.
+The specification repository has its own validation dependencies; use each
+repository's lockfile rather than mixing compiler and library installations.
 
 The Python generator's isolated environment uses the requirements in
 `eng/generation/requirements.txt`. Those are build tools, not runtime package
@@ -57,6 +59,20 @@ already defines preparation and version-pinned file reads; filesystem creation,
 no-overwrite checks, response cleanup and partial-output handling are client-side
 behavior, not new service operations. Keep these hooks in the verifier's explicit
 maintained-module inventory so regeneration preserves the implementation.
+
+Completion-feed negotiation, observation, acknowledgement, result recovery,
+and shutdown are maintained client orchestration in `_capabilities.py`,
+`_completion_feed.py`, `aio/_completion_feed.py`, and the client patches.
+The TypeSpec contract defines bounded SSE and ACK responses; the raw feed
+operation is excluded from Python because existing convenience sampling owns
+that workflow and retains its result API. Async connection-pool sizing and
+typed session-close error handling are also client behavior, not new service
+request properties.
+
+Nullable checkpoint timestamps and `CheckpointPublicationState` are emitted
+directly from TypeSpec. They do not require model overrides or edits to generated
+classes. Validate their mapping, typed access, and legacy omission behavior
+after regeneration.
 
 ## Validation and packaging
 

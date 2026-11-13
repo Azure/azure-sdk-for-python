@@ -54,6 +54,38 @@ def test_legacy_string_engine_dead_offers_cft(status_code: int) -> None:
     _assert_recovery_guidance(exc)
 
 
+@pytest.mark.parametrize(
+    "body",
+    [
+        None,
+        [],
+        "Conflict",
+        {},
+        {"detail": None},
+        {"detail": []},
+        {"detail": {"reason": "model_busy"}},
+        {"detail": "Conflict"},
+    ],
+)
+def test_unrecognized_409_does_not_infer_engine_death(body) -> None:
+    assert _classify_http_error(409, body, session_id="session_12345678") is None
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        {"reason": "engine_dead"},
+        {"detail": {"error_code": "engine_dead"}},
+    ],
+)
+def test_explicit_engine_dead_without_message_keeps_fallback_guidance(body) -> None:
+    exc = _classify_http_error(409, body, session_id="session_12345678")
+    assert isinstance(exc, TrainingEngineError)
+    assert exc.error_code == "engine_dead"
+    assert exc.session_id == "session_12345678"
+    _assert_recovery_guidance(exc)
+
+
 @pytest.mark.parametrize("code_field", ["error_code", "code"])
 @pytest.mark.parametrize("message_field", ["message", "error_message"])
 @pytest.mark.parametrize("nested", [False, True])
