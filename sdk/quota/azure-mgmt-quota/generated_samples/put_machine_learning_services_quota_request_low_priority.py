@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/putMachineLearningServicesQuotaRequestLowPriority.json
+# x-ms-original-file: 2026-09-01-preview/putMachineLearningServicesQuotaRequestLowPriority.json
 if __name__ == "__main__":
     main()

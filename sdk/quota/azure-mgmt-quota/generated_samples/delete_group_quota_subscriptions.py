@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-09-01/GroupQuotasSubscriptions/DeleteGroupQuotaSubscriptions.json
+# x-ms-original-file: 2026-09-01-preview/GroupQuotasSubscriptions/DeleteGroupQuotaSubscriptions.json
 if __name__ == "__main__":
     main()
