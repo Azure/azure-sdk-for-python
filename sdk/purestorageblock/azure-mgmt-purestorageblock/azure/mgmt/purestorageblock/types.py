@@ -27,10 +27,10 @@ if TYPE_CHECKING:
 class ActivateSaaSRequest(TypedDict, total=False):
     """SaaS guid for Activate SaaS Resource.
 
-    :ivar saas_guid: SaaS guid for Activate SaaS Resource. Required.
-    :vartype saas_guid: str
-    :ivar publisher_id: Publisher Id for PureStorage resource.
-    :vartype publisher_id: str
+    :ivar saasGuid: SaaS guid for Activate SaaS Resource. Required.
+    :vartype saasGuid: str
+    :ivar publisherId: Publisher Id for PureStorage resource.
+    :vartype publisherId: str
     """
 
     saasGuid: Required[str]
@@ -42,18 +42,18 @@ class ActivateSaaSRequest(TypedDict, total=False):
 class Address(TypedDict, total=False):
     """Address details.
 
-    :ivar address_line1: Address line 1. Required.
-    :vartype address_line1: str
-    :ivar address_line2: Address line 2.
-    :vartype address_line2: str
+    :ivar addressLine1: Address line 1. Required.
+    :vartype addressLine1: str
+    :ivar addressLine2: Address line 2.
+    :vartype addressLine2: str
     :ivar city: Name of the city. Required.
     :vartype city: str
     :ivar state: State (if any). Required.
     :vartype state: str
     :ivar country: Name of the country. Required.
     :vartype country: str
-    :ivar postal_code: Postal code. Required.
-    :vartype postal_code: str
+    :ivar postalCode: Postal code. Required.
+    :vartype postalCode: str
     """
 
     addressLine1: Required[str]
@@ -81,9 +81,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -109,9 +109,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -129,8 +129,8 @@ class AvsStorageContainerVolumeUpdate(TypedDict, total=False):
 class AvsStorageContainerVolumeUpdateProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """The updatable properties of the AvsStorageContainerVolume.
 
-    :ivar soft_deletion: Volume's soft-deletion state.
-    :vartype soft_deletion: "SoftDeletion"
+    :ivar softDeletion: Volume's soft-deletion state.
+    :vartype softDeletion: "SoftDeletion"
     """
 
     softDeletion: "SoftDeletion"
@@ -151,8 +151,8 @@ class AvsVmUpdate(TypedDict, total=False):
 class AvsVmUpdateProperties(TypedDict, total=False):
     """The updatable properties of the AvsVm.
 
-    :ivar soft_deletion: AVS VM's soft-deletion state.
-    :vartype soft_deletion: "SoftDeletion"
+    :ivar softDeletion: AVS VM's soft-deletion state.
+    :vartype softDeletion: "SoftDeletion"
     """
 
     softDeletion: "SoftDeletion"
@@ -173,8 +173,8 @@ class AvsVmVolumeUpdate(TypedDict, total=False):
 class AvsVmVolumeUpdateProperties(TypedDict, total=False):
     """The updatable properties of the AvsVmVolume.
 
-    :ivar soft_deletion: Volume's soft-deletion state.
-    :vartype soft_deletion: "SoftDeletion"
+    :ivar softDeletion: Volume's soft-deletion state.
+    :vartype softDeletion: "SoftDeletion"
     """
 
     softDeletion: "SoftDeletion"
@@ -184,11 +184,10 @@ class AvsVmVolumeUpdateProperties(TypedDict, total=False):
 class AzureVmwareService(TypedDict, total=False):
     """Connected AVS status.
 
-    :ivar avs_enabled: If true, an AVS SDDC is successfully connected to the storage pool.
-     Required.
-    :vartype avs_enabled: bool
-    :ivar cluster_resource_id: Azure resource ID of the AVS SDDC the storage pool is connected to.
-    :vartype cluster_resource_id: str
+    :ivar avsEnabled: If true, an AVS SDDC is successfully connected to the storage pool. Required.
+    :vartype avsEnabled: bool
+    :ivar sddcResourceId: Azure resource ID of the AVS SDDC the storage pool is connected to.
+    :vartype sddcResourceId: str
     """
 
     avsEnabled: Required[bool]
@@ -202,33 +201,32 @@ class AzureVolumeProperties(TypedDict, total=False):
 
     :ivar space: Storage space usage for the volume.
     :vartype space: "Space"
-    :ivar provisioned_size: Currently provisioned size of the volume, in bytes.
-    :vartype provisioned_size: int
-    :ivar serial_number: Serial number of the volume.
-    :vartype serial_number: str
-    :ivar created_at: Volume creation date, as an RFC 3339 timestamp.
-    :vartype created_at: str
-    :ivar source_volume_resource_id: Azure resource ID of the source volume for cloning.
-    :vartype source_volume_resource_id: str
-    :ivar source_volume_group_resource_id: Azure Resource ID of the source volume group to clone
-     from.
-    :vartype source_volume_group_resource_id: str
-    :ivar source_type: Indicates the source type for volume creation. Known values are: "none",
+    :ivar provisionedSize: Currently provisioned size of the volume, in bytes.
+    :vartype provisionedSize: int
+    :ivar serialNumber: Serial number of the volume.
+    :vartype serialNumber: str
+    :ivar createdAt: Volume creation date, as an RFC 3339 timestamp.
+    :vartype createdAt: str
+    :ivar sourceVolumeResourceId: Azure resource ID of the source volume for cloning.
+    :vartype sourceVolumeResourceId: str
+    :ivar sourceVolumeGroupResourceId: Azure Resource ID of the source volume group to clone from.
+    :vartype sourceVolumeGroupResourceId: str
+    :ivar sourceType: Indicates the source type for volume creation. Known values are: "none",
      "volume", "serialNumber", "snapshot", and "recoverableVolume".
-    :vartype source_type: Union[str, "VolumeSourceType"]
-    :ivar source_volume_snapshot: Source volume group snapshot and volume snapshot name to restore
+    :vartype sourceType: Union[str, "VolumeSourceType"]
+    :ivar sourceVolumeSnapshot: Source volume group snapshot and volume snapshot name to restore
      from.
-    :vartype source_volume_snapshot: "VolumeSnapshotSource"
-    :ivar source_serial_number: Serial number of the source volume to import.
-    :vartype source_serial_number: str
-    :ivar source_recoverable_volume_resource_id: Azure resource ID of the soft-deleted volume to
+    :vartype sourceVolumeSnapshot: "VolumeSnapshotSource"
+    :ivar sourceSerialNumber: Serial number of the source volume to import.
+    :vartype sourceSerialNumber: str
+    :ivar sourceRecoverableVolumeResourceId: Azure resource ID of the soft-deleted volume to
      recover within the same volume group.
-    :vartype source_recoverable_volume_resource_id: str
-    :ivar soft_deletion: Soft-deletion state of the volume.
-    :vartype soft_deletion: "DestroyedStateProperties"
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+    :vartype sourceRecoverableVolumeResourceId: str
+    :ivar softDeletion: Soft-deletion state of the volume.
+    :vartype softDeletion: "DestroyedStateProperties"
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Succeeded",
      "Failed", "Canceled", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     space: "Space"
@@ -262,8 +260,8 @@ class AzureVolumeProperties(TypedDict, total=False):
 class CompanyDetails(TypedDict, total=False):
     """Company details.
 
-    :ivar company_name: Company name. Required.
-    :vartype company_name: str
+    :ivar companyName: Company name. Required.
+    :vartype companyName: str
     :ivar address: Company address.
     :vartype address: "Address"
     """
@@ -280,14 +278,13 @@ class DestroyedStateProperties(TypedDict, total=False):
     :ivar destroyed: If false, the resource is active; if true, the resource has been destroyed.
      Required.
     :vartype destroyed: bool
-    :ivar destroyed_at: Date and time at which the resource was destroyed, as an RFC 3339
-     timestamp.
-    :vartype destroyed_at: str
-    :ivar previous_name: Name of the resource before it was destroyed.
-    :vartype previous_name: str
-    :ivar eradication_timestamp: Date at which the resource will be eradicated and impossible to
+    :ivar destroyedAt: Date and time at which the resource was destroyed, as an RFC 3339 timestamp.
+    :vartype destroyedAt: str
+    :ivar previousName: Name of the resource before it was destroyed.
+    :vartype previousName: str
+    :ivar eradicationTimestamp: Date at which the resource will be eradicated and impossible to
      recover, as an RFC 3339 timestamp.
-    :vartype eradication_timestamp: str
+    :vartype eradicationTimestamp: str
     """
 
     destroyed: Required[bool]
@@ -304,8 +301,8 @@ class DestroyedStateProperties(TypedDict, total=False):
 class LinkSaaSRequest(TypedDict, total=False):
     """SaaS details for linking to a reservation.
 
-    :ivar saa_s_resource_id: SaaS resource id. Required.
-    :vartype saa_s_resource_id: str
+    :ivar saaSResourceId: SaaS resource id. Required.
+    :vartype saaSResourceId: str
     """
 
     saaSResourceId: Required[str]
@@ -315,17 +312,17 @@ class LinkSaaSRequest(TypedDict, total=False):
 class ManagedServiceIdentity(TypedDict, total=False):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -344,16 +341,15 @@ class ManagedServiceIdentity(TypedDict, total=False):
 class MarketplaceDetails(TypedDict, total=False):
     """Marketplace details.
 
-    :ivar subscription_id: Marketplace subscription ID.
-    :vartype subscription_id: str
-    :ivar subscription_status: Marketplace subscription status. Known values are:
+    :ivar subscriptionId: Marketplace subscription ID.
+    :vartype subscriptionId: str
+    :ivar subscriptionStatus: Marketplace subscription status. Known values are:
      "PendingFulfillmentStart", "Subscribed", "Suspended", and "Unsubscribed".
-    :vartype subscription_status: Union[str, "MarketplaceSubscriptionStatus"]
-    :ivar offer_details: Offer details of the marketplace subscription.
-    :vartype offer_details: "OfferDetails"
-    :ivar saa_s_resource_id: ARM ID of the Marketplace SaaS resource. Only used in Create
-     operations.
-    :vartype saa_s_resource_id: str
+    :vartype subscriptionStatus: Union[str, "MarketplaceSubscriptionStatus"]
+    :ivar offerDetails: Offer details of the marketplace subscription.
+    :vartype offerDetails: "OfferDetails"
+    :ivar saaSResourceId: ARM ID of the Marketplace SaaS resource. Only used in Create operations.
+    :vartype saaSResourceId: str
     """
 
     subscriptionId: str
@@ -370,18 +366,18 @@ class MarketplaceDetails(TypedDict, total=False):
 class OfferDetails(TypedDict, total=False):
     """Offer details for the marketplace that is selected by the user.
 
-    :ivar publisher_id: Publisher ID for the marketplace offer. Required.
-    :vartype publisher_id: str
-    :ivar offer_id: Offer ID for the marketplace offer. Required.
-    :vartype offer_id: str
-    :ivar plan_id: Plan ID for the marketplace offer. Required.
-    :vartype plan_id: str
-    :ivar plan_name: Plan Name for the marketplace offer.
-    :vartype plan_name: str
-    :ivar term_unit: Term Unit for the marketplace offer.
-    :vartype term_unit: str
-    :ivar term_id: Term ID for the marketplace offer.
-    :vartype term_id: str
+    :ivar publisherId: Publisher ID for the marketplace offer. Required.
+    :vartype publisherId: str
+    :ivar offerId: Offer ID for the marketplace offer. Required.
+    :vartype offerId: str
+    :ivar planId: Plan ID for the marketplace offer. Required.
+    :vartype planId: str
+    :ivar planName: Plan Name for the marketplace offer.
+    :vartype planName: str
+    :ivar termUnit: Term Unit for the marketplace offer.
+    :vartype termUnit: str
+    :ivar termId: Term ID for the marketplace offer.
+    :vartype termId: str
     """
 
     publisherId: Required[str]
@@ -401,10 +397,10 @@ class OfferDetails(TypedDict, total=False):
 class PerformanceParameters(TypedDict, total=False):
     """Performance parameters for volume group.
 
-    :ivar bandwidth_limit_mb_per_sec: Bandwidth limit in MB per second.
-    :vartype bandwidth_limit_mb_per_sec: int
-    :ivar iops_limit: IOPS limit.
-    :vartype iops_limit: int
+    :ivar bandwidthLimitMbPerSec: Bandwidth limit in MB per second.
+    :vartype bandwidthLimitMbPerSec: int
+    :ivar iopsLimit: IOPS limit.
+    :vartype iopsLimit: int
     """
 
     bandwidthLimitMbPerSec: int
@@ -438,8 +434,8 @@ class PlatformConsoleSettings(TypedDict, total=False):
     :vartype cli: "PlatformConsoleAccessSettings"
     :ivar subnets: Subnets configured for platform console access.
     :vartype subnets: list["PlatformConsoleSubnet"]
-    :ivar default_username: Default username for console access (system-populated).
-    :vartype default_username: str
+    :ivar defaultUsername: Default username for console access (system-populated).
+    :vartype defaultUsername: str
     """
 
     enabled: bool
@@ -462,11 +458,11 @@ class PlatformConsoleSubnet(TypedDict, total=False):
 
     :ivar id: Azure resource ID of the subnet. Required.
     :vartype id: str
-    :ivar management_ip_address: Management IP address assigned to the subnet (system-populated).
-    :vartype management_ip_address: str
-    :ivar service_backend_ips: Service backend IP addresses assigned to the subnet
+    :ivar managementIpAddress: Management IP address assigned to the subnet (system-populated).
+    :vartype managementIpAddress: str
+    :ivar serviceBackendIps: Service backend IP addresses assigned to the subnet
      (system-populated).
-    :vartype service_backend_ips: list[str]
+    :vartype serviceBackendIps: list[str]
     """
 
     id: Required[str]
@@ -503,9 +499,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -529,9 +525,9 @@ class Reservation(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -547,15 +543,15 @@ class Reservation(TrackedResource):
 class ReservationPropertiesBaseResourceProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """Properties of a Reservation resource.
 
-    :ivar reservation_internal_id: Pure Storage's internal ID for the reservation.
-    :vartype reservation_internal_id: str
+    :ivar reservationInternalId: Pure Storage's internal ID for the reservation.
+    :vartype reservationInternalId: str
     :ivar marketplace: Marketplace details. Required.
     :vartype marketplace: "MarketplaceDetails"
     :ivar user: User details.
     :vartype user: "UserDetails"
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Succeeded",
      "Failed", "Canceled", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     reservationInternalId: str
@@ -598,14 +594,14 @@ class ReservationUpdateProperties(TypedDict, total=False):
 class ServiceInitializationInfo(TypedDict, total=False):
     """Explicit service initialization data.
 
-    :ivar service_account_username: Service account username.
-    :vartype service_account_username: str
-    :ivar service_account_password: Service account password.
-    :vartype service_account_password: str
-    :ivar v_sphere_ip: AVS instance's vSphere IP address.
-    :vartype v_sphere_ip: str
-    :ivar v_sphere_certificate: AVS instance's vSphere certificate.
-    :vartype v_sphere_certificate: str
+    :ivar serviceAccountUsername: Service account username.
+    :vartype serviceAccountUsername: str
+    :ivar serviceAccountPassword: Service account password.
+    :vartype serviceAccountPassword: str
+    :ivar vSphereIp: AVS instance's vSphere IP address.
+    :vartype vSphereIp: str
+    :ivar vSphereCertificate: AVS instance's vSphere certificate.
+    :vartype vSphereCertificate: str
     """
 
     serviceAccountUsername: str
@@ -625,9 +621,9 @@ class SoftDeletion(TypedDict, total=False):
      resources can be soft-deleted by setting destroyed to true, and recovered by setting it to
      false. Required.
     :vartype destroyed: bool
-    :ivar eradication_timestamp: Date at which the resource will be eradicated and impossible to
+    :ivar eradicationTimestamp: Date at which the resource will be eradicated and impossible to
      recover, as an RFC 3339 timestamp; invalid if destroyed is false;.
-    :vartype eradication_timestamp: str
+    :vartype eradicationTimestamp: str
     """
 
     destroyed: Required[bool]
@@ -641,9 +637,9 @@ class SoftDeletion(TypedDict, total=False):
 class Space(TypedDict, total=False):
     """Storage space usage.
 
-    :ivar total_used: Total space occupied by customer data (i.e., being billed for), in bytes.
+    :ivar totalUsed: Total space occupied by customer data (i.e., being billed for), in bytes.
      Required.
-    :vartype total_used: int
+    :vartype totalUsed: int
     :ivar unique: Unique space occupied by customer data, in bytes; for a volume, this is the
      amount of storage that would be freed by deleting the volume, since snapshot and shared data
      would be kept. Required.
@@ -671,12 +667,12 @@ class Space(TypedDict, total=False):
 class SshPlatformConsoleAuthConfig(TypedDict, total=False):
     """SSH-based platform console authentication configuration.
 
-    :ivar auth_type: Required. SSH public key authentication.
-    :vartype auth_type: Literal[PlatformConsoleAuthType.SSH]
+    :ivar authType: Required. SSH public key authentication.
+    :vartype authType: Literal[PlatformConsoleAuthType.SSH]
     :ivar username: Username to associate with the SSH public key. Required.
     :vartype username: str
-    :ivar public_key: SSH public key in OpenSSH authorized_keys format. Required.
-    :vartype public_key: str
+    :ivar publicKey: SSH public key in OpenSSH authorized_keys format. Required.
+    :vartype publicKey: str
     :ivar role: Role to assign to the user on the platform console. Required. Known values are:
      "array_admin", "storage_admin", and "read_only".
     :vartype role: Union[str, "PlatformConsoleRole"]
@@ -704,9 +700,9 @@ class StoragePool(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -726,8 +722,8 @@ class StoragePool(TrackedResource):
 class StoragePoolEnableAvsConnectionPost(TypedDict, total=False):
     """EnableAvsConnection payload information.
 
-    :ivar cluster_resource_id: Azure resource ID of the AVS SDDC to connect to. Required.
-    :vartype cluster_resource_id: str
+    :ivar sddcResourceId: Azure resource ID of the AVS SDDC to connect to. Required.
+    :vartype sddcResourceId: str
     """
 
     sddcResourceId: Required[str]
@@ -737,10 +733,10 @@ class StoragePoolEnableAvsConnectionPost(TypedDict, total=False):
 class StoragePoolFinalizeAvsConnectionPost(TypedDict, total=False):
     """FinalizeAvsConnection payload information, either encoded or explicit.
 
-    :ivar service_initialization_data_enc: Encoded AVS connection information.
-    :vartype service_initialization_data_enc: str
-    :ivar service_initialization_data: Explicit AVS connection information.
-    :vartype service_initialization_data: "ServiceInitializationInfo"
+    :ivar serviceInitializationDataEnc: Encoded AVS connection information.
+    :vartype serviceInitializationDataEnc: str
+    :ivar serviceInitializationData: Explicit AVS connection information.
+    :vartype serviceInitializationData: "ServiceInitializationInfo"
     """
 
     serviceInitializationDataEnc: str
@@ -752,30 +748,30 @@ class StoragePoolFinalizeAvsConnectionPost(TypedDict, total=False):
 class StoragePoolProperties(TypedDict, total=False):
     """Properties of a storage pool.
 
-    :ivar storage_pool_internal_id: Pure Storage's internal ID of the storage pool.
-    :vartype storage_pool_internal_id: str
-    :ivar availability_zone: Azure Availability Zone the Pool is located in. Required.
-    :vartype availability_zone: str
-    :ivar vnet_injection: Network properties of the storage pool. Required.
-    :vartype vnet_injection: "VnetInjection"
-    :ivar data_retention_period: How long a destroyed object is kept before being eradicated, in
+    :ivar storagePoolInternalId: Pure Storage's internal ID of the storage pool.
+    :vartype storagePoolInternalId: str
+    :ivar availabilityZone: Azure Availability Zone the Pool is located in. Required.
+    :vartype availabilityZone: str
+    :ivar vnetInjection: Network properties of the storage pool. Required.
+    :vartype vnetInjection: "VnetInjection"
+    :ivar dataRetentionPeriod: How long a destroyed object is kept before being eradicated, in
      seconds.
-    :vartype data_retention_period: int
-    :ivar provisioned_bandwidth_mb_per_sec: Total bandwidth provisioned for the pool, in MB/s.
+    :vartype dataRetentionPeriod: int
+    :ivar provisionedBandwidthMbPerSec: Total bandwidth provisioned for the pool, in MB/s.
      Required.
-    :vartype provisioned_bandwidth_mb_per_sec: int
-    :ivar provisioned_iops: Total I/O operations per second (IOPS) provisioned for the pool.
-    :vartype provisioned_iops: int
+    :vartype provisionedBandwidthMbPerSec: int
+    :ivar provisionedIops: Total I/O operations per second (IOPS) provisioned for the pool.
+    :vartype provisionedIops: int
     :ivar avs: AVS connection state summary.
     :vartype avs: "AzureVmwareService"
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Succeeded",
      "Failed", "Canceled", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar reservation_resource_id: Azure resource ID of the Pure Storage Cloud service (reservation
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar reservationResourceId: Azure resource ID of the Pure Storage Cloud service (reservation
      resource) this storage pool belongs to. Required.
-    :vartype reservation_resource_id: str
-    :ivar platform_console_settings: Platform console access settings for the storage pool.
-    :vartype platform_console_settings: "PlatformConsoleSettings"
+    :vartype reservationResourceId: str
+    :ivar platformConsoleSettings: Platform console access settings for the storage pool.
+    :vartype platformConsoleSettings: "PlatformConsoleSettings"
     """
 
     storagePoolInternalId: str
@@ -824,10 +820,10 @@ class StoragePoolUpdate(TypedDict, total=False):
 class StoragePoolUpdateProperties(TypedDict, total=False):
     """The updatable properties of the StoragePool.
 
-    :ivar provisioned_bandwidth_mb_per_sec: Total bandwidth provisioned for the pool, in MB/s.
-    :vartype provisioned_bandwidth_mb_per_sec: int
-    :ivar platform_console_settings: Platform console access settings for the storage pool.
-    :vartype platform_console_settings: "PlatformConsoleSettings"
+    :ivar provisionedBandwidthMbPerSec: Total bandwidth provisioned for the pool, in MB/s.
+    :vartype provisionedBandwidthMbPerSec: int
+    :ivar platformConsoleSettings: Platform console access settings for the storage pool.
+    :vartype platformConsoleSettings: "PlatformConsoleSettings"
     """
 
     provisionedBandwidthMbPerSec: int
@@ -839,20 +835,20 @@ class StoragePoolUpdateProperties(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -874,10 +870,10 @@ class SystemData(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -889,18 +885,18 @@ class UserAssignedIdentity(TypedDict, total=False):
 class UserDetails(TypedDict, total=False):
     """User details.
 
-    :ivar first_name: First name. Required.
-    :vartype first_name: str
-    :ivar last_name: Last name. Required.
-    :vartype last_name: str
-    :ivar email_address: Email address. Required.
-    :vartype email_address: str
+    :ivar firstName: First name. Required.
+    :vartype firstName: str
+    :ivar lastName: Last name. Required.
+    :vartype lastName: str
+    :ivar emailAddress: Email address. Required.
+    :vartype emailAddress: str
     :ivar upn: Principal name.
     :vartype upn: str
-    :ivar phone_number: Phone number.
-    :vartype phone_number: str
-    :ivar company_details: Company details.
-    :vartype company_details: "CompanyDetails"
+    :ivar phoneNumber: Phone number.
+    :vartype phoneNumber: str
+    :ivar companyDetails: Company details.
+    :vartype companyDetails: "CompanyDetails"
     """
 
     firstName: Required[str]
@@ -920,12 +916,12 @@ class UserDetails(TypedDict, total=False):
 class VnetInjection(TypedDict, total=False):
     """Network in which the storage pool will be made available.
 
-    :ivar subnet_id: Azure resource ID of the Virtual Network subnet where the storage pool will be
+    :ivar subnetId: Azure resource ID of the Virtual Network subnet where the storage pool will be
      connected. Required.
-    :vartype subnet_id: str
-    :ivar vnet_id: Azure resource ID of the Virtual Network in which the subnet is located.
+    :vartype subnetId: str
+    :ivar vnetId: Azure resource ID of the Virtual Network in which the subnet is located.
      Required.
-    :vartype vnet_id: str
+    :vartype vnetId: str
     """
 
     subnetId: Required[str]
@@ -946,9 +942,9 @@ class Volume(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "AzureVolumeProperties"
     """
@@ -968,9 +964,9 @@ class VolumeGroup(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -986,11 +982,11 @@ class VolumeGroup(TrackedResource):
 class VolumeGroupOverwriteRequest(TypedDict, total=False):
     """Request to overwrite all volumes in a volume group from a snapshot.
 
-    :ivar source_snapshot_resource_id: Azure resource ID of the volume group snapshot to restore
-     from. Required.
-    :vartype source_snapshot_resource_id: str
-    :ivar source_volume_group_resource_id: Azure resource ID of the source volume group. Required.
-    :vartype source_volume_group_resource_id: str
+    :ivar sourceSnapshotResourceId: Azure resource ID of the volume group snapshot to restore from.
+     Required.
+    :vartype sourceSnapshotResourceId: str
+    :ivar sourceVolumeGroupResourceId: Azure resource ID of the source volume group. Required.
+    :vartype sourceVolumeGroupResourceId: str
     """
 
     sourceSnapshotResourceId: Required[str]
@@ -1002,29 +998,27 @@ class VolumeGroupOverwriteRequest(TypedDict, total=False):
 class VolumeGroupProperties(TypedDict, total=False):
     """Properties of a volume group.
 
-    :ivar storage_pool_internal_id: Pure Storage's internal ID of the storage pool.
-    :vartype storage_pool_internal_id: str
-    :ivar volume_group_internal_id: Pure Storage's internal ID of the volume group.
-    :vartype volume_group_internal_id: str
-    :ivar source_volume_group_resource_id: Azure resource ID of the source volume group for
-     cloning.
-    :vartype source_volume_group_resource_id: str
-    :ivar source_type: Indicates the source type for volume group creation. Known values are:
+    :ivar storagePoolInternalId: Pure Storage's internal ID of the storage pool.
+    :vartype storagePoolInternalId: str
+    :ivar volumeGroupInternalId: Pure Storage's internal ID of the volume group.
+    :vartype volumeGroupInternalId: str
+    :ivar sourceVolumeGroupResourceId: Azure resource ID of the source volume group for cloning.
+    :vartype sourceVolumeGroupResourceId: str
+    :ivar sourceType: Indicates the source type for volume group creation. Known values are:
      "none", "volumeGroup", "snapshot", and "recoverableVolumeGroup".
-    :vartype source_type: Union[str, "VolumeGroupSourceType"]
-    :ivar source_snapshot_resource_id: Azure resource ID of the volume group snapshot to restore
-     from.
-    :vartype source_snapshot_resource_id: str
-    :ivar source_recoverable_volume_group_resource_id: Azure resource ID of the soft-deleted volume
+    :vartype sourceType: Union[str, "VolumeGroupSourceType"]
+    :ivar sourceSnapshotResourceId: Azure resource ID of the volume group snapshot to restore from.
+    :vartype sourceSnapshotResourceId: str
+    :ivar sourceRecoverableVolumeGroupResourceId: Azure resource ID of the soft-deleted volume
      group to recover.
-    :vartype source_recoverable_volume_group_resource_id: str
-    :ivar performance_parameters: Performance parameters for the volume group.
-    :vartype performance_parameters: "PerformanceParameters"
-    :ivar protection_parameters: Protection parameters for the volume group.
-    :vartype protection_parameters: "ProtectionParameters"
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+    :vartype sourceRecoverableVolumeGroupResourceId: str
+    :ivar performanceParameters: Performance parameters for the volume group.
+    :vartype performanceParameters: "PerformanceParameters"
+    :ivar protectionParameters: Protection parameters for the volume group.
+    :vartype protectionParameters: "ProtectionParameters"
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Succeeded",
      "Failed", "Canceled", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     storagePoolInternalId: str
@@ -1060,9 +1054,9 @@ class VolumeGroupSnapshot(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "VolumeGroupSnapshotProperties"
     """
@@ -1098,23 +1092,23 @@ class VolumeGroupSnapshotListRequest(TypedDict, total=False):
 class VolumeGroupSnapshotProperties(TypedDict, total=False):
     """Properties of a volume group snapshot.
 
-    :ivar source_snapshot_resource_id: Azure resource ID of the source snapshot to recover from;
-     omit for a new manual snapshot.
-    :vartype source_snapshot_resource_id: str
-    :ivar created_at: Date and time at which the snapshot was created, as an RFC 3339 timestamp.
-    :vartype created_at: str
-    :ivar created_by_policy: Whether the snapshot was created by a protection policy.
-    :vartype created_by_policy: bool
-    :ivar soft_deletion: Soft-deletion state of the snapshot.
-    :vartype soft_deletion: "DestroyedStateProperties"
+    :ivar sourceSnapshotResourceId: Azure resource ID of the source snapshot to recover from; omit
+     for a new manual snapshot.
+    :vartype sourceSnapshotResourceId: str
+    :ivar createdAt: Date and time at which the snapshot was created, as an RFC 3339 timestamp.
+    :vartype createdAt: str
+    :ivar createdByPolicy: Whether the snapshot was created by a protection policy.
+    :vartype createdByPolicy: bool
+    :ivar softDeletion: Soft-deletion state of the snapshot.
+    :vartype softDeletion: "DestroyedStateProperties"
     :ivar space: Storage space usage of the snapshot.
     :vartype space: "Space"
-    :ivar volume_snapshots: List of individual volume snapshots included in this volume group
+    :ivar volumeSnapshots: List of individual volume snapshots included in this volume group
      snapshot; populated on single-get, empty or omitted on list for performance.
-    :vartype volume_snapshots: list["VolumeSnapshotInfo"]
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+    :vartype volumeSnapshots: list["VolumeSnapshotInfo"]
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Succeeded",
      "Failed", "Canceled", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     sourceSnapshotResourceId: str
@@ -1153,10 +1147,10 @@ class VolumeGroupUpdate(TypedDict, total=False):
 class VolumeGroupUpdateProperties(TypedDict, total=False):
     """The updatable properties of the VolumeGroup.
 
-    :ivar performance_parameters: Performance parameters for the volume group.
-    :vartype performance_parameters: "PerformanceParameters"
-    :ivar protection_parameters: Protection parameters for the volume group.
-    :vartype protection_parameters: "ProtectionParameters"
+    :ivar performanceParameters: Performance parameters for the volume group.
+    :vartype performanceParameters: "PerformanceParameters"
+    :ivar protectionParameters: Protection parameters for the volume group.
+    :vartype protectionParameters: "ProtectionParameters"
     """
 
     performanceParameters: "PerformanceParameters"
@@ -1168,22 +1162,22 @@ class VolumeGroupUpdateProperties(TypedDict, total=False):
 class VolumeOverwriteRequest(TypedDict, total=False):
     """Request to overwrite a volume's content from another volume or a snapshot.
 
-    :ivar source_type: Source type for the overwrite operation. Required. Known values are: "none",
+    :ivar sourceType: Source type for the overwrite operation. Required. Known values are: "none",
      "volume", "serialNumber", "snapshot", and "recoverableVolume".
-    :vartype source_type: Union[str, "VolumeSourceType"]
-    :ivar source_volume_group_resource_id: Azure resource ID of the source volume group. Required
-     when sourceType is 'snapshot' or when the source volume belongs to a different volume group
-     than the target.
-    :vartype source_volume_group_resource_id: str
-    :ivar source_volume_snapshot: Source volume group snapshot and volume snapshot name to restore
+    :vartype sourceType: Union[str, "VolumeSourceType"]
+    :ivar sourceVolumeGroupResourceId: Azure resource ID of the source volume group. Required when
+     sourceType is 'snapshot' or when the source volume belongs to a different volume group than the
+     target.
+    :vartype sourceVolumeGroupResourceId: str
+    :ivar sourceVolumeSnapshot: Source volume group snapshot and volume snapshot name to restore
      from. Used when sourceType is 'snapshot'.
-    :vartype source_volume_snapshot: "VolumeSnapshotSource"
-    :ivar source_serial_number: Serial number of the source volume to overwrite from. Used when
+    :vartype sourceVolumeSnapshot: "VolumeSnapshotSource"
+    :ivar sourceSerialNumber: Serial number of the source volume to overwrite from. Used when
      sourceType is 'serialNumber'.
-    :vartype source_serial_number: str
-    :ivar source_volume_resource_id: Azure resource ID of the source volume to clone from. Used
-     when sourceType is 'volume'.
-    :vartype source_volume_resource_id: str
+    :vartype sourceSerialNumber: str
+    :ivar sourceVolumeResourceId: Azure resource ID of the source volume to clone from. Used when
+     sourceType is 'volume'.
+    :vartype sourceVolumeResourceId: str
     """
 
     sourceType: Required[Union[str, "VolumeSourceType"]]
@@ -1208,10 +1202,10 @@ class VolumeSnapshotInfo(TypedDict, total=False):
     :vartype name: str
     :ivar space: Storage space usage of the volume snapshot.
     :vartype space: "Space"
-    :ivar provisioned_size: Provisioned size of the volume, in bytes.
-    :vartype provisioned_size: int
-    :ivar serial_number: Serial number of the volume.
-    :vartype serial_number: str
+    :ivar provisionedSize: Provisioned size of the volume, in bytes.
+    :vartype provisionedSize: int
+    :ivar serialNumber: Serial number of the volume.
+    :vartype serialNumber: str
     """
 
     name: Required[str]
@@ -1227,12 +1221,12 @@ class VolumeSnapshotInfo(TypedDict, total=False):
 class VolumeSnapshotSource(TypedDict, total=False):
     """Identifies the specific volume snapshot within a volume group snapshot to restore from.
 
-    :ivar volume_group_snapshot_resource_id: Azure resource ID of the volume group snapshot
-     containing the desired volume snapshot. Required.
-    :vartype volume_group_snapshot_resource_id: str
-    :ivar volume_snapshot_name: Name of the volume snapshot within the volume group snapshot.
+    :ivar volumeGroupSnapshotResourceId: Azure resource ID of the volume group snapshot containing
+     the desired volume snapshot. Required.
+    :vartype volumeGroupSnapshotResourceId: str
+    :ivar volumeSnapshotName: Name of the volume snapshot within the volume group snapshot.
      Required.
-    :vartype volume_snapshot_name: str
+    :vartype volumeSnapshotName: str
     """
 
     volumeGroupSnapshotResourceId: Required[str]
@@ -1256,8 +1250,8 @@ class VolumeUpdate(TypedDict, total=False):
 class VolumeUpdateProperties(TypedDict, total=False):
     """The updatable properties of the Volume.
 
-    :ivar provisioned_size: Currently provisioned size of the volume, in bytes.
-    :vartype provisioned_size: int
+    :ivar provisionedSize: Currently provisioned size of the volume, in bytes.
+    :vartype provisionedSize: int
     """
 
     provisionedSize: int

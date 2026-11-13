@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +71,7 @@ def build_reservations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_reservations_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +131,7 @@ def build_reservations_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +160,7 @@ def build_reservations_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PureStorage.Block/reservations/{reservationName}"
     path_format_arguments = {
@@ -183,7 +183,7 @@ def build_reservations_list_by_resource_group_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -210,7 +210,7 @@ def build_reservations_list_by_subscription_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -236,7 +236,7 @@ def build_reservations_get_resource_limits_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -264,7 +264,7 @@ def build_reservations_get_billing_status_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -292,7 +292,7 @@ def build_reservations_get_billing_report_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -321,7 +321,7 @@ def build_reservations_link_saa_s_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -351,7 +351,7 @@ def build_reservations_latest_linked_saa_s_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -379,7 +379,7 @@ def build_storage_pools_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -408,7 +408,7 @@ def build_storage_pools_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -439,7 +439,7 @@ def build_storage_pools_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -468,7 +468,7 @@ def build_storage_pools_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PureStorage.Block/storagePools/{storagePoolName}"
     path_format_arguments = {
@@ -491,7 +491,7 @@ def build_storage_pools_list_by_resource_group_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -518,7 +518,7 @@ def build_storage_pools_list_by_subscription_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -544,7 +544,7 @@ def build_storage_pools_get_health_status_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -572,7 +572,7 @@ def build_storage_pools_get_avs_connection_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -600,7 +600,7 @@ def build_storage_pools_get_avs_status_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -629,7 +629,7 @@ def build_storage_pools_enable_avs_connection_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PureStorage.Block/storagePools/{storagePoolName}/enableAvsConnection"
     path_format_arguments = {
@@ -655,7 +655,7 @@ def build_storage_pools_disable_avs_connection_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PureStorage.Block/storagePools/{storagePoolName}/disableAvsConnection"
     path_format_arguments = {
@@ -679,7 +679,7 @@ def build_storage_pools_finalize_avs_connection_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PureStorage.Block/storagePools/{storagePoolName}/finalizeAvsConnection"
     path_format_arguments = {
@@ -705,7 +705,7 @@ def build_storage_pools_repair_avs_connection_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PureStorage.Block/storagePools/{storagePoolName}/repairAvsConnection"
     path_format_arguments = {
@@ -728,7 +728,7 @@ def build_storage_pools_list_platform_console_activation_code_request(  # pylint
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -757,7 +757,7 @@ def build_storage_pools_configure_platform_console_auth_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -787,7 +787,7 @@ def build_avs_storage_containers_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -815,7 +815,7 @@ def build_avs_storage_containers_delete_request(  # pylint: disable=name-too-lon
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PureStorage.Block/storagePools/{storagePoolName}/avsStorageContainers/{storageContainerName}"
     path_format_arguments = {
@@ -839,7 +839,7 @@ def build_avs_storage_containers_list_by_storage_pool_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -873,7 +873,7 @@ def build_avs_storage_container_volumes_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -910,7 +910,7 @@ def build_avs_storage_container_volumes_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -944,7 +944,7 @@ def build_avs_storage_container_volumes_delete_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PureStorage.Block/storagePools/{storagePoolName}/avsStorageContainers/{storageContainerName}/volumes/{volumeId}"
     path_format_arguments = {
@@ -969,7 +969,7 @@ def build_avs_storage_container_volumes_list_by_avs_storage_container_request(  
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -999,7 +999,7 @@ def build_avs_vms_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1030,7 +1030,7 @@ def build_avs_vms_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1058,7 +1058,7 @@ def build_avs_vms_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PureStorage.Block/storagePools/{storagePoolName}/avsVms/{avsVmId}"
     path_format_arguments = {
@@ -1082,7 +1082,7 @@ def build_avs_vms_list_by_storage_pool_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1116,7 +1116,7 @@ def build_avs_vm_volumes_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1153,7 +1153,7 @@ def build_avs_vm_volumes_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1187,7 +1187,7 @@ def build_avs_vm_volumes_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PureStorage.Block/storagePools/{storagePoolName}/avsVms/{avsVmId}/avsVmVolumes/{volumeId}"
     path_format_arguments = {
@@ -1212,7 +1212,7 @@ def build_avs_vm_volumes_list_by_avs_vm_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1241,7 +1241,7 @@ def build_volume_groups_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1271,7 +1271,7 @@ def build_volume_groups_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1303,7 +1303,7 @@ def build_volume_groups_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1333,7 +1333,7 @@ def build_volume_groups_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PureStorage.Block/storagePools/{storagePoolName}/volumeGroups/{volumeGroupName}"
     path_format_arguments = {
@@ -1357,7 +1357,7 @@ def build_volume_groups_list_by_storage_pool_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1385,7 +1385,7 @@ def build_volume_groups_list_connection_parameters_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1414,7 +1414,7 @@ def build_volume_groups_get_status_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1444,7 +1444,7 @@ def build_volume_groups_overwrite_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PureStorage.Block/storagePools/{storagePoolName}/volumeGroups/{volumeGroupName}/overwrite"
     path_format_arguments = {
@@ -1477,7 +1477,7 @@ def build_volumes_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1513,7 +1513,7 @@ def build_volumes_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1551,7 +1551,7 @@ def build_volumes_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1587,7 +1587,7 @@ def build_volumes_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PureStorage.Block/storagePools/{storagePoolName}/volumeGroups/{volumeGroupName}/volumes/{volumeName}"
     path_format_arguments = {
@@ -1612,7 +1612,7 @@ def build_volumes_list_by_volume_group_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1647,7 +1647,7 @@ def build_volumes_overwrite_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PureStorage.Block/storagePools/{storagePoolName}/volumeGroups/{volumeGroupName}/volumes/{volumeName}/overwrite"
     path_format_arguments = {
@@ -1680,7 +1680,7 @@ def build_recoverable_volume_groups_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1711,7 +1711,7 @@ def build_recoverable_volume_groups_list_by_storage_pool_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1742,7 +1742,7 @@ def build_recoverable_volume_groups_delete_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PureStorage.Block/storagePools/{storagePoolName}/recoverableVolumeGroups/{recoverableVolumeGroupName}"
     path_format_arguments = {
@@ -1769,7 +1769,7 @@ def build_saa_soperation_group_activate_resource_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1802,7 +1802,7 @@ def build_volume_group_snapshots_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1838,7 +1838,7 @@ def build_volume_group_snapshots_create_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1874,7 +1874,7 @@ def build_volume_group_snapshots_delete_request(  # pylint: disable=name-too-lon
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PureStorage.Block/storagePools/{storagePoolName}/volumeGroups/{volumeGroupName}/snapshots/{snapshotName}"
     path_format_arguments = {
@@ -1908,7 +1908,7 @@ def build_volume_group_snapshots_list_by_volume_group_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1946,7 +1946,7 @@ def build_volume_group_snapshots_list_snapshots_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1971,7 +1971,7 @@ def build_volume_group_snapshots_list_snapshots_request(  # pylint: disable=name
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2083,7 +2083,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReservationsOperations:
+class ReservationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3040,6 +3040,7 @@ class ReservationsOperations:
             "2026-01-01-preview",
             "2026-03-01-preview",
             "2026-05-01-preview",
+            "2026-10-01",
         ],
     )
     def get_billing_status(
@@ -3132,6 +3133,7 @@ class ReservationsOperations:
             "2026-01-01-preview",
             "2026-03-01-preview",
             "2026-05-01-preview",
+            "2026-10-01",
         ],
     )
     def get_billing_report(
@@ -3218,7 +3220,7 @@ class ReservationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def _link_saa_s_initial(
         self,
@@ -3401,7 +3403,7 @@ class ReservationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def begin_link_saa_s(
         self,
@@ -3499,7 +3501,7 @@ class ReservationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def latest_linked_saa_s(
         self, resource_group_name: str, reservation_name: str, **kwargs: Any
@@ -3574,7 +3576,7 @@ class ReservationsOperations:
         return deserialized  # type: ignore
 
 
-class StoragePoolsOperations:  # pylint: disable=too-many-public-methods
+class StoragePoolsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5376,7 +5378,7 @@ class StoragePoolsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def list_platform_console_activation_code(
         self, resource_group_name: str, storage_pool_name: str, **kwargs: Any
@@ -5547,7 +5549,7 @@ class StoragePoolsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def configure_platform_console_auth(
         self,
@@ -5640,7 +5642,7 @@ class StoragePoolsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class AvsStorageContainersOperations:
+class AvsStorageContainersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5961,7 +5963,7 @@ class AvsStorageContainersOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AvsStorageContainerVolumesOperations:
+class AvsStorageContainerVolumesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6578,7 +6580,7 @@ class AvsStorageContainerVolumesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AvsVmsOperations:
+class AvsVmsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7147,7 +7149,7 @@ class AvsVmsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AvsVmVolumesOperations:
+class AvsVmVolumesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7743,7 +7745,7 @@ class AvsVmVolumesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class VolumeGroupsOperations:
+class VolumeGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7775,7 +7777,7 @@ class VolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def get(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, **kwargs: Any
@@ -7864,7 +7866,7 @@ class VolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def _create_initial(
         self,
@@ -8052,7 +8054,7 @@ class VolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def begin_create(
         self,
@@ -8146,7 +8148,7 @@ class VolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def _update_initial(
         self,
@@ -8332,7 +8334,7 @@ class VolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def begin_update(
         self,
@@ -8424,7 +8426,7 @@ class VolumeGroupsOperations:
                 "volume_group_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def _delete_initial(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, **kwargs: Any
@@ -8500,7 +8502,7 @@ class VolumeGroupsOperations:
                 "volume_group_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def begin_delete(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, **kwargs: Any
@@ -8575,7 +8577,7 @@ class VolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def list_by_storage_pool(
         self, resource_group_name: str, storage_pool_name: str, **kwargs: Any
@@ -8691,7 +8693,7 @@ class VolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def list_connection_parameters(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, **kwargs: Any
@@ -8781,7 +8783,7 @@ class VolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def get_status(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, **kwargs: Any
@@ -8869,7 +8871,7 @@ class VolumeGroupsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def _overwrite_initial(
         self,
@@ -9053,7 +9055,7 @@ class VolumeGroupsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def begin_overwrite(
         self,
@@ -9129,7 +9131,7 @@ class VolumeGroupsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class VolumesOperations:
+class VolumesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9162,7 +9164,7 @@ class VolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def get(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, volume_name: str, **kwargs: Any
@@ -9257,7 +9259,7 @@ class VolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def _create_initial(
         self,
@@ -9463,7 +9465,7 @@ class VolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def begin_create(
         self,
@@ -9564,7 +9566,7 @@ class VolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def _update_initial(
         self,
@@ -9768,7 +9770,7 @@ class VolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def begin_update(
         self,
@@ -9867,7 +9869,7 @@ class VolumesOperations:
                 "volume_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def _delete_initial(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, volume_name: str, **kwargs: Any
@@ -9945,7 +9947,7 @@ class VolumesOperations:
                 "volume_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def begin_delete(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, volume_name: str, **kwargs: Any
@@ -10026,7 +10028,7 @@ class VolumesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def list_by_volume_group(
         self, resource_group_name: str, storage_pool_name: str, volume_group_name: str, **kwargs: Any
@@ -10145,7 +10147,7 @@ class VolumesOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def _overwrite_initial(
         self,
@@ -10347,7 +10349,7 @@ class VolumesOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def begin_overwrite(
         self,
@@ -10429,7 +10431,7 @@ class VolumesOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class RecoverableVolumeGroupsOperations:
+class RecoverableVolumeGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10461,7 +10463,7 @@ class RecoverableVolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def get(
         self, resource_group_name: str, storage_pool_name: str, recoverable_volume_group_name: str, **kwargs: Any
@@ -10549,7 +10551,7 @@ class RecoverableVolumeGroupsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def list_by_storage_pool(
         self, resource_group_name: str, storage_pool_name: str, **kwargs: Any
@@ -10664,7 +10666,7 @@ class RecoverableVolumeGroupsOperations:
                 "recoverable_volume_group_name",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def _delete_initial(
         self, resource_group_name: str, storage_pool_name: str, recoverable_volume_group_name: str, **kwargs: Any
@@ -10740,7 +10742,7 @@ class RecoverableVolumeGroupsOperations:
                 "recoverable_volume_group_name",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def begin_delete(
         self, resource_group_name: str, storage_pool_name: str, recoverable_volume_group_name: str, **kwargs: Any
@@ -10804,7 +10806,7 @@ class RecoverableVolumeGroupsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class SaaSOperationGroupOperations:
+class SaaSOperationGroupOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10826,7 +10828,7 @@ class SaaSOperationGroupOperations:
     @api_version_validation(
         method_added_on="2026-03-01-preview",
         params_added_on={"2026-03-01-preview": ["api_version", "subscription_id", "content_type", "accept"]},
-        api_versions_list=["2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def _activate_resource_initial(
         self, body: Union[_models.ActivateSaaSRequest, _types.ActivateSaaSRequest, IO[bytes]], **kwargs: Any
@@ -10955,7 +10957,7 @@ class SaaSOperationGroupOperations:
     @api_version_validation(
         method_added_on="2026-03-01-preview",
         params_added_on={"2026-03-01-preview": ["api_version", "subscription_id", "content_type", "accept"]},
-        api_versions_list=["2026-03-01-preview", "2026-05-01-preview"],
+        api_versions_list=["2026-03-01-preview", "2026-05-01-preview", "2026-10-01"],
     )
     def begin_activate_resource(
         self, body: Union[_models.ActivateSaaSRequest, _types.ActivateSaaSRequest, IO[bytes]], **kwargs: Any
@@ -11018,7 +11020,7 @@ class SaaSOperationGroupOperations:
         )
 
 
-class VolumeGroupSnapshotsOperations:
+class VolumeGroupSnapshotsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11051,7 +11053,7 @@ class VolumeGroupSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def get(
         self,
@@ -11149,7 +11151,7 @@ class VolumeGroupSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def _create_initial(
         self,
@@ -11352,7 +11354,7 @@ class VolumeGroupSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def begin_create(
         self,
@@ -11450,7 +11452,7 @@ class VolumeGroupSnapshotsOperations:
                 "snapshot_name",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def _delete_initial(
         self,
@@ -11533,7 +11535,7 @@ class VolumeGroupSnapshotsOperations:
                 "snapshot_name",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def begin_delete(
         self,
@@ -11621,7 +11623,7 @@ class VolumeGroupSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def list_by_volume_group(
         self,
@@ -11859,7 +11861,7 @@ class VolumeGroupSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-10-01"],
     )
     def list_snapshots(
         self,

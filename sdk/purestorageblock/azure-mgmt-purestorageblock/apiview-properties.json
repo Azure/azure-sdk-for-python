@@ -248,5 +248,5 @@
         "azure.mgmt.purestorageblock.operations.VolumeGroupSnapshotsOperations.list_snapshots": "PureStorage.Block.VolumeGroupSnapshots.listSnapshots",
         "azure.mgmt.purestorageblock.aio.operations.VolumeGroupSnapshotsOperations.list_snapshots": "PureStorage.Block.VolumeGroupSnapshots.listSnapshots"
     },
-    "CrossLanguageVersion": "9e4cb37a0c70"
+    "CrossLanguageVersion": "b968c591a438"
 }
