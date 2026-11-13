@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-09-01",
+  "apiVersions": {
+    "Anyscale.Platform": "2026-09-01"
+  },
+  "commit": "d8e20b2d2c2761a4cb7c22f5a222524d59a9e9dc",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/anyscale/resource-manager/Anyscale.Platform/platform",
+  "emitterVersion": "0.63.10",
+  "httpClientPythonVersion": "0.39.0"
+}
