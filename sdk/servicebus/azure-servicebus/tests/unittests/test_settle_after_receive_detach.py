@@ -34,7 +34,12 @@ async def _settle_via_receiver_link(asynchronous, handler):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("asynchronous", [False, True])
 @pytest.mark.parametrize(
-    "is_closed, state, error", [(True, LinkState.DETACHED, DETACH_FORCED), (False, LinkState.DETACHED, None)]
+    "is_closed, state, error",
+    [
+        (True, LinkState.ERROR, DETACH_FORCED),  # the service detached the link with an error
+        (True, LinkState.DETACHED, None),
+        (False, LinkState.DETACHED, None),  # the session was discarded
+    ],
 )
 async def test_settle_on_detached_receive_link_falls_back_to_management_link(asynchronous, is_closed, state, error):
     # The receiver's _settle_message settles over the management link on RuntimeError.
