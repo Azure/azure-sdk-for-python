@@ -22,7 +22,7 @@ class ActionTask(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
@@ -48,6 +48,18 @@ class AutoFailover(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disable AutoFailover."""
 
 
+class BackupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The backup mechanism used to select recovery points."""
+
+    STREAMING = "Streaming"
+    """Streaming backups, including full, differential, incremental, and other supported backup
+    categories."""
+    LOG = "Log"
+    """Log backups that provide point-in-time recovery candidates."""
+    SNAPSHOT = "Snapshot"
+    """Snapshot backups."""
+
+
 class CommentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of user comment."""
 
@@ -68,6 +80,15 @@ class ConfirmationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The high availability solution does not require user approval."""
     REJECTED_BY_USER = "RejectedByUser"
     """The high availability solution has been rejected by the user."""
+
+
+class CopyOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The behavior when a copied file already exists."""
+
+    OVERWRITE = "Overwrite"
+    """Overwrite the existing file."""
+    SKIP = "Skip"
+    """Skip the existing file."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -291,6 +312,30 @@ class FailoverState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource is in reprotect pending state."""
 
 
+class FaultEligibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Normal fault eligibility of a drill resource, independent of inclusion and readiness."""
+
+    UNKNOWN = "Unknown"
+    """The available information is insufficient to determine normal fault eligibility."""
+    ELIGIBLE = "Eligible"
+    """The resource satisfies the normal fault inclusion policy."""
+    INELIGIBLE = "Ineligible"
+    """The resource does not satisfy the normal fault inclusion policy."""
+
+
+class FaultIneligibleReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reason requiring attention for a resource that requires recovery-plan participation and has no
+    independent fault eligibility path.
+    """
+
+    RECOVERY_PLAN_NOT_CONFIGURED = "RecoveryPlanNotConfigured"
+    """The parent drill has no associated recovery plan required by the resource's normal fault
+    inclusion policy."""
+    RESOURCE_NOT_INCLUDED_IN_RECOVERY_PLAN = "ResourceNotIncludedInRecoveryPlan"
+    """The associated recovery plan's complete membership collection was successfully read and the
+    resource is absent or explicitly Excluded."""
+
+
 class ForceInclusionAndUpdate(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum for ForceInclusionAndUpdate."""
 
@@ -316,6 +361,19 @@ class InitialConfig(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Initial config pending."""
     COMPLETE = "Complete"
     """Initial config complete."""
+
+
+class IsoDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ISO 8601 duration formats."""
+
+    PT15_M = "PT15M"
+    """15 minutes."""
+    PT1_H = "PT1H"
+    """1 hour."""
+    PT4_H = "PT4H"
+    """4 hours."""
+    PT24_H = "PT24H"
+    """24 hours."""
 
 
 class JobResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -393,7 +451,7 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -542,6 +600,62 @@ class RecoveryPlanType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A recovery orchestration plan for regional resiliency."""
     ZONAL = "Zonal"
     """A recovery orchestration plan for zonal resiliency."""
+    CYBER_RECOVERY = "CyberRecovery"
+    """A recovery orchestration plan for cyber recovery into a clean-room environment."""
+
+
+class RecoveryPointHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The health eligibility filter for discrete recovery points. This filter does not apply to log
+    or point-in-time recovery candidates.
+    """
+
+    HEALTHY_ONLY = "HealthyOnly"
+    """Include only recovery points with a Healthy threat status."""
+    HEALTHY_AND_UNKNOWN = "HealthyAndUnknown"
+    """Include recovery points with Healthy, Unknown, unspecified, or NotAvailable threat statuses,
+    excluding Warning and UnHealthy."""
+    ALL = "All"
+    """Include all threat statuses without health-based ordering."""
+
+
+class RecoveryPointPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A policy for selecting a recovery point."""
+
+    LATEST = "Latest"
+    """Use the latest available recovery point."""
+    RANDOM = "Random"
+    """Use a random recovery point within the specified time bounds."""
+
+
+class RecoveryResourceInclusionEligibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether a recovery resource can be included for the configured targets."""
+
+    CAN_BE_INCLUDED = "CanBeIncluded"
+    """The recovery resource can be included."""
+    CANNOT_BE_INCLUDED = "CannotBeIncluded"
+    """The recovery resource cannot be included."""
+
+
+class RecoveryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported workload recovery behavior."""
+
+    CREATE_NEW_VM = "CreateNewVM"
+    """Recovery creates a new virtual machine."""
+    ALTERNATE_LOCATION = "AlternateLocation"
+    """Recovery targets an alternate location."""
+    RESTORE_AS_DISKS = "RestoreAsDisks"
+    """Recovery restores the workload as disks."""
+    RESTORE_AS_FILES = "RestoreAsFiles"
+    """Recovery restores the workload as files."""
+
+
+class RegionalResiliencyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Regional resiliency posture reported by the selected protection solution."""
+
+    RESILIENT = "Resilient"
+    """The available protection-solution posture reports the resource as regionally resilient."""
+    NOT_RESILIENT = "NotResilient"
+    """The available protection-solution posture reports the resource as not regionally resilient."""
 
 
 class RelativeResourceCompositionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -551,6 +665,26 @@ class RelativeResourceCompositionState(str, Enum, metaclass=CaseInsensitiveEnumM
     """Resources in sync."""
     OUT_OF_SYNC = "OutOfSync"
     """Resources out of sync."""
+
+
+class ReplicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Replication mode configured for a protected resource."""
+
+    NONE = "None"
+    """No replication mode is configured for the protected resource."""
+    ACTIVE_ACTIVE = "ActiveActive"
+    """The resource is active in multiple locations at the same time."""
+    ACTIVE_PASSIVE = "ActivePassive"
+    """The resource has one active location and one or more passive recovery locations."""
+
+
+class ResiliencyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the resiliency type for recovery plan properties."""
+
+    INFRASTRUCTURE_RESILIENCY = "InfrastructureResiliency"
+    """Infrastructure resiliency properties."""
+    CYBER_RESILIENCY = "CyberResiliency"
+    """Cyber resiliency properties."""
 
 
 class ResourceFeasibilityReviewStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -571,6 +705,15 @@ class ResourceFeasibilityReviewType(str, Enum, metaclass=CaseInsensitiveEnumMeta
 
     SKU_CAPACITY = "SkuCapacity"
     """SKU capacity availability check in the target region or zone."""
+
+
+class ResourceInclusionDisabledReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reason why a recovery resource cannot be included in a recovery plan."""
+
+    RESOURCE_HIGHLY_AVAILABLE = "ResourceHighlyAvailable"
+    """The resource is highly available and does not require recovery-plan inclusion."""
+    RESOURCE_ACTIVE_ACTIVE_PROTECTION = "ResourceActiveActiveProtection"
+    """The resource uses active-active protection."""
 
 
 class ResourceInclusionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -597,6 +740,32 @@ class ResourceProtectionSolutionType(str, Enum, metaclass=CaseInsensitiveEnumMet
     CUSTOM_RUNBOOK = "CustomRunbook"
     """Resource is not protected with native solution and using custom runbook automation scripts for
     recovery verbs."""
+    AZURE_TEMPLATE = "AzureTemplate"
+    """Resource recovery is orchestrated by deploying an Azure Resource Manager template."""
+    AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
+    """Resource is protected with Azure Storage account customer-managed failover."""
+    AZURE_SERVICE_BUS = "AzureServiceBus"
+    """Resource is protected with Azure Service Bus geo-replication, where a premium namespace
+    replicates data to a secondary region and recovery promotes that secondary in place."""
+    AZURE_NET_APP_FILES = "AzureNetAppFiles"
+    """Resource is protected with Azure NetApp Files cross-region replication, where recovery fails
+    over to the destination volume."""
+    AZURE_COSMOS_DB = "AzureCosmosDB"
+    """Resource is protected with Azure Cosmos DB multiregion replication using customer-managed
+    failover, where recovery promotes a secondary region to the write region."""
+
+
+class ResourceProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A state type that indicates the protection status of a resource with an Azure solution for
+    Backup.
+    """
+
+    UNKNOWN = "Unknown"
+    """The protection status of the resource is unknown."""
+    PROTECTED = "Protected"
+    """A state indicating that the resource is protected by the recovery solution."""
+    NOT_PROTECTED = "NotProtected"
+    """A state indicating that the resource is not protected by any recovery solution."""
 
 
 class ResourceProtectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -662,6 +831,13 @@ class SolutionDisplayName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VM in multi-zone VMSS."""
 
 
+class TargetProvisioningMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How a target resource is provisioned."""
+
+    EXISTING = "Existing"
+    """An existing target resource is used."""
+
+
 class TestFailoverState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A state specific to the resource that helps identify its TestFailover state."""
 
@@ -694,3 +870,20 @@ class VMPresent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """At least one VM is present."""
     ABSENT = "Absent"
     """No VM present."""
+
+
+class WorkloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The workload protected by a recovery configuration profile."""
+
+    AZURE_VM = "AzureVm"
+    """An Azure virtual machine workload."""
+    SQL_DATABASE_IN_AZURE_VM = "SqlDatabaseInAzureVm"
+    """A SQL database workload hosted in an Azure virtual machine."""
+    SAP_HANA_IN_AZURE_VM = "SapHanaInAzureVm"
+    """An SAP HANA workload hosted in an Azure virtual machine."""
+    SAP_ASE_IN_AZURE_VM = "SapAseInAzureVm"
+    """An SAP ASE workload hosted in an Azure virtual machine."""
+    ORACLE_IN_AZURE_VM = "OracleInAzureVm"
+    """An Oracle workload hosted in an Azure virtual machine."""
+    AZURE_FILE_SHARE = "AzureFileShare"
+    """An Azure Files workload."""
