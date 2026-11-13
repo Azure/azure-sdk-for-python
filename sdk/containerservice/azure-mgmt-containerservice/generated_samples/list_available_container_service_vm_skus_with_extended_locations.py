@@ -15,7 +15,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python agent_pools_create_managed_gpu.py
+    python list_available_container_service_vm_skus_with_extended_locations.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,23 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.agent_pools.begin_create_or_update(
-        resource_group_name="rg1",
-        resource_name="clustername1",
-        agent_pool_name="agentpool1",
-        parameters={
-            "properties": {
-                "count": 3,
-                "gpuProfile": {"driver": "Install", "nvidia": {"managementMode": "Managed"}},
-                "mode": "User",
-                "osType": "Linux",
-                "vmSize": "Standard_NC4as_T4_v3",
-            }
-        },
-    ).result()
-    print(response)
+    response = client.vm_skus.list(
+        location="westus",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-09-01/AgentPoolsCreate_ManagedGPU.json
+# x-ms-original-file: 2026-09-02-preview/ListAvailableContainerServiceVmSkusWithExtendedLocations.json
 if __name__ == "__main__":
     main()
