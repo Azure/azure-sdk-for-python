@@ -152,6 +152,35 @@ def test_dev_requirements_share_selected_target_provisioning(tmp_path):
     assert "variable=AZURESDK_PYTHON_ARM64_LIBS]" not in result.stdout
 
 
+def test_shared_test_steps_provision_windows_native_dependencies(tmp_path):
+    steps = load_template("steps/build-test.yml")["steps"]
+    authenticate = next(step for step in steps if isinstance(step, dict) and step.get("task") == "NuGetAuthenticate@1")
+    provision = next(
+        step
+        for step in steps
+        if isinstance(step, dict) and step.get("displayName") == "Pre-provision CPython for cibuildwheel"
+    )
+    condition = "and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))"
+    assert authenticate["condition"] == provision["condition"] == condition
+    before_tests = steps.index("${{ parameters.BeforeTestSteps }}")
+    assert before_tests < steps.index(authenticate) < steps.index(provision)
+    for branch in ("${{ if eq('true', parameters.UseFederatedAuth) }}", "${{ else }}"):
+        execution = next(step for step in steps if branch in step)
+        assert steps.index(provision) < steps.index(execution)
+
+    assert "nuget install" not in provision["pwsh"]
+    assert "3.10.11" not in provision["pwsh"]
+    cache_root = tmp_path / "agent temp"
+    result = run_powershell(provision["pwsh"].replace("$(Agent.TempDirectory)", str(cache_root)))
+    assert result.returncode == 0, result.stderr
+    assert f"variable=CIBW_CACHE_PATH]{cache_root / 'cibw-cache'}\n" in result.stdout
+    assert (
+        "variable=AZURESDK_PYTHON_NUGET_FEED]"
+        "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json\n"
+    ) in result.stdout
+    assert "variable=AZURESDK_PYTHON_ARM64_LIBS]" not in result.stdout
+
+
 def test_live_test_rust_support_is_opt_in_and_forwarded():
     archetype = load_template("stages/archetype-sdk-tests.yml")
     live = load_template("jobs/live.tests.yml")
