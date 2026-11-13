@@ -18,12 +18,20 @@ from ._operations import MarketplaceGalleryImagesOperations  # type: ignore
 from ._operations import NetworkInterfacesOperations  # type: ignore
 from ._operations import NetworkSecurityGroupsOperations  # type: ignore
 from ._operations import SecurityRulesOperations  # type: ignore
+from ._operations import SnapshotsOperations  # type: ignore
 from ._operations import StorageContainersOperations  # type: ignore
 from ._operations import VirtualHardDisksOperations  # type: ignore
 from ._operations import VirtualMachineInstancesOperations  # type: ignore
 from ._operations import HybridIdentityMetadataOperations  # type: ignore
 from ._operations import AttestationStatusesOperations  # type: ignore
 from ._operations import GuestAgentsOperations  # type: ignore
+from ._operations import VirtualNetworksOperations  # type: ignore
+from ._operations import VirtualNetworkSubnetsOperations  # type: ignore
+from ._operations import PublicIPAddressesOperations  # type: ignore
+from ._operations import NatGatewaysOperations  # type: ignore
+from ._operations import InboundRulesOperations  # type: ignore
+from ._operations import LoadBalancersOperations  # type: ignore
+from ._operations import Operations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -36,12 +44,20 @@ __all__ = [
     "NetworkInterfacesOperations",
     "NetworkSecurityGroupsOperations",
     "SecurityRulesOperations",
+    "SnapshotsOperations",
     "StorageContainersOperations",
     "VirtualHardDisksOperations",
     "VirtualMachineInstancesOperations",
     "HybridIdentityMetadataOperations",
     "AttestationStatusesOperations",
     "GuestAgentsOperations",
+    "VirtualNetworksOperations",
+    "VirtualNetworkSubnetsOperations",
+    "PublicIPAddressesOperations",
+    "NatGatewaysOperations",
+    "InboundRulesOperations",
+    "LoadBalancersOperations",
+    "Operations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

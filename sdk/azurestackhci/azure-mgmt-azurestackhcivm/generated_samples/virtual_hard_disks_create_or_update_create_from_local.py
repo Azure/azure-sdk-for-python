@@ -33,7 +33,7 @@ def main():
 
     response = client.virtual_hard_disks.begin_create_or_update(
         resource_group_name="test-rg",
-        virtual_hard_disk_name="test-vhd",
+        virtual_hard_disk_name="rehome-datadisk-1",
         resource={
             "extendedLocation": {
                 "name": "/subscriptions/a95612cb-f1fa-4daa-a4fd-272844fa512c/resourceGroups/dogfoodarc/providers/Microsoft.ExtendedLocation/customLocations/dogfood-location",
@@ -41,14 +41,14 @@ def main():
             },
             "location": "West US2",
             "properties": {
-                "containerId": "/subscriptions/a95612cb-f1fa-4daa-a4fd-272844fa512c/resourceGroups/dogfoodarc/providers/Microsoft.AzureStackHCI/storageContainers/test-storage-container",
                 "createFromLocal": True,
+                "localVhdPath": "C:\\ClusterStorage\\UserStorage_2\\e35803d0bd82d61\\rehome555-dd1-a95612cb-f1fa-4daa-a4fd-272844fa512c-dogfoodarc.vhdx",
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01-preview/VirtualHardDisks__CreateOrUpdate_CreateFromLocal.json
+# x-ms-original-file: 2026-07-01-preview/VirtualHardDisks__CreateOrUpdate_CreateFromLocal.json
 if __name__ == "__main__":
     main()
