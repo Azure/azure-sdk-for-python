@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/CosmosDBPrivateLinkResourceGet.json
+# x-ms-original-file: 2026-07-15/CosmosDBPrivateLinkResourceGet.json
 if __name__ == "__main__":
     main()

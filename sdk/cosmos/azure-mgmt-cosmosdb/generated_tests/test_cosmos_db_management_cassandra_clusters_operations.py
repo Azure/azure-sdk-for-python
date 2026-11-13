@@ -49,7 +49,6 @@ class TestCosmosDBManagementCassandraClustersOperations(AzureMgmtRecordedTestCas
                     "cassandraVersion": "str",
                     "clientCertificates": [{"pem": "str"}],
                     "clusterNameOverride": "str",
-                    "clusterType": "str",
                     "deallocated": bool,
                     "delegatedManagementSubnetId": "str",
                     "extensions": ["str"],
@@ -104,7 +103,6 @@ class TestCosmosDBManagementCassandraClustersOperations(AzureMgmtRecordedTestCas
                     "cassandraVersion": "str",
                     "clientCertificates": [{"pem": "str"}],
                     "clusterNameOverride": "str",
-                    "clusterType": "str",
                     "deallocated": bool,
                     "delegatedManagementSubnetId": "str",
                     "extensions": ["str"],
@@ -182,64 +180,6 @@ class TestCosmosDBManagementCassandraClustersOperations(AzureMgmtRecordedTestCas
                 "readwrite": bool,
             },
         ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_cassandra_clusters_begin_invoke_command_async(self, resource_group):
-        response = self.client.cassandra_clusters.begin_invoke_command_async(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-            body={"command": "str", "host": "str", "arguments": {}, "cassandra-stop-start": bool, "readWrite": bool},
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_cassandra_clusters_list_command(self, resource_group):
-        response = self.client.cassandra_clusters.list_command(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_cassandra_clusters_get_command_async(self, resource_group):
-        response = self.client.cassandra_clusters.get_command_async(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-            command_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_cassandra_clusters_list_backups(self, resource_group):
-        response = self.client.cassandra_clusters.list_backups(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_cassandra_clusters_get_backup(self, resource_group):
-        response = self.client.cassandra_clusters.get_backup(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-            backup_id="str",
-        )
 
         # please add some check logic here by yourself
         # ...

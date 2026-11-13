@@ -196,24 +196,57 @@ are rejected before submission. Text-only sampling does not support prompt
 log-probabilities, caller-selected stopping criteria, or `response_format`.
 Installing the SDK does not enable these capabilities or grant model access.
 
-### Checkpoint preparation only
+### Download checkpoint files
 
 `client.checkpoints.download_weights(session_id, checkpoint_id, output_path)`
-and its async counterpart currently **prepare a checkpoint on the service;
-they do not download files**. They validate the destination, poll preparation,
-validate the returned inventory, and return `None` after successful preparation.
-They do not create directories, write files, or transfer weights.
+and its async counterpart prepare an authorized checkpoint export, validate the
+complete file inventory, and stream its files to
+`output_path/<session_id>/<checkpoint_id>`. They return `None` only after all
+advertised files are complete locally.
 
-These methods require service support and authorized checkpoint access.
-Preparation failure, unknown states, invalid inventories, and HTTP/transport
-errors are surfaced; unknown states are never treated as success.
+```python
+client.checkpoints.download_weights(
+    session_id="session_example",
+    checkpoint_id="sampler_checkpoint",
+    output_path="./checkpoints",
+)
+```
 
-The checked destination is `output_path/<session_id>/<checkpoint_id>`.
-That checkpoint directory must be empty or absent. Identifiers must be portable
-directory names, and resolved paths must remain inside the output root,
-including through symlinks. Validation happens before the preparation request
-and does not reserve the destination. Do not interpret a successful return as
-confirmation of a local download.
+For an asynchronous client, await the same method:
+
+```python
+await async_client.checkpoints.download_weights(
+    session_id="session_example",
+    checkpoint_id="sampler_checkpoint",
+    output_path="./checkpoints",
+)
+```
+
+The checkpoint directory must be empty or absent; parent directories may contain
+unrelated files. Session/checkpoint identifiers must be portable directory names.
+Paths are checked before preparation and rechecked before writing. File creation
+rejects existing entries and symlinks/reparse points below the resolved output root.
+On Linux and macOS, new directories are opened in protected same-filesystem
+staging and published atomically without replacing an existing entry. This
+requires a writable ancestor owned by the current account, without group/other
+write access or extended ACLs. Unsupported staging or no-replace publication
+fails explicitly; the SDK does not fall back to unsafe directory creation.
+Private staging is not a security boundary against malicious processes running
+with the same operating-system credentials.
+Each file is requested through the service API with its advertised strong ETag,
+then checked against the exact advertised byte count. File reads do not follow
+redirects, retry, or resume automatically.
+
+Failures or async cancellation retain any partial directories and files. Inspect
+the output and choose a new empty destination, or explicitly remove the partial
+checkpoint before retrying. The SDK never deletes or overwrites existing entries.
+An unsuccessful directory publication can also retain an empty
+`.finetuning-checkpoint-*` staging directory under the protected ancestor.
+
+Downloading requires service support, an eligible model and authorized checkpoint
+access. It does not grant access to base-model weights or enable download
+eligibility. Preparation failure, unknown states, invalid inventories, file
+identity/size mismatches and HTTP/transport errors are surfaced explicitly.
 
 ### Raw operations and convenience methods
 

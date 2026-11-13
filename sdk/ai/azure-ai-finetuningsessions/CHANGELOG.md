@@ -1,13 +1,13 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b2 (2026-11-12)
 
 ### Features Added
 
 - Add opt-in text-only sampling with public conversation messages and function tools, plus reference-based training using opaque sample references and scalar advantages.
 - Support optional model-specific text-only `reasoning_effort` values `low`, `medium`, and `high`. Omission or `None` preserves the model default.
 - Add async `FineTuningSessionClient.attach_session(session_id)` to start a heartbeat for an existing session without creating or loading it.
-- Add synchronous and asynchronous checkpoint preparation helpers. These validate paths and file inventories but do not transfer weights or write local files.
+- Add synchronous and asynchronous local checkpoint downloads. These prepare the export, validate the complete inventory, and stream files into an empty or absent destination with exact ETag and byte-count checks. Failures retain partial output without automatic resume, deletion, or overwrite; model eligibility and authorization remain enforced by the service.
 
 ### Breaking Changes
 
@@ -20,12 +20,14 @@
 - Retry sampling responses missing `request_id` within a bounded fault budget, then raise `MalformedResponseError`.
 - Improve polling budgets, sampling limits, heartbeat shutdown, and scalar serialization while preserving protected-training replay safeguards.
 - Use canonical `/fine_tuning_sessions` routes in generated operations while retaining existing Python convenience APIs.
+- Preserve POSIX ownership across checkpoint directory creation and opening using protected staging and atomic no-replace publication. Reject unsupported staging explicitly and retain partial output without adopting or overwriting concurrent directories.
 
 ### Other Changes
 
 - Clarify session lifecycle, service-selected training tiers, checkpoint preparation limits, and differences between raw operations and convenience methods.
 - Improve generated request-model documentation without changing supported message roles, function-only tools, or request payloads.
 - Restore the standard README sections and include public test sources in source distributions while keeping archived review material excluded.
+- Synchronize generation metadata with the updated public TypeSpec source without changing the Python API or runtime.
 
 ## 1.0.0b1 (2026-09-24)
 
