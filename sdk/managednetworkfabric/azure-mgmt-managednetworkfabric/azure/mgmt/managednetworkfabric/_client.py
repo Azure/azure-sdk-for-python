@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -21,7 +22,9 @@ from ._configuration import ManagedNetworkFabricMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     AccessControlListsOperations,
+    EdgeConnectorsOperations,
     ExternalNetworksOperations,
+    FabricsOperations,
     InternalNetworksOperations,
     InternetGatewayRulesOperations,
     InternetGatewaysOperations,
@@ -59,7 +62,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ManagedNetworkFabricMgmtClient:  # pylint: disable=too-many-instance-attributes
+class ManagedNetworkFabricMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Self service experience for Azure Network Fabric API.
 
     :ivar operations: Operations operations
@@ -133,6 +136,10 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=too-many-instance-attri
     :ivar network_bootstrap_interfaces: NetworkBootstrapInterfacesOperations operations
     :vartype network_bootstrap_interfaces:
      azure.mgmt.managednetworkfabric.operations.NetworkBootstrapInterfacesOperations
+    :ivar edge_connectors: EdgeConnectorsOperations operations
+    :vartype edge_connectors: azure.mgmt.managednetworkfabric.operations.EdgeConnectorsOperations
+    :ivar fabrics: FabricsOperations operations
+    :vartype fabrics: azure.mgmt.managednetworkfabric.operations.FabricsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -142,9 +149,10 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=too-many-instance-attri
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2025-07-15"
-     and None. Default value is None. If not set, the operation's default API version will be used.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-01-15-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -260,6 +268,8 @@ class ManagedNetworkFabricMgmtClient:  # pylint: disable=too-many-instance-attri
         self.network_bootstrap_interfaces = NetworkBootstrapInterfacesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.edge_connectors = EdgeConnectorsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.fabrics = FabricsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

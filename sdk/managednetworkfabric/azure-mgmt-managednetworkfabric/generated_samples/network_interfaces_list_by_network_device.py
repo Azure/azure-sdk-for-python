@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-07-15/NetworkInterfaces_ListByNetworkDevice.json
+# x-ms-original-file: 2026-01-15-preview/NetworkInterfaces_ListByNetworkDevice.json
 if __name__ == "__main__":
     main()

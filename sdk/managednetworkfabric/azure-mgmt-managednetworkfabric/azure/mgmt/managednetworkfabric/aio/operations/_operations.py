@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
@@ -47,6 +47,12 @@ from ...operations._operations import (
     build_access_control_lists_update_administrative_state_request,
     build_access_control_lists_update_request,
     build_access_control_lists_validate_configuration_request,
+    build_edge_connectors_create_request,
+    build_edge_connectors_delete_request,
+    build_edge_connectors_get_request,
+    build_edge_connectors_list_by_resource_group_request,
+    build_edge_connectors_list_by_subscription_request,
+    build_edge_connectors_update_request,
     build_external_networks_create_request,
     build_external_networks_delete_request,
     build_external_networks_get_request,
@@ -55,6 +61,12 @@ from ...operations._operations import (
     build_external_networks_update_bfd_administrative_state_request,
     build_external_networks_update_request,
     build_external_networks_update_static_route_bfd_administrative_state_request,
+    build_fabrics_create_request,
+    build_fabrics_delete_request,
+    build_fabrics_get_request,
+    build_fabrics_list_by_resource_group_request,
+    build_fabrics_list_by_subscription_request,
+    build_fabrics_update_request,
     build_internal_networks_create_request,
     build_internal_networks_delete_request,
     build_internal_networks_get_request,
@@ -249,11 +261,10 @@ from .._configuration import ManagedNetworkFabricMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -366,7 +377,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AccessControlListsOperations:
+class AccessControlListsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -461,7 +472,7 @@ class AccessControlListsOperations:
         self,
         resource_group_name: str,
         access_control_list_name: str,
-        body: Union[_models.AccessControlList, JSON, IO[bytes]],
+        body: Union[_models.AccessControlList, _types.AccessControlList, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -568,7 +579,7 @@ class AccessControlListsOperations:
         self,
         resource_group_name: str,
         access_control_list_name: str,
-        body: JSON,
+        body: _types.AccessControlList,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -581,7 +592,7 @@ class AccessControlListsOperations:
         :param access_control_list_name: Name of the Access Control List. Required.
         :type access_control_list_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.AccessControlList
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -626,7 +637,7 @@ class AccessControlListsOperations:
         self,
         resource_group_name: str,
         access_control_list_name: str,
-        body: Union[_models.AccessControlList, JSON, IO[bytes]],
+        body: Union[_models.AccessControlList, _types.AccessControlList, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AccessControlList]:
         """Implements Access Control List PUT method.
@@ -636,9 +647,9 @@ class AccessControlListsOperations:
         :type resource_group_name: str
         :param access_control_list_name: Name of the Access Control List. Required.
         :type access_control_list_name: str
-        :param body: Request payload. Is one of the following types: AccessControlList, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.AccessControlList or JSON or IO[bytes]
+        :param body: Request payload. Is either a AccessControlList type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.AccessControlList or
+         ~azure.mgmt.managednetworkfabric.types.AccessControlList or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AccessControlList. The AccessControlList is
          compatible with MutableMapping
         :rtype:
@@ -701,7 +712,7 @@ class AccessControlListsOperations:
         self,
         resource_group_name: str,
         access_control_list_name: str,
-        body: Union[_models.AccessControlListPatch, JSON, IO[bytes]],
+        body: Union[_models.AccessControlListPatch, _types.AccessControlListPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -806,7 +817,7 @@ class AccessControlListsOperations:
         self,
         resource_group_name: str,
         access_control_list_name: str,
-        body: JSON,
+        body: _types.AccessControlListPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -819,7 +830,7 @@ class AccessControlListsOperations:
         :param access_control_list_name: Name of the Access Control List. Required.
         :type access_control_list_name: str
         :param body: Access Control List properties to update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.AccessControlListPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -864,7 +875,7 @@ class AccessControlListsOperations:
         self,
         resource_group_name: str,
         access_control_list_name: str,
-        body: Union[_models.AccessControlListPatch, JSON, IO[bytes]],
+        body: Union[_models.AccessControlListPatch, _types.AccessControlListPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AccessControlList]:
         """API to update certain properties of the Access Control List resource.
@@ -874,9 +885,10 @@ class AccessControlListsOperations:
         :type resource_group_name: str
         :param access_control_list_name: Name of the Access Control List. Required.
         :type access_control_list_name: str
-        :param body: Access Control List properties to update. Is one of the following types:
-         AccessControlListPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.AccessControlListPatch or JSON or IO[bytes]
+        :param body: Access Control List properties to update. Is either a AccessControlListPatch type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.AccessControlListPatch or
+         ~azure.mgmt.managednetworkfabric.types.AccessControlListPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AccessControlList. The AccessControlList is
          compatible with MutableMapping
         :rtype:
@@ -1261,13 +1273,13 @@ class AccessControlListsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_administrative_state_initial(
         self,
         resource_group_name: str,
         access_control_list_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1372,7 +1384,7 @@ class AccessControlListsOperations:
         self,
         resource_group_name: str,
         access_control_list_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1385,7 +1397,7 @@ class AccessControlListsOperations:
         :param access_control_list_name: Name of the Access Control List. Required.
         :type access_control_list_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1438,13 +1450,13 @@ class AccessControlListsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_administrative_state(
         self,
         resource_group_name: str,
         access_control_list_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.UpdateAdministrativeStateResponse]:
         """Implements the operation to the underlying resources.
@@ -1454,10 +1466,10 @@ class AccessControlListsOperations:
         :type resource_group_name: str
         :param access_control_list_name: Name of the Access Control List. Required.
         :type access_control_list_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns UpdateAdministrativeStateResponse. The
          UpdateAdministrativeStateResponse is compatible with MutableMapping
         :rtype:
@@ -1643,6 +1655,19 @@ class AccessControlListsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "access_control_list_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
     async def _validate_configuration_initial(
         self, resource_group_name: str, access_control_list_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -1705,9 +1730,22 @@ class AccessControlListsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "access_control_list_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
     async def begin_validate_configuration(
         self, resource_group_name: str, access_control_list_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[_models.ValidateConfigurationResponse]:
+    ) -> AsyncLROPoller[_models.ValidateConfigurationResponseV2]:
         """Implements the operation to the underlying resources.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1715,16 +1753,16 @@ class AccessControlListsOperations:
         :type resource_group_name: str
         :param access_control_list_name: Name of the Access Control List. Required.
         :type access_control_list_name: str
-        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponse. The
-         ValidateConfigurationResponse is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponseV2. The
+         ValidateConfigurationResponseV2 is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponseV2]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ValidateConfigurationResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ValidateConfigurationResponseV2] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -1742,7 +1780,7 @@ class AccessControlListsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = _deserialize(_models.ValidateConfigurationResponse, response.json())
+            deserialized = _deserialize(_models.ValidateConfigurationResponseV2, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -1760,18 +1798,18 @@ class AccessControlListsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.ValidateConfigurationResponse].from_continuation_token(
+            return AsyncLROPoller[_models.ValidateConfigurationResponseV2].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.ValidateConfigurationResponse](
+        return AsyncLROPoller[_models.ValidateConfigurationResponseV2](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
 
-class InternetGatewayRulesOperations:
+class InternetGatewayRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1866,7 +1904,7 @@ class InternetGatewayRulesOperations:
         self,
         resource_group_name: str,
         internet_gateway_rule_name: str,
-        body: Union[_models.InternetGatewayRule, JSON, IO[bytes]],
+        body: Union[_models.InternetGatewayRule, _types.InternetGatewayRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1973,7 +2011,7 @@ class InternetGatewayRulesOperations:
         self,
         resource_group_name: str,
         internet_gateway_rule_name: str,
-        body: JSON,
+        body: _types.InternetGatewayRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1986,7 +2024,7 @@ class InternetGatewayRulesOperations:
         :param internet_gateway_rule_name: Name of the Internet Gateway rule. Required.
         :type internet_gateway_rule_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.InternetGatewayRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2031,7 +2069,7 @@ class InternetGatewayRulesOperations:
         self,
         resource_group_name: str,
         internet_gateway_rule_name: str,
-        body: Union[_models.InternetGatewayRule, JSON, IO[bytes]],
+        body: Union[_models.InternetGatewayRule, _types.InternetGatewayRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.InternetGatewayRule]:
         """Creates an Internet Gateway rule resource.
@@ -2041,9 +2079,10 @@ class InternetGatewayRulesOperations:
         :type resource_group_name: str
         :param internet_gateway_rule_name: Name of the Internet Gateway rule. Required.
         :type internet_gateway_rule_name: str
-        :param body: Request payload. Is one of the following types: InternetGatewayRule, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.InternetGatewayRule or JSON or IO[bytes]
+        :param body: Request payload. Is either a InternetGatewayRule type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.InternetGatewayRule or
+         ~azure.mgmt.managednetworkfabric.types.InternetGatewayRule or IO[bytes]
         :return: An instance of AsyncLROPoller that returns InternetGatewayRule. The
          InternetGatewayRule is compatible with MutableMapping
         :rtype:
@@ -2106,7 +2145,7 @@ class InternetGatewayRulesOperations:
         self,
         resource_group_name: str,
         internet_gateway_rule_name: str,
-        body: Union[_models.InternetGatewayRulePatch, JSON, IO[bytes]],
+        body: Union[_models.InternetGatewayRulePatch, _types.InternetGatewayRulePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2211,7 +2250,7 @@ class InternetGatewayRulesOperations:
         self,
         resource_group_name: str,
         internet_gateway_rule_name: str,
-        body: JSON,
+        body: _types.InternetGatewayRulePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2224,7 +2263,7 @@ class InternetGatewayRulesOperations:
         :param internet_gateway_rule_name: Name of the Internet Gateway rule. Required.
         :type internet_gateway_rule_name: str
         :param body: Internet Gateway Rule properties to update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.InternetGatewayRulePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2269,7 +2308,7 @@ class InternetGatewayRulesOperations:
         self,
         resource_group_name: str,
         internet_gateway_rule_name: str,
-        body: Union[_models.InternetGatewayRulePatch, JSON, IO[bytes]],
+        body: Union[_models.InternetGatewayRulePatch, _types.InternetGatewayRulePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.InternetGatewayRule]:
         """API to update certain properties of the Internet Gateway Rule resource.
@@ -2279,10 +2318,10 @@ class InternetGatewayRulesOperations:
         :type resource_group_name: str
         :param internet_gateway_rule_name: Name of the Internet Gateway rule. Required.
         :type internet_gateway_rule_name: str
-        :param body: Internet Gateway Rule properties to update. Is one of the following types:
-         InternetGatewayRulePatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.InternetGatewayRulePatch or JSON or
-         IO[bytes]
+        :param body: Internet Gateway Rule properties to update. Is either a InternetGatewayRulePatch
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.InternetGatewayRulePatch or
+         ~azure.mgmt.managednetworkfabric.types.InternetGatewayRulePatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns InternetGatewayRule. The
          InternetGatewayRule is compatible with MutableMapping
         :rtype:
@@ -2656,7 +2695,7 @@ class InternetGatewayRulesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class InternetGatewaysOperations:
+class InternetGatewaysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2749,7 +2788,7 @@ class InternetGatewaysOperations:
         self,
         resource_group_name: str,
         internet_gateway_name: str,
-        body: Union[_models.InternetGateway, JSON, IO[bytes]],
+        body: Union[_models.InternetGateway, _types.InternetGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2856,7 +2895,7 @@ class InternetGatewaysOperations:
         self,
         resource_group_name: str,
         internet_gateway_name: str,
-        body: JSON,
+        body: _types.InternetGateway,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2869,7 +2908,7 @@ class InternetGatewaysOperations:
         :param internet_gateway_name: Name of the Internet Gateway. Required.
         :type internet_gateway_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.InternetGateway
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2914,7 +2953,7 @@ class InternetGatewaysOperations:
         self,
         resource_group_name: str,
         internet_gateway_name: str,
-        body: Union[_models.InternetGateway, JSON, IO[bytes]],
+        body: Union[_models.InternetGateway, _types.InternetGateway, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.InternetGateway]:
         """Creates a Network Fabric Service Internet Gateway resource instance.
@@ -2924,9 +2963,9 @@ class InternetGatewaysOperations:
         :type resource_group_name: str
         :param internet_gateway_name: Name of the Internet Gateway. Required.
         :type internet_gateway_name: str
-        :param body: Request payload. Is one of the following types: InternetGateway, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.InternetGateway or JSON or IO[bytes]
+        :param body: Request payload. Is either a InternetGateway type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.InternetGateway or
+         ~azure.mgmt.managednetworkfabric.types.InternetGateway or IO[bytes]
         :return: An instance of AsyncLROPoller that returns InternetGateway. The InternetGateway is
          compatible with MutableMapping
         :rtype:
@@ -2989,7 +3028,7 @@ class InternetGatewaysOperations:
         self,
         resource_group_name: str,
         internet_gateway_name: str,
-        body: Union[_models.InternetGatewayPatch, JSON, IO[bytes]],
+        body: Union[_models.InternetGatewayPatch, _types.InternetGatewayPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3094,7 +3133,7 @@ class InternetGatewaysOperations:
         self,
         resource_group_name: str,
         internet_gateway_name: str,
-        body: JSON,
+        body: _types.InternetGatewayPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3107,7 +3146,7 @@ class InternetGatewaysOperations:
         :param internet_gateway_name: Name of the Internet Gateway. Required.
         :type internet_gateway_name: str
         :param body: API to update certain properties of the InternetGateway resource.. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.InternetGatewayPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3152,7 +3191,7 @@ class InternetGatewaysOperations:
         self,
         resource_group_name: str,
         internet_gateway_name: str,
-        body: Union[_models.InternetGatewayPatch, JSON, IO[bytes]],
+        body: Union[_models.InternetGatewayPatch, _types.InternetGatewayPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.InternetGateway]:
         """Execute patch on Network Fabric Service Internet Gateway.
@@ -3162,9 +3201,10 @@ class InternetGatewaysOperations:
         :type resource_group_name: str
         :param internet_gateway_name: Name of the Internet Gateway. Required.
         :type internet_gateway_name: str
-        :param body: API to update certain properties of the InternetGateway resource.. Is one of the
-         following types: InternetGatewayPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.InternetGatewayPatch or JSON or IO[bytes]
+        :param body: API to update certain properties of the InternetGateway resource.. Is either a
+         InternetGatewayPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.InternetGatewayPatch or
+         ~azure.mgmt.managednetworkfabric.types.InternetGatewayPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns InternetGateway. The InternetGateway is
          compatible with MutableMapping
         :rtype:
@@ -3538,7 +3578,7 @@ class InternetGatewaysOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class IpCommunitiesOperations:
+class IpCommunitiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3631,7 +3671,7 @@ class IpCommunitiesOperations:
         self,
         resource_group_name: str,
         ip_community_name: str,
-        body: Union[_models.IpCommunity, JSON, IO[bytes]],
+        body: Union[_models.IpCommunity, _types.IpCommunity, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3737,7 +3777,7 @@ class IpCommunitiesOperations:
         self,
         resource_group_name: str,
         ip_community_name: str,
-        body: JSON,
+        body: _types.IpCommunity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3750,7 +3790,7 @@ class IpCommunitiesOperations:
         :param ip_community_name: Name of the IP Community. Required.
         :type ip_community_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.IpCommunity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3793,7 +3833,7 @@ class IpCommunitiesOperations:
         self,
         resource_group_name: str,
         ip_community_name: str,
-        body: Union[_models.IpCommunity, JSON, IO[bytes]],
+        body: Union[_models.IpCommunity, _types.IpCommunity, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IpCommunity]:
         """Implements an IP Community PUT method.
@@ -3803,9 +3843,9 @@ class IpCommunitiesOperations:
         :type resource_group_name: str
         :param ip_community_name: Name of the IP Community. Required.
         :type ip_community_name: str
-        :param body: Request payload. Is one of the following types: IpCommunity, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.IpCommunity or JSON or IO[bytes]
+        :param body: Request payload. Is either a IpCommunity type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.IpCommunity or
+         ~azure.mgmt.managednetworkfabric.types.IpCommunity or IO[bytes]
         :return: An instance of AsyncLROPoller that returns IpCommunity. The IpCommunity is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.IpCommunity]
@@ -3867,7 +3907,7 @@ class IpCommunitiesOperations:
         self,
         resource_group_name: str,
         ip_community_name: str,
-        body: Union[_models.IpCommunityPatch, JSON, IO[bytes]],
+        body: Union[_models.IpCommunityPatch, _types.IpCommunityPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3971,7 +4011,7 @@ class IpCommunitiesOperations:
         self,
         resource_group_name: str,
         ip_community_name: str,
-        body: JSON,
+        body: _types.IpCommunityPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3984,7 +4024,7 @@ class IpCommunitiesOperations:
         :param ip_community_name: Name of the IP Community. Required.
         :type ip_community_name: str
         :param body: IP Community properties to update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.IpCommunityPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4027,7 +4067,7 @@ class IpCommunitiesOperations:
         self,
         resource_group_name: str,
         ip_community_name: str,
-        body: Union[_models.IpCommunityPatch, JSON, IO[bytes]],
+        body: Union[_models.IpCommunityPatch, _types.IpCommunityPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IpCommunity]:
         """API to update certain properties of the IP Community resource.
@@ -4037,9 +4077,10 @@ class IpCommunitiesOperations:
         :type resource_group_name: str
         :param ip_community_name: Name of the IP Community. Required.
         :type ip_community_name: str
-        :param body: IP Community properties to update. Is one of the following types:
-         IpCommunityPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.IpCommunityPatch or JSON or IO[bytes]
+        :param body: IP Community properties to update. Is either a IpCommunityPatch type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.IpCommunityPatch or
+         ~azure.mgmt.managednetworkfabric.types.IpCommunityPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns IpCommunity. The IpCommunity is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.IpCommunity]
@@ -4410,7 +4451,7 @@ class IpCommunitiesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class IpExtendedCommunitiesOperations:
+class IpExtendedCommunitiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4505,7 +4546,7 @@ class IpExtendedCommunitiesOperations:
         self,
         resource_group_name: str,
         ip_extended_community_name: str,
-        body: Union[_models.IpExtendedCommunity, JSON, IO[bytes]],
+        body: Union[_models.IpExtendedCommunity, _types.IpExtendedCommunity, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4612,7 +4653,7 @@ class IpExtendedCommunitiesOperations:
         self,
         resource_group_name: str,
         ip_extended_community_name: str,
-        body: JSON,
+        body: _types.IpExtendedCommunity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4625,7 +4666,7 @@ class IpExtendedCommunitiesOperations:
         :param ip_extended_community_name: Name of the IP Extended Community. Required.
         :type ip_extended_community_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.IpExtendedCommunity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4670,7 +4711,7 @@ class IpExtendedCommunitiesOperations:
         self,
         resource_group_name: str,
         ip_extended_community_name: str,
-        body: Union[_models.IpExtendedCommunity, JSON, IO[bytes]],
+        body: Union[_models.IpExtendedCommunity, _types.IpExtendedCommunity, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IpExtendedCommunity]:
         """Implements IP Extended Community PUT method.
@@ -4680,9 +4721,10 @@ class IpExtendedCommunitiesOperations:
         :type resource_group_name: str
         :param ip_extended_community_name: Name of the IP Extended Community. Required.
         :type ip_extended_community_name: str
-        :param body: Request payload. Is one of the following types: IpExtendedCommunity, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.IpExtendedCommunity or JSON or IO[bytes]
+        :param body: Request payload. Is either a IpExtendedCommunity type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.IpExtendedCommunity or
+         ~azure.mgmt.managednetworkfabric.types.IpExtendedCommunity or IO[bytes]
         :return: An instance of AsyncLROPoller that returns IpExtendedCommunity. The
          IpExtendedCommunity is compatible with MutableMapping
         :rtype:
@@ -4745,7 +4787,7 @@ class IpExtendedCommunitiesOperations:
         self,
         resource_group_name: str,
         ip_extended_community_name: str,
-        body: Union[_models.IpExtendedCommunityPatch, JSON, IO[bytes]],
+        body: Union[_models.IpExtendedCommunityPatch, _types.IpExtendedCommunityPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4850,7 +4892,7 @@ class IpExtendedCommunitiesOperations:
         self,
         resource_group_name: str,
         ip_extended_community_name: str,
-        body: JSON,
+        body: _types.IpExtendedCommunityPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4863,7 +4905,7 @@ class IpExtendedCommunitiesOperations:
         :param ip_extended_community_name: Name of the IP Extended Community. Required.
         :type ip_extended_community_name: str
         :param body: IP Extended Community properties to update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.IpExtendedCommunityPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4908,7 +4950,7 @@ class IpExtendedCommunitiesOperations:
         self,
         resource_group_name: str,
         ip_extended_community_name: str,
-        body: Union[_models.IpExtendedCommunityPatch, JSON, IO[bytes]],
+        body: Union[_models.IpExtendedCommunityPatch, _types.IpExtendedCommunityPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IpExtendedCommunity]:
         """API to update certain properties of the IP Extended Community resource.
@@ -4918,10 +4960,10 @@ class IpExtendedCommunitiesOperations:
         :type resource_group_name: str
         :param ip_extended_community_name: Name of the IP Extended Community. Required.
         :type ip_extended_community_name: str
-        :param body: IP Extended Community properties to update. Is one of the following types:
-         IpExtendedCommunityPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityPatch or JSON or
-         IO[bytes]
+        :param body: IP Extended Community properties to update. Is either a IpExtendedCommunityPatch
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.IpExtendedCommunityPatch or
+         ~azure.mgmt.managednetworkfabric.types.IpExtendedCommunityPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns IpExtendedCommunity. The
          IpExtendedCommunity is compatible with MutableMapping
         :rtype:
@@ -5295,7 +5337,7 @@ class IpExtendedCommunitiesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class IpPrefixesOperations:
+class IpPrefixesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5388,7 +5430,7 @@ class IpPrefixesOperations:
         self,
         resource_group_name: str,
         ip_prefix_name: str,
-        body: Union[_models.IpPrefix, JSON, IO[bytes]],
+        body: Union[_models.IpPrefix, _types.IpPrefix, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5494,7 +5536,7 @@ class IpPrefixesOperations:
         self,
         resource_group_name: str,
         ip_prefix_name: str,
-        body: JSON,
+        body: _types.IpPrefix,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5507,7 +5549,7 @@ class IpPrefixesOperations:
         :param ip_prefix_name: Name of the IP Prefix. Required.
         :type ip_prefix_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.IpPrefix
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5550,7 +5592,7 @@ class IpPrefixesOperations:
         self,
         resource_group_name: str,
         ip_prefix_name: str,
-        body: Union[_models.IpPrefix, JSON, IO[bytes]],
+        body: Union[_models.IpPrefix, _types.IpPrefix, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IpPrefix]:
         """Implements IP Prefix PUT method.
@@ -5560,9 +5602,9 @@ class IpPrefixesOperations:
         :type resource_group_name: str
         :param ip_prefix_name: Name of the IP Prefix. Required.
         :type ip_prefix_name: str
-        :param body: Request payload. Is one of the following types: IpPrefix, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.IpPrefix or JSON or IO[bytes]
+        :param body: Request payload. Is either a IpPrefix type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.IpPrefix or
+         ~azure.mgmt.managednetworkfabric.types.IpPrefix or IO[bytes]
         :return: An instance of AsyncLROPoller that returns IpPrefix. The IpPrefix is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.IpPrefix]
@@ -5624,7 +5666,7 @@ class IpPrefixesOperations:
         self,
         resource_group_name: str,
         ip_prefix_name: str,
-        body: Union[_models.IpPrefixPatch, JSON, IO[bytes]],
+        body: Union[_models.IpPrefixPatch, _types.IpPrefixPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5728,7 +5770,7 @@ class IpPrefixesOperations:
         self,
         resource_group_name: str,
         ip_prefix_name: str,
-        body: JSON,
+        body: _types.IpPrefixPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5741,7 +5783,7 @@ class IpPrefixesOperations:
         :param ip_prefix_name: Name of the IP Prefix. Required.
         :type ip_prefix_name: str
         :param body: IP Prefix properties to update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.IpPrefixPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5784,7 +5826,7 @@ class IpPrefixesOperations:
         self,
         resource_group_name: str,
         ip_prefix_name: str,
-        body: Union[_models.IpPrefixPatch, JSON, IO[bytes]],
+        body: Union[_models.IpPrefixPatch, _types.IpPrefixPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.IpPrefix]:
         """API to update certain properties of the IP Prefix resource.
@@ -5794,9 +5836,10 @@ class IpPrefixesOperations:
         :type resource_group_name: str
         :param ip_prefix_name: Name of the IP Prefix. Required.
         :type ip_prefix_name: str
-        :param body: IP Prefix properties to update. Is one of the following types: IpPrefixPatch,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.IpPrefixPatch or JSON or IO[bytes]
+        :param body: IP Prefix properties to update. Is either a IpPrefixPatch type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.IpPrefixPatch or
+         ~azure.mgmt.managednetworkfabric.types.IpPrefixPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns IpPrefix. The IpPrefix is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.IpPrefix]
@@ -6165,7 +6208,7 @@ class IpPrefixesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class L2IsolationDomainsOperations:
+class L2IsolationDomainsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6260,7 +6303,7 @@ class L2IsolationDomainsOperations:
         self,
         resource_group_name: str,
         l2_isolation_domain_name: str,
-        body: Union[_models.L2IsolationDomain, JSON, IO[bytes]],
+        body: Union[_models.L2IsolationDomain, _types.L2IsolationDomain, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6368,7 +6411,7 @@ class L2IsolationDomainsOperations:
         self,
         resource_group_name: str,
         l2_isolation_domain_name: str,
-        body: JSON,
+        body: _types.L2IsolationDomain,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6382,7 +6425,7 @@ class L2IsolationDomainsOperations:
         :param l2_isolation_domain_name: Name of the L2 Isolation Domain. Required.
         :type l2_isolation_domain_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.L2IsolationDomain
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6428,7 +6471,7 @@ class L2IsolationDomainsOperations:
         self,
         resource_group_name: str,
         l2_isolation_domain_name: str,
-        body: Union[_models.L2IsolationDomain, JSON, IO[bytes]],
+        body: Union[_models.L2IsolationDomain, _types.L2IsolationDomain, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.L2IsolationDomain]:
         """Creates layer 2 network connectivity between compute nodes within a rack and across racks.The
@@ -6439,9 +6482,9 @@ class L2IsolationDomainsOperations:
         :type resource_group_name: str
         :param l2_isolation_domain_name: Name of the L2 Isolation Domain. Required.
         :type l2_isolation_domain_name: str
-        :param body: Request payload. Is one of the following types: L2IsolationDomain, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.L2IsolationDomain or JSON or IO[bytes]
+        :param body: Request payload. Is either a L2IsolationDomain type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.L2IsolationDomain or
+         ~azure.mgmt.managednetworkfabric.types.L2IsolationDomain or IO[bytes]
         :return: An instance of AsyncLROPoller that returns L2IsolationDomain. The L2IsolationDomain is
          compatible with MutableMapping
         :rtype:
@@ -6504,7 +6547,7 @@ class L2IsolationDomainsOperations:
         self,
         resource_group_name: str,
         l2_isolation_domain_name: str,
-        body: Union[_models.L2IsolationDomainPatch, JSON, IO[bytes]],
+        body: Union[_models.L2IsolationDomainPatch, _types.L2IsolationDomainPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6609,7 +6652,7 @@ class L2IsolationDomainsOperations:
         self,
         resource_group_name: str,
         l2_isolation_domain_name: str,
-        body: JSON,
+        body: _types.L2IsolationDomainPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6622,7 +6665,7 @@ class L2IsolationDomainsOperations:
         :param l2_isolation_domain_name: Name of the L2 Isolation Domain. Required.
         :type l2_isolation_domain_name: str
         :param body: API to update certain properties of the L2 Isolation Domain resource.. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.L2IsolationDomainPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6667,7 +6710,7 @@ class L2IsolationDomainsOperations:
         self,
         resource_group_name: str,
         l2_isolation_domain_name: str,
-        body: Union[_models.L2IsolationDomainPatch, JSON, IO[bytes]],
+        body: Union[_models.L2IsolationDomainPatch, _types.L2IsolationDomainPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.L2IsolationDomain]:
         """API to update certain properties of the L2 Isolation Domain resource.
@@ -6677,9 +6720,10 @@ class L2IsolationDomainsOperations:
         :type resource_group_name: str
         :param l2_isolation_domain_name: Name of the L2 Isolation Domain. Required.
         :type l2_isolation_domain_name: str
-        :param body: API to update certain properties of the L2 Isolation Domain resource.. Is one of
-         the following types: L2IsolationDomainPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.L2IsolationDomainPatch or JSON or IO[bytes]
+        :param body: API to update certain properties of the L2 Isolation Domain resource.. Is either a
+         L2IsolationDomainPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.L2IsolationDomainPatch or
+         ~azure.mgmt.managednetworkfabric.types.L2IsolationDomainPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns L2IsolationDomain. The L2IsolationDomain is
          compatible with MutableMapping
         :rtype:
@@ -7064,13 +7108,13 @@ class L2IsolationDomainsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_administrative_state_initial(
         self,
         resource_group_name: str,
         l2_isolation_domain_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7175,7 +7219,7 @@ class L2IsolationDomainsOperations:
         self,
         resource_group_name: str,
         l2_isolation_domain_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7188,7 +7232,7 @@ class L2IsolationDomainsOperations:
         :param l2_isolation_domain_name: Name of the L2 Isolation Domain. Required.
         :type l2_isolation_domain_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7241,13 +7285,13 @@ class L2IsolationDomainsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_administrative_state(
         self,
         resource_group_name: str,
         l2_isolation_domain_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.UpdateAdministrativeStateResponse]:
         """Enables isolation domain across the fabric or on specified racks.
@@ -7257,10 +7301,10 @@ class L2IsolationDomainsOperations:
         :type resource_group_name: str
         :param l2_isolation_domain_name: Name of the L2 Isolation Domain. Required.
         :type l2_isolation_domain_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns UpdateAdministrativeStateResponse. The
          UpdateAdministrativeStateResponse is compatible with MutableMapping
         :rtype:
@@ -7319,6 +7363,19 @@ class L2IsolationDomainsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "l2_isolation_domain_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
     async def _validate_configuration_initial(
         self, resource_group_name: str, l2_isolation_domain_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -7381,9 +7438,22 @@ class L2IsolationDomainsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "l2_isolation_domain_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
     async def begin_validate_configuration(
         self, resource_group_name: str, l2_isolation_domain_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[_models.ValidateConfigurationResponse]:
+    ) -> AsyncLROPoller[_models.ValidateConfigurationResponseV2]:
         """Validates the configuration of the resources.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -7391,16 +7461,16 @@ class L2IsolationDomainsOperations:
         :type resource_group_name: str
         :param l2_isolation_domain_name: Name of the L2 Isolation Domain. Required.
         :type l2_isolation_domain_name: str
-        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponse. The
-         ValidateConfigurationResponse is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponseV2. The
+         ValidateConfigurationResponseV2 is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponseV2]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ValidateConfigurationResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ValidateConfigurationResponseV2] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -7418,7 +7488,7 @@ class L2IsolationDomainsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = _deserialize(_models.ValidateConfigurationResponse, response.json())
+            deserialized = _deserialize(_models.ValidateConfigurationResponseV2, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -7436,13 +7506,13 @@ class L2IsolationDomainsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.ValidateConfigurationResponse].from_continuation_token(
+            return AsyncLROPoller[_models.ValidateConfigurationResponseV2].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.ValidateConfigurationResponse](
+        return AsyncLROPoller[_models.ValidateConfigurationResponseV2](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -7574,7 +7644,7 @@ class L2IsolationDomainsOperations:
         )
 
 
-class L3IsolationDomainsOperations:
+class L3IsolationDomainsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7669,7 +7739,7 @@ class L3IsolationDomainsOperations:
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
-        body: Union[_models.L3IsolationDomain, JSON, IO[bytes]],
+        body: Union[_models.L3IsolationDomain, _types.L3IsolationDomain, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7778,7 +7848,7 @@ class L3IsolationDomainsOperations:
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
-        body: JSON,
+        body: _types.L3IsolationDomain,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7793,7 +7863,7 @@ class L3IsolationDomainsOperations:
         :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.L3IsolationDomain
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7840,7 +7910,7 @@ class L3IsolationDomainsOperations:
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
-        body: Union[_models.L3IsolationDomain, JSON, IO[bytes]],
+        body: Union[_models.L3IsolationDomain, _types.L3IsolationDomain, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.L3IsolationDomain]:
         """Create isolation domain resources for layer 3 connectivity between compute nodes and for
@@ -7852,9 +7922,9 @@ class L3IsolationDomainsOperations:
         :type resource_group_name: str
         :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param body: Request payload. Is one of the following types: L3IsolationDomain, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.L3IsolationDomain or JSON or IO[bytes]
+        :param body: Request payload. Is either a L3IsolationDomain type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.L3IsolationDomain or
+         ~azure.mgmt.managednetworkfabric.types.L3IsolationDomain or IO[bytes]
         :return: An instance of AsyncLROPoller that returns L3IsolationDomain. The L3IsolationDomain is
          compatible with MutableMapping
         :rtype:
@@ -7917,7 +7987,7 @@ class L3IsolationDomainsOperations:
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
-        body: Union[_models.L3IsolationDomainPatch, JSON, IO[bytes]],
+        body: Union[_models.L3IsolationDomainPatch, _types.L3IsolationDomainPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8022,7 +8092,7 @@ class L3IsolationDomainsOperations:
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
-        body: JSON,
+        body: _types.L3IsolationDomainPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8035,7 +8105,7 @@ class L3IsolationDomainsOperations:
         :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
         :param body: API to update certain properties of the L3 Isolation Domain resource. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.L3IsolationDomainPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8080,7 +8150,7 @@ class L3IsolationDomainsOperations:
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
-        body: Union[_models.L3IsolationDomainPatch, JSON, IO[bytes]],
+        body: Union[_models.L3IsolationDomainPatch, _types.L3IsolationDomainPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.L3IsolationDomain]:
         """API to update certain properties of the L3 Isolation Domain resource.
@@ -8090,9 +8160,10 @@ class L3IsolationDomainsOperations:
         :type resource_group_name: str
         :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param body: API to update certain properties of the L3 Isolation Domain resource. Is one of
-         the following types: L3IsolationDomainPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.L3IsolationDomainPatch or JSON or IO[bytes]
+        :param body: API to update certain properties of the L3 Isolation Domain resource. Is either a
+         L3IsolationDomainPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.L3IsolationDomainPatch or
+         ~azure.mgmt.managednetworkfabric.types.L3IsolationDomainPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns L3IsolationDomain. The L3IsolationDomain is
          compatible with MutableMapping
         :rtype:
@@ -8477,13 +8548,13 @@ class L3IsolationDomainsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_administrative_state_initial(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8588,7 +8659,7 @@ class L3IsolationDomainsOperations:
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8601,7 +8672,7 @@ class L3IsolationDomainsOperations:
         :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8654,13 +8725,13 @@ class L3IsolationDomainsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_administrative_state(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.UpdateAdministrativeStateResponse]:
         """Updates the administrative state of the L3 Isolation Domain resource.
@@ -8670,10 +8741,10 @@ class L3IsolationDomainsOperations:
         :type resource_group_name: str
         :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns UpdateAdministrativeStateResponse. The
          UpdateAdministrativeStateResponse is compatible with MutableMapping
         :rtype:
@@ -8732,6 +8803,19 @@ class L3IsolationDomainsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "l3_isolation_domain_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
     async def _validate_configuration_initial(
         self, resource_group_name: str, l3_isolation_domain_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -8794,9 +8878,22 @@ class L3IsolationDomainsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "l3_isolation_domain_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
     async def begin_validate_configuration(
         self, resource_group_name: str, l3_isolation_domain_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[_models.ValidateConfigurationResponse]:
+    ) -> AsyncLROPoller[_models.ValidateConfigurationResponseV2]:
         """Validates the configuration of the resources.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -8804,16 +8901,16 @@ class L3IsolationDomainsOperations:
         :type resource_group_name: str
         :param l3_isolation_domain_name: Name of the L3 Isolation Domain. Required.
         :type l3_isolation_domain_name: str
-        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponse. The
-         ValidateConfigurationResponse is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponseV2. The
+         ValidateConfigurationResponseV2 is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponseV2]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ValidateConfigurationResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ValidateConfigurationResponseV2] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -8831,7 +8928,7 @@ class L3IsolationDomainsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = _deserialize(_models.ValidateConfigurationResponse, response.json())
+            deserialized = _deserialize(_models.ValidateConfigurationResponseV2, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -8849,13 +8946,13 @@ class L3IsolationDomainsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.ValidateConfigurationResponse].from_continuation_token(
+            return AsyncLROPoller[_models.ValidateConfigurationResponseV2].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.ValidateConfigurationResponse](
+        return AsyncLROPoller[_models.ValidateConfigurationResponseV2](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -8987,7 +9084,7 @@ class L3IsolationDomainsOperations:
         )
 
 
-class InternalNetworksOperations:
+class InternalNetworksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9086,7 +9183,7 @@ class InternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: Union[_models.InternalNetwork, JSON, IO[bytes]],
+        body: Union[_models.InternalNetwork, _types.InternalNetwork, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9198,7 +9295,7 @@ class InternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: JSON,
+        body: _types.InternalNetwork,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9213,7 +9310,7 @@ class InternalNetworksOperations:
         :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.InternalNetwork
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9262,7 +9359,7 @@ class InternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: Union[_models.InternalNetwork, JSON, IO[bytes]],
+        body: Union[_models.InternalNetwork, _types.InternalNetwork, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.InternalNetwork]:
         """Creates InternalNetwork PUT method.
@@ -9274,9 +9371,9 @@ class InternalNetworksOperations:
         :type l3_isolation_domain_name: str
         :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
-        :param body: Request payload. Is one of the following types: InternalNetwork, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.InternalNetwork or JSON or IO[bytes]
+        :param body: Request payload. Is either a InternalNetwork type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.InternalNetwork or
+         ~azure.mgmt.managednetworkfabric.types.InternalNetwork or IO[bytes]
         :return: An instance of AsyncLROPoller that returns InternalNetwork. The InternalNetwork is
          compatible with MutableMapping
         :rtype:
@@ -9341,7 +9438,7 @@ class InternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: Union[_models.InternalNetworkPatch, JSON, IO[bytes]],
+        body: Union[_models.InternalNetworkPatch, _types.InternalNetworkPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9451,7 +9548,7 @@ class InternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: JSON,
+        body: _types.InternalNetworkPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9466,7 +9563,7 @@ class InternalNetworksOperations:
         :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: InternalNetwork properties to update. Only annotations are supported. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.InternalNetworkPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9515,7 +9612,7 @@ class InternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: Union[_models.InternalNetworkPatch, JSON, IO[bytes]],
+        body: Union[_models.InternalNetworkPatch, _types.InternalNetworkPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.InternalNetwork]:
         """Updates a InternalNetworks.
@@ -9527,9 +9624,10 @@ class InternalNetworksOperations:
         :type l3_isolation_domain_name: str
         :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
-        :param body: InternalNetwork properties to update. Only annotations are supported. Is one of
-         the following types: InternalNetworkPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.InternalNetworkPatch or JSON or IO[bytes]
+        :param body: InternalNetwork properties to update. Only annotations are supported. Is either a
+         InternalNetworkPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.InternalNetworkPatch or
+         ~azure.mgmt.managednetworkfabric.types.InternalNetworkPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns InternalNetwork. The InternalNetwork is
          compatible with MutableMapping
         :rtype:
@@ -9829,14 +9927,14 @@ class InternalNetworksOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_administrative_state_initial(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9946,7 +10044,7 @@ class InternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9961,7 +10059,7 @@ class InternalNetworksOperations:
         :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10018,14 +10116,14 @@ class InternalNetworksOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_administrative_state(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.UpdateAdministrativeStateResponse]:
         """Executes update operation to enable or disable administrative State for InternalNetwork.
@@ -10037,10 +10135,10 @@ class InternalNetworksOperations:
         :type l3_isolation_domain_name: str
         :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns UpdateAdministrativeStateResponse. The
          UpdateAdministrativeStateResponse is compatible with MutableMapping
         :rtype:
@@ -10113,14 +10211,18 @@ class InternalNetworksOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_bgp_administrative_state_initial(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: Union[_models.InternalNetworkUpdateBgpAdministrativeStateRequest, JSON, IO[bytes]],
+        body: Union[
+            _models.InternalNetworkUpdateBgpAdministrativeStateRequest,
+            _types.InternalNetworkUpdateBgpAdministrativeStateRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10232,7 +10334,7 @@ class InternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: JSON,
+        body: _types.InternalNetworkUpdateBgpAdministrativeStateRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10247,7 +10349,8 @@ class InternalNetworksOperations:
         :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body:
+         ~azure.mgmt.managednetworkfabric.types.InternalNetworkUpdateBgpAdministrativeStateRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10306,14 +10409,18 @@ class InternalNetworksOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_bgp_administrative_state(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: Union[_models.InternalNetworkUpdateBgpAdministrativeStateRequest, JSON, IO[bytes]],
+        body: Union[
+            _models.InternalNetworkUpdateBgpAdministrativeStateRequest,
+            _types.InternalNetworkUpdateBgpAdministrativeStateRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.InternalNetworkUpdateBgpAdministrativeStateResponse]:
         """Update BGP state for internalNetwork. Allowed only on edge devices.
@@ -10325,11 +10432,12 @@ class InternalNetworksOperations:
         :type l3_isolation_domain_name: str
         :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
-        :param body: Request payload. Is one of the following types:
-         InternalNetworkUpdateBgpAdministrativeStateRequest, JSON, IO[bytes] Required.
+        :param body: Request payload. Is either a InternalNetworkUpdateBgpAdministrativeStateRequest
+         type or a IO[bytes] type. Required.
         :type body:
          ~azure.mgmt.managednetworkfabric.models.InternalNetworkUpdateBgpAdministrativeStateRequest or
-         JSON or IO[bytes]
+         ~azure.mgmt.managednetworkfabric.types.InternalNetworkUpdateBgpAdministrativeStateRequest or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns
          InternalNetworkUpdateBgpAdministrativeStateResponse. The
          InternalNetworkUpdateBgpAdministrativeStateResponse is compatible with MutableMapping
@@ -10403,14 +10511,14 @@ class InternalNetworksOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_static_route_bfd_administrative_state_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10520,7 +10628,7 @@ class InternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10535,7 +10643,7 @@ class InternalNetworksOperations:
         :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10592,14 +10700,14 @@ class InternalNetworksOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_static_route_bfd_administrative_state(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.UpdateAdministrativeStateResponse]:
         """Update Static Route BFD administrative state for internalNetwork.
@@ -10611,10 +10719,10 @@ class InternalNetworksOperations:
         :type l3_isolation_domain_name: str
         :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns UpdateAdministrativeStateResponse. The
          UpdateAdministrativeStateResponse is compatible with MutableMapping
         :rtype:
@@ -10687,14 +10795,18 @@ class InternalNetworksOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_bfd_administrative_state_initial(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: Union[_models.InternalNetworkUpdateBfdAdministrativeStateRequest, JSON, IO[bytes]],
+        body: Union[
+            _models.InternalNetworkUpdateBfdAdministrativeStateRequest,
+            _types.InternalNetworkUpdateBfdAdministrativeStateRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10806,7 +10918,7 @@ class InternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: JSON,
+        body: _types.InternalNetworkUpdateBfdAdministrativeStateRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10821,7 +10933,8 @@ class InternalNetworksOperations:
         :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body:
+         ~azure.mgmt.managednetworkfabric.types.InternalNetworkUpdateBfdAdministrativeStateRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10880,14 +10993,18 @@ class InternalNetworksOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_bfd_administrative_state(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         internal_network_name: str,
-        body: Union[_models.InternalNetworkUpdateBfdAdministrativeStateRequest, JSON, IO[bytes]],
+        body: Union[
+            _models.InternalNetworkUpdateBfdAdministrativeStateRequest,
+            _types.InternalNetworkUpdateBfdAdministrativeStateRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.InternalNetworkUpdateBfdAdministrativeStateResponse]:
         """BFD administrative state for either static or bgp for internalNetwork.
@@ -10899,11 +11016,12 @@ class InternalNetworksOperations:
         :type l3_isolation_domain_name: str
         :param internal_network_name: Name of the Internal Network. Required.
         :type internal_network_name: str
-        :param body: Request payload. Is one of the following types:
-         InternalNetworkUpdateBfdAdministrativeStateRequest, JSON, IO[bytes] Required.
+        :param body: Request payload. Is either a InternalNetworkUpdateBfdAdministrativeStateRequest
+         type or a IO[bytes] type. Required.
         :type body:
          ~azure.mgmt.managednetworkfabric.models.InternalNetworkUpdateBfdAdministrativeStateRequest or
-         JSON or IO[bytes]
+         ~azure.mgmt.managednetworkfabric.types.InternalNetworkUpdateBfdAdministrativeStateRequest or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns
          InternalNetworkUpdateBfdAdministrativeStateResponse. The
          InternalNetworkUpdateBfdAdministrativeStateResponse is compatible with MutableMapping
@@ -10965,7 +11083,7 @@ class InternalNetworksOperations:
         )
 
 
-class ExternalNetworksOperations:
+class ExternalNetworksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11064,7 +11182,7 @@ class ExternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         external_network_name: str,
-        body: Union[_models.ExternalNetwork, JSON, IO[bytes]],
+        body: Union[_models.ExternalNetwork, _types.ExternalNetwork, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -11176,7 +11294,7 @@ class ExternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         external_network_name: str,
-        body: JSON,
+        body: _types.ExternalNetwork,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11191,7 +11309,7 @@ class ExternalNetworksOperations:
         :param external_network_name: Name of the External Network. Required.
         :type external_network_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.ExternalNetwork
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11240,7 +11358,7 @@ class ExternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         external_network_name: str,
-        body: Union[_models.ExternalNetwork, JSON, IO[bytes]],
+        body: Union[_models.ExternalNetwork, _types.ExternalNetwork, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExternalNetwork]:
         """Creates ExternalNetwork PUT method.
@@ -11252,9 +11370,9 @@ class ExternalNetworksOperations:
         :type l3_isolation_domain_name: str
         :param external_network_name: Name of the External Network. Required.
         :type external_network_name: str
-        :param body: Request payload. Is one of the following types: ExternalNetwork, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.ExternalNetwork or JSON or IO[bytes]
+        :param body: Request payload. Is either a ExternalNetwork type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.ExternalNetwork or
+         ~azure.mgmt.managednetworkfabric.types.ExternalNetwork or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExternalNetwork. The ExternalNetwork is
          compatible with MutableMapping
         :rtype:
@@ -11319,7 +11437,7 @@ class ExternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         external_network_name: str,
-        body: Union[_models.ExternalNetworkPatch, JSON, IO[bytes]],
+        body: Union[_models.ExternalNetworkPatch, _types.ExternalNetworkPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -11429,7 +11547,7 @@ class ExternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         external_network_name: str,
-        body: JSON,
+        body: _types.ExternalNetworkPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11444,7 +11562,7 @@ class ExternalNetworksOperations:
         :param external_network_name: Name of the External Network. Required.
         :type external_network_name: str
         :param body: ExternalNetwork properties to update. Only annotations are supported. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.ExternalNetworkPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11493,7 +11611,7 @@ class ExternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         external_network_name: str,
-        body: Union[_models.ExternalNetworkPatch, JSON, IO[bytes]],
+        body: Union[_models.ExternalNetworkPatch, _types.ExternalNetworkPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExternalNetwork]:
         """API to update certain properties of the ExternalNetworks resource.
@@ -11505,9 +11623,10 @@ class ExternalNetworksOperations:
         :type l3_isolation_domain_name: str
         :param external_network_name: Name of the External Network. Required.
         :type external_network_name: str
-        :param body: ExternalNetwork properties to update. Only annotations are supported. Is one of
-         the following types: ExternalNetworkPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.ExternalNetworkPatch or JSON or IO[bytes]
+        :param body: ExternalNetwork properties to update. Only annotations are supported. Is either a
+         ExternalNetworkPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.ExternalNetworkPatch or
+         ~azure.mgmt.managednetworkfabric.types.ExternalNetworkPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ExternalNetwork. The ExternalNetwork is
          compatible with MutableMapping
         :rtype:
@@ -11807,14 +11926,14 @@ class ExternalNetworksOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_administrative_state_initial(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         external_network_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -11924,7 +12043,7 @@ class ExternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         external_network_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11939,7 +12058,7 @@ class ExternalNetworksOperations:
         :param external_network_name: Name of the External Network. Required.
         :type external_network_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11996,14 +12115,14 @@ class ExternalNetworksOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_administrative_state(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         external_network_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.UpdateAdministrativeStateResponse]:
         """Executes update operation to enable or disable administrative State for externalNetwork.
@@ -12015,10 +12134,10 @@ class ExternalNetworksOperations:
         :type l3_isolation_domain_name: str
         :param external_network_name: Name of the External Network. Required.
         :type external_network_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns UpdateAdministrativeStateResponse. The
          UpdateAdministrativeStateResponse is compatible with MutableMapping
         :rtype:
@@ -12091,14 +12210,14 @@ class ExternalNetworksOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_static_route_bfd_administrative_state_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         external_network_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12208,7 +12327,7 @@ class ExternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         external_network_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12223,7 +12342,7 @@ class ExternalNetworksOperations:
         :param external_network_name: Name of the External Network. Required.
         :type external_network_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12280,14 +12399,14 @@ class ExternalNetworksOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_static_route_bfd_administrative_state(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         external_network_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.UpdateAdministrativeStateResponse]:
         """Update Static Route BFD for external Network.
@@ -12299,10 +12418,10 @@ class ExternalNetworksOperations:
         :type l3_isolation_domain_name: str
         :param external_network_name: Name of the External Network. Required.
         :type external_network_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns UpdateAdministrativeStateResponse. The
          UpdateAdministrativeStateResponse is compatible with MutableMapping
         :rtype:
@@ -12375,14 +12494,18 @@ class ExternalNetworksOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_bfd_administrative_state_initial(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         external_network_name: str,
-        body: Union[_models.ExternalNetworkUpdateBfdAdministrativeStateRequest, JSON, IO[bytes]],
+        body: Union[
+            _models.ExternalNetworkUpdateBfdAdministrativeStateRequest,
+            _types.ExternalNetworkUpdateBfdAdministrativeStateRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12494,7 +12617,7 @@ class ExternalNetworksOperations:
         resource_group_name: str,
         l3_isolation_domain_name: str,
         external_network_name: str,
-        body: JSON,
+        body: _types.ExternalNetworkUpdateBfdAdministrativeStateRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12509,7 +12632,8 @@ class ExternalNetworksOperations:
         :param external_network_name: Name of the External Network. Required.
         :type external_network_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body:
+         ~azure.mgmt.managednetworkfabric.types.ExternalNetworkUpdateBfdAdministrativeStateRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12568,14 +12692,18 @@ class ExternalNetworksOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_bfd_administrative_state(
         self,
         resource_group_name: str,
         l3_isolation_domain_name: str,
         external_network_name: str,
-        body: Union[_models.ExternalNetworkUpdateBfdAdministrativeStateRequest, JSON, IO[bytes]],
+        body: Union[
+            _models.ExternalNetworkUpdateBfdAdministrativeStateRequest,
+            _types.ExternalNetworkUpdateBfdAdministrativeStateRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ExternalNetworkUpdateBfdAdministrativeStateResponse]:
         """BFD administrative state for either static or bgp for internalNetwork.
@@ -12587,11 +12715,12 @@ class ExternalNetworksOperations:
         :type l3_isolation_domain_name: str
         :param external_network_name: Name of the External Network. Required.
         :type external_network_name: str
-        :param body: Request payload. Is one of the following types:
-         ExternalNetworkUpdateBfdAdministrativeStateRequest, JSON, IO[bytes] Required.
+        :param body: Request payload. Is either a ExternalNetworkUpdateBfdAdministrativeStateRequest
+         type or a IO[bytes] type. Required.
         :type body:
          ~azure.mgmt.managednetworkfabric.models.ExternalNetworkUpdateBfdAdministrativeStateRequest or
-         JSON or IO[bytes]
+         ~azure.mgmt.managednetworkfabric.types.ExternalNetworkUpdateBfdAdministrativeStateRequest or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns
          ExternalNetworkUpdateBfdAdministrativeStateResponse. The
          ExternalNetworkUpdateBfdAdministrativeStateResponse is compatible with MutableMapping
@@ -12653,7 +12782,7 @@ class ExternalNetworksOperations:
         )
 
 
-class NeighborGroupsOperations:
+class NeighborGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12746,7 +12875,7 @@ class NeighborGroupsOperations:
         self,
         resource_group_name: str,
         neighbor_group_name: str,
-        body: Union[_models.NeighborGroup, JSON, IO[bytes]],
+        body: Union[_models.NeighborGroup, _types.NeighborGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12853,7 +12982,7 @@ class NeighborGroupsOperations:
         self,
         resource_group_name: str,
         neighbor_group_name: str,
-        body: JSON,
+        body: _types.NeighborGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12866,7 +12995,7 @@ class NeighborGroupsOperations:
         :param neighbor_group_name: Name of the Neighbor Group. Required.
         :type neighbor_group_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NeighborGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12911,7 +13040,7 @@ class NeighborGroupsOperations:
         self,
         resource_group_name: str,
         neighbor_group_name: str,
-        body: Union[_models.NeighborGroup, JSON, IO[bytes]],
+        body: Union[_models.NeighborGroup, _types.NeighborGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NeighborGroup]:
         """Implements the Neighbor Group PUT method.
@@ -12921,9 +13050,9 @@ class NeighborGroupsOperations:
         :type resource_group_name: str
         :param neighbor_group_name: Name of the Neighbor Group. Required.
         :type neighbor_group_name: str
-        :param body: Request payload. Is one of the following types: NeighborGroup, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NeighborGroup or JSON or IO[bytes]
+        :param body: Request payload. Is either a NeighborGroup type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NeighborGroup or
+         ~azure.mgmt.managednetworkfabric.types.NeighborGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NeighborGroup. The NeighborGroup is
          compatible with MutableMapping
         :rtype:
@@ -12986,7 +13115,7 @@ class NeighborGroupsOperations:
         self,
         resource_group_name: str,
         neighbor_group_name: str,
-        body: Union[_models.NeighborGroupPatch, JSON, IO[bytes]],
+        body: Union[_models.NeighborGroupPatch, _types.NeighborGroupPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -13091,7 +13220,7 @@ class NeighborGroupsOperations:
         self,
         resource_group_name: str,
         neighbor_group_name: str,
-        body: JSON,
+        body: _types.NeighborGroupPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13104,7 +13233,7 @@ class NeighborGroupsOperations:
         :param neighbor_group_name: Name of the Neighbor Group. Required.
         :type neighbor_group_name: str
         :param body: Neighbor Group properties to update. Only annotations are supported. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NeighborGroupPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13149,7 +13278,7 @@ class NeighborGroupsOperations:
         self,
         resource_group_name: str,
         neighbor_group_name: str,
-        body: Union[_models.NeighborGroupPatch, JSON, IO[bytes]],
+        body: Union[_models.NeighborGroupPatch, _types.NeighborGroupPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NeighborGroup]:
         """Updates the Neighbor Group.
@@ -13159,9 +13288,10 @@ class NeighborGroupsOperations:
         :type resource_group_name: str
         :param neighbor_group_name: Name of the Neighbor Group. Required.
         :type neighbor_group_name: str
-        :param body: Neighbor Group properties to update. Only annotations are supported. Is one of the
-         following types: NeighborGroupPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NeighborGroupPatch or JSON or IO[bytes]
+        :param body: Neighbor Group properties to update. Only annotations are supported. Is either a
+         NeighborGroupPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NeighborGroupPatch or
+         ~azure.mgmt.managednetworkfabric.types.NeighborGroupPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NeighborGroup. The NeighborGroup is
          compatible with MutableMapping
         :rtype:
@@ -13539,7 +13669,7 @@ class NeighborGroupsOperations:
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "neighbor_group_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _resync_initial(
         self, resource_group_name: str, neighbor_group_name: str, **kwargs: Any
@@ -13608,7 +13738,7 @@ class NeighborGroupsOperations:
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "neighbor_group_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_resync(
         self, resource_group_name: str, neighbor_group_name: str, **kwargs: Any
@@ -13676,7 +13806,7 @@ class NeighborGroupsOperations:
         )
 
 
-class NetworkDeviceSkusOperations:
+class NetworkDeviceSkusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13856,7 +13986,7 @@ class NetworkDeviceSkusOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
+class NetworkDevicesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13949,7 +14079,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: Union[_models.NetworkDevice, JSON, IO[bytes]],
+        body: Union[_models.NetworkDevice, _types.NetworkDevice, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14056,7 +14186,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: JSON,
+        body: _types.NetworkDevice,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14069,7 +14199,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkDevice
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14114,7 +14244,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: Union[_models.NetworkDevice, JSON, IO[bytes]],
+        body: Union[_models.NetworkDevice, _types.NetworkDevice, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkDevice]:
         """Create a Network Device resource.
@@ -14124,9 +14254,9 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
-        :param body: Request payload. Is one of the following types: NetworkDevice, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkDevice or JSON or IO[bytes]
+        :param body: Request payload. Is either a NetworkDevice type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkDevice or
+         ~azure.mgmt.managednetworkfabric.types.NetworkDevice or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkDevice. The NetworkDevice is
          compatible with MutableMapping
         :rtype:
@@ -14189,7 +14319,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: Union[_models.NetworkDevicePatchParameters, JSON, IO[bytes]],
+        body: Union[_models.NetworkDevicePatchParameters, _types.NetworkDevicePatchParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14294,7 +14424,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: JSON,
+        body: _types.NetworkDevicePatchParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14307,7 +14437,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
         :param body: Network Device properties to update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkDevicePatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14352,7 +14482,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: Union[_models.NetworkDevicePatchParameters, JSON, IO[bytes]],
+        body: Union[_models.NetworkDevicePatchParameters, _types.NetworkDevicePatchParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkDevice]:
         """Update certain properties of the Network Device resource.
@@ -14362,10 +14492,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
-        :param body: Network Device properties to update. Is one of the following types:
-         NetworkDevicePatchParameters, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkDevicePatchParameters or JSON or
-         IO[bytes]
+        :param body: Network Device properties to update. Is either a NetworkDevicePatchParameters type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkDevicePatchParameters or
+         ~azure.mgmt.managednetworkfabric.types.NetworkDevicePatchParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkDevice. The NetworkDevice is
          compatible with MutableMapping
         :rtype:
@@ -14750,13 +14880,13 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _reboot_initial(
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: Union[_models.RebootProperties, JSON, IO[bytes]],
+        body: Union[_models.RebootProperties, _types.RebootProperties, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14861,7 +14991,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: JSON,
+        body: _types.RebootProperties,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14874,7 +15004,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.RebootProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14927,13 +15057,13 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_reboot(
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: Union[_models.RebootProperties, JSON, IO[bytes]],
+        body: Union[_models.RebootProperties, _types.RebootProperties, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
         """Reboot the Network Device.
@@ -14943,9 +15073,9 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
-        :param body: Request payload. Is one of the following types: RebootProperties, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.RebootProperties or JSON or IO[bytes]
+        :param body: Request payload. Is either a RebootProperties type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.RebootProperties or
+         ~azure.mgmt.managednetworkfabric.types.RebootProperties or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -15009,7 +15139,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_device_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _refresh_configuration_initial(
         self, resource_group_name: str, network_device_name: str, **kwargs: Any
@@ -15078,7 +15208,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_device_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_refresh_configuration(
         self, resource_group_name: str, network_device_name: str, **kwargs: Any
@@ -15157,13 +15287,13 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_administrative_state_initial(
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: Union[_models.UpdateDeviceAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateDeviceAdministrativeState, _types.UpdateDeviceAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15269,7 +15399,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: JSON,
+        body: _types.UpdateDeviceAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15282,7 +15412,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateDeviceAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15337,13 +15467,13 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_administrative_state(
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: Union[_models.UpdateDeviceAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateDeviceAdministrativeState, _types.UpdateDeviceAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkDeviceUpdateAdministrativeStateResponse]:
         """Updates the Administrative state of the Network Device.
@@ -15353,10 +15483,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
-        :param body: Request payload. Is one of the following types: UpdateDeviceAdministrativeState,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateDeviceAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateDeviceAdministrativeState type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateDeviceAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateDeviceAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns
          NetworkDeviceUpdateAdministrativeStateResponse. The
          NetworkDeviceUpdateAdministrativeStateResponse is compatible with MutableMapping
@@ -15428,13 +15558,13 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _upgrade_initial(
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: Union[_models.NetworkDeviceUpgradeRequest, JSON, IO[bytes]],
+        body: Union[_models.NetworkDeviceUpgradeRequest, _types.NetworkDeviceUpgradeRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15539,7 +15669,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: JSON,
+        body: _types.NetworkDeviceUpgradeRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15552,7 +15682,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkDeviceUpgradeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15605,13 +15735,13 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_upgrade(
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: Union[_models.NetworkDeviceUpgradeRequest, JSON, IO[bytes]],
+        body: Union[_models.NetworkDeviceUpgradeRequest, _types.NetworkDeviceUpgradeRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkDeviceUpgradeResponse]:
         """Upgrades the version of the Network Device.
@@ -15621,10 +15751,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
-        :param body: Request payload. Is one of the following types: NetworkDeviceUpgradeRequest, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkDeviceUpgradeRequest or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a NetworkDeviceUpgradeRequest type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkDeviceUpgradeRequest or
+         ~azure.mgmt.managednetworkfabric.types.NetworkDeviceUpgradeRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkDeviceUpgradeResponse. The
          NetworkDeviceUpgradeResponse is compatible with MutableMapping
         :rtype:
@@ -15695,13 +15825,13 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2024-06-15-preview", "2025-07-15"],
+        api_versions_list=["2024-06-15-preview", "2025-07-15", "2026-01-15-preview"],
     )
     async def _run_ro_command_initial(
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: Union[_models.DeviceRoCommand, JSON, IO[bytes]],
+        body: Union[_models.DeviceRoCommand, _types.DeviceRoCommand, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15808,7 +15938,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: JSON,
+        body: _types.DeviceRoCommand,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15821,7 +15951,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
         :param body: Request the command. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.DeviceRoCommand
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15878,13 +16008,13 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2024-06-15-preview", "2025-07-15"],
+        api_versions_list=["2024-06-15-preview", "2025-07-15", "2026-01-15-preview"],
     )
     async def begin_run_ro_command(
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: Union[_models.DeviceRoCommand, JSON, IO[bytes]],
+        body: Union[_models.DeviceRoCommand, _types.DeviceRoCommand, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CommonPostActionResponseForDeviceROCommandsOperationStatusResult]:
         """Run the RO Command on the Network Device.
@@ -15894,9 +16024,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
-        :param body: Request the command. Is one of the following types: DeviceRoCommand, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.DeviceRoCommand or JSON or IO[bytes]
+        :param body: Request the command. Is either a DeviceRoCommand type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.DeviceRoCommand or
+         ~azure.mgmt.managednetworkfabric.types.DeviceRoCommand or IO[bytes]
         :return: An instance of AsyncLROPoller that returns
          CommonPostActionResponseForDeviceROCommandsOperationStatusResult. The
          CommonPostActionResponseForDeviceROCommandsOperationStatusResult is compatible with
@@ -15973,13 +16104,13 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _run_rw_command_initial(
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: Union[_models.DeviceRwCommand, JSON, IO[bytes]],
+        body: Union[_models.DeviceRwCommand, _types.DeviceRwCommand, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -16084,7 +16215,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: JSON,
+        body: _types.DeviceRwCommand,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16097,7 +16228,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
         :param body: Request the command. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.DeviceRwCommand
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16150,13 +16281,13 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_run_rw_command(
         self,
         resource_group_name: str,
         network_device_name: str,
-        body: Union[_models.DeviceRwCommand, JSON, IO[bytes]],
+        body: Union[_models.DeviceRwCommand, _types.DeviceRwCommand, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkDeviceRunRwCommandResponse]:
         """Run the RW Command on the Network Device.
@@ -16166,9 +16297,10 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_device_name: Name of the Network Device. Required.
         :type network_device_name: str
-        :param body: Request the command. Is one of the following types: DeviceRwCommand, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.DeviceRwCommand or JSON or IO[bytes]
+        :param body: Request the command. Is either a DeviceRwCommand type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.DeviceRwCommand or
+         ~azure.mgmt.managednetworkfabric.types.DeviceRwCommand or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkDeviceRunRwCommandResponse. The
          NetworkDeviceRunRwCommandResponse is compatible with MutableMapping
         :rtype:
@@ -16232,7 +16364,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_device_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _resync_passwords_initial(
         self, resource_group_name: str, network_device_name: str, **kwargs: Any
@@ -16301,7 +16433,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_device_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_resync_passwords(
         self, resource_group_name: str, network_device_name: str, **kwargs: Any
@@ -16376,7 +16508,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_device_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _resync_certificates_initial(
         self, resource_group_name: str, network_device_name: str, **kwargs: Any
@@ -16445,7 +16577,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_device_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_resync_certificates(
         self, resource_group_name: str, network_device_name: str, **kwargs: Any
@@ -16517,7 +16649,7 @@ class NetworkDevicesOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class NetworkInterfacesOperations:
+class NetworkInterfacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16616,7 +16748,7 @@ class NetworkInterfacesOperations:
         resource_group_name: str,
         network_device_name: str,
         network_interface_name: str,
-        body: Union[_models.NetworkInterface, JSON, IO[bytes]],
+        body: Union[_models.NetworkInterface, _types.NetworkInterface, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -16728,7 +16860,7 @@ class NetworkInterfacesOperations:
         resource_group_name: str,
         network_device_name: str,
         network_interface_name: str,
-        body: JSON,
+        body: _types.NetworkInterface,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16743,7 +16875,7 @@ class NetworkInterfacesOperations:
         :param network_interface_name: Name of the Network Interface. Required.
         :type network_interface_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkInterface
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16792,7 +16924,7 @@ class NetworkInterfacesOperations:
         resource_group_name: str,
         network_device_name: str,
         network_interface_name: str,
-        body: Union[_models.NetworkInterface, JSON, IO[bytes]],
+        body: Union[_models.NetworkInterface, _types.NetworkInterface, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkInterface]:
         """Create a Network Interface resource.
@@ -16804,9 +16936,9 @@ class NetworkInterfacesOperations:
         :type network_device_name: str
         :param network_interface_name: Name of the Network Interface. Required.
         :type network_interface_name: str
-        :param body: Request payload. Is one of the following types: NetworkInterface, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkInterface or JSON or IO[bytes]
+        :param body: Request payload. Is either a NetworkInterface type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkInterface or
+         ~azure.mgmt.managednetworkfabric.types.NetworkInterface or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkInterface. The NetworkInterface is
          compatible with MutableMapping
         :rtype:
@@ -16871,7 +17003,7 @@ class NetworkInterfacesOperations:
         resource_group_name: str,
         network_device_name: str,
         network_interface_name: str,
-        body: Union[_models.NetworkInterfacePatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkInterfacePatch, _types.NetworkInterfacePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -16981,7 +17113,7 @@ class NetworkInterfacesOperations:
         resource_group_name: str,
         network_device_name: str,
         network_interface_name: str,
-        body: JSON,
+        body: _types.NetworkInterfacePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16996,7 +17128,7 @@ class NetworkInterfacesOperations:
         :param network_interface_name: Name of the Network Interface. Required.
         :type network_interface_name: str
         :param body: NetworkInterface properties to update. Only tags are supported. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkInterfacePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17045,7 +17177,7 @@ class NetworkInterfacesOperations:
         resource_group_name: str,
         network_device_name: str,
         network_interface_name: str,
-        body: Union[_models.NetworkInterfacePatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkInterfacePatch, _types.NetworkInterfacePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkInterface]:
         """Update certain properties of the Network Interface resource.
@@ -17057,9 +17189,10 @@ class NetworkInterfacesOperations:
         :type network_device_name: str
         :param network_interface_name: Name of the Network Interface. Required.
         :type network_interface_name: str
-        :param body: NetworkInterface properties to update. Only tags are supported. Is one of the
-         following types: NetworkInterfacePatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkInterfacePatch or JSON or IO[bytes]
+        :param body: NetworkInterface properties to update. Only tags are supported. Is either a
+         NetworkInterfacePatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkInterfacePatch or
+         ~azure.mgmt.managednetworkfabric.types.NetworkInterfacePatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkInterface. The NetworkInterface is
          compatible with MutableMapping
         :rtype:
@@ -17359,14 +17492,14 @@ class NetworkInterfacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_administrative_state_initial(
         self,
         resource_group_name: str,
         network_device_name: str,
         network_interface_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -17476,7 +17609,7 @@ class NetworkInterfacesOperations:
         resource_group_name: str,
         network_device_name: str,
         network_interface_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17491,7 +17624,7 @@ class NetworkInterfacesOperations:
         :param network_interface_name: Name of the Network Interface. Required.
         :type network_interface_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17548,14 +17681,14 @@ class NetworkInterfacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_administrative_state(
         self,
         resource_group_name: str,
         network_device_name: str,
         network_interface_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.UpdateAdministrativeStateResponse]:
         """Update the admin state of the Network Interface.
@@ -17567,10 +17700,10 @@ class NetworkInterfacesOperations:
         :type network_device_name: str
         :param network_interface_name: Name of the Network Interface. Required.
         :type network_interface_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns UpdateAdministrativeStateResponse. The
          UpdateAdministrativeStateResponse is compatible with MutableMapping
         :rtype:
@@ -17631,7 +17764,7 @@ class NetworkInterfacesOperations:
         )
 
 
-class NetworkFabricControllersOperations:
+class NetworkFabricControllersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17726,7 +17859,7 @@ class NetworkFabricControllersOperations:
         self,
         resource_group_name: str,
         network_fabric_controller_name: str,
-        body: Union[_models.NetworkFabricController, JSON, IO[bytes]],
+        body: Union[_models.NetworkFabricController, _types.NetworkFabricController, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -17833,7 +17966,7 @@ class NetworkFabricControllersOperations:
         self,
         resource_group_name: str,
         network_fabric_controller_name: str,
-        body: JSON,
+        body: _types.NetworkFabricController,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17846,7 +17979,7 @@ class NetworkFabricControllersOperations:
         :param network_fabric_controller_name: Name of the Network Fabric Controller. Required.
         :type network_fabric_controller_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkFabricController
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17891,7 +18024,7 @@ class NetworkFabricControllersOperations:
         self,
         resource_group_name: str,
         network_fabric_controller_name: str,
-        body: Union[_models.NetworkFabricController, JSON, IO[bytes]],
+        body: Union[_models.NetworkFabricController, _types.NetworkFabricController, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkFabricController]:
         """Creates a Network Fabric Controller.
@@ -17901,10 +18034,10 @@ class NetworkFabricControllersOperations:
         :type resource_group_name: str
         :param network_fabric_controller_name: Name of the Network Fabric Controller. Required.
         :type network_fabric_controller_name: str
-        :param body: Request payload. Is one of the following types: NetworkFabricController, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkFabricController or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a NetworkFabricController type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkFabricController or
+         ~azure.mgmt.managednetworkfabric.types.NetworkFabricController or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkFabricController. The
          NetworkFabricController is compatible with MutableMapping
         :rtype:
@@ -17967,7 +18100,7 @@ class NetworkFabricControllersOperations:
         self,
         resource_group_name: str,
         network_fabric_controller_name: str,
-        body: Union[_models.NetworkFabricControllerPatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkFabricControllerPatch, _types.NetworkFabricControllerPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -18072,7 +18205,7 @@ class NetworkFabricControllersOperations:
         self,
         resource_group_name: str,
         network_fabric_controller_name: str,
-        body: JSON,
+        body: _types.NetworkFabricControllerPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18085,7 +18218,7 @@ class NetworkFabricControllersOperations:
         :param network_fabric_controller_name: Name of the Network Fabric Controller. Required.
         :type network_fabric_controller_name: str
         :param body: Network Fabric Controller properties to update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkFabricControllerPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18130,7 +18263,7 @@ class NetworkFabricControllersOperations:
         self,
         resource_group_name: str,
         network_fabric_controller_name: str,
-        body: Union[_models.NetworkFabricControllerPatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkFabricControllerPatch, _types.NetworkFabricControllerPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkFabricController]:
         """Updates are currently not supported for the Network Fabric Controller resource.
@@ -18140,10 +18273,10 @@ class NetworkFabricControllersOperations:
         :type resource_group_name: str
         :param network_fabric_controller_name: Name of the Network Fabric Controller. Required.
         :type network_fabric_controller_name: str
-        :param body: Network Fabric Controller properties to update. Is one of the following types:
-         NetworkFabricControllerPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkFabricControllerPatch or JSON or
-         IO[bytes]
+        :param body: Network Fabric Controller properties to update. Is either a
+         NetworkFabricControllerPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkFabricControllerPatch or
+         ~azure.mgmt.managednetworkfabric.types.NetworkFabricControllerPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkFabricController. The
          NetworkFabricController is compatible with MutableMapping
         :rtype:
@@ -18517,7 +18650,7 @@ class NetworkFabricControllersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NetworkFabricSkusOperations:
+class NetworkFabricSkusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18697,7 +18830,7 @@ class NetworkFabricSkusOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
+class NetworkFabricsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18717,6 +18850,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-07-15",
+        params_added_on={
+            "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
+        },
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
+    )
     async def get(self, resource_group_name: str, network_fabric_name: str, **kwargs: Any) -> _models.NetworkFabric:
         """Get Network Fabric resource details.
 
@@ -18786,11 +18926,25 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2025-07-15",
+        params_added_on={
+            "2025-07-15": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "network_fabric_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
+    )
     async def _create_initial(
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.NetworkFabric, JSON, IO[bytes]],
+        body: Union[_models.NetworkFabric, _types.NetworkFabric, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -18897,7 +19051,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: JSON,
+        body: _types.NetworkFabric,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18910,7 +19064,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkFabric
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18951,11 +19105,25 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-07-15",
+        params_added_on={
+            "2025-07-15": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "network_fabric_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
+    )
     async def begin_create(
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.NetworkFabric, JSON, IO[bytes]],
+        body: Union[_models.NetworkFabric, _types.NetworkFabric, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkFabric]:
         """Create Network Fabric resource.
@@ -18965,9 +19133,9 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
-        :param body: Request payload. Is one of the following types: NetworkFabric, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkFabric or JSON or IO[bytes]
+        :param body: Request payload. Is either a NetworkFabric type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkFabric or
+         ~azure.mgmt.managednetworkfabric.types.NetworkFabric or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkFabric. The NetworkFabric is
          compatible with MutableMapping
         :rtype:
@@ -19026,11 +19194,25 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2025-07-15",
+        params_added_on={
+            "2025-07-15": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "network_fabric_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
+    )
     async def _update_initial(
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.NetworkFabricPatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkFabricPatch, _types.NetworkFabricPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -19135,7 +19317,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: JSON,
+        body: _types.NetworkFabricPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19148,7 +19330,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
         :param body: Network Fabric properties to update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkFabricPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19189,11 +19371,25 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-07-15",
+        params_added_on={
+            "2025-07-15": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "network_fabric_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
+    )
     async def begin_update(
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.NetworkFabricPatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkFabricPatch, _types.NetworkFabricPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkFabric]:
         """Update certain properties of the Network Fabric resource.
@@ -19203,9 +19399,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
-        :param body: Network Fabric properties to update. Is one of the following types:
-         NetworkFabricPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkFabricPatch or JSON or IO[bytes]
+        :param body: Network Fabric properties to update. Is either a NetworkFabricPatch type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkFabricPatch or
+         ~azure.mgmt.managednetworkfabric.types.NetworkFabricPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkFabric. The NetworkFabric is
          compatible with MutableMapping
         :rtype:
@@ -19264,6 +19461,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2025-07-15",
+        params_added_on={
+            "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name"]
+        },
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
+    )
     async def _delete_initial(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -19326,6 +19530,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-07-15",
+        params_added_on={
+            "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name"]
+        },
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
+    )
     async def begin_delete(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -19385,6 +19596,11 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-07-15",
+        params_added_on={"2025-07-15": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
+    )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.NetworkFabric"]:
@@ -19485,6 +19701,11 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-07-15",
+        params_added_on={"2025-07-15": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
+    )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkFabric"]:
         """List all the Network Fabric resources in the given subscription.
 
@@ -19583,7 +19804,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _provision_initial(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -19652,7 +19873,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_provision(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -19724,7 +19945,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _deprovision_initial(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -19793,7 +20014,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_deprovision(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -19872,13 +20093,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _upgrade_initial(
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.UpgradeNetworkFabricProperties, JSON, IO[bytes]],
+        body: Union[_models.UpgradeNetworkFabricProperties, _types.UpgradeNetworkFabricProperties, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -19983,7 +20204,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: JSON,
+        body: _types.UpgradeNetworkFabricProperties,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19996,7 +20217,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
         :param body: Network Fabric properties to update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpgradeNetworkFabricProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20049,13 +20270,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_upgrade(
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.UpgradeNetworkFabricProperties, JSON, IO[bytes]],
+        body: Union[_models.UpgradeNetworkFabricProperties, _types.UpgradeNetworkFabricProperties, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
         """Upgrades the version of the underlying resources in the given Network Fabric instance.
@@ -20065,10 +20286,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
-        :param body: Network Fabric properties to update. Is one of the following types:
-         UpgradeNetworkFabricProperties, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpgradeNetworkFabricProperties or JSON or
-         IO[bytes]
+        :param body: Network Fabric properties to update. Is either a UpgradeNetworkFabricProperties
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpgradeNetworkFabricProperties or
+         ~azure.mgmt.managednetworkfabric.types.UpgradeNetworkFabricProperties or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -20128,14 +20349,29 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         )
 
     @api_version_validation(
-        method_added_on="2025-07-15",
+        method_added_on="2026-01-15-preview",
         params_added_on={
-            "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "network_fabric_name",
+                "content_type",
+                "accept",
+            ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2026-01-15-preview"],
     )
     async def _refresh_configuration_initial(
-        self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        network_fabric_name: str,
+        body: Optional[
+            Union[
+                _models.RefreshConfigurationRequestProperties, _types.RefreshConfigurationRequestProperties, IO[bytes]
+            ]
+        ] = None,
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -20145,16 +20381,30 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json" if body else None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            if body is not None:
+                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
 
         _request = build_network_fabrics_refresh_configuration_request(
             resource_group_name=resource_group_name,
             network_fabric_name=network_fabric_name,
             subscription_id=self._config.subscription_id,
+            content_type=content_type,
             api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -20195,16 +20445,15 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-07-15",
-        params_added_on={
-            "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
-        },
-        api_versions_list=["2025-07-15"],
-    )
+    @overload
     async def begin_refresh_configuration(
-        self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        network_fabric_name: str,
+        body: Optional[_models.RefreshConfigurationRequestProperties] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
         """Refreshes the configuration of the underlying resources in the given Network Fabric instance.
 
@@ -20213,15 +20462,124 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
+        :param body: Request payload. Default value is None.
+        :type body: ~azure.mgmt.managednetworkfabric.models.RefreshConfigurationRequestProperties
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.OperationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
+
+    @overload
+    async def begin_refresh_configuration(
+        self,
+        resource_group_name: str,
+        network_fabric_name: str,
+        body: Optional[_types.RefreshConfigurationRequestProperties] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OperationStatusResult]:
+        """Refreshes the configuration of the underlying resources in the given Network Fabric instance.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param network_fabric_name: Name of the Network Fabric. Required.
+        :type network_fabric_name: str
+        :param body: Request payload. Default value is None.
+        :type body: ~azure.mgmt.managednetworkfabric.types.RefreshConfigurationRequestProperties
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
+         OperationStatusResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_refresh_configuration(
+        self,
+        resource_group_name: str,
+        network_fabric_name: str,
+        body: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OperationStatusResult]:
+        """Refreshes the configuration of the underlying resources in the given Network Fabric instance.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param network_fabric_name: Name of the Network Fabric. Required.
+        :type network_fabric_name: str
+        :param body: Request payload. Default value is None.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
+         OperationStatusResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "network_fabric_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
+    async def begin_refresh_configuration(
+        self,
+        resource_group_name: str,
+        network_fabric_name: str,
+        body: Optional[
+            Union[
+                _models.RefreshConfigurationRequestProperties, _types.RefreshConfigurationRequestProperties, IO[bytes]
+            ]
+        ] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OperationStatusResult]:
+        """Refreshes the configuration of the underlying resources in the given Network Fabric instance.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param network_fabric_name: Name of the Network Fabric. Required.
+        :type network_fabric_name: str
+        :param body: Request payload. Is either a RefreshConfigurationRequestProperties type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.managednetworkfabric.models.RefreshConfigurationRequestProperties or
+         ~azure.mgmt.managednetworkfabric.types.RefreshConfigurationRequestProperties or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
+         OperationStatusResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
         cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -20230,6 +20588,8 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
             raw_result = await self._refresh_configuration_initial(
                 resource_group_name=resource_group_name,
                 network_fabric_name=network_fabric_name,
+                body=body,
+                content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -20280,13 +20640,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_workload_management_bfd_configuration_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -20392,7 +20752,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20406,7 +20766,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20460,13 +20820,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_workload_management_bfd_configuration(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.UpdateAdministrativeStateResponse]:
         """Updates the Workload Management BFD Configuration of the underlying resources in the given
@@ -20477,10 +20837,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns UpdateAdministrativeStateResponse. The
          UpdateAdministrativeStateResponse is compatible with MutableMapping
         :rtype:
@@ -20551,13 +20911,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_infra_management_bfd_configuration_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -20663,7 +21023,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20677,7 +21037,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20731,13 +21091,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_infra_management_bfd_configuration(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.UpdateAdministrativeStateResponse]:
         """Updates the Infra Management BFD Configuration of the underlying resources in the given Network
@@ -20748,10 +21108,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns UpdateAdministrativeStateResponse. The
          UpdateAdministrativeStateResponse is compatible with MutableMapping
         :rtype:
@@ -20810,11 +21170,25 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "network_fabric_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
     async def _validate_configuration_initial(
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.ValidateConfigurationProperties, JSON, IO[bytes]],
+        body: Union[_models.ValidateConfigurationProperties, _types.ValidateConfigurationProperties, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -20894,7 +21268,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.ValidateConfigurationResponse]:
+    ) -> AsyncLROPoller[_models.ValidateConfigurationResponseV2]:
         """Validates the configuration of the underlying resources in the given Network Fabric instance.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -20907,10 +21281,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponse. The
-         ValidateConfigurationResponse is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponseV2. The
+         ValidateConfigurationResponseV2 is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponseV2]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -20919,11 +21293,11 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: JSON,
+        body: _types.ValidateConfigurationProperties,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.ValidateConfigurationResponse]:
+    ) -> AsyncLROPoller[_models.ValidateConfigurationResponseV2]:
         """Validates the configuration of the underlying resources in the given Network Fabric instance.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -20932,14 +21306,14 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
         :param body: Validate configuration properties. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.ValidateConfigurationProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponse. The
-         ValidateConfigurationResponse is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponseV2. The
+         ValidateConfigurationResponseV2 is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponseV2]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -20952,7 +21326,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.ValidateConfigurationResponse]:
+    ) -> AsyncLROPoller[_models.ValidateConfigurationResponseV2]:
         """Validates the configuration of the underlying resources in the given Network Fabric instance.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -20965,21 +21339,35 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponse. The
-         ValidateConfigurationResponse is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponseV2. The
+         ValidateConfigurationResponseV2 is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponseV2]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "network_fabric_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
     async def begin_validate_configuration(
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.ValidateConfigurationProperties, JSON, IO[bytes]],
+        body: Union[_models.ValidateConfigurationProperties, _types.ValidateConfigurationProperties, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.ValidateConfigurationResponse]:
+    ) -> AsyncLROPoller[_models.ValidateConfigurationResponseV2]:
         """Validates the configuration of the underlying resources in the given Network Fabric instance.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -20987,21 +21375,21 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
-        :param body: Validate configuration properties. Is one of the following types:
-         ValidateConfigurationProperties, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.ValidateConfigurationProperties or JSON or
-         IO[bytes]
-        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponse. The
-         ValidateConfigurationResponse is compatible with MutableMapping
+        :param body: Validate configuration properties. Is either a ValidateConfigurationProperties
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.ValidateConfigurationProperties or
+         ~azure.mgmt.managednetworkfabric.types.ValidateConfigurationProperties or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponseV2. The
+         ValidateConfigurationResponseV2 is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponseV2]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ValidateConfigurationResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ValidateConfigurationResponseV2] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -21021,7 +21409,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = _deserialize(_models.ValidateConfigurationResponse, response.json())
+            deserialized = _deserialize(_models.ValidateConfigurationResponseV2, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -21039,13 +21427,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.ValidateConfigurationResponse].from_continuation_token(
+            return AsyncLROPoller[_models.ValidateConfigurationResponseV2].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.ValidateConfigurationResponse](
+        return AsyncLROPoller[_models.ValidateConfigurationResponseV2](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -21054,7 +21442,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _get_topology_initial(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -21123,7 +21511,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_get_topology(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -21202,13 +21590,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _commit_configuration_initial(
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Optional[Union[_models.CommitConfigurationRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.CommitConfigurationRequest, _types.CommitConfigurationRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -21318,7 +21706,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.CommitConfigurationRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21332,7 +21720,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
         :param body: The content of the action request. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.CommitConfigurationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21386,13 +21774,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_commit_configuration(
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Optional[Union[_models.CommitConfigurationRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.CommitConfigurationRequest, _types.CommitConfigurationRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CommitConfigurationResponse]:
         """Atomic update of the given Network Fabric instance. Sync update of NFA resources at Fabric
@@ -21403,10 +21791,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
-        :param body: The content of the action request. Is one of the following types:
-         CommitConfigurationRequest, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.managednetworkfabric.models.CommitConfigurationRequest or JSON or
-         IO[bytes]
+        :param body: The content of the action request. Is either a CommitConfigurationRequest type or
+         a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.managednetworkfabric.models.CommitConfigurationRequest or
+         ~azure.mgmt.managednetworkfabric.types.CommitConfigurationRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CommitConfigurationResponse. The
          CommitConfigurationResponse is compatible with MutableMapping
         :rtype:
@@ -21478,13 +21866,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _commit_batch_status_initial(
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.CommitBatchStatusRequest, JSON, IO[bytes]],
+        body: Union[_models.CommitBatchStatusRequest, _types.CommitBatchStatusRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -21589,7 +21977,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: JSON,
+        body: _types.CommitBatchStatusRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21602,7 +21990,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.CommitBatchStatusRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21655,13 +22043,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_commit_batch_status(
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.CommitBatchStatusRequest, JSON, IO[bytes]],
+        body: Union[_models.CommitBatchStatusRequest, _types.CommitBatchStatusRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CommitBatchStatusOperationResponse]:
         """Post action: Returns a status of commit batch operation.
@@ -21671,10 +22059,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
-        :param body: Request payload. Is one of the following types: CommitBatchStatusRequest, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.CommitBatchStatusRequest or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a CommitBatchStatusRequest type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.CommitBatchStatusRequest or
+         ~azure.mgmt.managednetworkfabric.types.CommitBatchStatusRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CommitBatchStatusOperationResponse. The
          CommitBatchStatusOperationResponse is compatible with MutableMapping
         :rtype:
@@ -21745,13 +22133,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _discard_commit_batch_initial(
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.DiscardCommitBatchRequest, JSON, IO[bytes]],
+        body: Union[_models.DiscardCommitBatchRequest, _types.DiscardCommitBatchRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -21856,7 +22244,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: JSON,
+        body: _types.DiscardCommitBatchRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21869,7 +22257,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.DiscardCommitBatchRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21922,13 +22310,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_discard_commit_batch(
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.DiscardCommitBatchRequest, JSON, IO[bytes]],
+        body: Union[_models.DiscardCommitBatchRequest, _types.DiscardCommitBatchRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DiscardCommitBatchOperationResponse]:
         """Post action: Discards a Batch operation in progress.
@@ -21938,10 +22326,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
-        :param body: Request payload. Is one of the following types: DiscardCommitBatchRequest, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.DiscardCommitBatchRequest or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a DiscardCommitBatchRequest type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.DiscardCommitBatchRequest or
+         ~azure.mgmt.managednetworkfabric.types.DiscardCommitBatchRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DiscardCommitBatchOperationResponse. The
          DiscardCommitBatchOperationResponse is compatible with MutableMapping
         :rtype:
@@ -22012,13 +22400,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _lock_fabric_initial(
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.NetworkFabricLockRequest, JSON, IO[bytes]],
+        body: Union[_models.NetworkFabricLockRequest, _types.NetworkFabricLockRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -22123,7 +22511,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: JSON,
+        body: _types.NetworkFabricLockRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22136,7 +22524,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkFabricLockRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22189,13 +22577,13 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_lock_fabric(
         self,
         resource_group_name: str,
         network_fabric_name: str,
-        body: Union[_models.NetworkFabricLockRequest, JSON, IO[bytes]],
+        body: Union[_models.NetworkFabricLockRequest, _types.NetworkFabricLockRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
         """Post action: Triggers network fabric lock operation.
@@ -22205,10 +22593,10 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param network_fabric_name: Name of the Network Fabric. Required.
         :type network_fabric_name: str
-        :param body: Request payload. Is one of the following types: NetworkFabricLockRequest, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkFabricLockRequest or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a NetworkFabricLockRequest type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkFabricLockRequest or
+         ~azure.mgmt.managednetworkfabric.types.NetworkFabricLockRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -22272,7 +22660,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _view_device_configuration_initial(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -22341,7 +22729,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_view_device_configuration(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -22413,7 +22801,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _arm_configuration_diff_initial(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -22482,7 +22870,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_arm_configuration_diff(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -22554,7 +22942,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _rotate_passwords_initial(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -22623,7 +23011,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_rotate_passwords(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -22704,7 +23092,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _resync_passwords_initial(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -22773,7 +23161,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_resync_passwords(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -22850,7 +23238,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _rotate_certificates_initial(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -22919,7 +23307,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_rotate_certificates(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -22995,7 +23383,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _resync_certificates_initial(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -23064,7 +23452,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_resync_certificates(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
@@ -23136,7 +23524,7 @@ class NetworkFabricsOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class NetworkToNetworkInterconnectsOperations:
+class NetworkToNetworkInterconnectsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -23241,7 +23629,7 @@ class NetworkToNetworkInterconnectsOperations:
         resource_group_name: str,
         network_fabric_name: str,
         network_to_network_interconnect_name: str,
-        body: Union[_models.NetworkToNetworkInterconnect, JSON, IO[bytes]],
+        body: Union[_models.NetworkToNetworkInterconnect, _types.NetworkToNetworkInterconnect, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -23354,7 +23742,7 @@ class NetworkToNetworkInterconnectsOperations:
         resource_group_name: str,
         network_fabric_name: str,
         network_to_network_interconnect_name: str,
-        body: JSON,
+        body: _types.NetworkToNetworkInterconnect,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23370,7 +23758,7 @@ class NetworkToNetworkInterconnectsOperations:
          Required.
         :type network_to_network_interconnect_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkToNetworkInterconnect
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23420,7 +23808,7 @@ class NetworkToNetworkInterconnectsOperations:
         resource_group_name: str,
         network_fabric_name: str,
         network_to_network_interconnect_name: str,
-        body: Union[_models.NetworkToNetworkInterconnect, JSON, IO[bytes]],
+        body: Union[_models.NetworkToNetworkInterconnect, _types.NetworkToNetworkInterconnect, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkToNetworkInterconnect]:
         """Configuration used to setup CE-PE connectivity PUT Method.
@@ -23433,10 +23821,10 @@ class NetworkToNetworkInterconnectsOperations:
         :param network_to_network_interconnect_name: Name of the Network to Network Interconnect.
          Required.
         :type network_to_network_interconnect_name: str
-        :param body: Request payload. Is one of the following types: NetworkToNetworkInterconnect,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkToNetworkInterconnect or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a NetworkToNetworkInterconnect type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkToNetworkInterconnect or
+         ~azure.mgmt.managednetworkfabric.types.NetworkToNetworkInterconnect or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkToNetworkInterconnect. The
          NetworkToNetworkInterconnect is compatible with MutableMapping
         :rtype:
@@ -23501,7 +23889,7 @@ class NetworkToNetworkInterconnectsOperations:
         resource_group_name: str,
         network_fabric_name: str,
         network_to_network_interconnect_name: str,
-        body: Union[_models.NetworkToNetworkInterconnectPatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkToNetworkInterconnectPatch, _types.NetworkToNetworkInterconnectPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -23612,7 +24000,7 @@ class NetworkToNetworkInterconnectsOperations:
         resource_group_name: str,
         network_fabric_name: str,
         network_to_network_interconnect_name: str,
-        body: JSON,
+        body: _types.NetworkToNetworkInterconnectPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23628,7 +24016,7 @@ class NetworkToNetworkInterconnectsOperations:
          Required.
         :type network_to_network_interconnect_name: str
         :param body: Network to Network Interconnect properties to update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkToNetworkInterconnectPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23678,7 +24066,7 @@ class NetworkToNetworkInterconnectsOperations:
         resource_group_name: str,
         network_fabric_name: str,
         network_to_network_interconnect_name: str,
-        body: Union[_models.NetworkToNetworkInterconnectPatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkToNetworkInterconnectPatch, _types.NetworkToNetworkInterconnectPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkToNetworkInterconnect]:
         """Update certain properties of the Network To NetworkInterconnects resource.
@@ -23691,10 +24079,10 @@ class NetworkToNetworkInterconnectsOperations:
         :param network_to_network_interconnect_name: Name of the Network to Network Interconnect.
          Required.
         :type network_to_network_interconnect_name: str
-        :param body: Network to Network Interconnect properties to update. Is one of the following
-         types: NetworkToNetworkInterconnectPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkToNetworkInterconnectPatch or JSON
-         or IO[bytes]
+        :param body: Network to Network Interconnect properties to update. Is either a
+         NetworkToNetworkInterconnectPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkToNetworkInterconnectPatch or
+         ~azure.mgmt.managednetworkfabric.types.NetworkToNetworkInterconnectPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkToNetworkInterconnect. The
          NetworkToNetworkInterconnect is compatible with MutableMapping
         :rtype:
@@ -24003,14 +24391,14 @@ class NetworkToNetworkInterconnectsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_npb_static_route_bfd_administrative_state_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         network_fabric_name: str,
         network_to_network_interconnect_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -24121,7 +24509,7 @@ class NetworkToNetworkInterconnectsOperations:
         resource_group_name: str,
         network_fabric_name: str,
         network_to_network_interconnect_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24137,7 +24525,7 @@ class NetworkToNetworkInterconnectsOperations:
          Required.
         :type network_to_network_interconnect_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24195,14 +24583,14 @@ class NetworkToNetworkInterconnectsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_npb_static_route_bfd_administrative_state(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         network_fabric_name: str,
         network_to_network_interconnect_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.UpdateAdministrativeStateResponse]:
         """Updates the NPB Static Route BFD Administrative State.
@@ -24215,10 +24603,10 @@ class NetworkToNetworkInterconnectsOperations:
         :param network_to_network_interconnect_name: Name of the Network to Network Interconnect.
          Required.
         :type network_to_network_interconnect_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns UpdateAdministrativeStateResponse. The
          UpdateAdministrativeStateResponse is compatible with MutableMapping
         :rtype:
@@ -24291,14 +24679,14 @@ class NetworkToNetworkInterconnectsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_administrative_state_initial(
         self,
         resource_group_name: str,
         network_fabric_name: str,
         network_to_network_interconnect_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -24409,7 +24797,7 @@ class NetworkToNetworkInterconnectsOperations:
         resource_group_name: str,
         network_fabric_name: str,
         network_to_network_interconnect_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24425,7 +24813,7 @@ class NetworkToNetworkInterconnectsOperations:
          Required.
         :type network_to_network_interconnect_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24483,14 +24871,14 @@ class NetworkToNetworkInterconnectsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_administrative_state(
         self,
         resource_group_name: str,
         network_fabric_name: str,
         network_to_network_interconnect_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.UpdateAdministrativeStateResponse]:
         """Updates the Admin State.
@@ -24503,10 +24891,10 @@ class NetworkToNetworkInterconnectsOperations:
         :param network_to_network_interconnect_name: Name of the Network to Network Interconnect.
          Required.
         :type network_to_network_interconnect_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns UpdateAdministrativeStateResponse. The
          UpdateAdministrativeStateResponse is compatible with MutableMapping
         :rtype:
@@ -24579,14 +24967,16 @@ class NetworkToNetworkInterconnectsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_bfd_administrative_state_initial(
         self,
         resource_group_name: str,
         network_fabric_name: str,
         network_to_network_interconnect_name: str,
-        body: Union[_models.NniUpdateBfdAdministrativeStateRequest, JSON, IO[bytes]],
+        body: Union[
+            _models.NniUpdateBfdAdministrativeStateRequest, _types.NniUpdateBfdAdministrativeStateRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -24697,7 +25087,7 @@ class NetworkToNetworkInterconnectsOperations:
         resource_group_name: str,
         network_fabric_name: str,
         network_to_network_interconnect_name: str,
-        body: JSON,
+        body: _types.NniUpdateBfdAdministrativeStateRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24713,7 +25103,7 @@ class NetworkToNetworkInterconnectsOperations:
          Required.
         :type network_to_network_interconnect_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NniUpdateBfdAdministrativeStateRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24771,14 +25161,16 @@ class NetworkToNetworkInterconnectsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_bfd_administrative_state(
         self,
         resource_group_name: str,
         network_fabric_name: str,
         network_to_network_interconnect_name: str,
-        body: Union[_models.NniUpdateBfdAdministrativeStateRequest, JSON, IO[bytes]],
+        body: Union[
+            _models.NniUpdateBfdAdministrativeStateRequest, _types.NniUpdateBfdAdministrativeStateRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NniUpdateBfdAdministrativeStateResponse]:
         """Updates the Admin State.
@@ -24791,10 +25183,10 @@ class NetworkToNetworkInterconnectsOperations:
         :param network_to_network_interconnect_name: Name of the Network to Network Interconnect.
          Required.
         :type network_to_network_interconnect_name: str
-        :param body: Request payload. Is one of the following types:
-         NniUpdateBfdAdministrativeStateRequest, JSON, IO[bytes] Required.
+        :param body: Request payload. Is either a NniUpdateBfdAdministrativeStateRequest type or a
+         IO[bytes] type. Required.
         :type body: ~azure.mgmt.managednetworkfabric.models.NniUpdateBfdAdministrativeStateRequest or
-         JSON or IO[bytes]
+         ~azure.mgmt.managednetworkfabric.types.NniUpdateBfdAdministrativeStateRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NniUpdateBfdAdministrativeStateResponse.
          The NniUpdateBfdAdministrativeStateResponse is compatible with MutableMapping
         :rtype:
@@ -24855,7 +25247,7 @@ class NetworkToNetworkInterconnectsOperations:
         )
 
 
-class NetworkPacketBrokersOperations:
+class NetworkPacketBrokersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24950,7 +25342,7 @@ class NetworkPacketBrokersOperations:
         self,
         resource_group_name: str,
         network_packet_broker_name: str,
-        body: Union[_models.NetworkPacketBroker, JSON, IO[bytes]],
+        body: Union[_models.NetworkPacketBroker, _types.NetworkPacketBroker, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -25057,7 +25449,7 @@ class NetworkPacketBrokersOperations:
         self,
         resource_group_name: str,
         network_packet_broker_name: str,
-        body: JSON,
+        body: _types.NetworkPacketBroker,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25070,7 +25462,7 @@ class NetworkPacketBrokersOperations:
         :param network_packet_broker_name: Name of the Network Packet Broker. Required.
         :type network_packet_broker_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkPacketBroker
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25115,7 +25507,7 @@ class NetworkPacketBrokersOperations:
         self,
         resource_group_name: str,
         network_packet_broker_name: str,
-        body: Union[_models.NetworkPacketBroker, JSON, IO[bytes]],
+        body: Union[_models.NetworkPacketBroker, _types.NetworkPacketBroker, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkPacketBroker]:
         """Creates a Network Packet Broker.
@@ -25125,9 +25517,10 @@ class NetworkPacketBrokersOperations:
         :type resource_group_name: str
         :param network_packet_broker_name: Name of the Network Packet Broker. Required.
         :type network_packet_broker_name: str
-        :param body: Request payload. Is one of the following types: NetworkPacketBroker, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkPacketBroker or JSON or IO[bytes]
+        :param body: Request payload. Is either a NetworkPacketBroker type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkPacketBroker or
+         ~azure.mgmt.managednetworkfabric.types.NetworkPacketBroker or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkPacketBroker. The
          NetworkPacketBroker is compatible with MutableMapping
         :rtype:
@@ -25190,7 +25583,7 @@ class NetworkPacketBrokersOperations:
         self,
         resource_group_name: str,
         network_packet_broker_name: str,
-        body: Union[_models.NetworkPacketBrokerPatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkPacketBrokerPatch, _types.NetworkPacketBrokerPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -25295,7 +25688,7 @@ class NetworkPacketBrokersOperations:
         self,
         resource_group_name: str,
         network_packet_broker_name: str,
-        body: JSON,
+        body: _types.NetworkPacketBrokerPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25308,7 +25701,7 @@ class NetworkPacketBrokersOperations:
         :param network_packet_broker_name: Name of the Network Packet Broker. Required.
         :type network_packet_broker_name: str
         :param body: Network Packet Broker properties to update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkPacketBrokerPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25353,7 +25746,7 @@ class NetworkPacketBrokersOperations:
         self,
         resource_group_name: str,
         network_packet_broker_name: str,
-        body: Union[_models.NetworkPacketBrokerPatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkPacketBrokerPatch, _types.NetworkPacketBrokerPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkPacketBroker]:
         """API to update certain properties of the Network Packet Broker resource.
@@ -25363,10 +25756,10 @@ class NetworkPacketBrokersOperations:
         :type resource_group_name: str
         :param network_packet_broker_name: Name of the Network Packet Broker. Required.
         :type network_packet_broker_name: str
-        :param body: Network Packet Broker properties to update. Is one of the following types:
-         NetworkPacketBrokerPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkPacketBrokerPatch or JSON or
-         IO[bytes]
+        :param body: Network Packet Broker properties to update. Is either a NetworkPacketBrokerPatch
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkPacketBrokerPatch or
+         ~azure.mgmt.managednetworkfabric.types.NetworkPacketBrokerPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkPacketBroker. The
          NetworkPacketBroker is compatible with MutableMapping
         :rtype:
@@ -25740,7 +26133,7 @@ class NetworkPacketBrokersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NetworkRacksOperations:
+class NetworkRacksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25833,7 +26226,7 @@ class NetworkRacksOperations:
         self,
         resource_group_name: str,
         network_rack_name: str,
-        body: Union[_models.NetworkRack, JSON, IO[bytes]],
+        body: Union[_models.NetworkRack, _types.NetworkRack, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -25939,7 +26332,7 @@ class NetworkRacksOperations:
         self,
         resource_group_name: str,
         network_rack_name: str,
-        body: JSON,
+        body: _types.NetworkRack,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25952,7 +26345,7 @@ class NetworkRacksOperations:
         :param network_rack_name: Name of the Network Rack. Required.
         :type network_rack_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkRack
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25995,7 +26388,7 @@ class NetworkRacksOperations:
         self,
         resource_group_name: str,
         network_rack_name: str,
-        body: Union[_models.NetworkRack, JSON, IO[bytes]],
+        body: Union[_models.NetworkRack, _types.NetworkRack, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkRack]:
         """Create Network Rack resource.
@@ -26005,9 +26398,9 @@ class NetworkRacksOperations:
         :type resource_group_name: str
         :param network_rack_name: Name of the Network Rack. Required.
         :type network_rack_name: str
-        :param body: Request payload. Is one of the following types: NetworkRack, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkRack or JSON or IO[bytes]
+        :param body: Request payload. Is either a NetworkRack type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkRack or
+         ~azure.mgmt.managednetworkfabric.types.NetworkRack or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkRack. The NetworkRack is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.NetworkRack]
@@ -26069,7 +26462,7 @@ class NetworkRacksOperations:
         self,
         resource_group_name: str,
         network_rack_name: str,
-        body: Union[_models.NetworkRackPatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkRackPatch, _types.NetworkRackPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -26173,7 +26566,7 @@ class NetworkRacksOperations:
         self,
         resource_group_name: str,
         network_rack_name: str,
-        body: JSON,
+        body: _types.NetworkRackPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26186,7 +26579,7 @@ class NetworkRacksOperations:
         :param network_rack_name: Name of the Network Rack. Required.
         :type network_rack_name: str
         :param body: Network Rack properties to update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkRackPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26229,7 +26622,7 @@ class NetworkRacksOperations:
         self,
         resource_group_name: str,
         network_rack_name: str,
-        body: Union[_models.NetworkRackPatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkRackPatch, _types.NetworkRackPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkRack]:
         """Update certain properties of the Network Rack resource.
@@ -26239,9 +26632,10 @@ class NetworkRacksOperations:
         :type resource_group_name: str
         :param network_rack_name: Name of the Network Rack. Required.
         :type network_rack_name: str
-        :param body: Network Rack properties to update. Is one of the following types:
-         NetworkRackPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkRackPatch or JSON or IO[bytes]
+        :param body: Network Rack properties to update. Is either a NetworkRackPatch type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkRackPatch or
+         ~azure.mgmt.managednetworkfabric.types.NetworkRackPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkRack. The NetworkRack is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.NetworkRack]
@@ -26612,7 +27006,7 @@ class NetworkRacksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NetworkTapRulesOperations:
+class NetworkTapRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26705,7 +27099,7 @@ class NetworkTapRulesOperations:
         self,
         resource_group_name: str,
         network_tap_rule_name: str,
-        body: Union[_models.NetworkTapRule, JSON, IO[bytes]],
+        body: Union[_models.NetworkTapRule, _types.NetworkTapRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -26812,7 +27206,7 @@ class NetworkTapRulesOperations:
         self,
         resource_group_name: str,
         network_tap_rule_name: str,
-        body: JSON,
+        body: _types.NetworkTapRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26825,7 +27219,7 @@ class NetworkTapRulesOperations:
         :param network_tap_rule_name: Name of the Network Tap Rule. Required.
         :type network_tap_rule_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkTapRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26870,7 +27264,7 @@ class NetworkTapRulesOperations:
         self,
         resource_group_name: str,
         network_tap_rule_name: str,
-        body: Union[_models.NetworkTapRule, JSON, IO[bytes]],
+        body: Union[_models.NetworkTapRule, _types.NetworkTapRule, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkTapRule]:
         """Create Network Tap Rule resource.
@@ -26880,9 +27274,9 @@ class NetworkTapRulesOperations:
         :type resource_group_name: str
         :param network_tap_rule_name: Name of the Network Tap Rule. Required.
         :type network_tap_rule_name: str
-        :param body: Request payload. Is one of the following types: NetworkTapRule, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkTapRule or JSON or IO[bytes]
+        :param body: Request payload. Is either a NetworkTapRule type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkTapRule or
+         ~azure.mgmt.managednetworkfabric.types.NetworkTapRule or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkTapRule. The NetworkTapRule is
          compatible with MutableMapping
         :rtype:
@@ -26945,7 +27339,7 @@ class NetworkTapRulesOperations:
         self,
         resource_group_name: str,
         network_tap_rule_name: str,
-        body: Union[_models.NetworkTapRulePatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkTapRulePatch, _types.NetworkTapRulePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -27050,7 +27444,7 @@ class NetworkTapRulesOperations:
         self,
         resource_group_name: str,
         network_tap_rule_name: str,
-        body: JSON,
+        body: _types.NetworkTapRulePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27063,7 +27457,7 @@ class NetworkTapRulesOperations:
         :param network_tap_rule_name: Name of the Network Tap Rule. Required.
         :type network_tap_rule_name: str
         :param body: Network Tap Rule properties to update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkTapRulePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27108,7 +27502,7 @@ class NetworkTapRulesOperations:
         self,
         resource_group_name: str,
         network_tap_rule_name: str,
-        body: Union[_models.NetworkTapRulePatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkTapRulePatch, _types.NetworkTapRulePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkTapRule]:
         """Update certain properties of the Network Tap Rule resource.
@@ -27118,9 +27512,10 @@ class NetworkTapRulesOperations:
         :type resource_group_name: str
         :param network_tap_rule_name: Name of the Network Tap Rule. Required.
         :type network_tap_rule_name: str
-        :param body: Network Tap Rule properties to update. Is one of the following types:
-         NetworkTapRulePatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkTapRulePatch or JSON or IO[bytes]
+        :param body: Network Tap Rule properties to update. Is either a NetworkTapRulePatch type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkTapRulePatch or
+         ~azure.mgmt.managednetworkfabric.types.NetworkTapRulePatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkTapRule. The NetworkTapRule is
          compatible with MutableMapping
         :rtype:
@@ -27497,7 +27892,7 @@ class NetworkTapRulesOperations:
         self,
         resource_group_name: str,
         network_tap_rule_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -27602,7 +27997,7 @@ class NetworkTapRulesOperations:
         self,
         resource_group_name: str,
         network_tap_rule_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27615,7 +28010,7 @@ class NetworkTapRulesOperations:
         :param network_tap_rule_name: Name of the Network Tap Rule. Required.
         :type network_tap_rule_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27660,7 +28055,7 @@ class NetworkTapRulesOperations:
         self,
         resource_group_name: str,
         network_tap_rule_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CommonPostActionResponseForStateUpdate]:
         """Implements the operation to the underlying resources.
@@ -27670,10 +28065,10 @@ class NetworkTapRulesOperations:
         :type resource_group_name: str
         :param network_tap_rule_name: Name of the Network Tap Rule. Required.
         :type network_tap_rule_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CommonPostActionResponseForStateUpdate. The
          CommonPostActionResponseForStateUpdate is compatible with MutableMapping
         :rtype:
@@ -27737,7 +28132,7 @@ class NetworkTapRulesOperations:
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_tap_rule_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _resync_initial(
         self, resource_group_name: str, network_tap_rule_name: str, **kwargs: Any
@@ -27806,7 +28201,7 @@ class NetworkTapRulesOperations:
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_tap_rule_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_resync(
         self, resource_group_name: str, network_tap_rule_name: str, **kwargs: Any
@@ -27873,6 +28268,19 @@ class NetworkTapRulesOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "network_tap_rule_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
     async def _validate_configuration_initial(
         self, resource_group_name: str, network_tap_rule_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -27935,9 +28343,22 @@ class NetworkTapRulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "network_tap_rule_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
     async def begin_validate_configuration(
         self, resource_group_name: str, network_tap_rule_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[_models.ValidateConfigurationResponse]:
+    ) -> AsyncLROPoller[_models.ValidateConfigurationResponseV2]:
         """Implements the operation to the underlying resources.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -27945,16 +28366,16 @@ class NetworkTapRulesOperations:
         :type resource_group_name: str
         :param network_tap_rule_name: Name of the Network Tap Rule. Required.
         :type network_tap_rule_name: str
-        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponse. The
-         ValidateConfigurationResponse is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponseV2. The
+         ValidateConfigurationResponseV2 is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponseV2]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ValidateConfigurationResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ValidateConfigurationResponseV2] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -27972,7 +28393,7 @@ class NetworkTapRulesOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = _deserialize(_models.ValidateConfigurationResponse, response.json())
+            deserialized = _deserialize(_models.ValidateConfigurationResponseV2, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -27990,18 +28411,18 @@ class NetworkTapRulesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.ValidateConfigurationResponse].from_continuation_token(
+            return AsyncLROPoller[_models.ValidateConfigurationResponseV2].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.ValidateConfigurationResponse](
+        return AsyncLROPoller[_models.ValidateConfigurationResponseV2](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
 
-class NetworkTapsOperations:
+class NetworkTapsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -28094,7 +28515,7 @@ class NetworkTapsOperations:
         self,
         resource_group_name: str,
         network_tap_name: str,
-        body: Union[_models.NetworkTap, JSON, IO[bytes]],
+        body: Union[_models.NetworkTap, _types.NetworkTap, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -28200,7 +28621,7 @@ class NetworkTapsOperations:
         self,
         resource_group_name: str,
         network_tap_name: str,
-        body: JSON,
+        body: _types.NetworkTap,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28213,7 +28634,7 @@ class NetworkTapsOperations:
         :param network_tap_name: Name of the Network Tap. Required.
         :type network_tap_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkTap
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28256,7 +28677,7 @@ class NetworkTapsOperations:
         self,
         resource_group_name: str,
         network_tap_name: str,
-        body: Union[_models.NetworkTap, JSON, IO[bytes]],
+        body: Union[_models.NetworkTap, _types.NetworkTap, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkTap]:
         """Creates a Network Tap.
@@ -28266,9 +28687,9 @@ class NetworkTapsOperations:
         :type resource_group_name: str
         :param network_tap_name: Name of the Network Tap. Required.
         :type network_tap_name: str
-        :param body: Request payload. Is one of the following types: NetworkTap, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkTap or JSON or IO[bytes]
+        :param body: Request payload. Is either a NetworkTap type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkTap or
+         ~azure.mgmt.managednetworkfabric.types.NetworkTap or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkTap. The NetworkTap is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.NetworkTap]
@@ -28330,7 +28751,7 @@ class NetworkTapsOperations:
         self,
         resource_group_name: str,
         network_tap_name: str,
-        body: Union[_models.NetworkTapPatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkTapPatch, _types.NetworkTapPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -28434,7 +28855,7 @@ class NetworkTapsOperations:
         self,
         resource_group_name: str,
         network_tap_name: str,
-        body: JSON,
+        body: _types.NetworkTapPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28447,7 +28868,7 @@ class NetworkTapsOperations:
         :param network_tap_name: Name of the Network Tap. Required.
         :type network_tap_name: str
         :param body: Network Tap properties to update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkTapPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28490,7 +28911,7 @@ class NetworkTapsOperations:
         self,
         resource_group_name: str,
         network_tap_name: str,
-        body: Union[_models.NetworkTapPatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkTapPatch, _types.NetworkTapPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkTap]:
         """API to update certain properties of the Network Tap resource.
@@ -28500,9 +28921,10 @@ class NetworkTapsOperations:
         :type resource_group_name: str
         :param network_tap_name: Name of the Network Tap. Required.
         :type network_tap_name: str
-        :param body: Network Tap properties to update. Is one of the following types: NetworkTapPatch,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkTapPatch or JSON or IO[bytes]
+        :param body: Network Tap properties to update. Is either a NetworkTapPatch type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkTapPatch or
+         ~azure.mgmt.managednetworkfabric.types.NetworkTapPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkTap. The NetworkTap is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.NetworkTap]
@@ -28884,13 +29306,13 @@ class NetworkTapsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_administrative_state_initial(
         self,
         resource_group_name: str,
         network_tap_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -28995,7 +29417,7 @@ class NetworkTapsOperations:
         self,
         resource_group_name: str,
         network_tap_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29008,7 +29430,7 @@ class NetworkTapsOperations:
         :param network_tap_name: Name of the Network Tap. Required.
         :type network_tap_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29061,13 +29483,13 @@ class NetworkTapsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_administrative_state(
         self,
         resource_group_name: str,
         network_tap_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.UpdateAdministrativeStateResponse]:
         """Implements the operation to the underlying resources.
@@ -29077,10 +29499,10 @@ class NetworkTapsOperations:
         :type resource_group_name: str
         :param network_tap_name: Name of the Network Tap. Required.
         :type network_tap_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns UpdateAdministrativeStateResponse. The
          UpdateAdministrativeStateResponse is compatible with MutableMapping
         :rtype:
@@ -29144,7 +29566,7 @@ class NetworkTapsOperations:
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_tap_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _resync_initial(
         self, resource_group_name: str, network_tap_name: str, **kwargs: Any
@@ -29213,7 +29635,7 @@ class NetworkTapsOperations:
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_tap_name", "accept"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_resync(
         self, resource_group_name: str, network_tap_name: str, **kwargs: Any
@@ -29281,7 +29703,7 @@ class NetworkTapsOperations:
         )
 
 
-class RoutePoliciesOperations:
+class RoutePoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29374,7 +29796,7 @@ class RoutePoliciesOperations:
         self,
         resource_group_name: str,
         route_policy_name: str,
-        body: Union[_models.RoutePolicy, JSON, IO[bytes]],
+        body: Union[_models.RoutePolicy, _types.RoutePolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -29480,7 +29902,7 @@ class RoutePoliciesOperations:
         self,
         resource_group_name: str,
         route_policy_name: str,
-        body: JSON,
+        body: _types.RoutePolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29493,7 +29915,7 @@ class RoutePoliciesOperations:
         :param route_policy_name: Name of the Route Policy. Required.
         :type route_policy_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.RoutePolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29536,7 +29958,7 @@ class RoutePoliciesOperations:
         self,
         resource_group_name: str,
         route_policy_name: str,
-        body: Union[_models.RoutePolicy, JSON, IO[bytes]],
+        body: Union[_models.RoutePolicy, _types.RoutePolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RoutePolicy]:
         """Implements Route Policy PUT method.
@@ -29546,9 +29968,9 @@ class RoutePoliciesOperations:
         :type resource_group_name: str
         :param route_policy_name: Name of the Route Policy. Required.
         :type route_policy_name: str
-        :param body: Request payload. Is one of the following types: RoutePolicy, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.RoutePolicy or JSON or IO[bytes]
+        :param body: Request payload. Is either a RoutePolicy type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.RoutePolicy or
+         ~azure.mgmt.managednetworkfabric.types.RoutePolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RoutePolicy. The RoutePolicy is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.RoutePolicy]
@@ -29610,7 +30032,7 @@ class RoutePoliciesOperations:
         self,
         resource_group_name: str,
         route_policy_name: str,
-        body: Union[_models.RoutePolicyPatch, JSON, IO[bytes]],
+        body: Union[_models.RoutePolicyPatch, _types.RoutePolicyPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -29714,7 +30136,7 @@ class RoutePoliciesOperations:
         self,
         resource_group_name: str,
         route_policy_name: str,
-        body: JSON,
+        body: _types.RoutePolicyPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29727,7 +30149,7 @@ class RoutePoliciesOperations:
         :param route_policy_name: Name of the Route Policy. Required.
         :type route_policy_name: str
         :param body: Route Policy properties to update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.RoutePolicyPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29770,7 +30192,7 @@ class RoutePoliciesOperations:
         self,
         resource_group_name: str,
         route_policy_name: str,
-        body: Union[_models.RoutePolicyPatch, JSON, IO[bytes]],
+        body: Union[_models.RoutePolicyPatch, _types.RoutePolicyPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RoutePolicy]:
         """API to update certain properties of the Route Policy resource.
@@ -29780,9 +30202,10 @@ class RoutePoliciesOperations:
         :type resource_group_name: str
         :param route_policy_name: Name of the Route Policy. Required.
         :type route_policy_name: str
-        :param body: Route Policy properties to update. Is one of the following types:
-         RoutePolicyPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.RoutePolicyPatch or JSON or IO[bytes]
+        :param body: Route Policy properties to update. Is either a RoutePolicyPatch type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.RoutePolicyPatch or
+         ~azure.mgmt.managednetworkfabric.types.RoutePolicyPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns RoutePolicy. The RoutePolicy is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.RoutePolicy]
@@ -30164,13 +30587,13 @@ class RoutePoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_administrative_state_initial(
         self,
         resource_group_name: str,
         route_policy_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -30275,7 +30698,7 @@ class RoutePoliciesOperations:
         self,
         resource_group_name: str,
         route_policy_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30288,7 +30711,7 @@ class RoutePoliciesOperations:
         :param route_policy_name: Name of the Route Policy. Required.
         :type route_policy_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30341,13 +30764,13 @@ class RoutePoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_administrative_state(
         self,
         resource_group_name: str,
         route_policy_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.UpdateAdministrativeStateResponse]:
         """Updated the admin state for this Route Policy.
@@ -30357,10 +30780,10 @@ class RoutePoliciesOperations:
         :type resource_group_name: str
         :param route_policy_name: Name of the Route Policy. Required.
         :type route_policy_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns UpdateAdministrativeStateResponse. The
          UpdateAdministrativeStateResponse is compatible with MutableMapping
         :rtype:
@@ -30419,6 +30842,19 @@ class RoutePoliciesOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "route_policy_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
     async def _validate_configuration_initial(
         self, resource_group_name: str, route_policy_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -30481,9 +30917,22 @@ class RoutePoliciesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "route_policy_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
     async def begin_validate_configuration(
         self, resource_group_name: str, route_policy_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[_models.ValidateConfigurationResponse]:
+    ) -> AsyncLROPoller[_models.ValidateConfigurationResponseV2]:
         """Validates the configuration of the resources.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -30491,16 +30940,16 @@ class RoutePoliciesOperations:
         :type resource_group_name: str
         :param route_policy_name: Name of the Route Policy. Required.
         :type route_policy_name: str
-        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponse. The
-         ValidateConfigurationResponse is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ValidateConfigurationResponseV2. The
+         ValidateConfigurationResponseV2 is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponseV2]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ValidateConfigurationResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ValidateConfigurationResponseV2] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -30518,7 +30967,7 @@ class RoutePoliciesOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = _deserialize(_models.ValidateConfigurationResponse, response.json())
+            deserialized = _deserialize(_models.ValidateConfigurationResponseV2, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -30536,13 +30985,13 @@ class RoutePoliciesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.ValidateConfigurationResponse].from_continuation_token(
+            return AsyncLROPoller[_models.ValidateConfigurationResponseV2].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.ValidateConfigurationResponse](
+        return AsyncLROPoller[_models.ValidateConfigurationResponseV2](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -30674,7 +31123,7 @@ class RoutePoliciesOperations:
         )
 
 
-class NetworkMonitorsOperations:
+class NetworkMonitorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30705,7 +31154,7 @@ class NetworkMonitorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-06-15-preview", "2025-07-15"],
+        api_versions_list=["2024-06-15-preview", "2025-07-15", "2026-01-15-preview"],
     )
     async def get(self, resource_group_name: str, network_monitor_name: str, **kwargs: Any) -> _models.NetworkMonitor:
         """Implements NetworkMonitor GET method.
@@ -30788,13 +31237,13 @@ class NetworkMonitorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-06-15-preview", "2025-07-15"],
+        api_versions_list=["2024-06-15-preview", "2025-07-15", "2026-01-15-preview"],
     )
     async def _create_initial(
         self,
         resource_group_name: str,
         network_monitor_name: str,
-        body: Union[_models.NetworkMonitor, JSON, IO[bytes]],
+        body: Union[_models.NetworkMonitor, _types.NetworkMonitor, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -30901,7 +31350,7 @@ class NetworkMonitorsOperations:
         self,
         resource_group_name: str,
         network_monitor_name: str,
-        body: JSON,
+        body: _types.NetworkMonitor,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30914,7 +31363,7 @@ class NetworkMonitorsOperations:
         :param network_monitor_name: Name of the Network Monitor. Required.
         :type network_monitor_name: str
         :param body: Resource create parameters. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkMonitor
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30967,13 +31416,13 @@ class NetworkMonitorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-06-15-preview", "2025-07-15"],
+        api_versions_list=["2024-06-15-preview", "2025-07-15", "2026-01-15-preview"],
     )
     async def begin_create(
         self,
         resource_group_name: str,
         network_monitor_name: str,
-        body: Union[_models.NetworkMonitor, JSON, IO[bytes]],
+        body: Union[_models.NetworkMonitor, _types.NetworkMonitor, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkMonitor]:
         """Creates NetworkMonitor resource.
@@ -30983,9 +31432,10 @@ class NetworkMonitorsOperations:
         :type resource_group_name: str
         :param network_monitor_name: Name of the Network Monitor. Required.
         :type network_monitor_name: str
-        :param body: Resource create parameters. Is one of the following types: NetworkMonitor, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkMonitor or JSON or IO[bytes]
+        :param body: Resource create parameters. Is either a NetworkMonitor type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkMonitor or
+         ~azure.mgmt.managednetworkfabric.types.NetworkMonitor or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkMonitor. The NetworkMonitor is
          compatible with MutableMapping
         :rtype:
@@ -31056,13 +31506,13 @@ class NetworkMonitorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-06-15-preview", "2025-07-15"],
+        api_versions_list=["2024-06-15-preview", "2025-07-15", "2026-01-15-preview"],
     )
     async def _update_initial(
         self,
         resource_group_name: str,
         network_monitor_name: str,
-        body: Union[_models.NetworkMonitorPatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkMonitorPatch, _types.NetworkMonitorPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -31167,7 +31617,7 @@ class NetworkMonitorsOperations:
         self,
         resource_group_name: str,
         network_monitor_name: str,
-        body: JSON,
+        body: _types.NetworkMonitorPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31180,7 +31630,7 @@ class NetworkMonitorsOperations:
         :param network_monitor_name: Name of the Network Monitor. Required.
         :type network_monitor_name: str
         :param body: The resource properties to be updated. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkMonitorPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31233,13 +31683,13 @@ class NetworkMonitorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-06-15-preview", "2025-07-15"],
+        api_versions_list=["2024-06-15-preview", "2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update(
         self,
         resource_group_name: str,
         network_monitor_name: str,
-        body: Union[_models.NetworkMonitorPatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkMonitorPatch, _types.NetworkMonitorPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkMonitor]:
         """API to update certain properties of the NetworkMonitor resource.
@@ -31249,9 +31699,10 @@ class NetworkMonitorsOperations:
         :type resource_group_name: str
         :param network_monitor_name: Name of the Network Monitor. Required.
         :type network_monitor_name: str
-        :param body: The resource properties to be updated. Is one of the following types:
-         NetworkMonitorPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkMonitorPatch or JSON or IO[bytes]
+        :param body: The resource properties to be updated. Is either a NetworkMonitorPatch type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkMonitorPatch or
+         ~azure.mgmt.managednetworkfabric.types.NetworkMonitorPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkMonitor. The NetworkMonitor is
          compatible with MutableMapping
         :rtype:
@@ -31315,7 +31766,7 @@ class NetworkMonitorsOperations:
         params_added_on={
             "2024-06-15-preview": ["api_version", "subscription_id", "resource_group_name", "network_monitor_name"]
         },
-        api_versions_list=["2024-06-15-preview", "2025-07-15"],
+        api_versions_list=["2024-06-15-preview", "2025-07-15", "2026-01-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, network_monitor_name: str, **kwargs: Any
@@ -31384,7 +31835,7 @@ class NetworkMonitorsOperations:
         params_added_on={
             "2024-06-15-preview": ["api_version", "subscription_id", "resource_group_name", "network_monitor_name"]
         },
-        api_versions_list=["2024-06-15-preview", "2025-07-15"],
+        api_versions_list=["2024-06-15-preview", "2025-07-15", "2026-01-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, network_monitor_name: str, **kwargs: Any
@@ -31448,7 +31899,7 @@ class NetworkMonitorsOperations:
     @api_version_validation(
         method_added_on="2024-06-15-preview",
         params_added_on={"2024-06-15-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2024-06-15-preview", "2025-07-15"],
+        api_versions_list=["2024-06-15-preview", "2025-07-15", "2026-01-15-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
@@ -31553,7 +32004,7 @@ class NetworkMonitorsOperations:
     @api_version_validation(
         method_added_on="2024-06-15-preview",
         params_added_on={"2024-06-15-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2024-06-15-preview", "2025-07-15"],
+        api_versions_list=["2024-06-15-preview", "2025-07-15", "2026-01-15-preview"],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkMonitor"]:
         """Displays NetworkMonitors list by subscription GET method.
@@ -31660,13 +32111,13 @@ class NetworkMonitorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-06-15-preview", "2025-07-15"],
+        api_versions_list=["2024-06-15-preview", "2025-07-15", "2026-01-15-preview"],
     )
     async def _update_administrative_state_initial(
         self,
         resource_group_name: str,
         network_monitor_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -31771,7 +32222,7 @@ class NetworkMonitorsOperations:
         self,
         resource_group_name: str,
         network_monitor_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31784,7 +32235,7 @@ class NetworkMonitorsOperations:
         :param network_monitor_name: Name of the Network Monitor. Required.
         :type network_monitor_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31837,13 +32288,13 @@ class NetworkMonitorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-06-15-preview", "2025-07-15"],
+        api_versions_list=["2024-06-15-preview", "2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_administrative_state(
         self,
         resource_group_name: str,
         network_monitor_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CommonPostActionResponseForDeviceUpdate]:
         """Enables isolation domain across the fabric or on specified racks.
@@ -31853,10 +32304,10 @@ class NetworkMonitorsOperations:
         :type resource_group_name: str
         :param network_monitor_name: Name of the Network Monitor. Required.
         :type network_monitor_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CommonPostActionResponseForDeviceUpdate.
          The CommonPostActionResponseForDeviceUpdate is compatible with MutableMapping
         :rtype:
@@ -31916,7 +32367,7 @@ class NetworkMonitorsOperations:
         )
 
 
-class NetworkBootstrapDevicesOperations:
+class NetworkBootstrapDevicesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31947,7 +32398,7 @@ class NetworkBootstrapDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def get(
         self, resource_group_name: str, network_bootstrap_device_name: str, **kwargs: Any
@@ -32032,13 +32483,13 @@ class NetworkBootstrapDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _create_initial(
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
-        body: Union[_models.NetworkBootstrapDevice, JSON, IO[bytes]],
+        body: Union[_models.NetworkBootstrapDevice, _types.NetworkBootstrapDevice, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -32145,7 +32596,7 @@ class NetworkBootstrapDevicesOperations:
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
-        body: JSON,
+        body: _types.NetworkBootstrapDevice,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32158,7 +32609,7 @@ class NetworkBootstrapDevicesOperations:
         :param network_bootstrap_device_name: Name of the Network Bootstrap Device. Required.
         :type network_bootstrap_device_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkBootstrapDevice
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32211,13 +32662,13 @@ class NetworkBootstrapDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_create(
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
-        body: Union[_models.NetworkBootstrapDevice, JSON, IO[bytes]],
+        body: Union[_models.NetworkBootstrapDevice, _types.NetworkBootstrapDevice, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkBootstrapDevice]:
         """Creates a Network Bootstrap Device resource.
@@ -32227,9 +32678,10 @@ class NetworkBootstrapDevicesOperations:
         :type resource_group_name: str
         :param network_bootstrap_device_name: Name of the Network Bootstrap Device. Required.
         :type network_bootstrap_device_name: str
-        :param body: Request payload. Is one of the following types: NetworkBootstrapDevice, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkBootstrapDevice or JSON or IO[bytes]
+        :param body: Request payload. Is either a NetworkBootstrapDevice type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkBootstrapDevice or
+         ~azure.mgmt.managednetworkfabric.types.NetworkBootstrapDevice or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkBootstrapDevice. The
          NetworkBootstrapDevice is compatible with MutableMapping
         :rtype:
@@ -32300,13 +32752,13 @@ class NetworkBootstrapDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_initial(
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
-        body: Union[_models.NetworkBootstrapDevicePatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkBootstrapDevicePatch, _types.NetworkBootstrapDevicePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -32411,7 +32863,7 @@ class NetworkBootstrapDevicesOperations:
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
-        body: JSON,
+        body: _types.NetworkBootstrapDevicePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32424,7 +32876,7 @@ class NetworkBootstrapDevicesOperations:
         :param network_bootstrap_device_name: Name of the Network Bootstrap Device. Required.
         :type network_bootstrap_device_name: str
         :param body: Network Bootstrap Device properties to update. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkBootstrapDevicePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32477,13 +32929,13 @@ class NetworkBootstrapDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update(
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
-        body: Union[_models.NetworkBootstrapDevicePatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkBootstrapDevicePatch, _types.NetworkBootstrapDevicePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkBootstrapDevice]:
         """Update certain properties of the Network Bootstrap Device resource.
@@ -32493,10 +32945,10 @@ class NetworkBootstrapDevicesOperations:
         :type resource_group_name: str
         :param network_bootstrap_device_name: Name of the Network Bootstrap Device. Required.
         :type network_bootstrap_device_name: str
-        :param body: Network Bootstrap Device properties to update. Is one of the following types:
-         NetworkBootstrapDevicePatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkBootstrapDevicePatch or JSON or
-         IO[bytes]
+        :param body: Network Bootstrap Device properties to update. Is either a
+         NetworkBootstrapDevicePatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkBootstrapDevicePatch or
+         ~azure.mgmt.managednetworkfabric.types.NetworkBootstrapDevicePatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkBootstrapDevice. The
          NetworkBootstrapDevice is compatible with MutableMapping
         :rtype:
@@ -32560,7 +33012,7 @@ class NetworkBootstrapDevicesOperations:
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_bootstrap_device_name"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, network_bootstrap_device_name: str, **kwargs: Any
@@ -32629,7 +33081,7 @@ class NetworkBootstrapDevicesOperations:
         params_added_on={
             "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_bootstrap_device_name"]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, network_bootstrap_device_name: str, **kwargs: Any
@@ -32693,7 +33145,7 @@ class NetworkBootstrapDevicesOperations:
     @api_version_validation(
         method_added_on="2025-07-15",
         params_added_on={"2025-07-15": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
@@ -32798,7 +33250,7 @@ class NetworkBootstrapDevicesOperations:
     @api_version_validation(
         method_added_on="2025-07-15",
         params_added_on={"2025-07-15": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkBootstrapDevice"]:
         """List all the Network Bootstrap Device resources in a given subscription.
@@ -32904,7 +33356,7 @@ class NetworkBootstrapDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _reboot_initial(
         self, resource_group_name: str, network_bootstrap_device_name: str, **kwargs: Any
@@ -32979,7 +33431,7 @@ class NetworkBootstrapDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_reboot(
         self, resource_group_name: str, network_bootstrap_device_name: str, **kwargs: Any
@@ -33057,7 +33509,7 @@ class NetworkBootstrapDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _refresh_configuration_initial(
         self, resource_group_name: str, network_bootstrap_device_name: str, **kwargs: Any
@@ -33132,7 +33584,7 @@ class NetworkBootstrapDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_refresh_configuration(
         self, resource_group_name: str, network_bootstrap_device_name: str, **kwargs: Any
@@ -33212,13 +33664,13 @@ class NetworkBootstrapDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _upgrade_initial(
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
-        body: Union[_models.UpdateVersion, JSON, IO[bytes]],
+        body: Union[_models.UpdateVersion, _types.UpdateVersion, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -33323,7 +33775,7 @@ class NetworkBootstrapDevicesOperations:
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
-        body: JSON,
+        body: _types.UpdateVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -33336,7 +33788,7 @@ class NetworkBootstrapDevicesOperations:
         :param network_bootstrap_device_name: Name of the Network Bootstrap Device. Required.
         :type network_bootstrap_device_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33389,13 +33841,13 @@ class NetworkBootstrapDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_upgrade(
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
-        body: Union[_models.UpdateVersion, JSON, IO[bytes]],
+        body: Union[_models.UpdateVersion, _types.UpdateVersion, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkBootstrapDeviceUpgradeResponse]:
         """Upgrades the version of the Network Bootstrap Device.
@@ -33405,9 +33857,9 @@ class NetworkBootstrapDevicesOperations:
         :type resource_group_name: str
         :param network_bootstrap_device_name: Name of the Network Bootstrap Device. Required.
         :type network_bootstrap_device_name: str
-        :param body: Request payload. Is one of the following types: UpdateVersion, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateVersion or JSON or IO[bytes]
+        :param body: Request payload. Is either a UpdateVersion type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateVersion or
+         ~azure.mgmt.managednetworkfabric.types.UpdateVersion or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkBootstrapDeviceUpgradeResponse. The
          NetworkBootstrapDeviceUpgradeResponse is compatible with MutableMapping
         :rtype:
@@ -33478,13 +33930,13 @@ class NetworkBootstrapDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_administrative_state_initial(
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
-        body: Union[_models.UpdateDeviceAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateDeviceAdministrativeState, _types.UpdateDeviceAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -33590,7 +34042,7 @@ class NetworkBootstrapDevicesOperations:
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
-        body: JSON,
+        body: _types.UpdateDeviceAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -33603,7 +34055,7 @@ class NetworkBootstrapDevicesOperations:
         :param network_bootstrap_device_name: Name of the Network Bootstrap Device. Required.
         :type network_bootstrap_device_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateDeviceAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33658,13 +34110,13 @@ class NetworkBootstrapDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_administrative_state(
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
-        body: Union[_models.UpdateDeviceAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateDeviceAdministrativeState, _types.UpdateDeviceAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkBootstrapDeviceUpdateAdministrativeStateResponse]:
         """Updates the Administrative state of the Network Bootstrap Device.
@@ -33674,10 +34126,10 @@ class NetworkBootstrapDevicesOperations:
         :type resource_group_name: str
         :param network_bootstrap_device_name: Name of the Network Bootstrap Device. Required.
         :type network_bootstrap_device_name: str
-        :param body: Request payload. Is one of the following types: UpdateDeviceAdministrativeState,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateDeviceAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateDeviceAdministrativeState type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateDeviceAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateDeviceAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns
          NetworkBootstrapDeviceUpdateAdministrativeStateResponse. The
          NetworkBootstrapDeviceUpdateAdministrativeStateResponse is compatible with MutableMapping
@@ -33752,7 +34204,7 @@ class NetworkBootstrapDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _resync_passwords_initial(
         self, resource_group_name: str, network_bootstrap_device_name: str, **kwargs: Any
@@ -33827,7 +34279,7 @@ class NetworkBootstrapDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_resync_passwords(
         self, resource_group_name: str, network_bootstrap_device_name: str, **kwargs: Any
@@ -33900,7 +34352,7 @@ class NetworkBootstrapDevicesOperations:
         )
 
 
-class NetworkBootstrapInterfacesOperations:
+class NetworkBootstrapInterfacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33932,7 +34384,7 @@ class NetworkBootstrapInterfacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def get(
         self,
@@ -34026,14 +34478,14 @@ class NetworkBootstrapInterfacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _create_initial(
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
         network_bootstrap_interface_name: str,
-        body: Union[_models.NetworkBootstrapInterface, JSON, IO[bytes]],
+        body: Union[_models.NetworkBootstrapInterface, _types.NetworkBootstrapInterface, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -34145,7 +34597,7 @@ class NetworkBootstrapInterfacesOperations:
         resource_group_name: str,
         network_bootstrap_device_name: str,
         network_bootstrap_interface_name: str,
-        body: JSON,
+        body: _types.NetworkBootstrapInterface,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -34160,7 +34612,7 @@ class NetworkBootstrapInterfacesOperations:
         :param network_bootstrap_interface_name: Name of the Network Bootstrap Interface. Required.
         :type network_bootstrap_interface_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkBootstrapInterface
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34217,14 +34669,14 @@ class NetworkBootstrapInterfacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_create(
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
         network_bootstrap_interface_name: str,
-        body: Union[_models.NetworkBootstrapInterface, JSON, IO[bytes]],
+        body: Union[_models.NetworkBootstrapInterface, _types.NetworkBootstrapInterface, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkBootstrapInterface]:
         """Create a Network Bootstrap Interface resource.
@@ -34236,10 +34688,10 @@ class NetworkBootstrapInterfacesOperations:
         :type network_bootstrap_device_name: str
         :param network_bootstrap_interface_name: Name of the Network Bootstrap Interface. Required.
         :type network_bootstrap_interface_name: str
-        :param body: Request payload. Is one of the following types: NetworkBootstrapInterface, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkBootstrapInterface or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a NetworkBootstrapInterface type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkBootstrapInterface or
+         ~azure.mgmt.managednetworkfabric.types.NetworkBootstrapInterface or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkBootstrapInterface. The
          NetworkBootstrapInterface is compatible with MutableMapping
         :rtype:
@@ -34312,14 +34764,14 @@ class NetworkBootstrapInterfacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_initial(
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
         network_bootstrap_interface_name: str,
-        body: Union[_models.NetworkBootstrapInterfacePatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkBootstrapInterfacePatch, _types.NetworkBootstrapInterfacePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -34429,7 +34881,7 @@ class NetworkBootstrapInterfacesOperations:
         resource_group_name: str,
         network_bootstrap_device_name: str,
         network_bootstrap_interface_name: str,
-        body: JSON,
+        body: _types.NetworkBootstrapInterfacePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -34444,7 +34896,7 @@ class NetworkBootstrapInterfacesOperations:
         :param network_bootstrap_interface_name: Name of the Network Bootstrap Interface. Required.
         :type network_bootstrap_interface_name: str
         :param body: NetworkBootstrapInterface properties to update. Only tags are supported. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.NetworkBootstrapInterfacePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34501,14 +34953,14 @@ class NetworkBootstrapInterfacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update(
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
         network_bootstrap_interface_name: str,
-        body: Union[_models.NetworkBootstrapInterfacePatch, JSON, IO[bytes]],
+        body: Union[_models.NetworkBootstrapInterfacePatch, _types.NetworkBootstrapInterfacePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkBootstrapInterface]:
         """Update certain properties of the Network Bootstrap Interface resource.
@@ -34520,10 +34972,10 @@ class NetworkBootstrapInterfacesOperations:
         :type network_bootstrap_device_name: str
         :param network_bootstrap_interface_name: Name of the Network Bootstrap Interface. Required.
         :type network_bootstrap_interface_name: str
-        :param body: NetworkBootstrapInterface properties to update. Only tags are supported. Is one of
-         the following types: NetworkBootstrapInterfacePatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkBootstrapInterfacePatch or JSON or
-         IO[bytes]
+        :param body: NetworkBootstrapInterface properties to update. Only tags are supported. Is either
+         a NetworkBootstrapInterfacePatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.NetworkBootstrapInterfacePatch or
+         ~azure.mgmt.managednetworkfabric.types.NetworkBootstrapInterfacePatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NetworkBootstrapInterface. The
          NetworkBootstrapInterface is compatible with MutableMapping
         :rtype:
@@ -34594,7 +35046,7 @@ class NetworkBootstrapInterfacesOperations:
                 "network_bootstrap_interface_name",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _delete_initial(
         self,
@@ -34674,7 +35126,7 @@ class NetworkBootstrapInterfacesOperations:
                 "network_bootstrap_interface_name",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_delete(
         self,
@@ -34753,7 +35205,7 @@ class NetworkBootstrapInterfacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     def list_by_network_bootstrap_device(
         self, resource_group_name: str, network_bootstrap_device_name: str, **kwargs: Any
@@ -34870,14 +35322,14 @@ class NetworkBootstrapInterfacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def _update_administrative_state_initial(
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
         network_bootstrap_interface_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -34987,7 +35439,7 @@ class NetworkBootstrapInterfacesOperations:
         resource_group_name: str,
         network_bootstrap_device_name: str,
         network_bootstrap_interface_name: str,
-        body: JSON,
+        body: _types.UpdateAdministrativeState,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -35002,7 +35454,7 @@ class NetworkBootstrapInterfacesOperations:
         :param network_bootstrap_interface_name: Name of the Network Bootstrap Interface. Required.
         :type network_bootstrap_interface_name: str
         :param body: Request payload. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35059,14 +35511,14 @@ class NetworkBootstrapInterfacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-15"],
+        api_versions_list=["2025-07-15", "2026-01-15-preview"],
     )
     async def begin_update_administrative_state(
         self,
         resource_group_name: str,
         network_bootstrap_device_name: str,
         network_bootstrap_interface_name: str,
-        body: Union[_models.UpdateAdministrativeState, JSON, IO[bytes]],
+        body: Union[_models.UpdateAdministrativeState, _types.UpdateAdministrativeState, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CommonPostActionResponseForStateUpdate]:
         """Update the admin state of the Network Interface.
@@ -35078,10 +35530,10 @@ class NetworkBootstrapInterfacesOperations:
         :type network_bootstrap_device_name: str
         :param network_bootstrap_interface_name: Name of the Network Bootstrap Interface. Required.
         :type network_bootstrap_interface_name: str
-        :param body: Request payload. Is one of the following types: UpdateAdministrativeState, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or JSON or
-         IO[bytes]
+        :param body: Request payload. Is either a UpdateAdministrativeState type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.UpdateAdministrativeState or
+         ~azure.mgmt.managednetworkfabric.types.UpdateAdministrativeState or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CommonPostActionResponseForStateUpdate. The
          CommonPostActionResponseForStateUpdate is compatible with MutableMapping
         :rtype:
@@ -35140,3 +35592,1933 @@ class NetworkBootstrapInterfacesOperations:
         return AsyncLROPoller[_models.CommonPostActionResponseForStateUpdate](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
+
+
+class EdgeConnectorsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.managednetworkfabric.aio.ManagedNetworkFabricMgmtClient`'s
+        :attr:`edge_connectors` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_connector_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
+    async def get(self, resource_group_name: str, edge_connector_name: str, **kwargs: Any) -> _models.EdgeConnector:
+        """Gets the specified EdgeConnector.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_connector_name: Name of the EdgeConnector. Required.
+        :type edge_connector_name: str
+        :return: EdgeConnector. The EdgeConnector is compatible with MutableMapping
+        :rtype: ~azure.mgmt.managednetworkfabric.models.EdgeConnector
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EdgeConnector] = kwargs.pop("cls", None)
+
+        _request = build_edge_connectors_get_request(
+            resource_group_name=resource_group_name,
+            edge_connector_name=edge_connector_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EdgeConnector, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_connector_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
+    async def _create_initial(
+        self,
+        resource_group_name: str,
+        edge_connector_name: str,
+        body: Union[_models.EdgeConnector, _types.EdgeConnector, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_edge_connectors_create_request(
+            resource_group_name=resource_group_name,
+            edge_connector_name=edge_connector_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create(
+        self,
+        resource_group_name: str,
+        edge_connector_name: str,
+        body: _models.EdgeConnector,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeConnector]:
+        """Creates or updates an EdgeConnector.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_connector_name: Name of the EdgeConnector. Required.
+        :type edge_connector_name: str
+        :param body: Request payload. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.EdgeConnector
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeConnector. The EdgeConnector is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.EdgeConnector]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create(
+        self,
+        resource_group_name: str,
+        edge_connector_name: str,
+        body: _types.EdgeConnector,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeConnector]:
+        """Creates or updates an EdgeConnector.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_connector_name: Name of the EdgeConnector. Required.
+        :type edge_connector_name: str
+        :param body: Request payload. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.types.EdgeConnector
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeConnector. The EdgeConnector is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.EdgeConnector]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create(
+        self,
+        resource_group_name: str,
+        edge_connector_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeConnector]:
+        """Creates or updates an EdgeConnector.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_connector_name: Name of the EdgeConnector. Required.
+        :type edge_connector_name: str
+        :param body: Request payload. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeConnector. The EdgeConnector is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.EdgeConnector]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_connector_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
+    async def begin_create(
+        self,
+        resource_group_name: str,
+        edge_connector_name: str,
+        body: Union[_models.EdgeConnector, _types.EdgeConnector, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeConnector]:
+        """Creates or updates an EdgeConnector.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_connector_name: Name of the EdgeConnector. Required.
+        :type edge_connector_name: str
+        :param body: Request payload. Is either a EdgeConnector type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.EdgeConnector or
+         ~azure.mgmt.managednetworkfabric.types.EdgeConnector or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns EdgeConnector. The EdgeConnector is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.EdgeConnector]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EdgeConnector] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_initial(
+                resource_group_name=resource_group_name,
+                edge_connector_name=edge_connector_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.EdgeConnector, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.EdgeConnector].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.EdgeConnector](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_connector_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        edge_connector_name: str,
+        body: Union[_models.EdgeConnectorPatch, _types.EdgeConnectorPatch, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_edge_connectors_update_request(
+            resource_group_name=resource_group_name,
+            edge_connector_name=edge_connector_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        edge_connector_name: str,
+        body: _models.EdgeConnectorPatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeConnector]:
+        """Updates an EdgeConnector.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_connector_name: Name of the EdgeConnector. Required.
+        :type edge_connector_name: str
+        :param body: EdgeConnector properties to update. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.EdgeConnectorPatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeConnector. The EdgeConnector is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.EdgeConnector]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        edge_connector_name: str,
+        body: _types.EdgeConnectorPatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeConnector]:
+        """Updates an EdgeConnector.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_connector_name: Name of the EdgeConnector. Required.
+        :type edge_connector_name: str
+        :param body: EdgeConnector properties to update. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.types.EdgeConnectorPatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeConnector. The EdgeConnector is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.EdgeConnector]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        edge_connector_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeConnector]:
+        """Updates an EdgeConnector.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_connector_name: Name of the EdgeConnector. Required.
+        :type edge_connector_name: str
+        :param body: EdgeConnector properties to update. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EdgeConnector. The EdgeConnector is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.EdgeConnector]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_connector_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        edge_connector_name: str,
+        body: Union[_models.EdgeConnectorPatch, _types.EdgeConnectorPatch, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EdgeConnector]:
+        """Updates an EdgeConnector.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_connector_name: Name of the EdgeConnector. Required.
+        :type edge_connector_name: str
+        :param body: EdgeConnector properties to update. Is either a EdgeConnectorPatch type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.EdgeConnectorPatch or
+         ~azure.mgmt.managednetworkfabric.types.EdgeConnectorPatch or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns EdgeConnector. The EdgeConnector is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.EdgeConnector]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EdgeConnector] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                edge_connector_name=edge_connector_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.EdgeConnector, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.EdgeConnector].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.EdgeConnector](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": ["api_version", "subscription_id", "resource_group_name", "edge_connector_name"]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, edge_connector_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_edge_connectors_delete_request(
+            resource_group_name=resource_group_name,
+            edge_connector_name=edge_connector_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": ["api_version", "subscription_id", "resource_group_name", "edge_connector_name"]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, edge_connector_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes the specified EdgeConnector.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param edge_connector_name: Name of the EdgeConnector. Required.
+        :type edge_connector_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                edge_connector_name=edge_connector_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={"2026-01-15-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-01-15-preview"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.EdgeConnector"]:
+        """Lists EdgeConnectors by resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of EdgeConnector
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.managednetworkfabric.models.EdgeConnector]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EdgeConnector]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_edge_connectors_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EdgeConnector],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={"2026-01-15-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-01-15-preview"],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.EdgeConnector"]:
+        """Lists EdgeConnectors by subscription.
+
+        :return: An iterator like instance of EdgeConnector
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.managednetworkfabric.models.EdgeConnector]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EdgeConnector]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_edge_connectors_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EdgeConnector],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class FabricsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.managednetworkfabric.aio.ManagedNetworkFabricMgmtClient`'s
+        :attr:`fabrics` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ManagedNetworkFabricMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": ["api_version", "subscription_id", "resource_group_name", "fabric_name", "accept"]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
+    async def get(self, resource_group_name: str, fabric_name: str, **kwargs: Any) -> _models.Fabric:
+        """Gets the specified Fabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fabric_name: Name of the Fabric. Required.
+        :type fabric_name: str
+        :return: Fabric. The Fabric is compatible with MutableMapping
+        :rtype: ~azure.mgmt.managednetworkfabric.models.Fabric
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Fabric] = kwargs.pop("cls", None)
+
+        _request = build_fabrics_get_request(
+            resource_group_name=resource_group_name,
+            fabric_name=fabric_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Fabric, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fabric_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
+    async def _create_initial(
+        self,
+        resource_group_name: str,
+        fabric_name: str,
+        body: Union[_models.Fabric, _types.Fabric, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_fabrics_create_request(
+            resource_group_name=resource_group_name,
+            fabric_name=fabric_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create(
+        self,
+        resource_group_name: str,
+        fabric_name: str,
+        body: _models.Fabric,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Fabric]:
+        """Creates or updates a Fabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fabric_name: Name of the Fabric. Required.
+        :type fabric_name: str
+        :param body: Request payload. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.Fabric
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Fabric. The Fabric is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.Fabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create(
+        self,
+        resource_group_name: str,
+        fabric_name: str,
+        body: _types.Fabric,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Fabric]:
+        """Creates or updates a Fabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fabric_name: Name of the Fabric. Required.
+        :type fabric_name: str
+        :param body: Request payload. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.types.Fabric
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Fabric. The Fabric is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.Fabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create(
+        self,
+        resource_group_name: str,
+        fabric_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Fabric]:
+        """Creates or updates a Fabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fabric_name: Name of the Fabric. Required.
+        :type fabric_name: str
+        :param body: Request payload. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Fabric. The Fabric is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.Fabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fabric_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
+    async def begin_create(
+        self,
+        resource_group_name: str,
+        fabric_name: str,
+        body: Union[_models.Fabric, _types.Fabric, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Fabric]:
+        """Creates or updates a Fabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fabric_name: Name of the Fabric. Required.
+        :type fabric_name: str
+        :param body: Request payload. Is either a Fabric type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.Fabric or
+         ~azure.mgmt.managednetworkfabric.types.Fabric or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns Fabric. The Fabric is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.Fabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Fabric] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_initial(
+                resource_group_name=resource_group_name,
+                fabric_name=fabric_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Fabric, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.Fabric].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.Fabric](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fabric_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        fabric_name: str,
+        body: Union[_models.FabricPatch, _types.FabricPatch, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_fabrics_update_request(
+            resource_group_name=resource_group_name,
+            fabric_name=fabric_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        fabric_name: str,
+        body: _models.FabricPatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Fabric]:
+        """Updates a Fabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fabric_name: Name of the Fabric. Required.
+        :type fabric_name: str
+        :param body: Fabric properties to update. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.FabricPatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Fabric. The Fabric is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.Fabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        fabric_name: str,
+        body: _types.FabricPatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Fabric]:
+        """Updates a Fabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fabric_name: Name of the Fabric. Required.
+        :type fabric_name: str
+        :param body: Fabric properties to update. Required.
+        :type body: ~azure.mgmt.managednetworkfabric.types.FabricPatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Fabric. The Fabric is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.Fabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        fabric_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Fabric]:
+        """Updates a Fabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fabric_name: Name of the Fabric. Required.
+        :type fabric_name: str
+        :param body: Fabric properties to update. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Fabric. The Fabric is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.Fabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fabric_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        fabric_name: str,
+        body: Union[_models.FabricPatch, _types.FabricPatch, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Fabric]:
+        """Updates a Fabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fabric_name: Name of the Fabric. Required.
+        :type fabric_name: str
+        :param body: Fabric properties to update. Is either a FabricPatch type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.managednetworkfabric.models.FabricPatch or
+         ~azure.mgmt.managednetworkfabric.types.FabricPatch or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns Fabric. The Fabric is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.managednetworkfabric.models.Fabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Fabric] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                fabric_name=fabric_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Fabric, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.Fabric].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.Fabric](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": ["api_version", "subscription_id", "resource_group_name", "fabric_name"]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
+    async def _delete_initial(self, resource_group_name: str, fabric_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_fabrics_delete_request(
+            resource_group_name=resource_group_name,
+            fabric_name=fabric_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={
+            "2026-01-15-preview": ["api_version", "subscription_id", "resource_group_name", "fabric_name"]
+        },
+        api_versions_list=["2026-01-15-preview"],
+    )
+    async def begin_delete(self, resource_group_name: str, fabric_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
+        """Deletes the specified Fabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param fabric_name: Name of the Fabric. Required.
+        :type fabric_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                fabric_name=fabric_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={"2026-01-15-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-01-15-preview"],
+    )
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.Fabric"]:
+        """Lists Fabrics by resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of Fabric
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.managednetworkfabric.models.Fabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Fabric]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_fabrics_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Fabric],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-15-preview",
+        params_added_on={"2026-01-15-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-01-15-preview"],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.Fabric"]:
+        """Lists Fabrics by subscription.
+
+        :return: An iterator like instance of Fabric
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.managednetworkfabric.models.Fabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Fabric]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_fabrics_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Fabric],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)

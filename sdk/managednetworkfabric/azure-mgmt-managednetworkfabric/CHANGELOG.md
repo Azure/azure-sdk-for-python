@@ -1,5 +1,91 @@
 # Release History
 
+## 3.0.0b1 (2026-10-30)
+
+### Features Added
+
+  - Client `ManagedNetworkFabricMgmtClient` added operation group `edge_connectors`
+  - Client `ManagedNetworkFabricMgmtClient` added operation group `fabrics`
+  - Enum `ConfigurationState` added member `COMMIT_ROLLBACK_FAILED`
+  - Enum `ConfigurationState` added member `COMMIT_STAGED`
+  - Enum `ConfigurationState` added member `COMMIT_STAGE_FAILED`
+  - Enum `DeviceRole` added member `TERMINAL_SERVER`
+  - Model `NeighborGroupProperties` added property `administrative_state`
+  - Model `NetworkBootstrapDevicePatchProperties` added property `control_plane_acls`
+  - Model `NetworkBootstrapDeviceProperties` added property `control_plane_acls`
+  - Model `NetworkBootstrapDeviceProperties` added property `operational_state`
+  - Model `NetworkBootstrapDeviceProperties` added property `secret_rotation_status`
+  - Model `NetworkBootstrapInterfaceProperties` added property `operational_state`
+  - Model `NetworkDeviceProperties` added property `operational_state`
+  - Model `NetworkFabricControllerProperties` added property `operational_state`
+  - Model `NetworkFabricControllerProperties` added property `vm_profile`
+  - Model `NetworkFabricPatchProperties` added property `secret_archive_settings`
+  - Model `NetworkFabricPatchProperties` added property `upgrade_profile`
+  - Model `NetworkFabricProperties` added property `network_bootstrap_device_id`
+  - Model `NetworkFabricProperties` added property `operational_state`
+  - Model `NetworkFabricProperties` added property `secret_archive_settings`
+  - Model `NetworkFabricProperties` added property `upgrade_profile`
+  - Model `NetworkInterfaceProperties` added property `operational_state`
+  - Model `NetworkPacketBrokerPatch` added property `properties`
+  - Model `NetworkPacketBrokerProperties` added property `source_network_tap_rule_id`
+  - Added enum `ConfigurationRegenerationType`
+  - Added enum `ConnectivityModel`
+  - Added enum `ControllerType`
+  - Added model `EdgeConnector`
+  - Added model `EdgeConnectorPatch`
+  - Added model `EdgeConnectorPatchableProperties`
+  - Added model `EdgeConnectorProperties`
+  - Added model `Fabric`
+  - Added model `FabricPatch`
+  - Added model `FabricPatchableProperties`
+  - Added model `FabricProperties`
+  - Added enum `GenerateBaseConfiguration`
+  - Added model `InfraNetwork`
+  - Added model `InfraNetworkOptionalIp`
+  - Added model `InfrastructureNetworks`
+  - Added model `InfrastructureServices`
+  - Added enum `ManagementMode`
+  - Added enum `NetworkFabricRefreshDeviceTypes`
+  - Added model `NetworkPacketBrokerPatchProperties`
+  - Added enum `OperationPolicy`
+  - Added enum `OperationalState`
+  - Added model `PatchInfraNetwork`
+  - Added model `PatchInfrastructureNetworks`
+  - Added model `PatchInfrastructureServices`
+  - Added model `PatchPlatformProxy`
+  - Added model `PlatformProxy`
+  - Added model `PostUpgradeProfilePatchProperties`
+  - Added model `PostUpgradeProfileProperties`
+  - Added model `PreUpgradeProfilePatchProperties`
+  - Added model `PreUpgradeProfileProperties`
+  - Added model `RefreshConfigurationRequestProperties`
+  - Added model `SecretArchivePatchSettings`
+  - Added model `SecretArchiveSettings`
+  - Added model `UpgradeProfileProperties`
+  - Added model `UpgradeProfilePropertiesPatchProperties`
+  - Added model `ValidateConfigurationResponseProperties`
+  - Added model `ValidateConfigurationResponseV2`
+  - Added model `VmProfile`
+  - Operation group `NetworkFabricsOperations` added parameter `content_type` in method `begin_refresh_configuration`
+  - Added operation group `EdgeConnectorsOperations`
+  - Added operation group `FabricsOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed model `ValidateConfigurationResponse`
+  - Method `AccessControlListsOperations.begin_validate_configuration` changed return type from `AsyncLROPoller[ValidateConfigurationResponse]` to `AsyncLROPoller[ValidateConfigurationResponseV2]`
+  - Method `L2IsolationDomainsOperations.begin_validate_configuration` changed return type from `AsyncLROPoller[ValidateConfigurationResponse]` to `AsyncLROPoller[ValidateConfigurationResponseV2]`
+  - Method `L3IsolationDomainsOperations.begin_validate_configuration` changed return type from `AsyncLROPoller[ValidateConfigurationResponse]` to `AsyncLROPoller[ValidateConfigurationResponseV2]`
+  - Method `NetworkFabricsOperations.begin_validate_configuration` changed return type from `AsyncLROPoller[ValidateConfigurationResponse]` to `AsyncLROPoller[ValidateConfigurationResponseV2]`
+  - Method `NetworkTapRulesOperations.begin_validate_configuration` changed return type from `AsyncLROPoller[ValidateConfigurationResponse]` to `AsyncLROPoller[ValidateConfigurationResponseV2]`
+  - Method `RoutePoliciesOperations.begin_validate_configuration` changed return type from `AsyncLROPoller[ValidateConfigurationResponse]` to `AsyncLROPoller[ValidateConfigurationResponseV2]`
+  - Method `AccessControlListsOperations.begin_validate_configuration` changed return type from `LROPoller[ValidateConfigurationResponse]` to `LROPoller[ValidateConfigurationResponseV2]`
+  - Method `L2IsolationDomainsOperations.begin_validate_configuration` changed return type from `LROPoller[ValidateConfigurationResponse]` to `LROPoller[ValidateConfigurationResponseV2]`
+  - Method `L3IsolationDomainsOperations.begin_validate_configuration` changed return type from `LROPoller[ValidateConfigurationResponse]` to `LROPoller[ValidateConfigurationResponseV2]`
+  - Method `NetworkFabricsOperations.begin_validate_configuration` changed return type from `LROPoller[ValidateConfigurationResponse]` to `LROPoller[ValidateConfigurationResponseV2]`
+  - Method `NetworkTapRulesOperations.begin_validate_configuration` changed return type from `LROPoller[ValidateConfigurationResponse]` to `LROPoller[ValidateConfigurationResponseV2]`
+  - Method `RoutePoliciesOperations.begin_validate_configuration` changed return type from `LROPoller[ValidateConfigurationResponse]` to `LROPoller[ValidateConfigurationResponseV2]`
+
 ## 2.0.0 (2026-06-08)
 
 ### Features Added

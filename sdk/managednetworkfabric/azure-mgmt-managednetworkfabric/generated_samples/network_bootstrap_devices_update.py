@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -37,6 +38,9 @@ def main():
             "identity": {"type": "None", "userAssignedIdentities": {"key8793": {}}},
             "properties": {
                 "annotation": "annotation",
+                "controlPlaneAcls": [
+                    "/subscriptions/xxxxxx/resourceGroups/resourcegroupname/providers/Microsoft.ManagedNetworkFabric/accessControlLists/example-acl"
+                ],
                 "hostName": "NFA-Device",
                 "serialNumber": "Vendor;DCS-7280XXX-24;12.05;JPE2111XXXX",
             },
@@ -46,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-15/NetworkBootstrapDevices_Update.json
+# x-ms-original-file: 2026-01-15-preview/NetworkBootstrapDevices_Update.json
 if __name__ == "__main__":
     main()
