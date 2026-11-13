@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2020-02-02/ComponentsListByResourceGroup.json
+# x-ms-original-file: 2025-01-23-preview/ComponentsListByResourceGroup.json
 if __name__ == "__main__":
     main()

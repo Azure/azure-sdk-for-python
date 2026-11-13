@@ -30,7 +30,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -109,13 +109,12 @@ from ...operations._operations import (
 )
 from .._configuration import ApplicationInsightsManagementClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
 
 
-class WebTestsOperations:
+class WebTestsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -234,7 +233,7 @@ class WebTestsOperations:
         self,
         resource_group_name: str,
         web_test_name: str,
-        web_test_definition: JSON,
+        web_test_definition: _types.WebTest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -248,7 +247,7 @@ class WebTestsOperations:
         :type web_test_name: str
         :param web_test_definition: Properties that need to be specified to create or update an
          Application Insights web test definition. Required.
-        :type web_test_definition: JSON
+        :type web_test_definition: ~azure.mgmt.applicationinsights.types.WebTest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -290,7 +289,7 @@ class WebTestsOperations:
         self,
         resource_group_name: str,
         web_test_name: str,
-        web_test_definition: Union[_models.WebTest, JSON, IO[bytes]],
+        web_test_definition: Union[_models.WebTest, _types.WebTest, IO[bytes]],
         **kwargs: Any
     ) -> _models.WebTest:
         """Creates or updates an Application Insights web test definition.
@@ -301,9 +300,10 @@ class WebTestsOperations:
         :param web_test_name: The name of the Application Insights WebTest resource. Required.
         :type web_test_name: str
         :param web_test_definition: Properties that need to be specified to create or update an
-         Application Insights web test definition. Is one of the following types: WebTest, JSON,
-         IO[bytes] Required.
-        :type web_test_definition: ~azure.mgmt.applicationinsights.models.WebTest or JSON or IO[bytes]
+         Application Insights web test definition. Is either a WebTest type or a IO[bytes] type.
+         Required.
+        :type web_test_definition: ~azure.mgmt.applicationinsights.models.WebTest or
+         ~azure.mgmt.applicationinsights.types.WebTest or IO[bytes]
         :return: WebTest. The WebTest is compatible with MutableMapping
         :rtype: ~azure.mgmt.applicationinsights.models.WebTest
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -405,7 +405,7 @@ class WebTestsOperations:
         self,
         resource_group_name: str,
         web_test_name: str,
-        web_test_tags: JSON,
+        web_test_tags: _types.TagsResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -419,7 +419,7 @@ class WebTestsOperations:
         :type web_test_name: str
         :param web_test_tags: Updated tag information to associate with the web test resource.
          Required.
-        :type web_test_tags: JSON
+        :type web_test_tags: ~azure.mgmt.applicationinsights.types.TagsResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -461,7 +461,7 @@ class WebTestsOperations:
         self,
         resource_group_name: str,
         web_test_name: str,
-        web_test_tags: Union[_models.TagsResource, JSON, IO[bytes]],
+        web_test_tags: Union[_models.TagsResource, _types.TagsResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.WebTest:
         """Updates the tags associated with an Application Insights web test.
@@ -471,9 +471,10 @@ class WebTestsOperations:
         :type resource_group_name: str
         :param web_test_name: The name of the Application Insights WebTest resource. Required.
         :type web_test_name: str
-        :param web_test_tags: Updated tag information to associate with the web test resource. Is one
-         of the following types: TagsResource, JSON, IO[bytes] Required.
-        :type web_test_tags: ~azure.mgmt.applicationinsights.models.TagsResource or JSON or IO[bytes]
+        :param web_test_tags: Updated tag information to associate with the web test resource. Is
+         either a TagsResource type or a IO[bytes] type. Required.
+        :type web_test_tags: ~azure.mgmt.applicationinsights.models.TagsResource or
+         ~azure.mgmt.applicationinsights.types.TagsResource or IO[bytes]
         :return: WebTest. The WebTest is compatible with MutableMapping
         :rtype: ~azure.mgmt.applicationinsights.models.WebTest
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -838,7 +839,7 @@ class WebTestsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -938,7 +939,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WorkbooksOperations:
+class WorkbooksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1072,7 +1073,7 @@ class WorkbooksOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        workbook_properties: JSON,
+        workbook_properties: _types.Workbook,
         *,
         source_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -1087,7 +1088,7 @@ class WorkbooksOperations:
         :type resource_name: str
         :param workbook_properties: Properties that need to be specified to create a new workbook.
          Required.
-        :type workbook_properties: JSON
+        :type workbook_properties: ~azure.mgmt.applicationinsights.types.Workbook
         :keyword source_id: Azure Resource Id that will fetch all linked workbooks. Default value is
          None.
         :paramtype source_id: str
@@ -1136,7 +1137,7 @@ class WorkbooksOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        workbook_properties: Union[_models.Workbook, JSON, IO[bytes]],
+        workbook_properties: Union[_models.Workbook, _types.Workbook, IO[bytes]],
         *,
         source_id: Optional[str] = None,
         **kwargs: Any
@@ -1149,8 +1150,9 @@ class WorkbooksOperations:
         :param resource_name: The name of the workbook resource. The value must be an UUID. Required.
         :type resource_name: str
         :param workbook_properties: Properties that need to be specified to create a new workbook. Is
-         one of the following types: Workbook, JSON, IO[bytes] Required.
-        :type workbook_properties: ~azure.mgmt.applicationinsights.models.Workbook or JSON or IO[bytes]
+         either a Workbook type or a IO[bytes] type. Required.
+        :type workbook_properties: ~azure.mgmt.applicationinsights.models.Workbook or
+         ~azure.mgmt.applicationinsights.types.Workbook or IO[bytes]
         :keyword source_id: Azure Resource Id that will fetch all linked workbooks. Default value is
          None.
         :paramtype source_id: str
@@ -1265,7 +1267,7 @@ class WorkbooksOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        workbook_update_parameters: Optional[JSON] = None,
+        workbook_update_parameters: Optional[_types.WorkbookUpdateParameters] = None,
         *,
         source_id: Optional[str] = None,
         content_type: str = "application/json",
@@ -1280,7 +1282,8 @@ class WorkbooksOperations:
         :type resource_name: str
         :param workbook_update_parameters: Properties that need to be specified to create a new
          workbook. Default value is None.
-        :type workbook_update_parameters: JSON
+        :type workbook_update_parameters:
+         ~azure.mgmt.applicationinsights.types.WorkbookUpdateParameters
         :keyword source_id: Azure Resource Id that will fetch all linked workbooks. Default value is
          None.
         :paramtype source_id: str
@@ -1329,7 +1332,9 @@ class WorkbooksOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        workbook_update_parameters: Optional[Union[_models.WorkbookUpdateParameters, JSON, IO[bytes]]] = None,
+        workbook_update_parameters: Optional[
+            Union[_models.WorkbookUpdateParameters, _types.WorkbookUpdateParameters, IO[bytes]]
+        ] = None,
         *,
         source_id: Optional[str] = None,
         **kwargs: Any
@@ -1342,10 +1347,10 @@ class WorkbooksOperations:
         :param resource_name: The name of the workbook resource. The value must be an UUID. Required.
         :type resource_name: str
         :param workbook_update_parameters: Properties that need to be specified to create a new
-         workbook. Is one of the following types: WorkbookUpdateParameters, JSON, IO[bytes] Default
-         value is None.
+         workbook. Is either a WorkbookUpdateParameters type or a IO[bytes] type. Default value is None.
         :type workbook_update_parameters:
-         ~azure.mgmt.applicationinsights.models.WorkbookUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.applicationinsights.models.WorkbookUpdateParameters or
+         ~azure.mgmt.applicationinsights.types.WorkbookUpdateParameters or IO[bytes]
         :keyword source_id: Azure Resource Id that will fetch all linked workbooks. Default value is
          None.
         :paramtype source_id: str
@@ -1861,7 +1866,7 @@ class WorkbooksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WorkbookTemplatesOperations:
+class WorkbookTemplatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1984,7 +1989,7 @@ class WorkbookTemplatesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        workbook_template_properties: JSON,
+        workbook_template_properties: _types.WorkbookTemplate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1998,7 +2003,7 @@ class WorkbookTemplatesOperations:
         :type resource_name: str
         :param workbook_template_properties: Properties that need to be specified to create a new
          workbook. Required.
-        :type workbook_template_properties: JSON
+        :type workbook_template_properties: ~azure.mgmt.applicationinsights.types.WorkbookTemplate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2040,7 +2045,7 @@ class WorkbookTemplatesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        workbook_template_properties: Union[_models.WorkbookTemplate, JSON, IO[bytes]],
+        workbook_template_properties: Union[_models.WorkbookTemplate, _types.WorkbookTemplate, IO[bytes]],
         **kwargs: Any
     ) -> _models.WorkbookTemplate:
         """Create a new workbook template.
@@ -2051,9 +2056,9 @@ class WorkbookTemplatesOperations:
         :param resource_name: The name of the Application Insights component resource. Required.
         :type resource_name: str
         :param workbook_template_properties: Properties that need to be specified to create a new
-         workbook. Is one of the following types: WorkbookTemplate, JSON, IO[bytes] Required.
+         workbook. Is either a WorkbookTemplate type or a IO[bytes] type. Required.
         :type workbook_template_properties: ~azure.mgmt.applicationinsights.models.WorkbookTemplate or
-         JSON or IO[bytes]
+         ~azure.mgmt.applicationinsights.types.WorkbookTemplate or IO[bytes]
         :return: WorkbookTemplate. The WorkbookTemplate is compatible with MutableMapping
         :rtype: ~azure.mgmt.applicationinsights.models.WorkbookTemplate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2160,7 +2165,7 @@ class WorkbookTemplatesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        workbook_template_update_parameters: Optional[JSON] = None,
+        workbook_template_update_parameters: Optional[_types.WorkbookTemplateUpdateParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2174,7 +2179,8 @@ class WorkbookTemplatesOperations:
         :type resource_name: str
         :param workbook_template_update_parameters: Properties that need to be specified to patch a
          workbook template. Default value is None.
-        :type workbook_template_update_parameters: JSON
+        :type workbook_template_update_parameters:
+         ~azure.mgmt.applicationinsights.types.WorkbookTemplateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2217,7 +2223,7 @@ class WorkbookTemplatesOperations:
         resource_group_name: str,
         resource_name: str,
         workbook_template_update_parameters: Optional[
-            Union[_models.WorkbookTemplateUpdateParameters, JSON, IO[bytes]]
+            Union[_models.WorkbookTemplateUpdateParameters, _types.WorkbookTemplateUpdateParameters, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> _models.WorkbookTemplate:
@@ -2229,10 +2235,11 @@ class WorkbookTemplatesOperations:
         :param resource_name: The name of the Application Insights component resource. Required.
         :type resource_name: str
         :param workbook_template_update_parameters: Properties that need to be specified to patch a
-         workbook template. Is one of the following types: WorkbookTemplateUpdateParameters, JSON,
-         IO[bytes] Default value is None.
+         workbook template. Is either a WorkbookTemplateUpdateParameters type or a IO[bytes] type.
+         Default value is None.
         :type workbook_template_update_parameters:
-         ~azure.mgmt.applicationinsights.models.WorkbookTemplateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.applicationinsights.models.WorkbookTemplateUpdateParameters or
+         ~azure.mgmt.applicationinsights.types.WorkbookTemplateUpdateParameters or IO[bytes]
         :return: WorkbookTemplate. The WorkbookTemplate is compatible with MutableMapping
         :rtype: ~azure.mgmt.applicationinsights.models.WorkbookTemplate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2455,7 +2462,7 @@ class WorkbookTemplatesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AnalyticsItemsOperations:
+class AnalyticsItemsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2704,7 +2711,7 @@ class AnalyticsItemsOperations:
         resource_group_name: str,
         resource_name: str,
         scope_path: Union[str, _models.ItemScopePath],
-        item_properties: JSON,
+        item_properties: _types.ApplicationInsightsComponentAnalyticsItem,
         *,
         override_item: Optional[bool] = None,
         content_type: str = "application/json",
@@ -2723,7 +2730,8 @@ class AnalyticsItemsOperations:
         :type scope_path: str or ~azure.mgmt.applicationinsights.models.ItemScopePath
         :param item_properties: Properties that need to be specified to create a new item and add it to
          an Application Insights component. Required.
-        :type item_properties: JSON
+        :type item_properties:
+         ~azure.mgmt.applicationinsights.types.ApplicationInsightsComponentAnalyticsItem
         :keyword override_item: Flag indicating whether or not to force save an item. This allows
          overriding an item if it already exists. Default value is None.
         :paramtype override_item: bool
@@ -2780,7 +2788,11 @@ class AnalyticsItemsOperations:
         resource_group_name: str,
         resource_name: str,
         scope_path: Union[str, _models.ItemScopePath],
-        item_properties: Union[_models.ApplicationInsightsComponentAnalyticsItem, JSON, IO[bytes]],
+        item_properties: Union[
+            _models.ApplicationInsightsComponentAnalyticsItem,
+            _types.ApplicationInsightsComponentAnalyticsItem,
+            IO[bytes],
+        ],
         *,
         override_item: Optional[bool] = None,
         **kwargs: Any
@@ -2797,11 +2809,11 @@ class AnalyticsItemsOperations:
          "analyticsItems" and "myanalyticsItems". Required.
         :type scope_path: str or ~azure.mgmt.applicationinsights.models.ItemScopePath
         :param item_properties: Properties that need to be specified to create a new item and add it to
-         an Application Insights component. Is one of the following types:
-         ApplicationInsightsComponentAnalyticsItem, JSON, IO[bytes] Required.
+         an Application Insights component. Is either a ApplicationInsightsComponentAnalyticsItem type
+         or a IO[bytes] type. Required.
         :type item_properties:
-         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentAnalyticsItem or JSON or
-         IO[bytes]
+         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentAnalyticsItem or
+         ~azure.mgmt.applicationinsights.types.ApplicationInsightsComponentAnalyticsItem or IO[bytes]
         :keyword override_item: Flag indicating whether or not to force save an item. This allows
          overriding an item if it already exists. Default value is None.
         :paramtype override_item: bool
@@ -2953,7 +2965,7 @@ class AnalyticsItemsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class AnnotationsOperations:
+class AnnotationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3102,7 +3114,7 @@ class AnnotationsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        annotation_properties: JSON,
+        annotation_properties: _types.Annotation,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3116,7 +3128,7 @@ class AnnotationsOperations:
         :type resource_name: str
         :param annotation_properties: Properties that need to be specified to create an annotation of a
          Application Insights component. Required.
-        :type annotation_properties: JSON
+        :type annotation_properties: ~azure.mgmt.applicationinsights.types.Annotation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3158,7 +3170,7 @@ class AnnotationsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        annotation_properties: Union[_models.Annotation, JSON, IO[bytes]],
+        annotation_properties: Union[_models.Annotation, _types.Annotation, IO[bytes]],
         **kwargs: Any
     ) -> List[_models.Annotation]:
         """Create an Annotation of an Application Insights component.
@@ -3169,10 +3181,9 @@ class AnnotationsOperations:
         :param resource_name: The name of the Application Insights component resource. Required.
         :type resource_name: str
         :param annotation_properties: Properties that need to be specified to create an annotation of a
-         Application Insights component. Is one of the following types: Annotation, JSON, IO[bytes]
-         Required.
-        :type annotation_properties: ~azure.mgmt.applicationinsights.models.Annotation or JSON or
-         IO[bytes]
+         Application Insights component. Is either a Annotation type or a IO[bytes] type. Required.
+        :type annotation_properties: ~azure.mgmt.applicationinsights.models.Annotation or
+         ~azure.mgmt.applicationinsights.types.Annotation or IO[bytes]
         :return: list of Annotation
         :rtype: list[~azure.mgmt.applicationinsights.models.Annotation]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3381,7 +3392,7 @@ class AnnotationsOperations:
         return deserialized  # type: ignore
 
 
-class APIKeysOperations:
+class APIKeysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3520,7 +3531,7 @@ class APIKeysOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        api_key_properties: JSON,
+        api_key_properties: _types.APIKeyRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3534,7 +3545,7 @@ class APIKeysOperations:
         :type resource_name: str
         :param api_key_properties: Properties that need to be specified to create an API Key of an
          Application Insights component. Required.
-        :type api_key_properties: JSON
+        :type api_key_properties: ~azure.mgmt.applicationinsights.types.APIKeyRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3578,7 +3589,7 @@ class APIKeysOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        api_key_properties: Union[_models.APIKeyRequest, JSON, IO[bytes]],
+        api_key_properties: Union[_models.APIKeyRequest, _types.APIKeyRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.ApplicationInsightsComponentAPIKey:
         """Create an API Key of an Application Insights component.
@@ -3589,10 +3600,9 @@ class APIKeysOperations:
         :param resource_name: The name of the Application Insights component resource. Required.
         :type resource_name: str
         :param api_key_properties: Properties that need to be specified to create an API Key of an
-         Application Insights component. Is one of the following types: APIKeyRequest, JSON, IO[bytes]
-         Required.
-        :type api_key_properties: ~azure.mgmt.applicationinsights.models.APIKeyRequest or JSON or
-         IO[bytes]
+         Application Insights component. Is either a APIKeyRequest type or a IO[bytes] type. Required.
+        :type api_key_properties: ~azure.mgmt.applicationinsights.models.APIKeyRequest or
+         ~azure.mgmt.applicationinsights.types.APIKeyRequest or IO[bytes]
         :return: ApplicationInsightsComponentAPIKey. The ApplicationInsightsComponentAPIKey is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentAPIKey
@@ -3811,7 +3821,7 @@ class APIKeysOperations:
         return deserialized  # type: ignore
 
 
-class ExportConfigurationsOperations:
+class ExportConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3934,7 +3944,7 @@ class ExportConfigurationsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        export_properties: JSON,
+        export_properties: _types.ApplicationInsightsComponentExportRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3947,7 +3957,8 @@ class ExportConfigurationsOperations:
         :param resource_name: The name of the Application Insights component resource. Required.
         :type resource_name: str
         :param export_properties: The request body. Required.
-        :type export_properties: JSON
+        :type export_properties:
+         ~azure.mgmt.applicationinsights.types.ApplicationInsightsComponentExportRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3990,7 +4001,11 @@ class ExportConfigurationsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        export_properties: Union[_models.ApplicationInsightsComponentExportRequest, JSON, IO[bytes]],
+        export_properties: Union[
+            _models.ApplicationInsightsComponentExportRequest,
+            _types.ApplicationInsightsComponentExportRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> List[_models.ApplicationInsightsComponentExportConfiguration]:
         """Create a Continuous Export configuration of an Application Insights component.
@@ -4000,11 +4015,11 @@ class ExportConfigurationsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component resource. Required.
         :type resource_name: str
-        :param export_properties: The request body. Is one of the following types:
-         ApplicationInsightsComponentExportRequest, JSON, IO[bytes] Required.
+        :param export_properties: The request body. Is either a
+         ApplicationInsightsComponentExportRequest type or a IO[bytes] type. Required.
         :type export_properties:
-         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentExportRequest or JSON or
-         IO[bytes]
+         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentExportRequest or
+         ~azure.mgmt.applicationinsights.types.ApplicationInsightsComponentExportRequest or IO[bytes]
         :return: list of ApplicationInsightsComponentExportConfiguration
         :rtype:
          list[~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentExportConfiguration]
@@ -4262,7 +4277,7 @@ class ExportConfigurationsOperations:
         resource_group_name: str,
         resource_name: str,
         export_id: str,
-        export_properties: JSON,
+        export_properties: _types.ApplicationInsightsComponentExportRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4279,7 +4294,8 @@ class ExportConfigurationsOperations:
         :type export_id: str
         :param export_properties: Properties that need to be specified to update the Continuous Export
          configuration. Required.
-        :type export_properties: JSON
+        :type export_properties:
+         ~azure.mgmt.applicationinsights.types.ApplicationInsightsComponentExportRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4328,7 +4344,11 @@ class ExportConfigurationsOperations:
         resource_group_name: str,
         resource_name: str,
         export_id: str,
-        export_properties: Union[_models.ApplicationInsightsComponentExportRequest, JSON, IO[bytes]],
+        export_properties: Union[
+            _models.ApplicationInsightsComponentExportRequest,
+            _types.ApplicationInsightsComponentExportRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> _models.ApplicationInsightsComponentExportConfiguration:
         """Update the Continuous Export configuration for this export id.
@@ -4342,11 +4362,11 @@ class ExportConfigurationsOperations:
          Insights component. Required.
         :type export_id: str
         :param export_properties: Properties that need to be specified to update the Continuous Export
-         configuration. Is one of the following types: ApplicationInsightsComponentExportRequest, JSON,
-         IO[bytes] Required.
+         configuration. Is either a ApplicationInsightsComponentExportRequest type or a IO[bytes] type.
+         Required.
         :type export_properties:
-         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentExportRequest or JSON or
-         IO[bytes]
+         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentExportRequest or
+         ~azure.mgmt.applicationinsights.types.ApplicationInsightsComponentExportRequest or IO[bytes]
         :return: ApplicationInsightsComponentExportConfiguration. The
          ApplicationInsightsComponentExportConfiguration is compatible with MutableMapping
         :rtype: ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentExportConfiguration
@@ -4418,7 +4438,7 @@ class ExportConfigurationsOperations:
         return deserialized  # type: ignore
 
 
-class ComponentCurrentBillingFeaturesOperations:  # pylint: disable=name-too-long
+class ComponentCurrentBillingFeaturesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4541,7 +4561,7 @@ class ComponentCurrentBillingFeaturesOperations:  # pylint: disable=name-too-lon
         self,
         resource_group_name: str,
         resource_name: str,
-        billing_features_properties: JSON,
+        billing_features_properties: _types.ApplicationInsightsComponentBillingFeatures,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4554,7 +4574,8 @@ class ComponentCurrentBillingFeaturesOperations:  # pylint: disable=name-too-lon
         :param resource_name: The name of the Application Insights component resource. Required.
         :type resource_name: str
         :param billing_features_properties: The request body. Required.
-        :type billing_features_properties: JSON
+        :type billing_features_properties:
+         ~azure.mgmt.applicationinsights.types.ApplicationInsightsComponentBillingFeatures
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4597,7 +4618,11 @@ class ComponentCurrentBillingFeaturesOperations:  # pylint: disable=name-too-lon
         self,
         resource_group_name: str,
         resource_name: str,
-        billing_features_properties: Union[_models.ApplicationInsightsComponentBillingFeatures, JSON, IO[bytes]],
+        billing_features_properties: Union[
+            _models.ApplicationInsightsComponentBillingFeatures,
+            _types.ApplicationInsightsComponentBillingFeatures,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> _models.ApplicationInsightsComponentBillingFeatures:
         """Update current billing features for an Application Insights component.
@@ -4607,11 +4632,11 @@ class ComponentCurrentBillingFeaturesOperations:  # pylint: disable=name-too-lon
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component resource. Required.
         :type resource_name: str
-        :param billing_features_properties: The request body. Is one of the following types:
-         ApplicationInsightsComponentBillingFeatures, JSON, IO[bytes] Required.
+        :param billing_features_properties: The request body. Is either a
+         ApplicationInsightsComponentBillingFeatures type or a IO[bytes] type. Required.
         :type billing_features_properties:
-         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentBillingFeatures or JSON or
-         IO[bytes]
+         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentBillingFeatures or
+         ~azure.mgmt.applicationinsights.types.ApplicationInsightsComponentBillingFeatures or IO[bytes]
         :return: ApplicationInsightsComponentBillingFeatures. The
          ApplicationInsightsComponentBillingFeatures is compatible with MutableMapping
         :rtype: ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentBillingFeatures
@@ -4682,7 +4707,7 @@ class ComponentCurrentBillingFeaturesOperations:  # pylint: disable=name-too-lon
         return deserialized  # type: ignore
 
 
-class ComponentQuotaStatusOperations:
+class ComponentQuotaStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4772,7 +4797,7 @@ class ComponentQuotaStatusOperations:
         return deserialized  # type: ignore
 
 
-class ComponentFeatureCapabilitiesOperations:
+class ComponentFeatureCapabilitiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4862,7 +4887,7 @@ class ComponentFeatureCapabilitiesOperations:
         return deserialized  # type: ignore
 
 
-class ComponentAvailableFeaturesOperations:
+class ComponentAvailableFeaturesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4952,7 +4977,7 @@ class ComponentAvailableFeaturesOperations:
         return deserialized  # type: ignore
 
 
-class ProactiveDetectionConfigurationsOperations:  # pylint: disable=name-too-long
+class ProactiveDetectionConfigurationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5163,7 +5188,7 @@ class ProactiveDetectionConfigurationsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         resource_name: str,
         configuration_id: str,
-        proactive_detection_properties: JSON,
+        proactive_detection_properties: _types.ApplicationInsightsComponentProactiveDetectionConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5180,7 +5205,8 @@ class ProactiveDetectionConfigurationsOperations:  # pylint: disable=name-too-lo
         :type configuration_id: str
         :param proactive_detection_properties: Properties that need to be specified to update the
          ProactiveDetection configuration. Required.
-        :type proactive_detection_properties: JSON
+        :type proactive_detection_properties:
+         ~azure.mgmt.applicationinsights.types.ApplicationInsightsComponentProactiveDetectionConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5232,7 +5258,9 @@ class ProactiveDetectionConfigurationsOperations:  # pylint: disable=name-too-lo
         resource_name: str,
         configuration_id: str,
         proactive_detection_properties: Union[
-            _models.ApplicationInsightsComponentProactiveDetectionConfiguration, JSON, IO[bytes]
+            _models.ApplicationInsightsComponentProactiveDetectionConfiguration,
+            _types.ApplicationInsightsComponentProactiveDetectionConfiguration,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> _models.ApplicationInsightsComponentProactiveDetectionConfiguration:
@@ -5247,11 +5275,13 @@ class ProactiveDetectionConfigurationsOperations:  # pylint: disable=name-too-lo
          Application Insights component. Required.
         :type configuration_id: str
         :param proactive_detection_properties: Properties that need to be specified to update the
-         ProactiveDetection configuration. Is one of the following types:
-         ApplicationInsightsComponentProactiveDetectionConfiguration, JSON, IO[bytes] Required.
+         ProactiveDetection configuration. Is either a
+         ApplicationInsightsComponentProactiveDetectionConfiguration type or a IO[bytes] type. Required.
         :type proactive_detection_properties:
          ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentProactiveDetectionConfiguration
-         or JSON or IO[bytes]
+         or
+         ~azure.mgmt.applicationinsights.types.ApplicationInsightsComponentProactiveDetectionConfiguration
+         or IO[bytes]
         :return: ApplicationInsightsComponentProactiveDetectionConfiguration. The
          ApplicationInsightsComponentProactiveDetectionConfiguration is compatible with MutableMapping
         :rtype:
@@ -5326,7 +5356,7 @@ class ProactiveDetectionConfigurationsOperations:  # pylint: disable=name-too-lo
         return deserialized  # type: ignore
 
 
-class WorkItemConfigurationsOperations:
+class WorkItemConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5468,7 +5498,7 @@ class WorkItemConfigurationsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        work_item_configuration_properties: JSON,
+        work_item_configuration_properties: _types.WorkItemCreateConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5481,7 +5511,8 @@ class WorkItemConfigurationsOperations:
         :param resource_name: The name of the Application Insights component resource. Required.
         :type resource_name: str
         :param work_item_configuration_properties: Work item configuration creation payload. Required.
-        :type work_item_configuration_properties: JSON
+        :type work_item_configuration_properties:
+         ~azure.mgmt.applicationinsights.types.WorkItemCreateConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5522,7 +5553,9 @@ class WorkItemConfigurationsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        work_item_configuration_properties: Union[_models.WorkItemCreateConfiguration, JSON, IO[bytes]],
+        work_item_configuration_properties: Union[
+            _models.WorkItemCreateConfiguration, _types.WorkItemCreateConfiguration, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.WorkItemConfiguration:
         """Create a work item configuration for an Application Insights component.
@@ -5532,10 +5565,11 @@ class WorkItemConfigurationsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component resource. Required.
         :type resource_name: str
-        :param work_item_configuration_properties: Work item configuration creation payload. Is one of
-         the following types: WorkItemCreateConfiguration, JSON, IO[bytes] Required.
+        :param work_item_configuration_properties: Work item configuration creation payload. Is either
+         a WorkItemCreateConfiguration type or a IO[bytes] type. Required.
         :type work_item_configuration_properties:
-         ~azure.mgmt.applicationinsights.models.WorkItemCreateConfiguration or JSON or IO[bytes]
+         ~azure.mgmt.applicationinsights.models.WorkItemCreateConfiguration or
+         ~azure.mgmt.applicationinsights.types.WorkItemCreateConfiguration or IO[bytes]
         :return: WorkItemConfiguration. The WorkItemConfiguration is compatible with MutableMapping
         :rtype: ~azure.mgmt.applicationinsights.models.WorkItemConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5845,7 +5879,7 @@ class WorkItemConfigurationsOperations:
         resource_group_name: str,
         resource_name: str,
         work_item_config_id: str,
-        work_item_configuration_properties: JSON,
+        work_item_configuration_properties: _types.WorkItemCreateConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5862,7 +5896,8 @@ class WorkItemConfigurationsOperations:
         :type work_item_config_id: str
         :param work_item_configuration_properties: Properties that need to be specified to update a
          work item configuration for this Application Insights component. Required.
-        :type work_item_configuration_properties: JSON
+        :type work_item_configuration_properties:
+         ~azure.mgmt.applicationinsights.types.WorkItemCreateConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5909,7 +5944,9 @@ class WorkItemConfigurationsOperations:
         resource_group_name: str,
         resource_name: str,
         work_item_config_id: str,
-        work_item_configuration_properties: Union[_models.WorkItemCreateConfiguration, JSON, IO[bytes]],
+        work_item_configuration_properties: Union[
+            _models.WorkItemCreateConfiguration, _types.WorkItemCreateConfiguration, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.WorkItemConfiguration:
         """Update a work item configuration for an Application Insights component.
@@ -5923,10 +5960,11 @@ class WorkItemConfigurationsOperations:
          name of connector as defined in connector configuration. Required.
         :type work_item_config_id: str
         :param work_item_configuration_properties: Properties that need to be specified to update a
-         work item configuration for this Application Insights component. Is one of the following types:
-         WorkItemCreateConfiguration, JSON, IO[bytes] Required.
+         work item configuration for this Application Insights component. Is either a
+         WorkItemCreateConfiguration type or a IO[bytes] type. Required.
         :type work_item_configuration_properties:
-         ~azure.mgmt.applicationinsights.models.WorkItemCreateConfiguration or JSON or IO[bytes]
+         ~azure.mgmt.applicationinsights.models.WorkItemCreateConfiguration or
+         ~azure.mgmt.applicationinsights.types.WorkItemCreateConfiguration or IO[bytes]
         :return: WorkItemConfiguration. The WorkItemConfiguration is compatible with MutableMapping
         :rtype: ~azure.mgmt.applicationinsights.models.WorkItemConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5997,7 +6035,7 @@ class WorkItemConfigurationsOperations:
         return deserialized  # type: ignore
 
 
-class ComponentLinkedStorageAccountsOperations:
+class ComponentLinkedStorageAccountsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6134,7 +6172,7 @@ class ComponentLinkedStorageAccountsOperations:
         resource_group_name: str,
         resource_name: str,
         storage_type: Union[str, _models.StorageType],
-        linked_storage_accounts_properties: JSON,
+        linked_storage_accounts_properties: _types.ComponentLinkedStorageAccounts,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6151,7 +6189,8 @@ class ComponentLinkedStorageAccountsOperations:
         :type storage_type: str or ~azure.mgmt.applicationinsights.models.StorageType
         :param linked_storage_accounts_properties: Properties that need to be specified to update
          linked storage accounts for an Application Insights component. Required.
-        :type linked_storage_accounts_properties: JSON
+        :type linked_storage_accounts_properties:
+         ~azure.mgmt.applicationinsights.types.ComponentLinkedStorageAccounts
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6200,7 +6239,9 @@ class ComponentLinkedStorageAccountsOperations:
         resource_group_name: str,
         resource_name: str,
         storage_type: Union[str, _models.StorageType],
-        linked_storage_accounts_properties: Union[_models.ComponentLinkedStorageAccounts, JSON, IO[bytes]],
+        linked_storage_accounts_properties: Union[
+            _models.ComponentLinkedStorageAccounts, _types.ComponentLinkedStorageAccounts, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ComponentLinkedStorageAccounts:
         """Replace current linked storage account for an Application Insights component.
@@ -6214,10 +6255,11 @@ class ComponentLinkedStorageAccountsOperations:
          storage account. "ServiceProfiler" Required.
         :type storage_type: str or ~azure.mgmt.applicationinsights.models.StorageType
         :param linked_storage_accounts_properties: Properties that need to be specified to update
-         linked storage accounts for an Application Insights component. Is one of the following types:
-         ComponentLinkedStorageAccounts, JSON, IO[bytes] Required.
+         linked storage accounts for an Application Insights component. Is either a
+         ComponentLinkedStorageAccounts type or a IO[bytes] type. Required.
         :type linked_storage_accounts_properties:
-         ~azure.mgmt.applicationinsights.models.ComponentLinkedStorageAccounts or JSON or IO[bytes]
+         ~azure.mgmt.applicationinsights.models.ComponentLinkedStorageAccounts or
+         ~azure.mgmt.applicationinsights.types.ComponentLinkedStorageAccounts or IO[bytes]
         :return: ComponentLinkedStorageAccounts. The ComponentLinkedStorageAccounts is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.applicationinsights.models.ComponentLinkedStorageAccounts
@@ -6332,7 +6374,7 @@ class ComponentLinkedStorageAccountsOperations:
         resource_group_name: str,
         resource_name: str,
         storage_type: Union[str, _models.StorageType],
-        linked_storage_accounts_properties: JSON,
+        linked_storage_accounts_properties: _types.ComponentLinkedStorageAccountsPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6349,7 +6391,8 @@ class ComponentLinkedStorageAccountsOperations:
         :type storage_type: str or ~azure.mgmt.applicationinsights.models.StorageType
         :param linked_storage_accounts_properties: Properties that need to be specified to update a
          linked storage accounts for an Application Insights component. Required.
-        :type linked_storage_accounts_properties: JSON
+        :type linked_storage_accounts_properties:
+         ~azure.mgmt.applicationinsights.types.ComponentLinkedStorageAccountsPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6398,7 +6441,9 @@ class ComponentLinkedStorageAccountsOperations:
         resource_group_name: str,
         resource_name: str,
         storage_type: Union[str, _models.StorageType],
-        linked_storage_accounts_properties: Union[_models.ComponentLinkedStorageAccountsPatch, JSON, IO[bytes]],
+        linked_storage_accounts_properties: Union[
+            _models.ComponentLinkedStorageAccountsPatch, _types.ComponentLinkedStorageAccountsPatch, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ComponentLinkedStorageAccounts:
         """Update linked storage accounts for an Application Insights component.
@@ -6412,10 +6457,11 @@ class ComponentLinkedStorageAccountsOperations:
          storage account. "ServiceProfiler" Required.
         :type storage_type: str or ~azure.mgmt.applicationinsights.models.StorageType
         :param linked_storage_accounts_properties: Properties that need to be specified to update a
-         linked storage accounts for an Application Insights component. Is one of the following types:
-         ComponentLinkedStorageAccountsPatch, JSON, IO[bytes] Required.
+         linked storage accounts for an Application Insights component. Is either a
+         ComponentLinkedStorageAccountsPatch type or a IO[bytes] type. Required.
         :type linked_storage_accounts_properties:
-         ~azure.mgmt.applicationinsights.models.ComponentLinkedStorageAccountsPatch or JSON or IO[bytes]
+         ~azure.mgmt.applicationinsights.models.ComponentLinkedStorageAccountsPatch or
+         ~azure.mgmt.applicationinsights.types.ComponentLinkedStorageAccountsPatch or IO[bytes]
         :return: ComponentLinkedStorageAccounts. The ComponentLinkedStorageAccounts is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.applicationinsights.models.ComponentLinkedStorageAccounts
@@ -6555,7 +6601,7 @@ class ComponentLinkedStorageAccountsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ComponentsOperations:
+class ComponentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6601,7 +6647,7 @@ class ComponentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-02-02"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-23-preview"))
         cls: ClsType[_models.ApplicationInsightsComponent] = kwargs.pop("cls", None)
 
         _request = build_components_get_request(
@@ -6683,7 +6729,7 @@ class ComponentsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        insight_properties: JSON,
+        insight_properties: _types.ApplicationInsightsComponent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6698,7 +6744,7 @@ class ComponentsOperations:
         :type resource_name: str
         :param insight_properties: Properties that need to be specified to create an Application
          Insights component. Required.
-        :type insight_properties: JSON
+        :type insight_properties: ~azure.mgmt.applicationinsights.types.ApplicationInsightsComponent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6743,7 +6789,7 @@ class ComponentsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        insight_properties: Union[_models.ApplicationInsightsComponent, JSON, IO[bytes]],
+        insight_properties: Union[_models.ApplicationInsightsComponent, _types.ApplicationInsightsComponent, IO[bytes]],
         **kwargs: Any
     ) -> _models.ApplicationInsightsComponent:
         """Creates (or updates) an Application Insights component. Note: You cannot specify a different
@@ -6755,10 +6801,10 @@ class ComponentsOperations:
         :param resource_name: The name of the Application Insights component resource. Required.
         :type resource_name: str
         :param insight_properties: Properties that need to be specified to create an Application
-         Insights component. Is one of the following types: ApplicationInsightsComponent, JSON,
-         IO[bytes] Required.
+         Insights component. Is either a ApplicationInsightsComponent type or a IO[bytes] type.
+         Required.
         :type insight_properties: ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponent
-         or JSON or IO[bytes]
+         or ~azure.mgmt.applicationinsights.types.ApplicationInsightsComponent or IO[bytes]
         :return: ApplicationInsightsComponent. The ApplicationInsightsComponent is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponent
@@ -6775,7 +6821,7 @@ class ComponentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-02-02"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-23-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ApplicationInsightsComponent] = kwargs.pop("cls", None)
 
@@ -6865,7 +6911,7 @@ class ComponentsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        component_tags: JSON,
+        component_tags: _types.TagsResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6878,7 +6924,7 @@ class ComponentsOperations:
         :param resource_name: The name of the Application Insights component resource. Required.
         :type resource_name: str
         :param component_tags: Updated tag information to set into the component instance. Required.
-        :type component_tags: JSON
+        :type component_tags: ~azure.mgmt.applicationinsights.types.TagsResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6921,7 +6967,7 @@ class ComponentsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        component_tags: Union[_models.TagsResource, JSON, IO[bytes]],
+        component_tags: Union[_models.TagsResource, _types.TagsResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ApplicationInsightsComponent:
         """Updates an existing component's tags. To update other fields use the CreateOrUpdate method.
@@ -6931,9 +6977,10 @@ class ComponentsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component resource. Required.
         :type resource_name: str
-        :param component_tags: Updated tag information to set into the component instance. Is one of
-         the following types: TagsResource, JSON, IO[bytes] Required.
-        :type component_tags: ~azure.mgmt.applicationinsights.models.TagsResource or JSON or IO[bytes]
+        :param component_tags: Updated tag information to set into the component instance. Is either a
+         TagsResource type or a IO[bytes] type. Required.
+        :type component_tags: ~azure.mgmt.applicationinsights.models.TagsResource or
+         ~azure.mgmt.applicationinsights.types.TagsResource or IO[bytes]
         :return: ApplicationInsightsComponent. The ApplicationInsightsComponent is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponent
@@ -6950,7 +6997,7 @@ class ComponentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-02-02"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-23-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ApplicationInsightsComponent] = kwargs.pop("cls", None)
 
@@ -7031,7 +7078,7 @@ class ComponentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-02-02"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-23-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_components_delete_request(
@@ -7082,7 +7129,7 @@ class ComponentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-02-02"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-23-preview"))
         cls: ClsType[List[_models.ApplicationInsightsComponent]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -7164,7 +7211,7 @@ class ComponentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-02-02"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-23-preview"))
         cls: ClsType[List[_models.ApplicationInsightsComponent]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -7277,7 +7324,7 @@ class ComponentsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        body: JSON,
+        body: _types.ComponentPurgeBody,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7302,7 +7349,7 @@ class ComponentsOperations:
         :type resource_name: str
         :param body: Describes the body of a request to purge data in a single table of an Application
          Insights component. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.applicationinsights.types.ComponentPurgeBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7355,7 +7402,7 @@ class ComponentsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        body: Union[_models.ComponentPurgeBody, JSON, IO[bytes]],
+        body: Union[_models.ComponentPurgeBody, _types.ComponentPurgeBody, IO[bytes]],
         **kwargs: Any
     ) -> _models.ComponentPurgeResponse:
         """Purges data in an Application Insights component by a set of user-defined filters.
@@ -7377,9 +7424,9 @@ class ComponentsOperations:
         :param resource_name: The name of the Application Insights component resource. Required.
         :type resource_name: str
         :param body: Describes the body of a request to purge data in a single table of an Application
-         Insights component. Is one of the following types: ComponentPurgeBody, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.applicationinsights.models.ComponentPurgeBody or JSON or IO[bytes]
+         Insights component. Is either a ComponentPurgeBody type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.applicationinsights.models.ComponentPurgeBody or
+         ~azure.mgmt.applicationinsights.types.ComponentPurgeBody or IO[bytes]
         :return: ComponentPurgeResponse. The ComponentPurgeResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.applicationinsights.models.ComponentPurgeResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7395,7 +7442,7 @@ class ComponentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-02-02"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-23-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ComponentPurgeResponse] = kwargs.pop("cls", None)
 
@@ -7482,7 +7529,7 @@ class ComponentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-02-02"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-23-preview"))
         cls: ClsType[_models.ComponentPurgeStatusResponse] = kwargs.pop("cls", None)
 
         _request = build_components_get_purge_status_request(
@@ -7531,7 +7578,7 @@ class ComponentsOperations:
         return deserialized  # type: ignore
 
 
-class DeletedWorkbooksOperations:
+class DeletedWorkbooksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7645,7 +7692,7 @@ class DeletedWorkbooksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FavoritesOperations:
+class FavoritesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7873,7 +7920,7 @@ class FavoritesOperations:
         resource_group_name: str,
         resource_name: str,
         favorite_id: str,
-        favorite_properties: JSON,
+        favorite_properties: _types.ApplicationInsightsComponentFavorite,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7890,7 +7937,8 @@ class FavoritesOperations:
         :type favorite_id: str
         :param favorite_properties: Properties that need to be specified to create a new favorite and
          add it to an Application Insights component. Required.
-        :type favorite_properties: JSON
+        :type favorite_properties:
+         ~azure.mgmt.applicationinsights.types.ApplicationInsightsComponentFavorite
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7939,7 +7987,9 @@ class FavoritesOperations:
         resource_group_name: str,
         resource_name: str,
         favorite_id: str,
-        favorite_properties: Union[_models.ApplicationInsightsComponentFavorite, JSON, IO[bytes]],
+        favorite_properties: Union[
+            _models.ApplicationInsightsComponentFavorite, _types.ApplicationInsightsComponentFavorite, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ApplicationInsightsComponentFavorite:
         """Adds a new favorites to an Application Insights component.
@@ -7953,11 +8003,11 @@ class FavoritesOperations:
          component. Required.
         :type favorite_id: str
         :param favorite_properties: Properties that need to be specified to create a new favorite and
-         add it to an Application Insights component. Is one of the following types:
-         ApplicationInsightsComponentFavorite, JSON, IO[bytes] Required.
+         add it to an Application Insights component. Is either a ApplicationInsightsComponentFavorite
+         type or a IO[bytes] type. Required.
         :type favorite_properties:
-         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentFavorite or JSON or
-         IO[bytes]
+         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentFavorite or
+         ~azure.mgmt.applicationinsights.types.ApplicationInsightsComponentFavorite or IO[bytes]
         :return: ApplicationInsightsComponentFavorite. The ApplicationInsightsComponentFavorite is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentFavorite
@@ -8068,7 +8118,7 @@ class FavoritesOperations:
         resource_group_name: str,
         resource_name: str,
         favorite_id: str,
-        favorite_properties: JSON,
+        favorite_properties: _types.ApplicationInsightsComponentFavorite,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8085,7 +8135,8 @@ class FavoritesOperations:
         :type favorite_id: str
         :param favorite_properties: Properties that need to be specified to update the existing
          favorite. Required.
-        :type favorite_properties: JSON
+        :type favorite_properties:
+         ~azure.mgmt.applicationinsights.types.ApplicationInsightsComponentFavorite
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8134,7 +8185,9 @@ class FavoritesOperations:
         resource_group_name: str,
         resource_name: str,
         favorite_id: str,
-        favorite_properties: Union[_models.ApplicationInsightsComponentFavorite, JSON, IO[bytes]],
+        favorite_properties: Union[
+            _models.ApplicationInsightsComponentFavorite, _types.ApplicationInsightsComponentFavorite, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ApplicationInsightsComponentFavorite:
         """Updates a favorite that has already been added to an Application Insights component.
@@ -8148,11 +8201,10 @@ class FavoritesOperations:
          component. Required.
         :type favorite_id: str
         :param favorite_properties: Properties that need to be specified to update the existing
-         favorite. Is one of the following types: ApplicationInsightsComponentFavorite, JSON, IO[bytes]
-         Required.
+         favorite. Is either a ApplicationInsightsComponentFavorite type or a IO[bytes] type. Required.
         :type favorite_properties:
-         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentFavorite or JSON or
-         IO[bytes]
+         ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentFavorite or
+         ~azure.mgmt.applicationinsights.types.ApplicationInsightsComponentFavorite or IO[bytes]
         :return: ApplicationInsightsComponentFavorite. The ApplicationInsightsComponentFavorite is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentFavorite
@@ -8282,7 +8334,7 @@ class FavoritesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class LiveTokenOperations:
+class LiveTokenOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8369,7 +8421,7 @@ class LiveTokenOperations:
         return deserialized  # type: ignore
 
 
-class WebTestLocationsOperations:
+class WebTestLocationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
