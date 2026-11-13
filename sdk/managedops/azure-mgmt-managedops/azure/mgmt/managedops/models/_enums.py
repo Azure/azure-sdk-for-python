@@ -80,3 +80,19 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource has begun provisioning."""
     DELETING = "Deleting"
     """The resource is being deleted."""
+    ACCEPTED = "Accepted"
+    """The resource has been accepted for provisioning."""
+
+
+class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of the SKU."""
+
+    MANAGED_OPS = "ManagedOps"
+    """ManagedOps SKU."""
+
+
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The pricing tier of the SKU."""
+
+    ESSENTIAL = "Essential"
+    """Essential tier."""
