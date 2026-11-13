@@ -22,7 +22,7 @@ from azure.core.utils import case_insensitive_dict
 from ._generated import models as _models
 from ._generated._utils.serialization import Serializer
 from ._generated.operations import CallRecordingOperations
-from ._shared.recording_url_validator import validate_recording_url
+from ._recording_url_validator import validate_recording_url
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -66,7 +66,8 @@ class ContentDownloader:
             raise ValueError("Recording client endpoint must not be None.")
 
         # Validate recording URL before sending authenticated request
-        validate_recording_url(source_location, "source_location")
+        source_location = validate_recording_url(source_location, "source_location")
+        kwargs["_recording_url_parameter_name"] = "source_location"
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -116,7 +117,8 @@ class ContentDownloader:
             raise ValueError("Recording client endpoint must not be None.")
 
         # Validate recording URL before sending authenticated request
-        validate_recording_url(recording_location, "recording_location")
+        recording_location = validate_recording_url(recording_location, "recording_location")
+        kwargs["_recording_url_parameter_name"] = "recording_location"
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
