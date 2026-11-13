@@ -1,6 +1,6 @@
 # Azure Data AI client library for Python
 
-`azure-data-ai` provides access to **Azure Data AI**, hosted by Azure Inference Service. It
+`azure-data-ai` provides access to **Azure Data AI**, hosted by Azure Data Inference Service. It
 supports semantic reranking: rank caller-supplied documents by their relevance to a
 query, optionally returning the documents and sentence-level scores.
 
