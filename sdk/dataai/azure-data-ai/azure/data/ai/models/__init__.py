@@ -14,9 +14,24 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    EmbeddingBadGatewayResult,
+    EmbeddingBadRequestResult,
+    EmbeddingData,
+    EmbeddingForbiddenResult,
+    EmbeddingGatewayTimeoutResult,
+    EmbeddingPayloadTooLargeResult,
+    EmbeddingResult,
+    EmbeddingServiceUnavailableResult,
+    EmbeddingUsage,
     InferenceErrorResult,
     InnerError,
     LatencyResult,
+    MultimodalDenseAndMultiVectorEmbedding,
+    MultimodalDenseEmbedding,
+    MultimodalEmbeddingOutput,
+    MultimodalEmbeddingUsage,
+    MultimodalEmbeddingWarning,
+    MultimodalMultiVectorEmbedding,
     ProblemDetails,
     SemanticRerankingInferenceContent,
     SemanticRerankingInferenceResult,
@@ -28,6 +43,15 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
+    EmbeddingContentKind,
+    EmbeddingDataKind,
+    EmbeddingDelivery,
+    EmbeddingEncodingFormat,
+    EmbeddingImageFormat,
+    EmbeddingOutputDataKind,
+    EmbeddingUsageKind,
+    EmbeddingVectorKind,
+    EmbeddingWarningCode,
     SemanticRerankingDocumentType,
 )
 from ._patch import __all__ as _patch_all
@@ -35,9 +59,24 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "EmbeddingBadGatewayResult",
+    "EmbeddingBadRequestResult",
+    "EmbeddingData",
+    "EmbeddingForbiddenResult",
+    "EmbeddingGatewayTimeoutResult",
+    "EmbeddingPayloadTooLargeResult",
+    "EmbeddingResult",
+    "EmbeddingServiceUnavailableResult",
+    "EmbeddingUsage",
     "InferenceErrorResult",
     "InnerError",
     "LatencyResult",
+    "MultimodalDenseAndMultiVectorEmbedding",
+    "MultimodalDenseEmbedding",
+    "MultimodalEmbeddingOutput",
+    "MultimodalEmbeddingUsage",
+    "MultimodalEmbeddingWarning",
+    "MultimodalMultiVectorEmbedding",
     "ProblemDetails",
     "SemanticRerankingInferenceContent",
     "SemanticRerankingInferenceResult",
@@ -46,6 +85,15 @@ __all__ = [
     "SentenceScore",
     "TokenUsageResult",
     "TooManyRequestsResult",
+    "EmbeddingContentKind",
+    "EmbeddingDataKind",
+    "EmbeddingDelivery",
+    "EmbeddingEncodingFormat",
+    "EmbeddingImageFormat",
+    "EmbeddingOutputDataKind",
+    "EmbeddingUsageKind",
+    "EmbeddingVectorKind",
+    "EmbeddingWarningCode",
     "SemanticRerankingDocumentType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

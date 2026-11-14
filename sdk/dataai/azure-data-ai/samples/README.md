@@ -34,6 +34,27 @@ Both clients accept `AzureKeyCredential` or the appropriate sync/async token
 credential. Wrap raw keys with `AzureKeyCredential`. Key authentication uses `Ocp-Apim-Subscription-Key` and requires a
 key issued for an endpoint with key-based authentication enabled.
 
+## Multimodal embedding
+
+- `python samples/multi_modal_embedding.py`: synchronous Microsoft Entra example
+  showing dense, combined, base64 multi-vector, and linked embedding results.
+- `python samples/multi_modal_embedding_async.py`: asynchronous example embedding
+  a document and a query concurrently in separate requests.
+
+Both use `AZURE_DATA_AI_ENDPOINT` and Microsoft Entra authentication. Install
+`azure-identity`, and `aiohttp` for the async sample. The synchronous sample also
+accepts `AZURE_DATA_AI_IMAGE_URL` and `AZURE_DATA_AI_IMAGE_SAS` for an Azure Blob
+image. Use a read-only, HTTPS-only user delegation SAS signed by the calling
+identity. Never log the input SAS or a result link's SAS.
+
+Pass plain item dictionaries in `inputs`, using `kind`, `content`, `url`, and
+`sasToken`. Options such as `vector_kind`, `encoding_format`, and `delivery` are
+method keyword arguments. `get_embeddings` also accepts a complete request
+dictionary with service JSON names such as `vectorKind`.
+
+A request supports at most one text or query item and up to 8 images. Response
+`kind` identifies the result model; `vector_kind` identifies the vector format.
+
 ## Model selection and request options
 
 Each sample sets `model` directly in its request dictionary. Change that field to a

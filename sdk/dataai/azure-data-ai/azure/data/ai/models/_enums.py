@@ -10,6 +10,100 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class EmbeddingContentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of an item to embed."""
+
+    TEXT = "text"
+    """A document to index."""
+    QUERY = "query"
+    """A search query. Queries are embedded for retrieval against documents and must be sent inline."""
+    IMAGE = "image"
+    """A document image, such as a scanned page."""
+
+
+class EmbeddingDataKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The implementation of an embedding result item."""
+
+    MULTIMODAL_DENSE = "multimodal_dense"
+    """One dense vector from a multimodal model."""
+    MULTIMODAL_MULTI_VECTOR = "multimodal_multi"
+    """One vector per token from a multimodal model."""
+    MULTIMODAL_DENSE_AND_MULTI_VECTOR = "multimodal_dense_multi"
+    """A dense vector and one vector per token from a multimodal model."""
+
+
+class EmbeddingDelivery(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How the results of a multimodal embedding operation are returned."""
+
+    INLINE = "inline"
+    """The vectors are in the response's ``data``."""
+    LINK = "link"
+    """The service stores the response as a JSON file and returns ``output``, a read-only link valid
+    for up to 15 minutes, with an empty ``data``. Not available on every endpoint
+    (``EMBEDDING_DELIVERY_NOT_SUPPORTED``)."""
+
+
+class EmbeddingEncodingFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How vectors are encoded in the response."""
+
+    FLOAT = "float"
+    """JSON arrays of numbers."""
+    BASE64 = "base64"
+    """A base64 string of little-endian values; row-major for multi-vectors."""
+
+
+class EmbeddingImageFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The format of an embedded image."""
+
+    JPEG = "jpeg"
+    """JPEG."""
+    PNG = "png"
+    """PNG."""
+    GIF = "gif"
+    """GIF."""
+    WEBP = "webp"
+    """WebP."""
+
+
+class EmbeddingOutputDataKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The numeric type of the returned vector values."""
+
+    FLOAT32 = "float32"
+    """32-bit floating point. The default for dense vectors."""
+    FLOAT16 = "float16"
+    """16-bit floating point. The default for ``multi`` and ``dense_multi``."""
+
+
+class EmbeddingUsageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The implementation that reported embedding usage."""
+
+    MULTIMODAL = "multimodal"
+    """Usage from a multimodal embedding model."""
+
+
+class EmbeddingVectorKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of vectors to return."""
+
+    DENSE = "dense"
+    """One vector per item."""
+    MULTI = "multi"
+    """One vector per token, for late-interaction (MaxSim) scoring."""
+    DENSE_AND_MULTI = "dense_multi"
+    """Both, from one model run: one dense vector (``dimensions`` wide) and one vector per token
+    (``multiDimensions`` wide) for each item."""
+
+
+class EmbeddingWarningCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A machine-readable embedding warning code."""
+
+    INPUT_TRUNCATED = "EMBEDDING_INPUT_TRUNCATED"
+    """A ``text`` or ``query`` item was over the model's token limit, and only its start was embedded.
+    Numeric alias ``1001``."""
+    SAS_LONG_LIVED = "EMBEDDING_SAS_LONG_LIVED"
+    """An item's ``sasToken`` stays valid for more than 15 minutes (plus 5 minutes of clock skew). The
+    blob was read and embedded; a shorter SAS is recommended. Numeric alias ``1002``."""
+
+
 class SemanticRerankingDocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The format of a document submitted for semantic reranking."""
 

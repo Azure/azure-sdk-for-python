@@ -1,17 +1,18 @@
 # Azure Data AI client library for Python
 
 `azure-data-ai` provides access to **Azure Data AI**, hosted by Azure Inference Service. It
-supports semantic reranking: rank caller-supplied documents by their relevance to a
-query, optionally returning the documents and sentence-level scores.
+supports semantic reranking and multimodal embedding of text, search queries, and
+document images.
 
-The package uses the `2026-10-30` service API.
+This preview uses the `2026-11-01-preview` service API by default. Pass
+`api_version="2026-10-30"` to the client to retain the generally available API version.
 
 ## Getting started
 
 ### Install the package
 
 ```bash
-python -m pip install azure-data-ai
+python -m pip install --pre azure-data-ai
 ```
 
 For local development, run `python -m pip install -e .` from this package directory instead.
@@ -151,6 +152,65 @@ and `as_dict()` retain the numeric millisecond representation.
 
 Each sentence score has a nonnegative, zero-based `index` and a `score` in the
 inclusive range 0–1. Sentence indices are not capped at 2.
+
+### Multimodal embedding
+
+Call `client.get_embeddings(inputs=[...], model="microsoft-embedding-1-large", ...)`
+with plain dictionaries and an explicit model name. A request can contain at most
+one text or query item and up to 8 images. Each input produces
+its own embedding; text and images are not fused into a single vector.
+
+```python
+result = client.get_embeddings(
+    model="microsoft-embedding-1-large",
+    inputs=[{"id": "doc-1", "kind": "text", "content": "Invoice terms: net 30."}],
+    vector_kind="dense",
+    dimensions=1536,
+    encoding_format="float",
+    delivery="inline",
+)
+print(result.data[0].embedding)
+```
+
+For a text-and-image request, supply the blob URL and a read-only, HTTPS-only user
+delegation SAS signed by the Microsoft Entra identity calling the API:
+
+```python
+result = client.get_embeddings(
+    model="microsoft-embedding-1-large",
+    inputs=[
+        {"id": "query-1", "kind": "query", "content": "When is the invoice due?"},
+        {
+            "id": "page-1",
+            "kind": "image",
+            "url": os.environ["AZURE_DATA_AI_IMAGE_URL"],
+            "sasToken": os.environ["AZURE_DATA_AI_IMAGE_SAS"],
+        },
+    ],
+    vector_kind="dense_multi",
+    encoding_format="float",
+    delivery="inline",
+)
+```
+
+The blob URL must not include a query string. Inline image inputs are available
+only where enabled by the endpoint. SAS values are credentials: never log them.
+
+`vector_kind` selects `"dense"`, `"multi"`, or `"dense_multi"`. Response items use
+`kind` to identify their model (`"multimodal_dense"`, `"multimodal_multi"`, or
+`"multimodal_dense_multi"`) and `vector_kind` for their vector format. Dense results
+contain `embedding`; multi-vector results contain `multi_embedding` and `shape`.
+With `encoding_format="base64"`, vectors contain little-endian values of
+`output_data_kind`.
+
+Text beyond the model's token limit is truncated with `truncated`, `input_tokens`,
+and a warning in `result.warnings`. Usage is available in `result.usage`.
+
+Use `delivery="link"` to receive a read-only result-file link in `result.output`
+instead of inline vectors. The link is valid for up to 15 minutes. A request
+containing images defaults to linked delivery where the endpoint supports it.
+The [embedding sample][samples] demonstrates downloading the file and checking
+its `size_in_bytes` and `sha256` before reading the embeddings.
 
 ## Examples
 
