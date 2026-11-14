@@ -51,6 +51,7 @@ class TestPrivateDnsManagementRecordSetsOperations(AzureMgmtRecordedTestCase):
                     "isAutoRegistered": bool,
                     "metadata": {"str": "str"},
                     "mxRecords": [{"exchange": "str", "preference": 0}],
+                    "provisioningState": "str",
                     "ptrRecords": [{"ptrdname": "str"}],
                     "soaRecord": {
                         "email": "str",
@@ -62,6 +63,7 @@ class TestPrivateDnsManagementRecordSetsOperations(AzureMgmtRecordedTestCase):
                         "serialNumber": 0,
                     },
                     "srvRecords": [{"port": 0, "priority": 0, "target": "str", "weight": 0}],
+                    "trafficManagementProfile": {"id": "str"},
                     "ttl": 0,
                     "txtRecords": [{"value": ["str"]}],
                 },
@@ -100,6 +102,7 @@ class TestPrivateDnsManagementRecordSetsOperations(AzureMgmtRecordedTestCase):
                     "isAutoRegistered": bool,
                     "metadata": {"str": "str"},
                     "mxRecords": [{"exchange": "str", "preference": 0}],
+                    "provisioningState": "str",
                     "ptrRecords": [{"ptrdname": "str"}],
                     "soaRecord": {
                         "email": "str",
@@ -111,6 +114,7 @@ class TestPrivateDnsManagementRecordSetsOperations(AzureMgmtRecordedTestCase):
                         "serialNumber": 0,
                     },
                     "srvRecords": [{"port": 0, "priority": 0, "target": "str", "weight": 0}],
+                    "trafficManagementProfile": {"id": "str"},
                     "ttl": 0,
                     "txtRecords": [{"value": ["str"]}],
                 },
