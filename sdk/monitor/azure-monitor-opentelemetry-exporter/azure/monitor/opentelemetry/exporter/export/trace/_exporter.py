@@ -594,8 +594,13 @@ def _convert_span_to_envelope(
     if _SAMPLE_RATE_KEY in span.attributes:
         envelope.sample_rate = span.attributes[_SAMPLE_RATE_KEY]
 
+    properties = dict(span.attributes)
+    for key in (gen_ai_attributes.GEN_AI_REQUEST_STOP_SEQUENCES, gen_ai_attributes.GEN_AI_RESPONSE_FINISH_REASONS):
+        value = properties.get(key)
+        if isinstance(value, (list, tuple)) and all(isinstance(item, str) for item in value):
+            properties[key] = json.dumps(value, ensure_ascii=False)
     data.properties = _utils._filter_custom_properties(
-        span.attributes,
+        properties,
         lambda key, val: not _is_standard_attribute(key, exclude_routing_attributes=exclude_routing_attributes),
         increase_truncation_limit=increase_truncation_limit,
     )
