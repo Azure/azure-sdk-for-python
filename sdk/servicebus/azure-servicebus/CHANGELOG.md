@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed concurrent operations on one sender or receiver (for example many `renew_message_lock` calls in parallel) each opening their own replacement connection after a retryable connection failure. The connections left open could exhaust the namespace's connection quota, and one operation's cleanup could close the link another had just opened, failing it with a non-retryable `ServiceBusError` wrapping `AttributeError`. Concurrent operations now share a single reconnect, a late failure from the old connection no longer closes the new one, and operations still in flight on the closed connection retry on the new one instead of failing.
+
 ### Other Changes
 
 ## 7.15.0 (2026-10-06)

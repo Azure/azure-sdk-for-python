@@ -357,7 +357,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
             # pylint: disable=protected-access
             self._handler._message_received = functools.partial(self._amqp_transport.enhanced_message_received, self)
 
-    def _open(self, timeout: Optional[float] = None) -> None:
+    def _open_handler(self, timeout: Optional[float] = None) -> None:
         # pylint: disable=protected-access
         if self._running:
             return

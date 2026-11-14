@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+import contextvars
 import logging
 import uuid
 import time
@@ -22,6 +23,7 @@ from ._transport._pyamqp_transport import PyamqpTransport
 from ._common._configuration import Configuration
 from .exceptions import (
     ServiceBusConnectionError,
+    ServiceBusError,
     OperationTimeoutError,
     SessionLockLostError,
 )
@@ -44,8 +46,6 @@ from ._common.constants import (
 )
 
 if TYPE_CHECKING:
-    from .exceptions import ServiceBusError
-
     try:
         from uamqp import AMQPClient as uamqp_AMQPClientSync
     except ImportError:
@@ -56,6 +56,10 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
+
+# The handler the current operation attempt runs on, so its failure closes only that handler: concurrent operations on
+# the same instance may have reopened meanwhile, and closing their new handler would fail them.
+_attempt_handler: contextvars.ContextVar[Any] = contextvars.ContextVar("servicebus_attempt_handler", default=None)
 
 
 def _parse_conn_str(  # pylint:disable=too-many-statements
@@ -288,6 +292,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             amqp_transport=self._amqp_transport,
         )
         self._shutdown = threading.Event()
+        # Serializes reopening the handler and closing it after a failure.
+        self._handler_lock = threading.RLock()
 
     @classmethod
     def _convert_connection_string_to_kwargs(cls, conn_str: str, **kwargs: Any) -> Dict[str, Any]:
@@ -330,7 +336,25 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def __exit__(self, *args: Any) -> None:
         self.close()
 
-    def _handle_exception(self, exception: BaseException) -> "ServiceBusError":
+    def _closed_underneath(self, ran_on: Any) -> bool:
+        # Whether another operation closed or replaced the handler the attempt ran on. Never after a user close or for
+        # a session receiver.
+        return (
+            ran_on is not None
+            and ran_on is not self._handler
+            and not self._shutdown.is_set()
+            and not getattr(self, "_session", None)
+        )
+
+    def _handle_exception(self, exception: BaseException, ran_on: Any) -> "ServiceBusError":
+        """Convert a failure to a ServiceBusError and close the handler if the error requires it.
+
+        :param Exception exception: The failure raised by the operation.
+        :param any ran_on: The handler the failed attempt ran on, or None if it ran on none. Only that handler is
+         closed: concurrent operations on this instance may have reopened meanwhile.
+        :return: The retryable error.
+        :rtype: ~azure.servicebus.exceptions.ServiceBusError
+        """
         # pylint: disable=protected-access, line-too-long
         error = self._amqp_transport.create_servicebus_exception(
             _LOGGER, exception, custom_endpoint_address=self._config.custom_endpoint_address
@@ -344,13 +368,29 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             # failure modes, that motivates us to disallow this.
             if self._session and self._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):  # type: ignore
                 self._session._lock_lost = True  # type: ignore
-                self._close_handler()
+                with self._handler_lock:
+                    self._close_handler()
                 raise error
         except AttributeError:
             pass
 
-        if error._shutdown_handler:
-            self._close_handler()
+        if (
+            type(error) is ServiceBusError  # pylint: disable=unidiomatic-typecheck
+            and not isinstance(exception, (ValueError, TypeError))
+            and self._closed_underneath(ran_on)
+        ):
+            # An unexpected error from a handler that another operation closed or replaced while this attempt ran on
+            # it (pyamqp raises AttributeError for a request on a closed client) only shows that: retry on the new
+            # handler. Errors with a definite meaning, from the service or from the caller's arguments, keep it. A
+            # session receiver cannot get its session back this way.
+            return ServiceBusConnectionError(
+                message="The connection was closed by another operation; retrying.", error=exception
+            )
+
+        if error._shutdown_handler and ran_on is not None and self._handler is ran_on:
+            with self._handler_lock:
+                if self._handler is ran_on:
+                    self._close_handler()
         if not error._retryable:
             raise error
 
@@ -393,6 +433,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         abs_timeout_time = (time.monotonic() + timeout) if (operation_requires_timeout and timeout) else None
 
         while retried_times <= max_retries:
+            # The handler this attempt runs on, if one is running; _open records the one it opens or finds.
+            token = _attempt_handler.set(self._handler if self._running else None)
             try:
                 if operation_requires_timeout:
                     remaining_timeout = (abs_timeout_time - time.monotonic()) if abs_timeout_time else None
@@ -406,7 +448,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 # If dependency is not installed, do not retry.
                 raise
             except Exception as exception:  # pylint: disable=broad-except
-                last_exception = self._handle_exception(exception)
+                last_exception = self._handle_exception(exception, _attempt_handler.get())
                 if require_last_exception:
                     kwargs["last_exception"] = last_exception
                 retried_times += 1
@@ -435,6 +477,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                     last_exception=last_exception,
                     abs_timeout_time=abs_timeout_time,
                 )
+            finally:
+                _attempt_handler.reset(token)
 
     def _backoff(
         self,
@@ -568,16 +612,63 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         )
 
     def _open(self, timeout: Optional[float] = None):
+        # Read before _running: if another operation closes the handler in between, the attempt still records the
+        # handler it runs on, so its failure on the closed handler is retried.
+        handler = self._handler
+        if self._running and handler is not None:
+            _attempt_handler.set(handler)
+            return
+        started = time.monotonic()
+        # Concurrent operations that find the handler closed share one reopen: the first creates and opens
+        # the new handler, the others wait here, within their own timeout, and then find it running.
+        if not self._handler_lock.acquire(  # pylint: disable=consider-using-with
+            timeout=-1 if timeout is None else max(timeout, 0)
+        ):
+            raise OperationTimeoutError(message="Timed out waiting for another operation to open the AMQP link.")
+        try:
+            if not self._running or self._handler is None:
+                # _running stays set while a detached handler is closing; clear it so _open_handler opens a new one.
+                self._running = False
+                if timeout is not None:
+                    # Time spent waiting for another caller's open counts against this attempt.
+                    timeout -= time.monotonic() - started
+                try:
+                    self._open_handler(timeout)
+                except:
+                    # A failure after the link came up (e.g. registering the session with the lock renewer) must not
+                    # leave it running.
+                    if self._running:
+                        try:
+                            self._close_handler()
+                        except Exception:  # pylint: disable=broad-except
+                            _LOGGER.warning("Handler cleanup failed; preserving the original error.", exc_info=True)
+                    raise
+            _attempt_handler.set(self._handler)
+        finally:
+            self._handler_lock.release()
+
+    def _open_handler(self, timeout: Optional[float] = None):
+        """Create and open a new handler. Called with the handler lock held.
+
+        :param float or None timeout: The time left to open the handler, or None when unbounded.
+        :return: None
+        :rtype: None
+        """
         raise ValueError("Subclass should override the method.")
 
     def _open_with_retry(self):
         return self._do_retryable_operation(self._open, operation_requires_timeout=True, apply_try_timeout=True)
 
     def _close_handler(self):
-        if self._handler:
-            self._handler.close()
-            self._handler = None
-        self._running = False
+        # Detach the handler before closing it, so operations starting meanwhile reopen instead of using the closing
+        # client. _running stays set until the close ends: settlement and lock renewal treat a receiver that is not
+        # running as shut down.
+        handler, self._handler = self._handler, None
+        try:
+            if handler:
+                handler.close()
+        finally:
+            self._running = False
 
     def close(self) -> None:
         """Close down the handler links (and connection if the handler uses a separate connection).
@@ -586,5 +677,6 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         :rtype: None
         """
-        self._close_handler()
+        # Set first, so a failure on the closing handler from another thread is not retried on a new one.
         self._shutdown.set()
+        self._close_handler()

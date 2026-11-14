@@ -11,8 +11,8 @@ from typing import TYPE_CHECKING, Any, Callable, Optional, Dict, Union
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
 from ._transport._pyamqp_transport_async import PyamqpTransportAsync
-from ._async_utils import await_with_deadline
-from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync, _get_backoff_time
+from ._async_utils import await_with_deadline, close_handler_for_cleanup
+from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync, _get_backoff_time, _attempt_handler
 from .._common._configuration import Configuration
 from .._common.utils import (
     create_properties,
@@ -33,6 +33,7 @@ from .._common.constants import (
 )
 from ..exceptions import (
     ServiceBusConnectionError,
+    ServiceBusError,
     SessionLockLostError,
     OperationTimeoutError,
 )
@@ -168,6 +169,14 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             amqp_transport=self._amqp_transport,
         )
         self._shutdown = asyncio.Event()
+        # Serializes reopening the handler and closing it after a failure; created on first use so it binds to the
+        # running loop.
+        self._handler_lock: Optional[asyncio.Lock] = None
+
+    def _get_handler_lock(self) -> asyncio.Lock:
+        if self._handler_lock is None:
+            self._handler_lock = asyncio.Lock()
+        return self._handler_lock
 
     @classmethod
     def _convert_connection_string_to_kwargs(cls, conn_str, **kwargs):
@@ -182,7 +191,25 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     async def __aexit__(self, *args: Any) -> None:
         await self.close()
 
-    async def _handle_exception(self, exception):
+    def _closed_underneath(self, ran_on: Any) -> bool:
+        # Whether another operation closed or replaced the handler the attempt ran on. Never after a user close or for
+        # a session receiver.
+        return (
+            ran_on is not None
+            and ran_on is not self._handler
+            and not self._shutdown.is_set()
+            and not getattr(self, "_session", None)
+        )
+
+    async def _handle_exception(self, exception, ran_on):
+        """Convert a failure to a ServiceBusError and close the handler if the error requires it.
+
+        :param Exception exception: The failure raised by the operation.
+        :param any ran_on: The handler the failed attempt ran on, or None if it ran on none. Only that handler is
+         closed: concurrent operations on this instance may have reopened meanwhile.
+        :return: The retryable error.
+        :rtype: ~azure.servicebus.exceptions.ServiceBusError
+        """
         # pylint: disable=protected-access
         error = self._amqp_transport.create_servicebus_exception(
             _LOGGER, exception, custom_endpoint_address=self._config.custom_endpoint_address
@@ -195,13 +222,29 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             # and the diversity of session failure modes, that motivates us to disallow this.
             if self._session and self._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):
                 self._session._lock_lost = True
-                await self._close_handler()
+                async with self._get_handler_lock():
+                    await self._close_handler()
                 raise error
         except AttributeError:
             pass
 
-        if error._shutdown_handler:
-            await self._close_handler()
+        if (
+            type(error) is ServiceBusError  # pylint: disable=unidiomatic-typecheck
+            and not isinstance(exception, (ValueError, TypeError))
+            and self._closed_underneath(ran_on)
+        ):
+            # An unexpected error from a handler that another operation closed or replaced while this attempt ran on
+            # it (pyamqp raises AttributeError for a request on a closed client) only shows that: retry on the new
+            # handler. Errors with a definite meaning, from the service or from the caller's arguments, keep it. A
+            # session receiver cannot get its session back this way.
+            return ServiceBusConnectionError(
+                message="The connection was closed by another operation; retrying.", error=exception
+            )
+
+        if error._shutdown_handler and ran_on is not None and self._handler is ran_on:
+            async with self._get_handler_lock():
+                if self._handler is ran_on:
+                    await self._close_handler()
         if not error._retryable:
             raise error
 
@@ -242,6 +285,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         abs_timeout_time = (time.monotonic() + timeout) if (operation_requires_timeout and timeout) else None
 
         while retried_times <= max_retries:
+            # The handler this attempt runs on, if one is running; _open records the one it opens or finds.
+            token = _attempt_handler.set(self._handler if self._running else None)
             try:
                 if operation_requires_timeout:
                     remaining_timeout = (abs_timeout_time - time.monotonic()) if abs_timeout_time else None
@@ -255,7 +300,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 # If dependency is not installed, do not retry.
                 raise
             except Exception as exception:  # pylint: disable=broad-except
-                last_exception = await self._handle_exception(exception)
+                last_exception = await self._handle_exception(exception, _attempt_handler.get())
                 if require_last_exception:
                     kwargs["last_exception"] = last_exception
                 retried_times += 1
@@ -282,6 +327,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                     last_exception=last_exception,
                     abs_timeout_time=abs_timeout_time,
                 )
+            finally:
+                _attempt_handler.reset(token)
 
     async def _backoff(self, retried_times, last_exception, abs_timeout_time=None, entity_name=None):
         entity_name = entity_name or self._container_id
@@ -412,16 +459,74 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         )
 
     async def _open(self, timeout: Optional[float] = None):
+        # Read before _running: if another operation closes the handler in between, the attempt still records the
+        # handler it runs on, so its failure on the closed handler is retried.
+        handler = self._handler
+        if self._running and handler is not None:
+            _attempt_handler.set(handler)
+            return
+        started = time.monotonic()
+        lock = self._get_handler_lock()
+        # Concurrent operations that find the handler closed share one reopen: the first creates and opens
+        # the new handler, the others wait here, within their own timeout, and then find it running.
+        # Acquiring in a separate task lets the wait end on timeout or cancellation without leaking the lock.
+        acquire = asyncio.ensure_future(lock.acquire())
+        try:
+            await asyncio.wait((acquire,), timeout=None if timeout is None else max(timeout, 0))
+        except BaseException:
+            # Cancelled while waiting: give the lock back if it was granted meanwhile.
+            if acquire.done() and not acquire.cancelled() and acquire.exception() is None:
+                lock.release()
+            else:
+                acquire.cancel()
+            raise
+        if not acquire.done():
+            # Cancelling a pending acquire never leaves the lock held.
+            acquire.cancel()
+            raise OperationTimeoutError(message="Timed out waiting for another operation to open the AMQP link.")
+        # Raises, without the lock, if the acquire itself was cancelled.
+        acquire.result()
+        try:
+            if not self._running or self._handler is None:
+                # _running stays set while a detached handler is closing; clear it so _open_handler opens a new one.
+                self._running = False
+                if timeout is not None:
+                    # Time spent waiting for another caller's open counts against this attempt.
+                    timeout -= time.monotonic() - started
+                try:
+                    await self._open_handler(timeout)
+                except:
+                    # A failure after the link came up (e.g. registering the session with the lock renewer) must not
+                    # leave it running.
+                    if self._running:
+                        await close_handler_for_cleanup(self._close_handler(), None)
+                    raise
+            _attempt_handler.set(self._handler)
+        finally:
+            lock.release()
+
+    async def _open_handler(self, timeout: Optional[float] = None):
+        """Create and open a new handler. Called with the handler lock held.
+
+        :param float or None timeout: The time left to open the handler, or None when unbounded.
+        :return: None
+        :rtype: None
+        """
         raise ValueError("Subclass should override the method.")
 
     async def _open_with_retry(self):
         return await self._do_retryable_operation(self._open, operation_requires_timeout=True, apply_try_timeout=True)
 
     async def _close_handler(self):
-        if self._handler:
-            await self._handler.close_async()
-            self._handler = None
-        self._running = False
+        # Detach the handler before closing it, so operations starting meanwhile reopen instead of using the closing
+        # client. _running stays set until the close ends: settlement and lock renewal treat a receiver that is not
+        # running as shut down.
+        handler, self._handler = self._handler, None
+        try:
+            if handler:
+                await handler.close_async()
+        finally:
+            self._running = False
 
     async def close(self) -> None:
         """Close down the handler connection.
@@ -431,5 +536,6 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         :rtype: None
         """
-        await self._close_handler()
+        # Set first, so a failure on the closing handler is not retried on a new one.
         self._shutdown.set()
+        await self._close_handler()

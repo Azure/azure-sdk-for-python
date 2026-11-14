@@ -357,7 +357,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         if self._prefetch_count == 0 and self._receive_mode == ServiceBusReceiveMode.PEEK_LOCK:
             self._amqp_transport.set_handler_message_received_async(self)
 
-    async def _open(self, timeout: Optional[float] = None) -> None:
+    async def _open_handler(self, timeout: Optional[float] = None) -> None:
         # pylint: disable=protected-access
         if self._running:
             return

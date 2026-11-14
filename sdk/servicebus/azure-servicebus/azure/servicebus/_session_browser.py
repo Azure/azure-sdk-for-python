@@ -135,7 +135,7 @@ class _SessionBrowser(BaseHandler):
             client_name=self._name,
         )
 
-    def _open(self, timeout: Optional[float] = None):
+    def _open_handler(self, timeout: Optional[float] = None):
         if self._running:
             return
         deadline = get_link_ready_deadline(timeout)

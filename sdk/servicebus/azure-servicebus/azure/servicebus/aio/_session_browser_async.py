@@ -65,7 +65,7 @@ class _SessionBrowserAsync(AsyncBaseHandler):
             client_name=self._name,
         )
 
-    async def _open(self, timeout: Optional[float] = None):
+    async def _open_handler(self, timeout: Optional[float] = None):
         if self._running:
             return
         deadline = get_link_ready_deadline(timeout)
