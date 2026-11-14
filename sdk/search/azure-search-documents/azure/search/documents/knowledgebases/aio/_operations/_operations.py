@@ -53,6 +53,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         retrieval_request: _models2.KnowledgeBaseRetrievalRequest,
         *,
         query_source_authorization: Optional[str] = None,
+        query_work_iq_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models2.KnowledgeBaseRetrievalResponse:
@@ -65,6 +66,10 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
+        :keyword query_work_iq_source_authorization: User assertion token for a customer-owned Entra
+         app registration configured on a Work IQ knowledge source. Used for on-behalf-of authentication
+         to the Work IQ API. Default value is None.
+        :paramtype query_work_iq_source_authorization: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -80,6 +85,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         retrieval_request: _types_models2.KnowledgeBaseRetrievalRequest,
         *,
         query_source_authorization: Optional[str] = None,
+        query_work_iq_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models2.KnowledgeBaseRetrievalResponse:
@@ -92,6 +98,10 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
+        :keyword query_work_iq_source_authorization: User assertion token for a customer-owned Entra
+         app registration configured on a Work IQ knowledge source. Used for on-behalf-of authentication
+         to the Work IQ API. Default value is None.
+        :paramtype query_work_iq_source_authorization: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -107,6 +117,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         retrieval_request: IO[bytes],
         *,
         query_source_authorization: Optional[str] = None,
+        query_work_iq_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> _models2.KnowledgeBaseRetrievalResponse:
@@ -118,6 +129,10 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
+        :keyword query_work_iq_source_authorization: User assertion token for a customer-owned Entra
+         app registration configured on a Work IQ knowledge source. Used for on-behalf-of authentication
+         to the Work IQ API. Default value is None.
+        :paramtype query_work_iq_source_authorization: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -129,13 +144,17 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
 
     @distributed_trace_async
     @api_version_validation(
-        params_added_on={"2026-05-01-preview": ["query_source_authorization"]},
+        params_added_on={
+            "2026-05-01-preview": ["query_source_authorization"],
+            "2026-08-01-preview": ["query_work_iq_source_authorization"],
+        },
         api_versions_list=[
             "2025-11-01-preview",
             "2026-04-01",
             "2026-05-01-preview",
             "2026-08-01-preview",
             "2026-10-01",
+            "2026-11-01-preview",
         ],
     )
     async def retrieve(
@@ -145,6 +164,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         ],
         *,
         query_source_authorization: Optional[str] = None,
+        query_work_iq_source_authorization: Optional[str] = None,
         **kwargs: Any,
     ) -> _models2.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
@@ -158,6 +178,10 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
+        :keyword query_work_iq_source_authorization: User assertion token for a customer-owned Entra
+         app registration configured on a Work IQ knowledge source. Used for on-behalf-of authentication
+         to the Work IQ API. Default value is None.
+        :paramtype query_work_iq_source_authorization: str
         :return: KnowledgeBaseRetrievalResponse. The KnowledgeBaseRetrievalResponse is compatible with
          MutableMapping
         :rtype: ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalResponse
@@ -187,6 +211,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         _request = build_knowledge_base_retrieval_retrieve_request(
             knowledge_base_name=self._config.knowledge_base_name,
             query_source_authorization=query_source_authorization,
+            query_work_iq_source_authorization=query_work_iq_source_authorization,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -230,11 +255,12 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         return deserialized  # type: ignore
 
     @overload
-    async def retrieve_stream(
+    async def retrieve_stream(  # pylint: disable=too-many-statements
         self,
         retrieval_request: _models2.KnowledgeBaseRetrievalRequest,
         *,
         query_source_authorization: Optional[str] = None,
+        query_work_iq_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> AsyncStream[
@@ -265,6 +291,10 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
+        :keyword query_work_iq_source_authorization: User assertion token for a customer-owned Entra
+         app registration configured on a Work IQ knowledge source. Used for on-behalf-of authentication
+         to the Work IQ API. Default value is None.
+        :paramtype query_work_iq_source_authorization: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -284,11 +314,12 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         """
 
     @overload
-    async def retrieve_stream(
+    async def retrieve_stream(  # pylint: disable=too-many-statements
         self,
         retrieval_request: _types_models2.KnowledgeBaseRetrievalRequest,
         *,
         query_source_authorization: Optional[str] = None,
+        query_work_iq_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> AsyncStream[
@@ -319,6 +350,10 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
+        :keyword query_work_iq_source_authorization: User assertion token for a customer-owned Entra
+         app registration configured on a Work IQ knowledge source. Used for on-behalf-of authentication
+         to the Work IQ API. Default value is None.
+        :paramtype query_work_iq_source_authorization: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -338,11 +373,12 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         """
 
     @overload
-    async def retrieve_stream(
+    async def retrieve_stream(  # pylint: disable=too-many-statements
         self,
         retrieval_request: IO[bytes],
         *,
         query_source_authorization: Optional[str] = None,
+        query_work_iq_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> AsyncStream[
@@ -372,6 +408,10 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
+        :keyword query_work_iq_source_authorization: User assertion token for a customer-owned Entra
+         app registration configured on a Work IQ knowledge source. Used for on-behalf-of authentication
+         to the Work IQ API. Default value is None.
+        :paramtype query_work_iq_source_authorization: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -399,11 +439,12 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
                 "accept",
                 "knowledge_base_name",
                 "query_source_authorization",
+                "query_work_iq_source_authorization",
                 "client_request_id",
                 "content_type",
             ]
         },
-        api_versions_list=["2026-08-01-preview", "2026-10-01"],
+        api_versions_list=["2026-08-01-preview", "2026-10-01", "2026-11-01-preview"],
     )
     async def retrieve_stream(  # pylint: disable=too-many-statements
         self,
@@ -412,6 +453,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         ],
         *,
         query_source_authorization: Optional[str] = None,
+        query_work_iq_source_authorization: Optional[str] = None,
         **kwargs: Any,
     ) -> AsyncStream[
         Union[
@@ -443,6 +485,10 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
         :paramtype query_source_authorization: str
+        :keyword query_work_iq_source_authorization: User assertion token for a customer-owned Entra
+         app registration configured on a Work IQ knowledge source. Used for on-behalf-of authentication
+         to the Work IQ API. Default value is None.
+        :paramtype query_work_iq_source_authorization: str
         :return: An instance of AsyncStream that iterates over KnowledgeBaseRetrievalStartedEvent or
          KnowledgeBaseActivityStartedEvent or KnowledgeBaseActivityRecord or
          KnowledgeBaseAnswerCompletedEvent or list of KnowledgeBaseReference or
@@ -493,6 +539,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         _request = build_knowledge_base_retrieval_retrieve_stream_request(
             knowledge_base_name=self._config.knowledge_base_name,
             query_source_authorization=query_source_authorization,
+            query_work_iq_source_authorization=query_work_iq_source_authorization,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -553,5 +600,9 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
 
         deserialized: AsyncStream[Union[_models2.KnowledgeBaseRetrievalStartedEvent, _models2.KnowledgeBaseActivityStartedEvent, _models2.KnowledgeBaseActivityRecord, _models2.KnowledgeBaseAnswerCompletedEvent, list[_models2.KnowledgeBaseReference], _models2.KnowledgeBaseStreamErrorEvent, _models2.KnowledgeBaseResponseCompletedEvent]] = AsyncStream(response=response, deserialization_callback=_callback, terminal_event_names=["error", "response.completed"])  # type: ignore
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            try:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            except BaseException:
+                await deserialized.close()
+                raise
         return deserialized

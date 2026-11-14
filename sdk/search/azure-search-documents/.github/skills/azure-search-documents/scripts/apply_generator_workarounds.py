@@ -4,10 +4,9 @@
 from __future__ import annotations
 
 import argparse
-import ast
 from dataclasses import dataclass
 from pathlib import Path
-import textwrap
+
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[4]
 
@@ -19,9 +18,53 @@ class Replacement:
     generated: str
     patched: str
     applies_when: str | None = None
+    expected_count: int = 1
 
 
 REPLACEMENTS = (
+    Replacement(
+        "azure/search/documents/models/_enums.py",
+        "render the agentic debug mode separator as a reStructuredText literal",
+        "supported modes using |; this selector",
+        "supported modes using ``|``; this selector",
+    ),
+    Replacement(
+        "azure/search/documents/indexes/models/_models.py",
+        "suppress generated SearchField constructor complexity",
+        "    @overload\n    def __init__(\n        self,\n        *,\n        name: str,\n"
+        '        type: Union[str, "_models.SearchFieldDataType"],\n',
+        "    @overload\n    def __init__(  # pylint: disable=too-many-locals\n"
+        "        self,\n        *,\n        name: str,\n"
+        '        type: Union[str, "_models.SearchFieldDataType"],\n',
+    ),
+    Replacement(
+        "azure/search/documents/knowledgebases/_operations/_operations.py",
+        "suppress generated sync streaming operation complexity",
+        "    def retrieve_stream(\n",
+        "    def retrieve_stream(  # pylint: disable=too-many-statements\n",
+        expected_count=4,
+    ),
+    Replacement(
+        "azure/search/documents/knowledgebases/aio/_operations/_operations.py",
+        "suppress generated async streaming operation complexity",
+        "    async def retrieve_stream(\n",
+        "    async def retrieve_stream(  # pylint: disable=too-many-statements\n",
+        expected_count=4,
+    ),
+    Replacement(
+        "azure/search/documents/indexes/_operations/_operations.py",
+        "resolve the File ingestion poller model through the imported sync namespace",
+        "return LROPoller[_indexes_models1.KnowledgeSourceFile]",
+        "return LROPoller[_models1.KnowledgeSourceFile]",
+        expected_count=4,
+    ),
+    Replacement(
+        "azure/search/documents/indexes/aio/_operations/_operations.py",
+        "resolve the File ingestion poller model through the imported async namespace",
+        "return AsyncLROPoller[_indexes_models1.KnowledgeSourceFile]",
+        "return AsyncLROPoller[_models2.KnowledgeSourceFile]",
+        expected_count=4,
+    ),
     Replacement(
         "azure/search/documents/models/__init__.py",
         "export SemanticQueryRewritesResultType",
@@ -32,7 +75,6 @@ REPLACEMENTS = (
     SemanticQueryRewritesResultType,
     SemanticSearchResultsType,
 """,
-        applies_when="SemanticFieldState",
     ),
     Replacement(
         "azure/search/documents/models/__init__.py",
@@ -44,7 +86,6 @@ REPLACEMENTS = (
     "SemanticQueryRewritesResultType",
     "SemanticSearchResultsType",
 """,
-        applies_when="SemanticFieldState",
     ),
     Replacement(
         "azure/search/documents/types.py",
@@ -52,6 +93,29 @@ REPLACEMENTS = (
         '"@search.semanticQueryRewritesResultType": Union[str, "_enums.SemanticQueryRewritesResultType"],',
         '"@search.semanticQueryRewritesResultType": Union[str, "SemanticQueryRewritesResultType"],',
         applies_when="@search.semanticQueryRewritesResultType",
+    ),
+    Replacement(
+        "azure/search/documents/knowledgebases/types.py",
+        "bind the search-index query-hint TypedDict privately at runtime for autodoc",
+        "from ..indexes.models._enums import KnowledgeSourceKind\nfrom .models._enums import (\n",
+        "from ..indexes.models._enums import KnowledgeSourceKind\n"
+        "from ..indexes.types import SearchIndexKnowledgeSourceQueryHints as _SearchIndexKnowledgeSourceQueryHints\n"
+        "from .models._enums import (\n",
+    ),
+    Replacement(
+        "azure/search/documents/knowledgebases/types.py",
+        "remove the redundant type-only search-index query-hint import",
+        "    from ..indexes.models import KnowledgeSourceResultsProcessing\n"
+        "    from ..indexes.types import SearchIndexKnowledgeSourceQueryHints\n"
+        "    from ..types import VectorQueryTopicGraph\n",
+        "    from ..indexes.models import KnowledgeSourceResultsProcessing\n"
+        "    from ..types import VectorQueryTopicGraph\n",
+    ),
+    Replacement(
+        "azure/search/documents/knowledgebases/types.py",
+        "resolve the retained query-hint annotation without ambiguous Sphinx references",
+        '    queryHintOverrides: "SearchIndexKnowledgeSourceQueryHints"\n',
+        "    queryHintOverrides: _SearchIndexKnowledgeSourceQueryHints\n",
     ),
     Replacement(
         "azure/search/documents/knowledgebases/types.py",
@@ -63,7 +127,7 @@ REPLACEMENTS = (
         """        KnowledgeSourceIngestionPermissionOption,
         KnowledgeSourceResultsProcessing,
 """,
-        applies_when="KnowledgeSourceResultsProcessing",
+        applies_when="KnowledgeSourceIngestionPermissionOption",
     ),
     Replacement(
         "azure/search/documents/indexes/types.py",
@@ -154,63 +218,293 @@ REPLACEMENTS = (
         "            )",
     ),
     Replacement(
-        "azure/search/documents/knowledgebases/_operations/_operations.py",
-        "suppress statement count for the generated retrieval stream",
-        '        api_versions_list=["2026-08-01-preview", "2026-10-01"],\n' "    )\n" "    def retrieve_stream(\n",
-        '        api_versions_list=["2026-08-01-preview", "2026-10-01"],\n'
-        "    )\n"
-        "    def retrieve_stream(  # pylint: disable=too-many-statements\n",
+        "azure/search/documents/indexes/types.py",
+        "keep the approved GA KnowledgeBaseModel alias",
+        "KnowledgeBaseModel = Union[\n"
+        "    KnowledgeBaseAzureOpenAIModel, KnowledgeBaseMicrosoftRetriever1Model, KnowledgeBaseOpenAICompatibleModel\n"
+        "]\n",
+        "KnowledgeBaseModel = Union[KnowledgeBaseAzureOpenAIModel]\n",
     ),
     Replacement(
-        "azure/search/documents/knowledgebases/aio/_operations/_operations.py",
-        "suppress statement count for the generated async retrieval stream",
-        '        api_versions_list=["2026-08-01-preview", "2026-10-01"],\n'
-        "    )\n"
-        "    async def retrieve_stream(\n",
-        '        api_versions_list=["2026-08-01-preview", "2026-10-01"],\n'
-        "    )\n"
-        "    async def retrieve_stream(  # pylint: disable=too-many-statements\n",
+        "azure/search/documents/indexes/types.py",
+        "expose all knowledge-base model variants through a separate input union",
+        "KnowledgeBaseModel = Union[KnowledgeBaseAzureOpenAIModel]\nMcpServerAuthentication =",
+        "KnowledgeBaseModel = Union[KnowledgeBaseAzureOpenAIModel]\n\n"
+        "KnowledgeBaseModelInput = Union[\n"
+        "    KnowledgeBaseAzureOpenAIModel, KnowledgeBaseMicrosoftRetriever1Model, KnowledgeBaseOpenAICompatibleModel\n"
+        "]\n"
+        '"""All supported knowledge-base model variants for dictionary-style inputs."""\n\n'
+        "McpServerAuthentication =",
+    ),
+    Replacement(
+        "azure/search/documents/indexes/types.py",
+        "preserve the GA knowledge-base model-list field",
+        '        "models": Union[list["KnowledgeBaseModel"], list["KnowledgeBaseModelInput"]],\n',
+        '        "models": list["KnowledgeBaseModel"],\n',
+    ),
+    Replacement(
+        "azure/search/documents/indexes/types.py",
+        "preserve the GA knowledge-base model-list documentation",
+        ':vartype models: Union[list["KnowledgeBaseModel"], list["KnowledgeBaseModelInput"]]\n',
+        ':vartype models: list["KnowledgeBaseModel"]\n',
+    ),
+    Replacement(
+        "azure/search/documents/indexes/types.py",
+        "preserve the classic scoring alias and expose random through a separate input union",
+        "ScoringFunction = Union[\n"
+        "    DistanceScoringFunction,\n"
+        "    FreshnessScoringFunction,\n"
+        "    MagnitudeScoringFunction,\n"
+        "    RandomScoringFunction,\n"
+        "    TagScoringFunction,\n"
+        "]\n"
+        "VectorSearchAlgorithmConfiguration =",
+        "ScoringFunction = Union[\n"
+        "    DistanceScoringFunction,\n"
+        "    FreshnessScoringFunction,\n"
+        "    MagnitudeScoringFunction,\n"
+        "    TagScoringFunction,\n"
+        "]\n\n"
+        "ScoringFunctionInput = Union[\n"
+        "    DistanceScoringFunction,\n"
+        "    FreshnessScoringFunction,\n"
+        "    MagnitudeScoringFunction,\n"
+        "    RandomScoringFunction,\n"
+        "    TagScoringFunction,\n"
+        "]\n"
+        '"""Classic and random scoring variants for dictionary-style inputs."""\n\n'
+        "VectorSearchAlgorithmConfiguration =",
+        applies_when="class RandomScoringFunction(",
     ),
 )
 
+REPLACEMENTS += tuple(
+    replacement
+    for path, model_namespace, types_namespace, kwargs_comma in (
+        ("azure/search/documents/indexes/_operations/_operations.py", "_models1", "_types_models1", ","),
+        ("azure/search/documents/indexes/aio/_operations/_operations.py", "_models2", "_types_models2", ""),
+    )
+    for replacement in (
+        Replacement(
+            path,
+            "accept expanded knowledge-base inputs in the generated create overload",
+            f"        self, knowledge_base: {types_namespace}.KnowledgeBase, "
+            '*, content_type: str = "application/json", **kwargs: Any\n',
+            "        self,\n"
+            f"        knowledge_base: Union[{types_namespace}.KnowledgeBase, {types_namespace}.KnowledgeBaseInput],\n"
+            "        *,\n"
+            '        content_type: str = "application/json",\n'
+            f"        **kwargs: Any{kwargs_comma}\n",
+        ),
+        Replacement(
+            path,
+            "accept expanded knowledge-base inputs in the generated create implementation",
+            f"        self, knowledge_base: Union[{model_namespace}.KnowledgeBase, "
+            f"{types_namespace}.KnowledgeBase, IO[bytes]], **kwargs: Any\n",
+            "        self,\n"
+            "        knowledge_base: Union[\n"
+            f"            {model_namespace}.KnowledgeBase, {types_namespace}.KnowledgeBase, "
+            f"{types_namespace}.KnowledgeBaseInput, IO[bytes]\n"
+            "        ],\n"
+            f"        **kwargs: Any{kwargs_comma}\n",
+        ),
+        Replacement(
+            path,
+            "accept expanded knowledge-base inputs in the generated update overload",
+            "        name: str,\n" f"        knowledge_base: {types_namespace}.KnowledgeBase,\n",
+            "        name: str,\n"
+            f"        knowledge_base: Union[{types_namespace}.KnowledgeBase, {types_namespace}.KnowledgeBaseInput],\n",
+        ),
+        Replacement(
+            path,
+            "accept expanded knowledge-base inputs in the generated update implementation",
+            "        name: str,\n"
+            f"        knowledge_base: Union[{model_namespace}.KnowledgeBase, "
+            f"{types_namespace}.KnowledgeBase, IO[bytes]],\n",
+            "        name: str,\n"
+            "        knowledge_base: Union[\n"
+            f"            {model_namespace}.KnowledgeBase, {types_namespace}.KnowledgeBase, "
+            f"{types_namespace}.KnowledgeBaseInput, IO[bytes]\n"
+            "        ],\n",
+        ),
+        Replacement(
+            path,
+            "document expanded knowledge-base inputs in the generated create overload",
+            "        :type knowledge_base: ~azure.search.documents.indexes.types.KnowledgeBase\n",
+            "        :type knowledge_base: ~azure.search.documents.indexes.types.KnowledgeBase or\n"
+            "         ~azure.search.documents.indexes.types.KnowledgeBaseInput\n",
+        ),
+        Replacement(
+            path,
+            "document expanded knowledge-base inputs in the generated implementations",
+            "         ~azure.search.documents.indexes.types.KnowledgeBase or IO[bytes]\n",
+            "         ~azure.search.documents.indexes.types.KnowledgeBase or\n"
+            "         ~azure.search.documents.indexes.types.KnowledgeBaseInput or IO[bytes]\n",
+            expected_count=2,
+        ),
+        Replacement(
+            path,
+            "accept expanded index inputs in the generated create overload",
+            f"        self, index: {types_namespace}.SearchIndex, "
+            '*, content_type: str = "application/json", **kwargs: Any\n',
+            "        self,\n"
+            f"        index: Union[{types_namespace}.SearchIndex, {types_namespace}.SearchIndexInput],\n"
+            "        *,\n"
+            '        content_type: str = "application/json",\n'
+            f"        **kwargs: Any{kwargs_comma}\n",
+        ),
+        Replacement(
+            path,
+            "accept expanded index inputs in the generated create implementation",
+            f"        self, index: Union[{model_namespace}.SearchIndex, "
+            f"{types_namespace}.SearchIndex, IO[bytes]], **kwargs: Any\n",
+            "        self,\n"
+            f"        index: Union[{model_namespace}.SearchIndex, {types_namespace}.SearchIndex, "
+            f"{types_namespace}.SearchIndexInput, IO[bytes]],\n"
+            f"        **kwargs: Any{kwargs_comma}\n",
+        ),
+        Replacement(
+            path,
+            "accept expanded index inputs in the generated update overload",
+            "        name: str,\n" f"        index: {types_namespace}.SearchIndex,\n",
+            "        name: str,\n"
+            f"        index: Union[{types_namespace}.SearchIndex, {types_namespace}.SearchIndexInput],\n",
+        ),
+        Replacement(
+            path,
+            "accept expanded index inputs in the generated update implementation",
+            "        name: str,\n"
+            f"        index: Union[{model_namespace}.SearchIndex, {types_namespace}.SearchIndex, IO[bytes]],\n",
+            "        name: str,\n"
+            f"        index: Union[{model_namespace}.SearchIndex, {types_namespace}.SearchIndex, "
+            f"{types_namespace}.SearchIndexInput, IO[bytes]],\n",
+        ),
+        Replacement(
+            path,
+            "document expanded index inputs in the generated create overload",
+            "        :type index: ~azure.search.documents.indexes.types.SearchIndex\n",
+            "        :type index: ~azure.search.documents.indexes.types.SearchIndex or\n"
+            "         ~azure.search.documents.indexes.types.SearchIndexInput\n",
+        ),
+        Replacement(
+            path,
+            "document expanded index inputs in the generated implementations",
+            "         ~azure.search.documents.indexes.types.SearchIndex or IO[bytes]\n",
+            "         ~azure.search.documents.indexes.types.SearchIndex or\n"
+            "         ~azure.search.documents.indexes.types.SearchIndexInput or IO[bytes]\n",
+            expected_count=2,
+        ),
+    )
+)
 
-def build_sphinx_type_section(namespace: str, source: str) -> str:
-    """Document TypedDict wire keys as variables rather than invalid Python attributes."""
-    wire_types: dict[str, list[str]] = {}
-    for node in ast.parse(source).body:
-        if (
-            isinstance(node, ast.Assign)
-            and len(node.targets) == 1
-            and isinstance(node.targets[0], ast.Name)
-            and isinstance(node.value, ast.Call)
-            and isinstance(node.value.func, ast.Name)
-            and node.value.func.id == "TypedDict"
-            and len(node.value.args) >= 2
-            and isinstance(node.value.args[1], ast.Dict)
-        ):
-            keys = [
-                key.value
-                for key in node.value.args[1].keys
-                if isinstance(key, ast.Constant) and isinstance(key.value, str) and not key.value.isidentifier()
-            ]
-            if keys:
-                wire_types[node.targets[0].id] = sorted(keys)
 
-    options = "   :inherited-members:\n   :members:\n   :show-inheritance:\n   :undoc-members:\n"
-    section = f".. automodule:: {namespace}\n{options}"
-    if wire_types:
-        section += (
-            textwrap.fill(
-                ", ".join(sorted(wire_types)),
-                width=120,
-                initial_indent="   :exclude-members: ",
-                subsequent_indent="      ",
-            )
-            + "\n"
+for _folder, _stream, _await in (("", "Stream", ""), ("aio/", "AsyncStream", "await ")):
+    _stream_assignment = (
+        f" = {_stream}(response=response, deserialization_callback=_callback, "
+        'terminal_event_names=["error", "response.completed"])  # type: ignore\n'
+    )
+    REPLACEMENTS += (
+        Replacement(
+            f"azure/search/documents/knowledgebases/{_folder}_operations/_operations.py",
+            f"close the {_stream} when the response callback raises",
+            _stream_assignment + "        if cls:\n"
+            "            return cls(pipeline_response, deserialized, {})  # type: ignore\n"
+            "        return deserialized\n",
+            _stream_assignment + "        if cls:\n"
+            "            try:\n"
+            "                return cls(pipeline_response, deserialized, {})  # type: ignore\n"
+            "            except BaseException:\n"
+            f"                {_await}deserialized.close()\n"
+            "                raise\n"
+            "        return deserialized\n",
+        ),
+    )
+
+
+def _add_knowledge_base_input(source: str) -> tuple[str, bool]:
+    declaration = "KnowledgeBase = TypedDict(\n"
+    documentation = 'KnowledgeBase.__doc__ = """'
+    if source.count(declaration) != 1 or source.count(documentation) != 1:
+        raise RuntimeError("Unexpected emitter output while locating the KnowledgeBase TypedDict")
+    start = source.index(declaration)
+    end = source.index('"""', source.index(documentation, start) + len(documentation)) + 3
+    legacy = source[start:end]
+    if legacy.count('list["KnowledgeBaseModel"]') != 2:
+        raise RuntimeError("Unexpected emitter output for the legacy KnowledgeBase model-list contract")
+    expanded = (
+        legacy.replace("KnowledgeBase = TypedDict(", "KnowledgeBaseInput = TypedDict(", 1)
+        .replace('    "KnowledgeBase",', '    "KnowledgeBaseInput",', 1)
+        .replace("KnowledgeBase.__doc__", "KnowledgeBaseInput.__doc__", 1)
+        .replace('list["KnowledgeBaseModel"]', 'list["KnowledgeBaseModelInput"]')
+        .replace(
+            "Represents a knowledge base definition.",
+            "Dictionary-style knowledge-base input supporting all model variants.",
+            1,
         )
-    for name, keys in sorted(wire_types.items()):
-        section += f"\n.. autoclass:: {namespace}.{name}\n{options}   :exclude-members: {', '.join(keys)}\n"
-    return section
+    )
+    if source.count(expanded) == 1 and source.count("KnowledgeBaseInput = TypedDict(") == 1:
+        return source, False
+    if "KnowledgeBaseInput = TypedDict(" in source:
+        raise RuntimeError("Unexpected existing KnowledgeBaseInput definition; regenerate before applying workarounds")
+    return source[:end] + "\n\n" + expanded + source[end:], True
+
+
+def _add_scoring_inputs(source: str) -> tuple[str, bool]:
+    changed = False
+    for name, annotation, input_annotation in (
+        ("ScoringProfile", 'list["ScoringFunction"]', 'list["ScoringFunctionInput"]'),
+        ("SearchIndex", 'list["ScoringProfile"]', 'list["ScoringProfileInput"]'),
+    ):
+        declaration = (
+            f"class {name}(TypedDict, total=False):\n" if name == "ScoringProfile" else f"{name} = TypedDict(\n"
+        )
+        if source.count(declaration) != 1:
+            raise RuntimeError(f"Unexpected emitter output while locating the {name} TypedDict")
+        start = source.index(declaration)
+        if name == "ScoringProfile":
+            end = min(
+                source.index(marker, start)
+                for marker in (
+                    "\n\nclass ScoringProfileInput(",
+                    "\n\nSearchAlias = TypedDict(",
+                    "\n\nSearchIndex = TypedDict(",
+                )
+                if marker in source[start:]
+            )
+        else:
+            documentation = 'SearchIndex.__doc__ = """'
+            if source.count(documentation) != 1:
+                raise RuntimeError("Unexpected emitter output while locating the SearchIndex documentation")
+            end = source.index('"""', source.index(documentation, start) + len(documentation)) + 3
+        legacy = source[start:end]
+        if legacy.count(annotation) != 2:
+            raise RuntimeError(f"Unexpected emitter output for the legacy {name} scoring contract")
+        input_name = name + "Input"
+        expanded = (
+            legacy.replace(f"class {name}(", f"class {input_name}(", 1)
+            .replace(f"{name} = TypedDict(", f"{input_name} = TypedDict(", 1)
+            .replace(f'    "{name}",', f'    "{input_name}",', 1)
+            .replace(f"{name}.__doc__", f"{input_name}.__doc__", 1)
+            .replace(annotation, input_annotation)
+            .replace(
+                "Defines parameters for a search index that influence scoring in search queries.",
+                "Dictionary-style scoring-profile input supporting classic and random scoring.",
+                1,
+            )
+            .replace(
+                "Represents a search index definition,",
+                "Dictionary-style search-index input supporting classic and random scoring,",
+                1,
+            )
+        )
+        input_declaration = f"class {input_name}(" if name == "ScoringProfile" else f"{input_name} = TypedDict("
+        if source.count(expanded) == 1 and source.count(input_declaration) == 1:
+            continue
+        if f"class {input_name}(" in source or f"{input_name} =" in source:
+            raise RuntimeError(f"Unexpected existing {input_name} definition; regenerate before applying workarounds")
+        source = source[:end] + "\n\n" + expanded + source[end:]
+        changed = True
+    return source, changed
 
 
 def update_sources(*, check: bool) -> int:
@@ -223,38 +517,28 @@ def update_sources(*, check: bool) -> int:
         generated_count = source.count(replacement.generated)
         patched_count = source.count(replacement.patched)
 
-        if generated_count == 1 and patched_count == 0:
-            sources[path] = source.replace(replacement.generated, replacement.patched, 1)
+        if generated_count == replacement.expected_count and patched_count == 0:
+            sources[path] = source.replace(replacement.generated, replacement.patched, replacement.expected_count)
             pending.append(replacement.description)
-        elif generated_count == 0 and patched_count == 1:
+        elif generated_count == 0 and patched_count == replacement.expected_count:
             continue
         elif replacement.applies_when is not None and replacement.applies_when not in source:
             continue
         else:
             raise RuntimeError(
                 f"Unexpected emitter output in {replacement.path} while attempting to "
-                f"{replacement.description}; expected exactly one generated or patched snippet"
+                f"{replacement.description}; expected exactly {replacement.expected_count} generated or patched snippets"
             )
 
-    for namespace in ("azure.search.documents", "azure.search.documents.indexes"):
-        path = PACKAGE_ROOT / "doc" / f"{namespace}.rst"
-        source = path.read_text(encoding="utf-8")
-        marker = f".. automodule:: {namespace}.types\n"
-        if source.count(marker) != 1:
-            raise RuntimeError(f"Expected exactly one input-type documentation section in {path}")
-        prefix, _ = source.split(marker, 1)
-        type_path = PACKAGE_ROOT.joinpath(*namespace.split("."), "types.py")
-        updated = prefix + build_sphinx_type_section(f"{namespace}.types", type_path.read_text(encoding="utf-8"))
-        if updated != source:
-            sources[path] = updated
-            pending.append(f"refresh package-local TypedDict documentation for {namespace}.types")
+    path = PACKAGE_ROOT / "azure/search/documents/indexes/types.py"
+    sources[path], added = _add_knowledge_base_input(sources[path])
+    if added:
+        pending.append("add a separate complete KnowledgeBaseInput without widening the GA TypedDict")
 
-    manifest_path = PACKAGE_ROOT / "MANIFEST.in"
-    manifest = manifest_path.read_text(encoding="utf-8")
-    directive = "recursive-include doc *.rst"
-    if directive not in manifest.splitlines():
-        sources[manifest_path] = manifest.rstrip("\n") + "\n" + directive + "\n"
-        pending.append("include package-local Sphinx documentation in the source distribution")
+    if "ScoringFunctionInput = Union[" in sources[path]:
+        sources[path], added = _add_scoring_inputs(sources[path])
+        if added:
+            pending.append("add separate scoring-profile and index inputs without widening the GA TypedDicts")
 
     if check:
         if pending:

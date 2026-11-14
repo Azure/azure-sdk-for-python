@@ -6,14 +6,23 @@
 
 from __future__ import annotations
 
-from devtools_testutils import AzureRecordedTestCase
+from azure.core import MatchConditions
+from devtools_testutils import AzureRecordedTestCase, remove_batch_sanitizers
+from devtools_testutils.helpers import get_recording_id
+from devtools_testutils.sanitizers import add_body_key_sanitizer
 
+from _capabilities import require_capability
 from _search_helpers import (
     HOTEL_SUGGESTER_NAME,
     LARGE_HOTEL_DOCUMENT_COUNT,
     SEARCH_SELECT_FIELDS,
     hotel_index,
+    index_resources,
     live_test,
+    make_index_client,
+    make_search_client,
+    upload_documents,
+    wait_for_document_count,
 )
 
 
@@ -27,6 +36,147 @@ def _assert_budget_results(results):
 
 
 class TestSearchClientSearch(AzureRecordedTestCase):
+    @live_test()
+    def test_search_openai_compatible_vectorizer_returns_expected_neighbor(self, endpoint):
+        require_capability(
+            "azure.search.documents.indexes.models.OpenAICompatibleVectorizer",
+            "azure.search.documents.indexes.models.OpenAICompatibleVectorizerParameters",
+        )
+        from azure.search.documents.models import VectorizableTextQuery, VectorizedQuery
+        from _preview_helpers import compatible_embedding_index_configuration
+
+        add_body_key_sanitizer(json_path="$..headers['api-key']", value="fake-provider-key", function_scoped=True)
+        index_name = self.get_resource_name("index-search-compatible-vectorizer")
+        index, documents = compatible_embedding_index_configuration(index_name, is_live=self.is_live)
+        with make_index_client(endpoint) as indexes:
+            created = None
+            try:
+                created = indexes.create_index(index)
+                with make_search_client(endpoint, index_name) as search:
+                    upload_documents(search, documents)
+                    wait_for_document_count(self, search, len(documents))
+                    control = list(
+                        search.search(
+                            vector_queries=[
+                                VectorizedQuery(
+                                    vector=documents[0]["DescriptionVector"],
+                                    fields="DescriptionVector",
+                                    k_nearest_neighbors=3,
+                                    exhaustive=True,
+                                )
+                            ],
+                            select=["HotelId"],
+                            top=3,
+                        )
+                    )
+                    generated = list(
+                        search.search(
+                            vector_queries=[
+                                VectorizableTextQuery(
+                                    text="Relaxing hotel with a pool and spa treatments.",
+                                    fields="DescriptionVector",
+                                    k_nearest_neighbors=3,
+                                    exhaustive=True,
+                                )
+                            ],
+                            select=["HotelId"],
+                            top=3,
+                        )
+                    )
+                    assert control and generated
+                    assert control[0]["HotelId"] == generated[0]["HotelId"] == "spa"
+                    assert {item["HotelId"] for item in generated} == {item["HotelId"] for item in documents}
+            finally:
+                if created is not None:
+                    indexes.delete_index(created, match_condition=MatchConditions.IfNotModified)
+
+    @live_test()
+    def test_search_agentic_returns_documents_and_reasoning_usage(self, endpoint):
+        require_capability(
+            "azure.search.documents.SearchClient.search.agentic_options",
+            "azure.search.documents.models.AgenticSearchOptions.max_runtime_in_seconds",
+            "azure.search.documents.models.AgenticSearchDebugInfo",
+        )
+        from azure.search.documents.models import AgenticSearchDebugInfo, AgenticSearchOptions
+        from _preview_helpers import knowledge_base_tool_documents
+
+        # Preserve synthetic document IDs for the result-membership assertion.
+        remove_batch_sanitizers(["AZSDK3430"], headers={"x-recording-id": get_recording_id()})
+        with index_resources(self, endpoint, semantic=True, prefix="index-search-agentic") as context:
+            with make_search_client(endpoint, context.index_name, credential=context.credential) as search_client:
+                documents = knowledge_base_tool_documents()[0]
+                upload_documents(search_client, documents)
+                wait_for_document_count(self, search_client, len(documents))
+                pager = search_client.search(
+                    search_text="Find hotels with complimentary wireless internet.",
+                    query_type="agentic",
+                    semantic_configuration_name="default",
+                    agentic_options=AgenticSearchOptions(max_runtime_in_seconds=30),
+                    debug="agentic",
+                    select=["id", "content"],
+                    top=2,
+                )
+                results = list(pager)
+                assert results
+                assert {result["id"] for result in results} <= {document["id"] for document in documents}
+                diagnostics = pager.get_debug_info().agentic
+                assert isinstance(diagnostics, AgenticSearchDebugInfo)
+                assert diagnostics.termination_reason != "modelFailed"
+                assert diagnostics.sub_queries
+                assert all(query.search and query.iteration >= 1 for query in diagnostics.sub_queries)
+                assert diagnostics.usage.agentic_planning_tokens >= 0
+                assert diagnostics.usage.reasoning_tokens >= 0
+                assert diagnostics.usage.agentic_planning_tokens + diagnostics.usage.reasoning_tokens > 0
+
+    @live_test()
+    def test_search_more_like_this_excludes_seed_document(self, endpoint):
+        require_capability("azure.search.documents.SearchClient.search.more_like_this")
+        index_name = self.get_resource_name("index-search-more-like-this")
+
+        with hotel_index(self, endpoint, index_name) as (search_client, documents):
+            results = list(search_client.search(more_like_this="8", select=["HotelId"], top=3))
+
+            assert results
+            result_ids = {result["HotelId"] for result in results}
+            assert "8" not in result_ids
+            assert result_ids <= {document["HotelId"] for document in documents}
+
+    @live_test()
+    def test_search_random_scoring_preserves_seeded_order(self, endpoint):
+        require_capability(
+            "azure.search.documents.indexes.models.RandomScoringFunction",
+            "azure.search.documents.indexes.models.RandomScoringParameters",
+        )
+        from azure.search.documents.indexes.models import RandomScoringFunction, RandomScoringParameters, ScoringProfile
+
+        index_name = self.get_resource_name("index-search-random-scoring")
+        with hotel_index(self, endpoint, index_name) as (search_client, documents):
+            with make_index_client(endpoint) as index_client:
+                index = index_client.get_index(index_name)
+                index.scoring_profiles = [
+                    ScoringProfile(
+                        name="random-hotels",
+                        functions=[RandomScoringFunction(parameters=RandomScoringParameters(seed_parameter="seed"))],
+                    )
+                ]
+                index_client.create_or_update_index(index)
+
+            options = {
+                "search_text": "*",
+                "scoring_profile": "random-hotels",
+                "scoring_parameters": ["seed-42"],
+                "select": ["HotelId"],
+                "top": len(documents),
+            }
+            first = list(search_client.search(**options))
+            second = list(search_client.search(**options))
+
+            assert len(first) == len(documents)
+            assert {result["HotelId"] for result in first} == {document["HotelId"] for document in documents}
+            assert [(result["HotelId"], result["@search.score"]) for result in first] == [
+                (result["HotelId"], result["@search.score"]) for result in second
+            ]
+
     @live_test()
     def test_search_returns_documents_matching_search_text(self, endpoint):
         index_name = self.get_resource_name("index-search-text")

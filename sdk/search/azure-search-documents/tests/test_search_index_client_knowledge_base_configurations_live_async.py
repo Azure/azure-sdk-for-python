@@ -31,6 +31,44 @@ _KNOWLEDGE_BASE_CONFIGURATION_CAPABILITIES = (
 
 class TestKnowledgeBaseConfigurationAsync(AzureRecordedTestCase):
     @live_test()
+    async def test_create_or_update_knowledge_base_preserves_and_clears_tools(self, endpoint: str) -> None:
+        require_capability(
+            *_KNOWLEDGE_BASE_CONFIGURATION_CAPABILITIES,
+            "azure.search.documents.indexes.models.KnowledgeBase.tools",
+            "azure.search.documents.indexes.models.KnowledgeBaseTool",
+            "azure.search.documents.indexes.models.KnowledgeBaseToolKnowledgeSourceReference",
+        )
+        from azure.search.documents.indexes.models import KnowledgeBaseTool, KnowledgeBaseToolKnowledgeSourceReference
+
+        async with knowledge_base_resources(self, endpoint, prefix="knowledge-base-tools") as context:
+            base = context.knowledge_base
+            base.tools = [
+                KnowledgeBaseTool(
+                    name="hotel-search",
+                    description="Retrieve hotel information from the hotel source.",
+                    knowledge_sources=[KnowledgeBaseToolKnowledgeSourceReference(name=context.knowledge_source_name)],
+                )
+            ]
+            await context.index_client.create_or_update_knowledge_base(
+                base, match_condition=MatchConditions.IfNotModified
+            )
+            fetched = await context.index_client.get_knowledge_base(context.knowledge_base_name)
+            assert len(fetched.tools) == 1
+            assert fetched.tools[0].name == "hotel-search"
+            assert fetched.tools[0].description == base.tools[0].description
+            assert [source.name for source in fetched.tools[0].knowledge_sources] == [context.knowledge_source_name]
+            assert fetched.e_tag != base.e_tag
+
+            fetched.tools = []
+            await context.index_client.create_or_update_knowledge_base(
+                fetched, match_condition=MatchConditions.IfNotModified
+            )
+            cleared = await context.index_client.get_knowledge_base(context.knowledge_base_name)
+            assert not cleared.tools
+            assert [source.name for source in cleared.knowledge_sources] == [context.knowledge_source_name]
+            assert cleared.e_tag != fetched.e_tag
+
+    @live_test()
     async def test_create_or_update_knowledge_base_round_trips_references_description_and_etag(
         self, endpoint: str
     ) -> None:

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Async live tests for ``SearchIndexClient`` web knowledge source operations."""
+"""Async live tests for ``SearchIndexClient`` knowledge source operations."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from azure.core import MatchConditions
 from devtools_testutils import AzureRecordedTestCase
 
 from _capabilities import require_capability
-from _search_helpers_async import live_test, make_index_client, safe_delete
+from _search_helpers_async import index_resources, live_test, make_index_client, safe_delete
 
 WEB_DOMAIN_ADDRESS = "https://learn.microsoft.com"
 WEB_KNOWLEDGE_SOURCE_DESCRIPTION = "Web knowledge source for SearchIndexClient live coverage"
@@ -65,6 +65,46 @@ def _assert_web_knowledge_source(result: Any, knowledge_source_name: str) -> Non
     assert result.web_parameters.domains.allowed_domains is not None
     assert result.web_parameters.domains.allowed_domains[0].address == WEB_DOMAIN_ADDRESS
     assert result.web_parameters.domains.allowed_domains[0].include_subpages is True
+
+
+class TestSearchIndexClientSearchIndexKnowledgeSourcesAsync(AzureRecordedTestCase):
+    @live_test()
+    async def test_create_or_update_knowledge_source_preserves_facet_hint(self, endpoint: str) -> None:
+        require_capability(
+            "azure.search.documents.indexes.aio.SearchIndexClient.create_or_update_knowledge_source",
+            "azure.search.documents.indexes.aio.SearchIndexClient.get_knowledge_source",
+            "azure.search.documents.indexes.aio.SearchIndexClient.delete_knowledge_source",
+            "azure.search.documents.indexes.models.SearchIndexKnowledgeSourceFilterHintAutoConfiguration",
+        )
+        from azure.search.documents.indexes.models import SearchFieldDataType, SimpleField
+        from _preview_helpers import knowledge_source_configuration
+
+        source_name = self.get_resource_name("knowledge-source-facet-hint")
+        async with index_resources(self, endpoint, semantic=True, prefix="facet-hint") as context:
+            client = context.index_client
+            index = await client.get_index(context.index_name)
+            index.fields.append(
+                SimpleField(name="category", type=SearchFieldDataType.STRING, filterable=True, facetable=True)
+            )
+            await client.create_or_update_index(index)
+            source = knowledge_source_configuration("facet_hint")
+            source.name = source_name
+            source.search_index_parameters.search_index_name = context.index_name
+            try:
+                await client.create_or_update_knowledge_source(source)
+                retrieved = await client.get_knowledge_source(source_name)
+                hint = retrieved.search_index_parameters.query_hints.filters[0]
+                assert hint.field == "category"
+                assert hint.field_values is None
+                assert hint.auto_configuration.cache_ttl == 300
+                assert hint.auto_configuration.max_facet_value_count == 16
+
+                hint.auto_configuration.cache_ttl = 600
+                await client.create_or_update_knowledge_source(retrieved)
+                updated = await client.get_knowledge_source(source_name)
+                assert updated.search_index_parameters.query_hints.filters[0].auto_configuration.cache_ttl == 600
+            finally:
+                await safe_delete(client.delete_knowledge_source, source_name)
 
 
 class TestSearchIndexClientWebKnowledgeSourcesAsync(AzureRecordedTestCase):

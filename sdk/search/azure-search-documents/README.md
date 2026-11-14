@@ -38,8 +38,8 @@ Use the Azure.Search.Documents client library to:
 
 ## Getting started
 
-This release targets the `2026-10-01` GA API by default. Features available only in preview API
-versions are not included in this GA build.
+This release targets the `2026-11-01-preview` API by default. The `2026-10-01` GA API
+remains selectable through the `api_version` client option.
 
 ### Install the package
 
@@ -132,6 +132,13 @@ search_client = SearchClient(service_endpoint, index_name, credential)
 ```
 
 ## Key concepts
+
+This preview defaults to API version `2026-11-01-preview`. Explicitly set
+`api_version` to an earlier supported `ApiVersion` to retain that service contract.
+Graph queries are available through `SearchClient.graph` in both synchronous and
+asynchronous clients; see the [graph query sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_query_graph_preview.py)
+for provenance and diagnostic results. Vector queries accept `topic_graph`
+configuration, and `SearchClient.search` forwards `agentic_options` and `more_like_this`.
 
 An Azure AI Search service contains one or more indexes that provide
 persistent storage of searchable data in the form of JSON documents.  _(If

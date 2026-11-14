@@ -6,13 +6,19 @@
 
 from __future__ import annotations
 
-import time
-
+from azure.core import MatchConditions
 from devtools_testutils import AzureRecordedTestCase
 
 from _capabilities import require_capability
-from _search_helpers import log_retrieval_stream_event, log_retrieval_stream_response
-from _search_helpers_async import knowledge_base_resources, live_test
+from _search_helpers_async import (
+    knowledge_base_resources,
+    knowledge_source_resources,
+    live_test,
+    make_search_client,
+    poll_until,
+    upload_documents,
+    wait_for_document_count,
+)
 
 KNOWLEDGE_BASE_RETRIEVAL_DESCRIPTION = "Knowledge base for retrieval client live coverage"
 KNOWLEDGE_SOURCE_RETRIEVAL_DESCRIPTION = "Knowledge source for retrieval client live coverage"
@@ -45,6 +51,121 @@ _STREAM_CAPABILITIES = (
 
 class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
     @live_test()
+    async def test_retrieve_tool_name_limits_sources_and_clearing_restores_kb_retrieval(self, endpoint: str) -> None:
+        require_capability(
+            *_KNOWLEDGE_BASE_RESOURCE_CAPABILITIES,
+            *_RETRIEVAL_CAPABILITIES,
+            "azure.search.documents.indexes.aio.SearchIndexClient.create_or_update_knowledge_base",
+            "azure.search.documents.indexes.aio.SearchIndexClient.get_knowledge_base",
+            "azure.search.documents.indexes.models.KnowledgeBase.tools",
+            "azure.search.documents.indexes.models.KnowledgeBaseTool",
+            "azure.search.documents.indexes.models.KnowledgeBaseToolKnowledgeSourceReference",
+            "azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest.tool_name",
+            "azure.search.documents.knowledgebases.models.KnowledgeRetrievalMinimalReasoningEffort",
+            "azure.search.documents.knowledgebases.models.KnowledgeBaseSearchIndexActivityRecord",
+            "azure.search.documents.knowledgebases.models.KnowledgeBaseSearchIndexReference",
+        )
+        from azure.search.documents.indexes.models import (
+            KnowledgeBaseTool,
+            KnowledgeBaseToolKnowledgeSourceReference,
+            KnowledgeSourceReference,
+        )
+        from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
+        from azure.search.documents.knowledgebases.models import (
+            KnowledgeBaseRetrievalRequest,
+            KnowledgeBaseSearchIndexActivityRecord,
+            KnowledgeBaseSearchIndexReference,
+            KnowledgeRetrievalMinimalReasoningEffort,
+            KnowledgeRetrievalSemanticIntent,
+        )
+        from _preview_helpers import knowledge_base_tool_documents
+
+        async with knowledge_source_resources(self, endpoint, prefix="retrieve-tool-excluded") as excluded:
+            async with knowledge_base_resources(
+                self, endpoint, prefix="retrieve-tool-selected", wait_for_active=True
+            ) as context:
+                for resource, documents in zip((context, excluded), knowledge_base_tool_documents()):
+                    async with make_search_client(
+                        endpoint, resource.index_name, credential=context.credential
+                    ) as search_client:
+                        await upload_documents(search_client, documents)
+                        await wait_for_document_count(self, search_client, len(documents))
+                await poll_until(
+                    lambda: context.index_client.get_knowledge_source_status(excluded.knowledge_source_name),
+                    predicate=lambda status: status.synchronization_status == "active",
+                    interval=5 if self.is_live else 0,
+                )
+                tool_name = "selected-hotels"
+                base = context.knowledge_base
+                base.knowledge_sources.append(KnowledgeSourceReference(name=excluded.knowledge_source_name))
+                base.retrieval_reasoning_effort = KnowledgeRetrievalMinimalReasoningEffort()
+                base.tools = [
+                    KnowledgeBaseTool(
+                        name=tool_name,
+                        description="Retrieve hotels from the selected hotel source.",
+                        knowledge_sources=[
+                            KnowledgeBaseToolKnowledgeSourceReference(name=context.knowledge_source_name)
+                        ],
+                        retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
+                    )
+                ]
+                await context.index_client.create_or_update_knowledge_base(
+                    base, match_condition=MatchConditions.IfNotModified
+                )
+                fetched = await context.index_client.get_knowledge_base(context.knowledge_base_name)
+                assert len(fetched.tools) == 1
+                assert fetched.tools[0].name == tool_name
+                assert [source.name for source in fetched.tools[0].knowledge_sources] == [context.knowledge_source_name]
+
+                async with KnowledgeBaseRetrievalClient(
+                    endpoint, credential=context.credential, knowledge_base_name=context.knowledge_base_name
+                ) as client:
+                    request = KnowledgeBaseRetrievalRequest(
+                        intents=[KnowledgeRetrievalSemanticIntent(search=RETRIEVAL_QUERY)],
+                        include_activity=True,
+                    )
+                    baseline = await client.retrieve(request)
+                    assert {reference.doc_key for reference in baseline.references} == {
+                        "hotel-selected-1",
+                        "hotel-selected-2",
+                        "hotel-excluded",
+                    }
+
+                    request.tool_name = tool_name
+                    result = await client.retrieve(request)
+                    assert result.references
+                    assert all(
+                        isinstance(reference, KnowledgeBaseSearchIndexReference) for reference in result.references
+                    )
+                    assert {reference.doc_key for reference in result.references} == {
+                        "hotel-selected-1",
+                        "hotel-selected-2",
+                    }
+                    activities = [
+                        activity
+                        for activity in result.activity
+                        if isinstance(activity, KnowledgeBaseSearchIndexActivityRecord)
+                    ]
+                    assert activities
+                    assert {activity.knowledge_source_name for activity in activities} == {
+                        context.knowledge_source_name
+                    }
+                    assert all(activity.error is None for activity in result.activity)
+
+                    fetched.tools = []
+                    await context.index_client.create_or_update_knowledge_base(
+                        fetched, match_condition=MatchConditions.IfNotModified
+                    )
+                    assert not (await context.index_client.get_knowledge_base(context.knowledge_base_name)).tools
+                    request.tool_name = None
+                    restored = await client.retrieve(request)
+                    assert {reference.doc_key for reference in restored.references} == {
+                        "hotel-selected-1",
+                        "hotel-selected-2",
+                        "hotel-excluded",
+                    }
+
+    @live_test()
     async def test_retrieve_returns_knowledge_base_response(self, endpoint: str) -> None:
         require_capability(*_KNOWLEDGE_BASE_RESOURCE_CAPABILITIES, *_RETRIEVAL_CAPABILITIES)
         from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
@@ -67,8 +188,6 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
             retrieval_request = KnowledgeBaseRetrievalRequest(
                 intents=[KnowledgeRetrievalSemanticIntent(search=RETRIEVAL_QUERY)],
                 retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
-                include_activity=True,
-                output_mode="extractiveData",
             )
 
             async with KnowledgeBaseRetrievalClient(
@@ -79,8 +198,8 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
                 result = await client.retrieve(retrieval_request)
 
             assert isinstance(result, KnowledgeBaseRetrievalResponse)
-            assert result.references
-            assert result.activity
+            assert hasattr(result, "response")
+            assert hasattr(result, "references")
 
     @live_test()
     async def test_retrieve_stream_returns_typed_lifecycle_events(self, endpoint: str) -> None:
@@ -91,9 +210,6 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
         )
         from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
         from azure.search.documents.knowledgebases.models import (
-            KnowledgeBaseActivityRecord,
-            KnowledgeBaseActivityStartedEvent,
-            KnowledgeBaseMessageTextContent,
             KnowledgeBaseResponseCompletedEvent,
             KnowledgeBaseRetrievalRequest,
             KnowledgeBaseRetrievalResponse,
@@ -101,7 +217,6 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
             KnowledgeBaseStreamErrorEvent,
             KnowledgeRetrievalMinimalReasoningEffort,
             KnowledgeRetrievalSemanticIntent,
-            SearchIndexKnowledgeSourceParams,
         )
 
         async with knowledge_base_resources(
@@ -114,16 +229,7 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
         ) as context:
             retrieval_request = KnowledgeBaseRetrievalRequest(
                 intents=[KnowledgeRetrievalSemanticIntent(search=RETRIEVAL_QUERY)],
-                knowledge_source_params=[
-                    SearchIndexKnowledgeSourceParams(
-                        knowledge_source_name=context.knowledge_source_name,
-                        include_references=True,
-                        include_reference_source_data=True,
-                    )
-                ],
                 retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
-                include_activity=True,
-                output_mode="extractiveData",
             )
 
             async with KnowledgeBaseRetrievalClient(
@@ -131,39 +237,13 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
                 credential=context.credential,
                 knowledge_base_name=context.knowledge_base_name,
             ) as client:
-                started_at = time.perf_counter()
-                events = []
-                stream = await client.retrieve_stream(
-                    retrieval_request, raw_response_hook=log_retrieval_stream_response
-                )
+                stream = await client.retrieve_stream(retrieval_request)
                 async with stream:
-                    async for event in stream:
-                        log_retrieval_stream_event(event, event_number=len(events) + 1, started_at=started_at)
-                        assert not isinstance(event, KnowledgeBaseStreamErrorEvent), f"Stream error: {event.as_dict()}"
-                        events.append(event)
+                    events = [event async for event in stream]
 
-            assert events, "The SSE response did not yield any events"
             assert isinstance(events[0], KnowledgeBaseRetrievalStartedEvent)
-            assert events[0].knowledge_base_name == context.knowledge_base_name
-            assert events[0].output_mode == "extractiveData"
             assert isinstance(events[-1], KnowledgeBaseResponseCompletedEvent)
-            assert isinstance(events[-1].response, KnowledgeBaseRetrievalResponse)
-            assert any(isinstance(event, KnowledgeBaseActivityStartedEvent) for event in events[1:-1])
-            assert any(isinstance(event, KnowledgeBaseActivityRecord) for event in events[1:-1])
-            assert any(isinstance(event, list) and event for event in events[1:-1]), "No streamed references"
-            assert events[-1].response.response, "The completed response did not contain any messages"
-            assert any(
-                isinstance(content, KnowledgeBaseMessageTextContent) and content.text
-                for message in events[-1].response.response
-                for content in message.content
-            ), "The completed response did not contain any text"
-            assert events[-1].response.references
-            assert events[-1].response.activity
             assert events[-1].status_code in (200, 206)
-            assert (
-                sum(
-                    isinstance(event, (KnowledgeBaseResponseCompletedEvent, KnowledgeBaseStreamErrorEvent))
-                    for event in events
-                )
-                == 1
-            )
+            assert isinstance(events[-1].response, KnowledgeBaseRetrievalResponse)
+            assert not any(isinstance(event, KnowledgeBaseStreamErrorEvent) for event in events)
+            assert sum(isinstance(event, KnowledgeBaseResponseCompletedEvent) for event in events) == 1

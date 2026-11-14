@@ -110,11 +110,15 @@ class TestSearchIndexClient(AzureRecordedTestCase):
         assert "limits" in result
 
     @live_test()
-    def test_list_indexes_returns_empty_page_when_service_has_no_indexes(self, endpoint):
+    def test_list_indexes_returns_empty_page_for_unmatched_prefix(self, endpoint):
         client = make_index_client(endpoint)
+        index_name = self.get_resource_name("index-empty-prefix")
         try:
-            assert list(client.list_indexes()) == []
+            client.create_index(_build_hotel_index(index_name))
+            assert list(client.list_indexes(search=f"{index_name}-missing", search_type="prefix")) == []
+            assert client.get_index(index_name).name == index_name
         finally:
+            safe_delete(client.delete_index, index_name)
             client.close()
 
     @live_test()

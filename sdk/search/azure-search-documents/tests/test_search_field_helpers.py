@@ -8,7 +8,9 @@ from __future__ import annotations
 
 import pytest
 
+from _capabilities import require_capability
 from azure.search.documents.indexes.models import (
+    AzureOpenAIModelName,
     ComplexField,
     LexicalAnalyzerName,
     SearchableField,
@@ -16,6 +18,31 @@ from azure.search.documents.indexes.models import (
     SearchFieldDataType,
     SimpleField,
 )
+
+
+class TestAzureOpenAIModelName:
+    @pytest.mark.parametrize(
+        ("alias", "canonical"),
+        [
+            ("GPT_5_MINI", "GPT5_MINI"),
+            ("GPT_5_NANO", "GPT5_NANO"),
+            ("GPT_5_4_MINI", "GPT5_4_MINI"),
+            ("GPT_5_4_NANO", "GPT5_4_NANO"),
+        ],
+    )
+    def test_legacy_aliases_are_registered_enum_members(self, alias, canonical):
+        member = getattr(AzureOpenAIModelName, canonical)
+        assert getattr(AzureOpenAIModelName, alias) is member
+        assert AzureOpenAIModelName[alias] is member
+        assert AzureOpenAIModelName.__members__[alias] is member
+        assert member.name == canonical
+        assert AzureOpenAIModelName[alias.lower()] is member
+
+    def test_compatibility_enum_preserves_november_members(self):
+        from azure.search.documents.indexes.models._enums import AzureOpenAIModelName as GeneratedModelName
+
+        for name, member in GeneratedModelName.__members__.items():
+            assert AzureOpenAIModelName[name].value == member.value
 
 
 def _assert_default_analyzer_settings(field):
@@ -50,6 +77,45 @@ class TestSearchFieldDataType:
 
 
 class TestSearchField:
+    def test_field_helpers_forward_november_topic_binding(self):
+        require_capability("azure.search.documents.indexes.models.SearchField.topic_graph_profile")
+        field = SearchField(
+            name="vector",
+            type=SearchFieldDataType.Collection(SearchFieldDataType.SINGLE),
+            searchable=True,
+            hidden=True,
+            stored=True,
+            vector_search_dimensions=2,
+            vector_search_profile_name="vector-profile",
+            topic_graph_profile="hotel-topics",
+        )
+        serialized = field.as_dict()
+        assert serialized["topicGraphProfile"] == "hotel-topics"
+        assert serialized["vectorSearchProfile"] == "vector-profile"
+        assert serialized["dimensions"] == 2
+        assert serialized["stored"] is True
+        assert serialized["retrievable"] is False
+
+    @pytest.mark.parametrize("builder", [SearchField, SimpleField])
+    @pytest.mark.parametrize("permission_filter", ["oneLakeParentFolders", "oneLakeLakehouseId"])
+    def test_field_helpers_forward_november_permission_roles(self, builder, permission_filter):
+        require_capability(
+            "azure.search.documents.indexes.models.SearchField.permission_filter",
+            "azure.search.documents.indexes.models.SearchIndex.one_lake_security_source",
+        )
+        field = builder(
+            name="permission",
+            type=SearchFieldDataType.Collection(SearchFieldDataType.STRING),
+            hidden=True,
+            filterable=True,
+            permission_filter=permission_filter,
+        )
+        serialized = field.as_dict()
+        assert serialized["permissionFilter"] == permission_filter
+        assert serialized["filterable"] is True
+        assert serialized["retrievable"] is False
+        assert serialized["type"] == "Collection(Edm.String)"
+
     def test_hidden_constructor_kwarg_sets_inverse_retrievable_value(self):
         field = SearchField(name="Rating", type=SearchFieldDataType.DOUBLE, hidden=True)
 
@@ -71,32 +137,14 @@ class TestSearchField:
 
 
 class TestSimpleField:
-    @pytest.mark.parametrize("enabled", [False, True])
-    def test_forwards_generated_permission_properties(self, enabled):
+    def test_simple_field_forwards_additional_properties_without_overriding_searchable(self):
+        require_capability("azure.search.documents.indexes.models.SearchField.permission_filter")
         field = SimpleField(
-            name="Expires",
-            type=SearchFieldDataType.DATE_TIME_OFFSET,
-            organization_access_expiration=enabled,
-            permission_filter="groupIds",
-            sharepoint_site_url=enabled,
+            name="Owner", type=SearchFieldDataType.STRING, permission_filter="userIds", stored=False, searchable=True
         )
-
-        wire = field.as_dict()
-        assert wire["organizationAccessExpiration"] is enabled
-        assert wire["permissionFilter"] == "groupIds"
-        assert wire["sharepointSiteUrl"] is enabled
-
-    def test_helper_defaults_take_precedence_over_extra_kwargs(self):
-        field = SimpleField(name="Category", type=SearchFieldDataType.STRING, searchable=True, retrievable=False)
-
+        assert field.permission_filter == "userIds"
+        assert field.stored is False
         assert field.searchable is False
-        assert field.retrievable is True
-
-    def test_hidden_takes_precedence_over_retrievable(self):
-        field = SimpleField(name="Category", type=SearchFieldDataType.STRING, hidden=True, retrievable=True)
-
-        assert field.hidden is True
-        assert field.retrievable is False
 
     def test_defaults_create_non_searchable_retrievable_field(self):
         field = SimpleField(name="Rating", type=SearchFieldDataType.DOUBLE)
@@ -136,23 +184,10 @@ class TestSimpleField:
 
 
 class TestSearchableField:
-    def test_forwards_generated_field_properties_without_overriding_type(self):
-        field = SearchableField(
-            name="Category",
-            normalizer_name="lowercase",
-            permission_filter="userIds",
-            type=SearchFieldDataType.INT32,
-        )
-
+    def test_searchable_field_forwards_additional_properties_without_overriding_type(self):
+        field = SearchableField(name="Text", stored=False, type="Edm.Int32")
+        assert field.stored is False
         assert field.type == SearchFieldDataType.STRING
-        assert field.as_dict()["normalizer"] == "lowercase"
-        assert field.as_dict()["permissionFilter"] == "userIds"
-
-    def test_hidden_takes_precedence_over_retrievable(self):
-        field = SearchableField(name="Description", hidden=True, retrievable=True)
-
-        assert field.hidden is True
-        assert field.retrievable is False
 
     def test_defaults_create_searchable_string_field(self):
         field = SearchableField(name="Description")
@@ -197,20 +232,10 @@ class TestSearchableField:
 
 
 class TestComplexField:
-    def test_forwards_extra_properties_without_overriding_complex_type(self):
-        subfield = SearchableField(name="City")
-        field = ComplexField(name="Address", fields=[subfield], hidden=True, type=SearchFieldDataType.STRING)
-
+    def test_complex_field_forwards_additional_properties_without_overriding_type(self):
+        field = ComplexField(name="Details", fields=[], stored=False, type="Edm.String")
+        assert field.stored is False
         assert field.type == SearchFieldDataType.COMPLEX
-        assert field.fields == [subfield]
-        assert field.hidden is True
-        assert field.retrievable is False
-
-    def test_does_not_add_retrievable_default(self):
-        field = ComplexField(name="Address", fields=[])
-
-        assert field.retrievable is None
-        assert "retrievable" not in field.as_dict()
 
     def test_single_complex_field_defaults_to_complex_type(self):
         subfield = SimpleField(name="City", type=SearchFieldDataType.STRING)

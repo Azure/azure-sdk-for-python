@@ -7,7 +7,14 @@ description: 'Post-regeneration customization guide for azure-search-documents. 
 
 After running `tsp-client update`, the generated code is a raw skeleton — not a shippable SDK. This skill tells you exactly which `_patch.py` files customize it and how to verify those customizations still work after regeneration.
 
-The generator never touches `_patch.py` files, so your customizations survive regeneration. Only edit `_patch.py` files for SDK customizations; the sole exception is adding inline `# pylint: disable=` comments to generated files for pylint issues. `_patch.py` files import from generated modules that **do** change, so a renamed model, a new parameter, or a removed enum value can silently break them. The verification steps below catch those breaks.
+The generator never touches `_patch.py` files, so your customizations survive regeneration.
+Before changing a customization, follow the repository's
+[patch diagnosis checklist](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md#before-you-customize).
+Prefer `_patch.py` for SDK-owned behavior; do not hand-edit generated code. The approved,
+exact-match post-generation rewriter and its removal conditions are described in
+`references/customizations.md`. `_patch.py` files import from generated modules that **do**
+change, so a renamed model, a new parameter, or a removed enum value can silently break them.
+The verification steps below catch those breaks.
 
 ## Additional references
 
@@ -16,6 +23,7 @@ Use these sidecars for guidance that is required for release-ready changes but d
 - Release tracks, branch-dependent API surface, and CHANGELOG rules: `references/release.md`
 - Test commands, live recording workflow, and test authoring rules: `references/testing.md`
 - Sample authoring workflow, `.http` contract parity, and live-run setup: `references/samples.md`
+- Customization entry points and guarded post-generation workarounds: `references/customizations.md`
 
 ## Environment setup
 

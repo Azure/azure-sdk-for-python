@@ -7,7 +7,7 @@
 
 """
 DESCRIPTION:
-    Demonstrates File knowledge source setup and retrieval using the 2026-10-01 GA API.
+    Demonstrates File knowledge source setup and retrieval.
 
 USAGE:
     python sample_knowledge_source_file_preview.py

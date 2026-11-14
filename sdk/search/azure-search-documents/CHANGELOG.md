@@ -1,5 +1,87 @@
 # Release History
 
+## 12.2.0b1 (Unreleased)
+
+### Features Added
+
+- Added `ApiVersion.V2026_11_01_PREVIEW` and made `2026-11-01-preview` the default.
+  Previously advertised API versions remain selectable.
+- Restored explicit `ApiVersion.V2026_10_01` selection without changing the November default.
+- Added `indexes.types.KnowledgeBaseInput` and `KnowledgeBaseModelInput` for all
+  three model variants in dictionary-style knowledge-base inputs, while preserving
+  the callable GA `indexes.types.KnowledgeBaseModel` alias and the legacy
+  `indexes.types.KnowledgeBase.models` list type.
+- Below operations and models are added for graph querying, index configuration, and retrieval:
+  - `SearchClient.graph` (synchronous and asynchronous), including typed provenance,
+    diagnostics, evidence, statistics, and explain results.
+  - `indexes.models.GraphFieldMappings` and `indexes.models.GraphProfile`.
+  - `indexes.models.KnowledgeSourceGraphExtractionParameters`, grounding, and ontology models.
+  - `knowledgebases.models.AgentRuntimeGraphParams`, graph hydration and provenance parameters.
+  - `knowledgebases.models.KnowledgeBaseGraphSearchActivityRecord` and
+    `knowledgebases.models.KnowledgeBaseGraphSearchReference`.
+- Below models and properties are added for retrieval and query configuration:
+  - `indexes.models.KnowledgeBaseMicrosoftRetriever1Model` and
+    `indexes.models.KnowledgeBaseOpenAICompatibleModel`.
+  - `indexes.models.KnowledgeBaseTool` and knowledge-source tool references.
+  - `indexes.models.OpenAICompatibleVectorizer`.
+  - `indexes.models.SearchIndexKnowledgeSourceFilterHint.auto_configuration` and
+    `SearchIndexKnowledgeSourceFilterHintAutoConfiguration` for facet-grounded hints.
+  - `indexes.models.VectorSearchTopicGraphProfile` and none, diverse, and balanced
+    vector-query topic-graph models in `documents.models`.
+  - `knowledgebases.models.KnowledgeSourceCache` and
+    `knowledgebases.models.KnowledgeSourceOpenAICompatibleVectorizer`.
+  - `models.AgenticSearchOptions`, agentic debug information, and `QueryType.AGENTIC`.
+- Below operations and models are added for asynchronous File knowledge-source ingestion:
+  - `SearchIndexClient.begin_ingest_knowledge_source_file_multipart` and
+    `SearchIndexClient.begin_ingest_knowledge_source_file_replacement`, including async clients.
+  - File ingestion operation status/listing, capacity, and error models.
+- Added `indexes.models.RandomScoringFunction` and `RandomScoringParameters`.
+- Added `indexes.types.ScoringFunctionInput`, `ScoringProfileInput`, and `SearchIndexInput`
+  for random scoring in dictionary-style inputs, while preserving the classic
+  `ScoringFunction` alias and legacy scoring-profile and index field types.
+- Added `more_like_this` and `agentic_options` to synchronous and asynchronous
+  `SearchClient.search`. Restored preview query, skill, knowledge-source, and indexer
+  surfaces remain present in the generated package.
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 12.1.0.
+> Only code written against a beta version such as 12.1.0b2 may be affected.
+
+- The service removes stored `query_hints` and request-time `query_hint_overrides`
+  from indexed knowledge sources other than search-index knowledge sources.
+- The service removes `query_hint_processing` from knowledge-base activity models
+  other than search-index activity models.
+- `KnowledgeBaseRetrievalClient.retrieve_stream` and its asynchronous equivalent now
+  yield typed payloads directly instead of `KnowledgeBaseRetrievalEvent` envelopes,
+  matching the October GA contract.
+
+### Bugs Fixed
+
+- Removed obsolete retrieval TypedDict annotation overrides that advertised unsupported
+  `queryHintOverrides` fields and prevented resolution of the generated search-index query-hint type.
+- Serialized asynchronous buffered uploads and waited for active uploads before
+  closing the client.
+- Closed typed retrieval streams when a response callback raises, including
+  awaiting asynchronous response cleanup.
+- Corrected graph query samples to pass request identifiers and content negotiation
+  through HTTP headers.
+- Preserved existing resource `get_*` list wrappers after generated method renames.
+- Preserved `ScoringFunction.field_name` and `boost` compatibility without adding
+  those fields to random scoring.
+- Corrected generated File-ingestion poller namespace references through the
+  package's reproducible post-generation workaround.
+- Preserved all buffered indexing actions after request failures and prevented
+  asynchronous auto-flush from cancelling its own task.
+- Kept batch wire values synchronized and accepted dictionary batches, including
+  custom error mappings during oversized-batch splitting.
+- Preserved the first search response's metadata and continuation across page iteration.
+- Corrected semantic answer and caption enum encoding and threshold separators.
+- Forwarded conditional-delete options for resource names and extra field-helper properties.
+- Preserved buffered client audience, API version, transport options, and schema-client ownership.
+- Restored registered GA model-name aliases, TypedDict and sequence inputs, constructor overloads,
+  and the callable `indexes.types.KnowledgeBaseModel` alias.
+
 ## 12.1.0 (2026-11-13)
 
 ### Features Added

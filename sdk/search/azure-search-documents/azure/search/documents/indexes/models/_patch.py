@@ -9,20 +9,27 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union, overload
-
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Mapping, Optional, Union, overload
 from azure.core import CaseInsensitiveEnumMeta
 from ._models import SearchField as _SearchField
 from ._models import SearchIndexerDataSourceConnection as _SearchIndexerDataSourceConnection
 from ._models import KnowledgeBase as _KnowledgeBase
 from ._models import SearchResourceEncryptionKey as _SearchResourceEncryptionKey
+from ._models import ScoringFunction as _ScoringFunction
+from ._models import (
+    DistanceScoringFunction as _DistanceScoringFunction,
+    FreshnessScoringFunction as _FreshnessScoringFunction,
+    MagnitudeScoringFunction as _MagnitudeScoringFunction,
+    RandomScoringFunction as _RandomScoringFunction,
+    TagScoringFunction as _TagScoringFunction,
+)
+from ..._utils.model_base import rest_discriminator, rest_field
 from ._enums import (
     LexicalAnalyzerName,
     SearchFieldDataType as _SearchFieldDataType,
 )
 
 if TYPE_CHECKING:
-    from .. import types as _types
     from ._models import (
         AzureActiveDirectoryApplicationCredentials,
         DataChangeDetectionPolicy,
@@ -31,28 +38,70 @@ if TYPE_CHECKING:
         SearchIndexerDataContainer,
         SearchIndexerDataIdentity,
     )
-    from ._enums import IndexerPermissionOption, SearchIndexerDataSourceType
+    from .. import types as _types
+    from ._enums import IndexerPermissionOption, ScoringFunctionInterpolation, SearchIndexerDataSourceType
 
 
-class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Azure Open AI model name that will be called."""
+class ScoringFunction(_ScoringFunction):
+    """Base scoring function, preserving field and boost compatibility.
 
-    TEXT_EMBEDDING_ADA002 = "text-embedding-ada-002"
-    TEXT_EMBEDDING3_LARGE = "text-embedding-3-large"
-    TEXT_EMBEDDING3_SMALL = "text-embedding-3-small"
-    GPT5_MINI = "gpt-5-mini"
-    GPT5_NANO = "gpt-5-nano"
-    GPT54 = "gpt-5.4"
-    GPT5_4_MINI = "gpt-5.4-mini"
-    GPT5_4_NANO = "gpt-5.4-nano"
-    GPT55 = "gpt-5.5"
-    GPT56_SOL = "gpt-5.6-sol"
-    GPT56_TERRA = "gpt-5.6-terra"
-    GPT56_LUNA = "gpt-5.6-luna"
-    GPT_5_MINI = GPT5_MINI
-    GPT_5_NANO = GPT5_NANO
-    GPT_5_4_MINI = GPT5_4_MINI
-    GPT_5_4_NANO = GPT5_4_NANO
+    Prefer a concrete scoring function when creating a scoring profile.
+
+    :ivar field_name: Field to which this scoring function applies.
+    :vartype field_name: str
+    :ivar boost: Multiplier for the document score.
+    :vartype boost: float
+    """
+
+    field_name: str = rest_field(name="fieldName")
+    boost: float = rest_field()
+    type: str = rest_discriminator(name="type")
+
+    @overload
+    def __init__(
+        self,
+        *,
+        field_name: str,
+        boost: float,
+        type: str,
+        interpolation: Optional[Union[str, "ScoringFunctionInterpolation"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DistanceScoringFunction(_DistanceScoringFunction, ScoringFunction, discriminator="distance"):
+    """Boosts scores based on distance from a geographic location."""
+
+    type: Literal["distance"] = rest_discriminator(name="type")
+
+
+class FreshnessScoringFunction(_FreshnessScoringFunction, ScoringFunction, discriminator="freshness"):
+    """Boosts scores based on the age of a document."""
+
+    type: Literal["freshness"] = rest_discriminator(name="type")
+
+
+class MagnitudeScoringFunction(_MagnitudeScoringFunction, ScoringFunction, discriminator="magnitude"):
+    """Boosts scores based on the magnitude of a numeric field."""
+
+    type: Literal["magnitude"] = rest_discriminator(name="type")
+
+
+class RandomScoringFunction(_RandomScoringFunction, ScoringFunction, discriminator="random"):
+    """Produces deterministic random scores using a query-time seed."""
+
+    type: Literal["random"] = rest_discriminator(name="type")
+
+
+class TagScoringFunction(_TagScoringFunction, ScoringFunction, discriminator="tag"):
+    """Boosts scores based on document tags."""
+
+    type: Literal["tag"] = rest_discriminator(name="type")
 
 
 class SearchField(_SearchField):
@@ -172,6 +221,7 @@ class SearchResourceEncryptionKey(_SearchResourceEncryptionKey):
         identity: Optional[Union["SearchIndexerDataIdentity", "_types.SearchIndexerDataIdentity"]] = None,
         application_id: Optional[str] = None,
         application_secret: Optional[str] = None,
+        is_service_level_key: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -256,6 +306,44 @@ else:
     SearchFieldDataType.ComplexType = SearchFieldDataType.COMPLEX  # type: ignore[attr-defined]
 
 
+# AzureOpenAIModelName with backward-compatible GPT_5* aliases
+# pylint: disable=enum-must-be-uppercase
+class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Azure Open AI model name that will be called."""
+
+    TEXT_EMBEDDING_ADA002 = "text-embedding-ada-002"
+    TEXT_EMBEDDING3_LARGE = "text-embedding-3-large"
+    TEXT_EMBEDDING3_SMALL = "text-embedding-3-small"
+    GPT4_O = "gpt-4o"
+    GPT4_O_MINI = "gpt-4o-mini"
+    GPT41 = "gpt-4.1"
+    GPT41_MINI = "gpt-4.1-mini"
+    GPT41_NANO = "gpt-4.1-nano"
+    GPT5 = "gpt-5"
+    GPT5_MINI = "gpt-5-mini"
+    GPT5_NANO = "gpt-5-nano"
+    GPT51 = "gpt-5.1"
+    GPT52 = "gpt-5.2"
+    GPT54 = "gpt-5.4"
+    GPT5_4_MINI = "gpt-5.4-mini"
+    GPT5_4_NANO = "gpt-5.4-nano"
+    GPT55 = "gpt-5.5"
+    GPT56_SOL = "gpt-5.6-sol"
+    GPT56_TERRA = "gpt-5.6-terra"
+    GPT56_LUNA = "gpt-5.6-luna"
+    GPT6_ASTRA = "gpt-6-astra"
+    GPT6_SOL = "gpt-6-sol"
+    GPT6_LUNA = "gpt-6-luna"
+    GPT61_SOL = "gpt-6.1-sol"
+    GPT_5_MINI = GPT5_MINI
+    GPT_5_NANO = GPT5_NANO
+    GPT_5_4_MINI = GPT5_4_MINI
+    GPT_5_4_NANO = GPT5_4_NANO
+
+
+# pylint: enable=enum-must-be-uppercase
+
+
 def Collection(typ: Any) -> str:
     """Helper function to create a collection type string.
 
@@ -282,9 +370,6 @@ def SimpleField(
     **kw,
 ) -> SearchField:
     """Configure a simple field for an Azure Search Index
-
-    Additional keyword arguments are forwarded to SearchField. Explicit helper arguments and
-    helper-controlled properties take precedence.
 
     :keyword name: Required. The name of the field, which must be unique within the fields collection
         of the index or parent field.
@@ -363,9 +448,6 @@ def SearchableField(
     **kw,
 ) -> SearchField:
     """Configure a searchable text field for an Azure Search Index
-
-    Additional keyword arguments are forwarded to SearchField. Explicit helper arguments and
-    helper-controlled properties take precedence.
 
     :keyword name: Required. The name of the field, which must be unique within the fields collection
         of the index or parent field.
@@ -513,9 +595,6 @@ def ComplexField(
 ) -> SearchField:
     """Configure a Complex or Complex collection field for an Azure Search Index
 
-    Additional keyword arguments are forwarded to SearchField. Explicit helper arguments and
-    helper-controlled properties take precedence.
-
     :keyword name: Required. The name of the field, which must be unique within the fields collection
         of the index or parent field.
     :paramtype name: str
@@ -532,8 +611,14 @@ def ComplexField(
 
 
 __all__: list[str] = [
-    "AzureOpenAIModelName",
+    "ScoringFunction",
+    "DistanceScoringFunction",
+    "FreshnessScoringFunction",
+    "MagnitudeScoringFunction",
+    "RandomScoringFunction",
+    "TagScoringFunction",
     "KnowledgeBase",
+    "AzureOpenAIModelName",
     "SearchField",
     "SearchFieldDataType",
     "SearchIndexerDataSourceConnection",

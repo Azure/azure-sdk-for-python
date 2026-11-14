@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,21 +10,149 @@
 from typing import Literal, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
-from .models._enums import VectorQueryKind
+from .models._enums import VectorQueryKind, VectorSearchTopicGraphKind, VectorThresholdKind
 
 if TYPE_CHECKING:
     from .models import (
         AutocompleteMode,
+        GraphQueryExecutionMode,
+        GraphQueryExplainStage,
+        GraphQueryProvenanceKind,
+        HybridCountAndFacetMode,
         IndexActionType,
         QueryAnswerType,
         QueryCaptionType,
         QueryDebugMode,
+        QueryLanguage,
+        QueryRewritesType,
+        QuerySpellerType,
         QueryType,
         ScoringStatistics,
         SearchMode,
         SemanticErrorMode,
         VectorFilterMode,
     )
+
+
+class AgenticSearchOptions(TypedDict, total=False):
+    """Request-scoped runtime options for agentic search; service safety limits apply independently.
+
+    :ivar maxRuntimeInSeconds: Maximum duration in seconds for the complete agentic search request,
+     including retrieval, ranking and retries.
+    :vartype maxRuntimeInSeconds: int
+    """
+
+    maxRuntimeInSeconds: int
+    """Maximum duration in seconds for the complete agentic search request, including retrieval,
+     ranking and retries."""
+
+
+class BalancedVectorQueryTopicGraph(TypedDict, total=False):
+    """Blends pure vector similarity with diversity-aware retrieval. Recommended default to balance
+    diversity with relevance.
+
+    :ivar kind: The discriminator value. Required. Blends pure vector similarity with
+     diversity-aware retrieval. Recommended default to balance diversity with relevance.
+    :vartype kind: Literal[VectorSearchTopicGraphKind.BALANCED]
+    :ivar minDiversityPoolSize: The minimum number of vector candidates to retrieve before topic
+     graph sampling. The default is 1,000.
+    :vartype minDiversityPoolSize: int
+    """
+
+    kind: Required[Literal[VectorSearchTopicGraphKind.BALANCED]]
+    """The discriminator value. Required. Blends pure vector similarity with diversity-aware
+     retrieval. Recommended default to balance diversity with relevance."""
+    minDiversityPoolSize: int
+    """The minimum number of vector candidates to retrieve before topic graph sampling. The default is
+     1,000."""
+
+
+class DiverseVectorQueryTopicGraph(TypedDict, total=False):
+    """Uses topic graph diverse retrieval.
+
+    :ivar kind: The discriminator value. Required. Use topic graph diverse retrieval.
+    :vartype kind: Literal[VectorSearchTopicGraphKind.DIVERSE]
+    :ivar diversityFactor: The diversity factor used for topic graph diverse retrieval. If omitted,
+     the default configured on the topic graph profile is used.
+    :vartype diversityFactor: float
+    :ivar minDiversityPoolSize: The minimum number of vector candidates to retrieve before topic
+     graph sampling. The default is 1,000.
+    :vartype minDiversityPoolSize: int
+    """
+
+    kind: Required[Literal[VectorSearchTopicGraphKind.DIVERSE]]
+    """The discriminator value. Required. Use topic graph diverse retrieval."""
+    diversityFactor: float
+    """The diversity factor used for topic graph diverse retrieval. If omitted, the default configured
+     on the topic graph profile is used."""
+    minDiversityPoolSize: int
+    """The minimum number of vector candidates to retrieve before topic graph sampling. The default is
+     1,000."""
+
+
+class GraphQueryProvenanceHydrateDocumentsParameters(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Selects fields from the source index configured by graphProfile.provenanceIndexName.
+
+    :ivar select: Comma-separated source document fields to return; omitted selects the service's
+     default retrievable fields.
+    :vartype select: str
+    """
+
+    select: str
+    """Comma-separated source document fields to return; omitted selects the service's default
+     retrievable fields."""
+
+
+class GraphQueryProvenanceParameters(TypedDict, total=False):
+    """Bounded provenance collection options for a graph query.
+
+    :ivar kind: Whether to return evidence identifiers or also hydrate their source documents.
+     Required. Known values are: "ids" and "hydrate".
+    :vartype kind: Union[str, "GraphQueryProvenanceKind"]
+    :ivar maxEvidencePerRow: Maximum evidence entries collected per result row. When bounded, the
+     response indicates whether the evidence count is exact or a lower bound.
+    :vartype maxEvidencePerRow: int
+    :ivar hydrateDocuments: Source-document selection options. Required when kind is hydrate.
+    :vartype hydrateDocuments: "GraphQueryProvenanceHydrateDocumentsParameters"
+    """
+
+    kind: Required[Union[str, "GraphQueryProvenanceKind"]]
+    """Whether to return evidence identifiers or also hydrate their source documents. Required. Known
+     values are: \"ids\" and \"hydrate\"."""
+    maxEvidencePerRow: int
+    """Maximum evidence entries collected per result row. When bounded, the response indicates whether
+     the evidence count is exact or a lower bound."""
+    hydrateDocuments: "GraphQueryProvenanceHydrateDocumentsParameters"
+    """Source-document selection options. Required when kind is hydrate."""
+
+
+class HybridSearch(TypedDict, total=False):
+    """The query parameters to configure hybrid search behaviors.
+
+    :ivar maxTextRecallSize: Determines the maximum number of documents to be retrieved by the text
+     query portion of a hybrid search request. Those documents will be combined with the documents
+     matching the vector queries to produce a single final list of results. Choosing a larger
+     maxTextRecallSize value will allow retrieving and paging through more documents (using the top
+     and skip parameters), at the cost of higher resource utilization and higher latency. The value
+     needs to be between 1 and 10,000. Default is 1000.
+    :vartype maxTextRecallSize: int
+    :ivar countAndFacetMode: Determines whether the count and facets should includes all documents
+     that matched the search query, or only the documents that are retrieved within the
+     'maxTextRecallSize' window. Known values are: "countRetrievableResults" and "countAllResults".
+    :vartype countAndFacetMode: Union[str, "HybridCountAndFacetMode"]
+    """
+
+    maxTextRecallSize: int
+    """Determines the maximum number of documents to be retrieved by the text query portion of a
+     hybrid search request. Those documents will be combined with the documents matching the vector
+     queries to produce a single final list of results. Choosing a larger maxTextRecallSize value
+     will allow retrieving and paging through more documents (using the top and skip parameters), at
+     the cost of higher resource utilization and higher latency. The value needs to be between 1 and
+     10,000. Default is 1000."""
+    countAndFacetMode: Union[str, "HybridCountAndFacetMode"]
+    """Determines whether the count and facets should includes all documents that matched the search
+     query, or only the documents that are retrieved within the 'maxTextRecallSize' window. Known
+     values are: \"countRetrievableResults\" and \"countAllResults\"."""
 
 
 IndexAction = TypedDict(
@@ -52,6 +181,212 @@ class IndexDocumentsBatch(TypedDict, total=False):
     """The actions in the batch. Required."""
 
 
+class NoneVectorQueryTopicGraph(TypedDict, total=False):
+    """Uses normal vector search without topic graph diverse retrieval.
+
+    :ivar kind: The discriminator value. Required. Use normal vector search when topic graph
+     diverse retrieval is off.
+    :vartype kind: Literal[VectorSearchTopicGraphKind.NONE]
+    """
+
+    kind: Required[Literal[VectorSearchTopicGraphKind.NONE]]
+    """The discriminator value. Required. Use normal vector search when topic graph diverse retrieval
+     is off."""
+
+
+class SearchScoreThreshold(TypedDict, total=False):
+    """The results of the vector query will filter based on the '.
+
+    :ivar value: The threshold will filter based on the '. Required.
+    :vartype value: float
+    :ivar kind: The kind of threshold used to filter vector queries. Required. The results of the
+     vector query will filter based on the '@search.score' value. Note this is the @search.score
+     returned as part of the search response. The threshold direction will be chosen for higher
+     @search.score.
+    :vartype kind: Literal[VectorThresholdKind.SEARCH_SCORE]
+    """
+
+    value: Required[float]
+    """The threshold will filter based on the '. Required."""
+    kind: Required[Literal[VectorThresholdKind.SEARCH_SCORE]]
+    """The kind of threshold used to filter vector queries. Required. The results of the vector query
+     will filter based on the '@search.score' value. Note this is the @search.score returned as part
+     of the search response. The threshold direction will be chosen for higher @search.score."""
+
+
+class VectorizableImageBinaryQuery(TypedDict, total=False):
+    """The query parameters to use for vector search when a base 64 encoded binary of an image that
+    needs to be vectorized is provided.
+
+    :ivar k: Number of nearest neighbors to return as top hits.
+    :vartype k: int
+    :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
+     searched.
+    :vartype fields: str
+    :ivar exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
+     vectors within the vector index. Useful for scenarios where exact matches are critical, such as
+     determining ground truth values.
+    :vartype exhaustive: bool
+    :ivar oversampling: Oversampling factor. Minimum value is 1. It overrides the
+     'defaultOversampling' parameter configured in the index definition. It can be set only when
+     'rerankWithOriginalVectors' is true. This parameter is only permitted when a compression method
+     is used on the underlying vector field.
+    :vartype oversampling: float
+    :ivar weight: Relative weight of the vector query when compared to other vector query and/or
+     the text query within the same search request. This value is used when combining the results of
+     multiple ranking lists produced by the different vector queries and/or the results retrieved
+     through the text query. The higher the weight, the higher the documents that matched that query
+     will be in the final ranking. Default is 1.0 and the value needs to be a positive number larger
+     than zero.
+    :vartype weight: float
+    :ivar threshold: The threshold used for vector queries. Note this can only be set if all
+     'fields' use the same similarity metric.
+    :vartype threshold: "VectorThreshold"
+    :ivar filterOverride: The OData filter expression to apply to this specific vector query. If no
+     filter expression is defined at the vector level, the expression defined in the top level
+     filter parameter is used instead.
+    :vartype filterOverride: str
+    :ivar perDocumentVectorLimit: Controls how many vectors can be matched from each document in a
+     vector search query. Setting it to 1 ensures at most one vector per document is matched,
+     guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
+     relevant vectors from the same document to be matched. Default is 0.
+    :vartype perDocumentVectorLimit: int
+    :ivar topicGraph: Topic graph vector search options.
+    :vartype topicGraph: "VectorQueryTopicGraph"
+    :ivar base64Image: The base 64 encoded binary of an image to be vectorized to perform a vector
+     search query.
+    :vartype base64Image: str
+    :ivar kind: The kind of vector query being performed. Required. Vector query where a base 64
+     encoded binary of an image that needs to be vectorized is provided.
+    :vartype kind: Literal[VectorQueryKind.IMAGE_BINARY]
+    """
+
+    k: int
+    """Number of nearest neighbors to return as top hits."""
+    fields: str
+    """Vector Fields of type Collection(Edm.Single) to be included in the vector searched."""
+    exhaustive: bool
+    """When true, triggers an exhaustive k-nearest neighbor search across all vectors within the
+     vector index. Useful for scenarios where exact matches are critical, such as determining ground
+     truth values."""
+    oversampling: float
+    """Oversampling factor. Minimum value is 1. It overrides the 'defaultOversampling' parameter
+     configured in the index definition. It can be set only when 'rerankWithOriginalVectors' is
+     true. This parameter is only permitted when a compression method is used on the underlying
+     vector field."""
+    weight: float
+    """Relative weight of the vector query when compared to other vector query and/or the text query
+     within the same search request. This value is used when combining the results of multiple
+     ranking lists produced by the different vector queries and/or the results retrieved through the
+     text query. The higher the weight, the higher the documents that matched that query will be in
+     the final ranking. Default is 1.0 and the value needs to be a positive number larger than zero."""
+    threshold: "VectorThreshold"
+    """The threshold used for vector queries. Note this can only be set if all 'fields' use the same
+     similarity metric."""
+    filterOverride: str
+    """The OData filter expression to apply to this specific vector query. If no filter expression is
+     defined at the vector level, the expression defined in the top level filter parameter is used
+     instead."""
+    perDocumentVectorLimit: int
+    """Controls how many vectors can be matched from each document in a vector search query. Setting
+     it to 1 ensures at most one vector per document is matched, guaranteeing results come from
+     distinct documents. Setting it to 0 (unlimited) allows multiple relevant vectors from the same
+     document to be matched. Default is 0."""
+    topicGraph: "VectorQueryTopicGraph"
+    """Topic graph vector search options."""
+    base64Image: str
+    """The base 64 encoded binary of an image to be vectorized to perform a vector search query."""
+    kind: Required[Literal[VectorQueryKind.IMAGE_BINARY]]
+    """The kind of vector query being performed. Required. Vector query where a base 64 encoded binary
+     of an image that needs to be vectorized is provided."""
+
+
+class VectorizableImageUrlQuery(TypedDict, total=False):
+    """The query parameters to use for vector search when an url that represents an image value that
+    needs to be vectorized is provided.
+
+    :ivar k: Number of nearest neighbors to return as top hits.
+    :vartype k: int
+    :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
+     searched.
+    :vartype fields: str
+    :ivar exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
+     vectors within the vector index. Useful for scenarios where exact matches are critical, such as
+     determining ground truth values.
+    :vartype exhaustive: bool
+    :ivar oversampling: Oversampling factor. Minimum value is 1. It overrides the
+     'defaultOversampling' parameter configured in the index definition. It can be set only when
+     'rerankWithOriginalVectors' is true. This parameter is only permitted when a compression method
+     is used on the underlying vector field.
+    :vartype oversampling: float
+    :ivar weight: Relative weight of the vector query when compared to other vector query and/or
+     the text query within the same search request. This value is used when combining the results of
+     multiple ranking lists produced by the different vector queries and/or the results retrieved
+     through the text query. The higher the weight, the higher the documents that matched that query
+     will be in the final ranking. Default is 1.0 and the value needs to be a positive number larger
+     than zero.
+    :vartype weight: float
+    :ivar threshold: The threshold used for vector queries. Note this can only be set if all
+     'fields' use the same similarity metric.
+    :vartype threshold: "VectorThreshold"
+    :ivar filterOverride: The OData filter expression to apply to this specific vector query. If no
+     filter expression is defined at the vector level, the expression defined in the top level
+     filter parameter is used instead.
+    :vartype filterOverride: str
+    :ivar perDocumentVectorLimit: Controls how many vectors can be matched from each document in a
+     vector search query. Setting it to 1 ensures at most one vector per document is matched,
+     guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
+     relevant vectors from the same document to be matched. Default is 0.
+    :vartype perDocumentVectorLimit: int
+    :ivar topicGraph: Topic graph vector search options.
+    :vartype topicGraph: "VectorQueryTopicGraph"
+    :ivar url: The URL of an image to be vectorized to perform a vector search query.
+    :vartype url: str
+    :ivar kind: The kind of vector query being performed. Required. Vector query where an url that
+     represents an image value that needs to be vectorized is provided.
+    :vartype kind: Literal[VectorQueryKind.IMAGE_URL]
+    """
+
+    k: int
+    """Number of nearest neighbors to return as top hits."""
+    fields: str
+    """Vector Fields of type Collection(Edm.Single) to be included in the vector searched."""
+    exhaustive: bool
+    """When true, triggers an exhaustive k-nearest neighbor search across all vectors within the
+     vector index. Useful for scenarios where exact matches are critical, such as determining ground
+     truth values."""
+    oversampling: float
+    """Oversampling factor. Minimum value is 1. It overrides the 'defaultOversampling' parameter
+     configured in the index definition. It can be set only when 'rerankWithOriginalVectors' is
+     true. This parameter is only permitted when a compression method is used on the underlying
+     vector field."""
+    weight: float
+    """Relative weight of the vector query when compared to other vector query and/or the text query
+     within the same search request. This value is used when combining the results of multiple
+     ranking lists produced by the different vector queries and/or the results retrieved through the
+     text query. The higher the weight, the higher the documents that matched that query will be in
+     the final ranking. Default is 1.0 and the value needs to be a positive number larger than zero."""
+    threshold: "VectorThreshold"
+    """The threshold used for vector queries. Note this can only be set if all 'fields' use the same
+     similarity metric."""
+    filterOverride: str
+    """The OData filter expression to apply to this specific vector query. If no filter expression is
+     defined at the vector level, the expression defined in the top level filter parameter is used
+     instead."""
+    perDocumentVectorLimit: int
+    """Controls how many vectors can be matched from each document in a vector search query. Setting
+     it to 1 ensures at most one vector per document is matched, guaranteeing results come from
+     distinct documents. Setting it to 0 (unlimited) allows multiple relevant vectors from the same
+     document to be matched. Default is 0."""
+    topicGraph: "VectorQueryTopicGraph"
+    """Topic graph vector search options."""
+    url: str
+    """The URL of an image to be vectorized to perform a vector search query."""
+    kind: Required[Literal[VectorQueryKind.IMAGE_URL]]
+    """The kind of vector query being performed. Required. Vector query where an url that represents
+     an image value that needs to be vectorized is provided."""
+
+
 class VectorizableTextQuery(TypedDict, total=False):
     """The query parameters to use for vector search when a text value that needs to be vectorized is
     provided.
@@ -77,8 +412,25 @@ class VectorizableTextQuery(TypedDict, total=False):
      will be in the final ranking. Default is 1.0 and the value needs to be a positive number larger
      than zero.
     :vartype weight: float
+    :ivar threshold: The threshold used for vector queries. Note this can only be set if all
+     'fields' use the same similarity metric.
+    :vartype threshold: "VectorThreshold"
+    :ivar filterOverride: The OData filter expression to apply to this specific vector query. If no
+     filter expression is defined at the vector level, the expression defined in the top level
+     filter parameter is used instead.
+    :vartype filterOverride: str
+    :ivar perDocumentVectorLimit: Controls how many vectors can be matched from each document in a
+     vector search query. Setting it to 1 ensures at most one vector per document is matched,
+     guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
+     relevant vectors from the same document to be matched. Default is 0.
+    :vartype perDocumentVectorLimit: int
+    :ivar topicGraph: Topic graph vector search options.
+    :vartype topicGraph: "VectorQueryTopicGraph"
     :ivar text: The text to be vectorized to perform a vector search query. Required.
     :vartype text: str
+    :ivar queryRewrites: Can be configured to let a generative model rewrite the query before
+     sending it to be vectorized. Known values are: "none" and "generative".
+    :vartype queryRewrites: Union[str, "QueryRewritesType"]
     :ivar kind: The kind of vector query being performed. Required. Vector query where a text value
      that needs to be vectorized is provided.
     :vartype kind: Literal[VectorQueryKind.TEXT]
@@ -103,8 +455,25 @@ class VectorizableTextQuery(TypedDict, total=False):
      ranking lists produced by the different vector queries and/or the results retrieved through the
      text query. The higher the weight, the higher the documents that matched that query will be in
      the final ranking. Default is 1.0 and the value needs to be a positive number larger than zero."""
+    threshold: "VectorThreshold"
+    """The threshold used for vector queries. Note this can only be set if all 'fields' use the same
+     similarity metric."""
+    filterOverride: str
+    """The OData filter expression to apply to this specific vector query. If no filter expression is
+     defined at the vector level, the expression defined in the top level filter parameter is used
+     instead."""
+    perDocumentVectorLimit: int
+    """Controls how many vectors can be matched from each document in a vector search query. Setting
+     it to 1 ensures at most one vector per document is matched, guaranteeing results come from
+     distinct documents. Setting it to 0 (unlimited) allows multiple relevant vectors from the same
+     document to be matched. Default is 0."""
+    topicGraph: "VectorQueryTopicGraph"
+    """Topic graph vector search options."""
     text: Required[str]
     """The text to be vectorized to perform a vector search query. Required."""
+    queryRewrites: Union[str, "QueryRewritesType"]
+    """Can be configured to let a generative model rewrite the query before sending it to be
+     vectorized. Known values are: \"none\" and \"generative\"."""
     kind: Required[Literal[VectorQueryKind.TEXT]]
     """The kind of vector query being performed. Required. Vector query where a text value that needs
      to be vectorized is provided."""
@@ -134,6 +503,20 @@ class VectorizedQuery(TypedDict, total=False):
      will be in the final ranking. Default is 1.0 and the value needs to be a positive number larger
      than zero.
     :vartype weight: float
+    :ivar threshold: The threshold used for vector queries. Note this can only be set if all
+     'fields' use the same similarity metric.
+    :vartype threshold: "VectorThreshold"
+    :ivar filterOverride: The OData filter expression to apply to this specific vector query. If no
+     filter expression is defined at the vector level, the expression defined in the top level
+     filter parameter is used instead.
+    :vartype filterOverride: str
+    :ivar perDocumentVectorLimit: Controls how many vectors can be matched from each document in a
+     vector search query. Setting it to 1 ensures at most one vector per document is matched,
+     guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
+     relevant vectors from the same document to be matched. Default is 0.
+    :vartype perDocumentVectorLimit: int
+    :ivar topicGraph: Topic graph vector search options.
+    :vartype topicGraph: "VectorQueryTopicGraph"
     :ivar vector: The vector representation of a search query. Required.
     :vartype vector: list[float]
     :ivar kind: The kind of vector query being performed. Required. Vector query where a raw vector
@@ -160,11 +543,104 @@ class VectorizedQuery(TypedDict, total=False):
      ranking lists produced by the different vector queries and/or the results retrieved through the
      text query. The higher the weight, the higher the documents that matched that query will be in
      the final ranking. Default is 1.0 and the value needs to be a positive number larger than zero."""
+    threshold: "VectorThreshold"
+    """The threshold used for vector queries. Note this can only be set if all 'fields' use the same
+     similarity metric."""
+    filterOverride: str
+    """The OData filter expression to apply to this specific vector query. If no filter expression is
+     defined at the vector level, the expression defined in the top level filter parameter is used
+     instead."""
+    perDocumentVectorLimit: int
+    """Controls how many vectors can be matched from each document in a vector search query. Setting
+     it to 1 ensures at most one vector per document is matched, guaranteeing results come from
+     distinct documents. Setting it to 0 (unlimited) allows multiple relevant vectors from the same
+     document to be matched. Default is 0."""
+    topicGraph: "VectorQueryTopicGraph"
+    """Topic graph vector search options."""
     vector: Required[list[float]]
     """The vector representation of a search query. Required."""
     kind: Required[Literal[VectorQueryKind.VECTOR]]
     """The kind of vector query being performed. Required. Vector query where a raw vector value is
      provided."""
+
+
+class VectorSimilarityThreshold(TypedDict, total=False):
+    """The results of the vector query will be filtered based on the vector similarity metric. Note
+    this is the canonical definition of similarity metric, not the 'distance' version. The
+    threshold direction (larger or smaller) will be chosen automatically according to the metric
+    used by the field.
+
+    :ivar value: The threshold will filter based on the similarity metric value. Note this is the
+     canonical definition of similarity metric, not the 'distance' version. The threshold direction
+     (larger or smaller) will be chosen automatically according to the metric used by the field.
+     Required.
+    :vartype value: float
+    :ivar kind: The kind of threshold used to filter vector queries. Required. The results of the
+     vector query will be filtered based on the vector similarity metric. Note this is the canonical
+     definition of similarity metric, not the 'distance' version. The threshold direction (larger or
+     smaller) will be chosen automatically according to the metric used by the field.
+    :vartype kind: Literal[VectorThresholdKind.VECTOR_SIMILARITY]
+    """
+
+    value: Required[float]
+    """The threshold will filter based on the similarity metric value. Note this is the canonical
+     definition of similarity metric, not the 'distance' version. The threshold direction (larger or
+     smaller) will be chosen automatically according to the metric used by the field. Required."""
+    kind: Required[Literal[VectorThresholdKind.VECTOR_SIMILARITY]]
+    """The kind of threshold used to filter vector queries. Required. The results of the vector query
+     will be filtered based on the vector similarity metric. Note this is the canonical definition
+     of similarity metric, not the 'distance' version. The threshold direction (larger or smaller)
+     will be chosen automatically according to the metric used by the field."""
+
+
+class GraphRequest(TypedDict, total=False):
+    """GraphRequest.
+
+    :ivar gql: The nonempty GQL query to bind and execute. Required.
+    :vartype gql: str
+    :ivar search: Full-text search text used to constrain graph backend requests.
+    :vartype search: str
+    :ivar filter: An OData filter over graph-index fields applied throughout graph execution.
+    :vartype filter: str
+    :ivar vectorQueries: Vector queries used to constrain the graph's backend searches.
+    :vartype vectorQueries: list["VectorQuery"]
+    :ivar executionMode: Executes the query by default. planOnly builds the plan without backend
+     query execution and requires at least one explain stage. Known values are: "execute" and
+     "planOnly".
+    :vartype executionMode: Union[str, "GraphQueryExecutionMode"]
+    :ivar explain: Diagnostic plan stages to include in the response. Plan representations are
+     diagnostic information rather than an executable client contract.
+    :vartype explain: list[Union[str, "GraphQueryExplainStage"]]
+    :ivar includeStatistics: Whether to include graph execution statistics. Defaults to true.
+    :vartype includeStatistics: bool
+    :ivar includeDiagnostics: Whether to include informational diagnostics. Errors and warnings are
+     returned regardless of this setting.
+    :vartype includeDiagnostics: bool
+    :ivar provenance: Controls bounded assertion evidence and optional source-document hydration.
+    :vartype provenance: "GraphQueryProvenanceParameters"
+    """
+
+    gql: Required[str]
+    """The nonempty GQL query to bind and execute. Required."""
+    search: str
+    """Full-text search text used to constrain graph backend requests."""
+    filter: str
+    """An OData filter over graph-index fields applied throughout graph execution."""
+    vectorQueries: list["VectorQuery"]
+    """Vector queries used to constrain the graph's backend searches."""
+    executionMode: Union[str, "GraphQueryExecutionMode"]
+    """Executes the query by default. planOnly builds the plan without backend query execution and
+     requires at least one explain stage. Known values are: \"execute\" and \"planOnly\"."""
+    explain: list[Union[str, "GraphQueryExplainStage"]]
+    """Diagnostic plan stages to include in the response. Plan representations are diagnostic
+     information rather than an executable client contract."""
+    includeStatistics: bool
+    """Whether to include graph execution statistics. Defaults to true."""
+    includeDiagnostics: bool
+    """Whether to include informational diagnostics. Errors and warnings are returned regardless of
+     this setting."""
+    provenance: "GraphQueryProvenanceParameters"
+    """Controls bounded assertion evidence and optional source-document hydration."""
 
 
 class SearchPostRequest(TypedDict, total=False):
@@ -205,8 +681,11 @@ class SearchPostRequest(TypedDict, total=False):
     :vartype orderby: list[str]
     :ivar queryType: A value that specifies the syntax of the search query. The default is
      'simple'. Use 'full' if your query uses the Lucene query syntax. Known values are: "simple",
-     "full", and "semantic".
+     "full", "semantic", and "agentic".
     :vartype queryType: Union[str, "QueryType"]
+    :ivar agenticOptions: Request-scoped runtime options when queryType is set to 'agentic'. Not
+     supported with other query modes. Use the existing debug selector for diagnostics.
+    :vartype agenticOptions: "AgenticSearchOptions"
     :ivar scoringStatistics: A value that specifies whether we want to calculate scoring statistics
      (such as document frequency) globally for more consistent scoring, or locally, for lower
      latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally before
@@ -229,8 +708,8 @@ class SearchPostRequest(TypedDict, total=False):
      documents in order to sort the results.
     :vartype scoringProfile: str
     :ivar debug: Enables a debugging tool that can be used to further explore your reranked
-     results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "innerHits", and
-     "all".
+     results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "agentic",
+     "innerHits", and "all".
     :vartype debug: Union[str, "QueryDebugMode"]
     :ivar search: A full-text search query expression; Use "*" or omit this parameter to match all
      documents.
@@ -243,6 +722,19 @@ class SearchPostRequest(TypedDict, total=False):
     :ivar searchMode: A value that specifies whether any or all of the search terms must be matched
      in order to count the document as a match. Known values are: "any" and "all".
     :vartype searchMode: Union[str, "SearchMode"]
+    :ivar queryLanguage: A value that specifies the language of the search query. Known values are:
+     "none", "en-us", "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es",
+     "es-mx", "zh-cn", "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz",
+     "nl-be", "nl-nl", "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma",
+     "ar-kw", "ar-jo", "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl",
+     "ta-in", "vi-vn", "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv",
+     "et-ee", "ca-es", "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in",
+     "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in",
+     "te-in", and "ur-pk".
+    :vartype queryLanguage: Union[str, "QueryLanguage"]
+    :ivar speller: A value that specifies the type of the speller to use to spell-correct
+     individual search query terms. Known values are: "none" and "lexicon".
+    :vartype speller: Union[str, "QuerySpellerType"]
     :ivar select: The comma-separated list of fields to retrieve. If unspecified, all fields marked
      as retrievable in the schema are included.
     :vartype select: list[str]
@@ -276,12 +768,19 @@ class SearchPostRequest(TypedDict, total=False):
     :ivar captions: A value that specifies whether captions should be returned as part of the
      search response. Known values are: "none" and "extractive".
     :vartype captions: Union[str, "QueryCaptionType"]
+    :ivar queryRewrites: A value that specifies whether query rewrites should be generated to
+     augment the search query. Known values are: "none" and "generative".
+    :vartype queryRewrites: Union[str, "QueryRewritesType"]
+    :ivar semanticFields: The comma-separated list of field names used for semantic ranking.
+    :vartype semanticFields: list[str]
     :ivar vectorQueries: The query parameters for vector and hybrid search queries.
     :vartype vectorQueries: list["VectorQuery"]
     :ivar vectorFilterMode: Determines whether or not filters are applied before or after the
      vector search is performed. Default is 'preFilter' for new indexes. Known values are:
-     "postFilter" and "preFilter".
+     "postFilter", "preFilter", and "strictPostFilter".
     :vartype vectorFilterMode: Union[str, "VectorFilterMode"]
+    :ivar hybridSearch: The query parameters to configure hybrid search behaviors.
+    :vartype hybridSearch: "HybridSearch"
     """
 
     count: bool
@@ -318,8 +817,11 @@ class SearchPostRequest(TypedDict, total=False):
      match score. There can be at most 32 $orderby clauses."""
     queryType: Union[str, "QueryType"]
     """A value that specifies the syntax of the search query. The default is 'simple'. Use 'full' if
-     your query uses the Lucene query syntax. Known values are: \"simple\", \"full\", and
-     \"semantic\"."""
+     your query uses the Lucene query syntax. Known values are: \"simple\", \"full\", \"semantic\",
+     and \"agentic\"."""
+    agenticOptions: "AgenticSearchOptions"
+    """Request-scoped runtime options when queryType is set to 'agentic'. Not supported with other
+     query modes. Use the existing debug selector for diagnostics."""
     scoringStatistics: Union[str, "ScoringStatistics"]
     """A value that specifies whether we want to calculate scoring statistics (such as document
      frequency) globally for more consistent scoring, or locally, for lower latency. The default is
@@ -342,8 +844,8 @@ class SearchPostRequest(TypedDict, total=False):
      the results."""
     debug: Union[str, "QueryDebugMode"]
     """Enables a debugging tool that can be used to further explore your reranked results. Known
-     values are: \"disabled\", \"semantic\", \"vector\", \"queryRewrites\", \"innerHits\", and
-     \"all\"."""
+     values are: \"disabled\", \"semantic\", \"vector\", \"queryRewrites\", \"agentic\",
+     \"innerHits\", and \"all\"."""
     search: str
     """A full-text search query expression; Use \"*\" or omit this parameter to match all documents."""
     searchFields: list[str]
@@ -353,6 +855,20 @@ class SearchPostRequest(TypedDict, total=False):
     searchMode: Union[str, "SearchMode"]
     """A value that specifies whether any or all of the search terms must be matched in order to count
      the document as a match. Known values are: \"any\" and \"all\"."""
+    queryLanguage: Union[str, "QueryLanguage"]
+    """A value that specifies the language of the search query. Known values are: \"none\", \"en-us\",
+     \"en-gb\", \"en-in\", \"en-ca\", \"en-au\", \"fr-fr\", \"fr-ca\", \"de-de\", \"es-es\",
+     \"es-mx\", \"zh-cn\", \"zh-tw\", \"pt-br\", \"pt-pt\", \"it-it\", \"ja-jp\", \"ko-kr\",
+     \"ru-ru\", \"cs-cz\", \"nl-be\", \"nl-nl\", \"hu-hu\", \"pl-pl\", \"sv-se\", \"tr-tr\",
+     \"hi-in\", \"ar-sa\", \"ar-eg\", \"ar-ma\", \"ar-kw\", \"ar-jo\", \"da-dk\", \"no-no\",
+     \"bg-bg\", \"hr-hr\", \"hr-ba\", \"ms-my\", \"ms-bn\", \"sl-sl\", \"ta-in\", \"vi-vn\",
+     \"el-gr\", \"ro-ro\", \"is-is\", \"id-id\", \"th-th\", \"lt-lt\", \"uk-ua\", \"lv-lv\",
+     \"et-ee\", \"ca-es\", \"fi-fi\", \"sr-ba\", \"sr-me\", \"sr-rs\", \"sk-sk\", \"nb-no\",
+     \"hy-am\", \"bn-in\", \"eu-es\", \"gl-es\", \"gu-in\", \"he-il\", \"ga-ie\", \"kn-in\",
+     \"ml-in\", \"mr-in\", \"fa-ae\", \"pa-in\", \"te-in\", and \"ur-pk\"."""
+    speller: Union[str, "QuerySpellerType"]
+    """A value that specifies the type of the speller to use to spell-correct individual search query
+     terms. Known values are: \"none\" and \"lexicon\"."""
     select: list[str]
     """The comma-separated list of fields to retrieve. If unspecified, all fields marked as
      retrievable in the schema are included."""
@@ -384,11 +900,19 @@ class SearchPostRequest(TypedDict, total=False):
     captions: Union[str, "QueryCaptionType"]
     """A value that specifies whether captions should be returned as part of the search response.
      Known values are: \"none\" and \"extractive\"."""
+    queryRewrites: Union[str, "QueryRewritesType"]
+    """A value that specifies whether query rewrites should be generated to augment the search query.
+     Known values are: \"none\" and \"generative\"."""
+    semanticFields: list[str]
+    """The comma-separated list of field names used for semantic ranking."""
     vectorQueries: list["VectorQuery"]
     """The query parameters for vector and hybrid search queries."""
     vectorFilterMode: Union[str, "VectorFilterMode"]
     """Determines whether or not filters are applied before or after the vector search is performed.
-     Default is 'preFilter' for new indexes. Known values are: \"postFilter\" and \"preFilter\"."""
+     Default is 'preFilter' for new indexes. Known values are: \"postFilter\", \"preFilter\", and
+     \"strictPostFilter\"."""
+    hybridSearch: "HybridSearch"
+    """The query parameters to configure hybrid search behaviors."""
 
 
 class SuggestPostRequest(TypedDict, total=False):
@@ -556,4 +1080,6 @@ class AutocompletePostRequest(TypedDict, total=False):
      default is 5."""
 
 
-VectorQuery = Union[VectorizableTextQuery, VectorizedQuery]
+VectorQueryTopicGraph = Union[BalancedVectorQueryTopicGraph, DiverseVectorQueryTopicGraph, NoneVectorQueryTopicGraph]
+VectorThreshold = Union[SearchScoreThreshold, VectorSimilarityThreshold]
+VectorQuery = Union[VectorizableImageBinaryQuery, VectorizableImageUrlQuery, VectorizableTextQuery, VectorizedQuery]

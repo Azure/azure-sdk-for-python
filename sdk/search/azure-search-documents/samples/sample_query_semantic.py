@@ -7,7 +7,7 @@
 
 """
 DESCRIPTION:
-    Demonstrates fuzzy term matching and semantic search with the 2026-10-01 GA API.
+    Demonstrates fuzzy term matching and semantic search.
     Fuzzy Lucene queries replace the preview-only query speller.
 USAGE:
     python sample_query_semantic.py
