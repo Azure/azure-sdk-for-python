@@ -12,7 +12,7 @@ from typing import Any, Optional, Union
 from ..utils import utc_now, utc_from_timestamp
 from ._management_link_async import ManagementLink
 from ..message import Message, Properties
-from ..error import AuthenticationException, ErrorCondition, TokenAuthFailure, TokenExpired
+from ..error import AMQPLinkError, AuthenticationException, ErrorCondition, TokenAuthFailure, TokenExpired
 from ..constants import (
     CbsState,
     CbsAuthState,
@@ -178,16 +178,16 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
                 if put_timeout:
                     self.auth_state = CbsAuthState.TIMEOUT
 
-    async def _cbs_link_ready(self) -> Optional[bool]:
+    async def _cbs_link_ready(self) -> bool:
         if self.state == CbsState.OPEN:
             return True
-        if self.state != CbsState.OPEN:
-            return False
         if self.state in (CbsState.CLOSED, CbsState.ERROR):
-            raise TokenAuthFailure(
-                status_code=ErrorCondition.ClientError,
-                status_description="CBS authentication link is in broken status, please recreate the cbs link.",
+            # The $cbs link pair failed to open or broke; waiting cannot recover it, so surface the
+            # AMQP cause (e.g. unauthorized-access) or a retryable link error that reconnects.
+            raise self._mgmt_link.failure_cause() or AMQPLinkError(
+                condition=ErrorCondition.UnknownError, description="CBS link failed.", retryable=True
             )
+        return False
 
     async def open(self) -> None:
         self.state = CbsState.OPENING
