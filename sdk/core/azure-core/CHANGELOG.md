@@ -2,6 +2,10 @@
 
 ## 1.42.0 (Unreleased)
 
+### Bugs Fixed
+
+- Fixed `RetryPolicy` and `AsyncRetryPolicy` waiting beyond the configured operation timeout when the server returns a `Retry-After` delay longer than the remaining time budget.
+
 ### Features Added
 
 - Added `ODataV4Format.as_dict()` to convert parsed OData V4 errors, including nested details and model-valued inner errors, to JSON-compatible dictionaries for generated model serialization, preserving `None` values and empty collections.
