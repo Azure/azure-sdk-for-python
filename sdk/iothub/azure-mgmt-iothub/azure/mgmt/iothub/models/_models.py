@@ -574,41 +574,6 @@ class DeviceRegistryLinkingProperties(_Model):
     """The last error encountered when linking the IoT Hub with an Azure Device Registry."""
 
 
-class EncryptionPropertiesDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The encryption properties for the IoT hub.
-
-    :ivar key_source: The source of the key.
-    :vartype key_source: str
-    :ivar key_vault_properties: The properties of the KeyVault key.
-    :vartype key_vault_properties: list[~azure.mgmt.iothub.models.KeyVaultKeyProperties]
-    """
-
-    key_source: Optional[str] = rest_field(name="keySource", visibility=["read", "create", "update", "delete", "query"])
-    """The source of the key."""
-    key_vault_properties: Optional[list["_models.KeyVaultKeyProperties"]] = rest_field(
-        name="keyVaultProperties", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The properties of the KeyVault key."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        key_source: Optional[str] = None,
-        key_vault_properties: Optional[list["_models.KeyVaultKeyProperties"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class EndpointHealthData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The health data for an endpoint.
 
@@ -1032,10 +997,8 @@ class FallbackRouteProperties(_Model):  # pylint: disable=docstring-keyword-shou
      underscores, hyphens, has a maximum length of 64 characters, and must be unique.
     :vartype name: str
     :ivar source: The source to which the routing rule is to be applied to. For example,
-     DeviceMessages. Required. Known values are: "Invalid", "DeviceMessages", "TwinChangeEvents",
-     "DeviceLifecycleEvents", "DeviceJobLifecycleEvents", "DigitalTwinChangeEvents",
-     "DeviceConnectionStateEvents", and "MqttBrokerMessages".
-    :vartype source: str or ~azure.mgmt.iothub.models.RoutingSource
+     DeviceMessages. Required. "DeviceMessages"
+    :vartype source: str or ~azure.mgmt.iothub.models.FallbackRouteSource
     :ivar condition: The condition which is evaluated in order to apply the fallback route. If the
      condition is not provided it will evaluate to true by default. For grammar, See:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language
@@ -1051,11 +1014,11 @@ class FallbackRouteProperties(_Model):  # pylint: disable=docstring-keyword-shou
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the route. The name can only include alphanumeric characters, periods, underscores,
      hyphens, has a maximum length of 64 characters, and must be unique."""
-    source: Union[str, "_models.RoutingSource"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    source: Union[str, "_models.FallbackRouteSource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The source to which the routing rule is to be applied to. For example, DeviceMessages.
-     Required. Known values are: \"Invalid\", \"DeviceMessages\", \"TwinChangeEvents\",
-     \"DeviceLifecycleEvents\", \"DeviceJobLifecycleEvents\", \"DigitalTwinChangeEvents\",
-     \"DeviceConnectionStateEvents\", and \"MqttBrokerMessages\"."""
+     Required. \"DeviceMessages\""""
     condition: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The condition which is evaluated in order to apply the fallback route. If the condition is not
      provided it will evaluate to true by default. For grammar, See:
@@ -1073,7 +1036,7 @@ class FallbackRouteProperties(_Model):  # pylint: disable=docstring-keyword-shou
     def __init__(
         self,
         *,
-        source: Union[str, "_models.RoutingSource"],
+        source: Union[str, "_models.FallbackRouteSource"],
         endpoint_names: list[str],
         is_enabled: bool,
         name: Optional[str] = None,
@@ -1625,29 +1588,14 @@ class IotHubProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
     :vartype cloud_to_device: ~azure.mgmt.iothub.models.CloudToDeviceProperties
     :ivar comments: IoT hub comments.
     :vartype comments: str
-    :ivar device_streams: The device streams properties of iothub.
-    :vartype device_streams: ~azure.mgmt.iothub.models.IotHubPropertiesDeviceStreams
     :ivar features: The capabilities and features enabled for the IoT hub. Known values are: "None"
      and "DeviceManagement".
     :vartype features: str or ~azure.mgmt.iothub.models.Capabilities
-    :ivar encryption: The encryption properties for the IoT hub.
-    :vartype encryption: ~azure.mgmt.iothub.models.EncryptionPropertiesDescription
     :ivar locations: Primary and secondary location for iot hub.
     :vartype locations: list[~azure.mgmt.iothub.models.IotHubLocationDescription]
     :ivar enable_data_residency: This property when set to true, will enable data residency, thus,
      disabling disaster recovery.
     :vartype enable_data_residency: bool
-    :ivar root_certificate: This property store root certificate related information.
-    :vartype root_certificate: ~azure.mgmt.iothub.models.RootCertificateProperties
-    :ivar ip_version: This property specifies the IP Version the hub is currently utilizing. Known
-     values are: "ipv4", "ipv6", and "ipv4ipv6".
-    :vartype ip_version: str or ~azure.mgmt.iothub.models.IpVersion
-    :ivar connection_profile: The connection profile that the IoT hub uses for device connections.
-     Defaults to 'Classic'. Known values are: "Classic" and "MqttV5".
-    :vartype connection_profile: str or ~azure.mgmt.iothub.models.ConnectionProfile
-    :ivar mqtt_v5_settings: The custom topic configuration for an Event Grid-backed MQTT v5 IoT
-     hub. This property is valid only when connectionProfile is 'MqttV5'.
-    :vartype mqtt_v5_settings: ~azure.mgmt.iothub.models.MqttV5Settings
     :ivar device_registry: Represents properties related to the Azure Device Registry (ADR).
     :vartype device_registry: ~azure.mgmt.iothub.models.DeviceRegistry
     :ivar iot_hub_details: Set of additional read-only properties for the IoT hub.
@@ -1745,44 +1693,17 @@ class IotHubProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
     """The IoT hub cloud-to-device messaging properties."""
     comments: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """IoT hub comments."""
-    device_streams: Optional["_models.IotHubPropertiesDeviceStreams"] = rest_field(
-        name="deviceStreams", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The device streams properties of iothub."""
     features: Optional[Union[str, "_models.Capabilities"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The capabilities and features enabled for the IoT hub. Known values are: \"None\" and
      \"DeviceManagement\"."""
-    encryption: Optional["_models.EncryptionPropertiesDescription"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The encryption properties for the IoT hub."""
     locations: Optional[list["_models.IotHubLocationDescription"]] = rest_field(visibility=["read"])
     """Primary and secondary location for iot hub."""
     enable_data_residency: Optional[bool] = rest_field(
         name="enableDataResidency", visibility=["read", "create", "update", "delete", "query"]
     )
     """This property when set to true, will enable data residency, thus, disabling disaster recovery."""
-    root_certificate: Optional["_models.RootCertificateProperties"] = rest_field(
-        name="rootCertificate", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """This property store root certificate related information."""
-    ip_version: Optional[Union[str, "_models.IpVersion"]] = rest_field(
-        name="ipVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """This property specifies the IP Version the hub is currently utilizing. Known values are:
-     \"ipv4\", \"ipv6\", and \"ipv4ipv6\"."""
-    connection_profile: Optional[Union[str, "_models.ConnectionProfile"]] = rest_field(
-        name="connectionProfile", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The connection profile that the IoT hub uses for device connections. Defaults to 'Classic'.
-     Known values are: \"Classic\" and \"MqttV5\"."""
-    mqtt_v5_settings: Optional["_models.MqttV5Settings"] = rest_field(
-        name="mqttV5Settings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The custom topic configuration for an Event Grid-backed MQTT v5 IoT hub. This property is valid
-     only when connectionProfile is 'MqttV5'."""
     device_registry: Optional["_models.DeviceRegistry"] = rest_field(name="deviceRegistry", visibility=["read"])
     """Represents properties related to the Azure Device Registry (ADR)."""
     iot_hub_details: Optional["_models.IotHubDetails"] = rest_field(name="iotHubDetails", visibility=["read"])
@@ -1810,44 +1731,8 @@ class IotHubProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
         enable_file_upload_notifications: Optional[bool] = None,
         cloud_to_device: Optional["_models.CloudToDeviceProperties"] = None,
         comments: Optional[str] = None,
-        device_streams: Optional["_models.IotHubPropertiesDeviceStreams"] = None,
         features: Optional[Union[str, "_models.Capabilities"]] = None,
-        encryption: Optional["_models.EncryptionPropertiesDescription"] = None,
         enable_data_residency: Optional[bool] = None,
-        root_certificate: Optional["_models.RootCertificateProperties"] = None,
-        ip_version: Optional[Union[str, "_models.IpVersion"]] = None,
-        connection_profile: Optional[Union[str, "_models.ConnectionProfile"]] = None,
-        mqtt_v5_settings: Optional["_models.MqttV5Settings"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class IotHubPropertiesDeviceStreams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The device streams properties of iothub.
-
-    :ivar streaming_endpoints: List of Device Streams Endpoints.
-    :vartype streaming_endpoints: list[str]
-    """
-
-    streaming_endpoints: Optional[list[str]] = rest_field(
-        name="streamingEndpoints", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of Device Streams Endpoints."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        streaming_endpoints: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -2049,43 +1934,6 @@ class JobResponse(_Model):
     """The job identifier of the parent job, if any."""
 
 
-class KeyVaultKeyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The properties of the KeyVault key.
-
-    :ivar key_identifier: The identifier of the key.
-    :vartype key_identifier: str
-    :ivar identity: Managed identity properties of KeyVault Key.
-    :vartype identity: ~azure.mgmt.iothub.models.ManagedIdentity
-    """
-
-    key_identifier: Optional[str] = rest_field(
-        name="keyIdentifier", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The identifier of the key."""
-    identity: Optional["_models.ManagedIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Managed identity properties of KeyVault Key."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        key_identifier: Optional[str] = None,
-        identity: Optional["_models.ManagedIdentity"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ManagedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the Managed identity.
 
@@ -2189,36 +2037,6 @@ class MessagingEndpointProperties(_Model):  # pylint: disable=docstring-keyword-
         lock_duration_as_iso8601: Optional[datetime.timedelta] = None,
         ttl_as_iso8601: Optional[datetime.timedelta] = None,
         max_delivery_count: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class MqttV5Settings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Settings for an Event Grid-backed MQTT v5 IoT hub.
-
-    :ivar topic_groups: The customer-defined groups of topic templates that devices publish to.
-    :vartype topic_groups: list[~azure.mgmt.iothub.models.TopicGroup]
-    """
-
-    topic_groups: Optional[list["_models.TopicGroup"]] = rest_field(
-        name="topicGroups", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The customer-defined groups of topic templates that devices publish to."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        topic_groups: Optional[list["_models.TopicGroup"]] = None,
     ) -> None: ...
 
     @overload
@@ -2625,44 +2443,6 @@ class RegistryStatistics(_Model):
     """The count of disabled devices in the identity registry."""
 
 
-class RootCertificateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """This property store root certificate related information.
-
-    :ivar enable_root_certificate_v2: This property when set to true, hub will use G2 cert; while
-     it's set to false, hub uses Baltimore Cert.
-    :vartype enable_root_certificate_v2: bool
-    :ivar last_updated_time_utc: the last update time to root certificate flag.
-    :vartype last_updated_time_utc: ~datetime.datetime
-    """
-
-    enable_root_certificate_v2: Optional[bool] = rest_field(
-        name="enableRootCertificateV2", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """This property when set to true, hub will use G2 cert; while it's set to false, hub uses
-     Baltimore Cert."""
-    last_updated_time_utc: Optional[datetime.datetime] = rest_field(
-        name="lastUpdatedTimeUtc", visibility=["read"], format="rfc3339"
-    )
-    """the last update time to root certificate flag."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        enable_root_certificate_v2: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class RouteCompilationError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Compilation error when evaluating route.
 
@@ -2781,16 +2561,13 @@ class RouteProperties(_Model):  # pylint: disable=docstring-keyword-should-match
     :vartype name: str
     :ivar source: The source that the routing rule is to be applied to, such as DeviceMessages.
      Required. Known values are: "Invalid", "DeviceMessages", "TwinChangeEvents",
-     "DeviceLifecycleEvents", "DeviceJobLifecycleEvents", "DigitalTwinChangeEvents",
-     "DeviceConnectionStateEvents", and "MqttBrokerMessages".
+     "DeviceLifecycleEvents", "DeviceJobLifecycleEvents", and "DeviceConnectionStateEvents".
     :vartype source: str or ~azure.mgmt.iothub.models.RoutingSource
     :ivar condition: The condition that is evaluated to apply the routing rule. If no condition is
      provided, it evaluates to true by default. For grammar, see:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language>`_.
     :vartype condition: str
-    :ivar data_schema: The data schema reference that is used to interpret the message body.
-    :vartype data_schema: str
     :ivar endpoint_names: The list of endpoints to which messages that satisfy the condition are
      routed. Currently only one endpoint is allowed. Required.
     :vartype endpoint_names: list[str]
@@ -2804,17 +2581,12 @@ class RouteProperties(_Model):  # pylint: disable=docstring-keyword-should-match
     source: Union[str, "_models.RoutingSource"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The source that the routing rule is to be applied to, such as DeviceMessages. Required. Known
      values are: \"Invalid\", \"DeviceMessages\", \"TwinChangeEvents\", \"DeviceLifecycleEvents\",
-     \"DeviceJobLifecycleEvents\", \"DigitalTwinChangeEvents\", \"DeviceConnectionStateEvents\", and
-     \"MqttBrokerMessages\"."""
+     \"DeviceJobLifecycleEvents\", and \"DeviceConnectionStateEvents\"."""
     condition: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The condition that is evaluated to apply the routing rule. If no condition is provided, it
      evaluates to true by default. For grammar, see:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language>`_."""
-    data_schema: Optional[str] = rest_field(
-        name="dataSchema", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The data schema reference that is used to interpret the message body."""
     endpoint_names: list[str] = rest_field(
         name="endpointNames", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2832,7 +2604,6 @@ class RouteProperties(_Model):  # pylint: disable=docstring-keyword-should-match
         endpoint_names: list[str],
         is_enabled: bool,
         condition: Optional[str] = None,
-        data_schema: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2886,9 +2657,6 @@ class RoutingCosmosDBSqlApiProperties(_Model):  # pylint: disable=docstring-keyw
      specified at most once, but order and non-placeholder components are arbitrary. This parameter
      is only required if PartitionKeyName is specified.
     :vartype partition_key_template: str
-    :ivar message_payload_format: The format of the message payload delivered to this endpoint.
-     Known values are: "DOObservationV1" and "None".
-    :vartype message_payload_format: str or ~azure.mgmt.iothub.models.MessagePayloadFormat
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2942,11 +2710,6 @@ class RoutingCosmosDBSqlApiProperties(_Model):  # pylint: disable=docstring-keyw
      {deviceid}, {DD}, {MM}, and {YYYY}. Any one placeholder may be specified at most once, but
      order and non-placeholder components are arbitrary. This parameter is only required if
      PartitionKeyName is specified."""
-    message_payload_format: Optional[Union[str, "_models.MessagePayloadFormat"]] = rest_field(
-        name="messagePayloadFormat", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The format of the message payload delivered to this endpoint. Known values are:
-     \"DOObservationV1\" and \"None\"."""
 
     @overload
     def __init__(
@@ -2964,7 +2727,6 @@ class RoutingCosmosDBSqlApiProperties(_Model):  # pylint: disable=docstring-keyw
         secondary_key: Optional[str] = None,
         partition_key_name: Optional[str] = None,
         partition_key_template: Optional[str] = None,
-        message_payload_format: Optional[Union[str, "_models.MessagePayloadFormat"]] = None,
     ) -> None: ...
 
     @overload
@@ -3084,9 +2846,6 @@ class RoutingEventHubProperties(_Model):  # pylint: disable=docstring-keyword-sh
     :vartype subscription_id: str
     :ivar resource_group: The name of the resource group of the event hub endpoint.
     :vartype resource_group: str
-    :ivar message_payload_format: The format of the message payload delivered to this endpoint.
-     Known values are: "DOObservationV1" and "None".
-    :vartype message_payload_format: str or ~azure.mgmt.iothub.models.MessagePayloadFormat
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3125,11 +2884,6 @@ class RoutingEventHubProperties(_Model):  # pylint: disable=docstring-keyword-sh
         name="resourceGroup", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the resource group of the event hub endpoint."""
-    message_payload_format: Optional[Union[str, "_models.MessagePayloadFormat"]] = rest_field(
-        name="messagePayloadFormat", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The format of the message payload delivered to this endpoint. Known values are:
-     \"DOObservationV1\" and \"None\"."""
 
     @overload
     def __init__(
@@ -3144,7 +2898,6 @@ class RoutingEventHubProperties(_Model):  # pylint: disable=docstring-keyword-sh
         identity: Optional["_models.ManagedIdentity"] = None,
         subscription_id: Optional[str] = None,
         resource_group: Optional[str] = None,
-        message_payload_format: Optional[Union[str, "_models.MessagePayloadFormat"]] = None,
     ) -> None: ...
 
     @overload
@@ -3185,9 +2938,6 @@ class RoutingEventStreamProperties(_Model):  # pylint: disable=docstring-keyword
     :vartype event_stream_id: str
     :ivar source_id: The unique GUID of the custom source for the event stream.
     :vartype source_id: str
-    :ivar message_payload_format: The format of the message payload delivered to this endpoint.
-     Known values are: "DOObservationV1" and "None".
-    :vartype message_payload_format: str or ~azure.mgmt.iothub.models.MessagePayloadFormat
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3220,11 +2970,6 @@ class RoutingEventStreamProperties(_Model):  # pylint: disable=docstring-keyword
     """The unique GUID of the target event stream under the workspace."""
     source_id: Optional[str] = rest_field(name="sourceId", visibility=["read", "create", "update", "delete", "query"])
     """The unique GUID of the custom source for the event stream."""
-    message_payload_format: Optional[Union[str, "_models.MessagePayloadFormat"]] = rest_field(
-        name="messagePayloadFormat", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The format of the message payload delivered to this endpoint. Known values are:
-     \"DOObservationV1\" and \"None\"."""
 
     @overload
     def __init__(
@@ -3238,7 +2983,6 @@ class RoutingEventStreamProperties(_Model):  # pylint: disable=docstring-keyword
         workspace_id: Optional[str] = None,
         event_stream_id: Optional[str] = None,
         source_id: Optional[str] = None,
-        message_payload_format: Optional[Union[str, "_models.MessagePayloadFormat"]] = None,
     ) -> None: ...
 
     @overload
@@ -3392,9 +3136,6 @@ class RoutingServiceBusQueueEndpointProperties(_Model):  # pylint: disable=docst
     :vartype subscription_id: str
     :ivar resource_group: The name of the resource group of the service bus queue endpoint.
     :vartype resource_group: str
-    :ivar message_payload_format: The format of the message payload delivered to this endpoint.
-     Known values are: "DOObservationV1" and "None".
-    :vartype message_payload_format: str or ~azure.mgmt.iothub.models.MessagePayloadFormat
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3433,11 +3174,6 @@ class RoutingServiceBusQueueEndpointProperties(_Model):  # pylint: disable=docst
         name="resourceGroup", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the resource group of the service bus queue endpoint."""
-    message_payload_format: Optional[Union[str, "_models.MessagePayloadFormat"]] = rest_field(
-        name="messagePayloadFormat", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The format of the message payload delivered to this endpoint. Known values are:
-     \"DOObservationV1\" and \"None\"."""
 
     @overload
     def __init__(
@@ -3452,7 +3188,6 @@ class RoutingServiceBusQueueEndpointProperties(_Model):  # pylint: disable=docst
         identity: Optional["_models.ManagedIdentity"] = None,
         subscription_id: Optional[str] = None,
         resource_group: Optional[str] = None,
-        message_payload_format: Optional[Union[str, "_models.MessagePayloadFormat"]] = None,
     ) -> None: ...
 
     @overload
@@ -3493,9 +3228,6 @@ class RoutingServiceBusTopicEndpointProperties(_Model):  # pylint: disable=docst
     :vartype subscription_id: str
     :ivar resource_group: The name of the resource group of the service bus topic endpoint.
     :vartype resource_group: str
-    :ivar message_payload_format: The format of the message payload delivered to this endpoint.
-     Known values are: "DOObservationV1" and "None".
-    :vartype message_payload_format: str or ~azure.mgmt.iothub.models.MessagePayloadFormat
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3534,11 +3266,6 @@ class RoutingServiceBusTopicEndpointProperties(_Model):  # pylint: disable=docst
         name="resourceGroup", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the resource group of the service bus topic endpoint."""
-    message_payload_format: Optional[Union[str, "_models.MessagePayloadFormat"]] = rest_field(
-        name="messagePayloadFormat", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The format of the message payload delivered to this endpoint. Known values are:
-     \"DOObservationV1\" and \"None\"."""
 
     @overload
     def __init__(
@@ -3553,7 +3280,6 @@ class RoutingServiceBusTopicEndpointProperties(_Model):  # pylint: disable=docst
         identity: Optional["_models.ManagedIdentity"] = None,
         subscription_id: Optional[str] = None,
         resource_group: Optional[str] = None,
-        message_payload_format: Optional[Union[str, "_models.MessagePayloadFormat"]] = None,
     ) -> None: ...
 
     @overload
@@ -3606,9 +3332,6 @@ class RoutingStorageContainerProperties(_Model):  # pylint: disable=docstring-ke
      'avro', 'avrodeflate', and 'JSON'. Default value is 'avro'. Known values are: "Avro",
      "AvroDeflate", and "JSON".
     :vartype encoding: str or ~azure.mgmt.iothub.models.RoutingStorageContainerPropertiesEncoding
-    :ivar message_payload_format: The format of the message payload delivered to this endpoint.
-     Known values are: "DOObservationV1" and "None".
-    :vartype message_payload_format: str or ~azure.mgmt.iothub.models.MessagePayloadFormat
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3667,11 +3390,6 @@ class RoutingStorageContainerProperties(_Model):  # pylint: disable=docstring-ke
     """Encoding that is used to serialize messages to blobs. Supported values are 'avro',
      'avrodeflate', and 'JSON'. Default value is 'avro'. Known values are: \"Avro\",
      \"AvroDeflate\", and \"JSON\"."""
-    message_payload_format: Optional[Union[str, "_models.MessagePayloadFormat"]] = rest_field(
-        name="messagePayloadFormat", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The format of the message payload delivered to this endpoint. Known values are:
-     \"DOObservationV1\" and \"None\"."""
 
     @overload
     def __init__(
@@ -3690,7 +3408,6 @@ class RoutingStorageContainerProperties(_Model):  # pylint: disable=docstring-ke
         batch_frequency_in_seconds: Optional[int] = None,
         max_chunk_size_in_bytes: Optional[int] = None,
         encoding: Optional[Union[str, "_models.RoutingStorageContainerPropertiesEncoding"]] = None,
-        message_payload_format: Optional[Union[str, "_models.MessagePayloadFormat"]] = None,
     ) -> None: ...
 
     @overload
@@ -3997,8 +3714,8 @@ class TestAllRoutesInput(_Model):  # pylint: disable=docstring-keyword-should-ma
     """Input for testing all routes.
 
     :ivar routing_source: Routing source. Known values are: "Invalid", "DeviceMessages",
-     "TwinChangeEvents", "DeviceLifecycleEvents", "DeviceJobLifecycleEvents",
-     "DigitalTwinChangeEvents", "DeviceConnectionStateEvents", and "MqttBrokerMessages".
+     "TwinChangeEvents", "DeviceLifecycleEvents", "DeviceJobLifecycleEvents", and
+     "DeviceConnectionStateEvents".
     :vartype routing_source: str or ~azure.mgmt.iothub.models.RoutingSource
     :ivar message: Routing message.
     :vartype message: ~azure.mgmt.iothub.models.RoutingMessage
@@ -4010,8 +3727,7 @@ class TestAllRoutesInput(_Model):  # pylint: disable=docstring-keyword-should-ma
         name="routingSource", visibility=["read", "create", "update", "delete", "query"]
     )
     """Routing source. Known values are: \"Invalid\", \"DeviceMessages\", \"TwinChangeEvents\",
-     \"DeviceLifecycleEvents\", \"DeviceJobLifecycleEvents\", \"DigitalTwinChangeEvents\",
-     \"DeviceConnectionStateEvents\", and \"MqttBrokerMessages\"."""
+     \"DeviceLifecycleEvents\", \"DeviceJobLifecycleEvents\", and \"DeviceConnectionStateEvents\"."""
     message: Optional["_models.RoutingMessage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Routing message."""
     twin: Optional["_models.RoutingTwin"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4159,44 +3875,6 @@ class TestRouteResultDetails(_Model):  # pylint: disable=docstring-keyword-shoul
         self,
         *,
         compilation_errors: Optional[list["_models.RouteCompilationError"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TopicGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A named set of topic templates for an Event Grid-backed MQTT v5 IoT hub.
-
-    :ivar topic_group_id: The customer-supplied identifier used to reconcile the topic group during
-     updates.
-    :vartype topic_group_id: str
-    :ivar topic_templates: The topic templates in this group.
-    :vartype topic_templates: list[str]
-    """
-
-    topic_group_id: Optional[str] = rest_field(
-        name="topicGroupId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The customer-supplied identifier used to reconcile the topic group during updates."""
-    topic_templates: Optional[list[str]] = rest_field(
-        name="topicTemplates", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The topic templates in this group."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        topic_group_id: Optional[str] = None,
-        topic_templates: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
