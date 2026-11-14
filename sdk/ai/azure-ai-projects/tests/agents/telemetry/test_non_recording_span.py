@@ -200,3 +200,58 @@ class TestNonRecordingSpanResponsesInstrumentor:
         mock_item.content = []
 
         instrumentor._add_conversation_item_event(span, mock_item)
+
+
+class TestRealNonRecordingSpanResponsesInstrumentor:
+    """Use real OpenTelemetry spans instead of mocks.
+
+    A ``MagicMock`` span answers any attribute lookup, which hides code that
+    reads attributes only present on a recording SDK span (for example
+    ``span_instance.attributes``). OpenTelemetry's ``NonRecordingSpan`` has no
+    such attribute, which is what callers see when a sampler drops the trace.
+    """
+
+    @staticmethod
+    def _non_recording_span():
+        from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+        from opentelemetry.trace import INVALID_SPAN_CONTEXT, NonRecordingSpan
+
+        return OpenTelemetrySpan(span=NonRecordingSpan(INVALID_SPAN_CONTEXT))
+
+    @pytest.fixture(autouse=True)
+    def _use_message_attributes(self, monkeypatch):
+        # Messages are aggregated into span attributes unless message events are enabled.
+        monkeypatch.setattr(
+            "azure.ai.projects.telemetry._responses_instrumentor._get_use_message_events",
+            lambda: False,
+        )
+
+    @pytest.mark.parametrize("role", ["user", "assistant", "tool"])
+    def test_add_message_event_with_real_non_recording_span(self, role):
+        """_add_message_event must not raise on a NonRecordingSpan (GitHub issue #49854)."""
+        instrumentor = _ResponsesInstrumentorPreview()
+        span = self._non_recording_span()
+
+        instrumentor._add_message_event(span, role=role, content="hello")
+
+    def test_append_to_message_attribute_with_real_non_recording_span(self):
+        """_append_to_message_attribute must skip a NonRecordingSpan instead of reading its attributes."""
+        instrumentor = _ResponsesInstrumentorPreview()
+        span = self._non_recording_span()
+
+        instrumentor._append_to_message_attribute(span, "gen_ai.output.messages", [{"role": "assistant"}])
+
+    def test_append_to_message_attribute_still_accumulates_on_recording_span(self):
+        """The guard must not change behavior for a recording span."""
+        from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+        from opentelemetry.sdk.trace import TracerProvider
+
+        instrumentor = _ResponsesInstrumentorPreview()
+        otel_span = TracerProvider().get_tracer(__name__).start_span("test")
+        span = OpenTelemetrySpan(span=otel_span)
+        try:
+            instrumentor._append_to_message_attribute(span, "gen_ai.input.messages", [{"role": "user"}])
+            instrumentor._append_to_message_attribute(span, "gen_ai.input.messages", [{"role": "tool"}])
+            assert json.loads(otel_span.attributes["gen_ai.input.messages"]) == [{"role": "user"}, {"role": "tool"}]
+        finally:
+            otel_span.end()
