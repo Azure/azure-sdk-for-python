@@ -283,7 +283,6 @@ class ODataV4Format:
         :rtype: str
         """
         error_str = "Code: {}".format(self.code)
-        error_str += "\nMessage: {}".format(self.message)
         if self.target:
             error_str += "\nTarget: {}".format(self.target)
 
