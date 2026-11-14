@@ -138,13 +138,27 @@ def test_delegation(get_token_method):
     method.assert_called_once_with("scope", **kwargs)
 
 
-@pytest.mark.parametrize("status,payload", [(400, {}), (200, {}), (200, {"value": 123})])
+@pytest.mark.parametrize("status,payload", [(400, {}), (200, {}), (200, {"value": 123}), (200, None)])
 def test_oidc_error(status, payload):
     credential = GitHubActionsCredential()
     response = Mock(status_code=status, headers={}, json=Mock(return_value=payload))
     credential._pipeline = Mock()
     credential._pipeline.run.return_value.http_response = response
     with pytest.raises(ClientAuthenticationError) as error:
+        credential._get_oidc_token()
+    assert error.value.response is response
+
+
+def test_oidc_invalid_json():
+    credential = GitHubActionsCredential()
+    response = Mock(
+        status_code=200, headers={}, json=Mock(side_effect=ValueError("invalid JSON"))
+    )
+    credential._pipeline = Mock()
+    credential._pipeline.run.return_value.http_response = response
+    with pytest.raises(
+        ClientAuthenticationError, match="Failed to deserialize JSON"
+    ) as error:
         credential._get_oidc_token()
     assert error.value.response is response
 

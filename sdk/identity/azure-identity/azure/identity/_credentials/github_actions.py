@@ -67,7 +67,13 @@ def derive_audience(authority: str) -> str:
 def _handle_oidc_response(response: Union[HttpResponse, AsyncHttpResponse]) -> str:
     if response.status_code != 200:
         raise ClientAuthenticationError("Unexpected response from OIDC token endpoint.", response=response)
-    assertion = response.json().get("value")
+    try:
+        content = response.json()
+    except ValueError as ex:
+        raise ClientAuthenticationError(
+            "Failed to deserialize JSON from OIDC token endpoint.", response=response
+        ) from ex
+    assertion = content.get("value") if content else None
     if not isinstance(assertion, str):
         raise ClientAuthenticationError("OIDC token not found in response.", response=response)
     return assertion

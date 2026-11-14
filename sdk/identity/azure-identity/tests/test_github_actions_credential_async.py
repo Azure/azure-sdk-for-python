@@ -72,6 +72,7 @@ async def test_delegation(get_token_method):
         (400, {}, "Unexpected response from OIDC token endpoint"),
         (200, {}, "OIDC token not found in response"),
         (200, {"value": 123}, "OIDC token not found in response"),
+        (200, None, "OIDC token not found in response"),
     ],
 )
 async def test_oidc_error(get_token_method, status, payload, message):
@@ -80,6 +81,21 @@ async def test_oidc_error(get_token_method, status, payload, message):
     transport = AsyncMock(send=AsyncMock(return_value=response))
     async with GitHubActionsCredential(transport=transport) as credential:
         with pytest.raises(ClientAuthenticationError, match=message) as error:
+            await getattr(credential, get_token_method)("scope")
+    assert error.value.response is response
+    transport.send.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_oidc_invalid_json(get_token_method):
+    response = mock_response(status_code=200)
+    response.json = Mock(side_effect=ValueError("invalid JSON"))
+    transport = AsyncMock(send=AsyncMock(return_value=response))
+    async with GitHubActionsCredential(transport=transport) as credential:
+        with pytest.raises(
+            ClientAuthenticationError, match="Failed to deserialize JSON"
+        ) as error:
             await getattr(credential, get_token_method)("scope")
     assert error.value.response is response
     transport.send.assert_awaited_once()
