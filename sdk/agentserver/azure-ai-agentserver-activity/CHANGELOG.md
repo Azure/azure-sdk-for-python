@@ -1,9 +1,10 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0 (2026-11-16)
 
 ### Features Added
 
+- First stable release of `azure-ai-agentserver-activity`.
 - Capture invocation-local original-subject assertions from platform headers,
   independently of Activity payload identity and user-state partition keys.
 
@@ -14,7 +15,7 @@
 
 ### Other Changes
 
-- Require Core `2.3.0b2` or later. Publish that Core version before this package.
+- Require the stable Core `2.3.0` release or later.
 
 ## 1.0.0b4 (2026-10-12)
 
