@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where settling a message on a receive link the service had already detached (for example after an entity update), once another operation on the connection such as a lock renewal had already processed the detach, raised a non-retryable `ServiceBusError` ("Link already closed.") and closed the handler. Settlement now falls back to the management link, which reports the actual outcome, such as `MessageLockLostError`.
+
 ### Other Changes
 
 ## 7.15.0 (2026-10-06)
