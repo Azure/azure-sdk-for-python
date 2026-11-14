@@ -149,6 +149,89 @@ def test_knowledge_base_inputs_preserve_public_model_list_contracts():
     }
 
 
+def test_scoring_inputs_preserve_legacy_fields_idempotently():
+    package_root = Path(__file__).resolve().parents[1]
+    script = package_root / ".github/skills/azure-search-documents/scripts/apply_generator_workarounds.py"
+    namespace = runpy.run_path(str(script))
+    add_inputs = namespace["_add_scoring_inputs"]
+    source = (
+        "class ScoringProfile(TypedDict, total=False):\n"
+        '    """Defines parameters for a search index that influence scoring in search queries.\n'
+        '    :vartype functions: list["ScoringFunction"]\n'
+        '    """\n'
+        "    name: Required[str]\n"
+        '    functions: list["ScoringFunction"]\n\n'
+        "SearchIndex = TypedDict(\n"
+        '    "SearchIndex",\n'
+        '    {"name": Required[str], "fields": Required[list[str]], '
+        '"scoringProfiles": list["ScoringProfile"], "@odata.etag": str},\n'
+        "    total=False,\n"
+        ")\n"
+        'SearchIndex.__doc__ = """Represents a search index definition,\n'
+        ':vartype scoringProfiles: list["ScoringProfile"]\n'
+        '"""\n'
+    )
+    patched, changed = add_inputs(source)
+    assert changed
+    assert source.split("SearchIndex =")[0] in patched
+    assert 'functions: list["ScoringFunctionInput"]' in patched
+    assert '"scoringProfiles": list["ScoringProfileInput"]' in patched
+    assert add_inputs(patched) == (patched, False)
+    unexpected = patched.replace('functions: list["ScoringFunctionInput"]', 'functions: list["ScoringFunction"]', 1)
+    with pytest.raises(RuntimeError, match="Unexpected existing ScoringProfileInput"):
+        add_inputs(unexpected)
+    for conflicting in (
+        "class ScoringProfileInput(TypedDict):\n    name: str\n",
+        'SearchIndexInput = TypedDict("ConflictingInput", {"name": str})\n',
+    ):
+        with pytest.raises(RuntimeError, match="Unexpected existing"):
+            add_inputs(patched + "\n" + conflicting)
+
+
+def test_scoring_inputs_preserve_public_profile_and_index_contracts():
+    require_capability(
+        "azure.search.documents.indexes.types.ScoringFunctionInput",
+        "azure.search.documents.indexes.types.ScoringProfileInput",
+        "azure.search.documents.indexes.types.SearchIndexInput",
+    )
+    from azure.search.documents.indexes import types
+
+    assert get_args(types.ScoringFunction) == (
+        types.DistanceScoringFunction,
+        types.FreshnessScoringFunction,
+        types.MagnitudeScoringFunction,
+        types.TagScoringFunction,
+    )
+    assert set(get_args(types.ScoringFunctionInput)) == set(get_args(types.ScoringFunction)) | {
+        types.RandomScoringFunction
+    }
+    for legacy, expanded, field, legacy_type, expanded_type in (
+        (
+            types.ScoringProfile,
+            types.ScoringProfileInput,
+            "functions",
+            types.ScoringFunction,
+            types.ScoringFunctionInput,
+        ),
+        (types.SearchIndex, types.SearchIndexInput, "scoringProfiles", types.ScoringProfile, types.ScoringProfileInput),
+    ):
+        contracts = TypedDict(
+            "Contracts",
+            {
+                "legacy": legacy.__annotations__[field],
+                "expanded": expanded.__annotations__[field],
+            },
+        )
+        annotations = get_type_hints(contracts, globalns=vars(types))
+        assert annotations["legacy"] == list[legacy_type]
+        assert annotations["expanded"] == list[expanded_type]
+        assert {key: value for key, value in legacy.__annotations__.items() if key != field} == {
+            key: value for key, value in expanded.__annotations__.items() if key != field
+        }
+        assert legacy.__required_keys__ == expanded.__required_keys__
+        assert legacy.__optional_keys__ == expanded.__optional_keys__
+
+
 if TYPE_CHECKING:
     from azure.search.documents.indexes import SearchIndexClient, models, types
     from azure.search.documents.indexes.aio import SearchIndexClient as AsyncSearchIndexClient
@@ -179,3 +262,39 @@ if TYPE_CHECKING:
         await async_client.create_or_update_knowledge_base(legacy)
         await async_client.create_knowledge_base(expanded)
         await async_client.create_or_update_knowledge_base(expanded)
+
+    def _read_legacy_scoring_types(
+        function: types.ScoringFunction,
+        profile: types.ScoringProfile,
+        index: types.SearchIndex,
+    ) -> tuple[float, str]:
+        functions: list[types.ScoringFunction] = profile["functions"]
+        profiles: list[types.ScoringProfile] = index["scoringProfiles"]
+        functions.append(function)
+        profiles.append(profile)
+        return function["boost"], function["fieldName"]
+
+    async def _check_scoring_input_types(
+        client: SearchIndexClient,
+        async_client: AsyncSearchIndexClient,
+        legacy: types.SearchIndex,
+        function: types.ScoringFunctionInput,
+    ) -> None:
+        random = types.RandomScoringFunction(type="random", random={"seedParameter": "seed"})
+        functions: list[types.ScoringFunctionInput] = [random]
+        profile = types.ScoringProfileInput(name="random-order", functions=functions)
+        profiles: list[types.ScoringProfileInput] = [profile]
+        index = types.SearchIndexInput(name="hotels", fields=[], scoringProfiles=profiles)
+        models.ScoringProfile(profile)
+        models.SearchIndex(index)
+        if function["type"] != "random":
+            field: str = function["fieldName"]
+            _read_legacy_scoring_types(function, types.ScoringProfile(name=field, functions=[function]), legacy)
+        client.create_index(legacy)
+        client.create_or_update_index(legacy)
+        client.create_index(index)
+        client.create_or_update_index(index)
+        await async_client.create_index(legacy)
+        await async_client.create_or_update_index(legacy)
+        await async_client.create_index(index)
+        await async_client.create_or_update_index(index)

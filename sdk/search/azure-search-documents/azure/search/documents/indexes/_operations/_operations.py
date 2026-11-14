@@ -2467,7 +2467,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     def _create_or_update_index(
         self,
         name: str,
-        index: _types_models1.SearchIndex,
+        index: Union[_types_models1.SearchIndex, _types_models1.SearchIndexInput],
         *,
         allow_index_downtime: Optional[bool] = None,
         content_type: str = "application/json",
@@ -2492,7 +2492,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     def _create_or_update_index(
         self,
         name: str,
-        index: Union[_models1.SearchIndex, _types_models1.SearchIndex, IO[bytes]],
+        index: Union[_models1.SearchIndex, _types_models1.SearchIndex, _types_models1.SearchIndexInput, IO[bytes]],
         *,
         allow_index_downtime: Optional[bool] = None,
         etag: Optional[str] = None,
@@ -2506,7 +2506,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         :param index: The definition of the index to create or update. Is either a SearchIndex type or
          a IO[bytes] type. Required.
         :type index: ~azure.search.documents.indexes.models.SearchIndex or
-         ~azure.search.documents.indexes.types.SearchIndex or IO[bytes]
+         ~azure.search.documents.indexes.types.SearchIndex or
+         ~azure.search.documents.indexes.types.SearchIndexInput or IO[bytes]
         :keyword allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
          to be added to an index by taking the index offline for at least a few seconds. This
          temporarily causes indexing and query requests to fail. Performance and write availability of
@@ -3003,12 +3004,17 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     def create_index(
-        self, index: _types_models1.SearchIndex, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        index: Union[_types_models1.SearchIndex, _types_models1.SearchIndexInput],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models1.SearchIndex:
         """Creates a new search index.
 
         :param index: The definition of the index to create. Required.
-        :type index: ~azure.search.documents.indexes.types.SearchIndex
+        :type index: ~azure.search.documents.indexes.types.SearchIndex or
+         ~azure.search.documents.indexes.types.SearchIndexInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3035,14 +3041,17 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace
     def create_index(
-        self, index: Union[_models1.SearchIndex, _types_models1.SearchIndex, IO[bytes]], **kwargs: Any
+        self,
+        index: Union[_models1.SearchIndex, _types_models1.SearchIndex, _types_models1.SearchIndexInput, IO[bytes]],
+        **kwargs: Any,
     ) -> _models1.SearchIndex:
         """Creates a new search index.
 
         :param index: The definition of the index to create. Is either a SearchIndex type or a
          IO[bytes] type. Required.
         :type index: ~azure.search.documents.indexes.models.SearchIndex or
-         ~azure.search.documents.indexes.types.SearchIndex or IO[bytes]
+         ~azure.search.documents.indexes.types.SearchIndex or
+         ~azure.search.documents.indexes.types.SearchIndexInput or IO[bytes]
         :return: SearchIndex. The SearchIndex is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises ~azure.core.exceptions.HttpResponseError:

@@ -44,7 +44,7 @@ azure.search.documents.indexes.types module
       MappingCharFilter, McpServerKnowledgeSource, MergeSkill, MicrosoftLanguageStemmingTokenizer, MicrosoftLanguageTokenizer, NGramTokenFilter,
       NGramTokenFilterV2, NGramTokenizer, NativeBlobSoftDeleteDeletionDetectionPolicy, OcrSkill, PIIDetectionSkill,
       PathHierarchyTokenizerV2, PatternAnalyzer, PatternCaptureTokenFilter, PatternReplaceCharFilter,
-      PatternReplaceTokenFilter, PatternTokenizer, PhoneticTokenFilter, RemoteSharePointKnowledgeSource, SearchAlias, SearchIndex,
+      PatternReplaceTokenFilter, PatternTokenizer, PhoneticTokenFilter, RemoteSharePointKnowledgeSource, SearchAlias, SearchIndex, SearchIndexInput,
       SearchIndexKnowledgeSource, SearchIndexer, SearchIndexerDataNoneIdentity, SearchIndexerDataSourceConnection,
       SearchIndexerDataUserAssignedIdentity, SearchIndexerSkillset, SentimentSkillV3, ShaperSkill, ShingleTokenFilter,
       SnowballTokenFilter, SoftDeleteColumnDeletionDetectionPolicy, SplitSkill, SqlIntegratedChangeTrackingPolicy,
@@ -536,6 +536,13 @@ azure.search.documents.indexes.types module
    :exclude-members: @odata.etag
 
 .. autoclass:: azure.search.documents.indexes.types.SearchIndex
+   :inherited-members:
+   :members:
+   :show-inheritance:
+   :undoc-members:
+   :exclude-members: @odata.etag
+
+.. autoclass:: azure.search.documents.indexes.types.SearchIndexInput
    :inherited-members:
    :members:
    :show-inheritance:

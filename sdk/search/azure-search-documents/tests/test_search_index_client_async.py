@@ -167,6 +167,52 @@ class TestSearchIndexClientKnowledgeBaseAsync:
 
 
 @pytest.mark.asyncio
+class TestSearchIndexClientScoringAsync:
+    @pytest.mark.parametrize("scoring_kind", ["classic", "random", "seeded-random"])
+    @pytest.mark.parametrize("method", ["create_index", "create_or_update_index"])
+    async def test_index_submission_accepts_legacy_and_random_scoring_inputs(self, scoring_kind, method):
+        from azure.search.documents.indexes import types
+
+        if scoring_kind != "classic":
+            require_capability(
+                "azure.search.documents.indexes.types.RandomScoringFunction",
+                "azure.search.documents.indexes.types.RandomScoringParameters",
+                "azure.search.documents.indexes.types.ScoringFunctionInput",
+                "azure.search.documents.indexes.types.ScoringProfileInput",
+                "azure.search.documents.indexes.types.SearchIndexInput",
+            )
+            function = types.RandomScoringFunction(type="random")
+            if scoring_kind == "seeded-random":
+                function["random"] = {"seedParameter": "seed"}
+            profile = types.ScoringProfileInput(name="order", functions=[function])
+            index = types.SearchIndexInput(name="owned-index", fields=[], scoringProfiles=[profile])
+        else:
+            function = types.MagnitudeScoringFunction(
+                type="magnitude",
+                fieldName="rating",
+                boost=2.0,
+                magnitude={"boostingRangeStart": 0, "boostingRangeEnd": 5},
+            )
+            profile = types.ScoringProfile(name="order", functions=[function])
+            index = types.SearchIndex(name="owned-index", fields=[], scoringProfiles=[profile])
+        response = mock.Mock()
+        response.http_response.status_code = 201
+        response.http_response.headers = {}
+        response.http_response.json.return_value = index
+        async with _client() as client:
+            with mock.patch.object(
+                client._client._pipeline, "run", new_callable=mock.AsyncMock, return_value=response
+            ) as operation:
+                submitted = await getattr(client, method)(index)
+
+        operation.assert_awaited_once()
+        request = operation.call_args.args[0]
+        assert request.method == ("POST" if method == "create_index" else "PUT")
+        assert json.loads(request.content)["scoringProfiles"] == [profile]
+        assert submitted.scoring_profiles[0].functions[0].as_dict() == function
+
+
+@pytest.mark.asyncio
 class TestListIndexesAsync:
     async def test_list_indexes_forwards_search_paging(self):
         require_capability(

@@ -726,7 +726,7 @@ namespace azure.search.documents.indexes
         @overload
         def create_index(
                 self, 
-                index: SearchIndex, 
+                index: Union[SearchIndex, SearchIndexInput], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -807,7 +807,7 @@ namespace azure.search.documents.indexes
         @distributed_trace
         def create_or_update_index(
                 self, 
-                index: Union[SearchIndex, SearchIndex, JSON], 
+                index: Union[SearchIndex, SearchIndex, SearchIndexInput, JSON], 
                 allow_index_downtime: Optional[bool] = None, 
                 *, 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
@@ -1557,7 +1557,7 @@ namespace azure.search.documents.indexes.aio
         @overload
         async def create_index(
                 self, 
-                index: SearchIndex, 
+                index: Union[SearchIndex, SearchIndexInput], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1638,7 +1638,7 @@ namespace azure.search.documents.indexes.aio
         @distributed_trace_async
         async def create_or_update_index(
                 self, 
-                index: Union[SearchIndex, SearchIndex, JSON], 
+                index: Union[SearchIndex, SearchIndex, SearchIndexInput, JSON], 
                 allow_index_downtime: Optional[bool] = None, 
                 *, 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
@@ -10765,6 +10765,16 @@ namespace azure.search.documents.indexes.types
         text: TextWeights
 
 
+    class azure.search.documents.indexes.types.ScoringProfileInput(TypedDict, total=False):
+        key "functionAggregation": Union[str, ScoringFunctionAggregation]
+        key "name": Required[str]
+        key "text": Optional[TextWeights]
+        functionAggregation: Union[str, ScoringFunctionAggregation]
+        functions: list[ScoringFunctionInput]
+        name: str
+        text: TextWeights
+
+
     class azure.search.documents.indexes.types.SearchAlias(TypedDict):
         key "@odata.etag": str
         key "indexes": Required[list[str]]
@@ -10864,6 +10874,42 @@ namespace azure.search.documents.indexes.types
     class azure.search.documents.indexes.types.SearchIndexFieldReference(TypedDict, total=False):
         key "name": Required[str]
         name: str
+
+
+    class azure.search.documents.indexes.types.SearchIndexInput(TypedDict):
+        key "@odata.etag": str
+        key "corsOptions": Optional[CorsOptions]
+        key "defaultScoringProfile": str
+        key "description": str
+        key "encryptionKey": Optional[SearchResourceEncryptionKey]
+        key "fields": Required[list[SearchField]]
+        key "name": Required[str]
+        key "permissionFilterOption": Optional[Union[str, SearchIndexPermissionFilterOption]]
+        key "purviewEnabled": Optional[bool]
+        key "semantic": Optional[SemanticSearch]
+        key "vectorSearch": Optional[VectorSearch]
+        ``@odata.etag``: str
+        analyzers: list[LexicalAnalyzer]
+        charFilters: list[CharFilter]
+        corsOptions: CorsOptions
+        defaultScoringProfile: str
+        description: str
+        encryptionKey: SearchResourceEncryptionKey
+        fields: list[SearchField]
+        graphProfile: ForwardRef('GraphProfile', module='types')
+        name: str
+        normalizers: list[LexicalNormalizer]
+        oneLakeSecuritySource: ForwardRef('OneLakeSecuritySource', module='types')
+        permissionFilterOption: Union[str, SearchIndexPermissionFilterOption]
+        purviewEnabled: bool
+        scoringProfiles: list[ScoringProfileInput]
+        semantic: SemanticSearch
+        sharePointConnectorAppRegistration: ForwardRef('SharePointConnectorAppRegistration', module='types')
+        similarity: ForwardRef('SimilarityAlgorithm', module='types')
+        suggesters: list[SearchSuggester]
+        tokenFilters: list[TokenFilter]
+        tokenizers: list[LexicalTokenizer]
+        vectorSearch: VectorSearch
 
 
     class azure.search.documents.indexes.types.SearchIndexKnowledgeSource(TypedDict):

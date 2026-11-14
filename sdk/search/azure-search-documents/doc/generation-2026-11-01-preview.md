@@ -41,6 +41,35 @@ Random scoring does not emit field or boost values unless explicitly supplied.
 This preserves SDK-owned compatibility without changing the pinned service
 contract or generator.
 
+The November TypedDict union also adds random, which has neither `fieldName` nor
+`boost`. Unchanged profile readers passed MyPy with the exact October type
+definitions at `c143a045142bf8e56416b6023f25230d301f56b3`, but failed against
+the expanded November alias. The service's spread restores these fields only
+on classic variants; it does not preserve the Python alias's read contract.
+The package-owned guarded rewriter therefore retains the four-variant
+`indexes.types.ScoringFunction`, `ScoringProfile.functions`, and
+`SearchIndex.scoringProfiles` contracts. Separate `ScoringFunctionInput`,
+`ScoringProfileInput`, and `SearchIndexInput` types support random without
+widening the legacy fields. Both sync and async index submission paths accept
+the expanded input; response models and request serialization stay unchanged.
+This is SDK-owned compatibility, not a service-spec or emitter defect.
+The generation inputs above are unchanged; full emitter regeneration was not
+repeated for this revision. Retain these rules until unmodified generation
+preserves the legacy typing and complete random input paths. New public input
+types require Python API review; local validation is not architect approval.
+
+Local validation passes 22 focused rewriter/model/submission regressions and
+four existing sync/async classic/random playback cases without changing
+recordings. MyPy checks the package and static legacy/expanded callers,
+Black and package Pylint pass, and strict Sphinx passes with the required
+sample includes staged alongside the documentation. The new input copies
+preserve all other annotations and required/optional keys; conflicting
+definitions are rejected instead of overwritten. Runtime AST comparison
+confirms that the generated operation bodies and handwritten wrappers are
+unchanged after excluding annotations and docstrings. The fresh wheel
+byte-matches all 76 packaged Python source files, and local `azpysdk apistub`
+regenerates the API markdown and matching metadata from that wheel.
+
 The Python emitter's File-ingestion LRO output refers to
 `_indexes_models1.KnowledgeSourceFile`, but imports that namespace as `_models1`
 (sync) or `_models2` (async). This produces eight MyPy errors and raises

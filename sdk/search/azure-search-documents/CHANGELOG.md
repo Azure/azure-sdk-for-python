@@ -36,6 +36,9 @@
     `SearchIndexClient.begin_ingest_knowledge_source_file_replacement`, including async clients.
   - File ingestion operation status/listing, capacity, and error models.
 - Added `indexes.models.RandomScoringFunction` and `RandomScoringParameters`.
+- Added `indexes.types.ScoringFunctionInput`, `ScoringProfileInput`, and `SearchIndexInput`
+  for random scoring in dictionary-style inputs, while preserving the classic
+  `ScoringFunction` alias and legacy scoring-profile and index field types.
 - Added `more_like_this` and `agentic_options` to synchronous and asynchronous
   `SearchClient.search`. Restored preview query, skill, knowledge-source, and indexer
   surfaces remain present in the generated package.

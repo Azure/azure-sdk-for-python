@@ -248,6 +248,34 @@ REPLACEMENTS = (
         ':vartype models: Union[list["KnowledgeBaseModel"], list["KnowledgeBaseModelInput"]]\n',
         ':vartype models: list["KnowledgeBaseModel"]\n',
     ),
+    Replacement(
+        "azure/search/documents/indexes/types.py",
+        "preserve the classic scoring alias and expose random through a separate input union",
+        "ScoringFunction = Union[\n"
+        "    DistanceScoringFunction,\n"
+        "    FreshnessScoringFunction,\n"
+        "    MagnitudeScoringFunction,\n"
+        "    RandomScoringFunction,\n"
+        "    TagScoringFunction,\n"
+        "]\n"
+        "VectorSearchAlgorithmConfiguration =",
+        "ScoringFunction = Union[\n"
+        "    DistanceScoringFunction,\n"
+        "    FreshnessScoringFunction,\n"
+        "    MagnitudeScoringFunction,\n"
+        "    TagScoringFunction,\n"
+        "]\n\n"
+        "ScoringFunctionInput = Union[\n"
+        "    DistanceScoringFunction,\n"
+        "    FreshnessScoringFunction,\n"
+        "    MagnitudeScoringFunction,\n"
+        "    RandomScoringFunction,\n"
+        "    TagScoringFunction,\n"
+        "]\n"
+        '"""Classic and random scoring variants for dictionary-style inputs."""\n\n'
+        "VectorSearchAlgorithmConfiguration =",
+        applies_when="class RandomScoringFunction(",
+    ),
 )
 
 REPLACEMENTS += tuple(
@@ -314,6 +342,58 @@ REPLACEMENTS += tuple(
             "         ~azure.search.documents.indexes.types.KnowledgeBaseInput or IO[bytes]\n",
             expected_count=2,
         ),
+        Replacement(
+            path,
+            "accept expanded index inputs in the generated create overload",
+            f"        self, index: {types_namespace}.SearchIndex, "
+            '*, content_type: str = "application/json", **kwargs: Any\n',
+            "        self,\n"
+            f"        index: Union[{types_namespace}.SearchIndex, {types_namespace}.SearchIndexInput],\n"
+            "        *,\n"
+            '        content_type: str = "application/json",\n'
+            f"        **kwargs: Any{kwargs_comma}\n",
+        ),
+        Replacement(
+            path,
+            "accept expanded index inputs in the generated create implementation",
+            f"        self, index: Union[{model_namespace}.SearchIndex, "
+            f"{types_namespace}.SearchIndex, IO[bytes]], **kwargs: Any\n",
+            "        self,\n"
+            f"        index: Union[{model_namespace}.SearchIndex, {types_namespace}.SearchIndex, "
+            f"{types_namespace}.SearchIndexInput, IO[bytes]],\n"
+            f"        **kwargs: Any{kwargs_comma}\n",
+        ),
+        Replacement(
+            path,
+            "accept expanded index inputs in the generated update overload",
+            "        name: str,\n" f"        index: {types_namespace}.SearchIndex,\n",
+            "        name: str,\n"
+            f"        index: Union[{types_namespace}.SearchIndex, {types_namespace}.SearchIndexInput],\n",
+        ),
+        Replacement(
+            path,
+            "accept expanded index inputs in the generated update implementation",
+            "        name: str,\n"
+            f"        index: Union[{model_namespace}.SearchIndex, {types_namespace}.SearchIndex, IO[bytes]],\n",
+            "        name: str,\n"
+            f"        index: Union[{model_namespace}.SearchIndex, {types_namespace}.SearchIndex, "
+            f"{types_namespace}.SearchIndexInput, IO[bytes]],\n",
+        ),
+        Replacement(
+            path,
+            "document expanded index inputs in the generated create overload",
+            "        :type index: ~azure.search.documents.indexes.types.SearchIndex\n",
+            "        :type index: ~azure.search.documents.indexes.types.SearchIndex or\n"
+            "         ~azure.search.documents.indexes.types.SearchIndexInput\n",
+        ),
+        Replacement(
+            path,
+            "document expanded index inputs in the generated implementations",
+            "         ~azure.search.documents.indexes.types.SearchIndex or IO[bytes]\n",
+            "         ~azure.search.documents.indexes.types.SearchIndex or\n"
+            "         ~azure.search.documents.indexes.types.SearchIndexInput or IO[bytes]\n",
+            expected_count=2,
+        ),
     )
 )
 
@@ -369,6 +449,64 @@ def _add_knowledge_base_input(source: str) -> tuple[str, bool]:
     return source[:end] + "\n\n" + expanded + source[end:], True
 
 
+def _add_scoring_inputs(source: str) -> tuple[str, bool]:
+    changed = False
+    for name, annotation, input_annotation in (
+        ("ScoringProfile", 'list["ScoringFunction"]', 'list["ScoringFunctionInput"]'),
+        ("SearchIndex", 'list["ScoringProfile"]', 'list["ScoringProfileInput"]'),
+    ):
+        declaration = (
+            f"class {name}(TypedDict, total=False):\n" if name == "ScoringProfile" else f"{name} = TypedDict(\n"
+        )
+        if source.count(declaration) != 1:
+            raise RuntimeError(f"Unexpected emitter output while locating the {name} TypedDict")
+        start = source.index(declaration)
+        if name == "ScoringProfile":
+            end = min(
+                source.index(marker, start)
+                for marker in (
+                    "\n\nclass ScoringProfileInput(",
+                    "\n\nSearchAlias = TypedDict(",
+                    "\n\nSearchIndex = TypedDict(",
+                )
+                if marker in source[start:]
+            )
+        else:
+            documentation = 'SearchIndex.__doc__ = """'
+            if source.count(documentation) != 1:
+                raise RuntimeError("Unexpected emitter output while locating the SearchIndex documentation")
+            end = source.index('"""', source.index(documentation, start) + len(documentation)) + 3
+        legacy = source[start:end]
+        if legacy.count(annotation) != 2:
+            raise RuntimeError(f"Unexpected emitter output for the legacy {name} scoring contract")
+        input_name = name + "Input"
+        expanded = (
+            legacy.replace(f"class {name}(", f"class {input_name}(", 1)
+            .replace(f"{name} = TypedDict(", f"{input_name} = TypedDict(", 1)
+            .replace(f'    "{name}",', f'    "{input_name}",', 1)
+            .replace(f"{name}.__doc__", f"{input_name}.__doc__", 1)
+            .replace(annotation, input_annotation)
+            .replace(
+                "Defines parameters for a search index that influence scoring in search queries.",
+                "Dictionary-style scoring-profile input supporting classic and random scoring.",
+                1,
+            )
+            .replace(
+                "Represents a search index definition,",
+                "Dictionary-style search-index input supporting classic and random scoring,",
+                1,
+            )
+        )
+        input_declaration = f"class {input_name}(" if name == "ScoringProfile" else f"{input_name} = TypedDict("
+        if source.count(expanded) == 1 and source.count(input_declaration) == 1:
+            continue
+        if f"class {input_name}(" in source or f"{input_name} =" in source:
+            raise RuntimeError(f"Unexpected existing {input_name} definition; regenerate before applying workarounds")
+        source = source[:end] + "\n\n" + expanded + source[end:]
+        changed = True
+    return source, changed
+
+
 def update_sources(*, check: bool) -> int:
     sources: dict[Path, str] = {}
     pending: list[str] = []
@@ -396,6 +534,11 @@ def update_sources(*, check: bool) -> int:
     sources[path], added = _add_knowledge_base_input(sources[path])
     if added:
         pending.append("add a separate complete KnowledgeBaseInput without widening the GA TypedDict")
+
+    if "ScoringFunctionInput = Union[" in sources[path]:
+        sources[path], added = _add_scoring_inputs(sources[path])
+        if added:
+            pending.append("add separate scoring-profile and index inputs without widening the GA TypedDicts")
 
     if check:
         if pending:

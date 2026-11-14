@@ -5121,6 +5121,33 @@ class ScoringProfile(TypedDict, total=False):
      \"minimum\", \"maximum\", \"firstMatching\", and \"product\"."""
 
 
+class ScoringProfileInput(TypedDict, total=False):
+    """Dictionary-style scoring-profile input supporting classic and random scoring.
+
+    :ivar name: The name of the scoring profile. Required.
+    :vartype name: str
+    :ivar text: Parameters that boost scoring based on text matches in certain index fields.
+    :vartype text: "TextWeights"
+    :ivar functions: The collection of functions that influence the scoring of documents.
+    :vartype functions: list["ScoringFunctionInput"]
+    :ivar functionAggregation: A value indicating how the results of individual scoring functions
+     should be combined. Defaults to "Sum". Ignored if there are no scoring functions. Known values
+     are: "sum", "average", "minimum", "maximum", "firstMatching", and "product".
+    :vartype functionAggregation: Union[str, "ScoringFunctionAggregation"]
+    """
+
+    name: Required[str]
+    """The name of the scoring profile. Required."""
+    text: Optional["TextWeights"]
+    """Parameters that boost scoring based on text matches in certain index fields."""
+    functions: list["ScoringFunctionInput"]
+    """The collection of functions that influence the scoring of documents."""
+    functionAggregation: Union[str, "ScoringFunctionAggregation"]
+    """A value indicating how the results of individual scoring functions should be combined. Defaults
+     to \"Sum\". Ignored if there are no scoring functions. Known values are: \"sum\", \"average\",
+     \"minimum\", \"maximum\", \"firstMatching\", and \"product\"."""
+
+
 SearchAlias = TypedDict(
     "SearchAlias",
     {
@@ -5558,6 +5585,101 @@ index.
 :vartype graphProfile: "GraphProfile"
 :ivar scoringProfiles: The scoring profiles for the index.
 :vartype scoringProfiles: list["ScoringProfile"]
+:ivar defaultScoringProfile: The name of the scoring profile to use if none is specified in the
+ query. If this property is not set and no scoring profile is specified in the query, then
+ default scoring (tf-idf) will be used.
+:vartype defaultScoringProfile: str
+:ivar corsOptions: Options to control Cross-Origin Resource Sharing (CORS) for the index.
+:vartype corsOptions: "CorsOptions"
+:ivar suggesters: The suggesters for the index.
+:vartype suggesters: list["SearchSuggester"]
+:ivar analyzers: The analyzers for the index.
+:vartype analyzers: list["LexicalAnalyzer"]
+:ivar tokenizers: The tokenizers for the index.
+:vartype tokenizers: list["LexicalTokenizer"]
+:ivar tokenFilters: The token filters for the index.
+:vartype tokenFilters: list["TokenFilter"]
+:ivar charFilters: The character filters for the index.
+:vartype charFilters: list["CharFilter"]
+:ivar normalizers: The normalizers for the index.
+:vartype normalizers: list["LexicalNormalizer"]
+:ivar encryptionKey: A description of an encryption key that you create in Azure Key Vault.
+ This key is used to provide an additional level of encryption-at-rest for your data when you
+ want full assurance that no one, not even Microsoft, can decrypt your data. Once you have
+ encrypted your data, it will always remain encrypted. The search service will ignore attempts
+ to set this property to null. You can change this property as needed if you want to rotate your
+ encryption key; Your data will be unaffected. Encryption with customer-managed keys is not
+ available for free search services, and is only available for paid services created on or after
+ January 1, 2019.
+:vartype encryptionKey: "SearchResourceEncryptionKey"
+:ivar similarity: The type of similarity algorithm to be used when scoring and ranking the
+ documents matching a search query. The similarity algorithm can only be defined at index
+ creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
+ algorithm is used.
+:vartype similarity: "SimilarityAlgorithm"
+:ivar semantic: Defines parameters for a search index that influence semantic capabilities.
+:vartype semantic: "SemanticSearch"
+:ivar vectorSearch: Contains configuration options related to vector search.
+:vartype vectorSearch: "VectorSearch"
+:ivar permissionFilterOption: A value indicating whether permission filtering is enabled for
+ the index. Known values are: "enabled" and "disabled".
+:vartype permissionFilterOption: Union[str, "SearchIndexPermissionFilterOption"]
+:ivar purviewEnabled: A value indicating whether Purview is enabled for the index.
+:vartype purviewEnabled: bool
+:ivar sharePointConnectorAppRegistration: Configures a SharePoint connector app registration
+ for the index, enabling document-level permissions from SharePoint. If provided, the
+ applicationId and federatedCredentialId properties are required.
+:vartype sharePointConnectorAppRegistration: "SharePointConnectorAppRegistration"
+:ivar oneLakeSecuritySource: Identifies the Microsoft Fabric OneLake lakehouse that the index's
+ documents originate from. Required when any field uses the 'oneLakeParentFolders' or
+ 'oneLakeLakehouseId' permission filter.
+:vartype oneLakeSecuritySource: "OneLakeSecuritySource"
+:ivar ``@odata.etag``: The ETag of the index.
+:vartype ``@odata.etag``: str
+"""
+
+SearchIndexInput = TypedDict(
+    "SearchIndexInput",
+    {
+        "name": Required[str],
+        "description": str,
+        "fields": Required[list["SearchField"]],
+        "graphProfile": "GraphProfile",
+        "scoringProfiles": list["ScoringProfileInput"],
+        "defaultScoringProfile": str,
+        "corsOptions": Optional["CorsOptions"],
+        "suggesters": list["SearchSuggester"],
+        "analyzers": list["LexicalAnalyzer"],
+        "tokenizers": list["LexicalTokenizer"],
+        "tokenFilters": list["TokenFilter"],
+        "charFilters": list["CharFilter"],
+        "normalizers": list["LexicalNormalizer"],
+        "encryptionKey": Optional["SearchResourceEncryptionKey"],
+        "similarity": "SimilarityAlgorithm",
+        "semantic": Optional["SemanticSearch"],
+        "vectorSearch": Optional["VectorSearch"],
+        "permissionFilterOption": Optional[Union[str, "SearchIndexPermissionFilterOption"]],
+        "purviewEnabled": Optional[bool],
+        "sharePointConnectorAppRegistration": "SharePointConnectorAppRegistration",
+        "oneLakeSecuritySource": "OneLakeSecuritySource",
+        "@odata.etag": str,
+    },
+    total=False,
+)
+SearchIndexInput.__doc__ = """Dictionary-style search-index input supporting classic and random scoring, which describes the fields and search behavior of an
+index.
+
+:ivar name: The name of the index. Required.
+:vartype name: str
+:ivar description: The description of the index.
+:vartype description: str
+:ivar fields: The fields of the index. Required.
+:vartype fields: list["SearchField"]
+:ivar graphProfile: Maps edge-list graph roles to this index's fields. Required for
+ search.graph; omitted on ordinary document indexes.
+:vartype graphProfile: "GraphProfile"
+:ivar scoringProfiles: The scoring profiles for the index.
+:vartype scoringProfiles: list["ScoringProfileInput"]
 :ivar defaultScoringProfile: The name of the scoring profile to use if none is specified in the
  query. If this property is not set and no scoring profile is specified in the query, then
  default scoring (tf-idf) will be used.
@@ -7859,9 +7981,18 @@ ScoringFunction = Union[
     DistanceScoringFunction,
     FreshnessScoringFunction,
     MagnitudeScoringFunction,
+    TagScoringFunction,
+]
+
+ScoringFunctionInput = Union[
+    DistanceScoringFunction,
+    FreshnessScoringFunction,
+    MagnitudeScoringFunction,
     RandomScoringFunction,
     TagScoringFunction,
 ]
+"""Classic and random scoring variants for dictionary-style inputs."""
+
 VectorSearchAlgorithmConfiguration = Union[ExhaustiveKnnAlgorithmConfiguration, HnswAlgorithmConfiguration]
 KnowledgeBaseModel = Union[KnowledgeBaseAzureOpenAIModel]
 

@@ -135,7 +135,7 @@ class _SearchIndexClientOperationsMixin(
     @distributed_trace_async
     async def create_or_update_index(
         self,
-        index: Union[_models.SearchIndex, _types.SearchIndex, JSON],
+        index: Union[_models.SearchIndex, _types.SearchIndex, _types.SearchIndexInput, JSON],
         allow_index_downtime: Optional[bool] = None,
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
@@ -144,7 +144,9 @@ class _SearchIndexClientOperationsMixin(
         """Creates a new search index or updates an index if it already exists.
 
         :param index: The SearchIndex object to create or update. Required.
-        :type index: ~azure.search.documents.indexes.models.SearchIndex or TypedDict or JSON
+        :type index: ~azure.search.documents.indexes.models.SearchIndex or
+         ~azure.search.documents.indexes.types.SearchIndex or
+         ~azure.search.documents.indexes.types.SearchIndexInput or JSON
         :param allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
          to be added to an index by taking the index offline for at least a few seconds. This
          temporarily causes indexing and query requests to fail. Performance and write availability of
