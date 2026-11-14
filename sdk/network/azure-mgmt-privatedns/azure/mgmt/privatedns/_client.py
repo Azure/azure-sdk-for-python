@@ -19,7 +19,12 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from ._configuration import PrivateDnsManagementClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import PrivateZonesOperations, RecordSetsOperations, VirtualNetworkLinksOperations
+from .operations import (
+    PrivateDnsResourceReferenceOperations,
+    PrivateZonesOperations,
+    RecordSetsOperations,
+    VirtualNetworkLinksOperations,
+)
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -31,7 +36,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class PrivateDnsManagementClient:
+class PrivateDnsManagementClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Private DNS Management Client.
 
     :ivar record_sets: RecordSetsOperations operations
@@ -40,6 +45,9 @@ class PrivateDnsManagementClient:
     :vartype private_zones: azure.mgmt.privatedns.operations.PrivateZonesOperations
     :ivar virtual_network_links: VirtualNetworkLinksOperations operations
     :vartype virtual_network_links: azure.mgmt.privatedns.operations.VirtualNetworkLinksOperations
+    :ivar private_dns_resource_reference: PrivateDnsResourceReferenceOperations operations
+    :vartype private_dns_resource_reference:
+     azure.mgmt.privatedns.operations.PrivateDnsResourceReferenceOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -49,9 +57,10 @@ class PrivateDnsManagementClient:
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2024-06-01"
-     and None. Default value is None. If not set, the operation's default API version will be used.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-06-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -107,6 +116,9 @@ class PrivateDnsManagementClient:
         self.record_sets = RecordSetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_zones = PrivateZonesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.virtual_network_links = VirtualNetworkLinksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_dns_resource_reference = PrivateDnsResourceReferenceOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
