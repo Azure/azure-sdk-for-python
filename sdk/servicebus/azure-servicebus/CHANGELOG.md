@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Fixed pyAMQP session-window exhaustion on long-lived connections and rejected negative unsigned AMQP values. ([#49232](https://github.com/Azure/azure-sdk-for-python/issues/49232))
+- Fixed pyAMQP receive-window recovery after a link handler raises or is cancelled. Replenishment happens after delivery and only while the session is mapped, so closing sessions do not advertise new receive capacity.
+
 ### Other Changes
 
 ## 7.15.0 (2026-10-06)
