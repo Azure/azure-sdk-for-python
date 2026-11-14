@@ -48,6 +48,9 @@ aio = [
 ext-checksums = [
   "azure-storage-extensions>=0.1.0,<1.0.0",
 ]
+ext-transfer = [
+  "azure-storage-extensionstransfer>=0.1.0,<1.0.0",
+]
 
 [project.urls]
 repository = "https://github.com/Azure/azure-sdk-for-python"

@@ -1109,6 +1109,15 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
     ) -> BlobClient:
         """Creates a new blob from a data source with automatic chunking.
 
+        .. admonition:: Experimental native transfers
+
+            Installing ``pip install "azure-storage-blob[ext-transfer]"`` enables an optional
+            Rust-based extension that could increase performance for synchronous block blob uploads.
+            The extension is experimental, is not intended for production use, and may have breaking
+            changes in minor releases. See the `native transfers section of the README
+            <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob#experimental-native-transfers>`__
+            for limitations, behavior differences, and how to disable native transfers.
+
         :param str name: The blob with which to interact.
         :param data: The blob data to upload.
         :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
@@ -1336,6 +1345,15 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
+
+        .. admonition:: Experimental native transfers
+
+            Installing ``pip install "azure-storage-blob[ext-transfer]"`` enables an optional
+            Rust-based extension that could increase performance for synchronous block blob downloads.
+            The extension is experimental, is not intended for production use, and may have breaking
+            changes in minor releases. See the `native transfers section of the README
+            <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob#experimental-native-transfers>`__
+            for limitations, behavior differences, and how to disable native transfers.
 
         :param str blob: The blob with which to interact.
         :param int offset:

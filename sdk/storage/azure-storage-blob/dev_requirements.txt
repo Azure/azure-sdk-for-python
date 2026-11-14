@@ -2,5 +2,6 @@
 ../../core/azure-core
 ../../identity/azure-identity
 ../azure-storage-extensions
+../azure-storage-extensionstransfer
 azure-mgmt-storage==20.1.0
 aiohttp>=3.13.5
