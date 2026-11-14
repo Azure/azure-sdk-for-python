@@ -1,5 +1,30 @@
 # Release History
 
+## 4.2.0b1 (2026-11-13)
+
+### Features Added
+
+  - Client `ContainerServiceFleetMgmtClient` added operation group `identity_binding_profiles`
+  - Model `UpdateGroup` added property `max_allowed_failures`
+  - Model `UpdateGroupStatus` added property `failure_count`
+  - Model `UpdateGroupStatus` added property `max_allowed_failures`
+  - Model `UpdateRunStatus` added property `failure_count`
+  - Model `UpdateStage` added property `max_allowed_failures`
+  - Model `UpdateStageStatus` added property `failure_count`
+  - Model `UpdateStageStatus` added property `max_allowed_failures`
+  - Added model `AllowedSubject`
+  - Added model `IdentityBindingLabelSelector`
+  - Added enum `IdentityBindingLabelSelectorOperator`
+  - Added model `IdentityBindingLabelSelectorRequirement`
+  - Added model `IdentityBindingManagedIdentityProfile`
+  - Added model `IdentityBindingOidcIssuerProfile`
+  - Added model `IdentityBindingProfile`
+  - Added model `IdentityBindingProfileProperties`
+  - Added enum `IdentityBindingProfileProvisioningState`
+  - Added model `IdentityBindingProfileStatus`
+  - Added model `IdentityBindingProperties`
+  - Added operation group `IdentityBindingProfilesOperations`
+
 ## 4.1.0 (2026-11-11)
 
 ### Features Added

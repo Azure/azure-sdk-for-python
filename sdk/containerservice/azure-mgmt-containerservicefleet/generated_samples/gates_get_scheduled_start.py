@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-11-01/Gates_Get_ScheduledStart.json
+# x-ms-original-file: 2026-11-02-preview/Gates_Get_ScheduledStart.json
 if __name__ == "__main__":
     main()
