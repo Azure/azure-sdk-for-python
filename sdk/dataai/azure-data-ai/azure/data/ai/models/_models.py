@@ -53,22 +53,22 @@ class EmbeddingBadRequestResult(_Model):  # pylint: disable=docstring-keyword-sh
     """The embedding request was not valid. The ``error.code`` identifies the problem:
 
     * `InvalidRequest`: the request isn't supported on this endpoint, for example `inputs` isn't
-    enabled.
+      enabled.
     * `InvalidRequestBody`: malformed JSON, a wrong type, an unknown or snake_case field, or a
-    value outside its allowed
-    set. `error.details` describes each problem.
+      value outside its allowed
+      set. `error.details` describes each problem.
     * `EMBEDDING_INPUT_INVALID`: an item's kind, source, size, format or count, or the model isn't
-    valid.
-    Text over the model's token limit isn't an error; see `EMBEDDING_INPUT_TRUNCATED`.
+      valid.
+      Text over the model's token limit isn't an error; see `EMBEDDING_INPUT_TRUNCATED`.
     * `EMBEDDING_URL_NOT_ALLOWED`: `input_images`, a link in an image's `content`, a `url` where
-    blob inputs are off or
-    from an API-key caller, or a `sasToken` that isn't a read-only, https-only user delegation SAS
-    for one blob signed
-    by the caller. Nothing is read.
+      blob inputs are off or
+      from an API-key caller, or a `sasToken` that isn't a read-only, https-only user delegation SAS
+      for one blob signed
+      by the caller. Nothing is read.
     * `EMBEDDING_BLOB_READ_FAILED`: Storage refused the blob, for example because of an expired SAS
-    or a missing blob.
+      or a missing blob.
     * `EMBEDDING_DELIVERY_NOT_SUPPORTED`: `delivery: link` isn't enabled on this endpoint. Use
-    `inline`.
+      `inline`.
 
     :ivar error: The error object. Required.
     :vartype error: ~azure.data.ai.models.ProblemDetails
