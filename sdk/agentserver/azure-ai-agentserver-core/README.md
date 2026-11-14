@@ -296,6 +296,33 @@ request with the same `restore_id` does not invoke the handler again, while a
 new `restore_id` for the same session starts a new restore cycle. The server
 rejects attempts to reuse a restored process for a different session.
 
+Every sandbox restored from a snapshot starts with a copy of the same process
+memory, so the host refreshes state that would otherwise repeat across sessions:
+
+- After a successful before-snapshot cycle, the host flushes the global
+  OpenTelemetry trace, metric and log providers, so telemetry buffered at capture
+  isn't exported again by every restored sandbox. The host waits up to 10 seconds
+  and never fails the capture because of a flush problem; it logs a warning instead.
+- At the start of every after-restore request, the host adds operating-system
+  entropy to OpenSSL (the `ssl` module and, if loaded, the OpenSSL bundled with
+  `cryptography`). Before protocol and application restore handlers run for a new
+  `restore_id`, it reseeds Python's global `random` generator, which also produces
+  OpenTelemetry trace and span IDs, and NumPy's legacy global generator if
+  `numpy.random` is loaded.
+
+For deterministic randomness, use your own generator instances, such as
+`random.Random(seed)` or `numpy.random.default_rng(seed)`. Don't seed the
+global `random` generator: OpenTelemetry trace IDs and SDK retry jitter share it,
+so a fixed global seed makes those values repeat across sessions. Generator
+instances, IDs and connections that your application creates before the snapshot
+are copied too; recreate them in your after-restore handler.
+
+Telemetry recorded after the before-snapshot flush, such as that request's own
+completion log line, can still be exported once per restored sandbox. Metrics that
+use cumulative temporality (the OTLP exporter default) keep totals counted before
+the snapshot; record such metrics only after restore, or set
+`OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=delta`.
+
 When the host's protocols request task execution, the SDK prepares a session-bound
 TaskManager before the application `after_restore_handler`. Invocations uses
 `set_resilient_tasks_enabled(True)`; Responses independently uses

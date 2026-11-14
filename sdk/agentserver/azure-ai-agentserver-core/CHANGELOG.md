@@ -18,7 +18,26 @@
   owned workers to stop before incompatible configuration rollback, and stop
   managers created after startup at shutdown.
 
+### Breaking Changes
+
+- After a memory snapshot restore, the host reseeds Python's global `random`
+  generator and, if `numpy.random` is loaded, NumPy's legacy global generator
+  before restore handlers run. A global seed set before the snapshot no longer
+  carries into restored sessions. For deterministic randomness, use
+  `random.Random(seed)` or `numpy.random.default_rng(seed)` instead of seeding
+  the global generators.
+
 ### Bugs Fixed
+
+- Prevent sandboxes restored from the same memory snapshot from producing the
+  same Python `random`, NumPy, OpenSSL (`ssl` and `cryptography`) output and
+  OpenTelemetry trace and span IDs. Every after-restore request adds
+  operating-system entropy to OpenSSL, and each new restore reseeds the Python
+  and NumPy global generators from `os.urandom`.
+- Flush OpenTelemetry trace, metric and log providers after a successful
+  before-snapshot cycle, so telemetry buffered at capture isn't exported again
+  by every restored sandbox. The flush waits at most 10 seconds and never fails
+  the capture.
 
 - Track task identity throughout inline start/run claims and positional active-
   run lookup, preventing recovery from dispatching work before claim registration.

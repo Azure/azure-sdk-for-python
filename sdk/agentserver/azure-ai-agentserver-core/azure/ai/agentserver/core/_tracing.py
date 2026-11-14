@@ -36,9 +36,11 @@ real spans.  Azure Monitor export is optional (auto-configured by the distro).
 import asyncio  # pylint: disable=do-not-import-asyncio
 from collections.abc import AsyncIterable, AsyncIterator  # pylint: disable=import-error
 from contextlib import contextmanager, nullcontext
+import contextvars
 import logging
 import os
 import threading
+import time
 from typing import Any, Optional
 
 from anyio import CancelScope
@@ -703,6 +705,176 @@ def schedule_flush_spans(timeout_millis: int = 5000) -> None:
         _bg_flush_pending_timeout_millis = max(_bg_flush_pending_timeout_millis, timeout_millis)
         return
     _bg_flush_task = loop.create_task(_coalesced_flush(timeout_millis))
+
+
+# Upper bound on how long the before-snapshot endpoint waits for telemetry to
+# drain. OpenTelemetry batch processors ignore ``force_flush`` timeouts, so this
+# bounds the wait, not the export thread itself.
+_SNAPSHOT_FLUSH_TIMEOUT_SECONDS = 10.0
+
+
+def _get_snapshot_flush_providers() -> tuple[list[tuple[str, Any]], Any]:
+    """Return the global providers to flush before the logger, and the logger provider.
+
+    :return: ``(name, provider)`` pairs for traces and metrics, and the logger
+        provider (or ``None`` when the logs API is unavailable).
+    :rtype: tuple[list[tuple[str, Any]], Any]
+    """
+    providers: list[tuple[str, Any]] = [("traces", trace.get_tracer_provider())]
+    try:
+        from opentelemetry import metrics as _otel_metrics  # pylint: disable=import-outside-toplevel
+
+        providers.append(("metrics", _otel_metrics.get_meter_provider()))
+    except ImportError:
+        pass
+    try:
+        from opentelemetry._logs import (  # pylint: disable=import-outside-toplevel,no-cross-package-private-import
+            get_logger_provider,
+        )
+
+        logger_provider = get_logger_provider()
+    except ImportError:
+        logger_provider = None
+    return providers, logger_provider
+
+
+def _force_flush_provider(provider: Any, timeout_millis: int) -> str:
+    """Call ``force_flush`` on one provider and describe the outcome.
+
+    :param provider: OpenTelemetry tracer, meter or logger provider.
+    :type provider: Any
+    :param timeout_millis: Timeout passed to ``force_flush``.
+    :type timeout_millis: int
+    :return: ``"returned"``, ``"unsupported"``, ``"returned False"`` or a failure description.
+    :rtype: str
+    """
+    flush = getattr(provider, "force_flush", None)
+    if flush is None:
+        return "unsupported"
+    try:
+        return "returned False" if flush(timeout_millis) is False else "returned"
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        return f"failed ({type(exc).__name__})"
+
+
+def _flush_providers_for_snapshot(timeout_millis: int) -> None:
+    """Flush traces and metrics, log a summary, then flush logs last.
+
+    All providers share one ``timeout_millis`` budget; each ``force_flush`` call
+    receives the time remaining, but at least 1 ms. The summary is logged before
+    the final log flush so it is not left in the buffer that the snapshot captures.
+
+    :param timeout_millis: Total time budget for all ``force_flush`` calls.
+    :type timeout_millis: int
+    """
+    deadline = time.monotonic() + timeout_millis / 1000
+
+    def _remaining_millis() -> int:
+        return max(1, int((deadline - time.monotonic()) * 1000))
+
+    providers, logger_provider = _get_snapshot_flush_providers()
+    outcomes = {name: _force_flush_provider(provider, _remaining_millis()) for name, provider in providers}
+    flush_logs = callable(getattr(logger_provider, "force_flush", None))
+    if logger_provider is not None:
+        outcomes["logs"] = "pending" if flush_logs else "unsupported"
+    summary = ", ".join(f"{name}={outcome}" for name, outcome in outcomes.items())
+    if any(outcome not in ("returned", "unsupported", "pending") for outcome in outcomes.values()):
+        logger.warning("Telemetry flush before memory snapshot: %s", summary)
+    else:
+        logger.info("Telemetry flush before memory snapshot: %s", summary)
+    if flush_logs:
+        logs_outcome = _force_flush_provider(logger_provider, _remaining_millis())
+        if logs_outcome != "returned":
+            logger.warning("Log flush before memory snapshot: %s", logs_outcome)
+
+
+def _start_snapshot_flush_thread(loop: asyncio.AbstractEventLoop, timeout_millis: int) -> "asyncio.Future[None]":
+    """Run the snapshot flush on a dedicated thread and return a future for its completion.
+
+    A dedicated thread starts immediately even when the default executor is
+    busy, and copying the context keeps the summary log correlated with the
+    before-snapshot request.
+
+    :param loop: Event loop that owns the returned future.
+    :type loop: asyncio.AbstractEventLoop
+    :param timeout_millis: Total time budget for the flush.
+    :type timeout_millis: int
+    :return: A future that completes when the flush finishes.
+    :rtype: asyncio.Future[None]
+    """
+    future: "asyncio.Future[None]" = loop.create_future()
+    # Retrieve a late failure so a flush that outlives the wait never logs
+    # "exception was never retrieved".
+    future.add_done_callback(lambda done: None if done.cancelled() else done.exception())
+    context = contextvars.copy_context()
+
+    def _complete(error: Optional[Exception]) -> None:
+        if future.done():
+            return
+        if error is None:
+            future.set_result(None)
+        else:
+            future.set_exception(error)
+
+    def _run() -> None:
+        error: Optional[Exception] = None
+        try:
+            context.run(_flush_providers_for_snapshot, timeout_millis)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            error = exc
+        try:
+            loop.call_soon_threadsafe(_complete, error)
+        except RuntimeError:
+            pass  # The event loop closed while the flush was running.
+
+    threading.Thread(target=_run, name="agentserver-snapshot-flush", daemon=True).start()
+    return future
+
+
+async def flush_providers_before_snapshot(timeout_seconds: Optional[float] = None) -> None:
+    """Export buffered telemetry before the platform captures a memory snapshot.
+
+    Records still buffered at capture time would otherwise be exported again by
+    every sandbox restored from the snapshot. The flush runs on a dedicated
+    thread and is shielded from cancellation. It never raises for flush
+    failures: if the wait exceeds ``timeout_seconds``, a warning is logged and
+    the export may still be in flight when the snapshot is captured.
+
+    :param timeout_seconds: Maximum time to wait for the flush. Defaults to 10 seconds.
+    :type timeout_seconds: float or None
+    """
+    if timeout_seconds is None:
+        timeout_seconds = _SNAPSHOT_FLUSH_TIMEOUT_SECONDS
+    loop = asyncio.get_running_loop()
+    try:
+        future = _start_snapshot_flush_thread(loop, int(timeout_seconds * 1000))
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        logger.warning("Could not start the telemetry flush before memory snapshot: %s", type(exc).__name__)
+        return
+    deadline = loop.time() + timeout_seconds
+    cancellation: Optional[asyncio.CancelledError] = None
+    with CancelScope(shield=True):
+        while not future.done():
+            remaining = deadline - loop.time()
+            if remaining <= 0:
+                logger.warning(
+                    "Telemetry flush before memory snapshot did not finish within %g s; "
+                    "an export may still be in flight when the snapshot is captured",
+                    timeout_seconds,
+                )
+                break
+            try:
+                await asyncio.wait_for(asyncio.shield(future), remaining)
+            except asyncio.TimeoutError:
+                continue
+            except asyncio.CancelledError as exc:
+                cancellation = exc
+            except Exception:  # pylint: disable=broad-exception-caught
+                break  # Reported below.
+    if future.done() and not future.cancelled() and future.exception() is not None:
+        logger.warning("Telemetry flush before memory snapshot failed: %s", type(future.exception()).__name__)
+    if cancellation is not None:
+        raise cancellation
 
 
 def record_error(span: Any, exc: BaseException) -> None:
