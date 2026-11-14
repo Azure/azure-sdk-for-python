@@ -13,7 +13,7 @@ authors = [
 description = "Microsoft Azure Keyvault Management Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -22,6 +22,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
 ]
 requires-python = ">=3.10"
 keywords = [
@@ -79,7 +80,7 @@ package_name = "azure-mgmt-keyvault"
 package_nspkg = "azure-mgmt-nspkg"
 package_pprint_name = "Key Vault Management"
 package_doc_id = "?view=azure-python-preview"
-is_stable = true
+is_stable = false
 is_arm = true
 sample_link = ""
 title = "KeyVaultManagementClient"

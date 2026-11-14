@@ -27,6 +27,7 @@ from .operations import (
     MHSMRegionsOperations,
     ManagedHsmKeysOperations,
     ManagedHsmsOperations,
+    NetworkSecurityPerimeterConfigurationsOperations,
     Operations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
@@ -55,6 +56,10 @@ class KeyVaultManagementClient:  # pylint: disable=too-many-instance-attributes,
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.keyvault.aio.operations.PrivateEndpointConnectionsOperations
+    :ivar network_security_perimeter_configurations:
+     NetworkSecurityPerimeterConfigurationsOperations operations
+    :vartype network_security_perimeter_configurations:
+     azure.mgmt.keyvault.aio.operations.NetworkSecurityPerimeterConfigurationsOperations
     :ivar managed_hsms: ManagedHsmsOperations operations
     :vartype managed_hsms: azure.mgmt.keyvault.aio.operations.ManagedHsmsOperations
     :ivar secrets: SecretsOperations operations
@@ -83,9 +88,10 @@ class KeyVaultManagementClient:  # pylint: disable=too-many-instance-attributes,
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-05-15"
-     and None. Default value is None. If not set, the operation's default API version will be used.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-10-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -143,6 +149,9 @@ class KeyVaultManagementClient:  # pylint: disable=too-many-instance-attributes,
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.vaults = VaultsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_security_perimeter_configurations = NetworkSecurityPerimeterConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_hsms = ManagedHsmsOperations(self._client, self._config, self._serialize, self._deserialize)

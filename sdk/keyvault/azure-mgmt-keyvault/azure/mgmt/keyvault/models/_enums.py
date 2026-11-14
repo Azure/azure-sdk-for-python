@@ -21,6 +21,15 @@ class AccessPolicyUpdateKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """REMOVE."""
 
 
+class AccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Direction of Access Rule."""
+
+    INBOUND = "Inbound"
+    """Applies to inbound network traffic to the secured resources."""
+    OUTBOUND = "Outbound"
+    """Applies to outbound network traffic from the secured resources."""
+
+
 class ActionsRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A message indicating if changes on the service provider require any updates on the consumer."""
 
@@ -133,6 +142,22 @@ class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a managed identity."""
     KEY = "Key"
     """The entity was created by a key."""
+
+
+class IssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of issue."""
+
+    UNKNOWN = "Unknown"
+    """Unknown issue type."""
+    CONFIGURATION_PROPAGATION_FAILURE = "ConfigurationPropagationFailure"
+    """An error occurred while applying the network security perimeter (NSP) configuration."""
+    MISSING_PERIMETER_CONFIGURATION = "MissingPerimeterConfiguration"
+    """A network connectivity issue is happening on the resource which could be addressed either by
+    adding new resources to the network security perimeter (NSP) or by modifying access rules."""
+    MISSING_IDENTITY_CONFIGURATION = "MissingIdentityConfiguration"
+    """An managed identity hasn't been associated with the resource. The resource will still be able
+    to validate inbound traffic from the network security perimeter (NSP) or matching inbound
+    access rules, but it won't be able to perform outbound access as a member of the NSP."""
 
 
 class JsonWebKeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -315,6 +340,29 @@ class NetworkRuleBypassOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """NONE."""
 
 
+class NetworkSecurityPerimeterConfigurationProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Provisioning state of a network security perimeter configuration that is being created or
+    updated.
+    """
+
+    SUCCEEDED = "Succeeded"
+    """The configuration was provisioned successfully."""
+    CREATING = "Creating"
+    """The configuration is being created."""
+    UPDATING = "Updating"
+    """The configuration is being updated."""
+    DELETING = "Deleting"
+    """The configuration is being deleted."""
+    ACCEPTED = "Accepted"
+    """The configuration request was accepted and provisioning has not started yet."""
+    FAILED = "Failed"
+    """The configuration failed to provision."""
+    CANCELED = "Canceled"
+    """The configuration provisioning was canceled."""
+
+
 class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
     str, Enum, metaclass=CaseInsensitiveEnumMeta
 ):
@@ -388,6 +436,17 @@ class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ALREADY_EXISTS."""
 
 
+class ResourceAssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access mode of the resource association."""
+
+    ENFORCED = "Enforced"
+    """Enforced access mode - traffic to the resource that failed access checks is blocked."""
+    LEARNING = "Learning"
+    """Learning access mode - traffic to the resource is enabled for analysis but not blocked."""
+    AUDIT = "Audit"
+    """Audit access mode - traffic to the resource that fails access checks is logged but not blocked."""
+
+
 class SecretPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of SecretPermissions."""
 
@@ -409,6 +468,15 @@ class SecretPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RECOVER."""
     PURGE = "purge"
     """PURGE."""
+
+
+class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Severity of the issue."""
+
+    WARNING = "Warning"
+    """The issue is a warning and does not prevent the configuration from being applied."""
+    ERROR = "Error"
+    """The issue is an error and prevents the configuration from being applied."""
 
 
 class SkuFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -460,6 +528,33 @@ class StoragePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GETSAS."""
     DELETESAS = "deletesas"
     """DELETESAS."""
+
+
+class TokenBindingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This specifies whether token binding is disabled, enabled or enforced."""
+
+    ENFORCED = "Enforced"
+    """Token binding is enforced for the vault. Only bounded tokens will be accepted. Bearer tokens
+    will be rejected."""
+    NOT_ENFORCED = "NotEnforced"
+    """Token binding is not enforced for the vault. Bounded tokens will be rejected."""
+
+
+class TokenBindingStrength(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Must be one of the following values \"NoValidation\", \"Unattested\", \"AttestedTrustedLaunch\",
+    \"AttestedConfidential\". Strength of the token binding increases with each value in that order.
+    """
+
+    NO_VALIDATION = "NoValidation"
+    """This is default when token binding is not enabled."""
+    UNATTESTED = "Unattested"
+    """No attestation proof is required for the bounded token."""
+    ATTESTED_TRUSTED_LAUNCH = "AttestedTrustedLaunch"
+    """Bounded Entra token must originate from a trusted launch VM with attestation proof from the
+    attestation authority like Microsoft Azure Attestation."""
+    ATTESTED_CONFIDENTIAL = "AttestedConfidential"
+    """Bounded Entra token must originate from a confidential VM with attestation proof from the
+    attestation authority like Microsoft Azure Attestation."""
 
 
 class VaultProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
