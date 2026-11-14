@@ -1,4 +1,10 @@
 # Azure Cognitive Services Health Insights Radiology Insights client library for Python
+
+> **Proof only: DO NOT MERGE OR RELEASE.** Radiology Insights is retired. This
+> regenerated offline example requires Python >=3.10 and azure-core >=1.37.0.
+> See the [LRO result proof](tests/unit/lro_result_proof/README.md) for reproduction
+> and compatibility limits; the service documentation below is historical.
+
 [Health Insights][health_insights] is an Azure Applied AI Service built with the Azure Cognitive Services Framework, that leverages multiple Cognitive Services, Healthcare API services and other Azure resources.
 
 [Radiology Insights][radiology_insights_docs] is a model that aims to provide quality checks as feedback on errors and inconsistencies (mismatches) and ensures critical findings are identified and communicated using the full context of the report. Follow-up recommendations and clinical findings with measurements (sizes) documented by the radiologist are also identified.
@@ -7,7 +13,7 @@
 
 ### Prequisites
 
-- [Python 3.8+][python] is required to use this package.
+- [Python 3.10+][python] is required to use this proof package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Cognitive Services Health Insights instance.
 
