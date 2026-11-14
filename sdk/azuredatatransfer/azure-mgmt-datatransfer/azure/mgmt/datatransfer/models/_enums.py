@@ -59,6 +59,21 @@ class Casing(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     in \"hello world\"."""
 
 
+class CommonTransferFlowStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the storage transfer flow."""
+
+    AWAITING_APPROVAL = "AwaitingApproval"
+    """This flow has been created but is under review by the admin approver."""
+    APPROVED_WAITING_TO_BE_LINKED = "ApprovedWaitingToBeLinked"
+    """This flow has been approved by the admin approver and is waiting for the remote side to link."""
+    ENABLED = "Enabled"
+    """This flow has been enabled and is ready to send or receive data."""
+    DISABLED = "Disabled"
+    """This flow has been disabled."""
+    REJECTED = "Rejected"
+    """This flow has been rejected by the admin approver and cannot be used."""
+
+
 class ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the connection."""
 
@@ -384,8 +399,21 @@ class TargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The action executing is targeting a connection."""
     FLOW_TYPE = "FlowType"
     """The action executing is targeting a flow type."""
+    STORAGE_TRANSFER_FLOW = "StorageTransferFlow"
+    """The action executing is targeting a storage flow."""
+    MESSAGING_TRANSFER_FLOW = "MessagingTransferFlow"
+    """The action executing is targeting a messaging flow."""
     FLOW_PROFILE = "FlowProfile"
     """The action executing is targeting a flow profile."""
+
+
+class TransferRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Transfer role indicating the role of data movement."""
+
+    SOURCE = "Source"
+    """The role is on the source side for the paired flow."""
+    DESTINATION = "Destination"
+    """The role is on the destination side for the paired flow."""
 
 
 class ValidateSchemaStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
