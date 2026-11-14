@@ -250,6 +250,41 @@ async def test_retry_seekable_file(http_request):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_no_retry_consumed_generator_body(http_request):
+    class MockTransport(AsyncHttpTransport):
+        def __init__(self):
+            self.bodies = []
+
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        async def close(self):
+            pass
+
+        async def open(self):
+            pass
+
+        async def send(self, request, **kwargs):  # type: (PipelineRequest, Any) -> PipelineResponse
+            self.bodies.append(b"".join([chunk async for chunk in request.body]))
+            response = HttpResponse(request, None)
+            response.status_code = 503 if len(self.bodies) == 1 else 200
+            return response
+
+    async def body():
+        yield b"part1"
+        yield b"part2"
+
+    http_request = http_request("PUT", "http://localhost/")
+    http_request.set_streamed_data_body(body())
+    transport = MockTransport()
+    pipeline = AsyncPipeline(transport, [AsyncRetryPolicy(retry_backoff_factor=0)])
+    response = await pipeline.run(http_request)
+    assert transport.bodies == [b"part1part2"]
+    assert response.http_response.status_code == 503
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_retry_timeout(http_request):
     timeout = 1
 

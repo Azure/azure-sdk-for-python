@@ -332,6 +332,9 @@ class RetryPolicyBase:
             except (UnsupportedOperation, ValueError, AttributeError):
                 # if body is not seekable, then retry would not work
                 return False
+        elif hasattr(response.http_request.body, "__next__") or hasattr(response.http_request.body, "__anext__"):
+            # an iterator body was consumed by the previous attempt and cannot be rewound
+            return False
         file_positions = settings.get("file_positions")
         if response.http_request.files and file_positions:
             try:
