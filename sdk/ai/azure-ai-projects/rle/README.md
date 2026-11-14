@@ -26,7 +26,7 @@ Version selection follows `--version`, then `AZURE_AI_PROJECTS_VERSION`, then
 the manifest's `latest`. Pin an exact version listed in the manifest with:
 
 ```powershell
-python install_rle_sdk.py --version 2.7.13b1
+python install_rle_sdk.py --version 2.7.14b1
 ```
 
 Unavailable versions and checksum mismatches fail installation; there is no
@@ -355,3 +355,38 @@ Merging this artifact change into `rle-releases` selects `2.7.13b1` as `latest`.
 This is an RLE preview distribution, not a PyPI publication, backend deployment
 or live training qualification. Existing environments and consumer images must
 install this wheel to receive the new defaults.
+
+## Version 2.7.14b1
+
+This preview adds optional typed `HarnessConfiguration.opencode` settings for
+Harbor OpenCode rollouts: package version, context/output limits, temperature,
+compaction and built-in web tools. Settings survive synchronous/asynchronous HTTP
+and shared-session requests. Invalid settings fail before submission; omitted
+settings preserve existing behavior. Explicit `false` and zero temperature are
+retained. Web-tool switches are not a network-isolation policy.
+
+The wheel is built from merged source commit
+[`3b5b08277bc0ad7e1f943483f614cfc8f9ed5299`](https://github.com/sujit-kamireddy/azure-sdk-for-python/commit/3b5b08277bc0ad7e1f943483f614cfc8f9ed5299)
+in [source PR #23](https://github.com/sujit-kamireddy/azure-sdk-for-python/pull/23),
+with only the staged package version overridden to `2.7.14b1`.
+It retains the 128-call admission limit, 90-minute default post-admission timeout,
+64 MiB V4 result-download budget and explicit caller overrides.
+
+The wheel is 611286 bytes with SHA-256
+`080f5837574a9ada452847721944b3807b1bc1a6468bd0f18318e6d426cf17c1`.
+An isolated installation passed 734 offline rollout/model tests; all 92
+release-tool tests passed. All 63 packaged Python files match the pinned merged
+source except for the release version, dependencies are unchanged, and all 14
+registry wheels pass metadata, integrity and checksum validation. The 13
+historical entries and wheels are preserved.
+
+The new settings require matching service and Harbor worker support in the
+selected region, including all serving replicas. An SDK upgrade alone does not
+enable that support. Older HTTP backends reject the unknown `opencode` field;
+there is no automatic region detection or fallback. Training support for these
+harness settings is deferred.
+
+Merging this artifact change into `rle-releases` selects `2.7.14b1` as `latest`.
+This is an RLE preview distribution, not a PyPI publication, backend deployment
+or live Harbor/training qualification. Existing Python environments and consumer
+images must install the new wheel to consume it.
