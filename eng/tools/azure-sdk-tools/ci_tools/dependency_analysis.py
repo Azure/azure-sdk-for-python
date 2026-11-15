@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import argparse
-from datetime import datetime
+from datetime import datetime, timezone
 import glob
 import io
 import json
@@ -346,7 +346,7 @@ def analyze_dependencies() -> None:
         render_report(
             args.out,
             {
-                "curtime": datetime.utcnow(),
+                "curtime": datetime.now(timezone.utc).replace(tzinfo=None),
                 "dependencies": dependencies,  # dictionary that contains dependency packages and the specifiers each packages takes on them
                 "env": os.environ,
                 "external": external,  # list of requirements that are external
