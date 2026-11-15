@@ -26,7 +26,7 @@ Version selection follows `--version`, then `AZURE_AI_PROJECTS_VERSION`, then
 the manifest's `latest`. Pin an exact version listed in the manifest with:
 
 ```powershell
-python install_rle_sdk.py --version 2.7.14b1
+python install_rle_sdk.py --version 2.7.15b1
 ```
 
 Unavailable versions and checksum mismatches fail installation; there is no
@@ -390,3 +390,42 @@ Merging this artifact change into `rle-releases` selects `2.7.14b1` as `latest`.
 This is an RLE preview distribution, not a PyPI publication, backend deployment
 or live Harbor/training qualification. Existing Python environments and consumer
 images must install the new wheel to consume it.
+
+## Version 2.7.15b1
+
+This preview adds typed OpenCode provider timeout settings through
+`rle.OpenCodeProviderOptionsConfiguration`:
+
+```toml
+[harness.opencode.options]
+header_timeout = false
+chunk_timeout = 60000
+```
+
+Each optional timer accepts `false` to disable it, or positive integer
+milliseconds up to `2147483647`. Omitted timers retain the configured adapter's
+disabled defaults. Explicit settings override task/image provider options and
+survive sync/async HTTP and queued/WebSocket requests. Invalid values and unknown
+keys fail before submission. Overall rollout and agent deadlines are unchanged.
+Legacy runs without OpenCode configuration and other provider options are
+unchanged.
+
+The wheel is built from merged SDK source
+`4fd10fee5eeaeb83c3be7e785f6aec1d3288be94` in
+`sujit-kamireddy/azure-sdk-for-python`, including source PR #24. Only the staged
+package version is overridden to `2.7.15b1`; historical wheels remain available.
+The wheel is 611875 bytes with SHA-256
+`ea576faaa8ce5d584783fc2f1f9b56513ae7ee9d1eec43d46e7438a927d52a3f`.
+
+The installed-wheel offline rollout/model suite and release-tool suite passed
+all 857 tests. All 63 packaged Python files match the pinned source except for
+the release version; dependencies are unchanged. All 15 registry wheels pass
+metadata, integrity and checksum validation, and all 14 historical entries and
+wheels are preserved.
+
+The selected region requires matching service and Harbor worker support.
+Installing this SDK does not deploy that support or modify existing Python
+environments or consumer images. Training support for these harness settings
+remains deferred. Merging this artifact change into `rle-releases` selects
+`2.7.15b1` as `latest`. This is an RLE preview distribution, not a PyPI
+publication or live backend qualification.
