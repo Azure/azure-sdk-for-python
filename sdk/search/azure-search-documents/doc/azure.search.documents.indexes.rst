@@ -30,26 +30,27 @@ azure.search.documents.indexes.types module
    :show-inheritance:
    :undoc-members:
    :exclude-members: AIServicesAccountIdentity, AIServicesAccountKey, AsciiFoldingTokenFilter, AzureBlobKnowledgeSource,
-      AzureOpenAIEmbeddingSkill, BM25SimilarityAlgorithm, ChatCompletionSkill, CjkBigramTokenFilter,
+      AzureMachineLearningSkill, AzureOpenAIEmbeddingSkill, BM25SimilarityAlgorithm, ChatCompletionSkill, CjkBigramTokenFilter,
       ClassicSimilarityAlgorithm, ClassicTokenizer, CognitiveServicesAccountKey, CommonGramTokenFilter,
       ConditionalSkill, ContentUnderstandingSkill, CustomAnalyzer, CustomEntityLookupSkill, CustomNormalizer,
       DefaultCognitiveServicesAccount, DictionaryDecompounderTokenFilter, DocumentExtractionSkill,
       DocumentIntelligenceLayoutSkill, EdgeNGramTokenFilter, EdgeNGramTokenFilterV2, EdgeNGramTokenizer,
-      ElisionTokenFilter, EntityLinkingSkill, EntityRecognitionSkillV3, FileKnowledgeSource,
+      ElisionTokenFilter, EntityLinkingSkill, EntityRecognitionSkillV3, FabricDataAgentKnowledgeSource,
+      FabricOntologyKnowledgeSource, FileKnowledgeSource,
       HighWaterMarkChangeDetectionPolicy, ImageAnalysisSkill, IndexedOneLakeKnowledgeSource,
       IndexedSharePointKnowledgeSource, IndexedSqlKnowledgeSource, KeepTokenFilter, KeyPhraseExtractionSkill,
-      KeywordMarkerTokenFilter, KeywordTokenizer, KeywordTokenizerV2, KnowledgeBase, LanguageDetectionSkill,
+      KeywordMarkerTokenFilter, KeywordTokenizer, KeywordTokenizerV2, KnowledgeBase, KnowledgeBaseInput, LanguageDetectionSkill,
       LengthTokenFilter, LimitTokenFilter, LuceneStandardAnalyzer, LuceneStandardTokenizer, LuceneStandardTokenizerV2,
-      MappingCharFilter, MergeSkill, MicrosoftLanguageStemmingTokenizer, MicrosoftLanguageTokenizer, NGramTokenFilter,
+      MappingCharFilter, McpServerKnowledgeSource, MergeSkill, MicrosoftLanguageStemmingTokenizer, MicrosoftLanguageTokenizer, NGramTokenFilter,
       NGramTokenFilterV2, NGramTokenizer, NativeBlobSoftDeleteDeletionDetectionPolicy, OcrSkill, PIIDetectionSkill,
       PathHierarchyTokenizerV2, PatternAnalyzer, PatternCaptureTokenFilter, PatternReplaceCharFilter,
-      PatternReplaceTokenFilter, PatternTokenizer, PhoneticTokenFilter, SearchAlias, SearchIndex,
+      PatternReplaceTokenFilter, PatternTokenizer, PhoneticTokenFilter, RemoteSharePointKnowledgeSource, SearchAlias, SearchIndex, SearchIndexInput,
       SearchIndexKnowledgeSource, SearchIndexer, SearchIndexerDataNoneIdentity, SearchIndexerDataSourceConnection,
       SearchIndexerDataUserAssignedIdentity, SearchIndexerSkillset, SentimentSkillV3, ShaperSkill, ShingleTokenFilter,
       SnowballTokenFilter, SoftDeleteColumnDeletionDetectionPolicy, SplitSkill, SqlIntegratedChangeTrackingPolicy,
       StemmerOverrideTokenFilter, StemmerTokenFilter, StopAnalyzer, StopwordsTokenFilter, SynonymMap,
-      SynonymTokenFilter, TextTranslationSkill, TruncateTokenFilter, UaxUrlEmailTokenizer, UniqueTokenFilter,
-      WebApiSkill, WebKnowledgeSource, WordDelimiterTokenFilter
+      SynonymTokenFilter, TextTranslationSkill, TruncateTokenFilter, UaxUrlEmailTokenizer, UniqueTokenFilter, VisionVectorizeSkill,
+      WebApiSkill, WebKnowledgeSource, WordDelimiterTokenFilter, WorkIQKnowledgeSource
 
 .. autoclass:: azure.search.documents.indexes.types.AIServicesAccountIdentity
    :inherited-members:
@@ -78,6 +79,13 @@ azure.search.documents.indexes.types module
    :show-inheritance:
    :undoc-members:
    :exclude-members: @odata.etag
+
+.. autoclass:: azure.search.documents.indexes.types.AzureMachineLearningSkill
+   :inherited-members:
+   :members:
+   :show-inheritance:
+   :undoc-members:
+   :exclude-members: @odata.type
 
 .. autoclass:: azure.search.documents.indexes.types.AzureOpenAIEmbeddingSkill
    :inherited-members:
@@ -240,6 +248,20 @@ azure.search.documents.indexes.types module
    :undoc-members:
    :exclude-members: @odata.type
 
+.. autoclass:: azure.search.documents.indexes.types.FabricDataAgentKnowledgeSource
+   :inherited-members:
+   :members:
+   :show-inheritance:
+   :undoc-members:
+   :exclude-members: @odata.etag
+
+.. autoclass:: azure.search.documents.indexes.types.FabricOntologyKnowledgeSource
+   :inherited-members:
+   :members:
+   :show-inheritance:
+   :undoc-members:
+   :exclude-members: @odata.etag
+
 .. autoclass:: azure.search.documents.indexes.types.FileKnowledgeSource
    :inherited-members:
    :members:
@@ -324,6 +346,13 @@ azure.search.documents.indexes.types module
    :undoc-members:
    :exclude-members: @odata.etag
 
+.. autoclass:: azure.search.documents.indexes.types.KnowledgeBaseInput
+   :inherited-members:
+   :members:
+   :show-inheritance:
+   :undoc-members:
+   :exclude-members: @odata.etag
+
 .. autoclass:: azure.search.documents.indexes.types.LanguageDetectionSkill
    :inherited-members:
    :members:
@@ -372,6 +401,13 @@ azure.search.documents.indexes.types module
    :show-inheritance:
    :undoc-members:
    :exclude-members: @odata.type
+
+.. autoclass:: azure.search.documents.indexes.types.McpServerKnowledgeSource
+   :inherited-members:
+   :members:
+   :show-inheritance:
+   :undoc-members:
+   :exclude-members: @odata.etag
 
 .. autoclass:: azure.search.documents.indexes.types.MergeSkill
    :inherited-members:
@@ -485,6 +521,13 @@ azure.search.documents.indexes.types module
    :undoc-members:
    :exclude-members: @odata.type
 
+.. autoclass:: azure.search.documents.indexes.types.RemoteSharePointKnowledgeSource
+   :inherited-members:
+   :members:
+   :show-inheritance:
+   :undoc-members:
+   :exclude-members: @odata.etag
+
 .. autoclass:: azure.search.documents.indexes.types.SearchAlias
    :inherited-members:
    :members:
@@ -493,6 +536,13 @@ azure.search.documents.indexes.types module
    :exclude-members: @odata.etag
 
 .. autoclass:: azure.search.documents.indexes.types.SearchIndex
+   :inherited-members:
+   :members:
+   :show-inheritance:
+   :undoc-members:
+   :exclude-members: @odata.etag
+
+.. autoclass:: azure.search.documents.indexes.types.SearchIndexInput
    :inherited-members:
    :members:
    :show-inheritance:
@@ -660,6 +710,13 @@ azure.search.documents.indexes.types module
    :undoc-members:
    :exclude-members: @odata.type
 
+.. autoclass:: azure.search.documents.indexes.types.VisionVectorizeSkill
+   :inherited-members:
+   :members:
+   :show-inheritance:
+   :undoc-members:
+   :exclude-members: @odata.type
+
 .. autoclass:: azure.search.documents.indexes.types.WebApiSkill
    :inherited-members:
    :members:
@@ -680,3 +737,10 @@ azure.search.documents.indexes.types module
    :show-inheritance:
    :undoc-members:
    :exclude-members: @odata.type
+
+.. autoclass:: azure.search.documents.indexes.types.WorkIQKnowledgeSource
+   :inherited-members:
+   :members:
+   :show-inheritance:
+   :undoc-members:
+   :exclude-members: @odata.etag
