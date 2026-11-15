@@ -71,7 +71,7 @@ with (
     print(f"Retrieved external agent version: {fetched_version.name} version={fetched_version.version}")
 
     external_agents = list(project_client.agents.list(kind="external", limit=10))
-    print(f"Found {len(external_agents)} external agents or more")
+    print(f"Found {len(external_agents)} external agents")
     for external_agent in external_agents:
         print(f"  - {external_agent.name} ({external_agent.id})")
 
