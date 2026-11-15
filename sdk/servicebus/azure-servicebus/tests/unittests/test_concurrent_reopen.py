@@ -22,7 +22,7 @@ import pytest
 from azure.servicebus import AutoLockRenewer, ServiceBusClient, ServiceBusReceivedMessage
 from azure.servicebus.aio import AutoLockRenewer as AsyncAutoLockRenewer, ServiceBusClient as AsyncServiceBusClient
 from azure.servicebus.exceptions import MessageLockLostError, OperationTimeoutError, ServiceBusError
-from azure.servicebus._pyamqp.error import AMQPConnectionError, ErrorCondition
+from azure.servicebus._pyamqp.error import AMQPConnectionError, AMQPException, ErrorCondition
 
 CONCURRENCY = 20
 
@@ -419,6 +419,68 @@ async def test_async_open_failing_after_the_link_is_up_closes_it():
     assert not receiver._running and receiver._handler is None
 
 
+# close() does not wait for an open in progress (blocked in the credential fetch or the AMQP open), and nothing
+# reopens after it: the opener closes whatever it opened and fails like any operation on a closed receiver, and an
+# operation waiting to open fails the same way.
+@pytest.mark.parametrize("blocked_in", ["auth", "open"])
+def test_sync_close_during_an_open_leaves_no_handler(blocked_in):
+    opening, release = threading.Event(), threading.Event()
+    in_open = blocked_in == "open"
+    receiver, created = _receiver_creating(
+        ServiceBusClient, lambda n: _FakeHandler(opening=opening, release_open=release) if in_open else _FakeHandler()
+    )
+
+    def create_authentication(client):
+        if not in_open:
+            opening.set()
+            assert release.wait(5)
+
+    with patch("azure.servicebus._servicebus_receiver.create_authentication", create_authentication):
+        with ThreadPoolExecutor(2) as pool:
+            opener = pool.submit(receiver._open)
+            assert opening.wait(5)
+            waiter = pool.submit(receiver._open)
+            started = time.monotonic()
+            receiver.close()
+            assert time.monotonic() - started < 1  # did not wait for the open
+            release.set()
+            for future in (opener, waiter):
+                with pytest.raises(ValueError, match="already been shutdown"):
+                    future.result(timeout=5)
+
+    assert len(created) == 1 and created[0].closed == 1
+    assert receiver._handler is None and not receiver._running
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("blocked_in", ["auth", "open"])
+async def test_async_close_during_an_open_leaves_no_handler(blocked_in):
+    opening, release = asyncio.Event(), asyncio.Event()
+    in_open = blocked_in == "open"
+    receiver, created = _receiver_creating(
+        AsyncServiceBusClient,
+        lambda n: _FakeHandler(opening=opening, release_open=release) if in_open else _FakeHandler(),
+    )
+
+    async def create_authentication(client):
+        if not in_open:
+            opening.set()
+            await asyncio.wait_for(release.wait(), 5)
+
+    with patch("azure.servicebus.aio._servicebus_receiver_async.create_authentication", create_authentication):
+        opener = asyncio.ensure_future(receiver._open())
+        await asyncio.wait_for(opening.wait(), 5)
+        waiter = asyncio.ensure_future(receiver._open())
+        await asyncio.wait_for(receiver.close(), 1)  # does not wait for the open
+        release.set()
+        for task in (opener, waiter):
+            with pytest.raises(ValueError, match="already been shutdown"):
+                await asyncio.wait_for(task, 5)
+
+    assert len(created) == 1 and created[0].closed == 1
+    assert receiver._handler is None and not receiver._running
+
+
 # An operation is in flight on the handler when another operation's connection failure closes it, so the
 # in-flight one then fails with whatever the closed client raises. A receiver retries that on the new handler; a
 # session receiver cannot get its session back on a new link, so it still fails. A failure with a definite meaning,
@@ -428,6 +490,9 @@ _CLOSED_UNDER_IN_FLIGHT_CASES = [
     pytest.param("s1", None, ServiceBusError, id="session"),
     pytest.param(None, lambda: MessageLockLostError(message="lock lost"), MessageLockLostError, id="lock-lost"),
     pytest.param(None, lambda: TypeError("bad argument"), ServiceBusError, id="caller-error"),
+    pytest.param(
+        None, lambda: AMQPException(condition=b"com.microsoft:argument-error"), ServiceBusError, id="service-error"
+    ),
 ]
 
 

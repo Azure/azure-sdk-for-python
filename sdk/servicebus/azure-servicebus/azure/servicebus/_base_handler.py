@@ -17,6 +17,7 @@ try:
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
+from ._pyamqp.error import AMQPException
 from ._pyamqp.utils import generate_sas_token
 from ._transport._pyamqp_transport import PyamqpTransport
 
@@ -376,7 +377,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         if (
             type(error) is ServiceBusError  # pylint: disable=unidiomatic-typecheck
-            and not isinstance(exception, (ValueError, TypeError))
+            and not isinstance(exception, (AMQPException, ServiceBusError, ValueError, TypeError))
             and self._closed_underneath(ran_on)
         ):
             # An unexpected error from a handler that another operation closed or replaced while this attempt ran on
@@ -552,6 +553,10 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         """
         attempt_started = time.monotonic()
         self._open(timeout)
+        # Pin the handler for the request and record it for this attempt, as another thread may replace or close it
+        # meanwhile; if it was closed, the request uses the closed one and its failure is retried.
+        handler = self._handler or _attempt_handler.get()
+        _attempt_handler.set(handler)
         # Open and request share one attempt budget, so the request gets what is left.
         timeout = get_remaining_timeout(timeout, attempt_started)
         application_properties = {}
@@ -560,7 +565,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         if keep_alive_associated_link:
             try:
                 application_properties = {
-                    ASSOCIATEDLINKPROPERTYNAME: self._amqp_transport.get_handler_link_name(self._handler)
+                    ASSOCIATEDLINKPROPERTYNAME: self._amqp_transport.get_handler_link_name(handler)
                 }
             except AttributeError:
                 pass
@@ -579,7 +584,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         try:
             return self._amqp_transport.mgmt_client_request(
-                self._handler,
+                handler,
                 mgmt_msg,
                 operation=mgmt_operation,
                 operation_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
@@ -626,6 +631,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         ):
             raise OperationTimeoutError(message="Timed out waiting for another operation to open the AMQP link.")
         try:
+            # A close() while this operation waited: the handler must not reopen.
+            self._check_live()
             if not self._running or self._handler is None:
                 # _running stays set while a detached handler is closing; clear it so _open_handler opens a new one.
                 self._running = False
@@ -634,7 +641,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                     timeout -= time.monotonic() - started
                 try:
                     self._open_handler(timeout)
-                except:
+                except BaseException as exception:
                     # A failure after the link came up (e.g. registering the session with the lock renewer) must not
                     # leave it running.
                     if self._running:
@@ -642,7 +649,14 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                             self._close_handler()
                         except Exception:  # pylint: disable=broad-except
                             _LOGGER.warning("Handler cleanup failed; preserving the original error.", exc_info=True)
+                    if isinstance(exception, Exception) and self._shutdown.is_set():
+                        # A close() during the open made it fail.
+                        self._check_live()
                     raise
+                if self._shutdown.is_set():
+                    # close() ran during the open, possibly before the new handler was attached: close that too.
+                    self._close_handler()
+                    self._check_live()
             _attempt_handler.set(self._handler)
         finally:
             self._handler_lock.release()

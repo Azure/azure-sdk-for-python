@@ -13,7 +13,7 @@ from enum import Enum
 from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
 
 from .exceptions import MessageLockLostError
-from ._base_handler import BaseHandler
+from ._base_handler import BaseHandler, _attempt_handler
 from ._common.message import ServiceBusReceivedMessage
 from ._common.utils import (
     create_authentication,
@@ -409,7 +409,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
             # Acquisition is capped by try_timeout when enabled, and never exceeds the budget.
             self._open(get_attempt_timeout(wait_time, self._config.try_timeout))
 
-            amqp_receive_client = self._handler
+            # Pinned and recorded for this attempt, as in _mgmt_request_response.
+            amqp_receive_client = self._handler or _attempt_handler.get()
+            _attempt_handler.set(amqp_receive_client)
             received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
             # Poll with what is left of the one budget, not a fresh copy of it.
