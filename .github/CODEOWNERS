@@ -301,10 +301,10 @@
 /sdk/loadtesting/azure-developer-loadtesting/    @mitsha-microsoft @ninallam @prativen
 
 # PRLabel: %Machine Learning
-/sdk/ml/    @achauhan-scc @jayesh-tanna @kingernupur
+/sdk/ml/    @achauhan-scc @jayesh-tanna @kingernupur @novaturient95 @viragjain611
 
 # PRLabel: %Machine Learning
-/sdk/ml/azure-ai-ml/    @achauhan-scc @arunsu @jayesh-tanna @jialiu103 @JustinFirsching @kingernupur @nick863 @NonStatic2014 @novaturient95 @PhaniShekhar @raduk @rtanase @sharma-riti @vivram @yuanzhuangyuanzhuang
+/sdk/ml/azure-ai-ml/    @achauhan-scc @arunsu @jayesh-tanna @jialiu103 @JustinFirsching @kingernupur @nick863 @NonStatic2014 @novaturient95 @PhaniShekhar @raduk @rtanase @sharma-riti @viragjain611 @vivram @yuanzhuangyuanzhuang
 
 # ServiceLabel: %Machine Learning
 # ServiceOwners: @Azure/azure-ml-sdk @azureml-github

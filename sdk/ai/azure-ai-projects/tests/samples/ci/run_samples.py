@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 """Run resolved sample pytest nodes against the Bicep-created project, without recording."""
@@ -182,6 +183,7 @@ def main() -> int:
         PYTHONIOENCODING="utf-8",
     )
     environment.pop("MCP_GITHUB_PAT", None)
+    environment.pop("PROJ_CONN_OPEN_API_KEY", None)
     environment.pop("SYSTEM_ACCESSTOKEN", None)
     environment["PYTHONPATH"] = os.pathsep.join(
         (str(arguments.package_root), str(Path(__file__).resolve().parent), environment.get("PYTHONPATH", ""))

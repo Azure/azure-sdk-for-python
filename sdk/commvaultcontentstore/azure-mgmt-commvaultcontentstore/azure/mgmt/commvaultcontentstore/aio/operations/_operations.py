@@ -527,11 +527,25 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-11-03",
+        params_added_on={
+            "2026-11-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cloud_account_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-03"],
+    )
     async def _update_initial(
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        properties: Union[_models.CloudAccount, _types.CloudAccount, IO[bytes]],
+        properties: Union[_models.CloudAccountUpdate, _types.CloudAccountUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -607,7 +621,7 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        properties: _models.CloudAccount,
+        properties: _models.CloudAccountUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -620,7 +634,7 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
         :param cloud_account_name: Name of the Cloud Account resource. Required.
         :type cloud_account_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.commvaultcontentstore.models.CloudAccount
+        :type properties: ~azure.mgmt.commvaultcontentstore.models.CloudAccountUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -636,7 +650,7 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        properties: _types.CloudAccount,
+        properties: _types.CloudAccountUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -649,7 +663,7 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
         :param cloud_account_name: Name of the Cloud Account resource. Required.
         :type cloud_account_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.commvaultcontentstore.types.CloudAccount
+        :type properties: ~azure.mgmt.commvaultcontentstore.types.CloudAccountUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -690,11 +704,25 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-03",
+        params_added_on={
+            "2026-11-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cloud_account_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-03"],
+    )
     async def begin_update(
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        properties: Union[_models.CloudAccount, _types.CloudAccount, IO[bytes]],
+        properties: Union[_models.CloudAccountUpdate, _types.CloudAccountUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CloudAccount]:
         """Update a CloudAccount.
@@ -704,10 +732,10 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
         :type resource_group_name: str
         :param cloud_account_name: Name of the Cloud Account resource. Required.
         :type cloud_account_name: str
-        :param properties: The resource properties to be updated. Is either a CloudAccount type or a
-         IO[bytes] type. Required.
-        :type properties: ~azure.mgmt.commvaultcontentstore.models.CloudAccount or
-         ~azure.mgmt.commvaultcontentstore.types.CloudAccount or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a CloudAccountUpdate type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.commvaultcontentstore.models.CloudAccountUpdate or
+         ~azure.mgmt.commvaultcontentstore.types.CloudAccountUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CloudAccount. The CloudAccount is
          compatible with MutableMapping
         :rtype:
@@ -1096,6 +1124,7 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-07-03-preview",
             "2026-08-01-preview",
             "2026-09-30",
+            "2026-11-03",
         ],
     )
     async def _link_saa_s_initial(
@@ -1288,6 +1317,7 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-07-03-preview",
             "2026-08-01-preview",
             "2026-09-30",
+            "2026-11-03",
         ],
     )
     async def begin_link_saa_s(
@@ -1393,6 +1423,7 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-07-03-preview",
             "2026-08-01-preview",
             "2026-09-30",
+            "2026-11-03",
         ],
     )
     async def latest_linked_saa_s(
@@ -1496,6 +1527,7 @@ class SaaSOperationGroupOperations:  # pylint: disable=docstring-missing-param
             "2026-07-03-preview",
             "2026-08-01-preview",
             "2026-09-30",
+            "2026-11-03",
         ],
     )
     async def _activate_resource_initial(
@@ -1633,6 +1665,7 @@ class SaaSOperationGroupOperations:  # pylint: disable=docstring-missing-param
             "2026-07-03-preview",
             "2026-08-01-preview",
             "2026-09-30",
+            "2026-11-03",
         ],
     )
     async def begin_activate_resource(
@@ -2284,7 +2317,7 @@ class StoragesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30", "2026-11-03"],
     )
     async def enable_compliance_lock(
         self, resource_group_name: str, cloud_account_name: str, storage_name: str, **kwargs: Any
@@ -2373,7 +2406,7 @@ class StoragesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30", "2026-11-03"],
     )
     async def disable_compliance_lock(
         self, resource_group_name: str, cloud_account_name: str, storage_name: str, **kwargs: Any
@@ -2465,7 +2498,7 @@ class StoragesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30", "2026-11-03"],
     )
     async def refresh(
         self, resource_group_name: str, cloud_account_name: str, storage_name: str, **kwargs: Any
@@ -4056,6 +4089,7 @@ class ProtectionGroupsOperations:  # pylint: disable=docstring-missing-param
             "2026-07-03-preview",
             "2026-08-01-preview",
             "2026-09-30",
+            "2026-11-03",
         ],
     )
     async def restore(
@@ -4173,6 +4207,7 @@ class ProtectionGroupsOperations:  # pylint: disable=docstring-missing-param
             "2026-07-03-preview",
             "2026-08-01-preview",
             "2026-09-30",
+            "2026-11-03",
         ],
     )
     async def resume_backup(
@@ -4351,6 +4386,7 @@ class ProtectionGroupsOperations:  # pylint: disable=docstring-missing-param
             "2026-07-03-preview",
             "2026-08-01-preview",
             "2026-09-30",
+            "2026-11-03",
         ],
     )
     async def backup(
@@ -5033,7 +5069,13 @@ class ProtectedItemsOperationGroupOperations:  # pylint: disable=docstring-missi
     @api_version_validation(
         method_added_on="2026-07-01-preview",
         params_added_on={"2026-07-01-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2026-07-01-preview", "2026-07-03-preview", "2026-08-01-preview", "2026-09-30"],
+        api_versions_list=[
+            "2026-07-01-preview",
+            "2026-07-03-preview",
+            "2026-08-01-preview",
+            "2026-09-30",
+            "2026-11-03",
+        ],
     )
     async def count_by_protection_groups(
         self,
@@ -5147,7 +5189,7 @@ class RoleMappingsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30", "2026-11-03"],
     )
     async def get(self, resource_group_name: str, cloud_account_name: str, **kwargs: Any) -> _models.RoleMapping:
         """Get a RoleMapping.
@@ -5312,7 +5354,7 @@ class RoleMappingsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30", "2026-11-03"],
     )
     async def create_or_update(
         self,
@@ -5409,7 +5451,7 @@ class RoleMappingsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-07-03-preview": ["api_version", "subscription_id", "resource_group_name", "cloud_account_name"]
         },
-        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30", "2026-11-03"],
     )
     async def delete(self, resource_group_name: str, cloud_account_name: str, **kwargs: Any) -> None:
         """Delete a RoleMapping.
@@ -5479,7 +5521,7 @@ class RoleMappingsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30", "2026-11-03"],
     )
     def list(
         self, resource_group_name: str, cloud_account_name: str, **kwargs: Any

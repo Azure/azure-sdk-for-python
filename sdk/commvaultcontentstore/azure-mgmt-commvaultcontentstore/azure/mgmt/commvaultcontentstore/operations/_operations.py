@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +71,7 @@ def build_cloud_accounts_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_cloud_accounts_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +131,7 @@ def build_cloud_accounts_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +160,7 @@ def build_cloud_accounts_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}"
     path_format_arguments = {
@@ -183,7 +183,7 @@ def build_cloud_accounts_list_by_resource_group_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -210,7 +210,7 @@ def build_cloud_accounts_list_by_subscription_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -237,7 +237,7 @@ def build_cloud_accounts_link_saa_s_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -267,7 +267,7 @@ def build_cloud_accounts_latest_linked_saa_s_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -296,7 +296,7 @@ def build_saa_soperation_group_activate_resource_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -324,7 +324,7 @@ def build_storages_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -354,7 +354,7 @@ def build_storages_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -384,7 +384,7 @@ def build_storages_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}/storages/{storageName}"
     path_format_arguments = {
@@ -408,7 +408,7 @@ def build_storages_list_by_cloud_account_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -436,7 +436,7 @@ def build_storages_enable_compliance_lock_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -465,7 +465,7 @@ def build_storages_disable_compliance_lock_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -494,7 +494,7 @@ def build_storages_refresh_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -523,7 +523,7 @@ def build_plans_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -553,7 +553,7 @@ def build_plans_create_orupdate_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -583,7 +583,7 @@ def build_plans_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}/plans/{planName}"
     path_format_arguments = {
@@ -607,7 +607,7 @@ def build_plans_list_by_cloud_account_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -635,7 +635,7 @@ def build_protection_groups_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -665,7 +665,7 @@ def build_protection_groups_create_orupdate_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -695,7 +695,7 @@ def build_protection_groups_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}/protectionGroups/{protectionGroupName}"
     path_format_arguments = {
@@ -719,7 +719,7 @@ def build_protection_groups_list_by_cloud_account_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -748,7 +748,7 @@ def build_protection_groups_stop_backup_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}/protectionGroups/{protectionGroupName}/stopBackup"
     path_format_arguments = {
@@ -777,7 +777,7 @@ def build_protection_groups_restore_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -807,7 +807,7 @@ def build_protection_groups_resume_backup_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}/protectionGroups/{protectionGroupName}/resumeBackup"
     path_format_arguments = {
@@ -832,7 +832,7 @@ def build_protection_groups_backup_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -868,7 +868,7 @@ def build_protected_items_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -898,7 +898,7 @@ def build_protected_items_list_by_protection_group_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -932,7 +932,7 @@ def build_protected_items_get_restore_points_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -968,7 +968,7 @@ def build_protected_items_restore_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1001,7 +1001,7 @@ def build_protected_items_operation_group_count_by_protection_groups_request(  #
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1024,7 +1024,7 @@ def build_role_mappings_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1053,7 +1053,7 @@ def build_role_mappings_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1082,7 +1082,7 @@ def build_role_mappings_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}/roleMappings/default"
     path_format_arguments = {
@@ -1105,7 +1105,7 @@ def build_role_mappings_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-30"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1565,11 +1565,25 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-11-03",
+        params_added_on={
+            "2026-11-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cloud_account_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-03"],
+    )
     def _update_initial(
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        properties: Union[_models.CloudAccount, _types.CloudAccount, IO[bytes]],
+        properties: Union[_models.CloudAccountUpdate, _types.CloudAccountUpdate, IO[bytes]],
         **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1645,7 +1659,7 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        properties: _models.CloudAccount,
+        properties: _models.CloudAccountUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -1658,7 +1672,7 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
         :param cloud_account_name: Name of the Cloud Account resource. Required.
         :type cloud_account_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.commvaultcontentstore.models.CloudAccount
+        :type properties: ~azure.mgmt.commvaultcontentstore.models.CloudAccountUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1673,7 +1687,7 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        properties: _types.CloudAccount,
+        properties: _types.CloudAccountUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -1686,7 +1700,7 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
         :param cloud_account_name: Name of the Cloud Account resource. Required.
         :type cloud_account_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.commvaultcontentstore.types.CloudAccount
+        :type properties: ~azure.mgmt.commvaultcontentstore.types.CloudAccountUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1725,11 +1739,25 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-03",
+        params_added_on={
+            "2026-11-03": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cloud_account_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-03"],
+    )
     def begin_update(
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        properties: Union[_models.CloudAccount, _types.CloudAccount, IO[bytes]],
+        properties: Union[_models.CloudAccountUpdate, _types.CloudAccountUpdate, IO[bytes]],
         **kwargs: Any,
     ) -> LROPoller[_models.CloudAccount]:
         """Update a CloudAccount.
@@ -1739,10 +1767,10 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
         :type resource_group_name: str
         :param cloud_account_name: Name of the Cloud Account resource. Required.
         :type cloud_account_name: str
-        :param properties: The resource properties to be updated. Is either a CloudAccount type or a
-         IO[bytes] type. Required.
-        :type properties: ~azure.mgmt.commvaultcontentstore.models.CloudAccount or
-         ~azure.mgmt.commvaultcontentstore.types.CloudAccount or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a CloudAccountUpdate type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.commvaultcontentstore.models.CloudAccountUpdate or
+         ~azure.mgmt.commvaultcontentstore.types.CloudAccountUpdate or IO[bytes]
         :return: An instance of LROPoller that returns CloudAccount. The CloudAccount is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.commvaultcontentstore.models.CloudAccount]
@@ -2124,6 +2152,7 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-07-03-preview",
             "2026-08-01-preview",
             "2026-09-30",
+            "2026-11-03",
         ],
     )
     def _link_saa_s_initial(
@@ -2313,6 +2342,7 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-07-03-preview",
             "2026-08-01-preview",
             "2026-09-30",
+            "2026-11-03",
         ],
     )
     def begin_link_saa_s(
@@ -2417,6 +2447,7 @@ class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-07-03-preview",
             "2026-08-01-preview",
             "2026-09-30",
+            "2026-11-03",
         ],
     )
     def latest_linked_saa_s(
@@ -2520,6 +2551,7 @@ class SaaSOperationGroupOperations:  # pylint: disable=docstring-missing-param
             "2026-07-03-preview",
             "2026-08-01-preview",
             "2026-09-30",
+            "2026-11-03",
         ],
     )
     def _activate_resource_initial(
@@ -2657,6 +2689,7 @@ class SaaSOperationGroupOperations:  # pylint: disable=docstring-missing-param
             "2026-07-03-preview",
             "2026-08-01-preview",
             "2026-09-30",
+            "2026-11-03",
         ],
     )
     def begin_activate_resource(
@@ -3307,7 +3340,7 @@ class StoragesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30", "2026-11-03"],
     )
     def enable_compliance_lock(
         self, resource_group_name: str, cloud_account_name: str, storage_name: str, **kwargs: Any
@@ -3396,7 +3429,7 @@ class StoragesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30", "2026-11-03"],
     )
     def disable_compliance_lock(
         self, resource_group_name: str, cloud_account_name: str, storage_name: str, **kwargs: Any
@@ -3488,7 +3521,7 @@ class StoragesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30", "2026-11-03"],
     )
     def refresh(
         self, resource_group_name: str, cloud_account_name: str, storage_name: str, **kwargs: Any
@@ -5069,6 +5102,7 @@ class ProtectionGroupsOperations:  # pylint: disable=docstring-missing-param
             "2026-07-03-preview",
             "2026-08-01-preview",
             "2026-09-30",
+            "2026-11-03",
         ],
     )
     def restore(
@@ -5186,6 +5220,7 @@ class ProtectionGroupsOperations:  # pylint: disable=docstring-missing-param
             "2026-07-03-preview",
             "2026-08-01-preview",
             "2026-09-30",
+            "2026-11-03",
         ],
     )
     def resume_backup(  # pylint: disable=inconsistent-return-statements
@@ -5364,6 +5399,7 @@ class ProtectionGroupsOperations:  # pylint: disable=docstring-missing-param
             "2026-07-03-preview",
             "2026-08-01-preview",
             "2026-09-30",
+            "2026-11-03",
         ],
     )
     def backup(
@@ -6045,7 +6081,13 @@ class ProtectedItemsOperationGroupOperations:  # pylint: disable=docstring-missi
     @api_version_validation(
         method_added_on="2026-07-01-preview",
         params_added_on={"2026-07-01-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2026-07-01-preview", "2026-07-03-preview", "2026-08-01-preview", "2026-09-30"],
+        api_versions_list=[
+            "2026-07-01-preview",
+            "2026-07-03-preview",
+            "2026-08-01-preview",
+            "2026-09-30",
+            "2026-11-03",
+        ],
     )
     def count_by_protection_groups(
         self,
@@ -6159,7 +6201,7 @@ class RoleMappingsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30", "2026-11-03"],
     )
     def get(self, resource_group_name: str, cloud_account_name: str, **kwargs: Any) -> _models.RoleMapping:
         """Get a RoleMapping.
@@ -6324,7 +6366,7 @@ class RoleMappingsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30", "2026-11-03"],
     )
     def create_or_update(
         self,
@@ -6421,7 +6463,7 @@ class RoleMappingsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-07-03-preview": ["api_version", "subscription_id", "resource_group_name", "cloud_account_name"]
         },
-        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30", "2026-11-03"],
     )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, cloud_account_name: str, **kwargs: Any
@@ -6493,7 +6535,7 @@ class RoleMappingsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview", "2026-09-30", "2026-11-03"],
     )
     def list(
         self, resource_group_name: str, cloud_account_name: str, **kwargs: Any

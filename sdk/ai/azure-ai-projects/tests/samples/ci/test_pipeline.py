@@ -75,16 +75,17 @@ def test_cleanup_and_result_publication_still_run_on_failure(pipeline):
     assert results["inputs"]["failTaskOnFailureToPublishResults"] is True
 
 
-def test_pat_stays_scoped_to_provisioning_task(pipeline):
+@pytest.mark.parametrize("secret", ["MCP_GITHUB_PAT", "PROJ_CONN_OPEN_API_KEY"])
+def test_secrets_stay_scoped_to_provisioning_task(pipeline, secret):
     run_stage = next(stage for stage in live_stages(pipeline) if stage["stage"] == "RunSamples")
     steps = worker(pipeline)["steps"]
-    secret_steps = [step for step in steps if "MCP_GITHUB_PAT" in step.get("env", {})]
+    secret_steps = [step for step in steps if secret in step.get("env", {})]
     assert len(secret_steps) == 1
     provisioning = secret_steps[0]
-    assert provisioning["env"]["MCP_GITHUB_PAT"] == "$(MCP_GITHUB_PAT)"
+    assert provisioning["env"][secret] == f"$({secret})"
     assert "Invoke-SampleProvisioning.ps1" in provisioning["inputs"]["inlineScript"]
     assert "-ConfirmProvisioning" in provisioning["inputs"]["inlineScript"]
-    assert "MCP_GITHUB_PAT" not in {parameter["name"] for parameter in pipeline["parameters"]}
+    assert secret not in {parameter["name"] for parameter in pipeline["parameters"]}
 
 
 def test_failed_runner_still_fails_before_always_run_cleanup(pipeline):
@@ -308,8 +309,9 @@ def test_provisioning_metadata_is_passed_directly_not_through_environment_variab
     directory = Path(__file__).resolve().parent
     parameters = (directory / "infra/sample-resources.bicepparam").read_text(encoding="utf-8")
     assert parameters.startswith("using none")
-    assert parameters.count("readEnvironmentVariable(") == 1
+    assert parameters.count("readEnvironmentVariable(") == 2
     assert "param mcpPat = readEnvironmentVariable('MCP_GITHUB_PAT', '')" in parameters
+    assert "param openApiKey = readEnvironmentVariable('PROJ_CONN_OPEN_API_KEY', '')" in parameters
     provisioning = (directory / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
     assert "SAMPLE_CI_" not in provisioning + parameters
     assert "SetEnvironmentVariable" not in provisioning

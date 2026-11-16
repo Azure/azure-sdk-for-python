@@ -1,5 +1,21 @@
 # Release History
 
+## 2.0.0 (2026-11-05)
+
+### Features Added
+
+  - Enum `StorageClassType` added member `COLD`
+  - Added model `CloudAccountIdentityUpdate`
+  - Added model `CloudAccountMarketplaceUpdate`
+  - Added model `CloudAccountOfferDetailsUpdate`
+  - Added model `CloudAccountUpdate`
+  - Added model `CloudAccountUpdateProperties`
+  - Added model `CloudAccountUserUpdate`
+
+### Breaking Changes
+
+  - Method `CloudAccountsOperations.begin_update` changed type of its parameter `properties` from `CloudAccount` to `CloudAccountUpdate`
+
 ## 1.0.0 (2026-10-09)
 
 ### Features Added

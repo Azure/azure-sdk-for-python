@@ -3148,15 +3148,13 @@ namespace azure.mgmt.horizondb.models
         name: str
         properties: Optional[PoolProperties]
         system_data: SystemData
-        tags: Optional[dict[str, str]]
         type: str
 
         @overload
         def __init__(
                 self, 
                 *, 
-                properties: Optional[PoolProperties] = ..., 
-                tags: Optional[dict[str, str]] = ...
+                properties: Optional[PoolProperties] = ...
             ) -> None: ...
 
         @overload
@@ -3219,14 +3217,12 @@ namespace azure.mgmt.horizondb.models
 
     class azure.mgmt.horizondb.models.PoolForPatchUpdate(_Model):
         properties: Optional[PoolPropertiesForPatchUpdate]
-        tags: Optional[dict[str, str]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                properties: Optional[PoolPropertiesForPatchUpdate] = ..., 
-                tags: Optional[dict[str, str]] = ...
+                properties: Optional[PoolPropertiesForPatchUpdate] = ...
             ) -> None: ...
 
         @overload
@@ -3304,7 +3300,7 @@ namespace azure.mgmt.horizondb.models
         compute_model: PoolComputeModel
         high_availability: PoolHighAvailability
         node_count: int
-        parameter_group: PoolParameterGroupReference
+        parameter_group: Optional[PoolParameterGroupReference]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         scheduled_maintenance: Optional[ScheduledMaintenanceProperties]
         state: Optional[Union[str, PoolState]]
@@ -3316,7 +3312,7 @@ namespace azure.mgmt.horizondb.models
                 compute_model: PoolComputeModel, 
                 high_availability: PoolHighAvailability, 
                 node_count: int, 
-                parameter_group: PoolParameterGroupReference, 
+                parameter_group: Optional[PoolParameterGroupReference] = ..., 
                 scheduled_maintenance: Optional[ScheduledMaintenanceProperties] = ...
             ) -> None: ...
 
@@ -3503,6 +3499,7 @@ namespace azure.mgmt.horizondb.models
         IN_PROGRESS = "InProgress"
         PROVISIONING = "Provisioning"
         SUCCEEDED = "Succeeded"
+        UPDATING = "Updating"
 
 
     class azure.mgmt.horizondb.models.ProxyResource(Resource):
@@ -5713,7 +5710,6 @@ namespace azure.mgmt.horizondb.types
         name: str
         properties: PoolProperties
         systemData: SystemData
-        tags: dict[str, str]
         type: str
 
 
@@ -5742,7 +5738,6 @@ namespace azure.mgmt.horizondb.types
     class azure.mgmt.horizondb.types.PoolForPatchUpdate(TypedDict, total=False):
         key "properties": ForwardRef('PoolPropertiesForPatchUpdate', module='types')
         properties: PoolPropertiesForPatchUpdate
-        tags: dict[str, str]
 
 
     class azure.mgmt.horizondb.types.PoolHighAvailability(TypedDict, total=False):
@@ -5775,7 +5770,7 @@ namespace azure.mgmt.horizondb.types
         key "computeModel": Required[PoolComputeModel]
         key "highAvailability": Required[PoolHighAvailability]
         key "nodeCount": Required[int]
-        key "parameterGroup": Required[PoolParameterGroupReference]
+        key "parameterGroup": ForwardRef('PoolParameterGroupReference', module='types')
         key "provisioningState": Union[str, ProvisioningState]
         key "scheduledMaintenance": ForwardRef('ScheduledMaintenanceProperties', module='types')
         key "state": Union[str, PoolState]

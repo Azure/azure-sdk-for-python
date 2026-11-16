@@ -50,7 +50,6 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
                 "properties": {
                     "a365LoggingEnabled": bool,
                     "abusePenalty": {"action": "str", "expiration": "2020-02-20 00:00:00", "rateLimitPercentage": 0.0},
-                    "agentHostingConfigurations": ["agent_hosting_configuration"],
                     "allowProjectManagement": bool,
                     "allowedFqdnList": ["str"],
                     "amlWorkspace": {"identityClientId": "str", "resourceId": "str"},
@@ -82,10 +81,7 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
                         ],
                     },
                     "capabilities": [{"name": "str", "value": "str"}],
-                    "capabilitySettings": {"blobStore": "str", "documentStore": "str", "vectorStore": "str"},
                     "commitmentPlanAssociations": [{"commitmentPlanId": "str", "commitmentPlanLocation": "str"}],
-                    "costControlConnections": {"appInsightsConnectionId": "str", "eventGridConnectionId": "str"},
-                    "costControlIds": ["str"],
                     "customSubDomainName": "str",
                     "dateCreated": "str",
                     "defaultProject": "str",
@@ -103,12 +99,6 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
                     },
                     "endpoint": "str",
                     "endpoints": {"str": "str"},
-                    "foundryAutoUpgrade": {
-                        "mode": "str",
-                        "plannedByMicrosoft": bool,
-                        "scheduledAt": "2020-02-20 00:00:00",
-                        "statusReason": "str",
-                    },
                     "internalId": "str",
                     "isMigrated": bool,
                     "locations": {
@@ -180,6 +170,13 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
                         "lastChangeDate": "str",
                     },
                     "storedCompletionsDisabled": bool,
+                    "trustedCertificateSources": [
+                        {
+                            "certificateBundleReferences": [{"secretName": "str", "secretVersion": "str"}],
+                            "resourceId": "str",
+                            "type": "str",
+                        }
+                    ],
                     "userOwnedStorage": [{"identityClientId": "str", "resourceId": "str"}],
                 },
                 "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
@@ -220,7 +217,6 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
                 "properties": {
                     "a365LoggingEnabled": bool,
                     "abusePenalty": {"action": "str", "expiration": "2020-02-20 00:00:00", "rateLimitPercentage": 0.0},
-                    "agentHostingConfigurations": ["agent_hosting_configuration"],
                     "allowProjectManagement": bool,
                     "allowedFqdnList": ["str"],
                     "amlWorkspace": {"identityClientId": "str", "resourceId": "str"},
@@ -252,10 +248,7 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
                         ],
                     },
                     "capabilities": [{"name": "str", "value": "str"}],
-                    "capabilitySettings": {"blobStore": "str", "documentStore": "str", "vectorStore": "str"},
                     "commitmentPlanAssociations": [{"commitmentPlanId": "str", "commitmentPlanLocation": "str"}],
-                    "costControlConnections": {"appInsightsConnectionId": "str", "eventGridConnectionId": "str"},
-                    "costControlIds": ["str"],
                     "customSubDomainName": "str",
                     "dateCreated": "str",
                     "defaultProject": "str",
@@ -273,12 +266,6 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
                     },
                     "endpoint": "str",
                     "endpoints": {"str": "str"},
-                    "foundryAutoUpgrade": {
-                        "mode": "str",
-                        "plannedByMicrosoft": bool,
-                        "scheduledAt": "2020-02-20 00:00:00",
-                        "statusReason": "str",
-                    },
                     "internalId": "str",
                     "isMigrated": bool,
                     "locations": {
@@ -350,6 +337,13 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
                         "lastChangeDate": "str",
                     },
                     "storedCompletionsDisabled": bool,
+                    "trustedCertificateSources": [
+                        {
+                            "certificateBundleReferences": [{"secretName": "str", "secretVersion": "str"}],
+                            "resourceId": "str",
+                            "type": "str",
+                        }
+                    ],
                     "userOwnedStorage": [{"identityClientId": "str", "resourceId": "str"}],
                 },
                 "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
@@ -451,48 +445,5 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
             account_name="str",
         )
         result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_accounts_evaluate_deployment_policies(self, resource_group):
-        response = self.client.accounts.evaluate_deployment_policies(
-            resource_group_name=resource_group.name,
-            account_name="str",
-            body={
-                "deployments": [
-                    {
-                        "name": "str",
-                        "properties": {
-                            "model": {
-                                "callRateLimit": {
-                                    "count": 0.0,
-                                    "renewalPeriod": 0.0,
-                                    "rules": [
-                                        {
-                                            "count": 0.0,
-                                            "dynamicThrottlingEnabled": bool,
-                                            "key": "str",
-                                            "matchPatterns": [{"method": "str", "path": "str"}],
-                                            "minCount": 0.0,
-                                            "renewalPeriod": 0.0,
-                                        }
-                                    ],
-                                },
-                                "format": "str",
-                                "name": "str",
-                                "publisher": "str",
-                                "source": "str",
-                                "sourceAccount": "str",
-                                "version": "str",
-                            },
-                            "raiPolicyName": "str",
-                        },
-                    }
-                ]
-            },
-        )
-
         # please add some check logic here by yourself
         # ...

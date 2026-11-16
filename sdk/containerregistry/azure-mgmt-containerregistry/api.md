@@ -94,7 +94,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         async def begin_create(
                 self, 
                 resource_group_name: str, 
@@ -106,7 +106,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[ArchiveVersion]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name']}, api_versions_list=['2026-10-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -118,7 +118,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -130,7 +130,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> ArchiveVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -189,7 +189,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[Archive]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name']}, api_versions_list=['2026-10-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -200,7 +200,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -211,7 +211,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> Archive: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -485,7 +485,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncItemPaged[ConnectedRegistry]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'connected_registry_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'connected_registry_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         async def resync(
                 self, 
                 resource_group_name: str, 
@@ -647,7 +647,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[ExportPipeline]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'export_pipeline_name']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'export_pipeline_name']}, api_versions_list=['2026-10-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -657,7 +657,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'export_pipeline_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'export_pipeline_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -667,7 +667,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> ExportPipeline: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -721,7 +721,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[ImportPipeline]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'import_pipeline_name']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'import_pipeline_name']}, api_versions_list=['2026-10-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -731,7 +731,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'import_pipeline_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'import_pipeline_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -741,7 +741,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> ImportPipeline: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -807,7 +807,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[PipelineRun]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'pipeline_run_name']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'pipeline_run_name']}, api_versions_list=['2026-10-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -817,7 +817,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'pipeline_run_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'pipeline_run_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -827,7 +827,7 @@ namespace azure.mgmt.containerregistry.aio.operations
             ) -> PipelineRun: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -1671,7 +1671,23 @@ namespace azure.mgmt.containerregistry.models
 
 
     class azure.mgmt.containerregistry.models.AdditionalAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AWS_ELASTIC_CONTAINER_REGISTRY = "AwsElasticContainerRegistry"
+        ENTRA_FEDERATED_IDENTITY_CREDENTIAL = "EntraFederatedIdentityCredential"
         GOOGLE_ARTIFACT_REGISTRY = "GoogleArtifactRegistry"
+
+
+    class azure.mgmt.containerregistry.models.AdditionalAuthenticationUpdateProperties(_Model):
+        authentication_type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                authentication_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.containerregistry.models.Archive(ProxyResource):
@@ -1944,14 +1960,14 @@ namespace azure.mgmt.containerregistry.models
 
 
     class azure.mgmt.containerregistry.models.CacheRuleUpdateProperties(_Model):
-        additional_authentication_properties: Optional[AdditionalAuthenticationProperties]
+        additional_authentication_properties: Optional[AdditionalAuthenticationUpdateProperties]
         credential_set_resource_id: Optional[str]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                additional_authentication_properties: Optional[AdditionalAuthenticationProperties] = ..., 
+                additional_authentication_properties: Optional[AdditionalAuthenticationUpdateProperties] = ..., 
                 credential_set_resource_id: Optional[str] = ...
             ) -> None: ...
 
@@ -2235,6 +2251,48 @@ namespace azure.mgmt.containerregistry.models
         DENY = "Deny"
 
 
+    class azure.mgmt.containerregistry.models.EcrAuthenticationProperties(AdditionalAuthenticationProperties, discriminator='AwsElasticContainerRegistry'):
+        account_number: str
+        authentication_type: Literal[AdditionalAuthenticationType.AWS_ELASTIC_CONTAINER_REGISTRY]
+        region: str
+        role_name: str
+        role_path: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                account_number: str, 
+                region: str, 
+                role_name: str, 
+                role_path: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerregistry.models.EcrAuthenticationUpdateProperties(AdditionalAuthenticationUpdateProperties, discriminator='AwsElasticContainerRegistry'):
+        account_number: Optional[str]
+        authentication_type: Literal[AdditionalAuthenticationType.AWS_ELASTIC_CONTAINER_REGISTRY]
+        region: Optional[str]
+        role_name: Optional[str]
+        role_path: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                account_number: Optional[str] = ..., 
+                region: Optional[str] = ..., 
+                role_name: Optional[str] = ..., 
+                role_path: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerregistry.models.EncryptionProperty(_Model):
         key_vault_properties: Optional[KeyVaultProperties]
         status: Optional[Union[str, EncryptionStatus]]
@@ -2259,6 +2317,40 @@ namespace azure.mgmt.containerregistry.models
     class azure.mgmt.containerregistry.models.EndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         I_PV4 = "IPv4"
         I_PV4_AND_I_PV6 = "IPv4AndIPv6"
+
+
+    class azure.mgmt.containerregistry.models.EntraFederatedIdentityCredentialAuthenticationProperties(AdditionalAuthenticationProperties, discriminator='EntraFederatedIdentityCredential'):
+        authentication_type: Literal[AdditionalAuthenticationType.ENTRA_FEDERATED_IDENTITY_CREDENTIAL]
+        federated_application_client_id: str
+        source_tenant_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                federated_application_client_id: str, 
+                source_tenant_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerregistry.models.EntraFederatedIdentityCredentialAuthenticationUpdateProperties(AdditionalAuthenticationUpdateProperties, discriminator='EntraFederatedIdentityCredential'):
+        authentication_type: Literal[AdditionalAuthenticationType.ENTRA_FEDERATED_IDENTITY_CREDENTIAL]
+        federated_application_client_id: Optional[str]
+        source_tenant_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                federated_application_client_id: Optional[str] = ..., 
+                source_tenant_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.containerregistry.models.ErrorAdditionalInfo(_Model):
@@ -2489,6 +2581,25 @@ namespace azure.mgmt.containerregistry.models
                 project_number: str, 
                 workload_identity_pool: str, 
                 workload_identity_provider: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerregistry.models.GarAuthenticationUpdateProperties(AdditionalAuthenticationUpdateProperties, discriminator='GoogleArtifactRegistry'):
+        authentication_type: Literal[AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY]
+        project_number: Optional[str]
+        workload_identity_pool: Optional[str]
+        workload_identity_provider: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                project_number: Optional[str] = ..., 
+                workload_identity_pool: Optional[str] = ..., 
+                workload_identity_provider: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -4503,7 +4614,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def begin_create(
                 self, 
                 resource_group_name: str, 
@@ -4515,7 +4626,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[ArchiveVersion]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name']}, api_versions_list=['2026-10-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -4527,7 +4638,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'archive_version_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4539,7 +4650,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> ArchiveVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -4598,7 +4709,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[Archive]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name']}, api_versions_list=['2026-10-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -4609,7 +4720,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'archive_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4620,7 +4731,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> Archive: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'package_type', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -4894,7 +5005,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> ItemPaged[ConnectedRegistry]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'connected_registry_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'connected_registry_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def resync(
                 self, 
                 resource_group_name: str, 
@@ -5056,7 +5167,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[ExportPipeline]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'export_pipeline_name']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'export_pipeline_name']}, api_versions_list=['2026-10-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -5066,7 +5177,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'export_pipeline_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'export_pipeline_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -5076,7 +5187,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> ExportPipeline: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -5130,7 +5241,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[ImportPipeline]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'import_pipeline_name']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'import_pipeline_name']}, api_versions_list=['2026-10-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -5140,7 +5251,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'import_pipeline_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'import_pipeline_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -5150,7 +5261,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> ImportPipeline: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -5216,7 +5327,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[PipelineRun]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'pipeline_run_name']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'pipeline_run_name']}, api_versions_list=['2026-10-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -5226,7 +5337,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'pipeline_run_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'pipeline_run_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -5236,7 +5347,7 @@ namespace azure.mgmt.containerregistry.operations
             ) -> PipelineRun: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        @api_version_validation(method_added_on='2026-10-15-preview', params_added_on={'2026-10-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'registry_name', 'accept']}, api_versions_list=['2026-10-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -6038,18 +6149,9 @@ namespace azure.mgmt.containerregistry.types
         status: Union[str, ActivationStatus]
 
 
-    class azure.mgmt.containerregistry.types.AdditionalAuthenticationProperties(TypedDict, total=False):
-        key "authenticationType": Required[Literal[AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY]]
-        key "projectNumber": Required[str]
-        key "workloadIdentityPool": Required[str]
-        key "workloadIdentityProvider": Required[str]
-        authenticationType: Literal[AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY]
-        projectNumber: str
-        workloadIdentityPool: str
-        workloadIdentityProvider: str
-
-
     class azure.mgmt.containerregistry.types.AdditionalAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AWS_ELASTIC_CONTAINER_REGISTRY = "AwsElasticContainerRegistry"
+        ENTRA_FEDERATED_IDENTITY_CREDENTIAL = "EntraFederatedIdentityCredential"
         GOOGLE_ARTIFACT_REGISTRY = "GoogleArtifactRegistry"
 
 
@@ -6150,9 +6252,9 @@ namespace azure.mgmt.containerregistry.types
 
 
     class azure.mgmt.containerregistry.types.CacheRuleUpdateProperties(TypedDict, total=False):
-        key "additionalAuthenticationProperties": ForwardRef('AdditionalAuthenticationProperties', module='types')
+        key "additionalAuthenticationProperties": ForwardRef('AdditionalAuthenticationUpdateProperties', module='types')
         key "credentialSetResourceId": str
-        additionalAuthenticationProperties: AdditionalAuthenticationProperties
+        additionalAuthenticationProperties: AdditionalAuthenticationUpdateProperties
         credentialSetResourceId: str
 
 
@@ -6262,11 +6364,55 @@ namespace azure.mgmt.containerregistry.types
         authCredentials: list[AuthCredential]
 
 
+    class azure.mgmt.containerregistry.types.EcrAuthenticationProperties(TypedDict, total=False):
+        key "accountNumber": Required[str]
+        key "authenticationType": Required[Literal[AdditionalAuthenticationType.AWS_ELASTIC_CONTAINER_REGISTRY]]
+        key "region": Required[str]
+        key "roleName": Required[str]
+        key "rolePath": str
+        accountNumber: str
+        authenticationType: Literal[AdditionalAuthenticationType.AWS_ELASTIC_CONTAINER_REGISTRY]
+        region: str
+        roleName: str
+        rolePath: str
+
+
+    class azure.mgmt.containerregistry.types.EcrAuthenticationUpdateProperties(TypedDict, total=False):
+        key "accountNumber": str
+        key "authenticationType": Required[Literal[AdditionalAuthenticationType.AWS_ELASTIC_CONTAINER_REGISTRY]]
+        key "region": str
+        key "roleName": str
+        key "rolePath": str
+        accountNumber: str
+        authenticationType: Literal[AdditionalAuthenticationType.AWS_ELASTIC_CONTAINER_REGISTRY]
+        region: str
+        roleName: str
+        rolePath: str
+
+
     class azure.mgmt.containerregistry.types.EncryptionProperty(TypedDict, total=False):
         key "keyVaultProperties": ForwardRef('KeyVaultProperties', module='types')
         key "status": Union[str, EncryptionStatus]
         keyVaultProperties: KeyVaultProperties
         status: Union[str, EncryptionStatus]
+
+
+    class azure.mgmt.containerregistry.types.EntraFederatedIdentityCredentialAuthenticationProperties(TypedDict, total=False):
+        key "authenticationType": Required[Literal[AdditionalAuthenticationType.ENTRA_FEDERATED_IDENTITY_CREDENTIAL]]
+        key "federatedApplicationClientId": Required[str]
+        key "sourceTenantId": Required[str]
+        authenticationType: Literal[AdditionalAuthenticationType.ENTRA_FEDERATED_IDENTITY_CREDENTIAL]
+        federatedApplicationClientId: str
+        sourceTenantId: str
+
+
+    class azure.mgmt.containerregistry.types.EntraFederatedIdentityCredentialAuthenticationUpdateProperties(TypedDict, total=False):
+        key "authenticationType": Required[Literal[AdditionalAuthenticationType.ENTRA_FEDERATED_IDENTITY_CREDENTIAL]]
+        key "federatedApplicationClientId": str
+        key "sourceTenantId": str
+        authenticationType: Literal[AdditionalAuthenticationType.ENTRA_FEDERATED_IDENTITY_CREDENTIAL]
+        federatedApplicationClientId: str
+        sourceTenantId: str
 
 
     class azure.mgmt.containerregistry.types.ExportPipeline(ProxyResource):
@@ -6315,6 +6461,17 @@ namespace azure.mgmt.containerregistry.types
         key "projectNumber": Required[str]
         key "workloadIdentityPool": Required[str]
         key "workloadIdentityProvider": Required[str]
+        authenticationType: Literal[AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY]
+        projectNumber: str
+        workloadIdentityPool: str
+        workloadIdentityProvider: str
+
+
+    class azure.mgmt.containerregistry.types.GarAuthenticationUpdateProperties(TypedDict, total=False):
+        key "authenticationType": Required[Literal[AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY]]
+        key "projectNumber": str
+        key "workloadIdentityPool": str
+        key "workloadIdentityProvider": str
         authenticationType: Literal[AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY]
         projectNumber: str
         workloadIdentityPool: str

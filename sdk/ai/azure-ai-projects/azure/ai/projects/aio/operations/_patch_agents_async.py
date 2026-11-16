@@ -15,7 +15,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from ._operations import (
     AgentsOperations as GeneratedAgentsOperations,
-    BetaAgentsOperations as BetaAgentsOperationsGenerated,
     JSON,
     _Unset,
 )
@@ -433,7 +432,3 @@ class AgentsOperations(GeneratedAgentsOperations):
         return AsyncAgentOptimizationLROPoller(  # type: ignore
             self._client, raw_result, get_long_running_output, polling_method
         )
-
-
-class BetaAgentsOperations(BetaAgentsOperationsGenerated):
-    """Custom async operations for beta agents."""

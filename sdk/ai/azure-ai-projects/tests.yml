@@ -234,6 +234,7 @@ extends:
                   AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
                   AZURE_TENANT_ID: $(AZURE_TENANT_ID)
                   MCP_GITHUB_PAT: $(MCP_GITHUB_PAT)
+                  PROJ_CONN_OPEN_API_KEY: $(PROJ_CONN_OPEN_API_KEY)
                   SAMPLE_QUEUE_NAME: $(QueueName)
               - task: AzureCLI@2
                 displayName: 'Run selected test and collect results'
@@ -304,4 +305,3 @@ extends:
                 displayName: 'Fail if any selected sample could not be planned'
                 env:
                   REJECTED_COUNT: $(rejectedCount)
-

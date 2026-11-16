@@ -5,7 +5,7 @@
 Before running any sample:
 
 ```bash
-pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
+pip install "azure-ai-projects>=2.11.0" azure-identity python-dotenv
 ```
 
 To run asynchronous samples, also install `aiohttp`. Samples that produce or consume Azure OpenAI files, run evaluations, or seed agent conversations also use `openai`.
@@ -43,6 +43,7 @@ Supervised fine-tuning data generation, `question_types`, and Azure OpenAI file 
 | [sample_dataset_generation_job_simpleqna_with_agent_source.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_simpleqna_with_agent_source.py) | Agent definition | Evaluation | Generate a QnA dataset by creating a prompt agent and sourcing the job from the agent's instructions |
 | [sample_dataset_generation_job_simulation_seed_for_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_simulation_seed_for_evaluation.py) | Prompt | Evaluation | Generate simulation seeds (multi-turn test cases) for agent evaluation from a description of the agent's purpose, and print the first rows |
 | [sample_dataset_generation_job_traces_for_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_traces_for_evaluation.py) | Traces | Evaluation | Generate an evaluation dataset from an agent's recent conversation traces |
+| [sample_dataset_generation_job_traces_for_evaluation_with_test_case_rubric.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_traces_for_evaluation_with_test_case_rubric.py) | Traces | Evaluation | Generate an evaluation dataset with test-case rubric dimensions from an agent's recent conversation traces |
 | [sample_dataset_generation_job_traces_for_evaluation_merge.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_traces_for_evaluation_merge.py) | Traces | Evaluation | Grow an evaluation dataset from traces over time: create a dataset version with `write_mode=overwrite`, then merge newly generated, de-duplicated rows into the next version with `write_mode=merge` |
 | [sample_dataset_generation_job_management.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_management.py) | Prompt | Evaluation | Create a job without SDK polling, then list, get, and cancel data generation jobs |
 | [sample_dataset_generation_job_simpleqna_for_finetuning.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/datasets/sample_dataset_generation_job_simpleqna_for_finetuning.py) | File (Azure OpenAI) | Supervised fine-tuning (preview) | Generate supervised fine-tuning JSONL files (training and validation partitions) from an uploaded Azure OpenAI File |

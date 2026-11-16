@@ -321,8 +321,11 @@ class RuleProperty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class StorageClassType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Class of Commvault Storage."""
 
-    COOL = "COLD"
-    """Cold storage class."""
+    COLD = "COLD"
+    """Cold storage class. Requests that use COLD are rejected during validation; use COOL for the
+    infrequent-access tier."""
+    COOL = "COOL"
+    """Cool (infrequent-access) storage class."""
     HOT = "HOT"
     """Hot storage class."""
 

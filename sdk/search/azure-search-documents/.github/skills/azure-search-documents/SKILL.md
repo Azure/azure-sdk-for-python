@@ -161,7 +161,9 @@ Run the full validation suite (mypy, pylint, and the rest) in one shot:
 azsdk_package_run_check with checkType="All"
 ```
 
-`mypy.ini` and the repo-level `pylintrc` already exclude generated internals, `_vendor/`, `tests/`, and `samples/` — errors will originate in `_patch.py` customizations.
+MyPy checks generated code and customizations, then checks samples separately with
+`--check-untyped-defs`. Do not assume errors are limited to `_patch.py`. On a GA branch, retain
+only sample scenarios supported by the generated GA surface.
 
 ## Step 7: Update Documentation and Samples
 

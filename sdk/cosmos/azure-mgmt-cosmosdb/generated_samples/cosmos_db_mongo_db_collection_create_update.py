@@ -40,7 +40,6 @@ def main():
             "properties": {
                 "options": {},
                 "resource": {
-                    "analyticalStorageTtl": 500,
                     "id": "collectionName",
                     "indexes": [
                         {"key": {"keys": ["_ts"]}, "options": {"expireAfterSeconds": 100, "unique": True}},
@@ -55,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/CosmosDBMongoDBCollectionCreateUpdate.json
+# x-ms-original-file: 2026-07-15/CosmosDBMongoDBCollectionCreateUpdate.json
 if __name__ == "__main__":
     main()

@@ -9,7 +9,13 @@
         "azure.mgmt.commvaultcontentstore.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
         "azure.mgmt.commvaultcontentstore.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
         "azure.mgmt.commvaultcontentstore.models.CloudAccount": "Commvault.ContentStore.CloudAccount",
+        "azure.mgmt.commvaultcontentstore.models.CloudAccountIdentityUpdate": "Commvault.ContentStore.CloudAccountIdentityUpdate",
+        "azure.mgmt.commvaultcontentstore.models.CloudAccountMarketplaceUpdate": "Commvault.ContentStore.CloudAccountMarketplaceUpdate",
+        "azure.mgmt.commvaultcontentstore.models.CloudAccountOfferDetailsUpdate": "Commvault.ContentStore.CloudAccountOfferDetailsUpdate",
         "azure.mgmt.commvaultcontentstore.models.CloudAccountProperties": "Commvault.ContentStore.CloudAccountProperties",
+        "azure.mgmt.commvaultcontentstore.models.CloudAccountUpdate": "Commvault.ContentStore.CloudAccountUpdate",
+        "azure.mgmt.commvaultcontentstore.models.CloudAccountUpdateProperties": "Azure.ResourceManager.Foundations.ResourceUpdateModelProperties",
+        "azure.mgmt.commvaultcontentstore.models.CloudAccountUserUpdate": "Commvault.ContentStore.CloudAccountUserUpdate",
         "azure.mgmt.commvaultcontentstore.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
         "azure.mgmt.commvaultcontentstore.models.CommvaultPlan": "Commvault.ContentStore.CommvaultPlan",
         "azure.mgmt.commvaultcontentstore.models.CompanyProfile": "Commvault.ContentStore.CompanyProfile",
@@ -158,5 +164,5 @@
         "azure.mgmt.commvaultcontentstore.operations.RoleMappingsOperations.list": "Commvault.ContentStore.RoleMappings.list",
         "azure.mgmt.commvaultcontentstore.aio.operations.RoleMappingsOperations.list": "Commvault.ContentStore.RoleMappings.list"
     },
-    "CrossLanguageVersion": "e152381380ee"
+    "CrossLanguageVersion": "d93c02d429be"
 }

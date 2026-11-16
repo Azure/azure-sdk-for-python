@@ -109,36 +109,11 @@ class TestCommvaultContentStoreMgmtCloudAccountsOperationsAsync(AzureMgmtRecorde
                 resource_group_name=resource_group.name,
                 cloud_account_name="str",
                 properties={
-                    "location": "str",
-                    "id": "str",
                     "identity": {
                         "type": "str",
-                        "principalId": "str",
-                        "tenantId": "str",
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
-                    "name": "str",
                     "properties": {
-                        "marketplace": {
-                            "offerDetails": {
-                                "offerId": "str",
-                                "publisherId": "str",
-                                "planId": "str",
-                                "planName": "str",
-                                "termId": "str",
-                                "termUnit": "str",
-                            },
-                            "saasResourceId": "str",
-                            "subscriptionId": "str",
-                            "subscriptionStatus": "str",
-                        },
-                        "user": {
-                            "emailAddress": "str",
-                            "firstName": "str",
-                            "lastName": "str",
-                            "phoneNumber": "str",
-                            "upn": "str",
-                        },
                         "company": {
                             "city": "str",
                             "companyName": "str",
@@ -149,22 +124,27 @@ class TestCommvaultContentStoreMgmtCloudAccountsOperationsAsync(AzureMgmtRecorde
                             "street": "str",
                             "website": "str",
                         },
-                        "provisioningState": "str",
-                        "roleAssignmentsOnCcaCreate": [
-                            {"entities": [{"displayName": "str", "entityType": "str", "id": "str"}], "roleName": "str"}
-                        ],
-                        "ssoUrl": "str",
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str",
+                        "marketplace": {
+                            "offerDetails": {
+                                "offerId": "str",
+                                "planId": "str",
+                                "planName": "str",
+                                "publisherId": "str",
+                                "termId": "str",
+                                "termUnit": "str",
+                            },
+                            "saasResourceId": "str",
+                            "subscriptionId": "str",
+                        },
+                        "user": {
+                            "emailAddress": "str",
+                            "firstName": "str",
+                            "lastName": "str",
+                            "phoneNumber": "str",
+                            "upn": "str",
+                        },
                     },
                     "tags": {"str": "str"},
-                    "type": "str",
                 },
             )
         ).result()  # call '.result()' to poll until service return final result

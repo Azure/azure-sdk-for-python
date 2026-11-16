@@ -38,78 +38,6 @@ class TestCognitiveServicesManagementSubscriptionRaiPolicyOperations(AzureMgmtRe
                 "id": "str",
                 "name": "str",
                 "properties": {
-                    "acs": {
-                        "agent_control_specification_version": "str",
-                        "intervention_points": {
-                            "input": {
-                                "policy": {
-                                    "id": "str",
-                                    "aacs_moderation": {
-                                        "harm_configs": [{"category": "str", "harm_config_id": "str"}],
-                                        "subject_format": "str",
-                                    },
-                                    "query": "str",
-                                },
-                                "policy_target": "str",
-                                "policy_target_kind": "str",
-                                "annotations": {},
-                            },
-                            "output": {
-                                "policy": {
-                                    "id": "str",
-                                    "aacs_moderation": {
-                                        "harm_configs": [{"category": "str", "harm_config_id": "str"}],
-                                        "subject_format": "str",
-                                    },
-                                    "query": "str",
-                                },
-                                "policy_target": "str",
-                                "policy_target_kind": "str",
-                                "annotations": {},
-                            },
-                            "post_tool_call": {
-                                "policy": {
-                                    "id": "str",
-                                    "aacs_moderation": {
-                                        "harm_configs": [{"category": "str", "harm_config_id": "str"}],
-                                        "subject_format": "str",
-                                    },
-                                    "query": "str",
-                                },
-                                "policy_target": "str",
-                                "policy_target_kind": "str",
-                                "annotations": {},
-                                "tool_name_from": "str",
-                            },
-                            "pre_tool_call": {
-                                "policy": {
-                                    "id": "str",
-                                    "aacs_moderation": {
-                                        "harm_configs": [{"category": "str", "harm_config_id": "str"}],
-                                        "subject_format": "str",
-                                    },
-                                    "query": "str",
-                                },
-                                "policy_target": "str",
-                                "policy_target_kind": "str",
-                                "annotations": {},
-                                "tool_name_from": "str",
-                            },
-                        },
-                        "policies": {"str": {"query": "str", "type": "str"}},
-                        "annotators": {},
-                        "metadata": {"str": {}},
-                        "tools": {
-                            "str": {
-                                "clearance": "str",
-                                "description": "str",
-                                "id": "str",
-                                "security_labels": ["str"],
-                                "type": "str",
-                            }
-                        },
-                    },
-                    "acsRegos": [{"regoName": "str"}],
                     "basePolicyName": "str",
                     "contentFilters": [
                         {
@@ -122,14 +50,6 @@ class TestCognitiveServicesManagementSubscriptionRaiPolicyOperations(AzureMgmtRe
                         }
                     ],
                     "customBlocklists": [{"blocking": bool, "blocklistName": "str", "source": "str"}],
-                    "customExternalSafetyProviders": [
-                        {
-                            "externalSafetyProviderName": "str",
-                            "source": "str",
-                            "blocking": bool,
-                            "managedIdentityResourceId": "str",
-                        }
-                    ],
                     "egressPolicy": {
                         "defaultAction": "str",
                         "description": "str",
@@ -158,7 +78,6 @@ class TestCognitiveServicesManagementSubscriptionRaiPolicyOperations(AzureMgmtRe
                             }
                         ],
                     },
-                    "format": "str",
                     "mode": "str",
                     "safetyProviders": [{"blocking": bool, "safetyProviderName": "str", "source": "str"}],
                     "type": "str",

@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import asyncio
+from copy import deepcopy
 from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING, Any, AsyncIterator, Awaitable, Callable, Optional
 
@@ -26,6 +27,7 @@ from _search_helpers import (
     HOTEL_DOCUMENT_COUNT,
     INDEXING_DELAY_SECONDS,
     KNOWLEDGE_BASE_DESCRIPTION,
+    KNOWLEDGE_BASE_DOCUMENTS,
     KNOWLEDGE_SOURCE_DESCRIPTION,
     SEARCH_RESOURCE_PREFIX,
     SearchLiveContext,
@@ -253,6 +255,10 @@ async def knowledge_base_resources(
     try:
         index_create_attempted = True
         await index_client.create_index(build_index(index_name, semantic=True))
+        if wait_for_active:
+            async with make_search_client(endpoint, index_name, credential=credential) as search_client:
+                await upload_documents(search_client, deepcopy(KNOWLEDGE_BASE_DOCUMENTS))
+                await wait_for_document_count(test, search_client, len(KNOWLEDGE_BASE_DOCUMENTS))
         source_create_attempted = True
         created_source = await index_client.create_knowledge_source(
             build_knowledge_source(index_name, knowledge_source_name, description=source_description)
@@ -266,6 +272,7 @@ async def knowledge_base_resources(
             await poll_until(
                 lambda: index_client.get_knowledge_source_status(knowledge_source_name),
                 predicate=lambda s: s.synchronization_status == "active",
+                interval=5.0 if test.is_live else 0,
             )
 
         ctx = SearchLiveContext(

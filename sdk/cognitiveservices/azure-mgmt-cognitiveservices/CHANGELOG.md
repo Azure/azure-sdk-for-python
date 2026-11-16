@@ -1,5 +1,202 @@
 # Release History
 
+## 15.0.0 (2026-11-11)
+
+### Features Added
+
+  - Client `CognitiveServicesManagementClient` added parameter `content_type` in method `calculate_model_capacity`
+  - Client `CognitiveServicesManagementClient` added parameter `content_type` in method `check_domain_availability`
+  - Client `CognitiveServicesManagementClient` added parameter `content_type` in method `check_sku_availability`
+  - Client `CognitiveServicesManagementClient` added method `send_request`
+  - Client `CognitiveServicesManagementClient` added operation group `agent_applications`
+  - Client `CognitiveServicesManagementClient` added operation group `agent_deployments`
+  - Client `CognitiveServicesManagementClient` added operation group `managed_compute_capacities`
+  - Client `CognitiveServicesManagementClient` added operation group `managed_network_provisions`
+  - Client `CognitiveServicesManagementClient` added operation group `managed_network_settings`
+  - Client `CognitiveServicesManagementClient` added operation group `outbound_rule`
+  - Client `CognitiveServicesManagementClient` added operation group `outbound_rules`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_external_safety_provider`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_external_safety_providers`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_tool_labels`
+  - Client `CognitiveServicesManagementClient` added operation group `subscription_rai_policy`
+  - Client `CognitiveServicesManagementClient` added operation group `test_rai_external_safety_provider`
+  - Model `AccountProperties` added property `a365_logging_enabled`
+  - Model `AccountProperties` added property `trusted_certificate_sources`
+  - Model `CapabilityHostProperties` added property `enable_public_hosting_environment`
+  - Enum `ConnectionAuthType` added member `ACCOUNT_MANAGED_IDENTITY`
+  - Enum `ConnectionAuthType` added member `AGENTIC_IDENTITY_TOKEN`
+  - Enum `ConnectionAuthType` added member `AGENTIC_USER`
+  - Enum `ConnectionAuthType` added member `AGENT_USER_IMPERSONATION`
+  - Enum `ConnectionAuthType` added member `DELEGATED_SAS`
+  - Enum `ConnectionAuthType` added member `PROJECT_MANAGED_IDENTITY`
+  - Enum `ConnectionAuthType` added member `USER_ENTRA_TOKEN`
+  - Enum `ConnectionCategory` added member `API_MANAGEMENT`
+  - Enum `ConnectionCategory` added member `APP_CONFIG`
+  - Enum `ConnectionCategory` added member `APP_INSIGHTS`
+  - Enum `ConnectionCategory` added member `AZURE_CONTAINER_APP_ENVIRONMENT`
+  - Enum `ConnectionCategory` added member `AZURE_KEY_VAULT`
+  - Enum `ConnectionCategory` added member `DATABRICKS`
+  - Enum `ConnectionCategory` added member `GROUNDING_WITH_BING_SEARCH`
+  - Enum `ConnectionCategory` added member `GROUNDING_WITH_CUSTOM_SEARCH`
+  - Enum `ConnectionCategory` added member `MICROSOFT_FABRIC`
+  - Enum `ConnectionCategory` added member `MODEL_GATEWAY`
+  - Enum `ConnectionCategory` added member `POWER_PLATFORM_ENVIRONMENT`
+  - Enum `ConnectionCategory` added member `REMOTE_A2_A`
+  - Enum `ConnectionCategory` added member `REMOTE_TOOL`
+  - Enum `ConnectionCategory` added member `SHAREPOINT`
+  - Model `DeploymentProperties` added property `context_cache_container_id`
+  - Model `DeploymentProperties` added property `deployment_state`
+  - Model `DeploymentProperties` added property `routing`
+  - Model `DeploymentProperties` added property `service_tier`
+  - Model `ModelSkuCapacityProperties` added property `scope_id`
+  - Model `ModelSkuCapacityProperties` added property `scope_type`
+  - Model `RaiPolicyContentFilter` added property `action`
+  - Enum `RaiPolicyContentSource` added member `POST_RUN`
+  - Enum `RaiPolicyContentSource` added member `POST_TOOL_CALL`
+  - Enum `RaiPolicyContentSource` added member `PRE_RUN`
+  - Enum `RaiPolicyContentSource` added member `PRE_TOOL_CALL`
+  - Model `RaiPolicyProperties` added property `egress_policy`
+  - Model `RaiPolicyProperties` added property `safety_providers`
+  - Model `Usage` added property `id`
+  - Model `Usage` added property `scope_id`
+  - Model `Usage` added property `scope_type`
+  - Model `Usage` added property `type`
+  - Added model `AgentApplication`
+  - Added model `AgentDeployment`
+  - Added model `AgentDeploymentProperties`
+  - Added enum `AgentDeploymentProvisioningState`
+  - Added enum `AgentDeploymentState`
+  - Added enum `AgentDeploymentType`
+  - Added enum `AgentProtocol`
+  - Added model `AgentProtocolVersion`
+  - Added model `AgentReference`
+  - Added model `AgentReferenceProperties`
+  - Added model `AgentReferenceResourceArmPaginatedResult`
+  - Added model `AgenticApplicationProperties`
+  - Added enum `AgenticApplicationProvisioningState`
+  - Added model `ApplicationAuthorizationPolicy`
+  - Added model `ApplicationTrafficRoutingPolicy`
+  - Added model `AssignedIdentity`
+  - Added enum `BuiltInAuthorizationScheme`
+  - Added model `CertificateBundleReference`
+  - Added model `ChannelsBuiltInAuthorizationPolicy`
+  - Added model `DeploymentRouting`
+  - Added model `DeploymentSizeCapacity`
+  - Added enum `DeploymentState`
+  - Added enum `FirewallSku`
+  - Added model `FqdnOutboundRule`
+  - Added model `HostedAgentDeployment`
+  - Added enum `IdentityKind`
+  - Added enum `IdentityManagementType`
+  - Added enum `IdentityProvisioningState`
+  - Added enum `IsolationMode`
+  - Added model `ManagedAgentDeployment`
+  - Added model `ManagedComputeCapacity`
+  - Added model `ManagedComputeCapacityProperties`
+  - Added enum `ManagedNetworkKind`
+  - Added model `ManagedNetworkProvisionOptions`
+  - Added model `ManagedNetworkProvisionStatus`
+  - Added enum `ManagedNetworkProvisioningState`
+  - Added model `ManagedNetworkSettings`
+  - Added model `ManagedNetworkSettingsBasicResource`
+  - Added model `ManagedNetworkSettingsEx`
+  - Added model `ManagedNetworkSettingsProperties`
+  - Added model `ManagedNetworkSettingsPropertiesBasicResource`
+  - Added enum `ManagedNetworkStatus`
+  - Added model `OrganizationSharedBuiltInAuthorizationPolicy`
+  - Added model `OutboundRule`
+  - Added model `OutboundRuleBasicResource`
+  - Added model `PrivateEndpointOutboundRule`
+  - Added model `PrivateEndpointOutboundRuleDestination`
+  - Added model `ProjectCapabilityHost`
+  - Added model `ProjectCapabilityHostProperties`
+  - Added enum `QuotaScopeType`
+  - Added enum `RaiActionType`
+  - Added enum `RaiEgressDefaultAction`
+  - Added enum `RaiEgressHeaderOperation`
+  - Added model `RaiEgressHeaderTransform`
+  - Added model `RaiEgressHeaderValueRef`
+  - Added model `RaiEgressManagedIdentityRef`
+  - Added enum `RaiEgressMode`
+  - Added model `RaiEgressPolicyConfig`
+  - Added model `RaiEgressRewriteTarget`
+  - Added model `RaiEgressRule`
+  - Added model `RaiEgressRuleAction`
+  - Added enum `RaiEgressRuleActionType`
+  - Added model `RaiEgressRuleMatch`
+  - Added enum `RaiEgressRuleType`
+  - Added enum `RaiEgressScheme`
+  - Added model `RaiEgressSecretRef`
+  - Added model `RaiExternalSafetyProviderSchema`
+  - Added model `RaiExternalSafetyProviderSchemaProperties`
+  - Added model `RaiSafetyProviderConfig`
+  - Added model `RaiToolLabel`
+  - Added model `RaiToolLabelProperties`
+  - Added model `RaiToolLabelPropertiesAccountScope`
+  - Added model `RaiToolLabelPropertiesProjectScopesItem`
+  - Added model `RoleBasedBuiltInAuthorizationPolicy`
+  - Added enum `RoutingMode`
+  - Added enum `RuleAction`
+  - Added enum `RuleCategory`
+  - Added enum `RuleStatus`
+  - Added enum `RuleType`
+  - Added model `SafetyProviderConfig`
+  - Added model `ServiceTagOutboundRule`
+  - Added model `ServiceTagOutboundRuleDestination`
+  - Added enum `ServiceTier`
+  - Added enum `TrafficRoutingProtocol`
+  - Added model `TrafficRoutingRule`
+  - Added model `TrustedCertificateSource`
+  - Added enum `TrustedCertificateSourceType`
+  - Added model `VersionedAgentReference`
+  - Operation group `AccountCapabilityHostsOperations` added method `list`
+  - Operation group `AccountsOperations` added parameter `content_type` in method `regenerate_key`
+  - Operation group `DeploymentsOperations` added method `pause`
+  - Operation group `DeploymentsOperations` added method `resume`
+  - Operation group `ProjectCapabilityHostsOperations` added method `list`
+  - Operation group `RaiBlocklistItemsOperations` added parameter `content_type` in method `batch_delete`
+  - Added operation group `AgentApplicationsOperations`
+  - Added operation group `AgentDeploymentsOperations`
+  - Added operation group `ManagedComputeCapacitiesOperations`
+  - Added operation group `ManagedNetworkProvisionsOperations`
+  - Added operation group `ManagedNetworkSettingsOperations`
+  - Added operation group `OutboundRuleOperations`
+  - Added operation group `OutboundRulesOperations`
+  - Added operation group `RaiExternalSafetyProviderOperations`
+  - Added operation group `RaiExternalSafetyProvidersOperations`
+  - Added operation group `RaiToolLabelsOperations`
+  - Added operation group `SubscriptionRaiPolicyOperations`
+  - Added operation group `TestRaiExternalSafetyProviderOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Method `CognitiveServicesManagementClient.calculate_model_capacity` grouped `model`/`sku_name`/`workloads` into new signature `parameters`
+  - Method `CognitiveServicesManagementClient.check_domain_availability` grouped `subdomain_name`/`type`/`kind` into new signature `parameters`
+  - Method `CognitiveServicesManagementClient.check_sku_availability` grouped `skus`/`kind`/`type` into new signature `parameters`
+  - Method `AccountsOperations.regenerate_key` grouped `key_name` into new signature `parameters`
+  - Model `CommitmentPlanAccountAssociation` moved instance variable `account_id` under property `properties` whose type is `CommitmentPlanAccountAssociationProperties`
+  - Model `CustomKeys` renamed its instance variable `keys` to `keys_property`
+  - Model `ResourceSkuRestrictions` renamed its instance variable `values` to `values_property`
+  - Model `DefenderForAISetting` moved instance variable `state` under property `properties` whose type is `DefenderForAISettingProperties`
+  - Model `RaiPolicyProperties` deleted or renamed its instance variable `custom_topics`
+  - Deleted or renamed model `CustomTopicConfig`
+  - Deleted or renamed model `RaiTopicConfig`
+  - Method `AccountConnectionsOperations.list` changed its parameters `category`/`include_all`/`target` from `positional_or_keyword` to `keyword_only`
+  - Method `LocationBasedModelCapacitiesOperations.list` changed its parameters `model_format`/`model_name`/`model_version` from `positional_or_keyword` to `keyword_only`
+  - Method `ModelCapacitiesOperations.list` changed its parameters `model_format`/`model_name`/`model_version` from `positional_or_keyword` to `keyword_only`
+  - Method `ProjectConnectionsOperations.list` changed its parameters `category`/`include_all`/`target` from `positional_or_keyword` to `keyword_only`
+  - Method `ProjectCapabilityHostsOperations.begin_create_or_update` changed type of its parameter `capability_host` from `CapabilityHost` to `ProjectCapabilityHost`
+  - Method `RaiBlocklistItemsOperations.batch_delete` changed type of its parameter `rai_blocklist_items_names` from `JSON` to `List[str]`
+  - Method `ProjectCapabilityHostsOperations.begin_create_or_update` changed return type from `LROPoller[CapabilityHost]` to `LROPoller[ProjectCapabilityHost]`
+  - Method `ProjectCapabilityHostsOperations.get` changed return type from `CapabilityHost` to `ProjectCapabilityHost`
+
+### Other Changes
+
+  - Deleted model `AzureEntityResource`/`ErrorDetailAutoGenerated`/`ErrorResponseAutoGenerated` which actually were not used by SDK users
+  - Deleted model `AccountListResult`/`AccountModelListResult`/`CommitmentPlanAccountAssociationListResult`/`CommitmentPlanListResult`/`CommitmentTierListResult`/`ConnectionPropertiesV2BasicResourceArmPaginatedResult`/`DefenderForAISettingResult`/`DeploymentListResult`/`DeploymentSkuListResult`/`EncryptionScopeListResult`/`ModelCapacityListResult`/`ModelListResult`/`NetworkSecurityPerimeterConfigurationList`/`OperationListResult`/`ProjectListResult`/`QuotaTierListResult`/`RaiBlockListItemsResult`/`RaiBlockListResult`/`RaiContentFilterListResult`/`RaiPolicyListResult`/`RaiTopicResult`/`ResourceSkuListResult` which actually were not used by SDK users
+
 ## 15.0.0b6 (2026-10-10)
 
 ### Features Added

@@ -48,8 +48,10 @@ The request dictionaries demonstrate `topK`, `batchSize`, `sort`, `returnDocumen
 These are service request-body fields, not method keyword arguments.
 
 For JSON documents, JSON-encode each document string and use `documentType: "json"`.
-Supply `targetPaths`, using dot notation for nested properties and commas for
-multiple paths, such as `"meta.content,id"`.
+Supply up to 100 target paths, using dot notation for nested properties. In a request
+dictionary, `targetPaths` is a comma-separated string, such as `"meta.content,id"`; the
+`SemanticRerankingInferenceContent` model's `target_paths` takes a list, such as
+`["meta.content", "id"]`.
 See the [JSON document and model-selection example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/dataai/azure-data-ai/README.md#model-selection-and-json-documents).
 
 Python method names use snake_case, but dictionary keys keep the service's JSON
@@ -68,9 +70,10 @@ python samples/semantic_reranking_entra_json.py
 ```
 
 Use a model supported by your endpoint, or remove the request's `model` field for its default.
-The sample serializes each document with `json.dumps`, sets `documentType` to
-`"json"`, and passes `"title,description"` as the comma-separated `targetPaths`
-string. Do not pass dictionaries directly in the `documents` array.
+The sample builds a `SemanticRerankingInferenceContent` model, serializes each document
+with `json.dumps`, sets `document_type` to `"json"`, and sets
+`target_paths=["title", "description"]`. Do not pass dictionaries directly in the
+`documents` array.
 
 Returned document text remains a JSON-encoded string; the sample uses `json.loads`
 to display its fields. It also prints any returned sentence scores. Only one

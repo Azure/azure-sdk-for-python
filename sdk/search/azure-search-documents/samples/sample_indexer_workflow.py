@@ -53,6 +53,7 @@ def sample_indexer_workflow():
         IndexingParameters,
         SearchIndexerDataSourceConnection,
         IndexingParametersConfiguration,
+        FieldMapping,
     )
 
     indexer_client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
@@ -69,6 +70,7 @@ def sample_indexer_workflow():
         ),
         SearchableField(name="HotelName", type=SearchFieldDataType.STRING),
         SimpleField(name="Description", type=SearchFieldDataType.STRING),
+        SearchableField(name="Locations", collection=True),
         SimpleField(name="Description_fr", type=SearchFieldDataType.STRING),
         SimpleField(name="Category", type=SearchFieldDataType.STRING),
         SimpleField(name="ParkingIncluded", type=SearchFieldDataType.BOOLEAN, filterable=True),
@@ -94,8 +96,8 @@ def sample_indexer_workflow():
     print(f"Created: data source '{data_source_name}'")
 
     # 3. Create a skillset
-    inp = InputFieldMappingEntry(name="text", source="/document/lastRenovationDate")
-    output = OutputFieldMappingEntry(name="dateTimes", target_name="RenovatedDate")
+    inp = InputFieldMappingEntry(name="text", source="/document/Description")
+    output = OutputFieldMappingEntry(name="locations", target_name="Locations")
     skill = EntityRecognitionSkillV3(name="merge-skill", inputs=[inp], outputs=[output])
     skillset = SearchIndexerSkillset(name=skillset_name, skills=[skill], description="example skillset")
     indexer_client.create_skillset(skillset)
@@ -110,6 +112,7 @@ def sample_indexer_workflow():
         target_index_name=index_name,
         skillset_name=skillset_name,
         parameters=parameters,
+        output_field_mappings=[FieldMapping(source_field_name="/document/Locations/*", target_field_name="Locations")],
     )
     indexer_client.create_indexer(indexer)
     print(f"Created: indexer '{indexer_name}'")

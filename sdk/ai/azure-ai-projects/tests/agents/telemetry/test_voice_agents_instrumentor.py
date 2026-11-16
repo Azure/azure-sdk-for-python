@@ -37,8 +37,8 @@ from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.ai.projects.telemetry import _voice_agents_instrumentor as voice
 from azure.ai.projects.telemetry import _responses_instrumentor as responses
-from azure.ai.projects._realtime import BetaRealtimeConnectionManager
-from azure.ai.projects.aio._realtime import AsyncBetaRealtimeConnectionManager
+from azure.ai.projects._realtime import RealtimeConnectionManager
+from azure.ai.projects.aio._realtime import AsyncRealtimeConnectionManager
 
 _ENDPOINT = "https://example.test/api/projects/project-test"
 _PREFIX = "az.ai.voice_agents."
@@ -134,7 +134,7 @@ def _manager(monkeypatch, is_async, events=None, failure=None, headers=None):
     ws = MagicMock()
     ws.close_code = 1000
     ws.closed = False
-    manager: BetaRealtimeConnectionManager | AsyncBetaRealtimeConnectionManager
+    manager: RealtimeConnectionManager | AsyncRealtimeConnectionManager
     if is_async:
         import aiohttp
 
@@ -149,7 +149,7 @@ def _manager(monkeypatch, is_async, events=None, failure=None, headers=None):
         session.ws_connect = AsyncMock(side_effect=failure, return_value=ws)
         credential.get_token = AsyncMock(return_value=token)
         monkeypatch.setattr(aiohttp, "ClientSession", MagicMock(return_value=session))
-        manager = AsyncBetaRealtimeConnectionManager(
+        manager = AsyncRealtimeConnectionManager(
             endpoint=_ENDPOINT,
             credential=credential,
             credential_scopes=["https://ai.azure.com/.default"],
@@ -165,7 +165,7 @@ def _manager(monkeypatch, is_async, events=None, failure=None, headers=None):
         credential.get_token.return_value = token
         connect = MagicMock(side_effect=failure, return_value=ws)
         monkeypatch.setattr(websockets.sync.client, "connect", connect)
-        manager = BetaRealtimeConnectionManager(
+        manager = RealtimeConnectionManager(
             endpoint=_ENDPOINT,
             credential=credential,
             credential_scopes=["https://ai.azure.com/.default"],
@@ -342,7 +342,7 @@ def test_voice_creation_reuses_foundry_span_without_duplicates(telemetry):
 def test_rest_delete_error_status_has_no_raw_service_error(telemetry):
     with _rest_client({"error": {"code": "not_found", "message": _SECRET}}, status=404) as client:
         with pytest.raises(ResourceNotFoundError):
-            client.beta.voice_agents.conversations.delete("agent-test", "conversation-test")
+            client.voice_agents.conversations.delete("agent-test", "conversation-test")
     (span,) = _spans(telemetry, "voice_agents.conversations.delete")
     assert span.status.status_code is StatusCode.ERROR
     assert span.attributes["http.response.status_code"] == 404
@@ -352,9 +352,7 @@ def test_rest_delete_error_status_has_no_raw_service_error(telemetry):
 
 def test_opt_out_per_rest_call_and_experimental_gate(telemetry):
     with _rest_client({}, status=204) as client:
-        client.beta.voice_agents.conversations.delete(
-            "agent-test", "conversation-test", tracing_options={"enabled": False}
-        )
+        client.voice_agents.conversations.delete("agent-test", "conversation-test", tracing_options={"enabled": False})
     assert not _spans(telemetry, "voice_agents.conversations.delete")
     telemetry.instrumentor.uninstrument()
     telemetry.monkeypatch.setenv("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", "false")
@@ -578,7 +576,7 @@ async def test_async_generation_rest_uses_same_span_and_no_new_public_api(teleme
         telemetry.monkeypatch.setattr(
             client._client._pipeline, "run", AsyncMock(return_value=SimpleNamespace(http_response=response))
         )
-        result = await client.beta.agents.create_from_prompt(
+        result = await client.agents.create_from_prompt(
             models.GenerateVoiceAgentRequest(kind=models.AgentKind.VOICE, name="agent-test")
         )
     assert result.name == "agent-test"
@@ -669,11 +667,11 @@ async def test_telephony_mutations_names_and_safe_errors(telemetry, is_async, me
                 client._client._pipeline, "run", AsyncMock(return_value=SimpleNamespace(http_response=response))
             )
             with pytest.raises(ResourceNotFoundError):
-                await getattr(client.beta.voice_agents.telephony, method)(*args, **kwargs)
+                await getattr(client.voice_agents.telephony, method)(*args, **kwargs)
     else:
         with _rest_client({"error": {"code": "not_found", "message": _SECRET}}, status=404) as client:
             with pytest.raises(ResourceNotFoundError):
-                getattr(client.beta.voice_agents.telephony, method)(*args, **kwargs)
+                getattr(client.voice_agents.telephony, method)(*args, **kwargs)
     (span,) = _spans(telemetry, "voice_agents.telephony." + method)
     assert span.attributes[_PREFIX + "operation"] == method
     assert span.attributes["http.response.status_code"] == 404
@@ -684,9 +682,7 @@ async def test_telephony_mutations_names_and_safe_errors(telemetry, is_async, me
 def test_explicit_rest_enable_overrides_global_disable(telemetry):
     settings.tracing_enabled = False
     with _rest_client({}, status=204) as client:
-        client.beta.voice_agents.conversations.delete(
-            "agent-test", "conversation-test", tracing_options={"enabled": True}
-        )
+        client.voice_agents.conversations.delete("agent-test", "conversation-test", tracing_options={"enabled": True})
     assert len(_spans(telemetry, "voice_agents.conversations.delete")) == 1
 
 

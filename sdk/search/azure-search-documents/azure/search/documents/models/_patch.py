@@ -61,12 +61,24 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
     Search index.
 
     Index operations are performed in the order in which they are added
-    to the batch.
+    to the batch. Queue operations and serialization share the generated
+    model's action storage.
     """
 
     def __init__(self, *, actions: Optional[List[IndexAction]] = None) -> None:
         super().__init__(actions=actions if actions is not None else [])
-        self._actions: List[IndexAction] = self["value"]
+
+    def _get_actions(self) -> List[IndexAction]:
+        """Return the action list held by the generated wire model.
+
+        :return: The stored index actions.
+        :rtype: list[~azure.search.documents.models.IndexAction]
+        """
+        actions: Optional[List[IndexAction]] = self.get("value")
+        if actions is None:
+            actions = []
+            self["value"] = actions
+        return actions
 
     def __repr__(self) -> str:
         return "<IndexDocumentsBatch [{} actions]>".format(len(self.actions) if self.actions else 0)[:1024]
@@ -158,9 +170,7 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
 
         :rtype: list[~azure.search.documents.models.IndexAction]
         """
-        if not hasattr(self, "_actions") or self._actions is None:
-            self._actions = []
-        return list(self._actions)
+        return list(self._get_actions())
 
     @actions.setter
     def actions(self, value: List[IndexAction]) -> None:
@@ -169,7 +179,7 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         :param value: The list of index actions
         :type value: list[~azure.search.documents.models.IndexAction]
         """
-        self._actions = value if value is not None else []
+        self["value"] = value if value is not None else []
 
     def dequeue_actions(self, **kwargs: Any) -> List[IndexAction]:
         # pylint: disable=unused-argument
@@ -178,10 +188,8 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         :return: the current actions
         :rtype: list[~azure.search.documents.models.IndexAction]
         """
-        if not hasattr(self, "_actions") or self._actions is None:
-            return []
-        result = list(self._actions)
-        self._actions = []
+        result = self.actions
+        self.actions = []
         return result
 
     def enqueue_actions(self, new_actions: Union[IndexAction, List[IndexAction]], **kwargs: Any) -> None:
@@ -191,13 +199,11 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         :param new_actions: the actions to enqueue
         :type new_actions: ~azure.search.documents.models.IndexAction or list[~azure.search.documents.models.IndexAction]
         """
-        if not hasattr(self, "_actions") or self._actions is None:
-            self._actions = []
-
+        actions = self._get_actions()
         if isinstance(new_actions, IndexAction):
-            self._actions.append(new_actions)
+            actions.append(new_actions)
         else:
-            self._actions.extend(new_actions)
+            actions.extend(new_actions)
 
     def _extend_batch(self, documents: List[Dict[str, Any]], action_type: str) -> List[IndexAction]:
         """Internal helper to extend the batch with new actions.
@@ -209,16 +215,13 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         :return: The list of actions added
         :rtype: list[~azure.search.documents.models.IndexAction]
         """
-        if not hasattr(self, "_actions") or self._actions is None:
-            self._actions = []
-
         new_actions = []
         for doc in documents:
             action = IndexAction(action_type=action_type)
             action.update(doc)
             new_actions.append(action)
 
-        self._actions.extend(new_actions)
+        self._get_actions().extend(new_actions)
         return new_actions
 
 

@@ -36,7 +36,7 @@ def main():
         storage_name="sample-storageName",
         resource={
             "properties": {
-                "class": "COLD",
+                "class": "COOL",
                 "location": "idxxvyqhyxvahalfmkbjxklfbimouxnasnxdmaydqv",
                 "storageType": "Air_Gap_Protect",
                 "vendor": "Azure_Blob_Storage",
@@ -46,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-09-30/Storages_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-11-03/Storages_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

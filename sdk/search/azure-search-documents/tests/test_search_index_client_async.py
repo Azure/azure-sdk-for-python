@@ -9,6 +9,7 @@ from __future__ import annotations
 from unittest import mock
 
 import pytest
+from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureKeyCredential
 
@@ -19,6 +20,59 @@ from _capabilities import require_capability
 
 ENDPOINT = "https://my-search-service.search.windows.net"
 KEY = "fake-api-key"
+
+_DELETE_RESOURCES = [
+    ("delete_index", "SearchIndex"),
+    ("delete_synonym_map", "SynonymMap"),
+    ("delete_alias", "SearchAlias"),
+    ("delete_knowledge_base", "KnowledgeBase"),
+    ("delete_knowledge_source", "SearchIndexKnowledgeSource"),
+]
+_DELETE_CONDITIONS = [
+    (MatchConditions.Unconditionally, None, None),
+    (MatchConditions.IfNotModified, "If-Match", '"etag"'),
+    (MatchConditions.IfModified, "If-None-Match", '"etag"'),
+    (MatchConditions.IfPresent, "If-Match", "*"),
+    (MatchConditions.IfMissing, "If-None-Match", "*"),
+]
+
+
+@pytest.mark.asyncio
+class TestSearchIndexClientDeletesAsync:
+    @pytest.mark.parametrize("method_name,model_name", _DELETE_RESOURCES)
+    @pytest.mark.parametrize("condition,header,value", _DELETE_CONDITIONS)
+    @pytest.mark.parametrize("as_model", [False, True])
+    async def test_delete_preserves_conditions_in_generated_headers(
+        self, method_name, model_name, condition, header, value, as_model
+    ):
+        from types import SimpleNamespace
+        from azure.search.documents.indexes import models
+
+        resource = (
+            getattr(models, model_name)({"name": "resource", "@odata.etag": '"etag"'}) if as_model else "resource"
+        )
+        kwargs = {} if as_model else {"etag": '"etag"'}
+        response = mock.Mock(status_code=204)
+
+        async with _client() as client:
+            with mock.patch.object(
+                client._client._pipeline,
+                "run",
+                new=mock.AsyncMock(return_value=SimpleNamespace(http_response=response)),
+            ) as run:
+                await getattr(client, method_name)(
+                    resource, match_condition=condition, headers={"x-custom": "value"}, **kwargs
+                )
+
+        request = run.call_args.args[0]
+        assert request.method == "DELETE"
+        assert "resource" in request.url
+        assert request.headers["x-custom"] == "value"
+        if header is None:
+            assert "If-Match" not in request.headers
+            assert "If-None-Match" not in request.headers
+        else:
+            assert request.headers[header] == value
 
 
 def _client() -> SearchIndexClient:
@@ -56,6 +110,10 @@ def _index_response_stub(name="hotels"):
     response.vector_search = None
     response.permission_filter_option = None
     response.purview_enabled = None
+    response.share_point_connector_app_registration = {
+        "applicationId": "sharepoint-app",
+        "federatedCredentialId": "sharepoint-credential",
+    }
     response.e_tag = '"etag"'
     return response
 
@@ -91,7 +149,7 @@ class TestListIndexesAsync:
             "azure.search.documents.indexes.aio.SearchIndexClient.list_indexes.search_type",
             "azure.search.documents.indexes.models.SearchIndex.cors_options",
             "azure.search.documents.indexes.models.SearchIndex.permission_filter_option",
-            "azure.search.documents.indexes.models.SearchIndex.purview_enabled",
+            "azure.search.documents.indexes.models.SearchIndex.share_point_connector_app_registration",
         )
 
         with mock.patch(
@@ -112,6 +170,10 @@ class TestListIndexesAsync:
         converted = kwargs["cls"]([_index_response_stub()])
         assert isinstance(converted[0], SearchIndex)
         assert converted[0].name == "hotels"
+        registration = converted[0].share_point_connector_app_registration
+        assert registration.application_id == "sharepoint-app"
+        assert registration.federated_credential_id == "sharepoint-credential"
+        assert converted[0].e_tag == '"etag"'
 
 
 @pytest.mark.asyncio
@@ -222,10 +284,10 @@ class TestKnowledgeSourceFileOperationsAsync:
 @pytest.mark.parametrize(
     ("public_method", "generated_method"),
     [
-        ("get_synonym_maps", "_get_synonym_maps"),
-        ("get_data_source_connections", "_get_data_source_connections"),
-        ("get_indexers", "_get_indexers"),
-        ("get_skillsets", "_get_skillsets"),
+        ("get_synonym_maps", "list_synonym_maps"),
+        ("get_data_source_connections", "list_data_source_connections"),
+        ("get_indexers", "list_indexers"),
+        ("get_skillsets", "list_skillsets"),
     ],
 )
 async def test_custom_list_wrappers_forward_search_paging(public_method, generated_method):
@@ -256,3 +318,62 @@ async def test_custom_list_wrappers_forward_search_paging(public_method, generat
         page_size=2,
         search_type="prefix",
     )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("api_version", ["2026-04-01", "2026-10-01"])
+@pytest.mark.parametrize(
+    ("public_method", "route", "model_name"),
+    [
+        ("get_synonym_maps", "synonymmaps", "SynonymMap"),
+        ("get_data_source_connections", "datasources", "SearchIndexerDataSourceConnection"),
+        ("get_indexers", "indexers", "SearchIndexer"),
+        ("get_skillsets", "skillsets", "SearchIndexerSkillset"),
+    ],
+)
+async def test_custom_list_wrappers_use_generated_paging(public_method, route, model_name, api_version):
+    from types import SimpleNamespace
+    from urllib.parse import parse_qs, urlsplit
+
+    from azure.search.documents.indexes import models
+    from azure.search.documents.indexes.aio import SearchIndexerClient
+
+    client_type = SearchIndexClient if public_method == "get_synonym_maps" else SearchIndexerClient
+    pages = [
+        {
+            "value": [{"name": "hot-first"}],
+            "@odata.nextLink": f"{ENDPOINT}/{route}?continuationToken=next&api-version={api_version}",
+        },
+        {"value": [{"name": "hot-second"}]},
+    ]
+    responses = [mock.Mock(status_code=200) for _ in pages]
+    for response, payload in zip(responses, pages):
+        response.json.return_value = payload
+    options = {"search": "hot", "page_size": 1, "search_type": "prefix"} if api_version == "2026-10-01" else {}
+
+    async with client_type(ENDPOINT, AzureKeyCredential(KEY), api_version=api_version) as client:
+        with mock.patch.object(
+            client._client._pipeline,
+            "run",
+            new=mock.AsyncMock(side_effect=[SimpleNamespace(http_response=response) for response in responses]),
+        ) as send:
+            result = await getattr(client, public_method)(select=["name"], headers={"x-custom": "value"}, **options)
+
+    assert isinstance(result, list)
+    assert [item.name for item in result] == ["hot-first", "hot-second"]
+    assert all(isinstance(item, getattr(models, model_name)) for item in result)
+    assert send.await_count == 2
+    for call in send.call_args_list:
+        request = call.args[0]
+        assert request.method == "GET"
+        assert urlsplit(request.url).path == f"/{route}"
+        assert parse_qs(urlsplit(request.url).query)["api-version"] == [api_version]
+        assert request.headers["x-custom"] == "value"
+    first_query = parse_qs(urlsplit(send.call_args_list[0].args[0].url).query)
+    assert first_query["$select"] == ["name"]
+    if options:
+        assert first_query["search"] == ["hot"]
+        assert first_query["pageSize"] == ["1"]
+        assert first_query["searchType"] == ["prefix"]
+    else:
+        assert not {"search", "pageSize", "searchType"}.intersection(first_query)

@@ -245,6 +245,13 @@ stages:
       - job: MarkPackageReleaseCompletion
         displayName: "Mark package release completion"
         dependsOn: PublishPackage
+        variables:
+          # Release stages only exist for manual runs and post-merge CI on 'main', so a run from an individual CI
+          # is an auto-release. Only then does the AutoReleasePrepare stage exist to read the triggering SDK PR from.
+          ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+            AutoReleaseSdkPullRequestUrl: $[ stageDependencies.AutoReleasePrepare.ResolveAutoReleasePackages.outputs['resolve.AutoReleaseSdkPullRequestUrl'] ]
+          ${{ else }}:
+            AutoReleaseSdkPullRequestUrl: ''
 
         pool:
           image: ubuntu-24.04
@@ -264,6 +271,17 @@ stages:
               EnableTwineAuth: false
               EnablePipAuth: true
               EnableUvAuth: false
+
+          # Log whether this is an auto-release or a manual release, and the auto-release SDK PR.
+          - pwsh: |
+              $type = if ($env:BUILD_REASON -eq 'IndividualCI') { 'auto-release' } else { 'manual release' }
+              $pr = if ($env:AUTO_RELEASE_SDK_PR) { $env:AUTO_RELEASE_SDK_PR } else { 'none' }
+              Write-Host "Release type: $type"
+              Write-Host "Auto-release SDK PR: $pr"
+            displayName: Show release type and auto-release SDK PR
+            env:
+              BUILD_REASON: $(Build.Reason)
+              AUTO_RELEASE_SDK_PR: $(AutoReleaseSdkPullRequestUrl)
 
           - template: /eng/common/pipelines/templates/steps/mark-release-completion.yml
             parameters:

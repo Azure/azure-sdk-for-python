@@ -94,12 +94,10 @@ class TestContainerServiceFleetMgmtFleetUpdateStrategiesOperations(AzureMgmtReco
                                                 },
                                             }
                                         ],
-                                        "maxAllowedFailures": "str",
                                         "maxConcurrency": "str",
                                         "memberSelector": {"byLabel": "str"},
                                     }
                                 ],
-                                "maxAllowedFailures": "str",
                                 "maxConcurrency": "str",
                                 "memberSelector": {"byLabel": "str"},
                             }

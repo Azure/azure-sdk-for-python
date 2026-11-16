@@ -154,8 +154,8 @@ class ProblemDetails(_Model):  # pylint: disable=docstring-keyword-should-match-
     :vartype title: str
     :ivar status: The HTTP status code associated with the problem.
     :vartype status: int
-    :ivar detail: A human-readable explanation specific to this occurrence.
-    :vartype detail: str
+    :ivar explanation: A human-readable explanation specific to this occurrence.
+    :vartype explanation: str
     :ivar instance: A URI reference identifying this occurrence of the problem.
     :vartype instance: str
     :ivar extensions: Additional service-defined details about the problem.
@@ -178,7 +178,7 @@ class ProblemDetails(_Model):  # pylint: disable=docstring-keyword-should-match-
     """A short, human-readable summary of the problem."""
     status: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The HTTP status code associated with the problem."""
-    detail: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    explanation: Optional[str] = rest_field(name="detail", visibility=["read", "create", "update", "delete", "query"])
     """A human-readable explanation specific to this occurrence."""
     instance: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A URI reference identifying this occurrence of the problem."""
@@ -197,7 +197,7 @@ class ProblemDetails(_Model):  # pylint: disable=docstring-keyword-should-match-
         type: Optional[str] = None,
         title: Optional[str] = None,
         status: Optional[int] = None,
-        detail: Optional[str] = None,
+        explanation: Optional[str] = None,
         instance: Optional[str] = None,
         extensions: Optional[dict[str, Any]] = None,
     ) -> None: ...
@@ -235,7 +235,7 @@ class SemanticRerankingInferenceContent(_Model):  # pylint: disable=docstring-ke
      property is required for JSON documents. Use dot notation for a nested property, for example
      ``meta.content``. You can specify multiple property paths separated by commas, for example
      ``meta.content,id``.
-    :vartype target_paths: str
+    :vartype target_paths: list[str]
     :ivar model: The name of the model used for the semantic reranking operation.
     :vartype model: str
     :ivar return_sentence_score: Whether to return sentence-level scores in the response.
@@ -260,8 +260,8 @@ class SemanticRerankingInferenceContent(_Model):  # pylint: disable=docstring-ke
         name="documentType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The format of the submitted documents. Known values are: \"text\" and \"json\"."""
-    target_paths: Optional[str] = rest_field(
-        name="targetPaths", visibility=["read", "create", "update", "delete", "query"]
+    target_paths: Optional[list[str]] = rest_field(
+        name="targetPaths", visibility=["read", "create", "update", "delete", "query"], format="commaDelimited"
     )
     """The property containing text to rank when the document type is JSON. This property is required
      for JSON documents. Use dot notation for a nested property, for example ``meta.content``. You
@@ -284,7 +284,7 @@ class SemanticRerankingInferenceContent(_Model):  # pylint: disable=docstring-ke
         batch_size: Optional[int] = None,
         sort: Optional[bool] = None,
         document_type: Optional[Union[str, "_models.SemanticRerankingDocumentType"]] = None,
-        target_paths: Optional[str] = None,
+        target_paths: Optional[list[str]] = None,
         model: Optional[str] = None,
         return_sentence_score: Optional[bool] = None,
     ) -> None: ...

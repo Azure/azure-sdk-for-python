@@ -185,8 +185,10 @@ if ($models.Count -ne 1 -or $sample['parameters'].Contains('validationModel') -o
 Write-Host 'Three worker templates compiled; shared identities, zero worker ARM IAM, native Cosmos grant, and secure single-model MCP contract verified.'
 
 $originalPat = [Environment]::GetEnvironmentVariable('MCP_GITHUB_PAT')
+$originalOpenApiKey = [Environment]::GetEnvironmentVariable('PROJ_CONN_OPEN_API_KEY')
 try {
     $env:MCP_GITHUB_PAT = ''
+    $env:PROJ_CONN_OPEN_API_KEY = ''
     $compiledParameters = Invoke-BicepCompilation -Path (Join-Path $infra 'sample-resources.bicepparam') -Parameters
     # CLI versions may return either the parameter object or a parametersJson wrapper.
     if ($compiledParameters.Contains('parametersJson')) {
@@ -197,16 +199,19 @@ try {
         }
     }
     if ($compiledParameters['parameters'] -isnot [System.Collections.IDictionary] -or
-        $compiledParameters['parameters'].Count -ne 1 -or
+        $compiledParameters['parameters'].Count -ne 2 -or
         -not $compiledParameters['parameters'].Contains('mcpPat') -or
-        $compiledParameters['parameters']['mcpPat']['value'] -cne '') {
-        throw 'Bicep parameter compilation must contain only an empty PAT; provisioning metadata must be passed directly.'
+        -not $compiledParameters['parameters'].Contains('openApiKey') -or
+        $compiledParameters['parameters']['mcpPat']['value'] -cne '' -or
+        $compiledParameters['parameters']['openApiKey']['value'] -cne '') {
+        throw 'Bicep parameter compilation must contain only empty PAT and OpenAPI secrets; provisioning metadata must be passed directly.'
     }
 } finally {
     [Environment]::SetEnvironmentVariable('MCP_GITHUB_PAT', $originalPat)
+    [Environment]::SetEnvironmentVariable('PROJ_CONN_OPEN_API_KEY', $originalOpenApiKey)
     $compiledParameters = $null
 }
-Write-Host 'Secret-only Bicep parameter file compiled with an empty PAT; no provisioning metadata comes from environment variables.'
+Write-Host 'Secret-only Bicep parameter file compiled with empty PAT and OpenAPI secrets; no provisioning metadata comes from environment variables.'
 
 $functionTemplate = Invoke-BicepCompilation -Path (Join-Path $infra 'function-app.bicep')
 $functionResources = @(Get-ArmResources -Template $functionTemplate)
@@ -381,12 +386,103 @@ if ($browserGrants.Count -ne 1 -or $browserGrants[0].roleDefinitionId -cne '78cf
 }
 Write-Host 'Browser module compiled; native keyless workspace, project connection, bootstrap role and non-secret outputs verified.'
 
+$connectionModules = @(
+    @{ File = 'bing-search.bicep'; Module = 'bing-search'; Connection = 'bing'; Category = 'GroundingWithBingSearch'
+        Kind = 'Bing.Grounding'; Sku = 'G1'; MetadataType = 'bing_grounding'
+        Names = @('BING_PROJECT_CONNECTION_ID', 'BING_PROJECT_CONNECTION_NAME') },
+    @{ File = 'bing-custom-search.bicep'; Module = 'bing-custom-search'; Connection = 'bing-custom'; Category = 'GroundingWithCustomSearch'
+        Kind = 'Bing.GroundingCustomSearch'; Sku = 'G2'; MetadataType = 'bing_custom_search'
+        Names = @('BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID', 'BING_CUSTOM_SEARCH_PROJECT_CONNECTION_NAME',
+            'BING_CUSTOM_SEARCH_INSTANCE_NAME', 'BING_CUSTOM_USER_INPUT') },
+    @{ File = 'openapi.bicep'; Module = 'openapi'; Connection = 'openapi'; Category = 'CustomKeys'
+        Names = @('OPENAPI_PROJECT_CONNECTION_ID', 'OPENAPI_PROJECT_CONNECTION_NAME', 'TRIPADVISOR_PROJECT_CONNECTION_ID') }
+)
+foreach ($contract in $connectionModules) {
+    $template = Invoke-BicepCompilation -Path (Join-Path $infra $contract.File)
+    $resources = @(Get-ArmResources -Template $template)
+    Assert-NoArmRoleAssignments -Resources $resources
+    $connections = @($resources | Where-Object Type -ceq 'Microsoft.CognitiveServices/accounts/projects/connections')
+    if ($connections.Count -ne 1) { throw 'Each Bing/OpenAPI module must create exactly one project connection.' }
+    $connection = $connections[0].Definition
+    $properties = $connection['properties']
+    if ($connection['apiVersion'] -cne '2025-10-01-preview' -or
+        $connection['name'] -cne "[format('{0}/{1}/{2}', parameters('accountName'), parameters('projectName'), '$($contract.Connection)')]" -or
+        $properties['category'] -cne $contract.Category -or $properties['isSharedToAll'] -ne $false) {
+        throw 'Bing/OpenAPI connection API, name, category and sharing must match the pool scripts.'
+    }
+    $environment = $template['outputs']['environment']['value']
+    $declared = @(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $infra $contract.File) | Sort-Object)
+    if ((@($environment.Keys | Sort-Object) -join ',') -cne (@($contract.Names | Sort-Object) -join ',') -or
+        ($declared -join ',') -cne (@($contract.Names | Sort-Object) -join ',') -or
+        ($environment | ConvertTo-Json -Depth 100 -Compress) -match 'listKeys|openApiKey|credentials') {
+        throw 'Bing/OpenAPI outputs must contain only their declared non-secret, discoverable sample bindings.'
+    }
+    if ($contract.Module -eq 'openapi') {
+        if ($resources.Count -ne 1 -or $template['parameters']['openApiKey']['type'] -ine 'secureString' -or
+            $template['parameters']['openApiKey']['minLength'] -ne 1 -or
+            $template['parameters']['openApiKey'].Contains('defaultValue') -or
+            $properties['authType'] -cne 'CustomKeys' -or $properties['target'] -cne '_' -or
+            $properties['credentials']['keys']['key'] -cne "[parameters('openApiKey')]" -or
+            $properties['metadata']['type'] -cne 'openapi' -or
+            $environment['TRIPADVISOR_PROJECT_CONNECTION_ID'] -cne $environment['OPENAPI_PROJECT_CONNECTION_ID']) {
+            throw 'OpenAPI must require a secure external key, store it only in CustomKeys credentials and preserve its alias.'
+        }
+        continue
+    }
+    $accounts = @($resources | Where-Object Type -ceq 'Microsoft.Bing/accounts')
+    $custom = @($resources | Where-Object Type -ceq 'Microsoft.Bing/accounts/customSearchConfigurations')
+    $isCustom = $contract.Module -eq 'bing-custom-search'
+    if ($accounts.Count -ne 1 -or $custom.Count -ne [int] $isCustom -or $resources.Count -ne (2 + [int] $isCustom)) {
+        throw 'Bing modules must declare only one account, one connection and the custom configuration when required.'
+    }
+    $account = $accounts[0].Definition
+    $bingId = "resourceId('Microsoft.Bing/accounts', parameters('bingAccountName'))"
+    if ($account['apiVersion'] -cne '2020-06-10' -or $account['location'] -cne 'global' -or
+        $account['kind'] -cne $contract.Kind -or $account['sku']['name'] -cne $contract.Sku -or
+        $account['properties']['statisticsEnabled'] -ne $false -or
+        $properties['target'] -cne "[reference($bingId, '2020-06-10').endpoint]" -or
+        $properties['authType'] -cne 'ApiKey' -or
+        $properties['credentials']['key'] -cne "[listKeys($bingId, '2020-06-10').key1]" -or
+        $properties['metadata']['ApiType'] -cne 'Azure' -or
+        $properties['metadata']['ResourceId'] -cne "[$bingId]" -or
+        $properties['metadata']['type'] -cne $contract.MetadataType -or
+        "[$bingId]" -cnotin @($connection['dependsOn'])) {
+        throw 'Bing connections must use the provisioned account endpoint and ARM-only key lookup with the pool SKU and metadata.'
+    }
+    if ($isCustom) {
+        $configuration = $custom[0].Definition
+        $expectedPages = @(
+            'https://learn.microsoft.com/en-us/azure/ai-foundry/agents/overview',
+            'https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/tools/overview',
+            'https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/tools/bing-grounding',
+            'https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/tools/bing-custom-search'
+        )
+        $domains = @($configuration['properties']['allowedDomains'])
+        if ($configuration['apiVersion'] -cne '2025-05-01-preview' -or
+            $configuration['name'] -cne "[format('{0}/{1}', parameters('bingAccountName'), 'agentdoc')]" -or
+            $domains.Count -ne 4 -or ($domains.domain -join ',') -cne ($expectedPages -join ',') -or
+            @($domains | Where-Object { $_.includeSubPages -ne $false -or $_.boostLevel -cne 'Default' }).Count -ne 0 -or
+            @($configuration['properties']['blockedDomains']).Count -ne 0 -or
+            @($configuration['properties']['pinnedDomains']).Count -ne 0 -or
+            $environment['BING_CUSTOM_SEARCH_INSTANCE_NAME'] -cne 'agentdoc' -or
+            [string]::IsNullOrWhiteSpace($environment['BING_CUSTOM_USER_INPUT'])) {
+            throw 'Custom Search must pin exactly the four approved pages without subpages, blocked/pinned domains or interactive input.'
+        }
+    }
+}
+Write-Host 'Bing and OpenAPI modules compiled; pool resource shapes, pinned custom pages and secret-only credentials verified.'
+
 # The root is the extensibility boundary: modules and bindings must stay in sync.
 $bundle = Invoke-BicepCompilation -Path (Join-Path $infra 'main.bicep')
 $bundleResources = @(Get-ArmResources -Template $bundle)
 Assert-NoArmRoleAssignments -Resources $bundleResources
 $declaredNames = @(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $infra 'main.bicep') | Sort-Object)
 $compiledNames = @($bundle['outputs']['environment']['value'].Keys | Sort-Object)
+if ($bundle['parameters']['openApiKey']['type'] -ine 'secureString' -or
+    $bundle['parameters']['openApiKey']['minLength'] -ne 1 -or
+    $bundle['parameters']['openApiKey'].Contains('defaultValue')) {
+    throw 'The root OpenAPI key must remain a required secureString without a default.'
+}
 if (($declaredNames -join ',') -cne ($compiledNames -join ',')) {
     throw 'The root environment contract must use explicit keys discoverable by offline planning.'
 }
@@ -420,7 +516,33 @@ foreach ($name in $expectedBrowserNames) {
         throw 'Every browser environment binding must be exposed by the root from the browser module.'
     }
 }
-Write-Host 'Complete resource bundle compiled; serialized models, independent browser provisioning, unconditional modules, environment contract and zero worker IAM verified.'
+foreach ($contract in $connectionModules) {
+    $modules = @($bundleResources | Where-Object {
+        $_.Type -ceq 'Microsoft.Resources/deployments' -and $_.Definition['name'] -ceq $contract.Module
+    })
+    if ($modules.Count -ne 1 -or @($modules[0].Definition['dependsOn']).Count -ne 1 -or
+        @($modules[0].Definition['dependsOn'])[0] -cne "[resourceId('Microsoft.Resources/deployments', 'standard-setup')]") {
+        throw 'Bing and OpenAPI provisioning must depend only on Standard setup, not on model deployments or indexing.'
+    }
+    foreach ($name in $contract.Names) {
+        if ($name -cnotin $compiledNames -or
+            -not ([string] $bundle['outputs']['environment']['value'][$name]).Contains("'$($contract.Module)'")) {
+            throw 'Every Bing/OpenAPI sample binding must be exposed by the root from its own module.'
+        }
+    }
+    if ($contract.Module -eq 'openapi') {
+        if ($modules[0].Definition['properties']['parameters']['openApiKey']['value'] -cne "[parameters('openApiKey')]") {
+            throw 'The OpenAPI module must receive only the root secure parameter, not a literal key.'
+        }
+    } else {
+        $prefix = $(if ($contract.Module -eq 'bing-search') { 'bing' } else { 'bing-custom' })
+        if ($modules[0].Definition['properties']['parameters']['bingAccountName']['value'] -cne
+            "[format('$prefix-{0}', uniqueString(resourceGroup().id, parameters('ownerToken')))]") {
+            throw 'Bing accounts must retain their full run-unique name hash.'
+        }
+    }
+}
+Write-Host 'Complete resource bundle compiled; serialized models, independent connections, unconditional modules, environment contract and zero worker IAM verified.'
 
 # Optional, separate provenance check. The parent downloader remains responsible
 # for fetching the original 14 pinned files; this checker never downloads or patches them.

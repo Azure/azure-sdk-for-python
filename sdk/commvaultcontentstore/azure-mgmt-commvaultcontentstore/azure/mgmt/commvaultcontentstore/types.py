@@ -210,6 +210,73 @@ class CloudAccount(TrackedResource):
     """The managed service identities assigned to this resource."""
 
 
+class CloudAccountIdentityUpdate(TypedDict, total=False):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    :ivar type: The type of managed identity assigned to this resource. Known values are: "None",
+     "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
+    :vartype type: Union[str, "ManagedServiceIdentityType"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
+    """
+
+    type: Union[str, "ManagedServiceIdentityType"]
+    """The type of managed identity assigned to this resource. Known values are: \"None\",
+     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
+    userAssignedIdentities: dict[str, "UserAssignedIdentity"]
+    """The identities assigned to this resource by the user."""
+
+
+class CloudAccountMarketplaceUpdate(TypedDict, total=False):
+    """Marketplace details that can be updated on a Commvault Cloud Account.
+
+    :ivar saasResourceId: Marketplace SaaS Resource Id.
+    :vartype saasResourceId: str
+    :ivar subscriptionId: Azure subscription id for the the marketplace offer is purchased from.
+    :vartype subscriptionId: str
+    :ivar offerDetails: Offer details for the marketplace that is selected by the user.
+    :vartype offerDetails: "CloudAccountOfferDetailsUpdate"
+    """
+
+    saasResourceId: str
+    """Marketplace SaaS Resource Id."""
+    subscriptionId: str
+    """Azure subscription id for the the marketplace offer is purchased from."""
+    offerDetails: "CloudAccountOfferDetailsUpdate"
+    """Offer details for the marketplace that is selected by the user."""
+
+
+class CloudAccountOfferDetailsUpdate(TypedDict, total=False):
+    """Marketplace offer details that can be updated on a Commvault Cloud Account.
+
+    :ivar publisherId: Publisher Id for the marketplace offer.
+    :vartype publisherId: str
+    :ivar offerId: Offer Id for the marketplace offer.
+    :vartype offerId: str
+    :ivar planName: Plan Name for the marketplace offer.
+    :vartype planName: str
+    :ivar termUnit: Plan Display Name for the marketplace offer.
+    :vartype termUnit: str
+    :ivar termId: Plan Display Name for the marketplace offer.
+    :vartype termId: str
+    :ivar planId: Plan Id for the marketplace offer.
+    :vartype planId: str
+    """
+
+    publisherId: str
+    """Publisher Id for the marketplace offer."""
+    offerId: str
+    """Offer Id for the marketplace offer."""
+    planName: str
+    """Plan Name for the marketplace offer."""
+    termUnit: str
+    """Plan Display Name for the marketplace offer."""
+    termId: str
+    """Plan Display Name for the marketplace offer."""
+    planId: str
+    """Plan Id for the marketplace offer."""
+
+
 class CloudAccountProperties(TypedDict, total=False):
     """Properties specific to Commvault Cloud Account resource.
 
@@ -243,6 +310,71 @@ class CloudAccountProperties(TypedDict, total=False):
     roleAssignmentsOnCcaCreate: list["RoleAssignment"]
     """Role assignments to provision during CCA creation. Each entry maps a Commvault role to its
      assigned Entra principals."""
+
+
+class CloudAccountUpdate(TypedDict, total=False):
+    """The type used for update operations of the CloudAccount.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "CloudAccountUpdateProperties"
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: "CloudAccountIdentityUpdate"
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+    properties: "CloudAccountUpdateProperties"
+    """The resource-specific properties for this resource."""
+    identity: "CloudAccountIdentityUpdate"
+    """The managed service identities assigned to this resource."""
+
+
+class CloudAccountUpdateProperties(TypedDict, total=False):
+    """The updatable properties of the CloudAccount.
+
+    :ivar company: Optional company details for the cloud account.
+    :vartype company: "CompanyProfile"
+    :ivar marketplace: Marketplace details of the resource.
+    :vartype marketplace: "CloudAccountMarketplaceUpdate"
+    :ivar user: Details of the user.
+    :vartype user: "CloudAccountUserUpdate"
+    """
+
+    company: "CompanyProfile"
+    """Optional company details for the cloud account."""
+    marketplace: "CloudAccountMarketplaceUpdate"
+    """Marketplace details of the resource."""
+    user: "CloudAccountUserUpdate"
+    """Details of the user."""
+
+
+class CloudAccountUserUpdate(TypedDict, total=False):
+    """User details that can be updated on a Commvault Cloud Account.
+
+    :ivar upn: User's principal name.
+    :vartype upn: str
+    :ivar phoneNumber: User's phone number.
+    :vartype phoneNumber: str
+    :ivar firstName: First name of the user.
+    :vartype firstName: str
+    :ivar lastName: Last name of the user.
+    :vartype lastName: str
+    :ivar emailAddress: Email address of the user.
+    :vartype emailAddress: str
+    """
+
+    upn: str
+    """User's principal name."""
+    phoneNumber: str
+    """User's phone number."""
+    firstName: str
+    """First name of the user."""
+    lastName: str
+    """Last name of the user."""
+    emailAddress: str
+    """Email address of the user."""
 
 
 class ProxyResource(Resource):
@@ -875,7 +1007,8 @@ StorageProperties.__doc__ = """The properties of Commvault Storage.
 :vartype storageType: Union[str, "StorageType"]
 :ivar vendor: The vendor of Commvault Storage. Required. "Azure_Blob_Storage"
 :vartype vendor: Union[str, "Vendor"]
-:ivar class: The class of Commvault Storage. Required. Known values are: "COLD" and "HOT".
+:ivar class: The class of Commvault Storage. Required. Known values are: "COLD", "COOL", and
+ "HOT".
 :vartype class: Union[str, "StorageClassType"]
 :ivar provisioningState: Provisioning state of the resource. Known values are: "Succeeded",
  "Failed", and "Canceled".

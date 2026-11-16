@@ -1,5 +1,18 @@
 # Release History
 
+## 15.1.0b4 (2026-11-11)
+
+### Features Added
+
+  - Enum `AdditionalAuthenticationType` added member `AWS_ELASTIC_CONTAINER_REGISTRY`
+  - Enum `AdditionalAuthenticationType` added member `ENTRA_FEDERATED_IDENTITY_CREDENTIAL`
+  - Added model `AdditionalAuthenticationUpdateProperties`
+  - Added model `EcrAuthenticationProperties`
+  - Added model `EcrAuthenticationUpdateProperties`
+  - Added model `EntraFederatedIdentityCredentialAuthenticationProperties`
+  - Added model `EntraFederatedIdentityCredentialAuthenticationUpdateProperties`
+  - Added model `GarAuthenticationUpdateProperties`
+
 ## 15.1.0b3 (2026-09-06)
 
 ### Features Added

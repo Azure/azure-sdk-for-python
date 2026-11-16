@@ -43,24 +43,13 @@ def main():
             },
             "kind": "AIServices",
             "location": "West US",
-            "properties": {
-                "agentHostingConfigurations": [
-                    {
-                        "clusterResourceId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/myResourceGroup/providers/Microsoft.ContainerService/managedClusters/cluster1",
-                        "hostingManagementIdentityResourceId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/myResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/account-control-plane",
-                        "hostingType": "ManagedCluster",
-                        "name": "default",
-                        "storageAccountResourceId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/myResourceGroup/providers/Microsoft.Storage/storageAccounts/storage1",
-                        "workloadIdentityResourceId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/myResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/aks-workload",
-                    }
-                ]
-            },
+            "properties": {},
             "sku": {"name": "S0"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-09-15-preview/CreateAccountWithAgentHostingConfiguration.json
+# x-ms-original-file: 2026-11-01/CreateAccountWithAgentHostingConfiguration.json
 if __name__ == "__main__":
     main()

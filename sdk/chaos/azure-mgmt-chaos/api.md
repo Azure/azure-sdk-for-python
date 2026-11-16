@@ -11,12 +11,15 @@ namespace azure.mgmt.chaos
         experiments: ExperimentsOperations
         operation_statuses: OperationStatusesOperations
         operations: Operations
-        private_accesses: PrivateAccessesOperations
         scenario_configurations: ScenarioConfigurationsOperations
         scenario_runs: ScenarioRunsOperations
+        scenario_template_versions: ScenarioTemplateVersionsOperations
+        scenario_templates: ScenarioTemplatesOperations
         scenarios: ScenariosOperations
         target_types: TargetTypesOperations
         targets: TargetsOperations
+        workspace_discoveries: WorkspaceDiscoveriesOperations
+        workspace_evaluations: WorkspaceEvaluationsOperations
         workspaces: WorkspacesOperations
 
         def __init__(
@@ -54,12 +57,15 @@ namespace azure.mgmt.chaos.aio
         experiments: ExperimentsOperations
         operation_statuses: OperationStatusesOperations
         operations: Operations
-        private_accesses: PrivateAccessesOperations
         scenario_configurations: ScenarioConfigurationsOperations
         scenario_runs: ScenarioRunsOperations
+        scenario_template_versions: ScenarioTemplateVersionsOperations
+        scenario_templates: ScenarioTemplatesOperations
         scenarios: ScenariosOperations
         target_types: TargetTypesOperations
         targets: TargetsOperations
+        workspace_discoveries: WorkspaceDiscoveriesOperations
+        workspace_evaluations: WorkspaceEvaluationsOperations
         workspaces: WorkspacesOperations
 
         def __init__(
@@ -96,7 +102,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'location', 'action_name', 'version_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'location', 'action_name', 'version_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         async def get(
                 self, 
                 location: str, 
@@ -106,7 +112,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> ActionVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'location', 'action_name', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'location', 'action_name', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def list(
                 self, 
                 location: str, 
@@ -126,7 +132,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'location', 'action_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'location', 'action_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         async def get(
                 self, 
                 location: str, 
@@ -135,7 +141,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> Action: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'location', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'location', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def list(
                 self, 
                 location: str, 
@@ -309,7 +315,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> Connection: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'connection_name']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'connection_name']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         async def delete(
                 self, 
                 resource_group_name: str, 
@@ -319,7 +325,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'connection_name', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'connection_name', 'accept']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -329,7 +335,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> Connection: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         def list_all(
                 self, 
                 resource_group_name: str, 
@@ -347,7 +353,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'discovered_resource_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'discovered_resource_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -357,7 +363,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> DiscoveredResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def list_by_workspace(
                 self, 
                 resource_group_name: str, 
@@ -547,156 +553,6 @@ namespace azure.mgmt.chaos.aio.operations
         def list_all(self, **kwargs: Any) -> AsyncItemPaged[Operation]: ...
 
 
-    class azure.mgmt.chaos.aio.operations.PrivateAccessesOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                resource: PrivateAccess, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[PrivateAccess]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                resource: PrivateAccess, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[PrivateAccess]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[PrivateAccess]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'private_access_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        async def begin_delete(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'private_access_name', 'private_endpoint_connection_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        async def begin_delete_a_private_endpoint_connection(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                private_endpoint_connection_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @overload
-        async def begin_update(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                properties: PrivateAccessPatch, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[PrivateAccess]: ...
-
-        @overload
-        async def begin_update(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                properties: PrivateAccessPatch, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[PrivateAccess]: ...
-
-        @overload
-        async def begin_update(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[PrivateAccess]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'private_access_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        async def get(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                **kwargs: Any
-            ) -> PrivateAccess: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'private_access_name', 'private_endpoint_connection_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        async def get_a_private_endpoint_connection(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                private_endpoint_connection_name: str, 
-                **kwargs: Any
-            ) -> PrivateEndpointConnection: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'private_access_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        async def get_private_link_resources(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                **kwargs: Any
-            ) -> PrivateLinkResourceListResult: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        def list(
-                self, 
-                resource_group_name: str, 
-                *, 
-                continuation_token_parameter: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[PrivateAccess]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        def list_all(
-                self, 
-                *, 
-                continuation_token_parameter: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[PrivateAccess]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'private_access_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        def list_private_endpoint_connections(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[PrivateEndpointConnection]: ...
-
-
     class azure.mgmt.chaos.aio.operations.ScenarioConfigurationsOperations:
 
         def __init__(
@@ -715,6 +571,8 @@ namespace azure.mgmt.chaos.aio.operations
                 resource: ScenarioConfiguration, 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> AsyncLROPoller[ScenarioConfiguration]: ...
 
@@ -728,6 +586,8 @@ namespace azure.mgmt.chaos.aio.operations
                 resource: ScenarioConfiguration, 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> AsyncLROPoller[ScenarioConfiguration]: ...
 
@@ -741,11 +601,13 @@ namespace azure.mgmt.chaos.aio.operations
                 resource: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> AsyncLROPoller[ScenarioConfiguration]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'scenario_configuration_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'scenario_configuration_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -756,7 +618,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'scenario_configuration_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'scenario_configuration_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         async def begin_execute(
                 self, 
                 resource_group_name: str, 
@@ -806,7 +668,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> AsyncLROPoller[PermissionsFix]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'scenario_configuration_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'scenario_configuration_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         async def begin_validate(
                 self, 
                 resource_group_name: str, 
@@ -817,7 +679,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> AsyncLROPoller[Validation]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'scenario_configuration_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'scenario_configuration_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -828,7 +690,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> ScenarioConfiguration: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def list_all(
                 self, 
                 resource_group_name: str, 
@@ -847,7 +709,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'run_id']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'run_id']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         async def begin_cancel(
                 self, 
                 resource_group_name: str, 
@@ -858,7 +720,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> AsyncLROPoller[ScenarioRun]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'run_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'run_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -869,7 +731,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> ScenarioRun: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def list_all(
                 self, 
                 resource_group_name: str, 
@@ -877,6 +739,53 @@ namespace azure.mgmt.chaos.aio.operations
                 scenario_name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[ScenarioRun]: ...
+
+
+    class azure.mgmt.chaos.aio.operations.ScenarioTemplateVersionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'scenario_template_name', 'version', 'accept']}, api_versions_list=['2026-11-01'])
+        async def get(
+                self, 
+                scenario_template_name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> ScenarioTemplateVersion: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'scenario_template_name', 'accept']}, api_versions_list=['2026-11-01'])
+        def list(
+                self, 
+                scenario_template_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[ScenarioTemplateVersion]: ...
+
+
+    class azure.mgmt.chaos.aio.operations.ScenarioTemplatesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'scenario_template_name', 'accept']}, api_versions_list=['2026-11-01'])
+        async def get(
+                self, 
+                scenario_template_name: str, 
+                **kwargs: Any
+            ) -> ScenarioTemplate: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'accept']}, api_versions_list=['2026-11-01'])
+        def list(self, **kwargs: Any) -> AsyncItemPaged[ScenarioTemplate]: ...
 
 
     class azure.mgmt.chaos.aio.operations.ScenariosOperations:
@@ -896,6 +805,8 @@ namespace azure.mgmt.chaos.aio.operations
                 resource: Scenario, 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> Scenario: ...
 
@@ -908,6 +819,8 @@ namespace azure.mgmt.chaos.aio.operations
                 resource: Scenario, 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> Scenario: ...
 
@@ -920,11 +833,13 @@ namespace azure.mgmt.chaos.aio.operations
                 resource: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> Scenario: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         async def delete(
                 self, 
                 resource_group_name: str, 
@@ -934,7 +849,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -944,7 +859,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> Scenario: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def list_all(
                 self, 
                 resource_group_name: str, 
@@ -1064,6 +979,66 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> AsyncItemPaged[Target]: ...
 
 
+    class azure.mgmt.chaos.aio.operations.WorkspaceDiscoveriesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'discovery_name', 'accept']}, api_versions_list=['2026-11-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                workspace_name: str, 
+                discovery_name: str, 
+                **kwargs: Any
+            ) -> WorkspaceDiscovery: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-11-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                workspace_name: str, 
+                *, 
+                continuation_token_parameter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[WorkspaceDiscovery]: ...
+
+
+    class azure.mgmt.chaos.aio.operations.WorkspaceEvaluationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'evaluation_name', 'accept']}, api_versions_list=['2026-11-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                workspace_name: str, 
+                evaluation_name: str, 
+                **kwargs: Any
+            ) -> WorkspaceEvaluation: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-11-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                workspace_name: str, 
+                *, 
+                continuation_token_parameter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[WorkspaceEvaluation]: ...
+
+
     class azure.mgmt.chaos.aio.operations.WorkspacesOperations:
 
         def __init__(
@@ -1080,6 +1055,8 @@ namespace azure.mgmt.chaos.aio.operations
                 resource: Workspace, 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> AsyncLROPoller[Workspace]: ...
 
@@ -1091,6 +1068,8 @@ namespace azure.mgmt.chaos.aio.operations
                 resource: Workspace, 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> AsyncLROPoller[Workspace]: ...
 
@@ -1102,11 +1081,13 @@ namespace azure.mgmt.chaos.aio.operations
                 resource: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> AsyncLROPoller[Workspace]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1115,7 +1096,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-11-01'])
         async def begin_discover(
                 self, 
                 resource_group_name: str, 
@@ -1124,7 +1105,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> AsyncLROPoller[WorkspaceDiscovery]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-11-01'])
         async def begin_evaluate(
                 self, 
                 resource_group_name: str, 
@@ -1166,7 +1147,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> AsyncLROPoller[Workspace]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1175,7 +1156,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> Workspace: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -1185,7 +1166,7 @@ namespace azure.mgmt.chaos.aio.operations
             ) -> AsyncItemPaged[Workspace]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def list_all(
                 self, 
                 *, 
@@ -1242,6 +1223,18 @@ namespace azure.mgmt.chaos.models
 
     class azure.mgmt.chaos.models.ActionDependencyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ACTION = "Action"
+
+
+    class azure.mgmt.chaos.models.ActionError(_Model):
+        code: str
+        details: Optional[list[ActionErrorDetail]]
+        message: str
+
+
+    class azure.mgmt.chaos.models.ActionErrorDetail(_Model):
+        code: str
+        message: str
+        target: Optional[str]
 
 
     class azure.mgmt.chaos.models.ActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1582,14 +1575,12 @@ namespace azure.mgmt.chaos.models
     class azure.mgmt.chaos.models.ConnectionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AKS_EXTENSION = "AksExtension"
         CHAOS_AGENT = "ChaosAgent"
-        CSFI = "Csfi"
 
 
     class azure.mgmt.chaos.models.ConnectionProperties(_Model):
         certificate_issuer: Optional[str]
         certificate_subject_name: Optional[str]
         data_plane_endpoint: Optional[str]
-        dsts_principal: Optional[str]
         kind: Union[str, ConnectionKind]
         principal_id: Optional[str]
         provisioning_state: Optional[Union[str, ProvisioningState]]
@@ -1603,7 +1594,6 @@ namespace azure.mgmt.chaos.models
                 *, 
                 certificate_issuer: Optional[str] = ..., 
                 certificate_subject_name: Optional[str] = ..., 
-                dsts_principal: Optional[str] = ..., 
                 kind: Union[str, ConnectionKind], 
                 principal_id: Optional[str] = ..., 
                 target_resource_id: str, 
@@ -1703,10 +1693,12 @@ namespace azure.mgmt.chaos.models
     class azure.mgmt.chaos.models.DiscoveredResourceProperties(_Model):
         discovered_at: datetime
         fully_qualified_identifier: str
+        location: Optional[str]
         resource_name: str
         resource_namespace: str
         resource_type: str
         scope: str
+        zones: Optional[list[str]]
 
 
     class azure.mgmt.chaos.models.DiscreteAction(ChaosExperimentAction, discriminator='discrete'):
@@ -1914,6 +1906,11 @@ namespace azure.mgmt.chaos.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.chaos.models.FailureBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CONTINUE = "Continue"
+        STOP = "Stop"
+
+
     class azure.mgmt.chaos.models.FilterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         SIMPLE = "Simple"
 
@@ -2049,6 +2046,14 @@ namespace azure.mgmt.chaos.models
         USER_SYSTEM = "user,system"
 
 
+    class azure.mgmt.chaos.models.ParameterFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_REGION = "AzureRegion"
+        AZURE_RESOURCE_ID = "AzureResourceId"
+        AZURE_ZONE = "AzureZone"
+        DURATION = "Duration"
+        JSON = "Json"
+
+
     class azure.mgmt.chaos.models.ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ARRAY = "array"
         BOOLEAN = "boolean"
@@ -2114,177 +2119,6 @@ namespace azure.mgmt.chaos.models
         physical_zone: str
 
 
-    class azure.mgmt.chaos.models.PrivateAccess(TrackedResource):
-        id: str
-        location: str
-        name: str
-        properties: PrivateAccessProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                location: str, 
-                properties: PrivateAccessProperties, 
-                tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.chaos.models.PrivateAccessPatch(_Model):
-        tags: Optional[dict[str, str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.chaos.models.PrivateAccessProperties(_Model):
-        private_endpoint_connections: Optional[list[PrivateEndpointConnection]]
-        provisioning_state: Optional[Union[str, ProvisioningState]]
-        public_network_access: Optional[Union[str, PublicNetworkAccessOption]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                public_network_access: Optional[Union[str, PublicNetworkAccessOption]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.chaos.models.PrivateEndpoint(_Model):
-        id: Optional[str]
-
-
-    class azure.mgmt.chaos.models.PrivateEndpointConnection(ProxyResource):
-        id: str
-        name: str
-        properties: Optional[PrivateEndpointConnectionProperties]
-        system_data: SystemData
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: Optional[PrivateEndpointConnectionProperties] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.chaos.models.PrivateEndpointConnectionProperties(_Model):
-        group_ids: Optional[list[str]]
-        private_endpoint: Optional[PrivateEndpoint]
-        private_link_service_connection_state: PrivateLinkServiceConnectionState
-        provisioning_state: Optional[Union[str, ProvisioningState]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                private_endpoint: Optional[PrivateEndpoint] = ..., 
-                private_link_service_connection_state: PrivateLinkServiceConnectionState
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.chaos.models.PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        APPROVED = "Approved"
-        PENDING = "Pending"
-        REJECTED = "Rejected"
-
-
-    class azure.mgmt.chaos.models.PrivateLinkResource(TrackedResource):
-        id: str
-        location: str
-        name: str
-        properties: PrivateLinkResourceProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                location: str, 
-                properties: PrivateLinkResourceProperties, 
-                tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.chaos.models.PrivateLinkResourceListResult(_Model):
-        next_link: Optional[str]
-        value: list[PrivateLinkResource]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                next_link: Optional[str] = ..., 
-                value: list[PrivateLinkResource]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.chaos.models.PrivateLinkResourceProperties(_Model):
-        group_id: Optional[str]
-        provisioning_state: Optional[Union[str, ProvisioningState]]
-        required_members: Optional[list[str]]
-        required_zone_names: Optional[list[str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                required_zone_names: Optional[list[str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.chaos.models.PrivateLinkServiceConnectionState(_Model):
-        actions_required: Optional[str]
-        description: Optional[str]
-        status: Optional[Union[str, PrivateEndpointServiceConnectionStatus]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                actions_required: Optional[str] = ..., 
-                description: Optional[str] = ..., 
-                status: Optional[Union[str, PrivateEndpointServiceConnectionStatus]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.chaos.models.ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CANCELED = "Canceled"
         CREATING = "Creating"
@@ -2300,11 +2134,6 @@ namespace azure.mgmt.chaos.models
         name: str
         system_data: SystemData
         type: str
-
-
-    class azure.mgmt.chaos.models.PublicNetworkAccessOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DISABLED = "Disabled"
-        ENABLED = "Enabled"
 
 
     class azure.mgmt.chaos.models.Recommendation(_Model):
@@ -2329,7 +2158,7 @@ namespace azure.mgmt.chaos.models
 
 
     class azure.mgmt.chaos.models.ResourceStateError(_Model):
-        error_code: int
+        error_code: str
         error_message: str
         remediation_uri: str
         resource_id: str
@@ -2443,9 +2272,11 @@ namespace azure.mgmt.chaos.models
         description: Optional[str]
         duration: str
         external_resource: Optional[ExternalResource]
+        failure_behavior: Optional[Union[str, FailureBehavior]]
         name: str
         parameters: Optional[list[KeyValuePair]]
         run_after: Optional[RunAfter]
+        selectors: Optional[list[ScenarioActionSelector]]
         timeout: Optional[str]
         wait_before: Optional[str]
 
@@ -2457,15 +2288,39 @@ namespace azure.mgmt.chaos.models
                 description: Optional[str] = ..., 
                 duration: str, 
                 external_resource: Optional[ExternalResource] = ..., 
+                failure_behavior: Optional[Union[str, FailureBehavior]] = ..., 
                 name: str, 
                 parameters: Optional[list[KeyValuePair]] = ..., 
                 run_after: Optional[RunAfter] = ..., 
+                selectors: Optional[list[ScenarioActionSelector]] = ..., 
                 timeout: Optional[str] = ..., 
                 wait_before: Optional[str] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.chaos.models.ScenarioActionSelector(_Model):
+        name: Union[str, ScenarioActionSelectorName]
+        value: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Union[str, ScenarioActionSelectorName], 
+                value: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.chaos.models.ScenarioActionSelectorName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        LOCATION = "location"
+        LOGICAL_ZONE = "logicalZone"
+        PHYSICAL_ZONE = "physicalZone"
 
 
     class azure.mgmt.chaos.models.ScenarioConfiguration(ProxyResource):
@@ -2526,6 +2381,7 @@ namespace azure.mgmt.chaos.models
     class azure.mgmt.chaos.models.ScenarioParameter(_Model):
         default: Optional[str]
         description: Optional[str]
+        format: Optional[ScenarioParameterFormat]
         name: str
         required: Optional[bool]
         type: Union[str, ParameterType]
@@ -2536,6 +2392,7 @@ namespace azure.mgmt.chaos.models
                 *, 
                 default: Optional[str] = ..., 
                 description: Optional[str] = ..., 
+                format: Optional[ScenarioParameterFormat] = ..., 
                 name: str, 
                 required: Optional[bool] = ..., 
                 type: Union[str, ParameterType]
@@ -2545,11 +2402,28 @@ namespace azure.mgmt.chaos.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.chaos.models.ScenarioParameterFormat(_Model):
+        examples: Optional[list[str]]
+        format_type: Optional[Union[str, ParameterFormatType]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                examples: Optional[list[str]] = ..., 
+                format_type: Optional[Union[str, ParameterFormatType]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.chaos.models.ScenarioProperties(_Model):
-        actions: list[ScenarioAction]
+        actions: Optional[list[ScenarioAction]]
         created_from: Optional[str]
         description: Optional[str]
-        parameters: list[ScenarioParameter]
+        failure_behavior: Optional[Union[str, FailureBehavior]]
+        parameters: Optional[list[ScenarioParameter]]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         recommendation: Optional[Recommendation]
         version: Optional[str]
@@ -2558,9 +2432,12 @@ namespace azure.mgmt.chaos.models
         def __init__(
                 self, 
                 *, 
-                actions: list[ScenarioAction], 
+                actions: Optional[list[ScenarioAction]] = ..., 
+                created_from: Optional[str] = ..., 
                 description: Optional[str] = ..., 
-                parameters: list[ScenarioParameter]
+                failure_behavior: Optional[Union[str, FailureBehavior]] = ..., 
+                parameters: Optional[list[ScenarioParameter]] = ..., 
+                version: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -2585,6 +2462,13 @@ namespace azure.mgmt.chaos.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.chaos.models.ScenarioRunEffectiveTarget(_Model):
+        completed_at: Optional[datetime]
+        id: str
+        started_at: Optional[datetime]
+        state: Union[str, ScenarioRunTargetState]
+
+
     class azure.mgmt.chaos.models.ScenarioRunProperties(_Model):
         end_time: Optional[datetime]
         errors: Optional[list[OperationError]]
@@ -2599,6 +2483,7 @@ namespace azure.mgmt.chaos.models
         scenario_run_summary: Optional[list[ScenarioRunSummaryAction]]
         start_time: datetime
         status: Union[str, ScenarioRunState]
+        warnings: Optional[list[ScenarioRunWarning]]
         workspace_name: str
         zone_resolution: Optional[ZoneResolutionInfo]
 
@@ -2613,6 +2498,7 @@ namespace azure.mgmt.chaos.models
         CLEANING_UP = "CleaningUp"
         FAILED = "Failed"
         GENERATING = "Generating"
+        PARTIALLY_SUCCEEDED = "PartiallySucceeded"
         PREPARING = "Preparing"
         QUEUED = "Queued"
         RESOLVING = "Resolving"
@@ -2626,9 +2512,35 @@ namespace azure.mgmt.chaos.models
     class azure.mgmt.chaos.models.ScenarioRunSummaryAction(_Model):
         action_urn: str
         completed_at: Optional[datetime]
-        resources: list[ScenarioRunResource]
+        error: Optional[ActionError]
+        failure_suppressed: Optional[bool]
+        resources: list[ScenarioRunSummaryResource]
         started_at: Optional[datetime]
         state: Union[str, ScenarioSummaryState]
+
+
+    class azure.mgmt.chaos.models.ScenarioRunSummaryResource(_Model):
+        affected_resources: Optional[list[ScenarioRunEffectiveTarget]]
+        id: str
+
+
+    class azure.mgmt.chaos.models.ScenarioRunTargetState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FAILED = "Failed"
+        NOT_APPLICABLE = "NotApplicable"
+        SKIPPED = "Skipped"
+        SUCCEEDED = "Succeeded"
+
+
+    class azure.mgmt.chaos.models.ScenarioRunWarning(_Model):
+        code: str
+        details: Optional[list[ScenarioRunWarningDetail]]
+        message: str
+
+
+    class azure.mgmt.chaos.models.ScenarioRunWarningDetail(_Model):
+        code: str
+        message: str
+        target: Optional[str]
 
 
     class azure.mgmt.chaos.models.ScenarioSummaryState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2642,6 +2554,59 @@ namespace azure.mgmt.chaos.models
         STARTING = "Starting"
         STOPPING = "Stopping"
         SUCCEEDED = "Succeeded"
+
+
+    class azure.mgmt.chaos.models.ScenarioTemplate(ProxyResource):
+        id: str
+        name: str
+        properties: ScenarioTemplateProperties
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: ScenarioTemplateProperties
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.chaos.models.ScenarioTemplateProperties(_Model):
+        actions: list[ScenarioAction]
+        description: Optional[str]
+        display_name: Optional[str]
+        failure_behavior: Optional[Union[str, FailureBehavior]]
+        latest_version: str
+        parameters: Optional[list[ScenarioParameter]]
+
+
+    class azure.mgmt.chaos.models.ScenarioTemplateVersion(ProxyResource):
+        id: str
+        name: str
+        properties: ScenarioTemplateVersionProperties
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: ScenarioTemplateVersionProperties
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.chaos.models.ScenarioTemplateVersionProperties(_Model):
+        actions: list[ScenarioAction]
+        description: Optional[str]
+        display_name: Optional[str]
+        failure_behavior: Optional[Union[str, FailureBehavior]]
+        parameters: Optional[list[ScenarioParameter]]
 
 
     class azure.mgmt.chaos.models.ScenarioValidationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2766,16 +2731,14 @@ namespace azure.mgmt.chaos.models
 
     class azure.mgmt.chaos.models.TemplateEvaluationResultItem(_Model):
         evaluation_result: Union[str, RecommendationStatus]
-        template_id: Optional[str]
-        template_name: Optional[str]
+        template_id: str
+        template_name: str
 
         @overload
         def __init__(
                 self, 
                 *, 
-                evaluation_result: Union[str, RecommendationStatus], 
-                template_id: Optional[str] = ..., 
-                template_name: Optional[str] = ...
+                evaluation_result: Union[str, RecommendationStatus]
             ) -> None: ...
 
         @overload
@@ -2871,6 +2834,42 @@ namespace azure.mgmt.chaos.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.chaos.models.WorkspaceCustomerManagedKeyEncryption(_Model):
+        key_encryption_key_url: str
+        key_vault_resource_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                key_encryption_key_url: str, 
+                key_vault_resource_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.chaos.models.WorkspaceCustomerManagedKeyEncryptionPatchMergePatchUpdateOrCreate(_Model):
+        key_encryption_key_url: Optional[str]
+        key_vault_resource_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                key_encryption_key_url: Optional[str] = ..., 
+                key_vault_resource_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.chaos.models.WorkspaceCustomerManagedKeyOnboarding(_Model):
+        application_id: str
+
+
     class azure.mgmt.chaos.models.WorkspaceDiscovery(ProxyResource):
         id: str
         name: str
@@ -2889,22 +2888,173 @@ namespace azure.mgmt.chaos.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.chaos.models.WorkspaceDiscoveryAccessWarning(WorkspaceDiscoveryWarning, discriminator='AccessIndeterminate'):
+        message: str
+        reason: Literal[WorkspaceDiscoveryWarningReason.ACCESS_INDETERMINATE]
+        resource_id: str
+        scope_id: str
+        scope_kind: str
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.chaos.models.WorkspaceDiscoveryCompleteness(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BASELINE_UNKNOWN = "BaselineUnknown"
+        ESTABLISHED = "Established"
+        KNOWN_PARTIAL = "KnownPartial"
+        VERIFICATION_INCOMPLETE = "VerificationIncomplete"
+
+
+    class azure.mgmt.chaos.models.WorkspaceDiscoveryCoverageSummary(_Model):
+        resources: Optional[WorkspaceDiscoveryResourceCoverageSummary]
+        scopes: WorkspaceDiscoveryScopeCoverageSummary
+
+
+    class azure.mgmt.chaos.models.WorkspaceDiscoveryPermissionWarning(WorkspaceDiscoveryWarning, discriminator='RbacValidationFailed'):
+        message: str
+        permission: PermissionError
+        reason: Literal[WorkspaceDiscoveryWarningReason.RBAC_VALIDATION_FAILED]
+        scope_id: str
+        scope_kind: str
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.chaos.models.WorkspaceDiscoveryProperties(_Model):
+        completeness: Optional[Union[str, WorkspaceDiscoveryCompleteness]]
+        coverage_summary: Optional[WorkspaceDiscoveryCoverageSummary]
         end_time: Optional[datetime]
         errors: Optional[list[OperationError]]
         resource_snapshot_id: Optional[str]
         start_time: Optional[datetime]
         status: Union[str, WorkspaceDiscoveryStatus]
+        warnings: Optional[list[WorkspaceDiscoveryWarning]]
+        warnings_total_count: Optional[int]
+        warnings_truncated: Optional[bool]
         workspace_id: str
+
+
+    class azure.mgmt.chaos.models.WorkspaceDiscoveryResourceCoverageSummary(_Model):
+        classified_count: int
+        covered_count: int
+        expected_count: int
+        unclassified_count: int
+
+
+    class azure.mgmt.chaos.models.WorkspaceDiscoveryResourceWarning(WorkspaceDiscoveryWarning, discriminator='TargetNotFound'):
+        message: str
+        reason: Literal[WorkspaceDiscoveryWarningReason.TARGET_NOT_FOUND]
+        resource_id: str
+        scope_id: str
+        scope_kind: str
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.chaos.models.WorkspaceDiscoveryScopeCoverageSummary(_Model):
+        baseline_unknown_count: int
+        established_count: int
+        known_expected_set_count: int
+        known_partial_count: int
+        total_count: int
+        unknown_expected_set_count: int
+        verification_incomplete_count: int
 
 
     class azure.mgmt.chaos.models.WorkspaceDiscoveryStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CANCELED = "Canceled"
         FAILED = "Failed"
         IN_PROGRESS = "InProgress"
+        PARTIALLY_SUCCEEDED = "PartiallySucceeded"
         PENDING = "Pending"
         QUEUED = "Queued"
         SUCCEEDED = "Succeeded"
+
+
+    class azure.mgmt.chaos.models.WorkspaceDiscoveryWarning(_Model):
+        message: str
+        reason: str
+        scope_id: str
+        scope_kind: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                reason: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.chaos.models.WorkspaceDiscoveryWarningReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCESS_INDETERMINATE = "AccessIndeterminate"
+        RBAC_VALIDATION_FAILED = "RbacValidationFailed"
+        TARGET_NOT_FOUND = "TargetNotFound"
+
+
+    class azure.mgmt.chaos.models.WorkspaceEncryption(_Model):
+        customer_managed_key_encryption: Optional[WorkspaceCustomerManagedKeyEncryption]
+        customer_managed_key_onboarding: Optional[WorkspaceCustomerManagedKeyOnboarding]
+        status: Optional[WorkspaceEncryptionStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                customer_managed_key_encryption: Optional[WorkspaceCustomerManagedKeyEncryption] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.chaos.models.WorkspaceEncryptionPatchMergePatchUpdateOrCreate(_Model):
+        customer_managed_key_encryption: Optional[WorkspaceCustomerManagedKeyEncryptionPatchMergePatchUpdateOrCreate]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                customer_managed_key_encryption: Optional[WorkspaceCustomerManagedKeyEncryptionPatchMergePatchUpdateOrCreate] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.chaos.models.WorkspaceEncryptionProtection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CUSTOMER_MANAGED = "CustomerManaged"
+        MICROSOFT_MANAGED = "MicrosoftManaged"
+
+
+    class azure.mgmt.chaos.models.WorkspaceEncryptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        APPLIED = "Applied"
+        FAILED = "Failed"
+        NOT_CONFIGURED = "NotConfigured"
+        PENDING = "Pending"
+        UNKNOWN = "Unknown"
+
+
+    class azure.mgmt.chaos.models.WorkspaceEncryptionStatus(_Model):
+        error: Optional[ErrorDetail]
+        last_checked_at: Optional[datetime]
+        observed_key_encryption_key_url: Optional[str]
+        observed_protection: Optional[Union[str, WorkspaceEncryptionProtection]]
+        state: Union[str, WorkspaceEncryptionState]
 
 
     class azure.mgmt.chaos.models.WorkspaceEvaluation(ProxyResource):
@@ -2926,14 +3076,14 @@ namespace azure.mgmt.chaos.models
 
 
     class azure.mgmt.chaos.models.WorkspaceEvaluationProperties(_Model):
+        discovery_result_id: str
         end_time: Optional[datetime]
         errors: Optional[list[OperationError]]
-        evaluation_result: Optional[Union[str, RecommendationStatus]]
-        num_templates_evaluated_cancelled: Optional[int]
-        num_templates_evaluated_failed: Optional[int]
-        num_templates_evaluated_succeeded: Optional[int]
-        num_templates_to_evaluate: Optional[int]
-        resource_snapshot_id: Optional[str]
+        num_templates_evaluated_cancelled: int
+        num_templates_evaluated_failed: int
+        num_templates_evaluated_succeeded: int
+        num_templates_to_evaluate: int
+        resource_snapshot_id: str
         results: Optional[list[TemplateEvaluationResultItem]]
         start_time: Optional[datetime]
         status: Union[str, WorkspaceEvaluationStatus]
@@ -2951,7 +3101,7 @@ namespace azure.mgmt.chaos.models
 
 
     class azure.mgmt.chaos.models.WorkspaceProperties(_Model):
-        communication_endpoint: Optional[str]
+        encryption: Optional[WorkspaceEncryption]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         scopes: list[str]
 
@@ -2959,6 +3109,7 @@ namespace azure.mgmt.chaos.models
         def __init__(
                 self, 
                 *, 
+                encryption: Optional[WorkspaceEncryption] = ..., 
                 scopes: list[str]
             ) -> None: ...
 
@@ -2968,6 +3119,7 @@ namespace azure.mgmt.chaos.models
 
     class azure.mgmt.chaos.models.WorkspaceUpdate(_Model):
         identity: Optional[ManagedServiceIdentity]
+        properties: Optional[WorkspaceUpdateProperties]
         tags: Optional[dict[str, str]]
 
         @overload
@@ -2975,7 +3127,22 @@ namespace azure.mgmt.chaos.models
                 self, 
                 *, 
                 identity: Optional[ManagedServiceIdentity] = ..., 
+                properties: Optional[WorkspaceUpdateProperties] = ..., 
                 tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.chaos.models.WorkspaceUpdateProperties(_Model):
+        encryption: Optional[WorkspaceEncryptionPatchMergePatchUpdateOrCreate]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                encryption: Optional[WorkspaceEncryptionPatchMergePatchUpdateOrCreate] = ...
             ) -> None: ...
 
         @overload
@@ -3009,7 +3176,7 @@ namespace azure.mgmt.chaos.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'location', 'action_name', 'version_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'location', 'action_name', 'version_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def get(
                 self, 
                 location: str, 
@@ -3019,7 +3186,7 @@ namespace azure.mgmt.chaos.operations
             ) -> ActionVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'location', 'action_name', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'location', 'action_name', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def list(
                 self, 
                 location: str, 
@@ -3039,7 +3206,7 @@ namespace azure.mgmt.chaos.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'location', 'action_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'location', 'action_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def get(
                 self, 
                 location: str, 
@@ -3048,7 +3215,7 @@ namespace azure.mgmt.chaos.operations
             ) -> Action: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'location', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'location', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def list(
                 self, 
                 location: str, 
@@ -3222,7 +3389,7 @@ namespace azure.mgmt.chaos.operations
             ) -> Connection: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'connection_name']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'connection_name']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         def delete(
                 self, 
                 resource_group_name: str, 
@@ -3232,7 +3399,7 @@ namespace azure.mgmt.chaos.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'connection_name', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'connection_name', 'accept']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -3242,7 +3409,7 @@ namespace azure.mgmt.chaos.operations
             ) -> Connection: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         def list_all(
                 self, 
                 resource_group_name: str, 
@@ -3260,7 +3427,7 @@ namespace azure.mgmt.chaos.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'discovered_resource_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'discovered_resource_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -3270,7 +3437,7 @@ namespace azure.mgmt.chaos.operations
             ) -> DiscoveredResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def list_by_workspace(
                 self, 
                 resource_group_name: str, 
@@ -3460,156 +3627,6 @@ namespace azure.mgmt.chaos.operations
         def list_all(self, **kwargs: Any) -> ItemPaged[Operation]: ...
 
 
-    class azure.mgmt.chaos.operations.PrivateAccessesOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                resource: PrivateAccess, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[PrivateAccess]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                resource: PrivateAccess, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[PrivateAccess]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[PrivateAccess]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'private_access_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        def begin_delete(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'private_access_name', 'private_endpoint_connection_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        def begin_delete_a_private_endpoint_connection(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                private_endpoint_connection_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @overload
-        def begin_update(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                properties: PrivateAccessPatch, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[PrivateAccess]: ...
-
-        @overload
-        def begin_update(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                properties: PrivateAccessPatch, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[PrivateAccess]: ...
-
-        @overload
-        def begin_update(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[PrivateAccess]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'private_access_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        def get(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                **kwargs: Any
-            ) -> PrivateAccess: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'private_access_name', 'private_endpoint_connection_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        def get_a_private_endpoint_connection(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                private_endpoint_connection_name: str, 
-                **kwargs: Any
-            ) -> PrivateEndpointConnection: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'private_access_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        def get_private_link_resources(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                **kwargs: Any
-            ) -> PrivateLinkResourceListResult: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        def list(
-                self, 
-                resource_group_name: str, 
-                *, 
-                continuation_token_parameter: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[PrivateAccess]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        def list_all(
-                self, 
-                *, 
-                continuation_token_parameter: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[PrivateAccess]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'private_access_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
-        def list_private_endpoint_connections(
-                self, 
-                resource_group_name: str, 
-                private_access_name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[PrivateEndpointConnection]: ...
-
-
     class azure.mgmt.chaos.operations.ScenarioConfigurationsOperations:
 
         def __init__(
@@ -3628,6 +3645,8 @@ namespace azure.mgmt.chaos.operations
                 resource: ScenarioConfiguration, 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> LROPoller[ScenarioConfiguration]: ...
 
@@ -3641,6 +3660,8 @@ namespace azure.mgmt.chaos.operations
                 resource: ScenarioConfiguration, 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> LROPoller[ScenarioConfiguration]: ...
 
@@ -3654,11 +3675,13 @@ namespace azure.mgmt.chaos.operations
                 resource: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> LROPoller[ScenarioConfiguration]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'scenario_configuration_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'scenario_configuration_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -3669,7 +3692,7 @@ namespace azure.mgmt.chaos.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'scenario_configuration_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'scenario_configuration_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def begin_execute(
                 self, 
                 resource_group_name: str, 
@@ -3719,7 +3742,7 @@ namespace azure.mgmt.chaos.operations
             ) -> LROPoller[PermissionsFix]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'scenario_configuration_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'scenario_configuration_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def begin_validate(
                 self, 
                 resource_group_name: str, 
@@ -3730,7 +3753,7 @@ namespace azure.mgmt.chaos.operations
             ) -> LROPoller[Validation]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'scenario_configuration_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'scenario_configuration_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -3741,7 +3764,7 @@ namespace azure.mgmt.chaos.operations
             ) -> ScenarioConfiguration: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def list_all(
                 self, 
                 resource_group_name: str, 
@@ -3760,7 +3783,7 @@ namespace azure.mgmt.chaos.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'run_id']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'run_id']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def begin_cancel(
                 self, 
                 resource_group_name: str, 
@@ -3771,7 +3794,7 @@ namespace azure.mgmt.chaos.operations
             ) -> LROPoller[ScenarioRun]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'run_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'run_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -3782,7 +3805,7 @@ namespace azure.mgmt.chaos.operations
             ) -> ScenarioRun: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def list_all(
                 self, 
                 resource_group_name: str, 
@@ -3790,6 +3813,53 @@ namespace azure.mgmt.chaos.operations
                 scenario_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[ScenarioRun]: ...
+
+
+    class azure.mgmt.chaos.operations.ScenarioTemplateVersionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'scenario_template_name', 'version', 'accept']}, api_versions_list=['2026-11-01'])
+        def get(
+                self, 
+                scenario_template_name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> ScenarioTemplateVersion: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'scenario_template_name', 'accept']}, api_versions_list=['2026-11-01'])
+        def list(
+                self, 
+                scenario_template_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[ScenarioTemplateVersion]: ...
+
+
+    class azure.mgmt.chaos.operations.ScenarioTemplatesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'scenario_template_name', 'accept']}, api_versions_list=['2026-11-01'])
+        def get(
+                self, 
+                scenario_template_name: str, 
+                **kwargs: Any
+            ) -> ScenarioTemplate: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'accept']}, api_versions_list=['2026-11-01'])
+        def list(self, **kwargs: Any) -> ItemPaged[ScenarioTemplate]: ...
 
 
     class azure.mgmt.chaos.operations.ScenariosOperations:
@@ -3809,6 +3879,8 @@ namespace azure.mgmt.chaos.operations
                 resource: Scenario, 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> Scenario: ...
 
@@ -3821,6 +3893,8 @@ namespace azure.mgmt.chaos.operations
                 resource: Scenario, 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> Scenario: ...
 
@@ -3833,11 +3907,13 @@ namespace azure.mgmt.chaos.operations
                 resource: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> Scenario: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def delete(
                 self, 
                 resource_group_name: str, 
@@ -3847,7 +3923,7 @@ namespace azure.mgmt.chaos.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'scenario_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -3857,7 +3933,7 @@ namespace azure.mgmt.chaos.operations
             ) -> Scenario: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def list_all(
                 self, 
                 resource_group_name: str, 
@@ -3977,6 +4053,66 @@ namespace azure.mgmt.chaos.operations
             ) -> ItemPaged[Target]: ...
 
 
+    class azure.mgmt.chaos.operations.WorkspaceDiscoveriesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'discovery_name', 'accept']}, api_versions_list=['2026-11-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                workspace_name: str, 
+                discovery_name: str, 
+                **kwargs: Any
+            ) -> WorkspaceDiscovery: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-11-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                workspace_name: str, 
+                *, 
+                continuation_token_parameter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[WorkspaceDiscovery]: ...
+
+
+    class azure.mgmt.chaos.operations.WorkspaceEvaluationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'evaluation_name', 'accept']}, api_versions_list=['2026-11-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                workspace_name: str, 
+                evaluation_name: str, 
+                **kwargs: Any
+            ) -> WorkspaceEvaluation: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-11-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                workspace_name: str, 
+                *, 
+                continuation_token_parameter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[WorkspaceEvaluation]: ...
+
+
     class azure.mgmt.chaos.operations.WorkspacesOperations:
 
         def __init__(
@@ -3993,6 +4129,8 @@ namespace azure.mgmt.chaos.operations
                 resource: Workspace, 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> LROPoller[Workspace]: ...
 
@@ -4004,6 +4142,8 @@ namespace azure.mgmt.chaos.operations
                 resource: Workspace, 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> LROPoller[Workspace]: ...
 
@@ -4015,11 +4155,13 @@ namespace azure.mgmt.chaos.operations
                 resource: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> LROPoller[Workspace]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -4028,7 +4170,7 @@ namespace azure.mgmt.chaos.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-11-01'])
         def begin_discover(
                 self, 
                 resource_group_name: str, 
@@ -4037,7 +4179,7 @@ namespace azure.mgmt.chaos.operations
             ) -> LROPoller[WorkspaceDiscovery]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-11-01', params_added_on={'2026-11-01': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-11-01'])
         def begin_evaluate(
                 self, 
                 resource_group_name: str, 
@@ -4079,7 +4221,7 @@ namespace azure.mgmt.chaos.operations
             ) -> LROPoller[Workspace]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'workspace_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4088,7 +4230,7 @@ namespace azure.mgmt.chaos.operations
             ) -> Workspace: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -4098,7 +4240,7 @@ namespace azure.mgmt.chaos.operations
             ) -> ItemPaged[Workspace]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'continuation_token_parameter', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-08-01-preview', '2026-11-01'])
         def list_all(
                 self, 
                 *, 
@@ -4114,7 +4256,7 @@ namespace azure.mgmt.chaos.types
         key "onActionLifecycle": Union[str, ActionLifecycle]
         key "type": Required[Union[str, ActionDependencyType]]
         name: str
-        on_action_lifecycle: Union[str, ActionLifecycle]
+        onActionLifecycle: Union[str, ActionLifecycle]
         type: Union[str, ActionDependencyType]
 
 
@@ -4127,7 +4269,7 @@ namespace azure.mgmt.chaos.types
         id: str
         name: str
         properties: CapabilityProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4139,10 +4281,10 @@ namespace azure.mgmt.chaos.types
         key "targetType": str
         key "urn": str
         description: str
-        parameters_schema: str
-        provisioning_state: Union[str, ProvisioningState]
+        parametersSchema: str
+        provisioningState: Union[str, ProvisioningState]
         publisher: str
-        target_type: str
+        targetType: str
         urn: str
 
 
@@ -4186,8 +4328,8 @@ namespace azure.mgmt.chaos.types
         key "type": Required[Literal[SelectorType.QUERY]]
         filter: ChaosTargetFilter
         id: str
-        query_string: str
-        subscription_ids: list[str]
+        queryString: str
+        subscriptionIds: list[str]
         type: Literal[SelectorType.QUERY]
 
 
@@ -4211,7 +4353,7 @@ namespace azure.mgmt.chaos.types
         id: str
         name: str
         properties: ConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4219,23 +4361,21 @@ namespace azure.mgmt.chaos.types
         key "certificateIssuer": str
         key "certificateSubjectName": str
         key "dataPlaneEndpoint": str
-        key "dstsPrincipal": str
         key "kind": Required[Union[str, ConnectionKind]]
         key "principalId": str
         key "provisioningState": Union[str, ProvisioningState]
         key "status": Union[str, ConnectionStatus]
         key "targetResourceId": Required[str]
         key "tenantId": str
-        certificate_issuer: str
-        certificate_subject_name: str
-        data_plane_endpoint: str
-        dsts_principal: str
+        certificateIssuer: str
+        certificateSubjectName: str
+        dataPlaneEndpoint: str
         kind: Union[str, ConnectionKind]
-        principal_id: str
-        provisioning_state: Union[str, ProvisioningState]
+        principalId: str
+        provisioningState: Union[str, ProvisioningState]
         status: Union[str, ConnectionStatus]
-        target_resource_id: str
-        tenant_id: str
+        targetResourceId: str
+        tenantId: str
 
 
     class azure.mgmt.chaos.types.ContinuousAction(TypedDict, total=False):
@@ -4247,15 +4387,15 @@ namespace azure.mgmt.chaos.types
         duration: str
         name: str
         parameters: list[KeyValuePair]
-        selector_id: str
+        selectorId: str
         type: Literal[ExperimentActionType.CONTINUOUS]
 
 
     class azure.mgmt.chaos.types.CustomerDataStorageProperties(TypedDict, total=False):
         key "blobContainerName": str
         key "storageAccountResourceId": str
-        blob_container_name: str
-        storage_account_resource_id: str
+        blobContainerName: str
+        storageAccountResourceId: str
 
 
     class azure.mgmt.chaos.types.DelayAction(TypedDict, total=False):
@@ -4274,8 +4414,26 @@ namespace azure.mgmt.chaos.types
         key "type": Required[Literal[ExperimentActionType.DISCRETE]]
         name: str
         parameters: list[KeyValuePair]
-        selector_id: str
+        selectorId: str
         type: Literal[ExperimentActionType.DISCRETE]
+
+
+    class azure.mgmt.chaos.types.ErrorAdditionalInfo(TypedDict, total=False):
+        key "info": Any
+        key "type": str
+        info: Any
+        type: str
+
+
+    class azure.mgmt.chaos.types.ErrorDetail(TypedDict, total=False):
+        key "code": str
+        key "message": str
+        key "target": str
+        additionalInfo: list[ErrorAdditionalInfo]
+        code: str
+        details: list[ErrorDetail]
+        message: str
+        target: str
 
 
     class azure.mgmt.chaos.types.Experiment(TrackedResource):
@@ -4291,7 +4449,7 @@ namespace azure.mgmt.chaos.types
         location: str
         name: str
         properties: ExperimentProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4307,8 +4465,8 @@ namespace azure.mgmt.chaos.types
         key "provisioningState": Union[str, ProvisioningState]
         key "selectors": Required[list[ChaosTargetSelector]]
         key "steps": Required[list[ChaosExperimentStep]]
-        customer_data_storage: CustomerDataStorageProperties
-        provisioning_state: Union[str, ProvisioningState]
+        customerDataStorage: CustomerDataStorageProperties
+        provisioningState: Union[str, ProvisioningState]
         selectors: list[ChaosTargetSelector]
         steps: list[ChaosExperimentStep]
 
@@ -4321,7 +4479,7 @@ namespace azure.mgmt.chaos.types
 
     class azure.mgmt.chaos.types.ExternalResource(TypedDict, total=False):
         key "resourceId": str
-        resource_id: str
+        resourceId: str
 
 
     class azure.mgmt.chaos.types.FilterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4330,7 +4488,7 @@ namespace azure.mgmt.chaos.types
 
     class azure.mgmt.chaos.types.FixResourcePermissionsRequest(TypedDict, total=False):
         key "whatIf": bool
-        what_if: bool
+        whatIf: bool
 
 
     class azure.mgmt.chaos.types.KeyValuePair(TypedDict, total=False):
@@ -4344,78 +4502,10 @@ namespace azure.mgmt.chaos.types
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedServiceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
-
-
-    class azure.mgmt.chaos.types.PrivateAccess(TrackedResource):
-        key "id": str
-        key "location": Required[str]
-        key "name": str
-        key "properties": Required[PrivateAccessProperties]
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        location: str
-        name: str
-        properties: PrivateAccessProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-
-    class azure.mgmt.chaos.types.PrivateAccessPatch(TypedDict, total=False):
-        tags: dict[str, str]
-
-
-    class azure.mgmt.chaos.types.PrivateAccessProperties(TypedDict, total=False):
-        key "provisioningState": Union[str, ProvisioningState]
-        key "publicNetworkAccess": Union[str, PublicNetworkAccessOption]
-        privateEndpointConnections: list[PrivateEndpointConnection]
-        private_endpoint_connections: list[PrivateEndpointConnection]
-        provisioning_state: Union[str, ProvisioningState]
-        public_network_access: Union[str, PublicNetworkAccessOption]
-
-
-    class azure.mgmt.chaos.types.PrivateEndpoint(TypedDict, total=False):
-        key "id": str
-        id: str
-
-
-    class azure.mgmt.chaos.types.PrivateEndpointConnection(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('PrivateEndpointConnectionProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.chaos.types.PrivateEndpointConnectionProperties(TypedDict, total=False):
-        key "privateEndpoint": ForwardRef('PrivateEndpoint', module='types')
-        key "privateLinkServiceConnectionState": Required[PrivateLinkServiceConnectionState]
-        key "provisioningState": Union[str, ProvisioningState]
-        groupIds: list[str]
-        group_ids: list[str]
-        private_endpoint: PrivateEndpoint
-        private_link_service_connection_state: PrivateLinkServiceConnectionState
-        provisioning_state: Union[str, ProvisioningState]
-
-
-    class azure.mgmt.chaos.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
-        key "actionsRequired": str
-        key "description": str
-        key "status": Union[str, PrivateEndpointServiceConnectionStatus]
-        actions_required: str
-        description: str
-        status: Union[str, PrivateEndpointServiceConnectionStatus]
 
 
     class azure.mgmt.chaos.types.ProxyResource(Resource):
@@ -4425,15 +4515,15 @@ namespace azure.mgmt.chaos.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.chaos.types.Recommendation(TypedDict, total=False):
         key "evaluationRunAt": str
         key "recommendationStatus": Required[Union[str, RecommendationStatus]]
-        evaluation_run_at: str
-        recommendation_status: Union[str, RecommendationStatus]
+        evaluationRunAt: str
+        recommendationStatus: Union[str, RecommendationStatus]
 
 
     class azure.mgmt.chaos.types.Resource(TypedDict, total=False):
@@ -4443,7 +4533,7 @@ namespace azure.mgmt.chaos.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4457,7 +4547,6 @@ namespace azure.mgmt.chaos.types
     class azure.mgmt.chaos.types.ResourceTargetingCriteria(TypedDict, total=False):
         locations: list[str]
         physicalZones: list[str]
-        physical_zones: list[str]
         resources: list[str]
         tags: list[KeyValuePair]
         types: list[str]
@@ -4468,7 +4557,7 @@ namespace azure.mgmt.chaos.types
         key "behavior": Union[str, RunAfterBehavior]
         key "items": Required[list[ActionDependency]]
         behavior: Union[str, RunAfterBehavior]
-        items_property: list[ActionDependency]
+        items: list[ActionDependency]
 
 
     class azure.mgmt.chaos.types.Scenario(ProxyResource):
@@ -4480,7 +4569,7 @@ namespace azure.mgmt.chaos.types
         id: str
         name: str
         properties: ScenarioProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4489,19 +4578,29 @@ namespace azure.mgmt.chaos.types
         key "description": str
         key "duration": Required[str]
         key "externalResource": ForwardRef('ExternalResource', module='types')
+        key "failureBehavior": Union[str, FailureBehavior]
         key "name": Required[str]
         key "runAfter": ForwardRef('RunAfter', module='types')
         key "timeout": str
         key "waitBefore": str
-        action_id: str
+        actionId: str
         description: str
         duration: str
-        external_resource: ExternalResource
+        externalResource: ExternalResource
+        failureBehavior: Union[str, FailureBehavior]
         name: str
         parameters: list[KeyValuePair]
-        run_after: RunAfter
+        runAfter: RunAfter
+        selectors: list[ScenarioActionSelector]
         timeout: str
-        wait_before: str
+        waitBefore: str
+
+
+    class azure.mgmt.chaos.types.ScenarioActionSelector(TypedDict, total=False):
+        key "name": Required[Union[str, ScenarioActionSelectorName]]
+        key "value": Required[str]
+        name: Union[str, ScenarioActionSelectorName]
+        value: str
 
 
     class azure.mgmt.chaos.types.ScenarioConfiguration(ProxyResource):
@@ -4513,7 +4612,7 @@ namespace azure.mgmt.chaos.types
         id: str
         name: str
         properties: ScenarioConfigurationProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4522,37 +4621,45 @@ namespace azure.mgmt.chaos.types
         key "resourceTargeting": ForwardRef('ResourceTargeting', module='types')
         key "scenarioId": Required[str]
         parameters: list[KeyValuePair]
-        provisioning_state: Union[str, ProvisioningState]
-        resource_targeting: ResourceTargeting
-        scenario_id: str
+        provisioningState: Union[str, ProvisioningState]
+        resourceTargeting: ResourceTargeting
+        scenarioId: str
 
 
     class azure.mgmt.chaos.types.ScenarioParameter(TypedDict, total=False):
         key "default": str
         key "description": str
+        key "format": ForwardRef('ScenarioParameterFormat', module='types')
         key "name": Required[str]
         key "required": bool
         key "type": Required[Union[str, ParameterType]]
         default: str
         description: str
+        format: ScenarioParameterFormat
         name: str
         required: bool
         type: Union[str, ParameterType]
 
 
+    class azure.mgmt.chaos.types.ScenarioParameterFormat(TypedDict, total=False):
+        key "formatType": Union[str, ParameterFormatType]
+        examples: list[str]
+        formatType: Union[str, ParameterFormatType]
+
+
     class azure.mgmt.chaos.types.ScenarioProperties(TypedDict, total=False):
-        key "actions": Required[list[ScenarioAction]]
         key "createdFrom": str
         key "description": str
-        key "parameters": Required[list[ScenarioParameter]]
+        key "failureBehavior": Union[str, FailureBehavior]
         key "provisioningState": Union[str, ProvisioningState]
         key "recommendation": ForwardRef('Recommendation', module='types')
         key "version": str
         actions: list[ScenarioAction]
-        created_from: str
+        createdFrom: str
         description: str
+        failureBehavior: Union[str, FailureBehavior]
         parameters: list[ScenarioParameter]
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
         recommendation: Recommendation
         version: str
 
@@ -4569,12 +4676,12 @@ namespace azure.mgmt.chaos.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.chaos.types.Target(ProxyResource):
@@ -4588,7 +4695,7 @@ namespace azure.mgmt.chaos.types
         location: str
         name: str
         properties: dict[str, Any]
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4608,7 +4715,7 @@ namespace azure.mgmt.chaos.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4616,8 +4723,8 @@ namespace azure.mgmt.chaos.types
     class azure.mgmt.chaos.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.chaos.types.Workspace(TrackedResource):
@@ -4633,24 +4740,77 @@ namespace azure.mgmt.chaos.types
         location: str
         name: str
         properties: WorkspaceProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
 
+    class azure.mgmt.chaos.types.WorkspaceCustomerManagedKeyEncryption(TypedDict, total=False):
+        key "keyEncryptionKeyUrl": Required[str]
+        key "keyVaultResourceId": Required[str]
+        keyEncryptionKeyUrl: str
+        keyVaultResourceId: str
+
+
+    class azure.mgmt.chaos.types.WorkspaceCustomerManagedKeyEncryptionPatchMergePatchUpdateOrCreate(TypedDict, total=False):
+        key "keyEncryptionKeyUrl": Optional[str]
+        key "keyVaultResourceId": Optional[str]
+        keyEncryptionKeyUrl: str
+        keyVaultResourceId: str
+
+
+    class azure.mgmt.chaos.types.WorkspaceCustomerManagedKeyOnboarding(TypedDict, total=False):
+        key "applicationId": Required[str]
+        applicationId: str
+
+
+    class azure.mgmt.chaos.types.WorkspaceEncryption(TypedDict, total=False):
+        key "customerManagedKeyEncryption": ForwardRef('WorkspaceCustomerManagedKeyEncryption', module='types')
+        key "customerManagedKeyOnboarding": ForwardRef('WorkspaceCustomerManagedKeyOnboarding', module='types')
+        key "status": ForwardRef('WorkspaceEncryptionStatus', module='types')
+        customerManagedKeyEncryption: WorkspaceCustomerManagedKeyEncryption
+        customerManagedKeyOnboarding: WorkspaceCustomerManagedKeyOnboarding
+        status: WorkspaceEncryptionStatus
+
+
+    class azure.mgmt.chaos.types.WorkspaceEncryptionPatchMergePatchUpdateOrCreate(TypedDict, total=False):
+        key "customerManagedKeyEncryption": Optional[WorkspaceCustomerManagedKeyEncryptionPatchMergePatchUpdateOrCreate]
+        customerManagedKeyEncryption: WorkspaceCustomerManagedKeyEncryptionPatchMergePatchUpdateOrCreate
+
+
+    class azure.mgmt.chaos.types.WorkspaceEncryptionStatus(TypedDict, total=False):
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "lastCheckedAt": str
+        key "observedKeyEncryptionKeyUrl": str
+        key "observedProtection": Union[str, WorkspaceEncryptionProtection]
+        key "state": Required[Union[str, WorkspaceEncryptionState]]
+        error: ErrorDetail
+        lastCheckedAt: str
+        observedKeyEncryptionKeyUrl: str
+        observedProtection: Union[str, WorkspaceEncryptionProtection]
+        state: Union[str, WorkspaceEncryptionState]
+
+
     class azure.mgmt.chaos.types.WorkspaceProperties(TypedDict, total=False):
-        key "communicationEndpoint": str
+        key "encryption": ForwardRef('WorkspaceEncryption', module='types')
         key "provisioningState": Union[str, ProvisioningState]
         key "scopes": Required[list[str]]
-        communication_endpoint: str
-        provisioning_state: Union[str, ProvisioningState]
+        encryption: WorkspaceEncryption
+        provisioningState: Union[str, ProvisioningState]
         scopes: list[str]
 
 
     class azure.mgmt.chaos.types.WorkspaceUpdate(TypedDict, total=False):
         key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "properties": ForwardRef('WorkspaceUpdateProperties', module='types')
         identity: ManagedServiceIdentity
+        properties: WorkspaceUpdateProperties
         tags: dict[str, str]
+
+
+    class azure.mgmt.chaos.types.WorkspaceUpdateProperties(TypedDict, total=False):
+        key "encryption": Optional[WorkspaceEncryptionPatchMergePatchUpdateOrCreate]
+        encryption: WorkspaceEncryptionPatchMergePatchUpdateOrCreate
 
 
 ```

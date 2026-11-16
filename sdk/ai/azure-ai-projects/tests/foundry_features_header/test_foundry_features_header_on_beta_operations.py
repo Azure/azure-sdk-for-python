@@ -225,7 +225,7 @@ class TestFoundryFeaturesHeaderOnBetaOperations(FoundryFeaturesHeaderTestBase):
         extra_kwargs: dict[str, Any] = {}
         self._assert_header(label, self._make_fake_call(method, extra_kwargs=extra_kwargs), expected_header_value)
 
-    @pytest.mark.parametrize("subclient_name", ["conversations", "telephony"])
+    @pytest.mark.parametrize("subclient_name", ["live_conversations", "telephony"])
     def test_foundry_features_header_on_voice_agent_subclients(
         self, client: AIProjectClient, subclient_name: str
     ) -> None:
@@ -239,6 +239,19 @@ class TestFoundryFeaturesHeaderOnBetaOperations(FoundryFeaturesHeaderTestBase):
             if callable(method):
                 label = f".beta.voice_agents.{subclient_name}.{method_name}()"
                 self._assert_header(label, self._make_fake_call(method), EXPECTED_FOUNDRY_FEATURES["voice_agents"])
+
+    @pytest.mark.parametrize("allow_preview", [False, True])
+    def test_skills_preview_header_is_always_sent(self, allow_preview: bool) -> None:
+        with AIProjectClient(
+            endpoint=FAKE_ENDPOINT,
+            credential=FakeCredential(),
+            allow_preview=allow_preview,
+            transport=CapturingTransport(),
+        ) as client:
+            assert not hasattr(client, "skills")
+            self._assert_header(
+                ".beta.skills.get()", lambda: client.beta.skills.get("skill-test"), EXPECTED_FOUNDRY_FEATURES["skills"]
+            )
 
 
 # ---------------------------------------------------------------------------

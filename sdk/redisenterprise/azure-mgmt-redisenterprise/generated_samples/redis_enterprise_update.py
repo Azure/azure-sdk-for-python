@@ -35,6 +35,10 @@ def main():
         cluster_name="cache1",
         parameters={
             "properties": {
+                "firewallRules": [
+                    {"name": "allowOfficeNetwork", "sourceAddressPrefix": "10.0.0.0/24"},
+                    {"name": "allowPartnerNetwork", "sourceAddressPrefix": "192.168.1.0/24"},
+                ],
                 "maintenanceConfiguration": {
                     "maintenanceWindows": [
                         {"duration": "PT6H", "schedule": {"dayOfWeek": "Monday"}, "startHourUtc": 3, "type": "Weekly"},
@@ -50,13 +54,13 @@ def main():
                 "minimumTlsVersion": "1.2",
                 "publicNetworkAccess": "Enabled",
             },
-            "sku": {"capacity": 9, "name": "EnterpriseFlash_F300"},
+            "sku": {"name": "Balanced_B10"},
             "tags": {"tag1": "value1"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-09-01/RedisEnterpriseUpdate.json
+# x-ms-original-file: 2026-10-01-preview/RedisEnterpriseUpdate.json
 if __name__ == "__main__":
     main()

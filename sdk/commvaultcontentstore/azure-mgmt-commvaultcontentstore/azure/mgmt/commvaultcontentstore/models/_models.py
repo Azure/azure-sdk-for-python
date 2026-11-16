@@ -331,6 +331,145 @@ class CloudAccount(TrackedResource):  # pylint: disable=docstring-keyword-should
         super().__init__(*args, **kwargs)
 
 
+class CloudAccountIdentityUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    :ivar type: The type of managed identity assigned to this resource. Known values are: "None",
+     "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.commvaultcontentstore.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The identities assigned to this resource by the user.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.commvaultcontentstore.models.UserAssignedIdentity]
+    """
+
+    type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of managed identity assigned to this resource. Known values are: \"None\",
+     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identities assigned to this resource by the user."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CloudAccountMarketplaceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Marketplace details that can be updated on a Commvault Cloud Account.
+
+    :ivar saas_resource_id: Marketplace SaaS Resource Id.
+    :vartype saas_resource_id: str
+    :ivar subscription_id: Azure subscription id for the the marketplace offer is purchased from.
+    :vartype subscription_id: str
+    :ivar offer_details: Offer details for the marketplace that is selected by the user.
+    :vartype offer_details: ~azure.mgmt.commvaultcontentstore.models.CloudAccountOfferDetailsUpdate
+    """
+
+    saas_resource_id: Optional[str] = rest_field(
+        name="saasResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Marketplace SaaS Resource Id."""
+    subscription_id: Optional[str] = rest_field(
+        name="subscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure subscription id for the the marketplace offer is purchased from."""
+    offer_details: Optional["_models.CloudAccountOfferDetailsUpdate"] = rest_field(
+        name="offerDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Offer details for the marketplace that is selected by the user."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        saas_resource_id: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        offer_details: Optional["_models.CloudAccountOfferDetailsUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CloudAccountOfferDetailsUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Marketplace offer details that can be updated on a Commvault Cloud Account.
+
+    :ivar publisher_id: Publisher Id for the marketplace offer.
+    :vartype publisher_id: str
+    :ivar offer_id: Offer Id for the marketplace offer.
+    :vartype offer_id: str
+    :ivar plan_name: Plan Name for the marketplace offer.
+    :vartype plan_name: str
+    :ivar term_unit: Plan Display Name for the marketplace offer.
+    :vartype term_unit: str
+    :ivar term_id: Plan Display Name for the marketplace offer.
+    :vartype term_id: str
+    :ivar plan_id: Plan Id for the marketplace offer.
+    :vartype plan_id: str
+    """
+
+    publisher_id: Optional[str] = rest_field(
+        name="publisherId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Publisher Id for the marketplace offer."""
+    offer_id: Optional[str] = rest_field(name="offerId", visibility=["read", "create", "update", "delete", "query"])
+    """Offer Id for the marketplace offer."""
+    plan_name: Optional[str] = rest_field(name="planName", visibility=["read", "create", "update", "delete", "query"])
+    """Plan Name for the marketplace offer."""
+    term_unit: Optional[str] = rest_field(name="termUnit", visibility=["read", "create", "update", "delete", "query"])
+    """Plan Display Name for the marketplace offer."""
+    term_id: Optional[str] = rest_field(name="termId", visibility=["read", "create", "update", "delete", "query"])
+    """Plan Display Name for the marketplace offer."""
+    plan_id: Optional[str] = rest_field(name="planId", visibility=["read", "create", "update", "delete", "query"])
+    """Plan Id for the marketplace offer."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        publisher_id: Optional[str] = None,
+        offer_id: Optional[str] = None,
+        plan_name: Optional[str] = None,
+        term_unit: Optional[str] = None,
+        term_id: Optional[str] = None,
+        plan_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class CloudAccountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties specific to Commvault Cloud Account resource.
 
@@ -379,6 +518,140 @@ class CloudAccountProperties(_Model):  # pylint: disable=docstring-keyword-shoul
         user: "_models.UserDetails",
         company: Optional["_models.CompanyProfile"] = None,
         role_assignments_on_cca_create: Optional[list["_models.RoleAssignment"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CloudAccountUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the CloudAccount.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.commvaultcontentstore.models.CloudAccountUpdateProperties
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.commvaultcontentstore.models.CloudAccountIdentityUpdate
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.CloudAccountUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    identity: Optional["_models.CloudAccountIdentityUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.CloudAccountUpdateProperties"] = None,
+        identity: Optional["_models.CloudAccountIdentityUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CloudAccountUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the CloudAccount.
+
+    :ivar company: Optional company details for the cloud account.
+    :vartype company: ~azure.mgmt.commvaultcontentstore.models.CompanyProfile
+    :ivar marketplace: Marketplace details of the resource.
+    :vartype marketplace: ~azure.mgmt.commvaultcontentstore.models.CloudAccountMarketplaceUpdate
+    :ivar user: Details of the user.
+    :vartype user: ~azure.mgmt.commvaultcontentstore.models.CloudAccountUserUpdate
+    """
+
+    company: Optional["_models.CompanyProfile"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional company details for the cloud account."""
+    marketplace: Optional["_models.CloudAccountMarketplaceUpdate"] = rest_field(visibility=["read", "create", "update"])
+    """Marketplace details of the resource."""
+    user: Optional["_models.CloudAccountUserUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details of the user."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        company: Optional["_models.CompanyProfile"] = None,
+        marketplace: Optional["_models.CloudAccountMarketplaceUpdate"] = None,
+        user: Optional["_models.CloudAccountUserUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CloudAccountUserUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """User details that can be updated on a Commvault Cloud Account.
+
+    :ivar upn: User's principal name.
+    :vartype upn: str
+    :ivar phone_number: User's phone number.
+    :vartype phone_number: str
+    :ivar first_name: First name of the user.
+    :vartype first_name: str
+    :ivar last_name: Last name of the user.
+    :vartype last_name: str
+    :ivar email_address: Email address of the user.
+    :vartype email_address: str
+    """
+
+    upn: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """User's principal name."""
+    phone_number: Optional[str] = rest_field(
+        name="phoneNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """User's phone number."""
+    first_name: Optional[str] = rest_field(name="firstName", visibility=["read", "create", "update", "delete", "query"])
+    """First name of the user."""
+    last_name: Optional[str] = rest_field(name="lastName", visibility=["read", "create", "update", "delete", "query"])
+    """Last name of the user."""
+    email_address: Optional[str] = rest_field(
+        name="emailAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Email address of the user."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        upn: Optional[str] = None,
+        phone_number: Optional[str] = None,
+        first_name: Optional[str] = None,
+        last_name: Optional[str] = None,
+        email_address: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1914,8 +2187,8 @@ class StorageProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
     :vartype storage_type: str or ~azure.mgmt.commvaultcontentstore.models.StorageType
     :ivar vendor: The vendor of Commvault Storage. Required. "Azure_Blob_Storage"
     :vartype vendor: str or ~azure.mgmt.commvaultcontentstore.models.Vendor
-    :ivar class_property: The class of Commvault Storage. Required. Known values are: "COLD" and
-     "HOT".
+    :ivar class_property: The class of Commvault Storage. Required. Known values are: "COLD",
+     "COOL", and "HOT".
     :vartype class_property: str or ~azure.mgmt.commvaultcontentstore.models.StorageClassType
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
      "Failed", and "Canceled".
@@ -1938,7 +2211,7 @@ class StorageProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
     class_property: Union[str, "_models.StorageClassType"] = rest_field(
         name="class", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The class of Commvault Storage. Required. Known values are: \"COLD\" and \"HOT\"."""
+    """The class of Commvault Storage. Required. Known values are: \"COLD\", \"COOL\", and \"HOT\"."""
     provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
