@@ -393,9 +393,9 @@ class MonitoredSubscriptionsOperations:  # pylint: disable=docstring-missing-par
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
-        :param configuration_name: Required.
+        :param configuration_name: The configuration name. Only 'default' value is supported. Required.
         :type configuration_name: str
         :param body: Default value is None.
         :type body: ~azure.mgmt.elastic.models.MonitoredSubscriptionProperties
@@ -426,9 +426,9 @@ class MonitoredSubscriptionsOperations:  # pylint: disable=docstring-missing-par
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
-        :param configuration_name: Required.
+        :param configuration_name: The configuration name. Only 'default' value is supported. Required.
         :type configuration_name: str
         :param body: Default value is None.
         :type body: ~azure.mgmt.elastic.types.MonitoredSubscriptionProperties
@@ -459,9 +459,9 @@ class MonitoredSubscriptionsOperations:  # pylint: disable=docstring-missing-par
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
-        :param configuration_name: Required.
+        :param configuration_name: The configuration name. Only 'default' value is supported. Required.
         :type configuration_name: str
         :param body: Default value is None.
         :type body: IO[bytes]
@@ -492,9 +492,9 @@ class MonitoredSubscriptionsOperations:  # pylint: disable=docstring-missing-par
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
-        :param configuration_name: Required.
+        :param configuration_name: The configuration name. Only 'default' value is supported. Required.
         :type configuration_name: str
         :param body: Is either a MonitoredSubscriptionProperties type or a IO[bytes] type. Default
          value is None.
@@ -660,9 +660,9 @@ class MonitoredSubscriptionsOperations:  # pylint: disable=docstring-missing-par
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
-        :param configuration_name: Required.
+        :param configuration_name: The configuration name. Only 'default' value is supported. Required.
         :type configuration_name: str
         :param body: Default value is None.
         :type body: ~azure.mgmt.elastic.models.MonitoredSubscriptionProperties
@@ -693,9 +693,9 @@ class MonitoredSubscriptionsOperations:  # pylint: disable=docstring-missing-par
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
-        :param configuration_name: Required.
+        :param configuration_name: The configuration name. Only 'default' value is supported. Required.
         :type configuration_name: str
         :param body: Default value is None.
         :type body: ~azure.mgmt.elastic.types.MonitoredSubscriptionProperties
@@ -726,9 +726,9 @@ class MonitoredSubscriptionsOperations:  # pylint: disable=docstring-missing-par
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
-        :param configuration_name: Required.
+        :param configuration_name: The configuration name. Only 'default' value is supported. Required.
         :type configuration_name: str
         :param body: Default value is None.
         :type body: IO[bytes]
@@ -759,9 +759,9 @@ class MonitoredSubscriptionsOperations:  # pylint: disable=docstring-missing-par
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
-        :param configuration_name: Required.
+        :param configuration_name: The configuration name. Only 'default' value is supported. Required.
         :type configuration_name: str
         :param body: Is either a MonitoredSubscriptionProperties type or a IO[bytes] type. Default
          value is None.
@@ -1166,9 +1166,9 @@ class TagRulesOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
-        :param rule_set_name: Required.
+        :param rule_set_name: Tag Rule Set resource name. Required.
         :type rule_set_name: str
         :param body: request body of MonitoringTagRules. Default value is None.
         :type body: ~azure.mgmt.elastic.models.MonitoringTagRules
@@ -1197,9 +1197,9 @@ class TagRulesOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
-        :param rule_set_name: Required.
+        :param rule_set_name: Tag Rule Set resource name. Required.
         :type rule_set_name: str
         :param body: request body of MonitoringTagRules. Default value is None.
         :type body: ~azure.mgmt.elastic.types.MonitoringTagRules
@@ -1228,9 +1228,9 @@ class TagRulesOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
-        :param rule_set_name: Required.
+        :param rule_set_name: Tag Rule Set resource name. Required.
         :type rule_set_name: str
         :param body: request body of MonitoringTagRules. Default value is None.
         :type body: IO[bytes]
@@ -1257,9 +1257,9 @@ class TagRulesOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
-        :param rule_set_name: Required.
+        :param rule_set_name: Tag Rule Set resource name. Required.
         :type rule_set_name: str
         :param body: request body of MonitoringTagRules. Is either a MonitoringTagRules type or a
          IO[bytes] type. Default value is None.
@@ -5391,9 +5391,9 @@ class OpenAIOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
-        :param integration_name: Required.
+        :param integration_name: OpenAI Integration name. Required.
         :type integration_name: str
         :param body: Default value is None.
         :type body: ~azure.mgmt.elastic.models.OpenAIIntegrationRPModel
@@ -5423,9 +5423,9 @@ class OpenAIOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
-        :param integration_name: Required.
+        :param integration_name: OpenAI Integration name. Required.
         :type integration_name: str
         :param body: Default value is None.
         :type body: ~azure.mgmt.elastic.types.OpenAIIntegrationRPModel
@@ -5455,9 +5455,9 @@ class OpenAIOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
-        :param integration_name: Required.
+        :param integration_name: OpenAI Integration name. Required.
         :type integration_name: str
         :param body: Default value is None.
         :type body: IO[bytes]
@@ -5485,9 +5485,9 @@ class OpenAIOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
-        :param integration_name: Required.
+        :param integration_name: OpenAI Integration name. Required.
         :type integration_name: str
         :param body: Is either a OpenAIIntegrationRPModel type or a IO[bytes] type. Default value is
          None.
