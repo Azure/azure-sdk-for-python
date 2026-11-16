@@ -141,7 +141,7 @@ def set_content_body(
         if isinstance(content, str):
             headers["Content-Type"] = "text/plain"
         if body:
-            headers["Content-Length"] = str(len(body))
+            headers["Content-Length"] = str(len(body.encode("utf-8") if isinstance(body, str) else body))
         return headers, body
     if any(hasattr(content, attr) for attr in ["read", "__iter__", "__aiter__"]):
         return headers, content

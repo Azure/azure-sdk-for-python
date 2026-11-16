@@ -294,7 +294,7 @@ class HttpRequest:
             self.data = None
         else:
             self.data = data
-            self.headers["Content-Length"] = str(len(self.data))
+            self.headers["Content-Length"] = str(len(self.data.encode("utf-8")))
         self.files = None
 
     def set_xml_body(self, data: Any) -> None:
