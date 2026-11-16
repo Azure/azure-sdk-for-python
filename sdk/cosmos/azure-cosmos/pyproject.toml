@@ -125,6 +125,7 @@ synchronize-version-metadata = true
 mypy = true
 pyright = false
 pylint = true
+pyo3-abi3-minimum = "3.10"
 
 [tool.azure-sdk-conda]
 in_bundle = false
