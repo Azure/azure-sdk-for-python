@@ -6,7 +6,7 @@
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer
 from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_component_scores, _rewrite_query_infos, \
-    _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids, _attach_parameters, \
+    _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids, _attach_parameters, _get_hybrid_search_result, \
     _FULL_TEXT_SCORE_SCOPE_KEY, _FULL_TEXT_SCORE_SCOPE_LOCAL, _FULL_TEXT_SCORE_SCOPE_DEFAULT
 from azure.cosmos._routing import routing_range
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
@@ -27,8 +27,8 @@ async def _drain_and_coalesce_results(document_producers_to_drain):
     all_results = []
     is_singleton = True
     for dp in document_producers_to_drain:
-        all_results.append(await dp.peek())
-        all_results.extend(dp._ex_context._buffer)
+        async for item in dp:
+            all_results.append(item)
     if len(document_producers_to_drain) > 1:
         all_results = _coalesce_duplicate_rids(all_results)
         is_singleton = False
@@ -170,7 +170,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         # Drain all the results and coalesce on rid
         drained_results, is_singleton = await _drain_and_coalesce_results(component_query_results)
         # If we only have one component query, we format the response and return with no further work
-        if is_singleton:
+        if not drained_results or (is_singleton and len(rewritten_query_infos) == 1):
             self._format_final_results(drained_results)
             return
 
@@ -185,12 +185,13 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         drained_results.sort(key=lambda x: x['_rid'])
 
         # Compose component scores matrix, where each tuple is (score, index)
-        component_scores = _retrieve_component_scores(drained_results)
+        component_scores = _retrieve_component_scores(drained_results, len(rewritten_query_infos))
 
         # Sort by scores using component weights
         for index, score_tuples in enumerate(component_scores):
             # Negative Weights will change sorting from Descending to Ascending
-            ordering = self._hybrid_search_query_info['componentQueryInfos'][index]['orderBy'][0]
+            ordering = (self._hybrid_search_query_info['componentQueryInfos'][index].get('orderBy')
+                        or ['Descending'])[0]
             comparison_factor = not ordering.lower() == 'ascending'
             #  pylint: disable=cell-var-from-loop
             score_tuples.sort(key=lambda x: x[0], reverse=comparison_factor)
@@ -230,7 +231,8 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         take = self._hybrid_search_query_info['take']
         self._final_results = results[skip:skip + take]
         self._final_results.reverse()
-        self._final_results = [item["payload"]["payload"] for item in self._final_results]
+        result_bodies = (_get_hybrid_search_result(item) for item in self._final_results)
+        self._final_results = [item['payload'] for item in result_bodies if 'payload' in item]
 
     def _aggregate_global_statistics(self, global_statistics_doc_producers):
         self._aggregated_global_statistics = {"documentCount": 0,

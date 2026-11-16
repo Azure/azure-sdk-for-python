@@ -25,16 +25,28 @@ class _Placeholders:
     formattable_order_by = "{documentdb-formattableorderbyquery-filter}"
 
 
-def _retrieve_component_scores(drained_results):
+def _get_hybrid_search_result(result):
+    # Prefer the optimized envelope's scores over similarly named fields in a user projection.
+    if 'componentScores' in result:
+        return result
+    result_body = result.get('payload')
+    if not isinstance(result_body, dict) or 'componentScores' not in result_body:
+        raise ValueError("Hybrid search result is missing component scores.")
+    return result_body
+
+
+def _retrieve_component_scores(drained_results, component_count):
     component_scores_list = []
-    for _ in drained_results[0]['payload']['componentScores']:
+    for _ in range(component_count):
         component_scores_list.append([])
     undefined_components = [-999999] * len(component_scores_list)
     for index, result in enumerate(drained_results):
-        component_scores = result['payload']['componentScores']
+        component_scores = _get_hybrid_search_result(result)['componentScores']
         # Another small fix while backend changes are released to deal with empty component score scenarios
         if len(component_scores) == 0:
             component_scores = undefined_components
+        elif len(component_scores) != component_count:
+            raise ValueError("Hybrid search result has an invalid number of component scores.")
         for component_score_index, component_score in enumerate(component_scores):
             score_tuple = (component_score, index)
             component_scores_list[component_score_index].append(score_tuple)
@@ -76,8 +88,7 @@ def _drain_and_coalesce_results(document_producers_to_drain):
     all_results = []
     is_singleton = True
     for dp in document_producers_to_drain:
-        all_results.append(dp.peek())
-        all_results.extend(dp._ex_context._buffer)
+        all_results.extend(dp)
     if len(document_producers_to_drain) > 1:
         all_results = _coalesce_duplicate_rids(all_results)
         is_singleton = False
@@ -87,20 +98,16 @@ def _drain_and_coalesce_results(document_producers_to_drain):
 def _rewrite_query_infos(hybrid_search_query_info, global_statistics, parameters=None):
     rewritten_query_infos = []
     for query_info in hybrid_search_query_info['componentQueryInfos']:
-        assert query_info['orderBy']
-        assert query_info['hasNonStreamingOrderBy']
-        rewritten_order_by_expressions = []
-        for order_by_expression in query_info['orderByExpressions']:
-            rewritten_order_by_expressions.append(
-                _format_component_query_workaround(order_by_expression, global_statistics,
-                                                   len(hybrid_search_query_info[
-                                                           'componentQueryInfos'])))
+        rewritten_order_by_expressions = query_info.get('orderByExpressions')
+        if query_info.get('orderBy'):
+            assert query_info['hasNonStreamingOrderBy']
+            rewritten_order_by_expressions = []
+            for order_by_expression in query_info['orderByExpressions']:
+                rewritten_order_by_expressions.append(
+                    _format_component_query(order_by_expression, global_statistics))
 
         query_info['rewrittenQuery'] = _attach_parameters(query_info['rewrittenQuery'], parameters)
-        rewritten_query = _format_component_query_workaround(query_info['rewrittenQuery'],
-                                                             global_statistics,
-                                                             len(hybrid_search_query_info[
-                                                                     'componentQueryInfos']))
+        rewritten_query = _format_component_query(query_info['rewrittenQuery'], global_statistics)
         new_query_info = query_info.copy()
         new_query_info['orderByExpressions'] = rewritten_order_by_expressions
         new_query_info['rewrittenQuery'] = rewritten_query
@@ -109,6 +116,10 @@ def _rewrite_query_infos(hybrid_search_query_info, global_statistics, parameters
 
 
 def _format_component_query(format_string, global_statistics):
+    query_spec = None
+    if isinstance(format_string, dict):
+        query_spec = format_string.copy()
+        format_string = query_spec['query']
     format_string = format_string.replace(_Placeholders.formattable_order_by, "true")
     query = format_string.replace(_Placeholders.total_document_count,
                                   str(global_statistics['documentCount']))
@@ -120,35 +131,10 @@ def _format_component_query(format_string, global_statistics):
         hit_counts_array = f"[{','.join(map(str, full_text_statistics['hitCounts']))}]"
         query = query.replace(_Placeholders.formattable_hit_counts_array.format(i), hit_counts_array)
 
+    if query_spec is not None:
+        query_spec['query'] = query
+        return query_spec
     return query
-
-
-def _format_component_query_workaround(format_string, global_statistics, component_count):
-    # TODO: remove this method once the fix is live and switch back to one above
-    parameters = None
-    if isinstance(format_string, dict):
-        parameters = format_string.get('parameters', None)
-        format_string = format_string['query']
-    format_string = format_string.replace(_Placeholders.formattable_order_by, "true")
-    query = format_string.replace(_Placeholders.total_document_count,
-                                  str(global_statistics['documentCount']))
-    statistics_index = 0
-    for component_index in range(component_count):
-        total_word_count_placeholder = _Placeholders.formattable_total_word_count.format(component_index)
-        hit_counts_array_placeholder = _Placeholders.formattable_hit_counts_array.format(component_index)
-
-        if total_word_count_placeholder not in query:
-            continue
-
-        full_text_statistics = global_statistics['fullTextStatistics'][statistics_index]
-        query = query.replace(total_word_count_placeholder, str(full_text_statistics['totalWordCount']))
-
-        hit_counts_array = f"[{','.join(map(str, full_text_statistics['hitCounts']))}]"
-        query = query.replace(hit_counts_array_placeholder, hit_counts_array)
-
-        statistics_index += 1
-
-    return _attach_parameters(query, parameters)
 
 
 def _attach_parameters(query, parameters=None):
@@ -306,7 +292,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         # Drain all the results and coalesce on rid
         drained_results, is_singleton = _drain_and_coalesce_results(component_query_results)
         # If we only have one component query, we format the response and return with no further work
-        if is_singleton:
+        if not drained_results or (is_singleton and len(rewritten_query_infos) == 1):
             self._format_final_results(drained_results)
             return
 
@@ -321,13 +307,14 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         drained_results.sort(key=lambda x: x['_rid'])
 
         # Compose component scores matrix, where each tuple is (score, index)
-        component_scores = _retrieve_component_scores(drained_results)
+        component_scores = _retrieve_component_scores(drained_results, len(rewritten_query_infos))
 
         # Sort by scores using component weights
         for index, score_tuples in enumerate(component_scores):
             # Ordering of the component query is based on if the weight is negative or positive
             # A positive weight ordering means descending order, a negative weight ordering means ascending order
-            ordering = self._hybrid_search_query_info['componentQueryInfos'][index]['orderBy'][0]
+            ordering = (self._hybrid_search_query_info['componentQueryInfos'][index].get('orderBy')
+                        or ['Descending'])[0]
             comparison_factor = not ordering.lower() == 'ascending'
             #  pylint: disable=cell-var-from-loop
             score_tuples.sort(key=lambda x: x[0], reverse=comparison_factor)
@@ -366,24 +353,23 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         take = self._hybrid_search_query_info['take']
         self._final_results = results[skip:skip + take]
         self._final_results.reverse()
-        self._final_results = [item["payload"]["payload"] for item in self._final_results]
+        result_bodies = (_get_hybrid_search_result(item) for item in self._final_results)
+        # Missing projections represent SQL undefined; explicit nulls and empty objects remain results.
+        self._final_results = [item['payload'] for item in result_bodies if 'payload' in item]
 
     def _rewrite_query_infos(self):
         rewritten_query_infos = []
         for query_info in self._hybrid_search_query_info['componentQueryInfos']:
-            assert query_info['orderBy']
-            assert query_info['hasNonStreamingOrderBy']
-            rewritten_order_by_expressions = []
-            for order_by_expression in query_info['orderByExpressions']:
-                rewritten_order_by_expressions.append(
-                    _format_component_query_workaround(order_by_expression, self._aggregated_global_statistics,
-                                                       len(self._hybrid_search_query_info[
-                                                               'componentQueryInfos'])))
+            rewritten_order_by_expressions = query_info.get('orderByExpressions')
+            if query_info.get('orderBy'):
+                assert query_info['hasNonStreamingOrderBy']
+                rewritten_order_by_expressions = []
+                for order_by_expression in query_info['orderByExpressions']:
+                    rewritten_order_by_expressions.append(
+                        _format_component_query(order_by_expression, self._aggregated_global_statistics))
             query_info['rewrittenQuery'] = _attach_parameters(query_info['rewrittenQuery'], self._parameters)
-            rewritten_query = _format_component_query_workaround(query_info['rewrittenQuery'],
-                                                                 self._aggregated_global_statistics,
-                                                                 len(self._hybrid_search_query_info[
-                                                                         'componentQueryInfos']))
+            rewritten_query = _format_component_query(query_info['rewrittenQuery'],
+                                                      self._aggregated_global_statistics)
             new_query_info = query_info.copy()
             new_query_info['orderByExpressions'] = rewritten_order_by_expressions
             new_query_info['rewrittenQuery'] = rewritten_query
