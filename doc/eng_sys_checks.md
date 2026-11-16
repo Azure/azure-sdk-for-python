@@ -75,7 +75,7 @@ All build definitions allow choice at queue time as to which checks actually run
 3. Before clicking `run` against `main` or your target commit, click `Variables` and add a variable of name `ChecksOverride`. The value should be a comma separated list of checks that you want to run in the test phase.
 4. Once it's set, run the build!
 
-The screenshot above narrows the default PR build set (`whl`, `sdist`, `mindependency`) to a specific subset.
+The screenshot above narrows the default PR build set (`whl`, `sdist`) to a specific subset.
 
 ![res/queue_time_variable.png](res/queue_time_variable.png)
 
@@ -167,11 +167,11 @@ After it is implemented, the `relative_cov` key will enable the prevention of **
 
 <a name="analyze-python-version"></a>
 
-By default, the analyze checks (mypy, pylint, pyright, etc.) run against an agreed minimum Python version (currently 3.10). A package can request a different Python version for its analyze checks by setting `analyze_python_version` in its `pyproject.toml`:
+By default, the analyze checks (mypy, pylint, pyright, etc.) run against an agreed minimum Python version (currently 3.11). A package can request a different Python version for its analyze checks by setting `analyze_python_version` in its `pyproject.toml`:
 
 ```toml
 [tool.azure-sdk-build]
-analyze_python_version = "3.11"
+analyze_python_version = "3.12"
 ```
 
 This setting is read by `eng/scripts/dispatch_checks.py` and is passed to `azpysdk` via the `--python` flag (which requires `--isolate` and `uv`). This is useful for packages that use newer syntax or type features that require a more recent Python interpreter.
@@ -240,14 +240,16 @@ The canonical definition of which install-and-test checks run in each mode lives
 |---|---|---|---|
 | `whl` | ✓ | ✓ | ✓ |
 | `sdist` | ✓ | ✓ | ✓ |
-| `mindependency` | ✓ | ✓ | ✓ |
+| `mindependency` | — | — | — |
 | `import_all` | — | ✓ | ✓ |
 | `whl_no_aio` | — | ✓ | ✓ |
 | `latestdependency` | — | ✓ | ✓ |
 | `devtest` | — | ✓ | — |
 | `regression` | — | ✓ | — |
 
-Static analysis checks always run against **Python 3.10** (configured via `PythonVersion` in `eng/pipelines/templates/variables/globals.yml`).
+> **Note:** `mindependency` is temporarily disabled repo-wide pending resolution of [issue #48346](https://github.com/Azure/azure-sdk-for-python/issues/48346) (CFS feed onboarding). The check script and local reproduction command still exist and will be re-enabled once the underlying issue is fixed.
+
+Static analysis checks always run against **Python 3.11** (configured via `PythonVersion` in `eng/pipelines/templates/variables/globals.yml`).
 
 The install-and-test checks run across the Python version and platform matrix defined in [`platform-matrix.json`](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/pipelines/templates/stages/platform-matrix.json).
 
@@ -259,7 +261,7 @@ Static analysis runs on every changed package in every PR and every nightly buil
 
 <a name="mypy"></a>
 
-[`MyPy`](https://pypi.org/project/mypy/) performs static type checking across the package, flagging annotation inconsistencies and type mismatches that would cause runtime errors. It runs against Python 3.10 by default and respects `py.typed` markers and stub files.
+[`MyPy`](https://pypi.org/project/mypy/) performs static type checking across the package, flagging annotation inconsistencies and type mismatches that would cause runtime errors. It runs against Python 3.11 by default and respects `py.typed` markers and stub files.
 
 To run locally:
 
@@ -295,7 +297,7 @@ azpysdk verifytypes .
 
 <a name="pylint"></a>
 
-[`Pylint`](https://pypi.org/project/pylint/) enforces the Azure SDK [custom lint rules](https://github.com/Azure/azure-sdk-tools/tree/main/tools/pylint-extensions/azure-pylint-guidelines-checker) on top of standard Python style guidelines. In CI it runs using the Python version configured for analyze checks (3.10 by default, or the value of `analyze_python_version` if set), so that version must be available locally to reproduce the check.
+[`Pylint`](https://pypi.org/project/pylint/) enforces the Azure SDK [custom lint rules](https://github.com/Azure/azure-sdk-tools/tree/main/tools/pylint-extensions/azure-pylint-guidelines-checker) on top of standard Python style guidelines. In CI it runs using the Python version configured for analyze checks (3.11 by default, or the value of `analyze_python_version` if set), so that version must be available locally to reproduce the check.
 
 To run locally:
 
@@ -457,6 +459,8 @@ azpysdk sdist .
 #### mindependency
 
 <a name="mindependency"></a>
+
+> **Note:** This check is currently disabled repo-wide in CI pending resolution of [issue #48346](https://github.com/Azure/azure-sdk-for-python/issues/48346) (CFS feed onboarding). It can still be run locally.
 
 For each Azure SDK dependency declared in `pyproject.toml` (or `setup.py` for legacy packages; dev-only requirements are excluded), this check resolves the **oldest** published version available on PyPI that satisfies the requirement range, installs it in place of the in-repo dev version, and then runs the full test suite. This confirms that the package works across the full declared version range — not just against the latest release.
 
