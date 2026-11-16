@@ -8,6 +8,8 @@
 
 import asyncio
 import tempfile
+import xml.etree.ElementTree as ET
+from base64 import b64decode
 from datetime import datetime, timedelta
 from io import BytesIO
 from unittest import mock
@@ -19,14 +21,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
 from settings.testcase import BlobPreparer
-from test_block_blob import (
-    _assert_unique_ordered_block_ids,
-    _block_list_entries,
-    _capture_block_list,
-    _CapturedBlockList,
-    _mixed_state_block_list,
-    EXPECTED_MIXED_STATE_ENTRIES,
-)
+from test_block_blob import _assert_unique_ordered_block_ids
 from test_content_validation import _deterministic_urandom
 from test_helpers_async import (
     NonSeekableStream,
@@ -42,6 +37,7 @@ from azure.storage.blob import (
     BlobImmutabilityPolicyMode,
     BlobSasPermissions,
     BlobType,
+    BlockState,
     ContentSettings,
     CustomerProvidedEncryptionKey,
     generate_blob_sas,
@@ -2338,17 +2334,46 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         # Substream path uses os.urandom(9) -> 12-char block IDs (matches old length).
         _assert_unique_ordered_block_ids(block_ids, data, service.blocks, 12)
 
-    def test_commit_block_list_sends_each_block_under_its_state(self):
+    @pytest.mark.asyncio
+    async def test_commit_block_list_sends_each_block_under_its_state(self):
         # Each block must be sent in the Put Block List element matching its state
-        # (Committed/Uncommitted/Latest), in the order given.
-        async def run():
-            async with BlobClient("https://example.blob.core.windows.net", "container", "blob") as blob:
-                await blob.commit_block_list(_mixed_state_block_list(), raw_request_hook=_capture_block_list)
+        # (Committed/Uncommitted/Latest), in the order given. States are interleaved on
+        # purpose: the service builds the blob in element order.
+        class CapturedBlockList(Exception):
+            def __init__(self, body):
+                super().__init__("request captured")
+                self.body = body
 
-        with pytest.raises(_CapturedBlockList) as captured:
-            asyncio.run(run())
+        def capture_block_list(request):
+            # Stop the Put Block List request before it is sent and hand back its body.
+            body = request.http_request.body
+            raise CapturedBlockList(body.decode() if isinstance(body, bytes) else body)
 
-        assert _block_list_entries(captured.value.body) == EXPECTED_MIXED_STATE_ENTRIES
+        block_list = [
+            BlobBlock(block_id="b", state=BlockState.UNCOMMITTED),
+            BlobBlock(block_id="a", state=BlockState.COMMITTED),
+            BlobBlock(block_id="c", state=BlockState.LATEST),
+            BlobBlock(block_id="d"),
+            "e",
+            BlobBlock(block_id="f", state=BlockState.COMMITTED),
+            BlobBlock(block_id="g", state=BlockState.COMMITTED),
+            BlobBlock(block_id="h", state=BlockState.UNCOMMITTED),
+        ]
+        async with BlobClient("https://example.blob.core.windows.net", "container", "blob") as blob:
+            with pytest.raises(CapturedBlockList) as captured:
+                await blob.commit_block_list(block_list, raw_request_hook=capture_block_list)
+
+        entries = [(element.tag, b64decode(element.text).decode()) for element in ET.fromstring(captured.value.body)]
+        assert entries == [
+            ("Uncommitted", "b"),
+            ("Committed", "a"),
+            ("Latest", "c"),
+            ("Latest", "d"),
+            ("Latest", "e"),
+            ("Committed", "f"),
+            ("Committed", "g"),
+            ("Uncommitted", "h"),
+        ]
 
 
 # ------------------------------------------------------------------------------
