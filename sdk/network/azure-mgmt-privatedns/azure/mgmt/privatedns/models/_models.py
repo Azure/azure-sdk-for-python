@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AaaaRecord(_Model):
+class AaaaRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An AAAA record.
 
     :ivar ipv6_address: The IPv6 address of this AAAA record.
@@ -47,7 +47,7 @@ class AaaaRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ARecord(_Model):
+class ARecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An A record.
 
     :ivar ipv4_address: The IPv4 address of this A record.
@@ -77,7 +77,7 @@ class ARecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudError(_Model):
+class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response from the service.
 
     :ivar error: Cloud error body.
@@ -105,7 +105,7 @@ class CloudError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudErrorBody(_Model):
+class CloudErrorBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response from the service.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -154,7 +154,7 @@ class CloudErrorBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CnameRecord(_Model):
+class CnameRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A CNAME record.
 
     :ivar cname: The canonical name for this CNAME record.
@@ -182,7 +182,7 @@ class CnameRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MxRecord(_Model):
+class MxRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An MX record.
 
     :ivar preference: The preference value for this MX record.
@@ -202,6 +202,217 @@ class MxRecord(_Model):
         *,
         preference: Optional[int] = None,
         exchange: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateDnsResourceReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents a single Azure resource and its referencing private DNS record sets.
+
+    :ivar private_dns_resources: A list of private DNS record sets that reference the target
+     resource.
+    :vartype private_dns_resources: list[~azure.mgmt.privatedns.models.SubResource]
+    :ivar target_resource: A reference to an azure resource from where the private DNS resource
+     value is taken.
+    :vartype target_resource: ~azure.mgmt.privatedns.models.SubResource
+    """
+
+    private_dns_resources: Optional[list["_models.SubResource"]] = rest_field(
+        name="privateDnsResources", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of private DNS record sets that reference the target resource."""
+    target_resource: Optional["_models.SubResource"] = rest_field(
+        name="targetResource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A reference to an azure resource from where the private DNS resource value is taken."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        private_dns_resources: Optional[list["_models.SubResource"]] = None,
+        target_resource: Optional["_models.SubResource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateDnsResourceReferenceRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents the properties of the private DNS Resource Reference Request.
+
+    :ivar properties: The properties of the Resource Reference Request.
+    :vartype properties: ~azure.mgmt.privatedns.models.PrivateDnsResourceReferenceRequestProperties
+    """
+
+    properties: Optional["_models.PrivateDnsResourceReferenceRequestProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties of the Resource Reference Request."""
+
+    __flattened_items = ["target_resources"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PrivateDnsResourceReferenceRequestProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class PrivateDnsResourceReferenceRequestProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Represents the properties of the private DNS Resource Reference Request.
+
+    :ivar target_resources: A list of references to azure resources for which referencing private
+     DNS records need to be queried.
+    :vartype target_resources: list[~azure.mgmt.privatedns.models.SubResource]
+    """
+
+    target_resources: Optional[list["_models.SubResource"]] = rest_field(
+        name="targetResources", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of references to azure resources for which referencing private DNS records need to be
+     queried."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_resources: Optional[list["_models.SubResource"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateDnsResourceReferenceResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents the properties of the private DNS Resource Reference Result.
+
+    :ivar properties: The result of private dns resource reference request. Returns a list of
+     private dns resource references for each of the azure resource in the request.
+    :vartype properties: ~azure.mgmt.privatedns.models.PrivateDnsResourceReferenceResultProperties
+    """
+
+    properties: Optional["_models.PrivateDnsResourceReferenceResultProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The result of private dns resource reference request. Returns a list of private dns resource
+     references for each of the azure resource in the request."""
+
+    __flattened_items = ["private_dns_resource_references"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PrivateDnsResourceReferenceResultProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class PrivateDnsResourceReferenceResultProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The result of private dns resource reference request. Returns a list of private dns resource
+    references for each of the azure resource in the request.
+
+    :ivar private_dns_resource_references: The result of private dns resource reference request. A
+     list of private dns resource references for each of the azure resource in the request.
+    :vartype private_dns_resource_references:
+     list[~azure.mgmt.privatedns.models.PrivateDnsResourceReference]
+    """
+
+    private_dns_resource_references: Optional[list["_models.PrivateDnsResourceReference"]] = rest_field(
+        name="privateDnsResourceReferences", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The result of private dns resource reference request. A list of private dns resource references
+     for each of the azure resource in the request."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        private_dns_resource_references: Optional[list["_models.PrivateDnsResourceReference"]] = None,
     ) -> None: ...
 
     @overload
@@ -260,7 +471,7 @@ class ProxyResource(Resource):
     """
 
 
-class PrivateZone(ProxyResource):
+class PrivateZone(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Private DNS zone.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -415,7 +626,7 @@ class PrivateZoneProperties(_Model):
     """Private zone internal Id."""
 
 
-class PtrRecord(_Model):
+class PtrRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A PTR record.
 
     :ivar ptrdname: The PTR target domain name for this PTR record.
@@ -443,7 +654,7 @@ class PtrRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecordSet(ProxyResource):
+class RecordSet(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a DNS record set (a collection of DNS records with the same name and type) in a
     Private DNS zone.
 
@@ -484,6 +695,8 @@ class RecordSet(ProxyResource):
         "soa_record",
         "srv_records",
         "txt_records",
+        "traffic_management_profile",
+        "provisioning_state",
     ]
 
     @overload
@@ -523,7 +736,7 @@ class RecordSet(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RecordSetProperties(_Model):
+class RecordSetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the properties of the records in the record set.
 
     :ivar metadata: The metadata attached to the record set.
@@ -551,6 +764,14 @@ class RecordSetProperties(_Model):
     :vartype srv_records: list[~azure.mgmt.privatedns.models.SrvRecord]
     :ivar txt_records: The list of TXT records in the record set.
     :vartype txt_records: list[~azure.mgmt.privatedns.models.TxtRecord]
+    :ivar traffic_management_profile: A reference to an azure private traffic manager profile
+     resource from where the record set value is taken. Cannot be combined with aRecords,
+     aaaaRecords, or cnameRecord.
+    :vartype traffic_management_profile: ~azure.mgmt.privatedns.models.SubResource
+    :ivar provisioning_state: The provisioning state of the record set. This is a read-only
+     property and any attempt to set this value will be ignored. Known values are: "Creating",
+     "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.privatedns.models.ProvisioningState
     """
 
     metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -593,6 +814,17 @@ class RecordSetProperties(_Model):
         name="txtRecords", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of TXT records in the record set."""
+    traffic_management_profile: Optional["_models.SubResource"] = rest_field(
+        name="trafficManagementProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A reference to an azure private traffic manager profile resource from where the record set
+     value is taken. Cannot be combined with aRecords, aaaaRecords, or cnameRecord."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the record set. This is a read-only property and any attempt to set
+     this value will be ignored. Known values are: \"Creating\", \"Updating\", \"Deleting\",
+     \"Succeeded\", \"Failed\", and \"Canceled\"."""
 
     @overload
     def __init__(
@@ -608,6 +840,7 @@ class RecordSetProperties(_Model):
         soa_record: Optional["_models.SoaRecord"] = None,
         srv_records: Optional[list["_models.SrvRecord"]] = None,
         txt_records: Optional[list["_models.TxtRecord"]] = None,
+        traffic_management_profile: Optional["_models.SubResource"] = None,
     ) -> None: ...
 
     @overload
@@ -621,7 +854,7 @@ class RecordSetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SoaRecord(_Model):
+class SoaRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An SOA record.
 
     :ivar host: The domain name of the authoritative name server for this SOA record.
@@ -689,7 +922,7 @@ class SoaRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SrvRecord(_Model):
+class SrvRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An SRV record.
 
     :ivar priority: The priority value for this SRV record.
@@ -732,7 +965,7 @@ class SrvRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubResource(_Model):
+class SubResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reference to another subresource.
 
     :ivar id: Resource ID.
@@ -760,7 +993,7 @@ class SubResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -827,7 +1060,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TxtRecord(_Model):
+class TxtRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A TXT record.
 
     :ivar value: The text value of this TXT record.
@@ -855,7 +1088,7 @@ class TxtRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualNetworkLink(ProxyResource):
+class VirtualNetworkLink(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a link to virtual network for a Private DNS zone.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -937,7 +1170,7 @@ class VirtualNetworkLink(ProxyResource):
             super().__setattr__(key, value)
 
 
-class VirtualNetworkLinkProperties(_Model):
+class VirtualNetworkLinkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the properties of the Private DNS zone.
 
     :ivar virtual_network: The reference of the virtual network.

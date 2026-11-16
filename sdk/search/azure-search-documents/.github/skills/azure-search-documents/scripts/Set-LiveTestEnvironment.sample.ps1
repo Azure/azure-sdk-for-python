@@ -7,10 +7,10 @@
     local values. Do not commit Set-LiveTestEnvironment.ps1 because it may
     contain secrets.
 
-    Use a dedicated, disposable Search service. Before each live test, the
-    preparer deletes all indexes, aliases, knowledge bases, knowledge sources,
-    indexers, data sources, and skillsets on that service. Never target a
-    shared or production service, and do not run these tests in parallel.
+    Use a dedicated, disposable Search service. The preparer only loads
+    configuration; test helpers clean up their own named resources. Check
+    inventories before and after a run. Never target production or delete
+    unrelated resources, and run tests serially unless isolation is verified.
 #>
 
 $env:SEARCH_SERVICE_ENDPOINT = "https://<search-service-name>.search.windows.net"

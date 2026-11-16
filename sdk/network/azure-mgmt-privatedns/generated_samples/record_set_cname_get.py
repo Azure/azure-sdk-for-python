@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-06-01/RecordSetCNAMEGet.json
+# x-ms-original-file: 2026-06-01-preview/RecordSetCNAMEGet.json
 if __name__ == "__main__":
     main()

@@ -7,6 +7,11 @@
         "azure.mgmt.privatedns.models.CloudErrorBody": "Microsoft.Network.CloudErrorBody",
         "azure.mgmt.privatedns.models.CnameRecord": "Microsoft.Network.CnameRecord",
         "azure.mgmt.privatedns.models.MxRecord": "Microsoft.Network.MxRecord",
+        "azure.mgmt.privatedns.models.PrivateDnsResourceReference": "Microsoft.Network.PrivateDnsResourceReference",
+        "azure.mgmt.privatedns.models.PrivateDnsResourceReferenceRequest": "Microsoft.Network.PrivateDnsResourceReferenceRequest",
+        "azure.mgmt.privatedns.models.PrivateDnsResourceReferenceRequestProperties": "Microsoft.Network.PrivateDnsResourceReferenceRequestProperties",
+        "azure.mgmt.privatedns.models.PrivateDnsResourceReferenceResult": "Microsoft.Network.PrivateDnsResourceReferenceResult",
+        "azure.mgmt.privatedns.models.PrivateDnsResourceReferenceResultProperties": "Microsoft.Network.PrivateDnsResourceReferenceResultProperties",
         "azure.mgmt.privatedns.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
         "azure.mgmt.privatedns.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
         "azure.mgmt.privatedns.models.PrivateZone": "Microsoft.Network.PrivateZone",
@@ -22,8 +27,8 @@
         "azure.mgmt.privatedns.models.VirtualNetworkLink": "Microsoft.Network.VirtualNetworkLink",
         "azure.mgmt.privatedns.models.VirtualNetworkLinkProperties": "Microsoft.Network.VirtualNetworkLinkProperties",
         "azure.mgmt.privatedns.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
-        "azure.mgmt.privatedns.models.RecordType": "Microsoft.Network.RecordType",
         "azure.mgmt.privatedns.models.ProvisioningState": "Microsoft.Network.ProvisioningState",
+        "azure.mgmt.privatedns.models.RecordType": "Microsoft.Network.RecordType",
         "azure.mgmt.privatedns.models.ResolutionPolicy": "Microsoft.Network.ResolutionPolicy",
         "azure.mgmt.privatedns.models.VirtualNetworkLinkState": "Microsoft.Network.VirtualNetworkLinkState",
         "azure.mgmt.privatedns.operations.RecordSetsOperations.get": "Microsoft.Network.RecordSets.get",
@@ -59,7 +64,9 @@
         "azure.mgmt.privatedns.operations.VirtualNetworkLinksOperations.begin_delete": "Microsoft.Network.VirtualNetworkLinks.delete",
         "azure.mgmt.privatedns.aio.operations.VirtualNetworkLinksOperations.begin_delete": "Microsoft.Network.VirtualNetworkLinks.delete",
         "azure.mgmt.privatedns.operations.VirtualNetworkLinksOperations.list": "Microsoft.Network.VirtualNetworkLinks.list",
-        "azure.mgmt.privatedns.aio.operations.VirtualNetworkLinksOperations.list": "Microsoft.Network.VirtualNetworkLinks.list"
+        "azure.mgmt.privatedns.aio.operations.VirtualNetworkLinksOperations.list": "Microsoft.Network.VirtualNetworkLinks.list",
+        "azure.mgmt.privatedns.operations.PrivateDnsResourceReferenceOperations.get_by_target_resources": "Microsoft.Network.PrivateDnsResourceReferenceOperations.getByTargetResources",
+        "azure.mgmt.privatedns.aio.operations.PrivateDnsResourceReferenceOperations.get_by_target_resources": "Microsoft.Network.PrivateDnsResourceReferenceOperations.getByTargetResources"
     },
-    "CrossLanguageVersion": "a5c7ad642a91"
+    "CrossLanguageVersion": "007d29025c55"
 }
