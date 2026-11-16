@@ -5,8 +5,7 @@
 ### Features Added
 
 ### Bugs Fixed
-- Fixed an issue where `update_message` could replace encrypted message content with plaintext when no key-encryption-key was configured. Trying to update an encrypted message without a key-encryption-key 
-will now raise an error.
+- Fixed an issue where `update_message` could replace encrypted message content with plaintext when no key-encryption-key was configured. Trying to update an encrypted message without a key-encryption-key will now raise an error.
 
 ## 12.19.0b1 (2026-11-05)
 
