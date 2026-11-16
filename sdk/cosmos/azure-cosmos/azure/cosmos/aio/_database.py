@@ -168,11 +168,11 @@ class DatabaseProxy(object):
         id: str,
         partition_key: PartitionKey,
         *,
-        indexing_policy: Optional[dict[str, str]] = None,
+        indexing_policy: Optional[dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        unique_key_policy: Optional[dict[str, str]] = None,
-        conflict_resolution_policy: Optional[dict[str, str]] = None,
+        unique_key_policy: Optional[dict[str, Any]] = None,
+        conflict_resolution_policy: Optional[dict[str, Any]] = None,
         initial_headers: Optional[dict[str, str]] = None,
         computed_properties: Optional[list[dict[str, str]]] = None,
         analytical_storage_ttl: Optional[int] = None,
@@ -190,13 +190,13 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
+        :keyword dict[str, Any] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
-        :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
+        :keyword dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword list[dict[str, str]] computed_properties: Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
@@ -254,11 +254,11 @@ class DatabaseProxy(object):
         id: str,
         partition_key: PartitionKey,
         *,
-        indexing_policy: Optional[dict[str, str]] = None,
+        indexing_policy: Optional[dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        unique_key_policy: Optional[dict[str, str]] = None,
-        conflict_resolution_policy: Optional[dict[str, str]] = None,
+        unique_key_policy: Optional[dict[str, Any]] = None,
+        conflict_resolution_policy: Optional[dict[str, Any]] = None,
         initial_headers: Optional[dict[str, str]] = None,
         computed_properties: Optional[list[dict[str, str]]] = None,
         analytical_storage_ttl: Optional[int] = None,
@@ -276,13 +276,13 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
+        :keyword dict[str, Any] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
-        :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
+        :keyword dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword list[dict[str, str]] computed_properties: Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
@@ -348,13 +348,13 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
+        :keyword dict[str, Any] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
-        :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
+        :keyword dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword list[dict[str, str]] computed_properties: Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
@@ -489,11 +489,11 @@ class DatabaseProxy(object):
         id: str,
         partition_key: PartitionKey,
         *,
-        indexing_policy: Optional[dict[str, str]] = None,
+        indexing_policy: Optional[dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        unique_key_policy: Optional[dict[str, str]] = None,
-        conflict_resolution_policy: Optional[dict[str, str]] = None,
+        unique_key_policy: Optional[dict[str, Any]] = None,
+        conflict_resolution_policy: Optional[dict[str, Any]] = None,
         initial_headers: Optional[dict[str, str]] = None,
         computed_properties: Optional[list[dict[str, str]]] = None,
         analytical_storage_ttl: Optional[int] = None,
@@ -513,13 +513,13 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
+        :keyword dict[str, Any] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
-        :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
+        :keyword dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword list[dict[str, str]] computed_properties: Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
@@ -559,11 +559,11 @@ class DatabaseProxy(object):
         id: str,
         partition_key: PartitionKey,
         *,
-        indexing_policy: Optional[dict[str, str]] = None,
+        indexing_policy: Optional[dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        unique_key_policy: Optional[dict[str, str]] = None,
-        conflict_resolution_policy: Optional[dict[str, str]] = None,
+        unique_key_policy: Optional[dict[str, Any]] = None,
+        conflict_resolution_policy: Optional[dict[str, Any]] = None,
         initial_headers: Optional[dict[str, str]] = None,
         computed_properties: Optional[list[dict[str, str]]] = None,
         analytical_storage_ttl: Optional[int] = None,
@@ -583,13 +583,13 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
+        :keyword dict[str, Any] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
-        :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
+        :keyword dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword list[dict[str, str]] computed_properties: Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
@@ -639,13 +639,13 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
+        :keyword dict[str, Any] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :keyword dict[str, str] unique_key_policy: The unique key policy to apply to the container.
-        :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
+        :keyword dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword list[dict[str, str]] computed_properties: Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
@@ -896,9 +896,9 @@ class DatabaseProxy(object):
         container: Union[str, ContainerProxy, Mapping[str, Any]],
         partition_key: PartitionKey,
         *,
-        indexing_policy: Optional[dict[str, str]] = None,
+        indexing_policy: Optional[dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
-        conflict_resolution_policy: Optional[dict[str, str]] = None,
+        conflict_resolution_policy: Optional[dict[str, Any]] = None,
         initial_headers: Optional[dict[str, str]] = None,
         analytical_storage_ttl: Optional[int] = None,
         computed_properties: Optional[list[dict[str, str]]] = None,
@@ -918,10 +918,10 @@ class DatabaseProxy(object):
         :type container: Union[str, dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
+        :keyword dict[str, Any] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
-        :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
@@ -962,9 +962,9 @@ class DatabaseProxy(object):
         container: Union[str, ContainerProxy, Mapping[str, Any]],
         partition_key: PartitionKey,
         *,
-        indexing_policy: Optional[dict[str, str]] = None,
+        indexing_policy: Optional[dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
-        conflict_resolution_policy: Optional[dict[str, str]] = None,
+        conflict_resolution_policy: Optional[dict[str, Any]] = None,
         initial_headers: Optional[dict[str, str]] = None,
         analytical_storage_ttl: Optional[int] = None,
         computed_properties: Optional[list[dict[str, str]]] = None,
@@ -984,10 +984,10 @@ class DatabaseProxy(object):
         :type container: Union[str, dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
+        :keyword dict[str, Any] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
-        :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
@@ -1040,10 +1040,10 @@ class DatabaseProxy(object):
         :type container: Union[str, dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
+        :keyword dict[str, Any] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
-        :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
