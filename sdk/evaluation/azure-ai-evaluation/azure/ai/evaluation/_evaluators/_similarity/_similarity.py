@@ -7,7 +7,9 @@ from typing import Dict
 
 from typing_extensions import overload, override
 
+from azure.ai.evaluation._common.utils import _is_intermediate_response, _preprocess_messages
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase, hoist_messages_to_conversation
+from azure.ai.evaluation._evaluators._common._decision_rubric import decode_message_list, rubric_strategy
 from azure.ai.evaluation._evaluators._common._validators import (
     MessagesOrQueryResponseInputValidator,
     ValidatorInterface,
@@ -30,7 +32,8 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
 
     Similarity scores range from 1 to 5, with 1 being the least similar and 5 being the most similar.
 
-    :param model_config: Configuration for the Azure OpenAI model.
+    :param model_config: Configuration for the Azure OpenAI model, or a decision model configuration with
+        ``type="decision"``, ``azure_endpoint`` and ``azure_deployment``.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the similarity evaluator. Default is 3.
@@ -79,7 +82,9 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     # Constants must be defined within eval's directory to be save/loadable
 
     _PROMPTY_FILE = "similarity.prompty"
+    _DECISION_FILE = "similarity.decision.yaml"
     _RESULT_KEY = "similarity"
+    _supports_decision_models = True
 
     _validator: ValidatorInterface
 
@@ -102,6 +107,11 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
             credential=credential,
             _higher_is_better=self._higher_is_better,
             **kwargs,
+        )
+        self._decision = (
+            rubric_strategy(self, os.path.join(current_dir, self._DECISION_FILE), ErrorTarget.SIMILARITY_EVALUATOR)
+            if self._uses_decision_model
+            else None
         )
 
     # Ignoring a mypy error about having only 1 overload function.
@@ -189,3 +199,19 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
             )
 
         return super()._convert_kwargs_to_eval_input(**kwargs)
+
+    @override
+    async def _do_decision_eval(self, eval_input: Dict) -> Dict[str, float]:
+        # Like the catalog evaluator, a JSON-encoded message list is judged as messages.
+        response = decode_message_list(eval_input["response"])
+        if _is_intermediate_response(response):
+            return self._return_not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
+            )
+        state = {
+            "query": eval_input["query"],
+            "response": _preprocess_messages(response),
+            "ground_truth": eval_input["ground_truth"],
+        }
+        return await self._decision.evaluate(state)

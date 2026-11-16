@@ -33,11 +33,11 @@ def main():
     response = client.accounts.begin_update(
         resource_group_name="bvttest",
         account_name="bingSearch",
-        account={"location": "global", "sku": {"name": "S2"}},
+        account={"location": "global", "properties": {}, "sku": {"name": "S2"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-07-15-preview/UpdateAccount.json
+# x-ms-original-file: 2026-11-01/UpdateAccount.json
 if __name__ == "__main__":
     main()

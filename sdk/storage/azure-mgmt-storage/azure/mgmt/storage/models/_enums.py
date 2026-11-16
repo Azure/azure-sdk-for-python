@@ -89,6 +89,13 @@ class AdvancedPlatformMetricsRuleType(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Container level capacity metrics rule type."""
 
 
+class AiProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The AI provider associated with a container."""
+
+    OPEN_AI = "OpenAI"
+    """OpenAI provider."""
+
+
 class AllowedCopyScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Restrict copy to and from Storage Accounts within an AAD tenant or with Private Links to the
     same VNet.
@@ -127,6 +134,77 @@ class AllowedMethods(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TRACE."""
 
 
+class BlobAccessPointConfigurationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of a Blob Access Point configuration."""
+
+    ACTIVE = "Active"
+    """The Blob Access Point configuration is active."""
+    INACTIVE = "Inactive"
+    """The Blob Access Point configuration is inactive."""
+
+
+class BlobAccessPointConnectionTestStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the most recent connection test."""
+
+    SUCCEEDED = "Succeeded"
+    """The connection test succeeded."""
+    FAILED = "Failed"
+    """The connection test failed."""
+
+
+class BlobAccessPointConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The connection type used to reach a non-Azure backing data source."""
+
+    ENDPOINT = "Endpoint"
+    """Connect directly to a public or otherwise routable endpoint."""
+    PRIVATE_LINK = "PrivateLink"
+    """Connect through Azure Private Link."""
+
+
+class BlobAccessPointPrivateLinkIdType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The format used by a Private Link identifier."""
+
+    RESOURCE_ID = "ResourceId"
+    """The identifier is an Azure resource ID."""
+
+
+class BlobAccessPointRemoteAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How Azure Storage authenticates to a non-Azure S3-compatible source."""
+
+    ACCESS_KEY = "AccessKey"
+    """Authenticate with an S3 access key and secret access key."""
+
+
+class BlobAccessPointSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the non-Azure S3-compatible data source exposed through the Blob Access Point."""
+
+    NET_APP_ONTAP = "NetAppOntap"
+    """NetApp ONTAP."""
+    AZURE_NET_APP_FILES = "AzureNetAppFiles"
+    """Azure NetApp Files."""
+    DELL_ONE_FS = "DellOneFs"
+    """Dell OneFS."""
+    QUMULO = "Qumulo"
+    """Qumulo S3-compatible data source."""
+    COMMVAULT = "Commvault"
+    """Commvault S3-compatible data source."""
+    NASUNI = "Nasuni"
+    """Nasuni S3-compatible data source."""
+    S3_COMPATIBLE = "S3Compatible"
+    """Another S3-compatible data source."""
+
+
+class BlobAccessPointTlsVerification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TLS certificate verification behavior."""
+
+    PERFORM = "Perform"
+    """Verify the TLS certificate chain."""
+    SKIP = "Skip"
+    """Skip TLS certificate-chain verification. Use only when the backing source uses a certificate
+    that cannot be validated against a trusted root. Skipping verification exposes credentials and
+    data to an on-path attacker."""
+
+
 class BlobInventoryPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of BlobInventoryPolicyName."""
 
@@ -150,7 +228,7 @@ class BlobRestoreProgressStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Bypass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies whether traffic is bypassed for Logging/Metrics/AzureServices. Possible values are
-    any combination of Logging|Metrics|AzureServices (For example, "Logging, Metrics"), or None to
+    any combination of Logging|Metrics|AzureServices (For example, \"Logging, Metrics\"), or None to
     bypass none of those traffics.
     """
 
@@ -162,6 +240,49 @@ class Bypass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """METRICS."""
     AZURE_SERVICES = "AzureServices"
     """AZURE_SERVICES."""
+
+
+class ContextCacheAccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of context cache account, determining storage topology."""
+
+    REGIONAL = "Regional"
+    """Single-region storage account."""
+    DATA_ZONE = "DataZone"
+    """Multi-region within a data zone."""
+    GLOBAL = "Global"
+    """All regions with global distribution."""
+
+
+class ContextCacheCheckNameAvailabilityFailureReason(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The reason why the context cache name is not available. The Reason element is only returned if
+    NameAvailable is false.
+    """
+
+    ALREADY_EXISTS = "AlreadyExists"
+    """The context cache name is already in use."""
+    CONTEXT_CACHE_NAME_INVALID = "ContextCacheNameInvalid"
+    """The context cache name is invalid."""
+
+
+class ContextCacheProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the current operation."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    CREATING = "Creating"
+    """Initial provisioning in progress."""
+    UPDATING = "Updating"
+    """Update in progress."""
+    DELETING = "Deleting"
+    """Deletion in progress."""
+    ACCEPTED = "Accepted"
+    """Change accepted for processing."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -344,6 +465,18 @@ class ImmutabilityPolicyUpdateType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """EXTEND."""
 
 
+class InfrastructureEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """(Optional) Discouraged to include in resource definition. Only needed where it is possible to
+    disable platform (AKA infrastructure) encryption. Azure SQL TDE is an example of this. Values
+    are enabled and disabled.
+    """
+
+    ENABLED = "enabled"
+    """Encryption is enabled."""
+    DISABLED = "disabled"
+    """Encryption is disabled."""
+
+
 class IntervalUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Run interval unit of task execution. This is a required field when
     ExecutionTrigger.properties.type is 'OnSchedule'; this property should not be present when
@@ -368,6 +501,17 @@ class IssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UNKNOWN."""
     CONFIGURATION_PROPAGATION_FAILURE = "ConfigurationPropagationFailure"
     """CONFIGURATION_PROPAGATION_FAILURE."""
+
+
+class KeyEncryptionKeyIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity to use."""
+
+    SYSTEM_ASSIGNED_IDENTITY = "systemAssignedIdentity"
+    """System assigned identity."""
+    USER_ASSIGNED_IDENTITY = "userAssignedIdentity"
+    """User assigned identity."""
+    DELEGATED_RESOURCE_IDENTITY = "delegatedResourceIdentity"
+    """Delegated identity."""
 
 
 class KeyPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -514,6 +658,21 @@ class ListLocalUserIncludeParam(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NFSV3 = "nfsv3"
     """NFSV3."""
+
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    """No managed identity."""
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned managed identity."""
+    USER_ASSIGNED = "UserAssigned"
+    """User assigned managed identity."""
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+    """System and user assigned managed identity."""
 
 
 class ManagementPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -664,6 +823,19 @@ class Permissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """P."""
 
 
+class PolicyViolationAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action to perform when a user delegation SAS (shared access signature) policy requirement
+    is violated.
+    """
+
+    NONE = "None"
+    """No action is taken when the policy requirement is violated."""
+    LOG = "Log"
+    """The policy violation is logged for audit purposes."""
+    BLOCK = "Block"
+    """The request is blocked and denied when the policy requirement is violated."""
+
+
 class PostFailoverRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The redundancy type of the account after an account failover is performed."""
 
@@ -760,9 +932,9 @@ class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The reason for the restriction. As of now this can be "QuotaId" or
-    "NotAvailableForSubscription". Quota Id is set when the SKU has requiredQuotas parameter as the
-    subscription does not belong to that quota. The "NotAvailableForSubscription" is related to
+    """The reason for the restriction. As of now this can be \"QuotaId\" or
+    \"NotAvailableForSubscription\". Quota Id is set when the SKU has requiredQuotas parameter as the
+    subscription does not belong to that quota. The \"NotAvailableForSubscription\" is related to
     capacity at DC.
     """
 
@@ -781,6 +953,17 @@ class ResourceAssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """LEARNING."""
     AUDIT = "Audit"
     """AUDIT."""
+
+
+class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of a resource type."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
 
 
 class RootSquashType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1060,6 +1243,15 @@ class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ON_SCHEDULE."""
     MOCK_RUN = "MockRun"
     """Run the task as a mock for testing."""
+
+
+class TurboTierStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether Turbo Tier is enabled or disabled."""
+
+    ENABLED = "Enabled"
+    """Turbo Tier is enabled."""
+    DISABLED = "Disabled"
+    """Turbo Tier is disabled."""
 
 
 class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):

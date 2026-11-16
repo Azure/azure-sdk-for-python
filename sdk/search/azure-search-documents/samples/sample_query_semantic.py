@@ -7,7 +7,8 @@
 
 """
 DESCRIPTION:
-    Demonstrates how to perform semantic search.
+    Demonstrates fuzzy term matching and semantic search with the 2026-10-01 GA API.
+    Fuzzy Lucene queries replace the preview-only query speller.
 USAGE:
     python sample_query_semantic.py
 
@@ -59,9 +60,9 @@ def speller():
 
     credential = AzureKeyCredential(key)
     search_client = SearchClient(endpoint=service_endpoint, index_name=index_name, credential=credential)
-    results = list(search_client.search(search_text="luxury", query_language="en-us", query_speller="lexicon"))
+    results = list(search_client.search(search_text="luxry~1", query_type="full"))
 
-    print("Results: speller")
+    print("Results: fuzzy matching for 'luxry'")
     for result in results:
         print(f"  HotelId: {result['HotelId']}")
         print(f"  HotelName: {result['HotelName']}")
@@ -80,7 +81,6 @@ def semantic_ranking():
             search_text="luxury",
             query_type="semantic",
             semantic_configuration_name=semantic_configuration_name,
-            query_language="en-us",
         )
     )
 

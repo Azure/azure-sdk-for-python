@@ -10,14 +10,7 @@
 from typing import Any, Literal, Optional, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
-from .models._enums import (
-    AgentDeploymentType,
-    AgentHostingType,
-    BuiltInAuthorizationScheme,
-    ComputeType,
-    ConnectionAuthType,
-    RuleType,
-)
+from .models._enums import AgentDeploymentType, BuiltInAuthorizationScheme, ConnectionAuthType, RuleType
 
 if TYPE_CHECKING:
     from .models import (
@@ -26,14 +19,10 @@ if TYPE_CHECKING:
         AgentDeploymentState,
         AgentProtocol,
         AgenticApplicationProvisioningState,
-        ArcDeploymentComputeType,
-        ArcDeploymentRuntime,
-        ArcDeploymentSkuName,
         ByPassSelection,
         CapabilityHostKind,
         CapabilityHostProvisioningState,
         CommitmentPlanProvisioningState,
-        ComputeProvisioningState,
         ConnectionCategory,
         ConnectionGroup,
         ContentLevel,
@@ -46,7 +35,6 @@ if TYPE_CHECKING:
         EncryptionScopeProvisioningState,
         EncryptionScopeState,
         FirewallSku,
-        FoundryAutoUpgradeMode,
         HostingModel,
         IdentityKind,
         IdentityManagementType,
@@ -85,8 +73,8 @@ if TYPE_CHECKING:
         SkuTier,
         TierUpgradePolicy,
         TrafficRoutingProtocol,
+        TrustedCertificateSourceType,
         UpgradeAvailabilityStatus,
-        VmPriority,
     )
 
 
@@ -570,7 +558,7 @@ class AccountProperties(TypedDict, total=False):
 
     :ivar provisioningState: Gets the status of the cognitive services account at the time the
      operation was called. Known values are: "Accepted", "Creating", "Deleting", "Moving", "Failed",
-     "Succeeded", "Canceled", "ResolvingDNS", and "ExtensionUnreachable".
+     "Succeeded", "Canceled", and "ResolvingDNS".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar endpoint: Endpoint of the created account.
     :vartype endpoint: str
@@ -643,9 +631,6 @@ class AccountProperties(TypedDict, total=False):
     :vartype raiMonitorConfig: "RaiMonitorConfig"
     :ivar networkInjections:
     :vartype networkInjections: list["NetworkInjection"]
-    :ivar foundryAutoUpgrade: Represents the foundry auto-upgrade configuration for a Cognitive
-     Services account.
-    :vartype foundryAutoUpgrade: "FoundryAutoUpgrade"
     :ivar allowProjectManagement: Specifies whether this resource support project management as
      child resources, used as containers for access management, data isolation and cost in AI
      Foundry.
@@ -656,24 +641,19 @@ class AccountProperties(TypedDict, total=False):
     :ivar associatedProjects: Specifies the projects, by project name, that are associated with
      this resource.
     :vartype associatedProjects: list[str]
-    :ivar capabilitySettings: Reusable default agent capability settings inherited by child
-     projects.
-    :vartype capabilitySettings: "CapabilitySettings"
-    :ivar agentHostingConfigurations: Customer-owned AKS hosting configurations for Foundry agents.
-     This property can only be specified when the account is created; an existing account without a
-     hosting configuration cannot add one later. This API version supports exactly one
-     configuration, while the array shape is reserved for future API versions that may support
-     multiple configurations. Once set, the configuration cannot be changed, removed, or reordered.
-     Account update requests should omit this property or send the complete existing value
-     unchanged. Responses only include hosting configuration types defined by the requested API
-     version.
-    :vartype agentHostingConfigurations: list["AgentHostingConfiguration"]
+    :ivar trustedCertificateSources: Private CA trust sources for supported features in an
+     AIServices account with allowProjectManagement enabled. Supports one Azure Key Vault source
+     containing version-pinned references to secrets with PEM-encoded CA certificates or certificate
+     bundles. On PUT or PATCH, a non-null array replaces the complete configuration, so include all
+     references to retain. Omit this property or send null to preserve the existing configuration;
+     send an empty array to clear it.
+    :vartype trustedCertificateSources: list["TrustedCertificateSource"]
     """
 
     provisioningState: Union[str, "ProvisioningState"]
     """Gets the status of the cognitive services account at the time the operation was called. Known
      values are: \"Accepted\", \"Creating\", \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\",
-     \"Canceled\", \"ResolvingDNS\", and \"ExtensionUnreachable\"."""
+     \"Canceled\", and \"ResolvingDNS\"."""
     endpoint: str
     """Endpoint of the created account."""
     internalId: str
@@ -734,8 +714,6 @@ class AccountProperties(TypedDict, total=False):
     raiMonitorConfig: "RaiMonitorConfig"
     """Cognitive Services Rai Monitor Config."""
     networkInjections: list["NetworkInjection"]
-    foundryAutoUpgrade: "FoundryAutoUpgrade"
-    """Represents the foundry auto-upgrade configuration for a Cognitive Services account."""
     allowProjectManagement: bool
     """Specifies whether this resource support project management as child resources, used as
      containers for access management, data isolation and cost in AI Foundry."""
@@ -744,16 +722,13 @@ class AccountProperties(TypedDict, total=False):
      without a project parameter."""
     associatedProjects: list[str]
     """Specifies the projects, by project name, that are associated with this resource."""
-    capabilitySettings: "CapabilitySettings"
-    """Reusable default agent capability settings inherited by child projects."""
-    agentHostingConfigurations: list["AgentHostingConfiguration"]
-    """Customer-owned AKS hosting configurations for Foundry agents. This property can only be
-     specified when the account is created; an existing account without a hosting configuration
-     cannot add one later. This API version supports exactly one configuration, while the array
-     shape is reserved for future API versions that may support multiple configurations. Once set,
-     the configuration cannot be changed, removed, or reordered. Account update requests should omit
-     this property or send the complete existing value unchanged. Responses only include hosting
-     configuration types defined by the requested API version."""
+    trustedCertificateSources: Optional[list["TrustedCertificateSource"]]
+    """Private CA trust sources for supported features in an AIServices account with
+     allowProjectManagement enabled. Supports one Azure Key Vault source containing version-pinned
+     references to secrets with PEM-encoded CA certificates or certificate bundles. On PUT or PATCH,
+     a non-null array replaces the complete configuration, so include all references to retain. Omit
+     this property or send null to preserve the existing configuration; send an empty array to clear
+     it."""
 
 
 class AgentApplication(ProxyResource):
@@ -1095,305 +1070,6 @@ class ApplicationTrafficRoutingPolicy(TypedDict, total=False):
     """Gets or sets the collection of traffic routing rules."""
 
 
-class ArcDeployment(ProxyResource):
-    """Cognitive Services account Arc deployment, backed by customer-managed Arc-enabled Kubernetes
-    resources.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar properties: Properties of the Cognitive Services Arc deployment. Required.
-    :vartype properties: "ArcDeploymentProperties"
-    :ivar sku: The Arc deployment SKU. Only the SKU name is required for Arc deployments. Required.
-    :vartype sku: "ArcDeploymentSku"
-    :ivar etag: Resource Etag.
-    :vartype etag: str
-    """
-
-    properties: Required["ArcDeploymentProperties"]
-    """Properties of the Cognitive Services Arc deployment. Required."""
-    sku: Required["ArcDeploymentSku"]
-    """The Arc deployment SKU. Only the SKU name is required for Arc deployments. Required."""
-    etag: str
-    """Resource Etag."""
-
-
-class ArcDeploymentCpuMemoryResourceRequirements(TypedDict, total=False):  # pylint: disable=name-too-long
-    """CPU and memory resource requirements for an Arc deployment replica.
-
-    :ivar cpu: Kubernetes CPU quantity string, for example 500m, 2, 4, or 8. Required.
-    :vartype cpu: str
-    :ivar memory: Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi. Required.
-    :vartype memory: str
-    """
-
-    cpu: Required[str]
-    """Kubernetes CPU quantity string, for example 500m, 2, 4, or 8. Required."""
-    memory: Required[str]
-    """Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi. Required."""
-
-
-class ArcDeploymentKubernetesResources(TypedDict, total=False):
-    """Per-replica Kubernetes resource requests and limits for an Arc deployment.
-
-    :ivar requests: Kubernetes CPU and memory resource requests for each deployment replica.
-    :vartype requests: "ArcDeploymentCpuMemoryResourceRequirements"
-    :ivar limits: Kubernetes resource limits for each deployment replica.
-    :vartype limits: "ArcDeploymentResourceRequirements"
-    """
-
-    requests: "ArcDeploymentCpuMemoryResourceRequirements"
-    """Kubernetes CPU and memory resource requests for each deployment replica."""
-    limits: "ArcDeploymentResourceRequirements"
-    """Kubernetes resource limits for each deployment replica."""
-
-
-class ArcDeploymentModel(TypedDict, total=False):
-    """Model reference for an Arc deployment.
-
-    :ivar format: Deployment model format. Required.
-    :vartype format: str
-    :ivar name: Deployment model name. Required.
-    :vartype name: str
-    """
-
-    format: Required[str]
-    """Deployment model format. Required."""
-    name: Required[str]
-    """Deployment model name. Required."""
-
-
-class ArcDeploymentPatchCpuMemoryResourceRequirements(TypedDict, total=False):  # pylint: disable=name-too-long
-    """CPU and memory resource requirements for an Arc deployment replica update.
-
-    :ivar cpu: Kubernetes CPU quantity string, for example 500m, 2, 4, or 8.
-    :vartype cpu: str
-    :ivar memory: Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi.
-    :vartype memory: str
-    """
-
-    cpu: str
-    """Kubernetes CPU quantity string, for example 500m, 2, 4, or 8."""
-    memory: str
-    """Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi."""
-
-
-class ArcDeploymentPatchKubernetesResources(TypedDict, total=False):
-    """Per-replica Kubernetes resource requests and limits for an Arc deployment update.
-
-    :ivar requests: Kubernetes CPU and memory resource requests for each deployment replica.
-    :vartype requests: "ArcDeploymentPatchCpuMemoryResourceRequirements"
-    :ivar limits: Kubernetes resource limits for each deployment replica.
-    :vartype limits: "ArcDeploymentResourceRequirements"
-    """
-
-    requests: "ArcDeploymentPatchCpuMemoryResourceRequirements"
-    """Kubernetes CPU and memory resource requests for each deployment replica."""
-    limits: "ArcDeploymentResourceRequirements"
-    """Kubernetes resource limits for each deployment replica."""
-
-
-class ArcDeploymentProperties(TypedDict, total=False):
-    """Properties of a Cognitive Services Arc deployment.
-
-    :ivar model: Model reference. Required on creation and immutable after creation. Required.
-    :vartype model: "ArcDeploymentModel"
-    :ivar extensionId: Full Azure resource ID of the Foundry inference extension on the target
-     Arc-enabled Kubernetes cluster. Required on creation and immutable after creation. Required.
-    :vartype extensionId: str
-    :ivar runtime: Inference runtime. Required on creation and immutable after creation. Required.
-     Known values are: "vllm" and "onnx-genai".
-    :vartype runtime: Union[str, "ArcDeploymentRuntime"]
-    :ivar compute: Compute type for the deployment. Required on creation and immutable after
-     creation. Required. Known values are: "gpu" and "cpu".
-    :vartype compute: Union[str, "ArcDeploymentComputeType"]
-    :ivar deploymentTemplate: Optional deployment template identifier for advanced vLLM tuning.
-     Allowed only when runtime is vllm. Example:
-     azureml://registries/{registry}/deploymenttemplates/{template}/versions/{version}.
-    :vartype deploymentTemplate: str
-    :ivar vllmParameters: Read-only. Effective vLLM runtime parameters resolved for the deployed
-     model. Returned only when runtime is vllm.
-    :vartype vllmParameters: "ArcDeploymentVllmParameters"
-    :ivar replicas: Physical replica count on the Arc cluster. Required.
-    :vartype replicas: int
-    :ivar resources: Per-replica Kubernetes resource requests and limits. Required.
-    :vartype resources: "ArcDeploymentKubernetesResources"
-    :ivar nodeSelector: Kubernetes node selector key-value map used to schedule pods onto nodes
-     with matching labels.
-    :vartype nodeSelector: dict[str, str]
-    :ivar deploymentState: The deployment state. Known values are: "Running" and "Paused".
-    :vartype deploymentState: Union[str, "DeploymentState"]
-    :ivar raiPolicyName: The name of RAI policy.
-    :vartype raiPolicyName: str
-    :ivar provisioningState: Read-only. Current provisioning state. Known values are: "Accepted",
-     "Creating", "Deleting", "Moving", "Failed", "Succeeded", "Canceled", "ResolvingDNS", and
-     "ExtensionUnreachable".
-    :vartype provisioningState: Union[str, "ProvisioningState"]
-    :ivar provisioningDetails: Read-only. Status message and timestamp from the last provisioning
-     operation.
-    :vartype provisioningDetails: "ArcDeploymentProvisioningDetails"
-    :ivar inferenceEndpoint: Read-only. Base URL for inference calls to this deployment on the Arc
-     cluster. Populated when provisioningState is Succeeded.
-    :vartype inferenceEndpoint: str
-    :ivar capabilities: Read-only. Deployment capabilities represented as key-value pairs.
-    :vartype capabilities: dict[str, str]
-    """
-
-    model: Required["ArcDeploymentModel"]
-    """Model reference. Required on creation and immutable after creation. Required."""
-    extensionId: Required[str]
-    """Full Azure resource ID of the Foundry inference extension on the target Arc-enabled Kubernetes
-     cluster. Required on creation and immutable after creation. Required."""
-    runtime: Required[Union[str, "ArcDeploymentRuntime"]]
-    """Inference runtime. Required on creation and immutable after creation. Required. Known values
-     are: \"vllm\" and \"onnx-genai\"."""
-    compute: Required[Union[str, "ArcDeploymentComputeType"]]
-    """Compute type for the deployment. Required on creation and immutable after creation. Required.
-     Known values are: \"gpu\" and \"cpu\"."""
-    deploymentTemplate: str
-    """Optional deployment template identifier for advanced vLLM tuning. Allowed only when runtime is
-     vllm. Example:
-     azureml://registries/{registry}/deploymenttemplates/{template}/versions/{version}."""
-    vllmParameters: "ArcDeploymentVllmParameters"
-    """Read-only. Effective vLLM runtime parameters resolved for the deployed model. Returned only
-     when runtime is vllm."""
-    replicas: Required[int]
-    """Physical replica count on the Arc cluster. Required."""
-    resources: Required["ArcDeploymentKubernetesResources"]
-    """Per-replica Kubernetes resource requests and limits. Required."""
-    nodeSelector: dict[str, str]
-    """Kubernetes node selector key-value map used to schedule pods onto nodes with matching labels."""
-    deploymentState: Union[str, "DeploymentState"]
-    """The deployment state. Known values are: \"Running\" and \"Paused\"."""
-    raiPolicyName: str
-    """The name of RAI policy."""
-    provisioningState: Union[str, "ProvisioningState"]
-    """Read-only. Current provisioning state. Known values are: \"Accepted\", \"Creating\",
-     \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\", \"Canceled\", \"ResolvingDNS\", and
-     \"ExtensionUnreachable\"."""
-    provisioningDetails: "ArcDeploymentProvisioningDetails"
-    """Read-only. Status message and timestamp from the last provisioning operation."""
-    inferenceEndpoint: str
-    """Read-only. Base URL for inference calls to this deployment on the Arc cluster. Populated when
-     provisioningState is Succeeded."""
-    capabilities: dict[str, str]
-    """Read-only. Deployment capabilities represented as key-value pairs."""
-
-
-class ArcDeploymentProvisioningDetails(TypedDict, total=False):
-    """Provisioning status details for an Arc deployment.
-
-    :ivar message: A human-readable status message from the last provisioning operation.
-    :vartype message: str
-    :ivar lastOperationTimestamp: Timestamp of the last provisioning operation.
-    :vartype lastOperationTimestamp: str
-    """
-
-    message: str
-    """A human-readable status message from the last provisioning operation."""
-    lastOperationTimestamp: str
-    """Timestamp of the last provisioning operation."""
-
-
-class ArcDeploymentResourceRequirements(TypedDict, total=False):
-    """Kubernetes resource requirements for an Arc deployment replica. Specify either cpu and memory
-    together, or gpu. GPU is supported only in limits, not requests.
-
-    :ivar cpu: Kubernetes CPU quantity string, for example 500m, 2, 4, or 8. Required with memory
-     when specifying CPU and memory limits. Do not specify with gpu.
-    :vartype cpu: str
-    :ivar memory: Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi. Required with
-     cpu when specifying CPU and memory limits. Do not specify with gpu.
-    :vartype memory: str
-    :ivar gpu: Kubernetes GPU quantity, for example 1, 2, or 5. Required when specifying GPU
-     limits. Do not specify with cpu or memory.
-    :vartype gpu: int
-    """
-
-    cpu: str
-    """Kubernetes CPU quantity string, for example 500m, 2, 4, or 8. Required with memory when
-     specifying CPU and memory limits. Do not specify with gpu."""
-    memory: str
-    """Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi. Required with cpu when
-     specifying CPU and memory limits. Do not specify with gpu."""
-    gpu: int
-    """Kubernetes GPU quantity, for example 1, 2, or 5. Required when specifying GPU limits. Do not
-     specify with cpu or memory."""
-
-
-class ArcDeploymentSku(TypedDict, total=False):
-    """SKU for an Arc deployment.
-
-    :ivar name: The name of the Arc deployment SKU. Must be Arc. Required. "Arc"
-    :vartype name: Union[str, "ArcDeploymentSkuName"]
-    """
-
-    name: Required[Union[str, "ArcDeploymentSkuName"]]
-    """The name of the Arc deployment SKU. Must be Arc. Required. \"Arc\""""
-
-
-class ArcDeploymentUpdate(TypedDict, total=False):
-    """The object used to update an Arc deployment.
-
-    :ivar properties: Properties that can be updated on an Arc deployment.
-    :vartype properties: "ArcDeploymentUpdateProperties"
-    """
-
-    properties: "ArcDeploymentUpdateProperties"
-    """Properties that can be updated on an Arc deployment."""
-
-
-class ArcDeploymentUpdateProperties(TypedDict, total=False):
-    """Mutable properties for an Arc deployment.
-
-    :ivar replicas: Physical replica count on the Arc cluster.
-    :vartype replicas: int
-    :ivar resources: Per-replica Kubernetes resource requests and limits.
-    :vartype resources: "ArcDeploymentPatchKubernetesResources"
-    :ivar nodeSelector: Kubernetes node selector key-value map used to schedule pods onto nodes
-     with matching labels.
-    :vartype nodeSelector: dict[str, str]
-    """
-
-    replicas: int
-    """Physical replica count on the Arc cluster."""
-    resources: "ArcDeploymentPatchKubernetesResources"
-    """Per-replica Kubernetes resource requests and limits."""
-    nodeSelector: dict[str, str]
-    """Kubernetes node selector key-value map used to schedule pods onto nodes with matching labels."""
-
-
-class ArcDeploymentVllmParameters(TypedDict, total=False):
-    """Effective vLLM runtime parameters for an Arc deployment.
-
-    :ivar tensorParallelSize: Number of GPUs used for tensor parallelism.
-    :vartype tensorParallelSize: int
-    :ivar maxModelLen: Maximum model context length.
-    :vartype maxModelLen: int
-    :ivar gpuMemoryUtilization: Fraction of GPU memory reserved for model execution.
-    :vartype gpuMemoryUtilization: float
-    :ivar enforceEager: Whether eager execution is enforced for the vLLM runtime.
-    :vartype enforceEager: bool
-    """
-
-    tensorParallelSize: int
-    """Number of GPUs used for tensor parallelism."""
-    maxModelLen: int
-    """Maximum model context length."""
-    gpuMemoryUtilization: float
-    """Fraction of GPU memory reserved for model execution."""
-    enforceEager: bool
-    """Whether eager execution is enforced for the vLLM runtime."""
-
-
 class AssignedIdentity(TypedDict, total=False):
     """Type representing an identity assignment.
 
@@ -1546,25 +1222,25 @@ class CapabilityHostProperties(ResourceBase):
     """Whether public hosting environment is enabled for the capability host."""
 
 
-class CapabilitySettings(TypedDict, total=False):
-    """Extensible agent capability configuration. Carries the Azure resource IDs of the agent storage
-    dependencies. Modeled as an object so future capability-backed resources can be added without
-    changing the account or project contract.
+class CertificateBundleReference(TypedDict, total=False):
+    """A reference to a specific version of a Key Vault secret containing a PEM-encoded CA certificate
+    or certificate bundle.
 
-    :ivar documentStore: Azure resource ID of the document store used by agent runtime state.
-    :vartype documentStore: str
-    :ivar vectorStore: Azure resource ID of the vector store used by agent retrieval and indexing.
-    :vartype vectorStore: str
-    :ivar blobStore: Azure resource ID of the blob store used by agent file and artifact storage.
-    :vartype blobStore: str
+    :ivar secretName: Name of the Key Vault secret containing the CA certificate or certificate
+     bundle. Required.
+    :vartype secretName: str
+    :ivar secretVersion: Required, pinned version of the Key Vault secret. Newer secret versions
+     are not followed automatically. To rotate a bundle, update this value and resubmit the complete
+     account trust configuration. Required.
+    :vartype secretVersion: str
     """
 
-    documentStore: str
-    """Azure resource ID of the document store used by agent runtime state."""
-    vectorStore: str
-    """Azure resource ID of the vector store used by agent retrieval and indexing."""
-    blobStore: str
-    """Azure resource ID of the blob store used by agent file and artifact storage."""
+    secretName: Required[str]
+    """Name of the Key Vault secret containing the CA certificate or certificate bundle. Required."""
+    secretVersion: Required[str]
+    """Required, pinned version of the Key Vault secret. Newer secret versions are not followed
+     automatically. To rotate a bundle, update this value and resubmit the complete account trust
+     configuration. Required."""
 
 
 class ChannelsBuiltInAuthorizationPolicy(TypedDict, total=False):
@@ -1616,45 +1292,6 @@ class CheckSkuAvailabilityParameter(TypedDict, total=False):
     """The kind (type) of cognitive service account. Required."""
     type: Required[str]
     """The Type of the resource. Required."""
-
-
-class ClusterComputeProperties(TypedDict, total=False):
-    """Properties for a Cluster (AKS-backed) compute resource.
-
-    :ivar location: The location of the compute resource. Required.
-    :vartype location: str
-    :ivar provisioningState: Provisioning state of the compute resource. Known values are:
-     "Accepted", "Succeeded", "Failed", "Canceled", "Deleting", "Scaling", "Disabled", "Starting",
-     "Stopping", "Restarting", and "Stopped".
-    :vartype provisioningState: Union[str, "ComputeProvisioningState"]
-    :ivar errors: Error details for the compute resource.
-    :vartype errors: list["ErrorDetail"]
-    :ivar creationTime: Creation time of the compute resource.
-    :vartype creationTime: str
-    :ivar computeType: The type of compute resource. Required. Cluster (AKS-backed) compute type.
-    :vartype computeType: Literal[ComputeType.CLUSTER]
-    :ivar pools: Pools attached to this compute cluster. Required.
-    :vartype pools: list["Pool"]
-    :ivar subnetArmId: ARM ID of the subnet used for compute.
-    :vartype subnetArmId: str
-    """
-
-    location: Required[str]
-    """The location of the compute resource. Required."""
-    provisioningState: Union[str, "ComputeProvisioningState"]
-    """Provisioning state of the compute resource. Known values are: \"Accepted\", \"Succeeded\",
-     \"Failed\", \"Canceled\", \"Deleting\", \"Scaling\", \"Disabled\", \"Starting\", \"Stopping\",
-     \"Restarting\", and \"Stopped\"."""
-    errors: list["ErrorDetail"]
-    """Error details for the compute resource."""
-    creationTime: str
-    """Creation time of the compute resource."""
-    computeType: Required[Literal[ComputeType.CLUSTER]]
-    """The type of compute resource. Required. Cluster (AKS-backed) compute type."""
-    pools: Required[list["Pool"]]
-    """Pools attached to this compute cluster. Required."""
-    subnetArmId: str
-    """ARM ID of the subnet used for compute."""
 
 
 class CommitmentPeriod(TypedDict, total=False):
@@ -1846,47 +1483,6 @@ class CommitmentQuota(TypedDict, total=False):
     """Commitment quota unit."""
 
 
-class Compute(ProxyResource):
-    """Cognitive Services compute resource. Supports polymorphic compute types (Cluster,
-    ContainerInstance) via the computeType discriminator in properties.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar properties: Polymorphic properties of the compute resource. Use computeType to select
-     Cluster or ContainerInstance. Required.
-    :vartype properties: "ComputeProperties"
-    :ivar etag: Resource Etag.
-    :vartype etag: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar kind: The kind (type) of compute resource.
-    :vartype kind: str
-    :ivar identity: Identity for the resource.
-    :vartype identity: "Identity"
-    """
-
-    properties: Required["ComputeProperties"]
-    """Polymorphic properties of the compute resource. Use computeType to select Cluster or
-     ContainerInstance. Required."""
-    etag: str
-    """Resource Etag."""
-    tags: dict[str, str]
-    """Resource tags."""
-    kind: str
-    """The kind (type) of compute resource."""
-    identity: "Identity"
-    """Identity for the resource."""
-
-
 class ConnectionAccessKey(TypedDict, total=False):
     """ConnectionAccessKey.
 
@@ -2061,75 +1657,6 @@ class ConnectionUsernamePassword(TypedDict, total=False):
     """Optional, required by connections like SalesForce for extra security in addition to
      UsernamePassword."""
     username: str
-
-
-class ConnectivityEndpoints(TypedDict, total=False):
-    """Network connectivity endpoints for a Container Instance compute.
-
-    :ivar publicIpAddress: The public IP address of the compute instance.
-    :vartype publicIpAddress: str
-    :ivar sshPort: The SSH port for the compute instance.
-    :vartype sshPort: int
-    """
-
-    publicIpAddress: str
-    """The public IP address of the compute instance."""
-    sshPort: int
-    """The SSH port for the compute instance."""
-
-
-class ContainerInstanceComputeProperties(TypedDict, total=False):
-    """Properties for a Container Instance compute resource.
-
-    :ivar location: The location of the compute resource. Required.
-    :vartype location: str
-    :ivar provisioningState: Provisioning state of the compute resource. Known values are:
-     "Accepted", "Succeeded", "Failed", "Canceled", "Deleting", "Scaling", "Disabled", "Starting",
-     "Stopping", "Restarting", and "Stopped".
-    :vartype provisioningState: Union[str, "ComputeProvisioningState"]
-    :ivar errors: Error details for the compute resource.
-    :vartype errors: list["ErrorDetail"]
-    :ivar creationTime: Creation time of the compute resource.
-    :vartype creationTime: str
-    :ivar computeType: The type of compute resource. Required. Container Instance compute type.
-    :vartype computeType: Literal[ComputeType.CONTAINER_INSTANCE]
-    :ivar targetClusterId: ARM resource ID of the parent cluster that hosts this container
-     instance. Required.
-    :vartype targetClusterId: str
-    :ivar imageLink: Container image URI (e.g., MCR or ACR image path) for the container instance.
-     Required.
-    :vartype imageLink: str
-    :ivar idleTimeBeforeShutdown: ISO 8601 duration before the idle instance is automatically shut
-     down (e.g., 'PT30M').
-    :vartype idleTimeBeforeShutdown: str
-    :ivar sshSettings: SSH configuration for remote access to the container instance.
-    :vartype sshSettings: "SshSettings"
-    :ivar connectivityEndpoints: Network connectivity endpoints assigned to the container instance.
-    :vartype connectivityEndpoints: "ConnectivityEndpoints"
-    """
-
-    location: Required[str]
-    """The location of the compute resource. Required."""
-    provisioningState: Union[str, "ComputeProvisioningState"]
-    """Provisioning state of the compute resource. Known values are: \"Accepted\", \"Succeeded\",
-     \"Failed\", \"Canceled\", \"Deleting\", \"Scaling\", \"Disabled\", \"Starting\", \"Stopping\",
-     \"Restarting\", and \"Stopped\"."""
-    errors: list["ErrorDetail"]
-    """Error details for the compute resource."""
-    creationTime: str
-    """Creation time of the compute resource."""
-    computeType: Required[Literal[ComputeType.CONTAINER_INSTANCE]]
-    """The type of compute resource. Required. Container Instance compute type."""
-    targetClusterId: Required[str]
-    """ARM resource ID of the parent cluster that hosts this container instance. Required."""
-    imageLink: Required[str]
-    """Container image URI (e.g., MCR or ACR image path) for the container instance. Required."""
-    idleTimeBeforeShutdown: str
-    """ISO 8601 duration before the idle instance is automatically shut down (e.g., 'PT30M')."""
-    sshSettings: "SshSettings"
-    """SSH configuration for remote access to the container instance."""
-    connectivityEndpoints: "ConnectivityEndpoints"
-    """Network connectivity endpoints assigned to the container instance."""
 
 
 class RaiBlocklistConfig(TypedDict, total=False):
@@ -2389,9 +1916,6 @@ class DeploymentProperties(TypedDict, total=False):
     :ivar contextCacheContainerId: The resource ID of the context cache container associated with
      this deployment.
     :vartype contextCacheContainerId: str
-    :ivar speculativeDecoding: Speculative decoding settings for the deployment. This configuration
-     applies to Fireworks model formats.
-    :vartype speculativeDecoding: "DeploymentSpeculativeDecoding"
     :ivar scaleSettings: Properties of Cognitive Services account deployment model. (Deprecated,
      please use Deployment.sku instead.).
     :vartype scaleSettings: "DeploymentScaleSettings"
@@ -2444,9 +1968,6 @@ class DeploymentProperties(TypedDict, total=False):
     """Properties of Cognitive Services account deployment model."""
     contextCacheContainerId: str
     """The resource ID of the context cache container associated with this deployment."""
-    speculativeDecoding: "DeploymentSpeculativeDecoding"
-    """Speculative decoding settings for the deployment. This configuration applies to Fireworks model
-     formats."""
     scaleSettings: "DeploymentScaleSettings"
     """Properties of Cognitive Services account deployment model. (Deprecated, please use
      Deployment.sku instead.)."""
@@ -2532,21 +2053,6 @@ class DeploymentScaleSettings(TypedDict, total=False):
      recently updated ``capacity``."""
 
 
-class DeploymentSpeculativeDecoding(TypedDict, total=False):
-    """Speculative decoding settings for a deployment.
-
-    :ivar draftModel: Draft model used to generate speculative decoding tokens. Required.
-    :vartype draftModel: "DeploymentModel"
-    :ivar draftTokenCount: The number of draft tokens attempted per speculation step.
-    :vartype draftTokenCount: int
-    """
-
-    draftModel: Required["DeploymentModel"]
-    """Draft model used to generate speculative decoding tokens. Required."""
-    draftTokenCount: int
-    """The number of draft tokens attempted per speculation step."""
-
-
 class Encryption(TypedDict, total=False):
     """Properties to configure Encryption.
 
@@ -2616,115 +2122,6 @@ class EncryptionScopeProperties(Encryption):
      \"Canceled\"."""
     state: Union[str, "EncryptionScopeState"]
     """The encryptionScope state. Known values are: \"Disabled\" and \"Enabled\"."""
-
-
-class ErrorAdditionalInfo(TypedDict, total=False):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: Any
-    """
-
-    type: str
-    """The additional info type."""
-    info: Any
-    """The additional info."""
-
-
-class ErrorDetail(TypedDict, total=False):
-    """The error detail.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list["ErrorDetail"]
-    :ivar additionalInfo: The error additional info.
-    :vartype additionalInfo: list["ErrorAdditionalInfo"]
-    """
-
-    code: str
-    """The error code."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-    details: list["ErrorDetail"]
-    """The error details."""
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
-
-
-class EvaluateDeploymentPoliciesDeployment(TypedDict, total=False):
-    """A hypothetical deployment definition used for policy dry-run evaluation.
-
-    :ivar name: The name of the hypothetical deployment. Required.
-    :vartype name: str
-    :ivar properties: Properties of the hypothetical deployment. Required.
-    :vartype properties: "EvaluateDeploymentPoliciesDeploymentProperties"
-    """
-
-    name: Required[str]
-    """The name of the hypothetical deployment. Required."""
-    properties: Required["EvaluateDeploymentPoliciesDeploymentProperties"]
-    """Properties of the hypothetical deployment. Required."""
-
-
-class EvaluateDeploymentPoliciesDeploymentProperties(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Properties of a hypothetical deployment for policy evaluation.
-
-    :ivar model: The model to evaluate. Required.
-    :vartype model: "DeploymentModel"
-    :ivar raiPolicyName: The name of the RAI policy to evaluate.
-    :vartype raiPolicyName: str
-    """
-
-    model: Required["DeploymentModel"]
-    """The model to evaluate. Required."""
-    raiPolicyName: str
-    """The name of the RAI policy to evaluate."""
-
-
-class EvaluateDeploymentPoliciesRequest(TypedDict, total=False):
-    """Request body for the evaluateDeploymentPolicies action.
-
-    :ivar deployments: The list of hypothetical deployments to evaluate against Azure Policy.
-     Required.
-    :vartype deployments: list["EvaluateDeploymentPoliciesDeployment"]
-    """
-
-    deployments: Required[list["EvaluateDeploymentPoliciesDeployment"]]
-    """The list of hypothetical deployments to evaluate against Azure Policy. Required."""
-
-
-class FoundryAutoUpgrade(TypedDict, total=False):
-    """Represents the foundry auto-upgrade configuration for a Cognitive Services account. Customers
-    can opt out of auto-upgrade by setting mode to Disabled.
-
-    :ivar mode: Gets or sets the auto-upgrade mode. Known values are: "Enabled" and "Disabled".
-    :vartype mode: Union[str, "FoundryAutoUpgradeMode"]
-    :ivar plannedByMicrosoft: Gets or sets a value indicating whether the auto-upgrade is planned
-     by Microsoft.
-    :vartype plannedByMicrosoft: bool
-    :ivar statusReason: Gets or sets the status reason for the auto-upgrade configuration.
-    :vartype statusReason: str
-    :ivar scheduledAt: Gets or sets the scheduled time for the auto-upgrade.
-    :vartype scheduledAt: str
-    """
-
-    mode: Union[str, "FoundryAutoUpgradeMode"]
-    """Gets or sets the auto-upgrade mode. Known values are: \"Enabled\" and \"Disabled\"."""
-    plannedByMicrosoft: bool
-    """Gets or sets a value indicating whether the auto-upgrade is planned by Microsoft."""
-    statusReason: str
-    """Gets or sets the status reason for the auto-upgrade configuration."""
-    scheduledAt: str
-    """Gets or sets the scheduled time for the auto-upgrade."""
 
 
 class FqdnOutboundRule(TypedDict, total=False):
@@ -2939,201 +2336,6 @@ class ManagedAgentDeployment(TypedDict, total=False):
     deploymentType: Required[Literal[AgentDeploymentType.MANAGED]]
     """Gets or sets the type of deployment for the agent. Required. The underlying infra is managed by
      the platform in the deployer's subscription."""
-
-
-class ManagedClusterAgentHostingConfiguration(TypedDict, total=False):
-    """Configuration for hosting Foundry agents on an Azure Kubernetes Service managed cluster.
-
-    :ivar name: Unique name of the hosting configuration within the Foundry account. Required.
-    :vartype name: str
-    :ivar hostingType: Type of infrastructure used to host Foundry agents. Required. Agents are
-     hosted on an Azure Kubernetes Service managed cluster.
-    :vartype hostingType: Literal[AgentHostingType.MANAGED_CLUSTER]
-    :ivar hostingManagementIdentityResourceId: Azure resource ID of the user-assigned managed
-     identity used by the Foundry resource provider to manage the hosting configuration. The
-     identity must be assigned to the Foundry account in identity.userAssignedIdentities. Required.
-    :vartype hostingManagementIdentityResourceId: str
-    :ivar workloadIdentityResourceId: Azure resource ID of the separate user-assigned managed
-     identity federated to service accounts on the AKS cluster. Hosted agents use this identity to
-     access the Azure Storage blob data plane. Required.
-    :vartype workloadIdentityResourceId: str
-    :ivar clusterResourceId: Azure resource ID of the customer-owned AKS managed cluster that runs
-     the hosted agent workloads. Required.
-    :vartype clusterResourceId: str
-    :ivar storageAccountResourceId: Azure resource ID of the customer-owned storage account used by
-     the hosted agents. The storage account must be in the same subscription and region as the AKS
-     cluster, and its data-plane endpoint must be reachable from the workload network. Required.
-    :vartype storageAccountResourceId: str
-    """
-
-    name: Required[str]
-    """Unique name of the hosting configuration within the Foundry account. Required."""
-    hostingType: Required[Literal[AgentHostingType.MANAGED_CLUSTER]]
-    """Type of infrastructure used to host Foundry agents. Required. Agents are hosted on an Azure
-     Kubernetes Service managed cluster."""
-    hostingManagementIdentityResourceId: Required[str]
-    """Azure resource ID of the user-assigned managed identity used by the Foundry resource provider
-     to manage the hosting configuration. The identity must be assigned to the Foundry account in
-     identity.userAssignedIdentities. Required."""
-    workloadIdentityResourceId: Required[str]
-    """Azure resource ID of the separate user-assigned managed identity federated to service accounts
-     on the AKS cluster. Hosted agents use this identity to access the Azure Storage blob data
-     plane. Required."""
-    clusterResourceId: Required[str]
-    """Azure resource ID of the customer-owned AKS managed cluster that runs the hosted agent
-     workloads. Required."""
-    storageAccountResourceId: Required[str]
-    """Azure resource ID of the customer-owned storage account used by the hosted agents. The storage
-     account must be in the same subscription and region as the AKS cluster, and its data-plane
-     endpoint must be reachable from the workload network. Required."""
-
-
-class ManagedComputeDeployment(ProxyResource):
-    """Cognitive Services account managed compute deployment, backed by managed compute (GPU)
-    resources.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar properties: Properties of the Cognitive Services managed compute deployment.
-    :vartype properties: "ManagedComputeDeploymentProperties"
-    :ivar sku: The resource model definition representing SKU.
-    :vartype sku: "Sku"
-    :ivar etag: Resource Etag.
-    :vartype etag: str
-    """
-
-    properties: "ManagedComputeDeploymentProperties"
-    """Properties of the Cognitive Services managed compute deployment."""
-    sku: "Sku"
-    """The resource model definition representing SKU."""
-    etag: str
-    """Resource Etag."""
-
-
-class ManagedComputeDeploymentProperties(TypedDict, total=False):
-    """Properties of a Cognitive Services managed compute deployment.
-
-    :ivar model: AzureML Registry model asset URI. Required on creation; immutable after creation.
-     Example: azureml://registries/{registry}/models/{model}/versions/{version}. Required.
-    :vartype model: str
-    :ivar deploymentTemplate: Deployment template identifier. Optional on creation. Accepts an
-     AzureML Registry deployment template URI or a project-scoped deployment template path for
-     VmManagedCompute. Examples:
-     azureml://registries/{registry}/deploymenttemplates/{template}/versions/{version},
-     projects/{project}/deploymentTemplates/{template}/versions/{version}.
-    :vartype deploymentTemplate: str
-    :ivar acceleratorType: Accelerator type (e.g., H100_80GB). Optional on creation; immutable
-     after creation.
-    :vartype acceleratorType: str
-    :ivar versionUpgradeOption: Template auto-upgrade policy. Defaults to
-     OnceNewDefaultVersionAvailable. Known values are: "OnceNewDefaultVersionAvailable",
-     "OnceCurrentVersionExpired", and "NoAutoUpgrade".
-    :vartype versionUpgradeOption: Union[str, "DeploymentModelVersionUpgradeOption"]
-    :ivar capabilities: Deployment capabilities represented as key-value pairs. Example: {
-     assetsV2: "true" }.
-    :vartype capabilities: dict[str, str]
-    :ivar computeId: Foundry compute ARM resource ID for VM-backed managed compute deployments.
-     Required when sku.name is VmManagedCompute; immutable after creation.
-    :vartype computeId: str
-    :ivar priority: Scheduling priority for VM-backed managed compute deployments. Immutable after
-     creation.
-    :vartype priority: str
-    :ivar acceleratorsPerInstance: Read-only. Number of accelerators (GPUs) consumed by each model
-     instance, sourced from the deployment template.
-    :vartype acceleratorsPerInstance: int
-    :ivar totalAccelerators: Read-only. Total accelerators allocated: sku.capacity (instances) x
-     acceleratorsPerInstance.
-    :vartype totalAccelerators: int
-    :ivar provisioningState: Read-only. Current provisioning state. Known values are: "Accepted",
-     "Creating", "Deleting", "Moving", "Failed", "Succeeded", "Canceled", "ResolvingDNS", and
-     "ExtensionUnreachable".
-    :vartype provisioningState: Union[str, "ProvisioningState"]
-    :ivar provisioningDetails: Read-only. Status message and timestamp from the last provisioning
-     operation.
-    :vartype provisioningDetails: "ManagedComputeDeploymentProvisioningDetails"
-    :ivar routes: Read-only. Inference route paths relative to the account endpoint. Populated when
-     provisioningState is Succeeded.
-    :vartype routes: "ManagedComputeDeploymentRoutes"
-    """
-
-    model: Required[str]
-    """AzureML Registry model asset URI. Required on creation; immutable after creation. Example:
-     azureml://registries/{registry}/models/{model}/versions/{version}. Required."""
-    deploymentTemplate: str
-    """Deployment template identifier. Optional on creation. Accepts an AzureML Registry deployment
-     template URI or a project-scoped deployment template path for VmManagedCompute. Examples:
-     azureml://registries/{registry}/deploymenttemplates/{template}/versions/{version},
-     projects/{project}/deploymentTemplates/{template}/versions/{version}."""
-    acceleratorType: str
-    """Accelerator type (e.g., H100_80GB). Optional on creation; immutable after creation."""
-    versionUpgradeOption: Union[str, "DeploymentModelVersionUpgradeOption"]
-    """Template auto-upgrade policy. Defaults to OnceNewDefaultVersionAvailable. Known values are:
-     \"OnceNewDefaultVersionAvailable\", \"OnceCurrentVersionExpired\", and \"NoAutoUpgrade\"."""
-    capabilities: dict[str, str]
-    """Deployment capabilities represented as key-value pairs. Example: { assetsV2: \"true\" }."""
-    computeId: str
-    """Foundry compute ARM resource ID for VM-backed managed compute deployments. Required when
-     sku.name is VmManagedCompute; immutable after creation."""
-    priority: str
-    """Scheduling priority for VM-backed managed compute deployments. Immutable after creation."""
-    acceleratorsPerInstance: int
-    """Read-only. Number of accelerators (GPUs) consumed by each model instance, sourced from the
-     deployment template."""
-    totalAccelerators: int
-    """Read-only. Total accelerators allocated: sku.capacity (instances) x acceleratorsPerInstance."""
-    provisioningState: Union[str, "ProvisioningState"]
-    """Read-only. Current provisioning state. Known values are: \"Accepted\", \"Creating\",
-     \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\", \"Canceled\", \"ResolvingDNS\", and
-     \"ExtensionUnreachable\"."""
-    provisioningDetails: "ManagedComputeDeploymentProvisioningDetails"
-    """Read-only. Status message and timestamp from the last provisioning operation."""
-    routes: "ManagedComputeDeploymentRoutes"
-    """Read-only. Inference route paths relative to the account endpoint. Populated when
-     provisioningState is Succeeded."""
-
-
-class ManagedComputeDeploymentProvisioningDetails(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Provisioning status details for a managed compute deployment.
-
-    :ivar message: A human-readable status message from the last provisioning operation.
-    :vartype message: str
-    :ivar lastOperationTimestamp: Timestamp of the last provisioning operation.
-    :vartype lastOperationTimestamp: str
-    """
-
-    message: str
-    """A human-readable status message from the last provisioning operation."""
-    lastOperationTimestamp: str
-    """Timestamp of the last provisioning operation."""
-
-
-class ManagedComputeDeploymentRoutes(TypedDict, total=False):
-    """Inference route paths for a managed compute deployment, relative to the account endpoint.
-    Populated when provisioningState is Succeeded.
-
-    :ivar chatCompletionsScoringPath: Relative path to the chat completions scoring endpoint.
-    :vartype chatCompletionsScoringPath: str
-    :ivar swagger: Relative path to the Swagger/OpenAPI endpoint.
-    :vartype swagger: str
-    :ivar messagesApiScoringPath: Relative path to the messages API scoring endpoint.
-    :vartype messagesApiScoringPath: str
-    """
-
-    chatCompletionsScoringPath: str
-    """Relative path to the chat completions scoring endpoint."""
-    swagger: str
-    """Relative path to the Swagger/OpenAPI endpoint."""
-    messagesApiScoringPath: str
-    """Relative path to the messages API scoring endpoint."""
 
 
 class ManagedIdentityAuthTypeConnectionProperties(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -3860,17 +3062,6 @@ class PATAuthTypeConnectionProperties(TypedDict, total=False):
     """Authentication type of the connection target. Required. PAT."""
 
 
-class PatchResourceSku(TypedDict, total=False):
-    """The object being used to update sku of a resource, in general used for PATCH operations.
-
-    :ivar sku: The resource model definition representing SKU.
-    :vartype sku: "Sku"
-    """
-
-    sku: "Sku"
-    """The resource model definition representing SKU."""
-
-
 class PatchResourceTags(TypedDict, total=False):
     """The object being used to update tags of a resource, in general used for PATCH operations.
 
@@ -3894,29 +3085,6 @@ class PatchResourceTagsAndSku(PatchResourceTags):
 
     sku: "Sku"
     """The resource model definition representing SKU."""
-
-
-class Pool(TypedDict, total=False):
-    """A compute pool configuration.
-
-    :ivar name: The name of the pool. Required.
-    :vartype name: str
-    :ivar vmPriority: The VM priority of the pool. Known values are: "Regular" and "Spot".
-    :vartype vmPriority: Union[str, "VmPriority"]
-    :ivar instanceType: The instance type (VM SKU) used in the pool. Required.
-    :vartype instanceType: str
-    :ivar nodeCount: The number of nodes in the pool. Required.
-    :vartype nodeCount: int
-    """
-
-    name: Required[str]
-    """The name of the pool. Required."""
-    vmPriority: Union[str, "VmPriority"]
-    """The VM priority of the pool. Known values are: \"Regular\" and \"Spot\"."""
-    instanceType: Required[str]
-    """The instance type (VM SKU) used in the pool. Required."""
-    nodeCount: Required[int]
-    """The number of nodes in the pool. Required."""
 
 
 class PrivateEndpoint(TypedDict, total=False):
@@ -4168,7 +3336,7 @@ class ProjectProperties(TypedDict, total=False):
 
     :ivar provisioningState: Gets the status of the cognitive services project at the time the
      operation was called. Known values are: "Accepted", "Creating", "Deleting", "Moving", "Failed",
-     "Succeeded", "Canceled", "ResolvingDNS", and "ExtensionUnreachable".
+     "Succeeded", "Canceled", and "ResolvingDNS".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar displayName: The display name of the Cognitive Services Project.
     :vartype displayName: str
@@ -4178,16 +3346,12 @@ class ProjectProperties(TypedDict, total=False):
     :vartype endpoints: dict[str, str]
     :ivar isDefault: Indicates whether the project is the default project for the account.
     :vartype isDefault: bool
-    :ivar capabilitySettings: Effective agent capability settings for the project. Optional partial
-     override of the account defaults; omitted fields inherit from the parent account when present.
-     Settable only at create time.
-    :vartype capabilitySettings: "CapabilitySettings"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
     """Gets the status of the cognitive services project at the time the operation was called. Known
      values are: \"Accepted\", \"Creating\", \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\",
-     \"Canceled\", \"ResolvingDNS\", and \"ExtensionUnreachable\"."""
+     \"Canceled\", and \"ResolvingDNS\"."""
     displayName: str
     """The display name of the Cognitive Services Project."""
     description: str
@@ -4196,10 +3360,6 @@ class ProjectProperties(TypedDict, total=False):
     """The list of endpoint for this Cognitive Services Project."""
     isDefault: bool
     """Indicates whether the project is the default project for the account."""
-    capabilitySettings: "CapabilitySettings"
-    """Effective agent capability settings for the project. Optional partial override of the account
-     defaults; omitted fields inherit from the parent account when present. Settable only at create
-     time."""
 
 
 class QuotaLimit(TypedDict, total=False):
@@ -5406,21 +4566,6 @@ class SkuChangeInfo(TypedDict, total=False):
     """Gets the last change date."""
 
 
-class SshSettings(TypedDict, total=False):
-    """SSH configuration for a Container Instance compute.
-
-    :ivar sshPublicKey: The SSH public key for authenticating to the compute instance.
-    :vartype sshPublicKey: str
-    :ivar adminEnabled: Whether SSH admin access is enabled.
-    :vartype adminEnabled: bool
-    """
-
-    sshPublicKey: str
-    """The SSH public key for authenticating to the compute instance."""
-    adminEnabled: bool
-    """Whether SSH admin access is enabled."""
-
-
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
@@ -5503,6 +4648,35 @@ class TrafficRoutingRule(TypedDict, total=False):
     """The unique identifier of the deployment to which traffic is routed by this rule."""
     trafficPercentage: int
     """Gets or sets the percentage of traffic allocated to this instance."""
+
+
+class TrustedCertificateSource(TypedDict, total=False):
+    """An Azure resource containing the CA certificate bundles trusted by supported features in the
+    account.
+
+    :ivar type: Type of resource containing the certificate bundles. Currently only AzureKeyVault
+     is supported. Required. "AzureKeyVault"
+    :vartype type: Union[str, "TrustedCertificateSourceType"]
+    :ivar resourceId: Azure resource ID of the Key Vault containing the referenced secrets. The
+     account identity must have permission to read these secrets. Required.
+    :vartype resourceId: str
+    :ivar certificateBundleReferences: References to secrets containing one or more PEM-encoded CA
+     certificates. Each secret name and version pair must be unique within the source, using
+     case-insensitive comparison. The same secret name can be referenced with different versions.
+     Required.
+    :vartype certificateBundleReferences: list["CertificateBundleReference"]
+    """
+
+    type: Required[Union[str, "TrustedCertificateSourceType"]]
+    """Type of resource containing the certificate bundles. Currently only AzureKeyVault is supported.
+     Required. \"AzureKeyVault\""""
+    resourceId: Required[str]
+    """Azure resource ID of the Key Vault containing the referenced secrets. The account identity must
+     have permission to read these secrets. Required."""
+    certificateBundleReferences: Required[list["CertificateBundleReference"]]
+    """References to secrets containing one or more PEM-encoded CA certificates. Each secret name and
+     version pair must be unique within the source, using case-insensitive comparison. The same
+     secret name can be referenced with different versions. Required."""
 
 
 class UserAssignedIdentity(TypedDict, total=False):
@@ -5695,98 +4869,6 @@ class VirtualNetworkRule(TypedDict, total=False):
     """Ignore missing vnet service endpoint or not."""
 
 
-class Workbench(ProxyResource):
-    """Workbench resource under a Cognitive Services project. Provides interactive compute with data
-    access for AI development.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar properties: Properties of the workbench resource. Required.
-    :vartype properties: "WorkbenchProperties"
-    :ivar etag: Resource Etag.
-    :vartype etag: str
-    :ivar location: The location of the workbench resource.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar identity: Identity for the resource.
-    :vartype identity: "Identity"
-    """
-
-    properties: Required["WorkbenchProperties"]
-    """Properties of the workbench resource. Required."""
-    etag: str
-    """Resource Etag."""
-    location: str
-    """The location of the workbench resource."""
-    tags: dict[str, str]
-    """Resource tags."""
-    identity: "Identity"
-    """Identity for the resource."""
-
-
-class WorkbenchProperties(TypedDict, total=False):
-    """Properties for a Workbench resource.
-
-    :ivar targetClusterId: ARM resource ID of the parent cluster that hosts this workbench.
-     Required.
-    :vartype targetClusterId: str
-    :ivar imageLink: Container image URI (e.g., MCR or ACR image path) for the workbench. Required.
-    :vartype imageLink: str
-    :ivar idleTimeBeforeShutdown: ISO 8601 duration before the idle workbench is automatically shut
-     down (e.g., 'PT30M').
-    :vartype idleTimeBeforeShutdown: str
-    :ivar datasetId: The dataset ID to mount for the workbench.
-    :vartype datasetId: str
-    :ivar sshSettings: SSH configuration for remote access to the workbench.
-    :vartype sshSettings: "SshSettings"
-    :ivar connectivityEndpoints: Network connectivity endpoints assigned to the workbench.
-    :vartype connectivityEndpoints: "ConnectivityEndpoints"
-    :ivar webEndpoint: The web endpoint URL for accessing the workbench.
-    :vartype webEndpoint: str
-    :ivar provisioningState: Provisioning state of the workbench resource. Known values are:
-     "Accepted", "Succeeded", "Failed", "Canceled", "Deleting", "Scaling", "Disabled", "Starting",
-     "Stopping", "Restarting", and "Stopped".
-    :vartype provisioningState: Union[str, "ComputeProvisioningState"]
-    :ivar errors: Error details for the workbench resource.
-    :vartype errors: list["ErrorDetail"]
-    :ivar creationTime: Creation time of the workbench resource.
-    :vartype creationTime: str
-    """
-
-    targetClusterId: Required[str]
-    """ARM resource ID of the parent cluster that hosts this workbench. Required."""
-    imageLink: Required[str]
-    """Container image URI (e.g., MCR or ACR image path) for the workbench. Required."""
-    idleTimeBeforeShutdown: str
-    """ISO 8601 duration before the idle workbench is automatically shut down (e.g., 'PT30M')."""
-    datasetId: str
-    """The dataset ID to mount for the workbench."""
-    sshSettings: "SshSettings"
-    """SSH configuration for remote access to the workbench."""
-    connectivityEndpoints: "ConnectivityEndpoints"
-    """Network connectivity endpoints assigned to the workbench."""
-    webEndpoint: str
-    """The web endpoint URL for accessing the workbench."""
-    provisioningState: Union[str, "ComputeProvisioningState"]
-    """Provisioning state of the workbench resource. Known values are: \"Accepted\", \"Succeeded\",
-     \"Failed\", \"Canceled\", \"Deleting\", \"Scaling\", \"Disabled\", \"Starting\", \"Stopping\",
-     \"Restarting\", and \"Stopped\"."""
-    errors: list["ErrorDetail"]
-    """Error details for the workbench resource."""
-    creationTime: str
-    """Creation time of the workbench resource."""
-
-
 ConnectionPropertiesV2 = Union[
     AADAuthTypeConnectionProperties,
     AccessKeyAuthTypeConnectionProperties,
@@ -5802,11 +4884,9 @@ ConnectionPropertiesV2 = Union[
     UsernamePasswordAuthTypeConnectionProperties,
 ]
 AgentDeploymentProperties = Union[HostedAgentDeployment, ManagedAgentDeployment]
-AgentHostingConfiguration = Union[ManagedClusterAgentHostingConfiguration]
 ApplicationAuthorizationPolicy = Union[
     ChannelsBuiltInAuthorizationPolicy,
     RoleBasedBuiltInAuthorizationPolicy,
     OrganizationSharedBuiltInAuthorizationPolicy,
 ]
-ComputeProperties = Union[ClusterComputeProperties, ContainerInstanceComputeProperties]
 OutboundRule = Union[FqdnOutboundRule, PrivateEndpointOutboundRule, ServiceTagOutboundRule]

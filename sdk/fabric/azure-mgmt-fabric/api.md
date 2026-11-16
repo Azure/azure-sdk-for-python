@@ -217,7 +217,7 @@ namespace azure.mgmt.fabric.aio.operations
             ) -> AsyncItemPaged[RpSkuDetailsForExistingResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-01-15-preview', params_added_on={'2025-01-15-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-01-15-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2025-01-15-preview', params_added_on={'2025-01-15-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-01-15-preview', '2026-09-01-preview'])
         def list_usages(
                 self, 
                 location: str, 
@@ -377,7 +377,7 @@ namespace azure.mgmt.fabric.models
 
     class azure.mgmt.fabric.models.FabricCapacityProperties(_Model):
         administration: CapacityAdministration
-        overage: Optional[CapacityOverageProperties]
+        overage: CapacityOverageProperties
         provisioning_state: Optional[Union[str, ProvisioningState]]
         state: Optional[Union[str, ResourceState]]
 
@@ -386,7 +386,7 @@ namespace azure.mgmt.fabric.models
                 self, 
                 *, 
                 administration: CapacityAdministration, 
-                overage: Optional[CapacityOverageProperties] = ...
+                overage: CapacityOverageProperties
             ) -> None: ...
 
         @overload
@@ -782,7 +782,7 @@ namespace azure.mgmt.fabric.operations
             ) -> ItemPaged[RpSkuDetailsForExistingResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-01-15-preview', params_added_on={'2025-01-15-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-01-15-preview', '2026-08-01-preview'])
+        @api_version_validation(method_added_on='2025-01-15-preview', params_added_on={'2025-01-15-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-01-15-preview', '2026-09-01-preview'])
         def list_usages(
                 self, 
                 location: str, 
@@ -843,7 +843,7 @@ namespace azure.mgmt.fabric.types
 
     class azure.mgmt.fabric.types.FabricCapacityProperties(TypedDict, total=False):
         key "administration": Required[CapacityAdministration]
-        key "overage": ForwardRef('CapacityOverageProperties', module='types')
+        key "overage": Required[CapacityOverageProperties]
         key "provisioningState": Union[str, ProvisioningState]
         key "state": Union[str, ResourceState]
         administration: CapacityAdministration

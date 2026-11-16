@@ -88,6 +88,16 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
+    def get_remote_max_message_batch_size(handler):
+        """
+        Returns the max batch size from the vendor link property
+        'com.microsoft:max-message-batch-size', or None if unavailable.
+        :param AMQPClient handler: Client to read link properties from.
+        :rtype: int or None
+        """
+
+    @staticmethod
+    @abstractmethod
     def get_remote_max_message_size(handler):
         """
         Returns max peer message size.

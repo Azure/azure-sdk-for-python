@@ -129,6 +129,7 @@ class TestRelayAPIMgmtNamespacesOperations(AzureMgmtRecordedTestCase):
                 "properties": {
                     "createdAt": "2020-02-20 00:00:00",
                     "metricId": "str",
+                    "minimumTlsVersion": "str",
                     "privateEndpointConnections": [
                         {
                             "id": "str",
@@ -185,6 +186,7 @@ class TestRelayAPIMgmtNamespacesOperations(AzureMgmtRecordedTestCase):
                 "properties": {
                     "createdAt": "2020-02-20 00:00:00",
                     "metricId": "str",
+                    "minimumTlsVersion": "str",
                     "privateEndpointConnections": [
                         {
                             "id": "str",

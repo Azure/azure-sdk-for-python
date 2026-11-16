@@ -11,6 +11,7 @@ namespace azure.mgmt.network
         application_gateway_waf_dynamic_manifests_default: ApplicationGatewayWafDynamicManifestsDefaultOperations
         application_gateways: ApplicationGatewaysOperations
         application_security_groups: ApplicationSecurityGroupsOperations
+        authentication_policies: AuthenticationPoliciesOperations
         available_delegations: AvailableDelegationsOperations
         available_endpoint_services: AvailableEndpointServicesOperations
         available_private_endpoint_types: AvailablePrivateEndpointTypesOperations
@@ -38,6 +39,7 @@ namespace azure.mgmt.network
         express_route_cross_connection_peerings: ExpressRouteCrossConnectionPeeringsOperations
         express_route_cross_connections: ExpressRouteCrossConnectionsOperations
         express_route_gateways: ExpressRouteGatewaysOperations
+        express_route_lag_authorizations: ExpressRouteLagAuthorizationsOperations
         express_route_lags: ExpressRouteLagsOperations
         express_route_links: ExpressRouteLinksOperations
         express_route_port_authorizations: ExpressRoutePortAuthorizationsOperations
@@ -147,6 +149,7 @@ namespace azure.mgmt.network
         virtual_hub_ip_configuration: VirtualHubIpConfigurationOperations
         virtual_hub_route_table_v2_s: VirtualHubRouteTableV2SOperations
         virtual_hubs: VirtualHubsOperations
+        virtual_network_appliance_capabilities: VirtualNetworkApplianceCapabilitiesOperations
         virtual_network_appliances: VirtualNetworkAppliancesOperations
         virtual_network_gateway_connections: VirtualNetworkGatewayConnectionsOperations
         virtual_network_gateway_nat_rules: VirtualNetworkGatewayNatRulesOperations
@@ -280,7 +283,7 @@ namespace azure.mgmt.network
             ) -> LROPoller[VpnProfileResponse]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'bastion_host_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'bastion_host_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_get_active_sessions(
                 self, 
                 resource_group_name: str, 
@@ -322,7 +325,7 @@ namespace azure.mgmt.network
             ) -> LROPoller[ItemPaged[BastionShareableLink]]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'location', 'domain_name_label', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'location', 'domain_name_label', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def check_dns_name_availability(
                 self, 
                 location: str, 
@@ -367,7 +370,7 @@ namespace azure.mgmt.network
             ) -> ItemPaged[BastionSessionState]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'providerport', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'providerport', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def express_route_provider_port(
                 self, 
                 providerport: str, 
@@ -560,7 +563,7 @@ namespace azure.mgmt.network
             ) -> HttpResponse: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_wan_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_wan_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def supported_security_providers(
                 self, 
                 resource_group_name: str, 
@@ -581,6 +584,7 @@ namespace azure.mgmt.network.aio
         application_gateway_waf_dynamic_manifests_default: ApplicationGatewayWafDynamicManifestsDefaultOperations
         application_gateways: ApplicationGatewaysOperations
         application_security_groups: ApplicationSecurityGroupsOperations
+        authentication_policies: AuthenticationPoliciesOperations
         available_delegations: AvailableDelegationsOperations
         available_endpoint_services: AvailableEndpointServicesOperations
         available_private_endpoint_types: AvailablePrivateEndpointTypesOperations
@@ -608,6 +612,7 @@ namespace azure.mgmt.network.aio
         express_route_cross_connection_peerings: ExpressRouteCrossConnectionPeeringsOperations
         express_route_cross_connections: ExpressRouteCrossConnectionsOperations
         express_route_gateways: ExpressRouteGatewaysOperations
+        express_route_lag_authorizations: ExpressRouteLagAuthorizationsOperations
         express_route_lags: ExpressRouteLagsOperations
         express_route_links: ExpressRouteLinksOperations
         express_route_port_authorizations: ExpressRoutePortAuthorizationsOperations
@@ -717,6 +722,7 @@ namespace azure.mgmt.network.aio
         virtual_hub_ip_configuration: VirtualHubIpConfigurationOperations
         virtual_hub_route_table_v2_s: VirtualHubRouteTableV2SOperations
         virtual_hubs: VirtualHubsOperations
+        virtual_network_appliance_capabilities: VirtualNetworkApplianceCapabilitiesOperations
         virtual_network_appliances: VirtualNetworkAppliancesOperations
         virtual_network_gateway_connections: VirtualNetworkGatewayConnectionsOperations
         virtual_network_gateway_nat_rules: VirtualNetworkGatewayNatRulesOperations
@@ -850,7 +856,7 @@ namespace azure.mgmt.network.aio
             ) -> AsyncLROPoller[VpnProfileResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'bastion_host_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'bastion_host_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_get_active_sessions(
                 self, 
                 resource_group_name: str, 
@@ -892,7 +898,7 @@ namespace azure.mgmt.network.aio
             ) -> AsyncLROPoller[AsyncItemPaged[BastionShareableLink]]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'location', 'domain_name_label', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'location', 'domain_name_label', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def check_dns_name_availability(
                 self, 
                 location: str, 
@@ -937,7 +943,7 @@ namespace azure.mgmt.network.aio
             ) -> AsyncItemPaged[BastionSessionState]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'providerport', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'providerport', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def express_route_provider_port(
                 self, 
                 providerport: str, 
@@ -1130,7 +1136,7 @@ namespace azure.mgmt.network.aio
             ) -> Awaitable[AsyncHttpResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_wan_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_wan_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def supported_security_providers(
                 self, 
                 resource_group_name: str, 
@@ -1791,6 +1797,107 @@ namespace azure.mgmt.network.aio.operations
             ) -> ApplicationSecurityGroup: ...
 
 
+    class azure.mgmt.network.aio.operations.AuthenticationPoliciesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                authentication_policy_name: str, 
+                resource: AuthenticationPolicy, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AuthenticationPolicy]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                authentication_policy_name: str, 
+                resource: AuthenticationPolicy, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AuthenticationPolicy]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                authentication_policy_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AuthenticationPolicy]: ...
+
+        @distributed_trace_async
+        async def delete(
+                self, 
+                resource_group_name: str, 
+                authentication_policy_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get(
+                self, 
+                resource_group_name: str, 
+                authentication_policy_name: str, 
+                **kwargs: Any
+            ) -> AuthenticationPolicy: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AuthenticationPolicy]: ...
+
+        @distributed_trace
+        def list_all(self, **kwargs: Any) -> AsyncItemPaged[AuthenticationPolicy]: ...
+
+        @overload
+        async def update(
+                self, 
+                resource_group_name: str, 
+                authentication_policy_name: str, 
+                parameters: AuthenticationPolicyUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AuthenticationPolicy: ...
+
+        @overload
+        async def update(
+                self, 
+                resource_group_name: str, 
+                authentication_policy_name: str, 
+                parameters: AuthenticationPolicyUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AuthenticationPolicy: ...
+
+        @overload
+        async def update(
+                self, 
+                resource_group_name: str, 
+                authentication_policy_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AuthenticationPolicy: ...
+
+
     class azure.mgmt.network.aio.operations.AvailableDelegationsOperations:
 
         def __init__(
@@ -2128,29 +2235,29 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @overload
-        async def begin_update_tags(
+        async def begin_update(
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                parameters: TagsObject, 
+                parameters: BastionHostUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> AsyncLROPoller[BastionHost]: ...
 
         @overload
-        async def begin_update_tags(
+        async def begin_update(
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                parameters: TagsObject, 
+                parameters: BastionHostUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> AsyncLROPoller[BastionHost]: ...
 
         @overload
-        async def begin_update_tags(
+        async def begin_update(
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
@@ -2763,7 +2870,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> DdosCustomPolicy: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -2771,7 +2878,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncItemPaged[DdosCustomPolicy]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def list_all(self, **kwargs: Any) -> AsyncItemPaged[DdosCustomPolicy]: ...
 
         @overload
@@ -3073,6 +3180,16 @@ namespace azure.mgmt.network.aio.operations
                 **kwargs: Any
             ) -> AsyncItemPaged[ExpressRouteCircuitAuthorization]: ...
 
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'authorization_name', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01'])
+        async def list_keys(
+                self, 
+                resource_group_name: str, 
+                circuit_name: str, 
+                authorization_name: str, 
+                **kwargs: Any
+            ) -> ExpressRouteAuthorizationKey: ...
+
 
     class azure.mgmt.network.aio.operations.ExpressRouteCircuitConnectionsOperations:
 
@@ -3272,7 +3389,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'failover_test_type', 'fetch_latest', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'failover_test_type', 'fetch_latest', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_get_circuit_link_failover_all_tests_details(
                 self, 
                 resource_group_name: str, 
@@ -3284,7 +3401,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[List[ExpressRouteLinkFailoverAllTestsDetails]]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'link_type', 'circuit_test_category', 'failover_test_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'link_type', 'circuit_test_category', 'failover_test_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_get_circuit_link_failover_single_test_details(
                 self, 
                 resource_group_name: str, 
@@ -3327,7 +3444,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[ExpressRouteCircuitsRoutesTableSummaryListResult]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'link_type', 'circuit_test_category', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'link_type', 'circuit_test_category', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_start_circuit_link_failover_test(
                 self, 
                 resource_group_name: str, 
@@ -3591,6 +3708,39 @@ namespace azure.mgmt.network.aio.operations
             ) -> None: ...
 
         @overload
+        async def begin_commit_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_commit_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_commit_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
         async def begin_create_or_update(
                 self, 
                 resource_group_name: str, 
@@ -3623,6 +3773,39 @@ namespace azure.mgmt.network.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[ExpressRouteCrossConnection]: ...
 
+        @overload
+        async def begin_get_circuit_migration_info(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitValidateAndHealthCheckRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_get_circuit_migration_info(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitValidateAndHealthCheckRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_get_circuit_migration_info(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
         @distributed_trace_async
         async def begin_list_arp_table(
                 self, 
@@ -3652,6 +3835,204 @@ namespace azure.mgmt.network.aio.operations
                 device_path: str, 
                 **kwargs: Any
             ) -> AsyncLROPoller[ExpressRouteCrossConnectionsRoutesTableSummaryListResult]: ...
+
+        @overload
+        async def begin_migrate_circuit(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_migrate_circuit(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_migrate_circuit(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_prepare_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_prepare_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_prepare_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_restore_bgp_for_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_restore_bgp_for_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_restore_bgp_for_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_rollback_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_rollback_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_rollback_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_shut_down_bgp_for_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_shut_down_bgp_for_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_shut_down_bgp_for_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        async def begin_validate_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitValidateAndHealthCheckRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitValidateResponse]: ...
+
+        @overload
+        async def begin_validate_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitValidateAndHealthCheckRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitValidateResponse]: ...
+
+        @overload
+        async def begin_validate_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MigrateExpressRouteCircuitValidateResponse]: ...
 
         @distributed_trace_async
         async def get(
@@ -3760,7 +4141,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'type', 'fetch_latest', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'type', 'fetch_latest', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_get_failover_all_tests_details(
                 self, 
                 resource_group_name: str, 
@@ -3772,7 +4153,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[List[ExpressRouteFailoverTestDetails]]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'peering_location', 'failover_test_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'peering_location', 'failover_test_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_get_failover_single_test_details(
                 self, 
                 resource_group_name: str, 
@@ -3784,7 +4165,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[List[ExpressRouteFailoverSingleTestDetails]]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'attempt_refresh', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'attempt_refresh', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_get_resiliency_information(
                 self, 
                 resource_group_name: str, 
@@ -3795,7 +4176,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[GatewayResiliencyInformation]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'attempt_refresh', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'attempt_refresh', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_get_routes_information(
                 self, 
                 resource_group_name: str, 
@@ -3806,7 +4187,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[GatewayRouteSetsInformation]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'peering_location', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'peering_location', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_start_site_failover_test(
                 self, 
                 resource_group_name: str, 
@@ -3899,6 +4280,86 @@ namespace azure.mgmt.network.aio.operations
 
         @distributed_trace_async
         async def list_by_subscription(self, **kwargs: Any) -> ExpressRouteGatewayList: ...
+
+
+    class azure.mgmt.network.aio.operations.ExpressRouteLagAuthorizationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                express_route_lag_name: str, 
+                authorization_name: str, 
+                authorization_parameters: ExpressRouteLagAuthorization, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ExpressRouteLagAuthorization]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                express_route_lag_name: str, 
+                authorization_name: str, 
+                authorization_parameters: ExpressRouteLagAuthorization, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ExpressRouteLagAuthorization]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                express_route_lag_name: str, 
+                authorization_name: str, 
+                authorization_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ExpressRouteLagAuthorization]: ...
+
+        @distributed_trace_async
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                express_route_lag_name: str, 
+                authorization_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        async def get(
+                self, 
+                resource_group_name: str, 
+                express_route_lag_name: str, 
+                authorization_name: str, 
+                **kwargs: Any
+            ) -> ExpressRouteLagAuthorization: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                express_route_lag_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[ExpressRouteLagAuthorization]: ...
+
+        @distributed_trace_async
+        async def list_keys(
+                self, 
+                resource_group_name: str, 
+                express_route_lag_name: str, 
+                authorization_name: str, 
+                **kwargs: Any
+            ) -> ExpressRouteAuthorizationKey: ...
 
 
     class azure.mgmt.network.aio.operations.ExpressRouteLagsOperations:
@@ -4166,6 +4627,16 @@ namespace azure.mgmt.network.aio.operations
                 express_route_port_name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[ExpressRoutePortAuthorization]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_port_name', 'authorization_name', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01'])
+        async def list_keys(
+                self, 
+                resource_group_name: str, 
+                express_route_port_name: str, 
+                authorization_name: str, 
+                **kwargs: Any
+            ) -> ExpressRouteAuthorizationKey: ...
 
 
     class azure.mgmt.network.aio.operations.ExpressRoutePortsLocationsOperations:
@@ -6166,7 +6637,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(params_added_on={'2025-07-01': ['detail_level']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01'])
+        @api_version_validation(params_added_on={'2025-07-01': ['detail_level']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -8146,7 +8617,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_virtual_appliance_name']}, api_versions_list=['2025-09-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_virtual_appliance_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_abort_migration(
                 self, 
                 resource_group_name: str, 
@@ -8525,7 +8996,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[ConnectionAnalyzer]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name']}, api_versions_list=['2025-09-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_connection_analyzers_delete(
                 self, 
                 resource_group_name: str, 
@@ -8535,7 +9006,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name', 'accept']}, api_versions_list=['2025-09-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_connection_analyzers_query(
                 self, 
                 resource_group_name: str, 
@@ -8883,7 +9354,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[VerificationIPFlowResult]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name', 'accept']}, api_versions_list=['2025-09-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         async def connection_analyzers_get(
                 self, 
                 resource_group_name: str, 
@@ -8893,7 +9364,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> ConnectionAnalyzer: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'accept']}, api_versions_list=['2025-09-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def connection_analyzers_list(
                 self, 
                 resource_group_name: str, 
@@ -13049,6 +13520,77 @@ namespace azure.mgmt.network.aio.operations
             ) -> VirtualHub: ...
 
 
+    class azure.mgmt.network.aio.operations.VirtualNetworkApplianceCapabilitiesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                virtual_network_appliance_name: str, 
+                capability_name: str, 
+                parameters: VirtualNetworkApplianceCapability, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[VirtualNetworkApplianceCapability]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                virtual_network_appliance_name: str, 
+                capability_name: str, 
+                parameters: VirtualNetworkApplianceCapability, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[VirtualNetworkApplianceCapability]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                virtual_network_appliance_name: str, 
+                capability_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[VirtualNetworkApplianceCapability]: ...
+
+        @distributed_trace_async
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                virtual_network_appliance_name: str, 
+                capability_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        async def get(
+                self, 
+                resource_group_name: str, 
+                virtual_network_appliance_name: str, 
+                capability_name: str, 
+                **kwargs: Any
+            ) -> VirtualNetworkApplianceCapability: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                virtual_network_appliance_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[VirtualNetworkApplianceCapability]: ...
+
+
     class azure.mgmt.network.aio.operations.VirtualNetworkAppliancesOperations:
 
         def __init__(
@@ -13644,7 +14186,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[BgpPeerStatusListResult]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_network_gateway_name', 'accept']}, api_versions_list=['2025-09-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_network_gateway_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         async def begin_get_effective_routes(
                 self, 
                 resource_group_name: str, 
@@ -15969,6 +16511,195 @@ namespace azure.mgmt.network.models
             ) -> None: ...
 
 
+    class azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingCondition(_Model):
+        condition_type: Union[str, ApplicationGatewayAdvancedRoutingConditionType]
+        property_name: Optional[str]
+        property_value_matcher: Optional[ApplicationGatewayAdvancedRoutingPropertyValueMatcher]
+        property_values: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                condition_type: Union[str, ApplicationGatewayAdvancedRoutingConditionType], 
+                property_name: Optional[str] = ..., 
+                property_value_matcher: Optional[ApplicationGatewayAdvancedRoutingPropertyValueMatcher] = ..., 
+                property_values: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingConditionSet(SubResource):
+        etag: Optional[str]
+        id: str
+        name: Optional[str]
+        properties: Optional[ApplicationGatewayAdvancedRoutingConditionSetPropertiesFormat]
+        type: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                properties: Optional[ApplicationGatewayAdvancedRoutingConditionSetPropertiesFormat] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingConditionSetPropertiesFormat(_Model):
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        routing_conditions: list[ApplicationGatewayAdvancedRoutingCondition]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                routing_conditions: list[ApplicationGatewayAdvancedRoutingCondition]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingConditionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CLIENT_IP = "ClientIP"
+        HEADER = "Header"
+        METHOD = "Method"
+        PATH = "Path"
+        QUERY_STRING = "QueryString"
+
+
+    class azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingMap(SubResource):
+        etag: Optional[str]
+        id: str
+        name: Optional[str]
+        properties: Optional[ApplicationGatewayAdvancedRoutingMapPropertiesFormat]
+        type: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                properties: Optional[ApplicationGatewayAdvancedRoutingMapPropertiesFormat] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingMapPropertiesFormat(_Model):
+        advanced_routing_rules: list[ApplicationGatewayAdvancedRoutingRule]
+        default_auth_configs: Optional[list[ApplicationGatewayAuthConfig]]
+        default_backend_address_pool: Optional[SubResource]
+        default_backend_http_settings: Optional[SubResource]
+        default_redirect_configuration: Optional[SubResource]
+        default_rewrite_rule_set: Optional[SubResource]
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                advanced_routing_rules: list[ApplicationGatewayAdvancedRoutingRule], 
+                default_auth_configs: Optional[list[ApplicationGatewayAuthConfig]] = ..., 
+                default_backend_address_pool: Optional[SubResource] = ..., 
+                default_backend_http_settings: Optional[SubResource] = ..., 
+                default_redirect_configuration: Optional[SubResource] = ..., 
+                default_rewrite_rule_set: Optional[SubResource] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingPropertyValueMatcher(_Model):
+        ignore_case: Optional[bool]
+        negate: Optional[bool]
+        pattern: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                ignore_case: Optional[bool] = ..., 
+                negate: Optional[bool] = ..., 
+                pattern: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingRule(SubResource):
+        etag: Optional[str]
+        id: str
+        name: Optional[str]
+        properties: Optional[ApplicationGatewayAdvancedRoutingRulePropertiesFormat]
+        type: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                properties: Optional[ApplicationGatewayAdvancedRoutingRulePropertiesFormat] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingRulePropertiesFormat(_Model):
+        advanced_routing_condition_set: Optional[SubResource]
+        auth_configs: Optional[list[ApplicationGatewayAuthConfig]]
+        backend_address_pool: Optional[SubResource]
+        backend_http_settings: Optional[SubResource]
+        priority: int
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        redirect_configuration: Optional[SubResource]
+        rewrite_rule_set: Optional[SubResource]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                advanced_routing_condition_set: Optional[SubResource] = ..., 
+                auth_configs: Optional[list[ApplicationGatewayAuthConfig]] = ..., 
+                backend_address_pool: Optional[SubResource] = ..., 
+                backend_http_settings: Optional[SubResource] = ..., 
+                priority: int, 
+                redirect_configuration: Optional[SubResource] = ..., 
+                rewrite_rule_set: Optional[SubResource] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.ApplicationGatewayAuthConfig(_Model):
+        authentication_policy: SubResource
+        name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                authentication_policy: SubResource, 
+                name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.network.models.ApplicationGatewayAuthenticationCertificate(SubResource):
         etag: Optional[str]
         id: str
@@ -16534,6 +17265,7 @@ namespace azure.mgmt.network.models
 
 
     class azure.mgmt.network.models.ApplicationGatewayFirewallManifestRuleSet(_Model):
+        display_name: Optional[str]
         rule_groups: list[ApplicationGatewayFirewallRuleGroup]
         rule_set_type: str
         rule_set_version: str
@@ -16544,6 +17276,7 @@ namespace azure.mgmt.network.models
         def __init__(
                 self, 
                 *, 
+                display_name: Optional[str] = ..., 
                 rule_groups: list[ApplicationGatewayFirewallRuleGroup], 
                 rule_set_type: str, 
                 rule_set_version: str, 
@@ -16568,6 +17301,7 @@ namespace azure.mgmt.network.models
     class azure.mgmt.network.models.ApplicationGatewayFirewallRule(_Model):
         action: Optional[Union[str, ApplicationGatewayWafRuleActionTypes]]
         description: Optional[str]
+        paranoia_level: Optional[Union[str, ApplicationGatewayWafRuleParanoiaLevel]]
         rule_id: int
         rule_id_string: Optional[str]
         sensitivity: Optional[Union[str, ApplicationGatewayWafRuleSensitivityTypes]]
@@ -16579,6 +17313,7 @@ namespace azure.mgmt.network.models
                 *, 
                 action: Optional[Union[str, ApplicationGatewayWafRuleActionTypes]] = ..., 
                 description: Optional[str] = ..., 
+                paranoia_level: Optional[Union[str, ApplicationGatewayWafRuleParanoiaLevel]] = ..., 
                 rule_id: int, 
                 rule_id_string: Optional[str] = ..., 
                 sensitivity: Optional[Union[str, ApplicationGatewayWafRuleSensitivityTypes]] = ..., 
@@ -16638,6 +17373,7 @@ namespace azure.mgmt.network.models
 
 
     class azure.mgmt.network.models.ApplicationGatewayFirewallRuleSetPropertiesFormat(_Model):
+        display_name: Optional[str]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         rule_groups: list[ApplicationGatewayFirewallRuleGroup]
         rule_set_type: str
@@ -16648,6 +17384,7 @@ namespace azure.mgmt.network.models
         def __init__(
                 self, 
                 *, 
+                display_name: Optional[str] = ..., 
                 rule_groups: list[ApplicationGatewayFirewallRuleGroup], 
                 rule_set_type: str, 
                 rule_set_version: str, 
@@ -17433,6 +18170,8 @@ namespace azure.mgmt.network.models
 
 
     class azure.mgmt.network.models.ApplicationGatewayPropertiesFormat(_Model):
+        advanced_routing_condition_sets: Optional[list[ApplicationGatewayAdvancedRoutingConditionSet]]
+        advanced_routing_maps: Optional[list[ApplicationGatewayAdvancedRoutingMap]]
         authentication_certificates: Optional[list[ApplicationGatewayAuthenticationCertificate]]
         autoscale_configuration: Optional[ApplicationGatewayAutoscaleConfiguration]
         backend_address_pools: Optional[list[ApplicationGatewayBackendAddressPool]]
@@ -17459,6 +18198,7 @@ namespace azure.mgmt.network.models
         provisioning_state: Optional[Union[str, ProvisioningState]]
         redirect_configurations: Optional[list[ApplicationGatewayRedirectConfiguration]]
         request_routing_rules: Optional[list[ApplicationGatewayRequestRoutingRule]]
+        reserved_capacity: Optional[int]
         resource_guid: Optional[str]
         rewrite_rule_sets: Optional[list[ApplicationGatewayRewriteRuleSet]]
         routing_rules: Optional[list[ApplicationGatewayRoutingRule]]
@@ -17475,6 +18215,8 @@ namespace azure.mgmt.network.models
         def __init__(
                 self, 
                 *, 
+                advanced_routing_condition_sets: Optional[list[ApplicationGatewayAdvancedRoutingConditionSet]] = ..., 
+                advanced_routing_maps: Optional[list[ApplicationGatewayAdvancedRoutingMap]] = ..., 
                 authentication_certificates: Optional[list[ApplicationGatewayAuthenticationCertificate]] = ..., 
                 autoscale_configuration: Optional[ApplicationGatewayAutoscaleConfiguration] = ..., 
                 backend_address_pools: Optional[list[ApplicationGatewayBackendAddressPool]] = ..., 
@@ -17497,6 +18239,7 @@ namespace azure.mgmt.network.models
                 probes: Optional[list[ApplicationGatewayProbe]] = ..., 
                 redirect_configurations: Optional[list[ApplicationGatewayRedirectConfiguration]] = ..., 
                 request_routing_rules: Optional[list[ApplicationGatewayRequestRoutingRule]] = ..., 
+                reserved_capacity: Optional[int] = ..., 
                 rewrite_rule_sets: Optional[list[ApplicationGatewayRewriteRuleSet]] = ..., 
                 routing_rules: Optional[list[ApplicationGatewayRoutingRule]] = ..., 
                 sku: Optional[ApplicationGatewaySku] = ..., 
@@ -17612,6 +18355,8 @@ namespace azure.mgmt.network.models
 
 
     class azure.mgmt.network.models.ApplicationGatewayRequestRoutingRulePropertiesFormat(_Model):
+        advanced_routing_map: Optional[SubResource]
+        auth_configs: Optional[list[ApplicationGatewayAuthConfig]]
         backend_address_pool: Optional[SubResource]
         backend_http_settings: Optional[SubResource]
         entra_jwt_validation_config: Optional[SubResource]
@@ -17628,6 +18373,8 @@ namespace azure.mgmt.network.models
         def __init__(
                 self, 
                 *, 
+                advanced_routing_map: Optional[SubResource] = ..., 
+                auth_configs: Optional[list[ApplicationGatewayAuthConfig]] = ..., 
                 backend_address_pool: Optional[SubResource] = ..., 
                 backend_http_settings: Optional[SubResource] = ..., 
                 entra_jwt_validation_config: Optional[SubResource] = ..., 
@@ -17645,6 +18392,7 @@ namespace azure.mgmt.network.models
 
 
     class azure.mgmt.network.models.ApplicationGatewayRequestRoutingRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ADVANCED_ROUTING = "AdvancedRouting"
         BASIC = "Basic"
         PATH_BASED_ROUTING = "PathBasedRouting"
 
@@ -17834,6 +18582,8 @@ namespace azure.mgmt.network.models
 
     class azure.mgmt.network.models.ApplicationGatewaySkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         BASIC = "Basic"
+        BASIC_V2 = "Basic_v2"
+        BASIC_WAF_V2 = "Basic_WAF_v2"
         STANDARD_LARGE = "Standard_Large"
         STANDARD_MEDIUM = "Standard_Medium"
         STANDARD_SMALL = "Standard_Small"
@@ -18058,6 +18808,8 @@ namespace azure.mgmt.network.models
 
     class azure.mgmt.network.models.ApplicationGatewayTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         BASIC = "Basic"
+        BASIC_V2 = "Basic_v2"
+        BASIC_WAF_V2 = "Basic_WAF_v2"
         STANDARD = "Standard"
         STANDARD_V2 = "Standard_v2"
         WAF = "WAF"
@@ -18287,6 +19039,13 @@ namespace azure.mgmt.network.models
         NONE = "None"
 
 
+    class azure.mgmt.network.models.ApplicationGatewayWafRuleParanoiaLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PL1 = "PL1"
+        PL2 = "PL2"
+        PL3 = "PL3"
+        PL4 = "PL4"
+
+
     class azure.mgmt.network.models.ApplicationGatewayWafRuleSensitivityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         HIGH = "High"
         LOW = "Low"
@@ -18405,6 +19164,34 @@ namespace azure.mgmt.network.models
         resource_guid: Optional[str]
 
 
+    class azure.mgmt.network.models.ApprovalReference(_Model):
+        private_endpoint_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                private_endpoint_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.ArmProxyResource(ArmResource):
+        id: str
+        name: str
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.network.models.ArmResource(_Model):
+        id: Optional[str]
+        name: Optional[str]
+        system_data: Optional[SystemData]
+        type: Optional[str]
+
+
     class azure.mgmt.network.models.AssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AUDIT = "Audit"
         ENFORCED = "Enforced"
@@ -18419,6 +19206,97 @@ namespace azure.mgmt.network.models
     class azure.mgmt.network.models.AuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         EAPMSCHA_PV2 = "EAPMSCHAPv2"
         EAPTLS = "EAPTLS"
+
+
+    class azure.mgmt.network.models.AuthenticationPolicy(Resource):
+        etag: Optional[str]
+        id: str
+        identity: Optional[ManagedServiceIdentity]
+        location: str
+        name: str
+        properties: Optional[AuthenticationPolicyPropertiesFormat]
+        system_data: Optional[SystemData]
+        tags: dict[str, str]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: Optional[str] = ..., 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                location: Optional[str] = ..., 
+                properties: Optional[AuthenticationPolicyPropertiesFormat] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.AuthenticationPolicyPropertiesFormat(_Model):
+        associated_resources: Optional[list[str]]
+        authentication_properties: AuthenticationProviderProperties
+        on_unauthenticated_request: Optional[Union[str, OnUnauthenticatedRequest]]
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        resource_guid: Optional[str]
+        user_trust_provider_type: Union[str, UserTrustProviderType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                authentication_properties: AuthenticationProviderProperties, 
+                on_unauthenticated_request: Optional[Union[str, OnUnauthenticatedRequest]] = ..., 
+                user_trust_provider_type: Union[str, UserTrustProviderType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.AuthenticationPolicyUpdateParameters(_Model):
+        identity: Optional[ManagedServiceIdentity]
+        tags: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.AuthenticationProviderProperties(_Model):
+        audience: Optional[str]
+        client_id: str
+        client_secret: Optional[str]
+        issuer: str
+        jwks_uri: Optional[str]
+        scope: Optional[list[str]]
+        session_cookie_name: Optional[str]
+        session_timeout: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audience: Optional[str] = ..., 
+                client_id: str, 
+                client_secret: Optional[str] = ..., 
+                issuer: str, 
+                jwks_uri: Optional[str] = ..., 
+                scope: Optional[list[str]] = ..., 
+                session_cookie_name: Optional[str] = ..., 
+                session_timeout: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.network.models.AuthorizationPropertiesFormat(_Model):
@@ -19122,6 +20000,7 @@ namespace azure.mgmt.network.models
     class azure.mgmt.network.models.AzureFirewallPropertiesFormat(_Model):
         additional_properties: Optional[dict[str, str]]
         afc_configuration: Optional[AfcConfiguration]
+        ai_security_add_on: Optional[bool]
         application_rule_collections: Optional[list[AzureFirewallApplicationRuleCollection]]
         autoscale_configuration: Optional[AzureFirewallAutoscaleConfiguration]
         firewall_policy: Optional[SubResource]
@@ -19141,6 +20020,7 @@ namespace azure.mgmt.network.models
                 self, 
                 *, 
                 additional_properties: Optional[dict[str, str]] = ..., 
+                ai_security_add_on: Optional[bool] = ..., 
                 application_rule_collections: Optional[list[AzureFirewallApplicationRuleCollection]] = ..., 
                 autoscale_configuration: Optional[AzureFirewallAutoscaleConfiguration] = ..., 
                 firewall_policy: Optional[SubResource] = ..., 
@@ -19484,6 +20364,7 @@ namespace azure.mgmt.network.models
     class azure.mgmt.network.models.BastionHost(Resource):
         etag: Optional[str]
         id: str
+        identity: Optional[ManagedServiceIdentity]
         location: str
         name: str
         properties: Optional[BastionHostPropertiesFormat]
@@ -19499,6 +20380,7 @@ namespace azure.mgmt.network.models
                 self, 
                 *, 
                 id: Optional[str] = ..., 
+                identity: Optional[ManagedServiceIdentity] = ..., 
                 location: Optional[str] = ..., 
                 properties: Optional[BastionHostPropertiesFormat] = ..., 
                 sku: Optional[Sku] = ..., 
@@ -19577,6 +20459,7 @@ namespace azure.mgmt.network.models
         network_acls: Optional[BastionHostPropertiesFormatNetworkAcls]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         scale_units: Optional[int]
+        session_recording_configuration: Optional[BastionSessionRecordingConfiguration]
         virtual_network: Optional[SubResource]
 
         @overload
@@ -19595,6 +20478,7 @@ namespace azure.mgmt.network.models
                 ip_configurations: Optional[list[BastionHostIPConfiguration]] = ..., 
                 network_acls: Optional[BastionHostPropertiesFormatNetworkAcls] = ..., 
                 scale_units: Optional[int] = ..., 
+                session_recording_configuration: Optional[BastionSessionRecordingConfiguration] = ..., 
                 virtual_network: Optional[SubResource] = ...
             ) -> None: ...
 
@@ -19621,6 +20505,38 @@ namespace azure.mgmt.network.models
         DEVELOPER = "Developer"
         PREMIUM = "Premium"
         STANDARD = "Standard"
+
+
+    class azure.mgmt.network.models.BastionHostUpdate(_Model):
+        identity: Optional[ManagedServiceIdentity]
+        tags: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.BastionSessionRecordingConfiguration(_Model):
+        blob_container_uri: str
+        identity: SessionRecordingIdentity
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                blob_container_uri: str, 
+                identity: SessionRecordingIdentity
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.network.models.BastionSessionState(_Model):
@@ -21203,6 +22119,16 @@ namespace azure.mgmt.network.models
         SINGULAR = "Singular"
 
 
+    class azure.mgmt.network.models.DdosContinent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AFRICA = "Africa"
+        ANTARCTICA = "Antarctica"
+        ASIA = "Asia"
+        EUROPE = "Europe"
+        NORTH_AMERICA = "NorthAmerica"
+        OCEANIA = "Oceania"
+        SOUTH_AMERICA = "SouthAmerica"
+
+
     class azure.mgmt.network.models.DdosCustomPolicy(Resource):
         etag: Optional[str]
         id: str
@@ -21237,6 +22163,7 @@ namespace azure.mgmt.network.models
     class azure.mgmt.network.models.DdosCustomPolicyPropertiesFormat(_Model):
         detection_rules: Optional[list[DdosDetectionRule]]
         front_end_ip_configuration: Optional[list[SubResource]]
+        mitigation_rules: Optional[list[DdosMitigationRule]]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         public_ip_addresses: Optional[list[SubResource]]
         resource_guid: Optional[str]
@@ -21246,7 +22173,8 @@ namespace azure.mgmt.network.models
                 self, 
                 *, 
                 detection_rules: Optional[list[DdosDetectionRule]] = ..., 
-                front_end_ip_configuration: Optional[list[SubResource]] = ...
+                front_end_ip_configuration: Optional[list[SubResource]] = ..., 
+                mitigation_rules: Optional[list[DdosMitigationRule]] = ...
             ) -> None: ...
 
         @overload
@@ -21315,6 +22243,67 @@ namespace azure.mgmt.network.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.network.models.DdosGeoMatch(_Model):
+        continent: Optional[Union[str, DdosContinent]]
+        country_code: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                continent: Optional[Union[str, DdosContinent]] = ..., 
+                country_code: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.DdosMitigationRule(SubResource):
+        etag: Optional[str]
+        id: str
+        name: str
+        properties: DdosMitigationRulePropertiesFormat
+        type: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str, 
+                properties: DdosMitigationRulePropertiesFormat
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.DdosMitigationRulePropertiesFormat(_Model):
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        source_policy_overrides: Optional[list[DdosSourcePolicyOverride]]
+        tcp_default_mitigations: Optional[DdosTcpDefaultMitigations]
+        traffic_scope: Union[str, DdosMitigationTrafficScope]
+        udp_default_mitigations: Optional[DdosUdpDefaultMitigations]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                source_policy_overrides: Optional[list[DdosSourcePolicyOverride]] = ..., 
+                tcp_default_mitigations: Optional[DdosTcpDefaultMitigations] = ..., 
+                traffic_scope: Union[str, DdosMitigationTrafficScope], 
+                udp_default_mitigations: Optional[DdosUdpDefaultMitigations] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.DdosMitigationTrafficScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        TCP = "Tcp"
+        UDP = "Udp"
+
+
     class azure.mgmt.network.models.DdosProtectionPlan(TrackedResourceWithOptionalLocation):
         etag: Optional[str]
         id: str
@@ -21376,10 +22365,133 @@ namespace azure.mgmt.network.models
         VIRTUAL_NETWORK_INHERITED = "VirtualNetworkInherited"
 
 
+    class azure.mgmt.network.models.DdosSourceMatchConditions(_Model):
+        geo_matches: Optional[list[DdosGeoMatch]]
+        ip_prefixes: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                geo_matches: Optional[list[DdosGeoMatch]] = ..., 
+                ip_prefixes: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.DdosSourcePolicyAction(_Model):
+        action_type: Union[str, DdosSourcePolicyActionType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                action_type: Union[str, DdosSourcePolicyActionType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.DdosSourcePolicyActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DENY = "Deny"
+        PERMIT = "Permit"
+
+
+    class azure.mgmt.network.models.DdosSourcePolicyOverride(_Model):
+        conditions: DdosSourceMatchConditions
+        policy_action: DdosSourcePolicyAction
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                conditions: DdosSourceMatchConditions, 
+                policy_action: DdosSourcePolicyAction
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.DdosTcpDefaultMitigations(_Model):
+        per_source_connection_rate_limiting: Optional[DdosTcpPerSourceConnectionRateLimitPolicy]
+        per_source_rate_limiting: Optional[DdosTcpPerSourceRateLimitPolicy]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                per_source_connection_rate_limiting: Optional[DdosTcpPerSourceConnectionRateLimitPolicy] = ..., 
+                per_source_rate_limiting: Optional[DdosTcpPerSourceRateLimitPolicy] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.DdosTcpPerSourceConnectionRateLimitPolicy(_Model):
+        connections_per_second: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connections_per_second: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.DdosTcpPerSourceRateLimitPolicy(_Model):
+        packets_per_second: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                packets_per_second: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.network.models.DdosTrafficType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         TCP = "Tcp"
         TCP_SYN = "TcpSyn"
         UDP = "Udp"
+
+
+    class azure.mgmt.network.models.DdosUdpDefaultMitigations(_Model):
+        per_source_rate_limiting: Optional[DdosUdpPerSourceRateLimitPolicy]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                per_source_rate_limiting: Optional[DdosUdpPerSourceRateLimitPolicy] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.DdosUdpPerSourceRateLimitPolicy(_Model):
+        packets_per_second: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                packets_per_second: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.network.models.DefaultAdminPropertiesFormat(_Model):
@@ -21436,6 +22548,7 @@ namespace azure.mgmt.network.models
 
 
     class azure.mgmt.network.models.DefaultRuleSetPropertyFormat(_Model):
+        display_name: Optional[str]
         rule_set_type: Optional[str]
         rule_set_version: Optional[str]
 
@@ -21443,6 +22556,7 @@ namespace azure.mgmt.network.models
         def __init__(
                 self, 
                 *, 
+                display_name: Optional[str] = ..., 
                 rule_set_type: Optional[str] = ..., 
                 rule_set_version: Optional[str] = ...
             ) -> None: ...
@@ -22065,11 +23179,6 @@ namespace azure.mgmt.network.models
         UDP = "Udp"
 
 
-    class azure.mgmt.network.models.EnableOnlyIpv6PeeringState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DISABLED = "Disabled"
-        ENABLED = "Enabled"
-
-
     class azure.mgmt.network.models.EndpointServiceResult(SubResource):
         id: str
         name: Optional[str]
@@ -22295,6 +23404,20 @@ namespace azure.mgmt.network.models
                 https_port: Optional[int] = ..., 
                 pac_file: Optional[str] = ..., 
                 pac_file_port: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.ExpressRouteAuthorizationKey(_Model):
+        authorization_key: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                authorization_key: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -22571,6 +23694,7 @@ namespace azure.mgmt.network.models
         bandwidth_in_gbps: Optional[float]
         circuit_provisioning_state: Optional[str]
         enable_direct_port_rate_limit: Optional[bool]
+        express_route_lag: Optional[SubResource]
         express_route_port: Optional[SubResource]
         gateway_manager_etag: Optional[str]
         global_reach_enabled: Optional[bool]
@@ -22595,6 +23719,7 @@ namespace azure.mgmt.network.models
                 bandwidth_in_gbps: Optional[float] = ..., 
                 circuit_provisioning_state: Optional[str] = ..., 
                 enable_direct_port_rate_limit: Optional[bool] = ..., 
+                express_route_lag: Optional[SubResource] = ..., 
                 express_route_port: Optional[SubResource] = ..., 
                 gateway_manager_etag: Optional[str] = ..., 
                 global_reach_enabled: Optional[bool] = ..., 
@@ -23288,6 +24413,35 @@ namespace azure.mgmt.network.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.network.models.ExpressRouteLagAuthorization(ProxyResourceWithReadOnlyID):
+        etag: Optional[str]
+        id: str
+        name: str
+        properties: Optional[ExpressRouteLagAuthorizationPropertiesFormat]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[ExpressRouteLagAuthorizationPropertiesFormat] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.ExpressRouteLagAuthorizationPropertiesFormat(_Model):
+        authorization_use_status: Optional[Union[str, ExpressRouteLagAuthorizationUseStatus]]
+        circuit_resource_uri: Optional[str]
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+
+
+    class azure.mgmt.network.models.ExpressRouteLagAuthorizationUseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AVAILABLE = "Available"
+        IN_USE = "InUse"
+
+
     class azure.mgmt.network.models.ExpressRouteLagBillingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         METERED_DATA = "MeteredData"
         UNLIMITED_DATA = "UnlimitedData"
@@ -23382,8 +24536,10 @@ namespace azure.mgmt.network.models
 
     class azure.mgmt.network.models.ExpressRouteLagPropertiesFormat(_Model):
         allocation_date: Optional[str]
+        authorizations: Optional[list[ExpressRouteLagAuthorization]]
         bandwidth_in_gbps: Optional[int]
         billing_type: Optional[Union[str, ExpressRouteLagBillingType]]
+        circuits: Optional[list[SubResource]]
         encapsulation: Optional[Union[str, ExpressRouteLagEncapsulation]]
         ether_type: Optional[str]
         lacp_timer: Optional[Union[str, ExpressRouteLagLacpTimer]]
@@ -23400,6 +24556,7 @@ namespace azure.mgmt.network.models
         def __init__(
                 self, 
                 *, 
+                authorizations: Optional[list[ExpressRouteLagAuthorization]] = ..., 
                 bandwidth_in_gbps: Optional[int] = ..., 
                 billing_type: Optional[Union[str, ExpressRouteLagBillingType]] = ..., 
                 encapsulation: Optional[Union[str, ExpressRouteLagEncapsulation]] = ..., 
@@ -25699,7 +26856,7 @@ namespace azure.mgmt.network.models
         allow_remote_vnet_to_use_hub_vnet_gateways: Optional[bool]
         connection_policy: Optional[SubResource]
         enable_internet_security: Optional[bool]
-        enable_only_ipv6_peering: Optional[Union[str, EnableOnlyIpv6PeeringState]]
+        enable_only_ipv6_peering: Optional[bool]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         remote_virtual_network: Optional[SubResource]
         routing_configuration: Optional[RoutingConfiguration]
@@ -25712,7 +26869,7 @@ namespace azure.mgmt.network.models
                 allow_remote_vnet_to_use_hub_vnet_gateways: Optional[bool] = ..., 
                 connection_policy: Optional[SubResource] = ..., 
                 enable_internet_security: Optional[bool] = ..., 
-                enable_only_ipv6_peering: Optional[Union[str, EnableOnlyIpv6PeeringState]] = ..., 
+                enable_only_ipv6_peering: Optional[bool] = ..., 
                 remote_virtual_network: Optional[SubResource] = ..., 
                 routing_configuration: Optional[RoutingConfiguration] = ...
             ) -> None: ...
@@ -26454,6 +27611,8 @@ namespace azure.mgmt.network.models
         description: Optional[str]
         display_name: Optional[str]
         ip_address_type: Optional[list[Union[str, IpType]]]
+        max_allocation_size: Optional[str]
+        min_allocation_size: Optional[str]
         parent_pool_name: Optional[str]
         provisioning_state: Optional[Union[str, ProvisioningState]]
 
@@ -26464,6 +27623,8 @@ namespace azure.mgmt.network.models
                 address_prefixes: list[str], 
                 description: Optional[str] = ..., 
                 display_name: Optional[str] = ..., 
+                max_allocation_size: Optional[str] = ..., 
+                min_allocation_size: Optional[str] = ..., 
                 parent_pool_name: Optional[str] = ...
             ) -> None: ...
 
@@ -26490,13 +27651,17 @@ namespace azure.mgmt.network.models
     class azure.mgmt.network.models.IpamPoolUpdateProperties(_Model):
         description: Optional[str]
         display_name: Optional[str]
+        max_allocation_size: Optional[str]
+        min_allocation_size: Optional[str]
 
         @overload
         def __init__(
                 self, 
                 *, 
                 description: Optional[str] = ..., 
-                display_name: Optional[str] = ...
+                display_name: Optional[str] = ..., 
+                max_allocation_size: Optional[str] = ..., 
+                min_allocation_size: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -27126,14 +28291,14 @@ namespace azure.mgmt.network.models
 
     class azure.mgmt.network.models.ManagedRuleSetRuleGroup(_Model):
         rule_group_name: str
-        rules: Optional[list[str]]
+        rules: Optional[list[int]]
 
         @overload
         def __init__(
                 self, 
                 *, 
                 rule_group_name: str, 
-                rules: Optional[list[str]] = ...
+                rules: Optional[list[int]] = ...
             ) -> None: ...
 
         @overload
@@ -27235,6 +28400,24 @@ namespace azure.mgmt.network.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.network.models.Metric(_Model):
+        name: Optional[str]
+        unit: Optional[str]
+        value: Optional[float]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Optional[str] = ..., 
+                unit: Optional[str] = ..., 
+                value: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.network.models.MetricSpecification(_Model):
         aggregation_type: Optional[str]
         availabilities: Optional[list[Availability]]
@@ -27269,6 +28452,98 @@ namespace azure.mgmt.network.models
                 source_mdm_account: Optional[str] = ..., 
                 source_mdm_namespace: Optional[str] = ..., 
                 unit: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.MigrateExpressRouteCircuitHealthCheckDetails(_Model):
+        port_migration_infos: Optional[list[PortMigrationInfo]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                port_migration_infos: Optional[list[PortMigrationInfo]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.MigrateExpressRouteCircuitHealthCheckResponse(_Model):
+        details: Optional[MigrateExpressRouteCircuitHealthCheckDetails]
+        failure_reason: Optional[str]
+        new_cross_connection_url: Optional[str]
+        new_s_tag: Optional[str]
+        phase: Optional[str]
+        prepare_expiry_time: Optional[datetime]
+        prepared_at: Optional[datetime]
+        should_rollback: Optional[bool]
+        status: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                details: Optional[MigrateExpressRouteCircuitHealthCheckDetails] = ..., 
+                failure_reason: Optional[str] = ..., 
+                new_cross_connection_url: Optional[str] = ..., 
+                new_s_tag: Optional[str] = ..., 
+                phase: Optional[str] = ..., 
+                prepare_expiry_time: Optional[datetime] = ..., 
+                prepared_at: Optional[datetime] = ..., 
+                should_rollback: Optional[bool] = ..., 
+                status: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.MigrateExpressRouteCircuitRequest(_Model):
+        port_id: Optional[str]
+        target_peering_location: Optional[str]
+        target_port_mapping: Optional[list[PortMapping]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                port_id: Optional[str] = ..., 
+                target_peering_location: Optional[str] = ..., 
+                target_port_mapping: Optional[list[PortMapping]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.MigrateExpressRouteCircuitValidateAndHealthCheckRequest(_Model):
+        target_peering_location: str
+        target_port_mapping: list[PortMapping]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                target_peering_location: str, 
+                target_port_mapping: list[PortMapping]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.MigrateExpressRouteCircuitValidateResponse(_Model):
+        status: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                status: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -27346,6 +28621,25 @@ namespace azure.mgmt.network.models
                 self, 
                 *, 
                 move_ip_configuration_items: list[MoveIpConfigurationItem]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.Nat64Capability(VirtualNetworkApplianceCapability, discriminator='NAT64'):
+        id: str
+        kind: Literal[VirtualNetworkApplianceCapabilityKind.NAT64]
+        name: str
+        properties: VirtualNetworkApplianceCapabilityProperties
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[VirtualNetworkApplianceCapabilityProperties] = ...
             ) -> None: ...
 
         @overload
@@ -28255,12 +29549,14 @@ namespace azure.mgmt.network.models
         description: str
         destination_addresses: Optional[list[str]]
         destination_fqdns: Optional[list[str]]
+        destination_geo_locations: Optional[list[str]]
         destination_ip_groups: Optional[list[str]]
         destination_ports: Optional[list[str]]
         ip_protocols: Optional[list[Union[str, FirewallPolicyRuleNetworkProtocol]]]
         name: str
         rule_type: Literal[FirewallPolicyRuleType.NETWORK_RULE]
         source_addresses: Optional[list[str]]
+        source_geo_locations: Optional[list[str]]
         source_ip_groups: Optional[list[str]]
         source_kube_selector_groups: Optional[list[str]]
 
@@ -28271,11 +29567,13 @@ namespace azure.mgmt.network.models
                 description: Optional[str] = ..., 
                 destination_addresses: Optional[list[str]] = ..., 
                 destination_fqdns: Optional[list[str]] = ..., 
+                destination_geo_locations: Optional[list[str]] = ..., 
                 destination_ip_groups: Optional[list[str]] = ..., 
                 destination_ports: Optional[list[str]] = ..., 
                 ip_protocols: Optional[list[Union[str, FirewallPolicyRuleNetworkProtocol]]] = ..., 
                 name: Optional[str] = ..., 
                 source_addresses: Optional[list[str]] = ..., 
+                source_geo_locations: Optional[list[str]] = ..., 
                 source_ip_groups: Optional[list[str]] = ..., 
                 source_kube_selector_groups: Optional[list[str]] = ...
             ) -> None: ...
@@ -29276,6 +30574,12 @@ namespace azure.mgmt.network.models
         OPTIMIZE_AND_ALLOW = "OptimizeAndAllow"
 
 
+    class azure.mgmt.network.models.OnUnauthenticatedRequest(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ALLOW = "allow"
+        AUTHENTICATE = "authenticate"
+        DENY = "deny"
+
+
     class azure.mgmt.network.models.Operation(_Model):
         display: Optional[OperationDisplay]
         name: Optional[str]
@@ -29680,6 +30984,63 @@ namespace azure.mgmt.network.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.network.models.PLGatewayCapability(VirtualNetworkApplianceCapability, discriminator='PLGateway'):
+        id: str
+        kind: Literal[VirtualNetworkApplianceCapabilityKind.PL_GATEWAY]
+        name: str
+        properties: VirtualNetworkApplianceCapabilityProperties
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[VirtualNetworkApplianceCapabilityProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.PLGatewayFastpathCapability(VirtualNetworkApplianceCapability, discriminator='PLGatewayFastpath'):
+        id: str
+        kind: Literal[VirtualNetworkApplianceCapabilityKind.PL_GATEWAY_FASTPATH]
+        name: str
+        properties: VirtualNetworkApplianceCapabilityProperties
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[VirtualNetworkApplianceCapabilityProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.PLIPForwardersCapability(VirtualNetworkApplianceCapability, discriminator='PLIPForwarders'):
+        id: str
+        kind: Literal[VirtualNetworkApplianceCapabilityKind.PLIP_FORWARDERS]
+        name: str
+        properties: VirtualNetworkApplianceCapabilityProperties
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[VirtualNetworkApplianceCapabilityProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.network.models.PacketCapture(_Model):
         properties: PacketCaptureParameters
 
@@ -30024,6 +31385,40 @@ namespace azure.mgmt.network.models
         UNENFORCED = "Unenforced"
 
 
+    class azure.mgmt.network.models.PeeringHealth(_Model):
+        stats_at_prepare: Optional[PeeringStats]
+        stats_current: Optional[PeeringStats]
+        type: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                stats_at_prepare: Optional[PeeringStats] = ..., 
+                stats_current: Optional[PeeringStats] = ..., 
+                type: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.PeeringStats(_Model):
+        metrics: Optional[list[Metric]]
+        timestamp: Optional[datetime]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                metrics: Optional[list[Metric]] = ..., 
+                timestamp: Optional[datetime] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.network.models.PerimeterAssociableResource(_Model):
         id: Optional[str]
         name: Optional[str]
@@ -30166,6 +31561,48 @@ namespace azure.mgmt.network.models
         number_of_reserved_ip_addresses: Optional[str]
         reserved_address_prefixes: Optional[list[str]]
         total_number_of_ip_addresses: Optional[str]
+
+
+    class azure.mgmt.network.models.PortMapping(_Model):
+        source_port_id: str
+        target_port_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                source_port_id: str, 
+                target_port_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.PortMigrationInfo(_Model):
+        failure_reason: Optional[str]
+        peerings: Optional[list[PeeringHealth]]
+        phase: Optional[str]
+        port_id: Optional[str]
+        source_port_id: Optional[str]
+        source_port_stats: Optional[SourcePortStats]
+        status: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                failure_reason: Optional[str] = ..., 
+                peerings: Optional[list[PeeringHealth]] = ..., 
+                phase: Optional[str] = ..., 
+                port_id: Optional[str] = ..., 
+                source_port_id: Optional[str] = ..., 
+                source_port_stats: Optional[SourcePortStats] = ..., 
+                status: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.network.models.PreferredIPVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -30509,6 +31946,7 @@ namespace azure.mgmt.network.models
 
 
     class azure.mgmt.network.models.PrivateLinkServiceConnectionProperties(_Model):
+        approval_reference: Optional[ApprovalReference]
         group_ids: Optional[list[str]]
         private_link_service_connection_state: Optional[PrivateLinkServiceConnectionState]
         private_link_service_id: Optional[str]
@@ -30519,6 +31957,7 @@ namespace azure.mgmt.network.models
         def __init__(
                 self, 
                 *, 
+                approval_reference: Optional[ApprovalReference] = ..., 
                 group_ids: Optional[list[str]] = ..., 
                 private_link_service_connection_state: Optional[PrivateLinkServiceConnectionState] = ..., 
                 private_link_service_id: Optional[str] = ..., 
@@ -30829,6 +32268,24 @@ namespace azure.mgmt.network.models
                 self, 
                 *, 
                 id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.ProxyResourceVirtualNetworkApplianceCapabilityProperties(ArmProxyResource):
+        id: str
+        name: str
+        properties: Optional[VirtualNetworkApplianceCapabilityProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[VirtualNetworkApplianceCapabilityProperties] = ...
             ) -> None: ...
 
         @overload
@@ -33183,6 +34640,27 @@ namespace azure.mgmt.network.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.network.models.SessionRecordingIdentity(_Model):
+        type: Union[str, SessionRecordingIdentityType]
+        user_assigned_identity_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: Union[str, SessionRecordingIdentityType], 
+                user_assigned_identity_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.SessionRecordingIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        SYSTEM_ASSIGNED = "SystemAssigned"
+        USER_ASSIGNED = "UserAssigned"
+
+
     class azure.mgmt.network.models.Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ERROR = "Error"
         WARNING = "Warning"
@@ -33337,6 +34815,20 @@ namespace azure.mgmt.network.models
     class azure.mgmt.network.models.SlotType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         PRODUCTION = "Production"
         STAGING = "Staging"
+
+
+    class azure.mgmt.network.models.SourcePortStats(_Model):
+        peerings: Optional[list[PeeringHealth]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                peerings: Optional[list[PeeringHealth]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.network.models.StaticCidr(CommonProxyResource):
@@ -34218,6 +35710,10 @@ namespace azure.mgmt.network.models
         TRUE = "True"
 
 
+    class azure.mgmt.network.models.UserTrustProviderType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ENTRA = "entra"
+
+
     class azure.mgmt.network.models.VM(Resource):
         id: str
         location: str
@@ -34800,6 +36296,54 @@ namespace azure.mgmt.network.models
             ) -> None: ...
 
 
+    class azure.mgmt.network.models.VirtualNetworkApplianceCapability(ProxyResourceVirtualNetworkApplianceCapabilityProperties):
+        id: str
+        kind: str
+        name: str
+        properties: VirtualNetworkApplianceCapabilityProperties
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                kind: str, 
+                properties: Optional[VirtualNetworkApplianceCapabilityProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.VirtualNetworkApplianceCapabilityIpVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DUAL_STACK = "DualStack"
+        I_PV6 = "IPv6"
+
+
+    class azure.mgmt.network.models.VirtualNetworkApplianceCapabilityKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        NAT64 = "NAT64"
+        PLIP_FORWARDERS = "PLIPForwarders"
+        PL_GATEWAY = "PLGateway"
+        PL_GATEWAY_FASTPATH = "PLGatewayFastpath"
+
+
+    class azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties(_Model):
+        ip_version: Optional[Union[str, VirtualNetworkApplianceCapabilityIpVersion]]
+        linked_resource_id: Optional[str]
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                ip_version: Optional[Union[str, VirtualNetworkApplianceCapabilityIpVersion]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.network.models.VirtualNetworkApplianceIpConfiguration(SubResource):
         etag: Optional[str]
         id: str
@@ -34856,6 +36400,7 @@ namespace azure.mgmt.network.models
 
     class azure.mgmt.network.models.VirtualNetworkAppliancePropertiesFormat(_Model):
         bandwidth_in_gbps: Optional[float]
+        capacity_provider: Optional[SubResource]
         ip_configurations: Optional[list[VirtualNetworkApplianceIpConfiguration]]
         private_ip_address_version: Optional[Union[str, VirtualNetworkApplianceIpVersionType]]
         provisioning_state: Optional[Union[str, ProvisioningState]]
@@ -34867,6 +36412,7 @@ namespace azure.mgmt.network.models
                 self, 
                 *, 
                 bandwidth_in_gbps: Optional[float] = ..., 
+                capacity_provider: Optional[SubResource] = ..., 
                 private_ip_address_version: Optional[Union[str, VirtualNetworkApplianceIpVersionType]] = ..., 
                 subnet: Optional[Subnet] = ...
             ) -> None: ...
@@ -35316,7 +36862,9 @@ namespace azure.mgmt.network.models
 
 
     class azure.mgmt.network.models.VirtualNetworkGatewayMigrationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MIGRATE_GATEWAY_FOR_POINT_TO_SITE_PROFILE = "MigrateGatewayForPointToSiteProfile"
         UPGRADE_DEPLOYMENT_TO_STANDARD_IP = "UpgradeDeploymentToStandardIP"
+        UPGRADE_GATEWAY_TO_DUAL_STACK = "UpgradeGatewayToDualStack"
 
 
     class azure.mgmt.network.models.VirtualNetworkGatewayNatRule(SubResourceModel):
@@ -37222,6 +38770,7 @@ namespace azure.mgmt.network.models
         policy_settings: Optional[PolicySettings]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         resource_state: Optional[Union[str, WebApplicationFirewallPolicyResourceState]]
+        tier: Optional[Union[str, WebApplicationFirewallPolicyTier]]
 
         @overload
         def __init__(
@@ -37229,7 +38778,8 @@ namespace azure.mgmt.network.models
                 *, 
                 custom_rules: Optional[list[WebApplicationFirewallCustomRule]] = ..., 
                 managed_rules: ManagedRulesDefinition, 
-                policy_settings: Optional[PolicySettings] = ...
+                policy_settings: Optional[PolicySettings] = ..., 
+                tier: Optional[Union[str, WebApplicationFirewallPolicyTier]] = ...
             ) -> None: ...
 
         @overload
@@ -37243,6 +38793,11 @@ namespace azure.mgmt.network.models
         DISABLING = "Disabling"
         ENABLED = "Enabled"
         ENABLING = "Enabling"
+
+
+    class azure.mgmt.network.models.WebApplicationFirewallPolicyTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BASIC = "Basic"
+        STANDARD = "Standard"
 
 
     class azure.mgmt.network.models.WebApplicationFirewallRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -37961,6 +39516,107 @@ namespace azure.mgmt.network.operations
             ) -> ApplicationSecurityGroup: ...
 
 
+    class azure.mgmt.network.operations.AuthenticationPoliciesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                authentication_policy_name: str, 
+                resource: AuthenticationPolicy, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AuthenticationPolicy]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                authentication_policy_name: str, 
+                resource: AuthenticationPolicy, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AuthenticationPolicy]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                authentication_policy_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AuthenticationPolicy]: ...
+
+        @distributed_trace
+        def delete(
+                self, 
+                resource_group_name: str, 
+                authentication_policy_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def get(
+                self, 
+                resource_group_name: str, 
+                authentication_policy_name: str, 
+                **kwargs: Any
+            ) -> AuthenticationPolicy: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[AuthenticationPolicy]: ...
+
+        @distributed_trace
+        def list_all(self, **kwargs: Any) -> ItemPaged[AuthenticationPolicy]: ...
+
+        @overload
+        def update(
+                self, 
+                resource_group_name: str, 
+                authentication_policy_name: str, 
+                parameters: AuthenticationPolicyUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AuthenticationPolicy: ...
+
+        @overload
+        def update(
+                self, 
+                resource_group_name: str, 
+                authentication_policy_name: str, 
+                parameters: AuthenticationPolicyUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AuthenticationPolicy: ...
+
+        @overload
+        def update(
+                self, 
+                resource_group_name: str, 
+                authentication_policy_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AuthenticationPolicy: ...
+
+
     class azure.mgmt.network.operations.AvailableDelegationsOperations:
 
         def __init__(
@@ -38298,29 +39954,29 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[None]: ...
 
         @overload
-        def begin_update_tags(
+        def begin_update(
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                parameters: TagsObject, 
+                parameters: BastionHostUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> LROPoller[BastionHost]: ...
 
         @overload
-        def begin_update_tags(
+        def begin_update(
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
-                parameters: TagsObject, 
+                parameters: BastionHostUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> LROPoller[BastionHost]: ...
 
         @overload
-        def begin_update_tags(
+        def begin_update(
                 self, 
                 resource_group_name: str, 
                 bastion_host_name: str, 
@@ -38933,7 +40589,7 @@ namespace azure.mgmt.network.operations
             ) -> DdosCustomPolicy: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -38941,7 +40597,7 @@ namespace azure.mgmt.network.operations
             ) -> ItemPaged[DdosCustomPolicy]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def list_all(self, **kwargs: Any) -> ItemPaged[DdosCustomPolicy]: ...
 
         @overload
@@ -39243,6 +40899,16 @@ namespace azure.mgmt.network.operations
                 **kwargs: Any
             ) -> ItemPaged[ExpressRouteCircuitAuthorization]: ...
 
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'authorization_name', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01'])
+        def list_keys(
+                self, 
+                resource_group_name: str, 
+                circuit_name: str, 
+                authorization_name: str, 
+                **kwargs: Any
+            ) -> ExpressRouteAuthorizationKey: ...
+
 
     class azure.mgmt.network.operations.ExpressRouteCircuitConnectionsOperations:
 
@@ -39442,7 +41108,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'failover_test_type', 'fetch_latest', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'failover_test_type', 'fetch_latest', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_get_circuit_link_failover_all_tests_details(
                 self, 
                 resource_group_name: str, 
@@ -39454,7 +41120,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[List[ExpressRouteLinkFailoverAllTestsDetails]]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'link_type', 'circuit_test_category', 'failover_test_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'link_type', 'circuit_test_category', 'failover_test_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_get_circuit_link_failover_single_test_details(
                 self, 
                 resource_group_name: str, 
@@ -39497,7 +41163,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[ExpressRouteCircuitsRoutesTableSummaryListResult]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'link_type', 'circuit_test_category', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'link_type', 'circuit_test_category', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_start_circuit_link_failover_test(
                 self, 
                 resource_group_name: str, 
@@ -39761,6 +41427,39 @@ namespace azure.mgmt.network.operations
             ) -> None: ...
 
         @overload
+        def begin_commit_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_commit_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_commit_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
         def begin_create_or_update(
                 self, 
                 resource_group_name: str, 
@@ -39793,6 +41492,39 @@ namespace azure.mgmt.network.operations
                 **kwargs: Any
             ) -> LROPoller[ExpressRouteCrossConnection]: ...
 
+        @overload
+        def begin_get_circuit_migration_info(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitValidateAndHealthCheckRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_get_circuit_migration_info(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitValidateAndHealthCheckRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_get_circuit_migration_info(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
         @distributed_trace
         def begin_list_arp_table(
                 self, 
@@ -39822,6 +41554,204 @@ namespace azure.mgmt.network.operations
                 device_path: str, 
                 **kwargs: Any
             ) -> LROPoller[ExpressRouteCrossConnectionsRoutesTableSummaryListResult]: ...
+
+        @overload
+        def begin_migrate_circuit(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_migrate_circuit(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_migrate_circuit(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_prepare_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_prepare_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_prepare_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_restore_bgp_for_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_restore_bgp_for_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_restore_bgp_for_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_rollback_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_rollback_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_rollback_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_shut_down_bgp_for_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_shut_down_bgp_for_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_shut_down_bgp_for_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitHealthCheckResponse]: ...
+
+        @overload
+        def begin_validate_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitValidateAndHealthCheckRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitValidateResponse]: ...
+
+        @overload
+        def begin_validate_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: MigrateExpressRouteCircuitValidateAndHealthCheckRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitValidateResponse]: ...
+
+        @overload
+        def begin_validate_circuit_migration(
+                self, 
+                resource_group_name: str, 
+                cross_connection_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MigrateExpressRouteCircuitValidateResponse]: ...
 
         @distributed_trace
         def get(
@@ -39930,7 +41860,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'type', 'fetch_latest', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'type', 'fetch_latest', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_get_failover_all_tests_details(
                 self, 
                 resource_group_name: str, 
@@ -39942,7 +41872,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[List[ExpressRouteFailoverTestDetails]]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'peering_location', 'failover_test_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'peering_location', 'failover_test_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_get_failover_single_test_details(
                 self, 
                 resource_group_name: str, 
@@ -39954,7 +41884,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[List[ExpressRouteFailoverSingleTestDetails]]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'attempt_refresh', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'attempt_refresh', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_get_resiliency_information(
                 self, 
                 resource_group_name: str, 
@@ -39965,7 +41895,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[GatewayResiliencyInformation]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'attempt_refresh', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'attempt_refresh', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_get_routes_information(
                 self, 
                 resource_group_name: str, 
@@ -39976,7 +41906,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[GatewayRouteSetsInformation]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'peering_location', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'peering_location', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_start_site_failover_test(
                 self, 
                 resource_group_name: str, 
@@ -40069,6 +41999,86 @@ namespace azure.mgmt.network.operations
 
         @distributed_trace
         def list_by_subscription(self, **kwargs: Any) -> ExpressRouteGatewayList: ...
+
+
+    class azure.mgmt.network.operations.ExpressRouteLagAuthorizationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                express_route_lag_name: str, 
+                authorization_name: str, 
+                authorization_parameters: ExpressRouteLagAuthorization, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ExpressRouteLagAuthorization]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                express_route_lag_name: str, 
+                authorization_name: str, 
+                authorization_parameters: ExpressRouteLagAuthorization, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ExpressRouteLagAuthorization]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                express_route_lag_name: str, 
+                authorization_name: str, 
+                authorization_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ExpressRouteLagAuthorization]: ...
+
+        @distributed_trace
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                express_route_lag_name: str, 
+                authorization_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def get(
+                self, 
+                resource_group_name: str, 
+                express_route_lag_name: str, 
+                authorization_name: str, 
+                **kwargs: Any
+            ) -> ExpressRouteLagAuthorization: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                express_route_lag_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[ExpressRouteLagAuthorization]: ...
+
+        @distributed_trace
+        def list_keys(
+                self, 
+                resource_group_name: str, 
+                express_route_lag_name: str, 
+                authorization_name: str, 
+                **kwargs: Any
+            ) -> ExpressRouteAuthorizationKey: ...
 
 
     class azure.mgmt.network.operations.ExpressRouteLagsOperations:
@@ -40336,6 +42346,16 @@ namespace azure.mgmt.network.operations
                 express_route_port_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[ExpressRoutePortAuthorization]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_port_name', 'authorization_name', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01'])
+        def list_keys(
+                self, 
+                resource_group_name: str, 
+                express_route_port_name: str, 
+                authorization_name: str, 
+                **kwargs: Any
+            ) -> ExpressRouteAuthorizationKey: ...
 
 
     class azure.mgmt.network.operations.ExpressRoutePortsLocationsOperations:
@@ -42336,7 +44356,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(params_added_on={'2025-07-01': ['detail_level']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01'])
+        @api_version_validation(params_added_on={'2025-07-01': ['detail_level']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -44316,7 +46336,7 @@ namespace azure.mgmt.network.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_virtual_appliance_name']}, api_versions_list=['2025-09-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_virtual_appliance_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_abort_migration(
                 self, 
                 resource_group_name: str, 
@@ -44695,7 +46715,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[ConnectionAnalyzer]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name']}, api_versions_list=['2025-09-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_connection_analyzers_delete(
                 self, 
                 resource_group_name: str, 
@@ -44705,7 +46725,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name', 'accept']}, api_versions_list=['2025-09-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_connection_analyzers_query(
                 self, 
                 resource_group_name: str, 
@@ -45053,7 +47073,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[VerificationIPFlowResult]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name', 'accept']}, api_versions_list=['2025-09-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def connection_analyzers_get(
                 self, 
                 resource_group_name: str, 
@@ -45063,7 +47083,7 @@ namespace azure.mgmt.network.operations
             ) -> ConnectionAnalyzer: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'accept']}, api_versions_list=['2025-09-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def connection_analyzers_list(
                 self, 
                 resource_group_name: str, 
@@ -49219,6 +51239,77 @@ namespace azure.mgmt.network.operations
             ) -> VirtualHub: ...
 
 
+    class azure.mgmt.network.operations.VirtualNetworkApplianceCapabilitiesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                virtual_network_appliance_name: str, 
+                capability_name: str, 
+                parameters: VirtualNetworkApplianceCapability, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[VirtualNetworkApplianceCapability]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                virtual_network_appliance_name: str, 
+                capability_name: str, 
+                parameters: VirtualNetworkApplianceCapability, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[VirtualNetworkApplianceCapability]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                virtual_network_appliance_name: str, 
+                capability_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[VirtualNetworkApplianceCapability]: ...
+
+        @distributed_trace
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                virtual_network_appliance_name: str, 
+                capability_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def get(
+                self, 
+                resource_group_name: str, 
+                virtual_network_appliance_name: str, 
+                capability_name: str, 
+                **kwargs: Any
+            ) -> VirtualNetworkApplianceCapability: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                virtual_network_appliance_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[VirtualNetworkApplianceCapability]: ...
+
+
     class azure.mgmt.network.operations.VirtualNetworkAppliancesOperations:
 
         def __init__(
@@ -49814,7 +51905,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[BgpPeerStatusListResult]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_network_gateway_name', 'accept']}, api_versions_list=['2025-09-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_network_gateway_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
         def begin_get_effective_routes(
                 self, 
                 resource_group_name: str, 
@@ -51790,6 +53881,112 @@ namespace azure.mgmt.network.types
         zones: list[str]
 
 
+    class azure.mgmt.network.types.ApplicationGatewayAdvancedRoutingCondition(TypedDict, total=False):
+        key "conditionType": Required[Union[str, ApplicationGatewayAdvancedRoutingConditionType]]
+        key "propertyName": str
+        key "propertyValueMatcher": ForwardRef('ApplicationGatewayAdvancedRoutingPropertyValueMatcher', module='types')
+        conditionType: Union[str, ApplicationGatewayAdvancedRoutingConditionType]
+        propertyName: str
+        propertyValueMatcher: ApplicationGatewayAdvancedRoutingPropertyValueMatcher
+        propertyValues: list[str]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayAdvancedRoutingConditionSet(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayAdvancedRoutingConditionSetPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayAdvancedRoutingConditionSetPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayAdvancedRoutingConditionSetPropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "routingConditions": Required[list[ApplicationGatewayAdvancedRoutingCondition]]
+        provisioningState: Union[str, ProvisioningState]
+        routingConditions: list[ApplicationGatewayAdvancedRoutingCondition]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayAdvancedRoutingMap(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayAdvancedRoutingMapPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayAdvancedRoutingMapPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayAdvancedRoutingMapPropertiesFormat(TypedDict, total=False):
+        key "advancedRoutingRules": Required[list[ApplicationGatewayAdvancedRoutingRule]]
+        key "defaultBackendAddressPool": ForwardRef('SubResource', module='types')
+        key "defaultBackendHttpSettings": ForwardRef('SubResource', module='types')
+        key "defaultRedirectConfiguration": ForwardRef('SubResource', module='types')
+        key "defaultRewriteRuleSet": ForwardRef('SubResource', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        advancedRoutingRules: list[ApplicationGatewayAdvancedRoutingRule]
+        defaultAuthConfigs: list[ApplicationGatewayAuthConfig]
+        defaultBackendAddressPool: SubResource
+        defaultBackendHttpSettings: SubResource
+        defaultRedirectConfiguration: SubResource
+        defaultRewriteRuleSet: SubResource
+        provisioningState: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ApplicationGatewayAdvancedRoutingPropertyValueMatcher(TypedDict, total=False):
+        key "ignoreCase": bool
+        key "negate": bool
+        key "pattern": Required[str]
+        ignoreCase: bool
+        negate: bool
+        pattern: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayAdvancedRoutingRule(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ApplicationGatewayAdvancedRoutingRulePropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ApplicationGatewayAdvancedRoutingRulePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ApplicationGatewayAdvancedRoutingRulePropertiesFormat(TypedDict, total=False):
+        key "advancedRoutingConditionSet": ForwardRef('SubResource', module='types')
+        key "backendAddressPool": ForwardRef('SubResource', module='types')
+        key "backendHttpSettings": ForwardRef('SubResource', module='types')
+        key "priority": Required[int]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "redirectConfiguration": ForwardRef('SubResource', module='types')
+        key "rewriteRuleSet": ForwardRef('SubResource', module='types')
+        advancedRoutingConditionSet: SubResource
+        authConfigs: list[ApplicationGatewayAuthConfig]
+        backendAddressPool: SubResource
+        backendHttpSettings: SubResource
+        priority: int
+        provisioningState: Union[str, ProvisioningState]
+        redirectConfiguration: SubResource
+        rewriteRuleSet: SubResource
+
+
+    class azure.mgmt.network.types.ApplicationGatewayAuthConfig(TypedDict, total=False):
+        key "authenticationPolicy": Required[SubResource]
+        key "name": Required[str]
+        authenticationPolicy: SubResource
+        name: str
+
+
     class azure.mgmt.network.types.ApplicationGatewayAuthenticationCertificate(SubResource):
         key "etag": str
         key "id": str
@@ -52371,10 +54568,13 @@ namespace azure.mgmt.network.types
         key "globalConfiguration": ForwardRef('ApplicationGatewayGlobalConfiguration', module='types')
         key "operationalState": Union[str, ApplicationGatewayOperationalState]
         key "provisioningState": Union[str, ProvisioningState]
+        key "reservedCapacity": int
         key "resourceGuid": str
         key "sku": ForwardRef('ApplicationGatewaySku', module='types')
         key "sslPolicy": ForwardRef('ApplicationGatewaySslPolicy', module='types')
         key "webApplicationFirewallConfiguration": ForwardRef('ApplicationGatewayWebApplicationFirewallConfiguration', module='types')
+        advancedRoutingConditionSets: list[ApplicationGatewayAdvancedRoutingConditionSet]
+        advancedRoutingMaps: list[ApplicationGatewayAdvancedRoutingMap]
         authenticationCertificates: list[ApplicationGatewayAuthenticationCertificate]
         autoscaleConfiguration: ApplicationGatewayAutoscaleConfiguration
         backendAddressPools: list[ApplicationGatewayBackendAddressPool]
@@ -52401,6 +54601,7 @@ namespace azure.mgmt.network.types
         provisioningState: Union[str, ProvisioningState]
         redirectConfigurations: list[ApplicationGatewayRedirectConfiguration]
         requestRoutingRules: list[ApplicationGatewayRequestRoutingRule]
+        reservedCapacity: int
         resourceGuid: str
         rewriteRuleSets: list[ApplicationGatewayRewriteRuleSet]
         routingRules: list[ApplicationGatewayRoutingRule]
@@ -52457,6 +54658,7 @@ namespace azure.mgmt.network.types
 
 
     class azure.mgmt.network.types.ApplicationGatewayRequestRoutingRulePropertiesFormat(TypedDict, total=False):
+        key "advancedRoutingMap": ForwardRef('SubResource', module='types')
         key "backendAddressPool": ForwardRef('SubResource', module='types')
         key "backendHttpSettings": ForwardRef('SubResource', module='types')
         key "entraJWTValidationConfig": ForwardRef('SubResource', module='types')
@@ -52468,6 +54670,8 @@ namespace azure.mgmt.network.types
         key "rewriteRuleSet": ForwardRef('SubResource', module='types')
         key "ruleType": Union[str, ApplicationGatewayRequestRoutingRuleType]
         key "urlPathMap": ForwardRef('SubResource', module='types')
+        advancedRoutingMap: SubResource
+        authConfigs: list[ApplicationGatewayAuthConfig]
         backendAddressPool: SubResource
         backendHttpSettings: SubResource
         entraJWTValidationConfig: SubResource
@@ -52776,6 +54980,91 @@ namespace azure.mgmt.network.types
         resourceGuid: str
 
 
+    class azure.mgmt.network.types.ApprovalReference(TypedDict, total=False):
+        key "privateEndpointId": str
+        privateEndpointId: str
+
+
+    class azure.mgmt.network.types.ArmProxyResource(ArmResource):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.ArmResource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.AuthenticationPolicy(Resource):
+        key "etag": str
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('AuthenticationPolicyPropertiesFormat', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: AuthenticationPolicyPropertiesFormat
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.network.types.AuthenticationPolicyPropertiesFormat(TypedDict, total=False):
+        key "authenticationProperties": Required[AuthenticationProviderProperties]
+        key "onUnauthenticatedRequest": Union[str, OnUnauthenticatedRequest]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "resourceGuid": str
+        key "userTrustProviderType": Required[Union[str, UserTrustProviderType]]
+        associatedResources: list[str]
+        authenticationProperties: AuthenticationProviderProperties
+        onUnauthenticatedRequest: Union[str, OnUnauthenticatedRequest]
+        provisioningState: Union[str, ProvisioningState]
+        resourceGuid: str
+        userTrustProviderType: Union[str, UserTrustProviderType]
+
+
+    class azure.mgmt.network.types.AuthenticationPolicyUpdateParameters(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        identity: ManagedServiceIdentity
+        tags: dict[str, str]
+
+
+    class azure.mgmt.network.types.AuthenticationProviderProperties(TypedDict, total=False):
+        key "audience": str
+        key "clientId": Required[str]
+        key "clientSecret": str
+        key "issuer": Required[str]
+        key "jwksUri": str
+        key "sessionCookieName": str
+        key "sessionTimeout": str
+        audience: str
+        clientId: str
+        clientSecret: str
+        issuer: str
+        jwksUri: str
+        scope: list[str]
+        sessionCookieName: str
+        sessionTimeout: str
+
+
     class azure.mgmt.network.types.AuthorizationPropertiesFormat(TypedDict, total=False):
         key "authorizationKey": str
         key "authorizationUseStatus": Union[str, AuthorizationUseStatus]
@@ -52986,6 +55275,7 @@ namespace azure.mgmt.network.types
 
     class azure.mgmt.network.types.AzureFirewallPropertiesFormat(TypedDict, total=False):
         key "afcConfiguration": ForwardRef('AfcConfiguration', module='types')
+        key "aiSecurityAddOn": bool
         key "autoscaleConfiguration": ForwardRef('AzureFirewallAutoscaleConfiguration', module='types')
         key "firewallPolicy": ForwardRef('SubResource', module='types')
         key "hubIPAddresses": ForwardRef('HubIPAddresses', module='types')
@@ -52996,6 +55286,7 @@ namespace azure.mgmt.network.types
         key "virtualHub": ForwardRef('SubResource', module='types')
         additionalProperties: dict[str, str]
         afcConfiguration: AfcConfiguration
+        aiSecurityAddOn: bool
         applicationRuleCollections: list[AzureFirewallApplicationRuleCollection]
         autoscaleConfiguration: AzureFirewallAutoscaleConfiguration
         firewallPolicy: SubResource
@@ -53085,6 +55376,7 @@ namespace azure.mgmt.network.types
     class azure.mgmt.network.types.BastionHost(Resource):
         key "etag": str
         key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
         key "location": str
         key "name": str
         key "properties": ForwardRef('BastionHostPropertiesFormat', module='types')
@@ -53092,6 +55384,7 @@ namespace azure.mgmt.network.types
         key "type": str
         etag: str
         id: str
+        identity: ManagedServiceIdentity
         location: str
         name: str
         properties: BastionHostPropertiesFormat
@@ -53138,6 +55431,7 @@ namespace azure.mgmt.network.types
         key "networkAcls": ForwardRef('BastionHostPropertiesFormatNetworkAcls', module='types')
         key "provisioningState": Union[str, ProvisioningState]
         key "scaleUnits": int
+        key "sessionRecordingConfiguration": ForwardRef('BastionSessionRecordingConfiguration', module='types')
         key "virtualNetwork": ForwardRef('SubResource', module='types')
         disableCopyPaste: bool
         dnsName: str
@@ -53152,11 +55446,25 @@ namespace azure.mgmt.network.types
         networkAcls: BastionHostPropertiesFormatNetworkAcls
         provisioningState: Union[str, ProvisioningState]
         scaleUnits: int
+        sessionRecordingConfiguration: BastionSessionRecordingConfiguration
         virtualNetwork: SubResource
 
 
     class azure.mgmt.network.types.BastionHostPropertiesFormatNetworkAcls(TypedDict, total=False):
         ipRules: list[IPRule]
+
+
+    class azure.mgmt.network.types.BastionHostUpdate(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        identity: ManagedServiceIdentity
+        tags: dict[str, str]
+
+
+    class azure.mgmt.network.types.BastionSessionRecordingConfiguration(TypedDict, total=False):
+        key "blobContainerUri": Required[str]
+        key "identity": Required[SessionRecordingIdentity]
+        blobContainerUri: str
+        identity: SessionRecordingIdentity
 
 
     class azure.mgmt.network.types.BastionShareableLink(TypedDict, total=False):
@@ -53830,6 +56138,7 @@ namespace azure.mgmt.network.types
         key "resourceGuid": str
         detectionRules: list[DdosDetectionRule]
         frontEndIpConfiguration: list[SubResource]
+        mitigationRules: list[DdosMitigationRule]
         provisioningState: Union[str, ProvisioningState]
         publicIPAddresses: list[SubResource]
         resourceGuid: str
@@ -53860,6 +56169,38 @@ namespace azure.mgmt.network.types
     class azure.mgmt.network.types.DdosFrontendIpConfigurationSettings(TypedDict, total=False):
         key "ddosCustomPolicy": ForwardRef('SubResource', module='types')
         ddosCustomPolicy: SubResource
+
+
+    class azure.mgmt.network.types.DdosGeoMatch(TypedDict, total=False):
+        key "continent": Union[str, DdosContinent]
+        key "countryCode": str
+        continent: Union[str, DdosContinent]
+        countryCode: str
+
+
+    class azure.mgmt.network.types.DdosMitigationRule(SubResource):
+        key "etag": str
+        key "id": str
+        key "name": Required[str]
+        key "properties": Required[DdosMitigationRulePropertiesFormat]
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: DdosMitigationRulePropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.DdosMitigationRulePropertiesFormat(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "tcpDefaultMitigations": ForwardRef('DdosTcpDefaultMitigations', module='types')
+        key "trafficScope": Required[Union[str, DdosMitigationTrafficScope]]
+        key "udpDefaultMitigations": ForwardRef('DdosUdpDefaultMitigations', module='types')
+        provisioningState: Union[str, ProvisioningState]
+        sourcePolicyOverrides: list[DdosSourcePolicyOverride]
+        tcpDefaultMitigations: DdosTcpDefaultMitigations
+        trafficScope: Union[str, DdosMitigationTrafficScope]
+        udpDefaultMitigations: DdosUdpDefaultMitigations
 
 
     class azure.mgmt.network.types.DdosProtectionPlan(TrackedResourceWithOptionalLocation):
@@ -53894,6 +56235,50 @@ namespace azure.mgmt.network.types
         ddosCustomPolicy: SubResource
         ddosProtectionPlan: SubResource
         protectionMode: Union[str, DdosSettingsProtectionMode]
+
+
+    class azure.mgmt.network.types.DdosSourceMatchConditions(TypedDict, total=False):
+        geoMatches: list[DdosGeoMatch]
+        ipPrefixes: list[str]
+
+
+    class azure.mgmt.network.types.DdosSourcePolicyAction(TypedDict, total=False):
+        key "actionType": Required[Union[str, DdosSourcePolicyActionType]]
+        actionType: Union[str, DdosSourcePolicyActionType]
+
+
+    class azure.mgmt.network.types.DdosSourcePolicyOverride(TypedDict, total=False):
+        key "conditions": Required[DdosSourceMatchConditions]
+        key "policyAction": Required[DdosSourcePolicyAction]
+        conditions: DdosSourceMatchConditions
+        policyAction: DdosSourcePolicyAction
+
+
+    class azure.mgmt.network.types.DdosTcpDefaultMitigations(TypedDict, total=False):
+        key "perSourceConnectionRateLimiting": ForwardRef('DdosTcpPerSourceConnectionRateLimitPolicy', module='types')
+        key "perSourceRateLimiting": ForwardRef('DdosTcpPerSourceRateLimitPolicy', module='types')
+        perSourceConnectionRateLimiting: DdosTcpPerSourceConnectionRateLimitPolicy
+        perSourceRateLimiting: DdosTcpPerSourceRateLimitPolicy
+
+
+    class azure.mgmt.network.types.DdosTcpPerSourceConnectionRateLimitPolicy(TypedDict, total=False):
+        key "connectionsPerSecond": Required[int]
+        connectionsPerSecond: int
+
+
+    class azure.mgmt.network.types.DdosTcpPerSourceRateLimitPolicy(TypedDict, total=False):
+        key "packetsPerSecond": Required[int]
+        packetsPerSecond: int
+
+
+    class azure.mgmt.network.types.DdosUdpDefaultMitigations(TypedDict, total=False):
+        key "perSourceRateLimiting": ForwardRef('DdosUdpPerSourceRateLimitPolicy', module='types')
+        perSourceRateLimiting: DdosUdpPerSourceRateLimitPolicy
+
+
+    class azure.mgmt.network.types.DdosUdpPerSourceRateLimitPolicy(TypedDict, total=False):
+        key "packetsPerSecond": Required[int]
+        packetsPerSecond: int
 
 
     class azure.mgmt.network.types.DefaultAdminPropertiesFormat(TypedDict, total=False):
@@ -54219,6 +56604,7 @@ namespace azure.mgmt.network.types
         key "bandwidthInGbps": float
         key "circuitProvisioningState": str
         key "enableDirectPortRateLimit": bool
+        key "expressRouteLag": ForwardRef('SubResource', module='types')
         key "expressRoutePort": ForwardRef('SubResource', module='types')
         key "gatewayManagerEtag": str
         key "globalReachEnabled": bool
@@ -54238,6 +56624,7 @@ namespace azure.mgmt.network.types
         bandwidthInGbps: float
         circuitProvisioningState: str
         enableDirectPortRateLimit: bool
+        expressRouteLag: SubResource
         expressRoutePort: SubResource
         gatewayManagerEtag: str
         globalReachEnabled: bool
@@ -54474,7 +56861,29 @@ namespace azure.mgmt.network.types
         type: str
 
 
-    class azure.mgmt.network.types.ExpressRouteLagLink(SubResource):
+    class azure.mgmt.network.types.ExpressRouteLagAuthorization(ProxyResourceWithReadOnlyID):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ExpressRouteLagAuthorizationPropertiesFormat', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ExpressRouteLagAuthorizationPropertiesFormat
+        type: str
+
+
+    class azure.mgmt.network.types.ExpressRouteLagAuthorizationPropertiesFormat(TypedDict, total=False):
+        key "authorizationUseStatus": Union[str, ExpressRouteLagAuthorizationUseStatus]
+        key "circuitResourceUri": str
+        key "provisioningState": Union[str, ProvisioningState]
+        authorizationUseStatus: Union[str, ExpressRouteLagAuthorizationUseStatus]
+        circuitResourceUri: str
+        provisioningState: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.network.types.ExpressRouteLagLink(TypedDict, total=False):
         key "etag": str
         key "id": Required[str]
         key "name": Required[str]
@@ -54501,7 +56910,7 @@ namespace azure.mgmt.network.types
         routerName: str
 
 
-    class azure.mgmt.network.types.ExpressRouteLagMember(SubResource):
+    class azure.mgmt.network.types.ExpressRouteLagMember(TypedDict, total=False):
         key "etag": str
         key "id": Required[str]
         key "name": Required[str]
@@ -54546,8 +56955,10 @@ namespace azure.mgmt.network.types
         key "provisioningState": Union[str, ProvisioningState]
         key "resourceGuid": str
         allocationDate: str
+        authorizations: list[ExpressRouteLagAuthorization]
         bandwidthInGbps: int
         billingType: Union[str, ExpressRouteLagBillingType]
+        circuits: list[SubResource]
         encapsulation: Union[str, ExpressRouteLagEncapsulation]
         etherType: str
         lacpTimer: Union[str, ExpressRouteLagLacpTimer]
@@ -55355,7 +57766,7 @@ namespace azure.mgmt.network.types
         key "allowRemoteVnetToUseHubVnetGateways": bool
         key "connectionPolicy": ForwardRef('SubResource', module='types')
         key "enableInternetSecurity": bool
-        key "enableOnlyIpv6Peering": Union[str, EnableOnlyIpv6PeeringState]
+        key "enableOnlyIPv6Peering": bool
         key "provisioningState": Union[str, ProvisioningState]
         key "remoteVirtualNetwork": ForwardRef('SubResource', module='types')
         key "routingConfiguration": ForwardRef('RoutingConfiguration', module='types')
@@ -55363,7 +57774,7 @@ namespace azure.mgmt.network.types
         allowRemoteVnetToUseHubVnetGateways: bool
         connectionPolicy: SubResource
         enableInternetSecurity: bool
-        enableOnlyIpv6Peering: Union[str, EnableOnlyIpv6PeeringState]
+        enableOnlyIPv6Peering: bool
         provisioningState: Union[str, ProvisioningState]
         remoteVirtualNetwork: SubResource
         routingConfiguration: RoutingConfiguration
@@ -55705,12 +58116,16 @@ namespace azure.mgmt.network.types
         key "addressPrefixes": Required[list[str]]
         key "description": str
         key "displayName": str
+        key "maxAllocationSize": str
+        key "minAllocationSize": str
         key "parentPoolName": str
         key "provisioningState": Union[str, ProvisioningState]
         addressPrefixes: list[str]
         description: str
         displayName: str
         ipAddressType: list[Union[str, IpType]]
+        maxAllocationSize: str
+        minAllocationSize: str
         parentPoolName: str
         provisioningState: Union[str, ProvisioningState]
 
@@ -55724,8 +58139,12 @@ namespace azure.mgmt.network.types
     class azure.mgmt.network.types.IpamPoolUpdateProperties(TypedDict, total=False):
         key "description": str
         key "displayName": str
+        key "maxAllocationSize": str
+        key "minAllocationSize": str
         description: str
         displayName: str
+        maxAllocationSize: str
+        minAllocationSize: str
 
 
     class azure.mgmt.network.types.IpsecPolicy(TypedDict, total=False):
@@ -55967,7 +58386,7 @@ namespace azure.mgmt.network.types
     class azure.mgmt.network.types.ManagedRuleSetRuleGroup(TypedDict, total=False):
         key "ruleGroupName": Required[str]
         ruleGroupName: str
-        rules: list[str]
+        rules: list[int]
 
 
     class azure.mgmt.network.types.ManagedRulesDefinition(TypedDict, total=False):
@@ -56013,6 +58432,21 @@ namespace azure.mgmt.network.types
         variableName: Union[str, WebApplicationFirewallMatchVariable]
 
 
+    class azure.mgmt.network.types.MigrateExpressRouteCircuitRequest(TypedDict, total=False):
+        key "portId": str
+        key "targetPeeringLocation": str
+        portId: str
+        targetPeeringLocation: str
+        targetPortMapping: list[PortMapping]
+
+
+    class azure.mgmt.network.types.MigrateExpressRouteCircuitValidateAndHealthCheckRequest(TypedDict, total=False):
+        key "targetPeeringLocation": Required[str]
+        key "targetPortMapping": Required[list[PortMapping]]
+        targetPeeringLocation: str
+        targetPortMapping: list[PortMapping]
+
+
     class azure.mgmt.network.types.MigrateLoadBalancerToIpBasedRequest(TypedDict, total=False):
         pools: list[str]
 
@@ -56032,6 +58466,21 @@ namespace azure.mgmt.network.types
     class azure.mgmt.network.types.MoveIpConfigurationsRequest(TypedDict, total=False):
         key "moveIpConfigurationItems": Required[list[MoveIpConfigurationItem]]
         moveIpConfigurationItems: list[MoveIpConfigurationItem]
+
+
+    class azure.mgmt.network.types.Nat64Capability(TypedDict, total=False):
+        key "id": str
+        key "kind": Required[Literal[VirtualNetworkApplianceCapabilityKind.NAT64]]
+        key "name": str
+        key "properties": ForwardRef('VirtualNetworkApplianceCapabilityProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        kind: Literal[VirtualNetworkApplianceCapabilityKind.NAT64]
+        name: str
+        properties: VirtualNetworkApplianceCapabilityProperties
+        systemData: SystemData
+        type: str
 
 
     class azure.mgmt.network.types.NatGateway(Resource):
@@ -56465,12 +58914,14 @@ namespace azure.mgmt.network.types
         description: str
         destinationAddresses: list[str]
         destinationFqdns: list[str]
+        destinationGeoLocations: list[str]
         destinationIpGroups: list[str]
         destinationPorts: list[str]
         ipProtocols: list[Union[str, FirewallPolicyRuleNetworkProtocol]]
         name: str
         ruleType: Literal[FirewallPolicyRuleType.NETWORK_RULE]
         sourceAddresses: list[str]
+        sourceGeoLocations: list[str]
         sourceIpGroups: list[str]
         sourceKubeSelectorGroups: list[str]
 
@@ -56984,6 +59435,51 @@ namespace azure.mgmt.network.types
         authenticationMethod: Union[str, AuthenticationMethod]
 
 
+    class azure.mgmt.network.types.PLGatewayCapability(TypedDict, total=False):
+        key "id": str
+        key "kind": Required[Literal[VirtualNetworkApplianceCapabilityKind.PL_GATEWAY]]
+        key "name": str
+        key "properties": ForwardRef('VirtualNetworkApplianceCapabilityProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        kind: Literal[VirtualNetworkApplianceCapabilityKind.PL_GATEWAY]
+        name: str
+        properties: VirtualNetworkApplianceCapabilityProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.PLGatewayFastpathCapability(TypedDict, total=False):
+        key "id": str
+        key "kind": Required[Literal[VirtualNetworkApplianceCapabilityKind.PL_GATEWAY_FASTPATH]]
+        key "name": str
+        key "properties": ForwardRef('VirtualNetworkApplianceCapabilityProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        kind: Literal[VirtualNetworkApplianceCapabilityKind.PL_GATEWAY_FASTPATH]
+        name: str
+        properties: VirtualNetworkApplianceCapabilityProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.network.types.PLIPForwardersCapability(TypedDict, total=False):
+        key "id": str
+        key "kind": Required[Literal[VirtualNetworkApplianceCapabilityKind.PLIP_FORWARDERS]]
+        key "name": str
+        key "properties": ForwardRef('VirtualNetworkApplianceCapabilityProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        kind: Literal[VirtualNetworkApplianceCapabilityKind.PLIP_FORWARDERS]
+        name: str
+        properties: VirtualNetworkApplianceCapabilityProperties
+        systemData: SystemData
+        type: str
+
+
     class azure.mgmt.network.types.PacketCapture(TypedDict, total=False):
         key "properties": Required[PacketCaptureParameters]
         properties: PacketCaptureParameters
@@ -57142,6 +59638,13 @@ namespace azure.mgmt.network.types
         state: Union[str, WebApplicationFirewallScrubbingState]
 
 
+    class azure.mgmt.network.types.PortMapping(TypedDict, total=False):
+        key "sourcePortId": Required[str]
+        key "targetPortId": Required[str]
+        sourcePortId: str
+        targetPortId: str
+
+
     class azure.mgmt.network.types.PrepareNetworkPoliciesRequest(TypedDict, total=False):
         key "serviceName": str
         networkIntentPolicyConfigurations: list[NetworkIntentPolicyConfiguration]
@@ -57293,10 +59796,12 @@ namespace azure.mgmt.network.types
 
 
     class azure.mgmt.network.types.PrivateLinkServiceConnectionProperties(TypedDict, total=False):
+        key "approvalReference": ForwardRef('ApprovalReference', module='types')
         key "privateLinkServiceConnectionState": ForwardRef('PrivateLinkServiceConnectionState', module='types')
         key "privateLinkServiceId": str
         key "provisioningState": Union[str, ProvisioningState]
         key "requestMessage": str
+        approvalReference: ApprovalReference
         groupIds: list[str]
         privateLinkServiceConnectionState: PrivateLinkServiceConnectionState
         privateLinkServiceId: str
@@ -57429,6 +59934,19 @@ namespace azure.mgmt.network.types
         etag: str
         id: str
         name: str
+        type: str
+
+
+    class azure.mgmt.network.types.ProxyResourceVirtualNetworkApplianceCapabilityProperties(ArmProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VirtualNetworkApplianceCapabilityProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: VirtualNetworkApplianceCapabilityProperties
+        systemData: SystemData
         type: str
 
 
@@ -58450,6 +60968,13 @@ namespace azure.mgmt.network.types
         sessionIds: list[str]
 
 
+    class azure.mgmt.network.types.SessionRecordingIdentity(TypedDict, total=False):
+        key "type": Required[Union[str, SessionRecordingIdentityType]]
+        key "userAssignedIdentityId": str
+        type: Union[str, SessionRecordingIdentityType]
+        userAssignedIdentityId: str
+
+
     class azure.mgmt.network.types.SharedKeyProperties(TypedDict, total=False):
         key "provisioningState": Union[str, ProvisioningState]
         key "sharedKey": str
@@ -58546,16 +61071,6 @@ namespace azure.mgmt.network.types
         key "vnetLocalRouteOverrideCriteria": Union[str, VnetLocalRouteOverrideCriteria]
         propagateStaticRoutes: bool
         vnetLocalRouteOverrideCriteria: Union[str, VnetLocalRouteOverrideCriteria]
-
-
-    class azure.mgmt.network.types.StopCircuitLinkFailoverTestParameterBody(TypedDict, total=False):
-        key "stopParameters": Required[ExpressRouteLinkFailoverStopApiParameters]
-        stopParameters: ExpressRouteLinkFailoverStopApiParameters
-
-
-    class azure.mgmt.network.types.StopSiteFailoverTestParameterBody(TypedDict, total=False):
-        key "stopParameters": Required[ExpressRouteFailoverStopApiParameters]
-        stopParameters: ExpressRouteFailoverStopApiParameters
 
 
     class azure.mgmt.network.types.StorageAccountSettings(TypedDict, total=False):
@@ -59098,6 +61613,22 @@ namespace azure.mgmt.network.types
         type: str
 
 
+    class azure.mgmt.network.types.VirtualNetworkApplianceCapabilityKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        NAT64 = "NAT64"
+        PLIP_FORWARDERS = "PLIPForwarders"
+        PL_GATEWAY = "PLGateway"
+        PL_GATEWAY_FASTPATH = "PLGatewayFastpath"
+
+
+    class azure.mgmt.network.types.VirtualNetworkApplianceCapabilityProperties(TypedDict, total=False):
+        key "ipVersion": Union[str, VirtualNetworkApplianceCapabilityIpVersion]
+        key "linkedResourceId": str
+        key "provisioningState": Union[str, ProvisioningState]
+        ipVersion: Union[str, VirtualNetworkApplianceCapabilityIpVersion]
+        linkedResourceId: str
+        provisioningState: Union[str, ProvisioningState]
+
+
     class azure.mgmt.network.types.VirtualNetworkApplianceIpConfiguration(SubResource):
         key "etag": str
         key "id": str
@@ -59126,11 +61657,13 @@ namespace azure.mgmt.network.types
 
     class azure.mgmt.network.types.VirtualNetworkAppliancePropertiesFormat(TypedDict, total=False):
         key "bandwidthInGbps": float
+        key "capacityProvider": ForwardRef('SubResource', module='types')
         key "privateIPAddressVersion": Union[str, VirtualNetworkApplianceIpVersionType]
         key "provisioningState": Union[str, ProvisioningState]
         key "resourceGuid": str
         key "subnet": ForwardRef('Subnet', module='types')
         bandwidthInGbps: float
+        capacityProvider: SubResource
         ipConfigurations: list[VirtualNetworkApplianceIpConfiguration]
         privateIPAddressVersion: Union[str, VirtualNetworkApplianceIpVersionType]
         provisioningState: Union[str, ProvisioningState]
@@ -60206,6 +62739,7 @@ namespace azure.mgmt.network.types
         key "policySettings": ForwardRef('PolicySettings', module='types')
         key "provisioningState": Union[str, ProvisioningState]
         key "resourceState": Union[str, WebApplicationFirewallPolicyResourceState]
+        key "tier": Union[str, WebApplicationFirewallPolicyTier]
         applicationGatewayForContainers: list[ApplicationGatewayForContainersReferenceDefinition]
         applicationGateways: list[ApplicationGateway]
         customRules: list[WebApplicationFirewallCustomRule]
@@ -60215,6 +62749,7 @@ namespace azure.mgmt.network.types
         policySettings: PolicySettings
         provisioningState: Union[str, ProvisioningState]
         resourceState: Union[str, WebApplicationFirewallPolicyResourceState]
+        tier: Union[str, WebApplicationFirewallPolicyTier]
 
 
     class azure.mgmt.network.types.WebApplicationFirewallScrubbingRules(TypedDict, total=False):

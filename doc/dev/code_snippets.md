@@ -23,7 +23,7 @@ async with AsyncPipeline(AsyncioRequestsTransport(), policies=policies) as pipel
 # [END asyncio]
 ```
 
-https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/samples/test_example_async.py#L63-L68
+https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/samples/test_example_async.py#L64-L69
 
 ## Refer samples
 

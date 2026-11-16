@@ -47,6 +47,7 @@ def main():
                 "analyticalStorageConfiguration": {"schemaType": "WellDefined"},
                 "apiProperties": {"serverVersion": "3.2"},
                 "backupPolicy": {
+                    "backupRetentionLockExpirationTimestamp": "2030-01-01T00:00:00Z",
                     "periodicModeProperties": {
                         "backupIntervalInMinutes": 240,
                         "backupRetentionIntervalInHours": 8,
@@ -83,6 +84,7 @@ def main():
                 "networkAclBypassResourceIds": [
                     "/subscriptions/subId/resourcegroups/rgName/providers/Microsoft.Synapse/workspaces/workspaceName"
                 ],
+                "perPartitionAutomaticFailoverEnabled": True,
                 "publicNetworkAccess": "Enabled",
                 "virtualNetworkRules": [
                     {
@@ -97,6 +99,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-15/CosmosDBDatabaseAccountCreateMax.json
+# x-ms-original-file: 2026-07-15/CosmosDBDatabaseAccountCreateMax.json
 if __name__ == "__main__":
     main()

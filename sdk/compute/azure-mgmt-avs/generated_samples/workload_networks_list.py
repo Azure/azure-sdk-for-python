@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.workload_networks.list_public_ips(
+    response = client.workload_networks.list(
         resource_group_name="group1",
         private_cloud_name="cloud1",
     )
@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-09-01/WorkloadNetworks_List.json
+# x-ms-original-file: 2026-03-01/WorkloadNetworks_List.json
 if __name__ == "__main__":
     main()

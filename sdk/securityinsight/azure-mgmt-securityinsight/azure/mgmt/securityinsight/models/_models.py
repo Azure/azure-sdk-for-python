@@ -35,7 +35,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class DataConnectorsCheckRequirements(_Model):
+class DataConnectorsCheckRequirements(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data connector requirements properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -88,7 +88,9 @@ class DataConnectorsCheckRequirements(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AADCheckRequirements(DataConnectorsCheckRequirements, discriminator="AzureActiveDirectory"):
+class AADCheckRequirements(
+    DataConnectorsCheckRequirements, discriminator="AzureActiveDirectory"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents AADIP (Azure Active Directory Identity Protection) requirements check request.
 
     :ivar properties: AADIP (Azure Active Directory Identity Protection) requirements check
@@ -143,7 +145,7 @@ class AADCheckRequirements(DataConnectorsCheckRequirements, discriminator="Azure
             super().__setattr__(key, value)
 
 
-class DataConnectorTenantId(_Model):
+class DataConnectorTenantId(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties data connector on tenant level.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -171,7 +173,9 @@ class DataConnectorTenantId(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AADCheckRequirementsProperties(DataConnectorTenantId):
+class AADCheckRequirementsProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AADIP (Azure Active Directory Identity Protection) requirements check properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -241,7 +245,7 @@ class ProxyResource(Resource):
     """
 
 
-class DataConnector(ProxyResource):
+class DataConnector(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data connector.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -315,7 +319,9 @@ class DataConnector(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AADDataConnector(DataConnector, discriminator="AzureActiveDirectory"):
+class AADDataConnector(
+    DataConnector, discriminator="AzureActiveDirectory"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents AADIP (Azure Active Directory Identity Protection) data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -383,7 +389,7 @@ class AADDataConnector(DataConnector, discriminator="AzureActiveDirectory"):
             super().__setattr__(key, value)
 
 
-class AADDataConnectorProperties(_Model):
+class AADDataConnectorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AADIP (Azure Active Directory Identity Protection) data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -418,7 +424,9 @@ class AADDataConnectorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AATPCheckRequirements(DataConnectorsCheckRequirements, discriminator="AzureAdvancedThreatProtection"):
+class AATPCheckRequirements(
+    DataConnectorsCheckRequirements, discriminator="AzureAdvancedThreatProtection"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents AATP (Azure Advanced Threat Protection) requirements check request.
 
     :ivar properties: AATP (Azure Advanced Threat Protection) requirements check properties.
@@ -473,7 +481,9 @@ class AATPCheckRequirements(DataConnectorsCheckRequirements, discriminator="Azur
             super().__setattr__(key, value)
 
 
-class AATPCheckRequirementsProperties(DataConnectorTenantId):
+class AATPCheckRequirementsProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AATP (Azure Advanced Threat Protection) requirements check properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -498,7 +508,9 @@ class AATPCheckRequirementsProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class AATPDataConnector(DataConnector, discriminator="AzureAdvancedThreatProtection"):
+class AATPDataConnector(
+    DataConnector, discriminator="AzureAdvancedThreatProtection"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents AATP (Azure Advanced Threat Protection) data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -566,7 +578,7 @@ class AATPDataConnector(DataConnector, discriminator="AzureAdvancedThreatProtect
             super().__setattr__(key, value)
 
 
-class AATPDataConnectorProperties(_Model):
+class AATPDataConnectorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AATP (Azure Advanced Threat Protection) data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -601,7 +613,7 @@ class AATPDataConnectorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Entity(ProxyResource):
+class Entity(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specific entity.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -659,7 +671,7 @@ class Entity(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AccountEntity(Entity, discriminator="Account"):
+class AccountEntity(Entity, discriminator="Account"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an account entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -827,7 +839,7 @@ class AccountEntityProperties(EntityCommonProperties):
     """The fully qualified domain DNS name."""
 
 
-class ActionPropertiesBase(_Model):
+class ActionPropertiesBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Action property bag base.
 
     :ivar logic_app_resource_id: Logic App Resource Id,
@@ -861,7 +873,7 @@ class ActionPropertiesBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceWithEtag(Resource):
+class ResourceWithEtag(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An azure resource object with an Etag property.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -900,7 +912,7 @@ class ResourceWithEtag(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ActionRequest(ResourceWithEtag):
+class ActionRequest(ResourceWithEtag):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Action for alert rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -964,7 +976,7 @@ class ActionRequest(ResourceWithEtag):
             super().__setattr__(key, value)
 
 
-class ActionRequestProperties(ActionPropertiesBase):
+class ActionRequestProperties(ActionPropertiesBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Action property bag.
 
     :ivar logic_app_resource_id: Logic App Resource Id,
@@ -997,7 +1009,7 @@ class ActionRequestProperties(ActionPropertiesBase):
         super().__init__(*args, **kwargs)
 
 
-class ActionResponse(ProxyResource):
+class ActionResponse(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Action for alert rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1063,7 +1075,7 @@ class ActionResponse(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ActionResponseProperties(ActionPropertiesBase):
+class ActionResponseProperties(ActionPropertiesBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Action property bag.
 
     :ivar logic_app_resource_id: Logic App Resource Id,
@@ -1098,7 +1110,7 @@ class ActionResponseProperties(ActionPropertiesBase):
         super().__init__(*args, **kwargs)
 
 
-class CustomEntityQuery(ResourceWithEtag):
+class CustomEntityQuery(ResourceWithEtag):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specific entity query that supports put requests.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1144,7 +1156,9 @@ class CustomEntityQuery(ResourceWithEtag):
         super().__init__(*args, **kwargs)
 
 
-class ActivityCustomEntityQuery(CustomEntityQuery, discriminator="Activity"):
+class ActivityCustomEntityQuery(
+    CustomEntityQuery, discriminator="Activity"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Activity entity query.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1224,7 +1238,7 @@ class ActivityCustomEntityQuery(CustomEntityQuery, discriminator="Activity"):
             super().__setattr__(key, value)
 
 
-class ActivityEntityQueriesProperties(_Model):
+class ActivityEntityQueriesProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes activity entity query properties.
 
     :ivar title: The entity query title.
@@ -1324,7 +1338,9 @@ class ActivityEntityQueriesProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActivityEntityQueriesPropertiesQueryDefinitions(_Model):  # pylint: disable=name-too-long
+class ActivityEntityQueriesPropertiesQueryDefinitions(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Activity query definitions.
 
     :ivar query: The Activity query to run on a given entity.
@@ -1352,7 +1368,7 @@ class ActivityEntityQueriesPropertiesQueryDefinitions(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class EntityQuery(ProxyResource):
+class EntityQuery(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specific entity query.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1406,7 +1422,9 @@ class EntityQuery(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ActivityEntityQuery(EntityQuery, discriminator="Activity"):
+class ActivityEntityQuery(
+    EntityQuery, discriminator="Activity"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Activity entity query.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1486,7 +1504,7 @@ class ActivityEntityQuery(EntityQuery, discriminator="Activity"):
             super().__setattr__(key, value)
 
 
-class EntityQueryTemplate(ProxyResource):
+class EntityQueryTemplate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specific entity query template.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1531,7 +1549,9 @@ class EntityQueryTemplate(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ActivityEntityQueryTemplate(EntityQueryTemplate, discriminator="Activity"):
+class ActivityEntityQueryTemplate(
+    EntityQueryTemplate, discriminator="Activity"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Activity entity query.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1605,7 +1625,7 @@ class ActivityEntityQueryTemplate(EntityQueryTemplate, discriminator="Activity")
             super().__setattr__(key, value)
 
 
-class ActivityEntityQueryTemplateProperties(_Model):
+class ActivityEntityQueryTemplateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes activity entity query properties.
 
     :ivar title: The entity query title.
@@ -1688,7 +1708,9 @@ class ActivityEntityQueryTemplateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActivityEntityQueryTemplatePropertiesQueryDefinitions(_Model):  # pylint: disable=name-too-long
+class ActivityEntityQueryTemplatePropertiesQueryDefinitions(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Activity query definitions.
 
     :ivar query: The Activity query to run on a given entity.
@@ -1724,7 +1746,7 @@ class ActivityEntityQueryTemplatePropertiesQueryDefinitions(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class EntityTimelineItem(_Model):
+class EntityTimelineItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Entity timeline Item.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1758,7 +1780,9 @@ class EntityTimelineItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActivityTimelineItem(EntityTimelineItem, discriminator="Activity"):
+class ActivityTimelineItem(
+    EntityTimelineItem, discriminator="Activity"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Activity timeline item.
 
     :ivar query_id: The activity query id. Required.
@@ -1829,7 +1853,7 @@ class ActivityTimelineItem(EntityTimelineItem, discriminator="Activity"):
         self.kind = EntityTimelineKind.ACTIVITY  # type: ignore
 
 
-class AddIncidentTaskActionProperties(_Model):
+class AddIncidentTaskActionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AddIncidentTaskActionProperties.
 
     :ivar title: The title of the task. Required.
@@ -1862,7 +1886,7 @@ class AddIncidentTaskActionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlertDetailsOverride(_Model):
+class AlertDetailsOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for how to dynamically override alert static details.
 
     :ivar alert_display_name_format: the format containing columns name(s) to override the alert
@@ -1923,7 +1947,7 @@ class AlertDetailsOverride(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlertPropertyMapping(_Model):
+class AlertPropertyMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single alert property mapping to override.
 
     :ivar alert_property: The V3 alert property. Known values are: "AlertLink", "ConfidenceLevel",
@@ -1962,7 +1986,7 @@ class AlertPropertyMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlertRule(ProxyResource):
+class AlertRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Alert rule.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2019,7 +2043,7 @@ class AlertRule(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AlertRuleTemplate(ProxyResource):
+class AlertRuleTemplate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Alert rule template.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2072,7 +2096,7 @@ class AlertRuleTemplate(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AlertRuleTemplateDataSource(_Model):
+class AlertRuleTemplateDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """alert rule template data sources.
 
     :ivar connector_id: The connector id that provides the following data types.
@@ -2109,7 +2133,7 @@ class AlertRuleTemplateDataSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlertRuleTemplatePropertiesBase(_Model):
+class AlertRuleTemplatePropertiesBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base alert rule template property bag.
 
     :ivar alert_rules_created_by_template_count: The number of alert rules that were created by
@@ -2181,7 +2205,9 @@ class AlertRuleTemplatePropertiesBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlertRuleTemplateWithMitreProperties(AlertRuleTemplatePropertiesBase):
+class AlertRuleTemplateWithMitreProperties(
+    AlertRuleTemplatePropertiesBase
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Alert rule template with MITRE property bag.
 
     :ivar alert_rules_created_by_template_count: The number of alert rules that were created by
@@ -2238,7 +2264,7 @@ class AlertRuleTemplateWithMitreProperties(AlertRuleTemplatePropertiesBase):
         super().__init__(*args, **kwargs)
 
 
-class AlertsDataTypeOfDataConnector(_Model):
+class AlertsDataTypeOfDataConnector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Alerts data type for data connectors.
 
     :ivar alerts: Alerts data type connection. Required.
@@ -2268,7 +2294,7 @@ class AlertsDataTypeOfDataConnector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyticsRuleRunTrigger(_Model):
+class AnalyticsRuleRunTrigger(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Analytics Rule Run Trigger request.
 
     :ivar properties: The analytics Rule Run Trigger request. Required.
@@ -2318,7 +2344,7 @@ class AnalyticsRuleRunTrigger(_Model):
             super().__setattr__(key, value)
 
 
-class AnalyticsRuleRunTriggerProperties(_Model):
+class AnalyticsRuleRunTriggerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Analytics Rule Run Trigger properties.
 
     :ivar execution_time_utc: Required.
@@ -2348,7 +2374,7 @@ class AnalyticsRuleRunTriggerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Settings(ProxyResource):
+class Settings(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Setting.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2402,7 +2428,7 @@ class Settings(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class Anomalies(Settings, discriminator="Anomalies"):
+class Anomalies(Settings, discriminator="Anomalies"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings with single toggle.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2481,7 +2507,7 @@ class AnomaliesSettingsProperties(_Model):
     """Determines whether the setting is enable or disabled."""
 
 
-class SecurityMLAnalyticsSetting(ProxyResource):
+class SecurityMLAnalyticsSetting(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security ML Analytics Setting.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2533,7 +2559,9 @@ class SecurityMLAnalyticsSetting(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AnomalySecurityMLAnalyticsSettings(SecurityMLAnalyticsSetting, discriminator="Anomaly"):
+class AnomalySecurityMLAnalyticsSettings(
+    SecurityMLAnalyticsSetting, discriminator="Anomaly"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Anomaly Security ML Analytics Settings.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2617,7 +2645,9 @@ class AnomalySecurityMLAnalyticsSettings(SecurityMLAnalyticsSetting, discriminat
             super().__setattr__(key, value)
 
 
-class AnomalySecurityMLAnalyticsSettingsProperties(_Model):  # pylint: disable=name-too-long
+class AnomalySecurityMLAnalyticsSettingsProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AnomalySecurityMLAnalytics settings base property bag.
 
     :ivar description: The description of the SecurityMLAnalyticsSettings.
@@ -2733,7 +2763,9 @@ class AnomalySecurityMLAnalyticsSettingsProperties(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class AnomalyTimelineItem(EntityTimelineItem, discriminator="Anomaly"):
+class AnomalyTimelineItem(
+    EntityTimelineItem, discriminator="Anomaly"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents anomaly timeline item.
 
     :ivar azure_resource_id: The anomaly azure resource id. Required.
@@ -2826,7 +2858,7 @@ class AnomalyTimelineItem(EntityTimelineItem, discriminator="Anomaly"):
         self.kind = EntityTimelineKind.ANOMALY  # type: ignore
 
 
-class CcpAuthConfig(_Model):
+class CcpAuthConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base Model for API authentication.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2861,7 +2893,9 @@ class CcpAuthConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiKeyAuthModel(CcpAuthConfig, discriminator="APIKey"):
+class ApiKeyAuthModel(
+    CcpAuthConfig, discriminator="APIKey"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model for authentication with the API Key. Will result in additional header on the request
     (default behavior) to the remote server: 'ApiKeyName: ApiKeyIdentifier ApiKey'. If
     'IsApiKeyInPostPayload' is true it will send it in the body of the request and not the header.
@@ -2915,7 +2949,7 @@ class ApiKeyAuthModel(CcpAuthConfig, discriminator="APIKey"):
         self.type = CcpAuthType.API_KEY  # type: ignore
 
 
-class ApiPollingParameters(_Model):
+class ApiPollingParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Codeless API Polling data connector.
 
     :ivar connector_ui_config: Config to describe the instructions blade.
@@ -2954,7 +2988,9 @@ class ApiPollingParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ASCCheckRequirements(DataConnectorsCheckRequirements, discriminator="AzureSecurityCenter"):
+class ASCCheckRequirements(
+    DataConnectorsCheckRequirements, discriminator="AzureSecurityCenter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents ASC (Azure Security Center) requirements check request.
 
     :ivar properties: ASC (Azure Security Center) requirements check properties.
@@ -3008,7 +3044,7 @@ class ASCCheckRequirements(DataConnectorsCheckRequirements, discriminator="Azure
             super().__setattr__(key, value)
 
 
-class ASCCheckRequirementsProperties(_Model):
+class ASCCheckRequirementsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ASC (Azure Security Center) requirements check properties.
 
     :ivar subscription_id: The subscription id to connect to, and get the data from.
@@ -3038,7 +3074,9 @@ class ASCCheckRequirementsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ASCDataConnector(DataConnector, discriminator="AzureSecurityCenter"):
+class ASCDataConnector(
+    DataConnector, discriminator="AzureSecurityCenter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents ASC (Azure Security Center) data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3106,7 +3144,7 @@ class ASCDataConnector(DataConnector, discriminator="AzureSecurityCenter"):
             super().__setattr__(key, value)
 
 
-class DataConnectorWithAlertsProperties(_Model):
+class DataConnectorWithAlertsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data connector properties.
 
     :ivar data_types: The available data types for the connector.
@@ -3136,7 +3174,9 @@ class DataConnectorWithAlertsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ASCDataConnectorProperties(DataConnectorWithAlertsProperties):
+class ASCDataConnectorProperties(
+    DataConnectorWithAlertsProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ASC (Azure Security Center) data connector properties.
 
     :ivar data_types: The available data types for the connector.
@@ -3169,7 +3209,7 @@ class ASCDataConnectorProperties(DataConnectorWithAlertsProperties):
         super().__init__(*args, **kwargs)
 
 
-class AssignmentItem(_Model):
+class AssignmentItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An entity describing a content item.
 
     :ivar resource_id: The resource id of the content item.
@@ -3199,7 +3239,7 @@ class AssignmentItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TIObject(Resource):
+class TIObject(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a threat intelligence object in Azure Security Insights.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3282,7 +3322,9 @@ class TIObject(Resource):
             super().__setattr__(key, value)
 
 
-class AttackPattern(TIObject, discriminator="AttackPattern"):
+class AttackPattern(
+    TIObject, discriminator="AttackPattern"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an attack pattern in Azure Security Insights.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3354,7 +3396,7 @@ class AttackPattern(TIObject, discriminator="AttackPattern"):
             super().__setattr__(key, value)
 
 
-class AutomationRule(ProxyResource):
+class AutomationRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -3430,7 +3472,7 @@ class AutomationRule(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AutomationRuleAction(_Model):
+class AutomationRuleAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an automation rule action.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3470,7 +3512,9 @@ class AutomationRuleAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomationRuleAddIncidentTaskAction(AutomationRuleAction, discriminator="AddIncidentTask"):
+class AutomationRuleAddIncidentTaskAction(
+    AutomationRuleAction, discriminator="AddIncidentTask"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an automation rule action to add a task to an incident.
 
     :ivar order: Required.
@@ -3509,7 +3553,7 @@ class AutomationRuleAddIncidentTaskAction(AutomationRuleAction, discriminator="A
         self.action_type = ActionType.ADD_INCIDENT_TASK  # type: ignore
 
 
-class AutomationRuleBooleanCondition(_Model):
+class AutomationRuleBooleanCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AutomationRuleBooleanCondition.
 
     :ivar operator: Known values are: "And" and "Or".
@@ -3546,7 +3590,7 @@ class AutomationRuleBooleanCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomationRuleCondition(_Model):
+class AutomationRuleCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an automation rule condition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3583,7 +3627,9 @@ class AutomationRuleCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomationRuleModifyPropertiesAction(AutomationRuleAction, discriminator="ModifyProperties"):
+class AutomationRuleModifyPropertiesAction(
+    AutomationRuleAction, discriminator="ModifyProperties"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an automation rule action to modify an object's properties.
 
     :ivar order: Required.
@@ -3621,7 +3667,7 @@ class AutomationRuleModifyPropertiesAction(AutomationRuleAction, discriminator="
         self.action_type = ActionType.MODIFY_PROPERTIES  # type: ignore
 
 
-class AutomationRuleProperties(_Model):
+class AutomationRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Automation rule properties.
 
     :ivar display_name: The display name of the automation rule. Required.
@@ -3688,7 +3734,9 @@ class AutomationRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomationRulePropertyArrayChangedValuesCondition(_Model):  # pylint: disable=name-too-long
+class AutomationRulePropertyArrayChangedValuesCondition(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AutomationRulePropertyArrayChangedValuesCondition.
 
     :ivar array_type: Known values are: "Alerts", "Labels", "Tactics", and "Comments".
@@ -3731,7 +3779,9 @@ class AutomationRulePropertyArrayChangedValuesCondition(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class AutomationRulePropertyArrayValuesCondition(_Model):  # pylint: disable=name-too-long
+class AutomationRulePropertyArrayValuesCondition(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AutomationRulePropertyArrayValuesCondition.
 
     :ivar array_type: Known values are: "CustomDetails", "CustomDetailValues", and
@@ -3779,7 +3829,9 @@ class AutomationRulePropertyArrayValuesCondition(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class AutomationRulePropertyValuesChangedCondition(_Model):  # pylint: disable=name-too-long
+class AutomationRulePropertyValuesChangedCondition(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AutomationRulePropertyValuesChangedCondition.
 
     :ivar property_name: Known values are: "IncidentSeverity", "IncidentStatus", and
@@ -3837,7 +3889,7 @@ class AutomationRulePropertyValuesChangedCondition(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class AutomationRulePropertyValuesCondition(_Model):
+class AutomationRulePropertyValuesCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AutomationRulePropertyValuesCondition.
 
     :ivar property_name: The property to evaluate in an automation rule property condition. Known
@@ -3915,7 +3967,9 @@ class AutomationRulePropertyValuesCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomationRuleRunPlaybookAction(AutomationRuleAction, discriminator="RunPlaybook"):
+class AutomationRuleRunPlaybookAction(
+    AutomationRuleAction, discriminator="RunPlaybook"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an automation rule action to run a playbook.
 
     :ivar order: Required.
@@ -3953,7 +4007,7 @@ class AutomationRuleRunPlaybookAction(AutomationRuleAction, discriminator="RunPl
         self.action_type = ActionType.RUN_PLAYBOOK  # type: ignore
 
 
-class AutomationRuleTriggeringLogic(_Model):
+class AutomationRuleTriggeringLogic(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes automation rule triggering logic.
 
     :ivar is_enabled: Determines whether the automation rule is enabled or disabled. Required.
@@ -4012,7 +4066,7 @@ class AutomationRuleTriggeringLogic(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Availability(_Model):
+class Availability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connector Availability Status.
 
     :ivar status: The connector Availability Status. Default value is 1.
@@ -4047,7 +4101,7 @@ class Availability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AWSAuthModel(CcpAuthConfig, discriminator="AWS"):
+class AWSAuthModel(CcpAuthConfig, discriminator="AWS"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model for API authentication with AWS.
 
     :ivar role_arn: AWS STS assume role ARN. Required.
@@ -4119,7 +4173,9 @@ class AwsCloudTrailCheckRequirements(DataConnectorsCheckRequirements, discrimina
         self.kind = DataConnectorKind.AMAZON_WEB_SERVICES_CLOUD_TRAIL  # type: ignore
 
 
-class AwsCloudTrailDataConnector(DataConnector, discriminator="AmazonWebServicesCloudTrail"):
+class AwsCloudTrailDataConnector(
+    DataConnector, discriminator="AmazonWebServicesCloudTrail"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Amazon Web Services CloudTrail data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4187,7 +4243,7 @@ class AwsCloudTrailDataConnector(DataConnector, discriminator="AmazonWebServices
             super().__setattr__(key, value)
 
 
-class AwsCloudTrailDataConnectorDataTypes(_Model):
+class AwsCloudTrailDataConnectorDataTypes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The available data types for Amazon Web Services CloudTrail data connector.
 
     :ivar logs: Logs data type. Required.
@@ -4217,7 +4273,7 @@ class AwsCloudTrailDataConnectorDataTypes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataConnectorDataTypeCommon(_Model):
+class DataConnectorDataTypeCommon(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common field for data type in data connectors.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -4247,7 +4303,9 @@ class DataConnectorDataTypeCommon(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AwsCloudTrailDataConnectorDataTypesLogs(DataConnectorDataTypeCommon):
+class AwsCloudTrailDataConnectorDataTypesLogs(
+    DataConnectorDataTypeCommon
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Logs data type.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -4273,7 +4331,7 @@ class AwsCloudTrailDataConnectorDataTypesLogs(DataConnectorDataTypeCommon):
         super().__init__(*args, **kwargs)
 
 
-class AwsCloudTrailDataConnectorProperties(_Model):
+class AwsCloudTrailDataConnectorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Amazon Web Services CloudTrail data connector properties.
 
     :ivar aws_role_arn: The Aws Role Arn (with CloudTrailReadOnly policy) that is used to access
@@ -4338,7 +4396,9 @@ class AwsS3CheckRequirements(DataConnectorsCheckRequirements, discriminator="Ama
         self.kind = DataConnectorKind.AMAZON_WEB_SERVICES_S3  # type: ignore
 
 
-class AwsS3DataConnector(DataConnector, discriminator="AmazonWebServicesS3"):
+class AwsS3DataConnector(
+    DataConnector, discriminator="AmazonWebServicesS3"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Amazon Web Services S3 data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4406,7 +4466,7 @@ class AwsS3DataConnector(DataConnector, discriminator="AmazonWebServicesS3"):
             super().__setattr__(key, value)
 
 
-class AwsS3DataConnectorDataTypes(_Model):
+class AwsS3DataConnectorDataTypes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The available data types for Amazon Web Services S3 data connector.
 
     :ivar logs: Logs data type. Required.
@@ -4436,7 +4496,9 @@ class AwsS3DataConnectorDataTypes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AwsS3DataConnectorDataTypesLogs(DataConnectorDataTypeCommon):
+class AwsS3DataConnectorDataTypesLogs(
+    DataConnectorDataTypeCommon
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Logs data type.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -4462,7 +4524,7 @@ class AwsS3DataConnectorDataTypesLogs(DataConnectorDataTypeCommon):
         super().__init__(*args, **kwargs)
 
 
-class AwsS3DataConnectorProperties(_Model):
+class AwsS3DataConnectorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Amazon Web Services S3 data connector properties.
 
     :ivar destination_table: The logs destination table name in LogAnalytics. Required.
@@ -4509,7 +4571,7 @@ class AwsS3DataConnectorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureDevOpsResourceInfo(_Model):
+class AzureDevOpsResourceInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resources created in Azure DevOps repository.
 
     :ivar pipeline_id: Id of the pipeline created for the source-control.
@@ -4546,7 +4608,9 @@ class AzureDevOpsResourceInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureResourceEntity(Entity, discriminator="AzureResource"):
+class AzureResourceEntity(
+    Entity, discriminator="AzureResource"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an azure resource entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4632,7 +4696,9 @@ class AzureResourceEntityProperties(EntityCommonProperties):
     """The subscription id of the resource."""
 
 
-class BasicAuthModel(CcpAuthConfig, discriminator="Basic"):
+class BasicAuthModel(
+    CcpAuthConfig, discriminator="Basic"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model for API authentication with basic flow - user name + password.
 
     :ivar user_name: The user name. Required.
@@ -4670,7 +4736,7 @@ class BasicAuthModel(CcpAuthConfig, discriminator="Basic"):
         self.type = CcpAuthType.BASIC  # type: ignore
 
 
-class BillingStatistic(ProxyResource):
+class BillingStatistic(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Billing statistic.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4721,7 +4787,7 @@ class BillingStatistic(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class Bookmark(ProxyResource):
+class Bookmark(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a bookmark in Azure Security Insights.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4804,7 +4870,7 @@ class Bookmark(ProxyResource):
             super().__setattr__(key, value)
 
 
-class BookmarkEntityMappings(_Model):
+class BookmarkEntityMappings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the entity mappings of a single entity.
 
     :ivar entity_type: The entity type.
@@ -4841,7 +4907,7 @@ class BookmarkEntityMappings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BookmarkExpandParameters(_Model):
+class BookmarkExpandParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters required to execute an expand operation on the given bookmark.
 
     :ivar end_time: The end date filter, so the only expansion results returned are before this
@@ -4887,7 +4953,7 @@ class BookmarkExpandParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BookmarkExpandResponse(_Model):
+class BookmarkExpandResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The entity expansion result operation response.
 
     :ivar meta_data: The metadata from the expansion operation results.
@@ -4924,7 +4990,7 @@ class BookmarkExpandResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BookmarkExpandResponseValue(_Model):
+class BookmarkExpandResponseValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The expansion result values.
 
     :ivar entities: Array of the expansion result entities.
@@ -4959,7 +5025,7 @@ class BookmarkExpandResponseValue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BookmarkProperties(_Model):
+class BookmarkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes bookmark properties.
 
     :ivar created: The time the bookmark was created.
@@ -5084,7 +5150,9 @@ class BookmarkProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BookmarkTimelineItem(EntityTimelineItem, discriminator="Bookmark"):
+class BookmarkTimelineItem(
+    EntityTimelineItem, discriminator="Bookmark"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents bookmark timeline item.
 
     :ivar azure_resource_id: The bookmark azure resource id. Required.
@@ -5164,7 +5232,9 @@ class BookmarkTimelineItem(EntityTimelineItem, discriminator="Bookmark"):
         self.kind = EntityTimelineKind.BOOKMARK  # type: ignore
 
 
-class BooleanConditionProperties(AutomationRuleCondition, discriminator="Boolean"):
+class BooleanConditionProperties(
+    AutomationRuleCondition, discriminator="Boolean"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an automation rule condition that applies a boolean operator (e.g AND, OR) to
     conditions.
 
@@ -5200,7 +5270,7 @@ class BooleanConditionProperties(AutomationRuleCondition, discriminator="Boolean
         self.condition_type = ConditionType.BOOLEAN  # type: ignore
 
 
-class CcpResponseConfig(_Model):
+class CcpResponseConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A custom response configuration for a rule.
 
     :ivar events_json_paths: The json paths, '$' char is the json root. Required.
@@ -5305,7 +5375,7 @@ class CcpResponseConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientInfo(_Model):
+class ClientInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information on the client (user or application) that made some action.
 
     :ivar email: The email of the client.
@@ -5350,7 +5420,9 @@ class ClientInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudApplicationEntity(Entity, discriminator="CloudApplication"):
+class CloudApplicationEntity(
+    Entity, discriminator="CloudApplication"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a cloud application entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5443,7 +5515,7 @@ class CloudApplicationEntityProperties(EntityCommonProperties):
      between several applications of the same type that a customer has."""
 
 
-class CloudError(_Model):
+class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response structure.
 
     :ivar error: Error data.
@@ -5489,7 +5561,9 @@ class CloudErrorBody(_Model):
     """A message describing the error, intended to be suitable for display in a user interface."""
 
 
-class CodelessApiPollingDataConnector(DataConnector, discriminator="APIPolling"):
+class CodelessApiPollingDataConnector(
+    DataConnector, discriminator="APIPolling"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Codeless API Polling data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5557,7 +5631,7 @@ class CodelessApiPollingDataConnector(DataConnector, discriminator="APIPolling")
             super().__setattr__(key, value)
 
 
-class CodelessConnectorPollingAuthProperties(_Model):
+class CodelessConnectorPollingAuthProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describe the authentication properties needed to successfully authenticate with the server.
 
     :ivar auth_type: The authentication type. Required.
@@ -5669,7 +5743,7 @@ class CodelessConnectorPollingAuthProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CodelessConnectorPollingConfigProperties(_Model):
+class CodelessConnectorPollingConfigProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Config to describe the polling config for API poller connector.
 
     :ivar is_active: The poller active status.
@@ -5726,7 +5800,7 @@ class CodelessConnectorPollingConfigProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CodelessConnectorPollingPagingProperties(_Model):
+class CodelessConnectorPollingPagingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describe the properties needed to make a pagination call.
 
     :ivar paging_type: Describes the type. could be 'None', 'PageToken', 'PageCount', 'TimeStamp'.
@@ -5810,7 +5884,9 @@ class CodelessConnectorPollingPagingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CodelessConnectorPollingRequestProperties(_Model):  # pylint: disable=name-too-long
+class CodelessConnectorPollingRequestProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describe the request properties needed to successfully pull from the server.
 
     :ivar api_endpoint: Describe the endpoint we should pull the data from. Required.
@@ -5916,7 +5992,9 @@ class CodelessConnectorPollingRequestProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class CodelessConnectorPollingResponseProperties(_Model):  # pylint: disable=name-too-long
+class CodelessConnectorPollingResponseProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes the response from the external server.
 
     :ivar events_json_paths: Describes the path we should extract the data in the response.
@@ -5970,7 +6048,7 @@ class CodelessConnectorPollingResponseProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class CodelessParameters(_Model):
+class CodelessParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Codeless UI data connector.
 
     :ivar connector_ui_config: Config to describe the instructions blade.
@@ -6001,7 +6079,7 @@ class CodelessParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CodelessUiConnectorConfigProperties(_Model):
+class CodelessUiConnectorConfigProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Config to describe the instructions blade.
 
     :ivar title: Connector blade title. Required.
@@ -6108,7 +6186,7 @@ class CodelessUiConnectorConfigProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectivityCriteria(_Model):
+class ConnectivityCriteria(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Setting for the connector check connectivity.
 
     :ivar type: type of connectivity. "IsConnectedQuery"
@@ -6145,7 +6223,7 @@ class ConnectivityCriteria(_Model):
 
 class CodelessUiConnectorConfigPropertiesConnectivityCriteriaItem(
     ConnectivityCriteria
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """CodelessUiConnectorConfigPropertiesConnectivityCriteriaItem.
 
     :ivar type: type of connectivity. "IsConnectedQuery"
@@ -6173,7 +6251,7 @@ class CodelessUiConnectorConfigPropertiesConnectivityCriteriaItem(
         super().__init__(*args, **kwargs)
 
 
-class LastDataReceivedDataType(_Model):
+class LastDataReceivedDataType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data type for last data received.
 
     :ivar name: Name of the data type to show in the graph. can be use with
@@ -6210,7 +6288,9 @@ class LastDataReceivedDataType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CodelessUiConnectorConfigPropertiesDataTypesItem(LastDataReceivedDataType):  # pylint: disable=name-too-long
+class CodelessUiConnectorConfigPropertiesDataTypesItem(
+    LastDataReceivedDataType
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """CodelessUiConnectorConfigPropertiesDataTypesItem.
 
     :ivar name: Name of the data type to show in the graph. can be use with
@@ -6239,7 +6319,7 @@ class CodelessUiConnectorConfigPropertiesDataTypesItem(LastDataReceivedDataType)
         super().__init__(*args, **kwargs)
 
 
-class GraphQueries(_Model):
+class GraphQueries(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The graph query to show the current data status.
 
     :ivar metric_name: the metric that the query is checking.
@@ -6279,7 +6359,9 @@ class GraphQueries(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CodelessUiConnectorConfigPropertiesGraphQueriesItem(GraphQueries):  # pylint: disable=name-too-long
+class CodelessUiConnectorConfigPropertiesGraphQueriesItem(
+    GraphQueries
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """CodelessUiConnectorConfigPropertiesGraphQueriesItem.
 
     :ivar metric_name: the metric that the query is checking.
@@ -6310,7 +6392,7 @@ class CodelessUiConnectorConfigPropertiesGraphQueriesItem(GraphQueries):  # pyli
         super().__init__(*args, **kwargs)
 
 
-class InstructionSteps(_Model):
+class InstructionSteps(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instruction steps to enable the connector.
 
     :ivar title: Instruction step title.
@@ -6351,7 +6433,9 @@ class InstructionSteps(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CodelessUiConnectorConfigPropertiesInstructionStepsItem(InstructionSteps):  # pylint: disable=name-too-long
+class CodelessUiConnectorConfigPropertiesInstructionStepsItem(
+    InstructionSteps
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """CodelessUiConnectorConfigPropertiesInstructionStepsItem.
 
     :ivar title: Instruction step title.
@@ -6383,7 +6467,7 @@ class CodelessUiConnectorConfigPropertiesInstructionStepsItem(InstructionSteps):
         super().__init__(*args, **kwargs)
 
 
-class SampleQueries(_Model):
+class SampleQueries(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The sample queries for the connector.
 
     :ivar description: The sample query description.
@@ -6416,7 +6500,9 @@ class SampleQueries(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CodelessUiConnectorConfigPropertiesSampleQueriesItem(SampleQueries):  # pylint: disable=name-too-long
+class CodelessUiConnectorConfigPropertiesSampleQueriesItem(
+    SampleQueries
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """CodelessUiConnectorConfigPropertiesSampleQueriesItem.
 
     :ivar description: The sample query description.
@@ -6444,7 +6530,9 @@ class CodelessUiConnectorConfigPropertiesSampleQueriesItem(SampleQueries):  # py
         super().__init__(*args, **kwargs)
 
 
-class CodelessUiDataConnector(DataConnector, discriminator="GenericUI"):
+class CodelessUiDataConnector(
+    DataConnector, discriminator="GenericUI"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Codeless UI data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6512,7 +6600,7 @@ class CodelessUiDataConnector(DataConnector, discriminator="GenericUI"):
             super().__setattr__(key, value)
 
 
-class ConditionClause(_Model):
+class ConditionClause(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a single clause to be evaluated by a NormalizedCondition.
 
     :ivar clause_connective: The connective used to join all values in this ConditionClause. Known
@@ -6572,7 +6660,7 @@ class ConditionClause(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConditionProperties(_Model):
+class ConditionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a condition used to query for TI objects.
 
     :ivar stix_object_type: The STIX type for the objects returned by this query.
@@ -6613,7 +6701,7 @@ class ConditionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedEntity(_Model):
+class ConnectedEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Expansion result connected entities.
 
     :ivar target_entity_id: Entity Id of the connected entity.
@@ -6650,7 +6738,7 @@ class ConnectedEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectivityCriterion(_Model):
+class ConnectivityCriterion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The criteria by which we determine whether the connector is connected or not. For Example, use
     a KQL query to check if  the expected data type is flowing).
 
@@ -6684,7 +6772,7 @@ class ConnectivityCriterion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectorDataType(_Model):
+class ConnectorDataType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The data type which is created by the connector, including a query indicated when was the last
     time that data type was received in the workspace.
 
@@ -6722,7 +6810,7 @@ class ConnectorDataType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectorDefinitionsAvailability(_Model):
+class ConnectorDefinitionsAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The exposure status of the connector to the customers.
 
     :ivar status: The exposure status of the connector to the customers. Available values are 0-4
@@ -6759,7 +6847,7 @@ class ConnectorDefinitionsAvailability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectorDefinitionsPermissions(_Model):
+class ConnectorDefinitionsPermissions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The required Permissions for the connector.
 
     :ivar tenant: Gets or sets the required tenant permissions for the connector.
@@ -6809,7 +6897,7 @@ class ConnectorDefinitionsPermissions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectorDefinitionsResourceProvider(_Model):
+class ConnectorDefinitionsResourceProvider(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource provider details include the required permissions for the user to create
     connections. The user should have the required permissions(Read\\Write, ..) in the specified
     scope ProviderPermissionsScope against the specified resource provider.
@@ -6876,7 +6964,7 @@ class ConnectorDefinitionsResourceProvider(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectorInstructionModelBase(_Model):
+class ConnectorInstructionModelBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instruction step details.
 
     :ivar parameters: The parameters for the setting.
@@ -6911,7 +6999,7 @@ class ConnectorInstructionModelBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CountQuery(_Model):
+class CountQuery(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a query to run on the TI objects in the workspace.
 
     :ivar properties: Query properties.
@@ -6961,7 +7049,7 @@ class CountQuery(_Model):
             super().__setattr__(key, value)
 
 
-class CustomizableConnectionsConfig(_Model):
+class CustomizableConnectionsConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The UiConfig for 'Customizable' connector definition kind.
 
     :ivar template_spec_name: Gets or sets the template name. The template includes ARM templates
@@ -7001,7 +7089,7 @@ class CustomizableConnectionsConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataConnectorDefinition(ProxyResource):
+class DataConnectorDefinition(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure resource, which encapsulate the entire info requires to display a data connector page
     in Azure portal, and the info required to define data connections.
 
@@ -7054,7 +7142,9 @@ class DataConnectorDefinition(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class CustomizableConnectorDefinition(DataConnectorDefinition, discriminator="Customizable"):
+class CustomizableConnectorDefinition(
+    DataConnectorDefinition, discriminator="Customizable"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connector definition for kind 'Customizable'.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7123,7 +7213,9 @@ class CustomizableConnectorDefinition(DataConnectorDefinition, discriminator="Cu
             super().__setattr__(key, value)
 
 
-class CustomizableConnectorDefinitionProperties(_Model):  # pylint: disable=name-too-long
+class CustomizableConnectorDefinitionProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The UiConfig for 'Customizable' connector definition kind.
 
     :ivar created_time_utc: Gets or sets the connector definition created date in UTC format.
@@ -7175,7 +7267,7 @@ class CustomizableConnectorDefinitionProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class CustomizableConnectorUiConfig(_Model):
+class CustomizableConnectorUiConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The UiConfig for 'Customizable' connector definition kind.
 
     :ivar id: Gets or sets custom connector id. optional field.
@@ -7281,7 +7373,7 @@ class CustomizableConnectorUiConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomPermissionDetails(_Model):
+class CustomPermissionDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Custom permissions required for the connector.
 
     :ivar name: Gets or sets the custom permissions name. Required.
@@ -7314,7 +7406,7 @@ class CustomPermissionDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomsPermission(_Model):
+class CustomsPermission(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Customs permissions required for the connector.
 
     :ivar name: Customs permissions name.
@@ -7347,7 +7439,7 @@ class CustomsPermission(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Customs(CustomsPermission):
+class Customs(CustomsPermission):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Customs permissions required for the connector.
 
     :ivar name: Customs permissions name.
@@ -7375,7 +7467,7 @@ class Customs(CustomsPermission):
         super().__init__(*args, **kwargs)
 
 
-class DataConnectorConnectBody(_Model):
+class DataConnectorConnectBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Codeless API Polling data connector.
 
     :ivar kind: The authentication kind used to poll the data. Known values are: "Basic", "OAuth2",
@@ -7473,7 +7565,7 @@ class DataConnectorConnectBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataConnectorRequirementsState(_Model):
+class DataConnectorRequirementsState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data connector requirements status.
 
     :ivar authorization_state: Authorization state for this connector. Known values are: "Valid"
@@ -7513,7 +7605,7 @@ class DataConnectorRequirementsState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataTypeDefinitions(_Model):
+class DataTypeDefinitions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The data type definition.
 
     :ivar data_type: The data type name.
@@ -7541,7 +7633,7 @@ class DataTypeDefinitions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DCRConfiguration(_Model):
+class DCRConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration of the destination of the data.
 
     :ivar data_collection_endpoint: Represents the data collection ingestion endpoint in log
@@ -7586,7 +7678,7 @@ class DCRConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Deployment(_Model):
+class Deployment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description about a deployment.
 
     :ivar deployment_id: Deployment identifier.
@@ -7647,7 +7739,7 @@ class Deployment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentInfo(_Model):
+class DeploymentInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information regarding a deployment.
 
     :ivar deployment_fetch_status: Status while fetching the last deployment. Known values are:
@@ -7690,7 +7782,7 @@ class DeploymentInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DnsEntity(Entity, discriminator="DnsResolution"):
+class DnsEntity(Entity, discriminator="DnsResolution"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a dns entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7791,7 +7883,9 @@ class DnsEntityProperties(EntityCommonProperties):
     """Ip entity identifiers for the resolved ip address."""
 
 
-class Dynamics365CheckRequirements(DataConnectorsCheckRequirements, discriminator="Dynamics365"):
+class Dynamics365CheckRequirements(
+    DataConnectorsCheckRequirements, discriminator="Dynamics365"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Dynamics365 requirements check request.
 
     :ivar properties: Dynamics365 requirements check properties.
@@ -7845,7 +7939,9 @@ class Dynamics365CheckRequirements(DataConnectorsCheckRequirements, discriminato
             super().__setattr__(key, value)
 
 
-class Dynamics365CheckRequirementsProperties(DataConnectorTenantId):
+class Dynamics365CheckRequirementsProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dynamics365 requirements check properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -7870,7 +7966,9 @@ class Dynamics365CheckRequirementsProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class Dynamics365DataConnector(DataConnector, discriminator="Dynamics365"):
+class Dynamics365DataConnector(
+    DataConnector, discriminator="Dynamics365"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Dynamics365 data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7938,7 +8036,7 @@ class Dynamics365DataConnector(DataConnector, discriminator="Dynamics365"):
             super().__setattr__(key, value)
 
 
-class Dynamics365DataConnectorDataTypes(_Model):
+class Dynamics365DataConnectorDataTypes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The available data types for Dynamics365 data connector.
 
     :ivar dynamics365_cds_activities: Common Data Service data type connection. Required.
@@ -7971,7 +8069,7 @@ class Dynamics365DataConnectorDataTypes(_Model):
 
 class Dynamics365DataConnectorDataTypesDynamics365CdsActivities(
     DataConnectorDataTypeCommon
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Common Data Service data type connection.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -7997,7 +8095,9 @@ class Dynamics365DataConnectorDataTypesDynamics365CdsActivities(
         super().__init__(*args, **kwargs)
 
 
-class Dynamics365DataConnectorProperties(DataConnectorTenantId):
+class Dynamics365DataConnectorProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dynamics365 data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -8030,7 +8130,7 @@ class Dynamics365DataConnectorProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class EnrichmentDomainBody(_Model):
+class EnrichmentDomainBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Domain name to be enriched.
 
     :ivar domain: The domain name.
@@ -8058,7 +8158,7 @@ class EnrichmentDomainBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnrichmentDomainWhois(_Model):
+class EnrichmentDomainWhois(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Whois information for a given domain and associated metadata.
 
     :ivar domain: The domain for this whois record.
@@ -8119,7 +8219,7 @@ class EnrichmentDomainWhois(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnrichmentDomainWhoisContact(_Model):
+class EnrichmentDomainWhoisContact(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An individual contact associated with this domain.
 
     :ivar name: The name of this contact.
@@ -8192,7 +8292,7 @@ class EnrichmentDomainWhoisContact(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnrichmentDomainWhoisContacts(_Model):
+class EnrichmentDomainWhoisContacts(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The set of contacts associated with this domain.
 
     :ivar admin: The admin contact for this whois record.
@@ -8243,7 +8343,7 @@ class EnrichmentDomainWhoisContacts(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnrichmentDomainWhoisDetails(_Model):
+class EnrichmentDomainWhoisDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The whois record for a given domain.
 
     :ivar registrar: The registrar associated with this domain.
@@ -8292,7 +8392,7 @@ class EnrichmentDomainWhoisDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnrichmentDomainWhoisRegistrarDetails(_Model):
+class EnrichmentDomainWhoisRegistrarDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The registrar associated with this domain.
 
     :ivar name: The name of this registrar.
@@ -8351,7 +8451,7 @@ class EnrichmentDomainWhoisRegistrarDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnrichmentIpAddressBody(_Model):
+class EnrichmentIpAddressBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP address (v4 or v6) to be enriched.
 
     :ivar ip_address: The dotted-decimal or colon-separated string representation of the IP
@@ -8380,7 +8480,7 @@ class EnrichmentIpAddressBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnrichmentIpGeodata(_Model):
+class EnrichmentIpGeodata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Geodata information for a given IP address.
 
     :ivar asn: The autonomous system number associated with this IP address.
@@ -8504,7 +8604,9 @@ class EnrichmentIpGeodata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityAnalytics(Settings, discriminator="EntityAnalytics"):
+class EntityAnalytics(
+    Settings, discriminator="EntityAnalytics"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings with single toggle.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8572,7 +8674,7 @@ class EntityAnalytics(Settings, discriminator="EntityAnalytics"):
             super().__setattr__(key, value)
 
 
-class EntityAnalyticsProperties(_Model):
+class EntityAnalyticsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EntityAnalytics property bag.
 
     :ivar entity_providers: The relevant entity providers that are synced.
@@ -8602,7 +8704,7 @@ class EntityAnalyticsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityEdges(_Model):
+class EntityEdges(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The edge that connects the entity to the other entity.
 
     :ivar target_entity_id: The target entity Id.
@@ -8640,7 +8742,7 @@ class EntityEdges(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityExpandParameters(_Model):
+class EntityExpandParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters required to execute an expand operation on the given entity.
 
     :ivar end_time: The end date filter, so the only expansion results returned are before this
@@ -8686,7 +8788,7 @@ class EntityExpandParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityExpandResponse(_Model):
+class EntityExpandResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The entity expansion result operation response.
 
     :ivar meta_data: The metadata from the expansion operation results.
@@ -8723,7 +8825,7 @@ class EntityExpandResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityExpandResponseValue(_Model):
+class EntityExpandResponseValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The expansion result values.
 
     :ivar entities: Array of the expansion result entities.
@@ -8758,7 +8860,7 @@ class EntityExpandResponseValue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityFieldMapping(_Model):
+class EntityFieldMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Map identifiers of a single entity.
 
     :ivar identifier: Alert V3 identifier.
@@ -8791,7 +8893,7 @@ class EntityFieldMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityGetInsightsParameters(_Model):
+class EntityGetInsightsParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters required to execute insights operation on the given entity.
 
     :ivar start_time: The start timeline date, so the results returned are after this date.
@@ -8846,7 +8948,7 @@ class EntityGetInsightsParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityGetInsightsResponse(_Model):
+class EntityGetInsightsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Get Insights result operation response.
 
     :ivar meta_data: The metadata from the get insights operation results.
@@ -8883,7 +8985,7 @@ class EntityGetInsightsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityInsightItem(_Model):
+class EntityInsightItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Entity insight Item.
 
     :ivar query_id: The query id of the insight.
@@ -8933,7 +9035,7 @@ class EntityInsightItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityInsightItemQueryTimeInterval(_Model):
+class EntityInsightItemQueryTimeInterval(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Time interval that the query actually executed on.
 
     :ivar start_time: Insight query start time.
@@ -8970,7 +9072,7 @@ class EntityInsightItemQueryTimeInterval(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityManualTriggerRequestBody(_Model):
+class EntityManualTriggerRequestBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the request body for triggering a playbook on an entity.
 
     :ivar incident_arm_id: Incident ARM id.
@@ -9012,7 +9114,7 @@ class EntityManualTriggerRequestBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityMapping(_Model):
+class EntityMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Single entity mapping for the alert rule.
 
     :ivar entity_type: The V3 type of the mapped entity. Known values are: "Account", "Host", "IP",
@@ -9055,7 +9157,7 @@ class EntityMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityQueryItem(_Model):
+class EntityQueryItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An abstract Query item for entity.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -9103,7 +9205,7 @@ class EntityQueryItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityQueryItemProperties(_Model):
+class EntityQueryItemProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An properties abstract Query item for entity.
 
     :ivar data_types: Data types for template.
@@ -9162,7 +9264,7 @@ class EntityQueryItemProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityQueryItemPropertiesDataTypesItem(_Model):
+class EntityQueryItemPropertiesDataTypesItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EntityQueryItemPropertiesDataTypesItem.
 
     :ivar data_type: Data type name.
@@ -9190,7 +9292,7 @@ class EntityQueryItemPropertiesDataTypesItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityTimelineParameters(_Model):
+class EntityTimelineParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters required to execute s timeline operation on the given entity.
 
     :ivar kinds: Array of timeline Item kinds.
@@ -9242,7 +9344,7 @@ class EntityTimelineParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityTimelineResponse(_Model):
+class EntityTimelineResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The entity timeline result operation response.
 
     :ivar meta_data: The metadata from the timeline operation results.
@@ -9279,7 +9381,7 @@ class EntityTimelineResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Error(_Model):
+class Error(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The error description for why a publication failed.
 
     :ivar member_resource_name: The member resource name for which the publication error occured.
@@ -9359,7 +9461,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -9387,7 +9489,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventGroupingSettings(_Model):
+class EventGroupingSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Event grouping settings property bag.
 
     :ivar aggregation_kind: The event grouping aggregation kinds. Known values are: "SingleAlert"
@@ -9419,7 +9521,7 @@ class EventGroupingSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExpansionEntityQueriesProperties(_Model):
+class ExpansionEntityQueriesProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes expansion entity query properties.
 
     :ivar data_sources: List of the data sources that are required to run the query.
@@ -9492,7 +9594,9 @@ class ExpansionEntityQueriesProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExpansionEntityQuery(EntityQuery, discriminator="Expansion"):
+class ExpansionEntityQuery(
+    EntityQuery, discriminator="Expansion"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Expansion entity query.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9567,7 +9671,7 @@ class ExpansionEntityQuery(EntityQuery, discriminator="Expansion"):
             super().__setattr__(key, value)
 
 
-class ExpansionResultAggregation(_Model):
+class ExpansionResultAggregation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information of a specific aggregation in the expansion result.
 
     :ivar aggregation_type: The common type of the aggregation. (for e.g. entity field name).
@@ -9626,7 +9730,7 @@ class ExpansionResultAggregation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExpansionResultsMetadata(_Model):
+class ExpansionResultsMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Expansion result metadata.
 
     :ivar aggregations: Information of the aggregated nodes in the expansion result.
@@ -9656,7 +9760,7 @@ class ExpansionResultsMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EyesOn(Settings, discriminator="EyesOn"):
+class EyesOn(Settings, discriminator="EyesOn"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings with single toggle.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9735,7 +9839,7 @@ class EyesOnSettingsProperties(_Model):
     """Determines whether the setting is enable or disabled."""
 
 
-class FieldMapping(_Model):
+class FieldMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single field mapping of the mapped entity.
 
     :ivar identifier: the V3 identifier of the entity.
@@ -9770,7 +9874,7 @@ class FieldMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileEntity(Entity, discriminator="File"):
+class FileEntity(Entity, discriminator="File"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a file entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9871,7 +9975,7 @@ class FileEntityProperties(EntityCommonProperties):
     """The Host entity id which the file belongs to."""
 
 
-class FileHashEntity(Entity, discriminator="FileHash"):
+class FileHashEntity(Entity, discriminator="FileHash"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a file hash entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9959,7 +10063,7 @@ class FileHashEntityProperties(EntityCommonProperties):
     """The file hash value."""
 
 
-class FileImport(ProxyResource):
+class FileImport(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a file import in Azure Security Insights.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10034,7 +10138,7 @@ class FileImport(ProxyResource):
             super().__setattr__(key, value)
 
 
-class FileImportProperties(_Model):
+class FileImportProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the FileImport's properties.
 
     :ivar ingestion_mode: Describes how to ingest the records in the file. Required. Known values
@@ -10135,7 +10239,7 @@ class FileImportProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileMetadata(_Model):
+class FileMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a file.
 
     :ivar file_format: The format of the file. Known values are: "CSV", "JSON", and "Unspecified".
@@ -10185,7 +10289,7 @@ class FileMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FusionAlertRule(AlertRule, discriminator="Fusion"):
+class FusionAlertRule(AlertRule, discriminator="Fusion"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Fusion alert rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10265,7 +10369,7 @@ class FusionAlertRule(AlertRule, discriminator="Fusion"):
             super().__setattr__(key, value)
 
 
-class FusionAlertRuleProperties(_Model):
+class FusionAlertRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fusion alert rule base property bag.
 
     :ivar alert_rule_template_name: The Name of the alert rule template used to create this rule.
@@ -10348,7 +10452,9 @@ class FusionAlertRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FusionAlertRuleTemplate(AlertRuleTemplate, discriminator="Fusion"):
+class FusionAlertRuleTemplate(
+    AlertRuleTemplate, discriminator="Fusion"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Fusion alert rule template.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10426,7 +10532,7 @@ class FusionAlertRuleTemplate(AlertRuleTemplate, discriminator="Fusion"):
             super().__setattr__(key, value)
 
 
-class FusionAlertRuleTemplateProperties(_Model):
+class FusionAlertRuleTemplateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fusion alert rule template properties.
 
     :ivar alert_rules_created_by_template_count: The number of alert rules that were created by
@@ -10533,7 +10639,7 @@ class FusionAlertRuleTemplateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FusionScenarioExclusionPattern(_Model):
+class FusionScenarioExclusionPattern(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Fusion scenario exclusion patterns in Fusion detection.
 
     :ivar exclusion_pattern: Scenario exclusion pattern. Required.
@@ -10570,7 +10676,7 @@ class FusionScenarioExclusionPattern(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FusionSourceSettings(_Model):
+class FusionSourceSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a supported source signal configuration in Fusion detection.
 
     :ivar enabled: Determines whether this source signal is enabled or disabled in Fusion
@@ -10614,7 +10720,7 @@ class FusionSourceSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FusionSourceSubTypeSetting(_Model):
+class FusionSourceSubTypeSetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a supported source subtype configuration under a source signal in Fusion detection.
 
     :ivar enabled: Determines whether this source subtype under source signal is enabled or
@@ -10666,7 +10772,7 @@ class FusionSourceSubTypeSetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FusionSubTypeSeverityFilter(_Model):
+class FusionSubTypeSeverityFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents severity configuration for a source subtype consumed in Fusion detection.
 
     :ivar is_supported: Determines whether this source subtype supports severity configuration or
@@ -10703,7 +10809,7 @@ class FusionSubTypeSeverityFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FusionSubTypeSeverityFiltersItem(_Model):
+class FusionSubTypeSeverityFiltersItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Severity filter setting for a given source subtype consumed in Fusion detection.
 
     :ivar severity: The Severity for a given source subtype consumed in Fusion detection. Required.
@@ -10742,7 +10848,7 @@ class FusionSubTypeSeverityFiltersItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FusionTemplateSourceSetting(_Model):
+class FusionTemplateSourceSetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a source signal consumed in Fusion detection.
 
     :ivar source_name: The name of a source signal consumed in Fusion detection. Required.
@@ -10778,7 +10884,7 @@ class FusionTemplateSourceSetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FusionTemplateSourceSubType(_Model):
+class FusionTemplateSourceSubType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a source subtype under a source signal consumed in Fusion detection.
 
     :ivar source_sub_type_name: The name of source subtype under a source signal consumed in Fusion
@@ -10823,7 +10929,7 @@ class FusionTemplateSourceSubType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FusionTemplateSubTypeSeverityFilter(_Model):
+class FusionTemplateSubTypeSeverityFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents severity configurations available for a source subtype consumed in Fusion detection.
 
     :ivar is_supported: Determines whether severity configuration is supported for this source
@@ -10861,7 +10967,7 @@ class FusionTemplateSubTypeSeverityFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GCPAuthModel(CcpAuthConfig, discriminator="GCP"):
+class GCPAuthModel(CcpAuthConfig, discriminator="GCP"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model for API authentication for all GCP kind connectors.
 
     :ivar service_account_email: GCP Service Account Email. Required.
@@ -10908,7 +11014,7 @@ class GCPAuthModel(CcpAuthConfig, discriminator="GCP"):
         self.type = CcpAuthType.GCP  # type: ignore
 
 
-class GCPAuthProperties(_Model):
+class GCPAuthProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Google Cloud Platform auth section properties.
 
     :ivar service_account_email: The service account that is used to access the GCP project.
@@ -10952,7 +11058,9 @@ class GCPAuthProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GCPDataConnector(DataConnector, discriminator="GCP"):
+class GCPDataConnector(
+    DataConnector, discriminator="GCP"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Google Cloud Platform data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11020,7 +11128,7 @@ class GCPDataConnector(DataConnector, discriminator="GCP"):
             super().__setattr__(key, value)
 
 
-class GCPDataConnectorProperties(_Model):
+class GCPDataConnectorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Google Cloud Platform data connector properties.
 
     :ivar connector_definition_name: The name of the connector definition that represents the UI
@@ -11068,7 +11176,7 @@ class GCPDataConnectorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GCPRequestProperties(_Model):
+class GCPRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Google Cloud Platform request section properties.
 
     :ivar project_id: The GCP project id. Required.
@@ -11103,7 +11211,9 @@ class GCPRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GenericBlobSbsAuthModel(CcpAuthConfig, discriminator="ServiceBus"):
+class GenericBlobSbsAuthModel(
+    CcpAuthConfig, discriminator="ServiceBus"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model for API authentication for working with service bus or storage account.
 
     :ivar credentials_config: Credentials for service bus namespace, keyvault uri for access key.
@@ -11186,7 +11296,7 @@ class GeoLocation(_Model):
     """State name."""
 
 
-class GetInsightsErrorKind(_Model):
+class GetInsightsErrorKind(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GetInsights Query Errors.
 
     :ivar kind: the query kind. Required. "Insight"
@@ -11226,7 +11336,7 @@ class GetInsightsErrorKind(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetInsightsResultsMetadata(_Model):
+class GetInsightsResultsMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Get Insights result metadata.
 
     :ivar total_count: the total items found for the insights request. Required.
@@ -11261,7 +11371,9 @@ class GetInsightsResultsMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GitHubAuthModel(CcpAuthConfig, discriminator="GitHub"):
+class GitHubAuthModel(
+    CcpAuthConfig, discriminator="GitHub"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model for API authentication for GitHub. For this authentication first we need to approve the
     Router app (Microsoft Security DevOps) to access the GitHub account, Then we only need the
     InstallationId to get the access token from
@@ -11300,7 +11412,7 @@ class GitHubAuthModel(CcpAuthConfig, discriminator="GitHub"):
         self.type = CcpAuthType.GIT_HUB  # type: ignore
 
 
-class GitHubResourceInfo(_Model):
+class GitHubResourceInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resources created in GitHub repository.
 
     :ivar app_installation_id: GitHub application installation id.
@@ -11330,7 +11442,7 @@ class GitHubResourceInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GraphQuery(_Model):
+class GraphQuery(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The graph query to show the volume of data arriving into the workspace over time.
 
     :ivar metric_name: Gets or sets the metric name that the query is checking. For example: 'Total
@@ -11372,7 +11484,7 @@ class GraphQuery(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GroupingConfiguration(_Model):
+class GroupingConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Grouping configuration property bag.
 
     :ivar enabled: Grouping enabled. Required.
@@ -11453,7 +11565,7 @@ class GroupingConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HostEntity(Entity, discriminator="Host"):
+class HostEntity(Entity, discriminator="Host"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a host entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11530,7 +11642,7 @@ class HostEntity(Entity, discriminator="Host"):
             super().__setattr__(key, value)
 
 
-class HostEntityProperties(EntityCommonProperties):
+class HostEntityProperties(EntityCommonProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Host entity property bag.
 
     :ivar additional_data: A bag of custom fields that should be part of the entity and will be
@@ -11605,7 +11717,7 @@ class HostEntityProperties(EntityCommonProperties):
         super().__init__(*args, **kwargs)
 
 
-class Hunt(ProxyResource):
+class Hunt(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Hunt in Azure Security Insights.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11680,7 +11792,7 @@ class Hunt(ProxyResource):
             super().__setattr__(key, value)
 
 
-class HuntComment(ProxyResource):
+class HuntComment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Hunt Comment in Azure Security Insights.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11746,7 +11858,7 @@ class HuntComment(ProxyResource):
             super().__setattr__(key, value)
 
 
-class HuntCommentProperties(_Model):
+class HuntCommentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a hunt comment properties.
 
     :ivar message: The message for the comment. Required.
@@ -11774,7 +11886,7 @@ class HuntCommentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HuntingBookmark(Entity, discriminator="Bookmark"):
+class HuntingBookmark(Entity, discriminator="Bookmark"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Hunting bookmark entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11853,7 +11965,7 @@ class HuntingBookmark(Entity, discriminator="Bookmark"):
             super().__setattr__(key, value)
 
 
-class HuntingBookmarkProperties(EntityCommonProperties):
+class HuntingBookmarkProperties(EntityCommonProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes bookmark properties.
 
     :ivar additional_data: A bag of custom fields that should be part of the entity and will be
@@ -11951,7 +12063,7 @@ class HuntingBookmarkProperties(EntityCommonProperties):
         super().__init__(*args, **kwargs)
 
 
-class HuntOwner(_Model):
+class HuntOwner(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a user that the hunt is assigned to.
 
     :ivar email: The email of the user the hunt is assigned to.
@@ -12007,7 +12119,7 @@ class HuntOwner(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HuntProperties(_Model):
+class HuntProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes hunt properties.
 
     :ivar display_name: The display name of the hunt. Required.
@@ -12082,7 +12194,7 @@ class HuntProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HuntRelation(ProxyResource):
+class HuntRelation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Hunt Relation in Azure Security Insights.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12149,7 +12261,7 @@ class HuntRelation(ProxyResource):
             super().__setattr__(key, value)
 
 
-class HuntRelationProperties(_Model):
+class HuntRelationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes hunt relation properties.
 
     :ivar related_resource_id: The id of the related resource. Required.
@@ -12196,7 +12308,7 @@ class HuntRelationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Identity(TIObject, discriminator="Identity"):
+class Identity(TIObject, discriminator="Identity"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an identity in Azure Security Insights.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12268,7 +12380,7 @@ class Identity(TIObject, discriminator="Identity"):
             super().__setattr__(key, value)
 
 
-class Incident(ProxyResource):
+class Incident(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an incident in Azure Security Insights.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12400,7 +12512,7 @@ class IncidentAdditionalData(_Model):
     """The URL to the incident that the current incident was merged into."""
 
 
-class IncidentAlertList(_Model):
+class IncidentAlertList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of incident alerts.
 
     :ivar value: Array of incident alerts. Required.
@@ -12428,7 +12540,7 @@ class IncidentAlertList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IncidentBookmarkList(_Model):
+class IncidentBookmarkList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of incident bookmarks.
 
     :ivar value: Array of incident bookmarks. Required.
@@ -12456,7 +12568,7 @@ class IncidentBookmarkList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IncidentComment(ProxyResource):
+class IncidentComment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an incident comment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12522,7 +12634,7 @@ class IncidentComment(ProxyResource):
             super().__setattr__(key, value)
 
 
-class IncidentCommentProperties(_Model):
+class IncidentCommentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Incident comment property bag.
 
     :ivar message: The comment message. Required.
@@ -12566,7 +12678,7 @@ class IncidentCommentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IncidentConfiguration(_Model):
+class IncidentConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Incident Configuration property bag.
 
     :ivar create_incident: Create incidents from alerts triggered by this analytics rule. Required.
@@ -12604,7 +12716,7 @@ class IncidentConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IncidentEntitiesResponse(_Model):
+class IncidentEntitiesResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The incident related entities response.
 
     :ivar entities: Array of the incident related entities.
@@ -12639,7 +12751,7 @@ class IncidentEntitiesResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IncidentEntitiesResultsMetadata(_Model):
+class IncidentEntitiesResultsMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information of a specific aggregation in the incident related entities result.
 
     :ivar entity_kind: The kind of the aggregated entity. Required. Known values are: "Account",
@@ -12684,7 +12796,7 @@ class IncidentEntitiesResultsMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IncidentInfo(_Model):
+class IncidentInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes related incident information for the bookmark.
 
     :ivar incident_id: Incident Id.
@@ -12735,7 +12847,7 @@ class IncidentInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IncidentLabel(_Model):
+class IncidentLabel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an incident label.
 
     :ivar label_name: The name of the label. Required.
@@ -12767,7 +12879,7 @@ class IncidentLabel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IncidentOwnerInfo(_Model):
+class IncidentOwnerInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information on the user an incident is assigned to.
 
     :ivar email: The email of the user the incident is assigned to.
@@ -12823,7 +12935,7 @@ class IncidentOwnerInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IncidentProperties(_Model):
+class IncidentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes incident properties.
 
     :ivar title: The title of the incident. Required.
@@ -12973,7 +13085,7 @@ class IncidentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IncidentPropertiesAction(_Model):
+class IncidentPropertiesAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IncidentPropertiesAction.
 
     :ivar severity: The severity of the incident. Known values are: "High", "Medium", "Low", and
@@ -13054,7 +13166,7 @@ class IncidentPropertiesAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IncidentTask(ProxyResource):
+class IncidentTask(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes incident task properties.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13128,7 +13240,7 @@ class IncidentTask(ProxyResource):
             super().__setattr__(key, value)
 
 
-class IncidentTaskProperties(_Model):
+class IncidentTaskProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of an incident task.
 
     :ivar title: The title of the task. Required.
@@ -13194,7 +13306,7 @@ class IncidentTaskProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Indicator(TIObject, discriminator="Indicator"):
+class Indicator(TIObject, discriminator="Indicator"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an indicator in Azure Security Insights.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13273,7 +13385,7 @@ class Indicator(TIObject, discriminator="Indicator"):
             super().__setattr__(key, value)
 
 
-class IndicatorObservablesItem(_Model):
+class IndicatorObservablesItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An observable of this indicator.
 
     :ivar type: The type of the observable of this indicator.
@@ -13306,7 +13418,9 @@ class IndicatorObservablesItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InsightQueryItem(EntityQueryItem, discriminator="Insight"):
+class InsightQueryItem(
+    EntityQueryItem, discriminator="Insight"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Insight Query.
 
     :ivar id: Query Template ARM ID.
@@ -13349,7 +13463,9 @@ class InsightQueryItem(EntityQueryItem, discriminator="Insight"):
         self.kind = EntityQueryKind.INSIGHT  # type: ignore
 
 
-class InsightQueryItemProperties(EntityQueryItemProperties):
+class InsightQueryItemProperties(
+    EntityQueryItemProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Insight Query.
 
     :ivar data_types: Data types for template.
@@ -13443,7 +13559,9 @@ class InsightQueryItemProperties(EntityQueryItemProperties):
         super().__init__(*args, **kwargs)
 
 
-class InsightQueryItemPropertiesAdditionalQuery(_Model):  # pylint: disable=name-too-long
+class InsightQueryItemPropertiesAdditionalQuery(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The activity query definitions.
 
     :ivar query: The insight query.
@@ -13476,7 +13594,9 @@ class InsightQueryItemPropertiesAdditionalQuery(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class InsightQueryItemPropertiesDefaultTimeRange(_Model):  # pylint: disable=name-too-long
+class InsightQueryItemPropertiesDefaultTimeRange(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The insight chart query.
 
     :ivar before_range: The padding for the start time of the query.
@@ -13513,7 +13633,9 @@ class InsightQueryItemPropertiesDefaultTimeRange(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class InsightQueryItemPropertiesReferenceTimeRange(_Model):  # pylint: disable=name-too-long
+class InsightQueryItemPropertiesReferenceTimeRange(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The insight chart query.
 
     :ivar before_range: Additional query time for looking back.
@@ -13543,7 +13665,7 @@ class InsightQueryItemPropertiesReferenceTimeRange(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class InsightQueryItemPropertiesTableQuery(_Model):
+class InsightQueryItemPropertiesTableQuery(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The insight table query.
 
     :ivar columns_definitions: List of insight column definitions.
@@ -13586,7 +13708,9 @@ class InsightQueryItemPropertiesTableQuery(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InsightQueryItemPropertiesTableQueryColumnsDefinitionsItem(_Model):  # pylint: disable=name-too-long
+class InsightQueryItemPropertiesTableQueryColumnsDefinitionsItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """InsightQueryItemPropertiesTableQueryColumnsDefinitionsItem.
 
     :ivar header: Insight column header.
@@ -13629,7 +13753,9 @@ class InsightQueryItemPropertiesTableQueryColumnsDefinitionsItem(_Model):  # pyl
         super().__init__(*args, **kwargs)
 
 
-class InsightQueryItemPropertiesTableQueryQueriesDefinitionsItem(_Model):  # pylint: disable=name-too-long
+class InsightQueryItemPropertiesTableQueryQueriesDefinitionsItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """InsightQueryItemPropertiesTableQueryQueriesDefinitionsItem.
 
     :ivar filter: Insight column header.
@@ -13679,7 +13805,7 @@ class InsightQueryItemPropertiesTableQueryQueriesDefinitionsItem(_Model):  # pyl
 
 class InsightQueryItemPropertiesTableQueryQueriesDefinitionsPropertiesItemsItem(
     _Model
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """InsightQueryItemPropertiesTableQueryQueriesDefinitionsPropertiesItemsItem.
 
     :ivar projected_name: Insight Link Definition Projected Name.
@@ -13714,7 +13840,7 @@ class InsightQueryItemPropertiesTableQueryQueriesDefinitionsPropertiesItemsItem(
         super().__init__(*args, **kwargs)
 
 
-class InsightsTableResult(_Model):
+class InsightsTableResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Query results for table insights query.
 
     :ivar columns: Columns Metadata of the table.
@@ -13749,7 +13875,7 @@ class InsightsTableResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InsightsTableResultColumnsItem(_Model):
+class InsightsTableResultColumnsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InsightsTableResultColumnsItem.
 
     :ivar type: the type of the column.
@@ -13782,7 +13908,7 @@ class InsightsTableResultColumnsItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstructionStep(_Model):
+class InstructionStep(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instruction steps to enable the connector.
 
     :ivar title: Gets or sets the instruction step title.
@@ -13831,7 +13957,7 @@ class InstructionStep(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstructionStepDetails(_Model):
+class InstructionStepDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instruction step details, to be displayed in the Instructions steps section in the connector's
     page in Sentinel Portal.
 
@@ -13865,7 +13991,9 @@ class InstructionStepDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstructionStepsInstructionsItem(ConnectorInstructionModelBase):
+class InstructionStepsInstructionsItem(
+    ConnectorInstructionModelBase
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InstructionStepsInstructionsItem.
 
     :ivar parameters: The parameters for the setting.
@@ -13894,7 +14022,9 @@ class InstructionStepsInstructionsItem(ConnectorInstructionModelBase):
         super().__init__(*args, **kwargs)
 
 
-class IoTCheckRequirements(DataConnectorsCheckRequirements, discriminator="IOT"):
+class IoTCheckRequirements(
+    DataConnectorsCheckRequirements, discriminator="IOT"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents IoT requirements check request.
 
     :ivar properties: IoT requirements check properties.
@@ -13948,7 +14078,7 @@ class IoTCheckRequirements(DataConnectorsCheckRequirements, discriminator="IOT")
             super().__setattr__(key, value)
 
 
-class IoTCheckRequirementsProperties(_Model):
+class IoTCheckRequirementsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IoT requirements check properties.
 
     :ivar subscription_id: The subscription id to connect to, and get the data from.
@@ -13978,7 +14108,9 @@ class IoTCheckRequirementsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IoTDataConnector(DataConnector, discriminator="IOT"):
+class IoTDataConnector(
+    DataConnector, discriminator="IOT"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents IoT data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14046,7 +14178,9 @@ class IoTDataConnector(DataConnector, discriminator="IOT"):
             super().__setattr__(key, value)
 
 
-class IoTDataConnectorProperties(DataConnectorWithAlertsProperties):
+class IoTDataConnectorProperties(
+    DataConnectorWithAlertsProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IoT data connector properties.
 
     :ivar data_types: The available data types for the connector.
@@ -14079,7 +14213,7 @@ class IoTDataConnectorProperties(DataConnectorWithAlertsProperties):
         super().__init__(*args, **kwargs)
 
 
-class IoTDeviceEntity(Entity, discriminator="IoTDevice"):
+class IoTDeviceEntity(Entity, discriminator="IoTDevice"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an IoT device entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14175,7 +14309,7 @@ class IoTDeviceEntity(Entity, discriminator="IoTDevice"):
             super().__setattr__(key, value)
 
 
-class IoTDeviceEntityProperties(EntityCommonProperties):
+class IoTDeviceEntityProperties(EntityCommonProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IoTDevice entity property bag.
 
     :ivar additional_data: A bag of custom fields that should be part of the entity and will be
@@ -14323,7 +14457,7 @@ class IoTDeviceEntityProperties(EntityCommonProperties):
         super().__init__(*args, **kwargs)
 
 
-class IpEntity(Entity, discriminator="Ip"):
+class IpEntity(Entity, discriminator="Ip"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an ip entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14415,7 +14549,7 @@ class IpEntityProperties(EntityCommonProperties):
     """A list of TI contexts attached to the ip entity."""
 
 
-class Job(ProxyResource):
+class Job(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The assignment job.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14481,7 +14615,7 @@ class Job(ProxyResource):
             super().__setattr__(key, value)
 
 
-class JobItem(_Model):
+class JobItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An entity describing the publish status of a content item.
 
     :ivar resource_id: The resource id of the content item.
@@ -14528,16 +14662,16 @@ class JobItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobProperties(_Model):
+class JobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The job properties.
 
     :ivar end_time: The time the job completed.
     :vartype end_time: ~datetime.datetime
     :ivar items_property: List of items published by the job.
     :vartype items_property: list[~azure.mgmt.securityinsight.models.JobItem]
-    :ivar provisioning_state: State of the job. Known values are: "Accepted", "InProgress",
-     "Succeeded", "Failed", and "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.securityinsight.models.ProvisioningState
+    :ivar provisioning_state: State of the job. Known values are: "Succeeded", "InProgress",
+     "Canceled", and "Failed".
+    :vartype provisioning_state: str or ~azure.mgmt.securityinsight.models.JobProvisioningState
     :ivar start_time: The time the job started.
     :vartype start_time: ~datetime.datetime
     :ivar error_message: Message to describe error, if an error exists.
@@ -14550,11 +14684,11 @@ class JobProperties(_Model):
         name="items", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="items"
     )
     """List of items published by the job."""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.JobProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """State of the job. Known values are: \"Accepted\", \"InProgress\", \"Succeeded\", \"Failed\",
-     and \"Canceled\"."""
+    """State of the job. Known values are: \"Succeeded\", \"InProgress\", \"Canceled\", and
+     \"Failed\"."""
     start_time: Optional[datetime.datetime] = rest_field(name="startTime", visibility=["read"], format="rfc3339")
     """The time the job started."""
     error_message: Optional[str] = rest_field(name="errorMessage", visibility=["read"])
@@ -14578,7 +14712,9 @@ class JobProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JwtAuthModel(CcpAuthConfig, discriminator="JwtToken"):
+class JwtAuthModel(
+    CcpAuthConfig, discriminator="JwtToken"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model for API authentication with JWT. Simple exchange between user name + password to access
     token.
 
@@ -14666,7 +14802,7 @@ class JwtAuthModel(CcpAuthConfig, discriminator="JwtToken"):
         self.type = CcpAuthType.JWT_TOKEN  # type: ignore
 
 
-class MailboxEntity(Entity, discriminator="Mailbox"):
+class MailboxEntity(Entity, discriminator="Mailbox"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a mailbox entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14769,7 +14905,9 @@ class MailboxEntityProperties(EntityCommonProperties):
      specific to mailbox object on office side."""
 
 
-class MailClusterEntity(Entity, discriminator="MailCluster"):
+class MailClusterEntity(
+    Entity, discriminator="MailCluster"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a mail cluster entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14930,7 +15068,9 @@ class MailClusterEntityProperties(EntityCommonProperties):
     """The cluster group."""
 
 
-class MailMessageEntity(Entity, discriminator="MailMessage"):
+class MailMessageEntity(
+    Entity, discriminator="MailMessage"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a mail message entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15023,7 +15163,9 @@ class MailMessageEntity(Entity, discriminator="MailMessage"):
             super().__setattr__(key, value)
 
 
-class MailMessageEntityProperties(EntityCommonProperties):
+class MailMessageEntityProperties(
+    EntityCommonProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Mail message entity property bag.
 
     :ivar additional_data: A bag of custom fields that should be part of the entity and will be
@@ -15187,7 +15329,7 @@ class MailMessageEntityProperties(EntityCommonProperties):
         super().__init__(*args, **kwargs)
 
 
-class MalwareEntity(Entity, discriminator="Malware"):
+class MalwareEntity(Entity, discriminator="Malware"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a malware entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15289,7 +15431,7 @@ class MalwareEntityProperties(EntityCommonProperties):
     """List of linked process entity identifiers on which the malware was found."""
 
 
-class ManualTriggerRequestBody(_Model):
+class ManualTriggerRequestBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ManualTriggerRequestBody.
 
     :ivar tenant_id:
@@ -15323,7 +15465,9 @@ class ManualTriggerRequestBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MCASCheckRequirements(DataConnectorsCheckRequirements, discriminator="MicrosoftCloudAppSecurity"):
+class MCASCheckRequirements(
+    DataConnectorsCheckRequirements, discriminator="MicrosoftCloudAppSecurity"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents MCAS (Microsoft Cloud App Security) requirements check request.
 
     :ivar properties: MCAS (Microsoft Cloud App Security) requirements check properties.
@@ -15377,7 +15521,9 @@ class MCASCheckRequirements(DataConnectorsCheckRequirements, discriminator="Micr
             super().__setattr__(key, value)
 
 
-class MCASCheckRequirementsProperties(DataConnectorTenantId):
+class MCASCheckRequirementsProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MCAS (Microsoft Cloud App Security) requirements check properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -15402,7 +15548,9 @@ class MCASCheckRequirementsProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class MCASDataConnector(DataConnector, discriminator="MicrosoftCloudAppSecurity"):
+class MCASDataConnector(
+    DataConnector, discriminator="MicrosoftCloudAppSecurity"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents MCAS (Microsoft Cloud App Security) data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15470,7 +15618,9 @@ class MCASDataConnector(DataConnector, discriminator="MicrosoftCloudAppSecurity"
             super().__setattr__(key, value)
 
 
-class MCASDataConnectorDataTypes(AlertsDataTypeOfDataConnector):
+class MCASDataConnectorDataTypes(
+    AlertsDataTypeOfDataConnector
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The available data types for MCAS (Microsoft Cloud App Security) data connector.
 
     :ivar alerts: Alerts data type connection. Required.
@@ -15503,7 +15653,7 @@ class MCASDataConnectorDataTypes(AlertsDataTypeOfDataConnector):
         super().__init__(*args, **kwargs)
 
 
-class MCASDataConnectorProperties(DataConnectorTenantId):
+class MCASDataConnectorProperties(DataConnectorTenantId):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MCAS (Microsoft Cloud App Security) data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -15538,7 +15688,7 @@ class MCASDataConnectorProperties(DataConnectorTenantId):
 
 class MDATPCheckRequirements(
     DataConnectorsCheckRequirements, discriminator="MicrosoftDefenderAdvancedThreatProtection"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents MDATP (Microsoft Defender Advanced Threat Protection) requirements check request.
 
     :ivar properties: MDATP (Microsoft Defender Advanced Threat Protection) requirements check
@@ -15596,7 +15746,9 @@ class MDATPCheckRequirements(
             super().__setattr__(key, value)
 
 
-class MDATPCheckRequirementsProperties(DataConnectorTenantId):
+class MDATPCheckRequirementsProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MDATP (Microsoft Defender Advanced Threat Protection) requirements check properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -15621,7 +15773,9 @@ class MDATPCheckRequirementsProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class MDATPDataConnector(DataConnector, discriminator="MicrosoftDefenderAdvancedThreatProtection"):
+class MDATPDataConnector(
+    DataConnector, discriminator="MicrosoftDefenderAdvancedThreatProtection"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents MDATP (Microsoft Defender Advanced Threat Protection) data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15691,7 +15845,7 @@ class MDATPDataConnector(DataConnector, discriminator="MicrosoftDefenderAdvanced
             super().__setattr__(key, value)
 
 
-class MDATPDataConnectorProperties(_Model):
+class MDATPDataConnectorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MDATP (Microsoft Defender Advanced Threat Protection) data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -15726,7 +15880,7 @@ class MDATPDataConnectorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetadataAuthor(_Model):
+class MetadataAuthor(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Publisher or creator of the content item.
 
     :ivar name: Name of the author. Company or person.
@@ -15764,7 +15918,7 @@ class MetadataAuthor(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetadataCategories(_Model):
+class MetadataCategories(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ies for the solution content item.
 
     :ivar domains: domain for the solution content item.
@@ -15797,7 +15951,7 @@ class MetadataCategories(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetadataDependencies(_Model):
+class MetadataDependencies(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dependencies for the content item, what other content items it requires to work.  Can describe
     more complex dependencies using a recursive/nested structure. For a single dependency an
     id/kind/version can be supplied or operator/criteria for complex dependencies.
@@ -15818,13 +15972,8 @@ class MetadataDependencies(_Model):
     :ivar name: Name of the content item.
     :vartype name: str
     :ivar operator: Operator used for list of dependencies in criteria array. Known values are:
-     "Equals", "NotEquals", "LessThan", "LessThanEqual", "GreaterThan", "GreaterThanEqual",
-     "StringContains", "StringNotContains", "StringStartsWith", "StringNotStartsWith",
-     "StringEndsWith", "StringNotEndsWith", "StringIsEmpty", "IsNull", "IsTrue", "IsFalse",
-     "ArrayContains", "ArrayNotContains", "OnOrAfterRelative", "AfterRelative",
-     "OnOrBeforeRelative", "BeforeRelative", "OnOrAfterAbsolute", "AfterAbsolute",
-     "OnOrBeforeAbsolute", and "BeforeAbsolute".
-    :vartype operator: str or ~azure.mgmt.securityinsight.models.Operator
+     "AND" and "OR".
+    :vartype operator: str or ~azure.mgmt.securityinsight.models.MetadataDependencyOperator
     :ivar criteria: This is the list of dependencies we must fulfill, according to the AND/OR
      operator.
     :vartype criteria: list[~azure.mgmt.securityinsight.models.MetadataDependencies]
@@ -15845,16 +15994,10 @@ class MetadataDependencies(_Model):
      exact match is required."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the content item."""
-    operator: Optional[Union[str, "_models.Operator"]] = rest_field(
+    operator: Optional[Union[str, "_models.MetadataDependencyOperator"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Operator used for list of dependencies in criteria array. Known values are: \"Equals\",
-     \"NotEquals\", \"LessThan\", \"LessThanEqual\", \"GreaterThan\", \"GreaterThanEqual\",
-     \"StringContains\", \"StringNotContains\", \"StringStartsWith\", \"StringNotStartsWith\",
-     \"StringEndsWith\", \"StringNotEndsWith\", \"StringIsEmpty\", \"IsNull\", \"IsTrue\",
-     \"IsFalse\", \"ArrayContains\", \"ArrayNotContains\", \"OnOrAfterRelative\", \"AfterRelative\",
-     \"OnOrBeforeRelative\", \"BeforeRelative\", \"OnOrAfterAbsolute\", \"AfterAbsolute\",
-     \"OnOrBeforeAbsolute\", and \"BeforeAbsolute\"."""
+    """Operator used for list of dependencies in criteria array. Known values are: \"AND\" and \"OR\"."""
     criteria: Optional[list["_models.MetadataDependencies"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -15868,7 +16011,7 @@ class MetadataDependencies(_Model):
         kind: Optional[Union[str, "_models.Kind"]] = None,
         version: Optional[str] = None,
         name: Optional[str] = None,
-        operator: Optional[Union[str, "_models.Operator"]] = None,
+        operator: Optional[Union[str, "_models.MetadataDependencyOperator"]] = None,
         criteria: Optional[list["_models.MetadataDependencies"]] = None,
     ) -> None: ...
 
@@ -15883,7 +16026,7 @@ class MetadataDependencies(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetadataModel(ProxyResource):
+class MetadataModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15969,7 +16112,7 @@ class MetadataModel(ProxyResource):
             super().__setattr__(key, value)
 
 
-class MetadataPatch(ResourceWithEtag):
+class MetadataPatch(ResourceWithEtag):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata patch request body.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16053,7 +16196,7 @@ class MetadataPatch(ResourceWithEtag):
             super().__setattr__(key, value)
 
 
-class MetadataProperties(_Model):
+class MetadataProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata property bag.
 
     :ivar content_id: Static ID for the content.  Used to identify dependencies and content from
@@ -16215,7 +16358,7 @@ class MetadataProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetadataPropertiesPatch(_Model):
+class MetadataPropertiesPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata property bag for patch requests.  This is the same as the MetadataProperties, but with
     nothing required.
 
@@ -16378,7 +16521,7 @@ class MetadataPropertiesPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetadataSource(_Model):
+class MetadataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The original source of the content item, where it comes from.
 
     :ivar kind: Source type of the content. Required. Known values are: "LocalWorkspace",
@@ -16418,7 +16561,7 @@ class MetadataSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetadataSupport(_Model):
+class MetadataSupport(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Support information for the content item.
 
     :ivar tier: Type of support for content item. Required. Known values are: "Microsoft",
@@ -16465,7 +16608,7 @@ class MetadataSupport(_Model):
 
 class MicrosoftPurviewInformationProtectionCheckRequirements(
     DataConnectorsCheckRequirements, discriminator="MicrosoftPurviewInformationProtection"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents MicrosoftPurviewInformationProtection requirements check request.
 
     :ivar properties: MicrosoftPurviewInformationProtection requirements check properties.
@@ -16524,7 +16667,7 @@ class MicrosoftPurviewInformationProtectionCheckRequirements(
 
 class MicrosoftPurviewInformationProtectionCheckRequirementsProperties(
     DataConnectorTenantId
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """MicrosoftPurviewInformationProtection requirements check properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -16549,7 +16692,9 @@ class MicrosoftPurviewInformationProtectionCheckRequirementsProperties(
         super().__init__(*args, **kwargs)
 
 
-class MicrosoftPurviewInformationProtectionConnectorDataTypes(_Model):  # pylint: disable=name-too-long
+class MicrosoftPurviewInformationProtectionConnectorDataTypes(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The available data types for Microsoft Purview Information Protection data connector.
 
     :ivar logs: Logs data type. Required.
@@ -16582,7 +16727,7 @@ class MicrosoftPurviewInformationProtectionConnectorDataTypes(_Model):  # pylint
 
 class MicrosoftPurviewInformationProtectionConnectorDataTypesLogs(
     DataConnectorDataTypeCommon
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Logs data type.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -16610,7 +16755,7 @@ class MicrosoftPurviewInformationProtectionConnectorDataTypesLogs(
 
 class MicrosoftPurviewInformationProtectionDataConnector(
     DataConnector, discriminator="MicrosoftPurviewInformationProtection"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents Microsoft Purview Information Protection data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16682,7 +16827,7 @@ class MicrosoftPurviewInformationProtectionDataConnector(
 
 class MicrosoftPurviewInformationProtectionDataConnectorProperties(
     DataConnectorTenantId
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Microsoft Purview Information Protection data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -16718,7 +16863,7 @@ class MicrosoftPurviewInformationProtectionDataConnectorProperties(
 
 class MicrosoftSecurityIncidentCreationAlertRule(
     AlertRule, discriminator="MicrosoftSecurityIncidentCreation"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents MicrosoftSecurityIncidentCreation rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16797,7 +16942,9 @@ class MicrosoftSecurityIncidentCreationAlertRule(
             super().__setattr__(key, value)
 
 
-class MicrosoftSecurityIncidentCreationAlertRuleCommonProperties(_Model):  # pylint: disable=name-too-long
+class MicrosoftSecurityIncidentCreationAlertRuleCommonProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """MicrosoftSecurityIncidentCreation rule common property bag.
 
     :ivar display_names_filter: the alerts' displayNames on which the cases will be generated.
@@ -16859,7 +17006,7 @@ class MicrosoftSecurityIncidentCreationAlertRuleCommonProperties(_Model):  # pyl
 
 class MicrosoftSecurityIncidentCreationAlertRuleProperties(
     MicrosoftSecurityIncidentCreationAlertRuleCommonProperties
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """MicrosoftSecurityIncidentCreation rule property bag.
 
     :ivar display_names_filter: the alerts' displayNames on which the cases will be generated.
@@ -16929,7 +17076,7 @@ class MicrosoftSecurityIncidentCreationAlertRuleProperties(
 
 class MicrosoftSecurityIncidentCreationAlertRuleTemplate(
     AlertRuleTemplate, discriminator="MicrosoftSecurityIncidentCreation"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents MicrosoftSecurityIncidentCreation rule template.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17009,7 +17156,7 @@ class MicrosoftSecurityIncidentCreationAlertRuleTemplate(
 
 class MicrosoftSecurityIncidentCreationAlertRuleTemplateProperties(
     AlertRuleTemplatePropertiesBase
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """MicrosoftSecurityIncidentCreation rule template properties.
 
     :ivar alert_rules_created_by_template_count: The number of alert rules that were created by
@@ -17089,7 +17236,9 @@ class MicrosoftSecurityIncidentCreationAlertRuleTemplateProperties(
         super().__init__(*args, **kwargs)
 
 
-class MLBehaviorAnalyticsAlertRule(AlertRule, discriminator="MLBehaviorAnalytics"):
+class MLBehaviorAnalyticsAlertRule(
+    AlertRule, discriminator="MLBehaviorAnalytics"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents MLBehaviorAnalytics alert rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17167,7 +17316,7 @@ class MLBehaviorAnalyticsAlertRule(AlertRule, discriminator="MLBehaviorAnalytics
             super().__setattr__(key, value)
 
 
-class MLBehaviorAnalyticsAlertRuleProperties(_Model):
+class MLBehaviorAnalyticsAlertRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MLBehaviorAnalytics alert rule base property bag.
 
     :ivar alert_rule_template_name: The Name of the alert rule template used to create this rule.
@@ -17235,7 +17384,9 @@ class MLBehaviorAnalyticsAlertRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MLBehaviorAnalyticsAlertRuleTemplate(AlertRuleTemplate, discriminator="MLBehaviorAnalytics"):
+class MLBehaviorAnalyticsAlertRuleTemplate(
+    AlertRuleTemplate, discriminator="MLBehaviorAnalytics"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents MLBehaviorAnalytics alert rule template.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17314,7 +17465,7 @@ class MLBehaviorAnalyticsAlertRuleTemplate(AlertRuleTemplate, discriminator="MLB
 
 class MLBehaviorAnalyticsAlertRuleTemplateProperties(
     AlertRuleTemplateWithMitreProperties
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """MLBehaviorAnalytics alert rule template properties.
 
     :ivar alert_rules_created_by_template_count: The number of alert rules that were created by
@@ -17374,7 +17525,9 @@ class MLBehaviorAnalyticsAlertRuleTemplateProperties(
         super().__init__(*args, **kwargs)
 
 
-class MSTICheckRequirements(DataConnectorsCheckRequirements, discriminator="MicrosoftThreatIntelligence"):
+class MSTICheckRequirements(
+    DataConnectorsCheckRequirements, discriminator="MicrosoftThreatIntelligence"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Microsoft Threat Intelligence requirements check request.
 
     :ivar properties: Microsoft Threat Intelligence requirements check properties.
@@ -17429,7 +17582,9 @@ class MSTICheckRequirements(DataConnectorsCheckRequirements, discriminator="Micr
             super().__setattr__(key, value)
 
 
-class MSTICheckRequirementsProperties(DataConnectorTenantId):
+class MSTICheckRequirementsProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft Threat Intelligence requirements check properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -17454,7 +17609,9 @@ class MSTICheckRequirementsProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class MSTIDataConnector(DataConnector, discriminator="MicrosoftThreatIntelligence"):
+class MSTIDataConnector(
+    DataConnector, discriminator="MicrosoftThreatIntelligence"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Microsoft Threat Intelligence data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17522,7 +17679,7 @@ class MSTIDataConnector(DataConnector, discriminator="MicrosoftThreatIntelligenc
             super().__setattr__(key, value)
 
 
-class MSTIDataConnectorDataTypes(_Model):
+class MSTIDataConnectorDataTypes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The available data types for Microsoft Threat Intelligence Platforms data connector.
 
     :ivar microsoft_emerging_threat_feed: Data type for Microsoft Threat Intelligence Platforms
@@ -17556,7 +17713,7 @@ class MSTIDataConnectorDataTypes(_Model):
 
 class MSTIDataConnectorDataTypesMicrosoftEmergingThreatFeed(
     DataConnectorDataTypeCommon
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Data type for Microsoft Threat Intelligence Platforms data connector.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -17590,7 +17747,7 @@ class MSTIDataConnectorDataTypesMicrosoftEmergingThreatFeed(
         super().__init__(*args, **kwargs)
 
 
-class MSTIDataConnectorProperties(DataConnectorTenantId):
+class MSTIDataConnectorProperties(DataConnectorTenantId):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft Threat Intelligence data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -17623,7 +17780,9 @@ class MSTIDataConnectorProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class MtpCheckRequirements(DataConnectorsCheckRequirements, discriminator="MicrosoftThreatProtection"):
+class MtpCheckRequirements(
+    DataConnectorsCheckRequirements, discriminator="MicrosoftThreatProtection"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents MTP (Microsoft Threat Protection) requirements check request.
 
     :ivar properties: MTP (Microsoft Threat Protection) requirements check properties.
@@ -17677,7 +17836,9 @@ class MtpCheckRequirements(DataConnectorsCheckRequirements, discriminator="Micro
             super().__setattr__(key, value)
 
 
-class MTPCheckRequirementsProperties(DataConnectorTenantId):
+class MTPCheckRequirementsProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MTP (Microsoft Threat Protection) requirements check properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -17702,7 +17863,9 @@ class MTPCheckRequirementsProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class MTPDataConnector(DataConnector, discriminator="MicrosoftThreatProtection"):
+class MTPDataConnector(
+    DataConnector, discriminator="MicrosoftThreatProtection"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents MTP (Microsoft Threat Protection) data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17770,7 +17933,7 @@ class MTPDataConnector(DataConnector, discriminator="MicrosoftThreatProtection")
             super().__setattr__(key, value)
 
 
-class MTPDataConnectorDataTypes(_Model):
+class MTPDataConnectorDataTypes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The available data types for Microsoft Threat Protection Platforms data connector.
 
     :ivar incidents: Incidents data type for Microsoft Threat Protection Platforms data connector.
@@ -17808,7 +17971,9 @@ class MTPDataConnectorDataTypes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MTPDataConnectorDataTypesAlerts(DataConnectorDataTypeCommon):
+class MTPDataConnectorDataTypesAlerts(
+    DataConnectorDataTypeCommon
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Alerts data type for Microsoft Threat Protection Platforms data connector.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -17834,7 +17999,9 @@ class MTPDataConnectorDataTypesAlerts(DataConnectorDataTypeCommon):
         super().__init__(*args, **kwargs)
 
 
-class MTPDataConnectorDataTypesIncidents(DataConnectorDataTypeCommon):
+class MTPDataConnectorDataTypesIncidents(
+    DataConnectorDataTypeCommon
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Incidents data type for Microsoft Threat Protection Platforms data connector.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -17860,7 +18027,7 @@ class MTPDataConnectorDataTypesIncidents(DataConnectorDataTypeCommon):
         super().__init__(*args, **kwargs)
 
 
-class MTPDataConnectorProperties(DataConnectorTenantId):
+class MTPDataConnectorProperties(DataConnectorTenantId):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MTP (Microsoft Threat Protection) data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -17900,7 +18067,7 @@ class MTPDataConnectorProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class MtpFilteredProviders(_Model):
+class MtpFilteredProviders(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the connector's Filtered providers.
 
     :ivar alerts: Alerts filtered providers. When filters are not applied, all alerts will stream
@@ -17934,7 +18101,7 @@ class MtpFilteredProviders(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NicEntity(Entity, discriminator="Nic"):
+class NicEntity(Entity, discriminator="Nic"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an network interface entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18052,7 +18219,7 @@ class NoneAuthModel(CcpAuthConfig, discriminator="None"):
         self.type = CcpAuthType.NONE  # type: ignore
 
 
-class NrtAlertRule(AlertRule, discriminator="NRT"):
+class NrtAlertRule(AlertRule, discriminator="NRT"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents NRT alert rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18140,7 +18307,7 @@ class NrtAlertRule(AlertRule, discriminator="NRT"):
             super().__setattr__(key, value)
 
 
-class NrtAlertRuleProperties(_Model):
+class NrtAlertRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Nrt alert rule base property bag.
 
     :ivar alert_rule_template_name: The Name of the alert rule template used to create this rule.
@@ -18295,7 +18462,9 @@ class NrtAlertRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NrtAlertRuleTemplate(AlertRuleTemplate, discriminator="NRT"):
+class NrtAlertRuleTemplate(
+    AlertRuleTemplate, discriminator="NRT"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents NRT alert rule template.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18378,7 +18547,7 @@ class NrtAlertRuleTemplate(AlertRuleTemplate, discriminator="NRT"):
             super().__setattr__(key, value)
 
 
-class NrtAlertRuleTemplateProperties(_Model):
+class NrtAlertRuleTemplateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NRT alert rule template properties.
 
     :ivar tactics: The tactics of the alert rule.
@@ -18519,7 +18688,7 @@ class NrtAlertRuleTemplateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OAuthModel(CcpAuthConfig, discriminator="OAuth2"):
+class OAuthModel(CcpAuthConfig, discriminator="OAuth2"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model for API authentication with OAuth2.
 
     :ivar authorization_code: The user's authorization code.
@@ -18646,7 +18815,9 @@ class OAuthModel(CcpAuthConfig, discriminator="OAuth2"):
         self.type = CcpAuthType.O_AUTH2  # type: ignore
 
 
-class Office365ProjectCheckRequirements(DataConnectorsCheckRequirements, discriminator="Office365Project"):
+class Office365ProjectCheckRequirements(
+    DataConnectorsCheckRequirements, discriminator="Office365Project"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Office365 Project requirements check request.
 
     :ivar properties: Office365 Project requirements check properties.
@@ -18701,7 +18872,9 @@ class Office365ProjectCheckRequirements(DataConnectorsCheckRequirements, discrim
             super().__setattr__(key, value)
 
 
-class Office365ProjectCheckRequirementsProperties(DataConnectorTenantId):  # pylint: disable=name-too-long
+class Office365ProjectCheckRequirementsProperties(
+    DataConnectorTenantId
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Office365 Project requirements check properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -18726,7 +18899,7 @@ class Office365ProjectCheckRequirementsProperties(DataConnectorTenantId):  # pyl
         super().__init__(*args, **kwargs)
 
 
-class Office365ProjectConnectorDataTypes(_Model):
+class Office365ProjectConnectorDataTypes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The available data types for Office Microsoft Project data connector.
 
     :ivar logs: Logs data type. Required.
@@ -18756,7 +18929,9 @@ class Office365ProjectConnectorDataTypes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Office365ProjectConnectorDataTypesLogs(DataConnectorDataTypeCommon):
+class Office365ProjectConnectorDataTypesLogs(
+    DataConnectorDataTypeCommon
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Logs data type.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -18782,7 +18957,9 @@ class Office365ProjectConnectorDataTypesLogs(DataConnectorDataTypeCommon):
         super().__init__(*args, **kwargs)
 
 
-class Office365ProjectDataConnector(DataConnector, discriminator="Office365Project"):
+class Office365ProjectDataConnector(
+    DataConnector, discriminator="Office365Project"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Office Microsoft Project data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18850,7 +19027,9 @@ class Office365ProjectDataConnector(DataConnector, discriminator="Office365Proje
             super().__setattr__(key, value)
 
 
-class Office365ProjectDataConnectorProperties(DataConnectorTenantId):
+class Office365ProjectDataConnectorProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Office Microsoft Project data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -18883,7 +19062,9 @@ class Office365ProjectDataConnectorProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class OfficeATPCheckRequirements(DataConnectorsCheckRequirements, discriminator="OfficeATP"):
+class OfficeATPCheckRequirements(
+    DataConnectorsCheckRequirements, discriminator="OfficeATP"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents OfficeATP (Office 365 Advanced Threat Protection) requirements check request.
 
     :ivar properties: OfficeATP (Office 365 Advanced Threat Protection) requirements check
@@ -18938,7 +19119,9 @@ class OfficeATPCheckRequirements(DataConnectorsCheckRequirements, discriminator=
             super().__setattr__(key, value)
 
 
-class OfficeATPCheckRequirementsProperties(DataConnectorTenantId):
+class OfficeATPCheckRequirementsProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OfficeATP (Office 365 Advanced Threat Protection) requirements check properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -18963,7 +19146,9 @@ class OfficeATPCheckRequirementsProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class OfficeATPDataConnector(DataConnector, discriminator="OfficeATP"):
+class OfficeATPDataConnector(
+    DataConnector, discriminator="OfficeATP"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents OfficeATP (Office 365 Advanced Threat Protection) data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19031,7 +19216,7 @@ class OfficeATPDataConnector(DataConnector, discriminator="OfficeATP"):
             super().__setattr__(key, value)
 
 
-class OfficeATPDataConnectorProperties(_Model):
+class OfficeATPDataConnectorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OfficeATP (Office 365 Advanced Threat Protection) data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -19066,7 +19251,7 @@ class OfficeATPDataConnectorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OfficeConsent(ProxyResource):
+class OfficeConsent(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Consent for Office365 tenant that already made.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19127,7 +19312,7 @@ class OfficeConsent(ProxyResource):
             super().__setattr__(key, value)
 
 
-class OfficeConsentProperties(_Model):
+class OfficeConsentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Consent property bag.
 
     :ivar tenant_id: The tenantId of the Office365 with the consent.
@@ -19160,7 +19345,9 @@ class OfficeConsentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OfficeDataConnector(DataConnector, discriminator="Office365"):
+class OfficeDataConnector(
+    DataConnector, discriminator="Office365"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents office data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19228,7 +19415,7 @@ class OfficeDataConnector(DataConnector, discriminator="Office365"):
             super().__setattr__(key, value)
 
 
-class OfficeDataConnectorDataTypes(_Model):
+class OfficeDataConnectorDataTypes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The available data types for office data connector.
 
     :ivar exchange: Exchange data type connection. Required.
@@ -19272,7 +19459,9 @@ class OfficeDataConnectorDataTypes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OfficeDataConnectorDataTypesExchange(DataConnectorDataTypeCommon):
+class OfficeDataConnectorDataTypesExchange(
+    DataConnectorDataTypeCommon
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Exchange data type connection.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -19298,7 +19487,9 @@ class OfficeDataConnectorDataTypesExchange(DataConnectorDataTypeCommon):
         super().__init__(*args, **kwargs)
 
 
-class OfficeDataConnectorDataTypesSharePoint(DataConnectorDataTypeCommon):
+class OfficeDataConnectorDataTypesSharePoint(
+    DataConnectorDataTypeCommon
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SharePoint data type connection.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -19324,7 +19515,9 @@ class OfficeDataConnectorDataTypesSharePoint(DataConnectorDataTypeCommon):
         super().__init__(*args, **kwargs)
 
 
-class OfficeDataConnectorDataTypesTeams(DataConnectorDataTypeCommon):
+class OfficeDataConnectorDataTypesTeams(
+    DataConnectorDataTypeCommon
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Teams data type connection.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -19350,7 +19543,9 @@ class OfficeDataConnectorDataTypesTeams(DataConnectorDataTypeCommon):
         super().__init__(*args, **kwargs)
 
 
-class OfficeDataConnectorProperties(DataConnectorTenantId):
+class OfficeDataConnectorProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Office data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -19383,7 +19578,9 @@ class OfficeDataConnectorProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class OfficeIRMCheckRequirements(DataConnectorsCheckRequirements, discriminator="OfficeIRM"):
+class OfficeIRMCheckRequirements(
+    DataConnectorsCheckRequirements, discriminator="OfficeIRM"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents OfficeIRM (Microsoft Insider Risk Management) requirements check request.
 
     :ivar properties: OfficeIRM (Microsoft Insider Risk Management) requirements check properties.
@@ -19437,7 +19634,9 @@ class OfficeIRMCheckRequirements(DataConnectorsCheckRequirements, discriminator=
             super().__setattr__(key, value)
 
 
-class OfficeIRMCheckRequirementsProperties(DataConnectorTenantId):
+class OfficeIRMCheckRequirementsProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OfficeIRM (Microsoft Insider Risk Management) requirements check properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -19462,7 +19661,9 @@ class OfficeIRMCheckRequirementsProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class OfficeIRMDataConnector(DataConnector, discriminator="OfficeIRM"):
+class OfficeIRMDataConnector(
+    DataConnector, discriminator="OfficeIRM"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents OfficeIRM (Microsoft Insider Risk Management) data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19530,7 +19731,7 @@ class OfficeIRMDataConnector(DataConnector, discriminator="OfficeIRM"):
             super().__setattr__(key, value)
 
 
-class OfficeIRMDataConnectorProperties(_Model):
+class OfficeIRMDataConnectorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OfficeIRM (Microsoft Insider Risk Management) data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -19565,7 +19766,9 @@ class OfficeIRMDataConnectorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OfficePowerBICheckRequirements(DataConnectorsCheckRequirements, discriminator="OfficePowerBI"):
+class OfficePowerBICheckRequirements(
+    DataConnectorsCheckRequirements, discriminator="OfficePowerBI"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Office PowerBI requirements check request.
 
     :ivar properties: Office Power BI requirements check properties.
@@ -19620,7 +19823,9 @@ class OfficePowerBICheckRequirements(DataConnectorsCheckRequirements, discrimina
             super().__setattr__(key, value)
 
 
-class OfficePowerBICheckRequirementsProperties(DataConnectorTenantId):
+class OfficePowerBICheckRequirementsProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Office PowerBI requirements check properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -19645,7 +19850,7 @@ class OfficePowerBICheckRequirementsProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class OfficePowerBIConnectorDataTypes(_Model):
+class OfficePowerBIConnectorDataTypes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The available data types for Office Microsoft PowerBI data connector.
 
     :ivar logs: Logs data type. Required.
@@ -19675,7 +19880,9 @@ class OfficePowerBIConnectorDataTypes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OfficePowerBIConnectorDataTypesLogs(DataConnectorDataTypeCommon):
+class OfficePowerBIConnectorDataTypesLogs(
+    DataConnectorDataTypeCommon
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Logs data type.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -19701,7 +19908,9 @@ class OfficePowerBIConnectorDataTypesLogs(DataConnectorDataTypeCommon):
         super().__init__(*args, **kwargs)
 
 
-class OfficePowerBIDataConnector(DataConnector, discriminator="OfficePowerBI"):
+class OfficePowerBIDataConnector(
+    DataConnector, discriminator="OfficePowerBI"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Office Microsoft PowerBI data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19769,7 +19978,9 @@ class OfficePowerBIDataConnector(DataConnector, discriminator="OfficePowerBI"):
             super().__setattr__(key, value)
 
 
-class OfficePowerBIDataConnectorProperties(DataConnectorTenantId):
+class OfficePowerBIDataConnectorProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Office Microsoft PowerBI data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -19802,7 +20013,7 @@ class OfficePowerBIDataConnectorProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation provided by provider.
 
     :ivar display: Properties of the operation.
@@ -19849,7 +20060,7 @@ class Operation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_Model):
+class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the operation.
 
     :ivar description: Description of the operation.
@@ -19892,7 +20103,9 @@ class OperationDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OracleAuthModel(CcpAuthConfig, discriminator="Oracle"):
+class OracleAuthModel(
+    CcpAuthConfig, discriminator="Oracle"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model for API authentication for Oracle.
 
     :ivar tenant_id: Oracle tenant ID. Required.
@@ -19942,7 +20155,7 @@ class OracleAuthModel(CcpAuthConfig, discriminator="Oracle"):
         self.type = CcpAuthType.ORACLE  # type: ignore
 
 
-class PackageBaseProperties(_Model):
+class PackageBaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes package properties.
 
     :ivar content_id: The content id of the package.
@@ -20120,7 +20333,7 @@ class PackageBaseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PackageModel(ProxyResource):
+class PackageModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Package in Azure Security Insights.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20210,7 +20423,7 @@ class PackageModel(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PackageProperties(PackageBaseProperties):
+class PackageProperties(PackageBaseProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes package properties.
 
     :ivar content_id: The content id of the package.
@@ -20307,7 +20520,7 @@ class PackageProperties(PackageBaseProperties):
         super().__init__(*args, **kwargs)
 
 
-class Permissions(_Model):
+class Permissions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Permissions required for the connector.
 
     :ivar resource_provider: Resource provider permissions required for the connector.
@@ -20345,7 +20558,7 @@ class Permissions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PermissionsCustomsItem(Customs):
+class PermissionsCustomsItem(Customs):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PermissionsCustomsItem.
 
     :ivar name: Customs permissions name.
@@ -20373,7 +20586,7 @@ class PermissionsCustomsItem(Customs):
         super().__init__(*args, **kwargs)
 
 
-class ResourceProvider(_Model):
+class ResourceProvider(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource provider permissions required for the connector.
 
     :ivar provider: Provider name. Known values are: "Microsoft.OperationalInsights/solutions",
@@ -20442,7 +20655,7 @@ class ResourceProvider(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PermissionsResourceProviderItem(ResourceProvider):
+class PermissionsResourceProviderItem(ResourceProvider):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PermissionsResourceProviderItem.
 
     :ivar provider: Provider name. Known values are: "Microsoft.OperationalInsights/solutions",
@@ -20484,7 +20697,7 @@ class PermissionsResourceProviderItem(ResourceProvider):
         super().__init__(*args, **kwargs)
 
 
-class PlaybookActionProperties(_Model):
+class PlaybookActionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PlaybookActionProperties.
 
     :ivar logic_app_resource_id: The resource id of the playbook resource. Required.
@@ -20519,7 +20732,7 @@ class PlaybookActionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PremiumMdtiDataConnectorDataTypes(_Model):
+class PremiumMdtiDataConnectorDataTypes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The available data types for Microsoft Defender for Threat Intelligence Premium data connector.
 
     :ivar connector: Data type for Microsoft Defender for Threat Intelligence Premium data
@@ -20551,7 +20764,9 @@ class PremiumMdtiDataConnectorDataTypes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PremiumMdtiDataConnectorDataTypesConnector(DataConnectorDataTypeCommon):  # pylint: disable=name-too-long
+class PremiumMdtiDataConnectorDataTypesConnector(
+    DataConnectorDataTypeCommon
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Data type for Microsoft Defender for Threat Intelligence Premium data connector.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -20577,7 +20792,9 @@ class PremiumMdtiDataConnectorDataTypesConnector(DataConnectorDataTypeCommon):  
         super().__init__(*args, **kwargs)
 
 
-class PremiumMdtiDataConnectorProperties(DataConnectorTenantId):
+class PremiumMdtiDataConnectorProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft Defender for Threat Intelligence Premium data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -20629,7 +20846,7 @@ class PremiumMdtiDataConnectorProperties(DataConnectorTenantId):
 
 class PremiumMicrosoftDefenderForThreatIntelligence(
     DataConnector, discriminator="PremiumMicrosoftDefenderForThreatIntelligence"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents Microsoft Defender for Threat Intelligence Premium data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20698,7 +20915,7 @@ class PremiumMicrosoftDefenderForThreatIntelligence(
             super().__setattr__(key, value)
 
 
-class ProcessEntity(Entity, discriminator="Process"):
+class ProcessEntity(Entity, discriminator="Process"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a process entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20775,7 +20992,7 @@ class ProcessEntity(Entity, discriminator="Process"):
             super().__setattr__(key, value)
 
 
-class ProcessEntityProperties(EntityCommonProperties):
+class ProcessEntityProperties(EntityCommonProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Process entity property bag.
 
     :ivar additional_data: A bag of custom fields that should be part of the entity and will be
@@ -20847,7 +21064,7 @@ class ProcessEntityProperties(EntityCommonProperties):
         super().__init__(*args, **kwargs)
 
 
-class ProductPackageModel(ProxyResource):
+class ProductPackageModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Package in Azure Security Insights.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20940,7 +21157,7 @@ class ProductPackageModel(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ProductPackageProperties(_Model):
+class ProductPackageProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes package properties.
 
     :ivar content_id: The content id of the package.
@@ -21140,7 +21357,7 @@ class ProductPackageProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProductTemplateModel(ProxyResource):
+class ProductTemplateModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Template resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -21233,7 +21450,7 @@ class ProductTemplateModel(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ProductTemplateProperties(_Model):
+class ProductTemplateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Template property bag.
 
     :ivar content_id: Static ID for the content.  Used to identify dependencies and content from
@@ -21459,7 +21676,9 @@ class ProductTemplateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PropertyArrayChangedConditionProperties(AutomationRuleCondition, discriminator="PropertyArrayChanged"):
+class PropertyArrayChangedConditionProperties(
+    AutomationRuleCondition, discriminator="PropertyArrayChanged"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an automation rule condition that evaluates an array property's value change.
 
     :ivar condition_properties:
@@ -21494,7 +21713,9 @@ class PropertyArrayChangedConditionProperties(AutomationRuleCondition, discrimin
         self.condition_type = ConditionType.PROPERTY_ARRAY_CHANGED  # type: ignore
 
 
-class PropertyArrayConditionProperties(AutomationRuleCondition, discriminator="PropertyArray"):
+class PropertyArrayConditionProperties(
+    AutomationRuleCondition, discriminator="PropertyArray"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an automation rule condition that evaluates an array property's value.
 
     :ivar condition_properties:
@@ -21529,7 +21750,9 @@ class PropertyArrayConditionProperties(AutomationRuleCondition, discriminator="P
         self.condition_type = ConditionType.PROPERTY_ARRAY  # type: ignore
 
 
-class PropertyChangedConditionProperties(AutomationRuleCondition, discriminator="PropertyChanged"):
+class PropertyChangedConditionProperties(
+    AutomationRuleCondition, discriminator="PropertyChanged"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an automation rule condition that evaluates a property's value change.
 
     :ivar condition_properties:
@@ -21564,7 +21787,9 @@ class PropertyChangedConditionProperties(AutomationRuleCondition, discriminator=
         self.condition_type = ConditionType.PROPERTY_CHANGED  # type: ignore
 
 
-class PropertyConditionProperties(AutomationRuleCondition, discriminator="Property"):
+class PropertyConditionProperties(
+    AutomationRuleCondition, discriminator="Property"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an automation rule condition that evaluates a property's value.
 
     :ivar condition_properties:
@@ -21604,19 +21829,19 @@ class PullRequest(_Model):
 
     :ivar url: URL of pull request.
     :vartype url: str
-    :ivar state: State of the pull request. Known values are: "Active", "InProgress", "Dismissed",
-     "CompletedByUser", and "CompletedBySystem".
-    :vartype state: str or ~azure.mgmt.securityinsight.models.State
+    :ivar state: State of the pull request. Known values are: "Open" and "Closed".
+    :vartype state: str or ~azure.mgmt.securityinsight.models.PullRequestState
     """
 
     url: Optional[str] = rest_field(visibility=["read"])
     """URL of pull request."""
-    state: Optional[Union[str, "_models.State"]] = rest_field(visibility=["read"])
-    """State of the pull request. Known values are: \"Active\", \"InProgress\", \"Dismissed\",
-     \"CompletedByUser\", and \"CompletedBySystem\"."""
+    state: Optional[Union[str, "_models.PullRequestState"]] = rest_field(visibility=["read"])
+    """State of the pull request. Known values are: \"Open\" and \"Closed\"."""
 
 
-class PurviewAuditCheckRequirements(DataConnectorsCheckRequirements, discriminator="PurviewAudit"):
+class PurviewAuditCheckRequirements(
+    DataConnectorsCheckRequirements, discriminator="PurviewAudit"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents PurviewAudit requirements check request.
 
     :ivar properties: PurviewAudit requirements check properties.
@@ -21670,7 +21895,9 @@ class PurviewAuditCheckRequirements(DataConnectorsCheckRequirements, discriminat
             super().__setattr__(key, value)
 
 
-class PurviewAuditCheckRequirementsProperties(DataConnectorTenantId):
+class PurviewAuditCheckRequirementsProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PurviewAudit requirements check properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -21695,7 +21922,7 @@ class PurviewAuditCheckRequirementsProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class PurviewAuditConnectorDataTypes(_Model):
+class PurviewAuditConnectorDataTypes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The available data types for PurviewAudit data connector.
 
     :ivar logs: Logs data type. Required.
@@ -21725,7 +21952,9 @@ class PurviewAuditConnectorDataTypes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PurviewAuditConnectorDataTypesLogs(DataConnectorDataTypeCommon):
+class PurviewAuditConnectorDataTypesLogs(
+    DataConnectorDataTypeCommon
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Logs data type.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -21751,7 +21980,9 @@ class PurviewAuditConnectorDataTypesLogs(DataConnectorDataTypeCommon):
         super().__init__(*args, **kwargs)
 
 
-class PurviewAuditDataConnector(DataConnector, discriminator="PurviewAudit"):
+class PurviewAuditDataConnector(
+    DataConnector, discriminator="PurviewAudit"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents PurviewAudit data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -21819,7 +22050,9 @@ class PurviewAuditDataConnector(DataConnector, discriminator="PurviewAudit"):
             super().__setattr__(key, value)
 
 
-class PurviewAuditDataConnectorProperties(DataConnectorTenantId):
+class PurviewAuditDataConnectorProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PurviewAudit data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -21874,7 +22107,7 @@ class PurviewAuditDataConnectorProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class Query(_Model):
+class Query(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a query to run on the TI objects in the workspace.
 
     :ivar condition: Represents a condition used to query for TI objects.
@@ -21927,7 +22160,7 @@ class Query(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryCondition(_Model):
+class QueryCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a condition used to query for TI objects.
 
     :ivar stix_object_type: The STIX type for the objects returned by this query.
@@ -21972,7 +22205,7 @@ class QueryCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryProperties(_Model):
+class QueryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the query properties.
 
     :ivar condition: Represents a condition used to query for TI objects.
@@ -22002,7 +22235,7 @@ class QueryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuerySortBy(_Model):
+class QuerySortBy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies how to sort the query results.
 
     :ivar direction: The direction to sort the results by. Known values are: "ASC" and "DESC".
@@ -22037,7 +22270,7 @@ class QuerySortBy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Recommendation(ProxyResource):
+class Recommendation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recommendation object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -22114,7 +22347,7 @@ class Recommendation(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RecommendationPatch(_Model):
+class RecommendationPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recommendation Fields to update.
 
     :ivar properties: Recommendation Fields Properties to update.
@@ -22144,7 +22377,7 @@ class RecommendationPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendationPatchProperties(_Model):
+class RecommendationPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recommendation Fields Properties to update.
 
     :ivar state: State of the recommendation. Known values are: "Active", "InProgress",
@@ -22176,7 +22409,7 @@ class RecommendationPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendationProperties(_Model):
+class RecommendationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recommendation properties object.
 
     :ivar recommendation_type_id: Id of the recommendation type. Required.
@@ -22267,7 +22500,7 @@ class RecommendationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendedSuggestion(_Model):
+class RecommendedSuggestion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """What suggestions should be taken to complete the recommendation.
 
     :ivar suggestion_type_id: Id of the suggestion type. Required.
@@ -22319,7 +22552,7 @@ class RecommendedSuggestion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReevaluateResponse(_Model):
+class ReevaluateResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reevaluate response object.
 
     :ivar last_evaluated_time_utc: The time stamp (UTC) when the recommendation was last evaluated.
@@ -22349,7 +22582,9 @@ class ReevaluateResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistryKeyEntity(Entity, discriminator="RegistryKey"):
+class RegistryKeyEntity(
+    Entity, discriminator="RegistryKey"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a registry key entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -22441,7 +22676,9 @@ class RegistryKeyEntityProperties(EntityCommonProperties):
     """The registry key path."""
 
 
-class RegistryValueEntity(Entity, discriminator="RegistryValue"):
+class RegistryValueEntity(
+    Entity, discriminator="RegistryValue"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a registry value entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -22539,7 +22776,7 @@ class RegistryValueEntityProperties(EntityCommonProperties):
      \"ExpandString\", \"Binary\", \"DWord\", \"MultiString\", and \"QWord\"."""
 
 
-class Relation(ProxyResource):
+class Relation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a relation between two resources.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -22610,7 +22847,7 @@ class Relation(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RelationProperties(_Model):
+class RelationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Relation property bag.
 
     :ivar related_resource_id: The resource ID of the related resource. Required.
@@ -22652,7 +22889,9 @@ class RelationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Relationship(TIObject, discriminator="Relationship"):
+class Relationship(
+    TIObject, discriminator="Relationship"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a relationship in Azure Security Insights.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -22726,7 +22965,7 @@ class Relationship(TIObject, discriminator="Relationship"):
             super().__setattr__(key, value)
 
 
-class RelationshipHint(_Model):
+class RelationshipHint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object used to help follow relationships from this object to other STIX objects.
 
     :ivar field_name:
@@ -22757,7 +22996,7 @@ class RelationshipHint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Repo(_Model):
+class Repo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a repository.
 
     :ivar url: The url to access the repository.
@@ -22802,7 +23041,7 @@ class Repo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Repository(_Model):
+class Repository(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """metadata of a repository.
 
     :ivar url: Url of repository. Required.
@@ -22846,7 +23085,7 @@ class Repository(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RepositoryAccess(_Model):
+class RepositoryAccess(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Credentials to access repository.
 
     :ivar kind: The kind of repository access credentials. Required. Known values are: "OAuth",
@@ -22906,7 +23145,7 @@ class RepositoryAccess(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RepositoryAccessObject(_Model):
+class RepositoryAccessObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Credentials to access repository.
 
     :ivar repository_access: RepositoryAccess properties. Required.
@@ -22956,7 +23195,7 @@ class RepositoryAccessObject(_Model):
             super().__setattr__(key, value)
 
 
-class RepositoryAccessProperties(_Model):
+class RepositoryAccessProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Credentials to access repository.
 
     :ivar properties: RepositoryAccess properties. Required.
@@ -22986,7 +23225,7 @@ class RepositoryAccessProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RepositoryResourceInfo(_Model):
+class RepositoryResourceInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resources created in user's repository for the source-control.
 
     :ivar webhook: The webhook object created for the source-control.
@@ -23027,7 +23266,7 @@ class RepositoryResourceInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RequiredPermissions(_Model):
+class RequiredPermissions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Required permissions for the connector.
 
     :ivar action: action permission.
@@ -23070,7 +23309,7 @@ class RequiredPermissions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceProviderRequiredPermissions(_Model):
+class ResourceProviderRequiredPermissions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Required permissions for the connector resource provider that define in ResourceProviders. For
     more information about the permissions see <see
     href="https://docs.microsoft.com/en-us/azure/role-based-access-control/role-definitions#actions-format">here</see>.
@@ -23116,7 +23355,9 @@ class ResourceProviderRequiredPermissions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestApiPollerDataConnector(DataConnector, discriminator="RestApiPoller"):
+class RestApiPollerDataConnector(
+    DataConnector, discriminator="RestApiPoller"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Rest Api Poller data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -23194,7 +23435,7 @@ class RestApiPollerDataConnector(DataConnector, discriminator="RestApiPoller"):
             super().__setattr__(key, value)
 
 
-class RestApiPollerDataConnectorProperties(_Model):
+class RestApiPollerDataConnectorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rest Api Poller data connector properties.
 
     :ivar connector_definition_name: The connector definition name (the dataConnectorDefinition
@@ -23277,7 +23518,7 @@ class RestApiPollerDataConnectorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestApiPollerRequestConfig(_Model):
+class RestApiPollerRequestConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request configuration.
 
     :ivar api_endpoint: The API endpoint. Required.
@@ -23426,7 +23667,7 @@ class RestApiPollerRequestConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestApiPollerRequestPagingConfig(_Model):
+class RestApiPollerRequestPagingConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request paging configuration.
 
     :ivar paging_type: Type of paging. Required. Known values are: "LinkHeader", "NextPageToken",
@@ -23470,7 +23711,9 @@ class RestApiPollerRequestPagingConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SapSolutionUsageStatistic(BillingStatistic, discriminator="SapSolutionUsage"):
+class SapSolutionUsageStatistic(
+    BillingStatistic, discriminator="SapSolutionUsage"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Billing statistic about the Microsoft Sentinel solution for SAP Usage.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -23549,7 +23792,9 @@ class SapSolutionUsageStatisticProperties(_Model):
     """The latest count of active SAP system IDs under the Microsoft Sentinel solution for SAP Usage."""
 
 
-class ScheduledAlertRule(AlertRule, discriminator="Scheduled"):
+class ScheduledAlertRule(
+    AlertRule, discriminator="Scheduled"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents scheduled alert rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -23641,7 +23886,7 @@ class ScheduledAlertRule(AlertRule, discriminator="Scheduled"):
             super().__setattr__(key, value)
 
 
-class ScheduledAlertRuleCommonProperties(_Model):
+class ScheduledAlertRuleCommonProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Scheduled alert rule template property bag.
 
     :ivar query: The query that creates alerts for this rule.
@@ -23745,7 +23990,9 @@ class ScheduledAlertRuleCommonProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledAlertRuleProperties(ScheduledAlertRuleCommonProperties):
+class ScheduledAlertRuleProperties(
+    ScheduledAlertRuleCommonProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Scheduled alert rule base property bag.
 
     :ivar query: The query that creates alerts for this rule.
@@ -23886,7 +24133,9 @@ class ScheduledAlertRuleProperties(ScheduledAlertRuleCommonProperties):
         super().__init__(*args, **kwargs)
 
 
-class ScheduledAlertRuleTemplate(AlertRuleTemplate, discriminator="Scheduled"):
+class ScheduledAlertRuleTemplate(
+    AlertRuleTemplate, discriminator="Scheduled"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents scheduled alert rule template.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -23974,7 +24223,7 @@ class ScheduledAlertRuleTemplate(AlertRuleTemplate, discriminator="Scheduled"):
             super().__setattr__(key, value)
 
 
-class ScheduledAlertRuleTemplateProperties(_Model):
+class ScheduledAlertRuleTemplateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Scheduled alert rule template properties.
 
     :ivar alert_rules_created_by_template_count: The number of alert rules that were created by
@@ -24152,7 +24401,9 @@ class ScheduledAlertRuleTemplateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityAlert(Entity, discriminator="SecurityAlert"):
+class SecurityAlert(
+    Entity, discriminator="SecurityAlert"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a security alert entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -24245,7 +24496,7 @@ class SecurityAlert(Entity, discriminator="SecurityAlert"):
             super().__setattr__(key, value)
 
 
-class SecurityAlertProperties(EntityCommonProperties):
+class SecurityAlertProperties(EntityCommonProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SecurityAlert entity property bag.
 
     :ivar additional_data: A bag of custom fields that should be part of the entity and will be
@@ -24423,7 +24674,9 @@ class SecurityAlertPropertiesConfidenceReasonsItem(_Model):  # pylint: disable=n
     """The type (category) of the reason."""
 
 
-class SecurityAlertTimelineItem(EntityTimelineItem, discriminator="SecurityAlert"):
+class SecurityAlertTimelineItem(
+    EntityTimelineItem, discriminator="SecurityAlert"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents security alert timeline item.
 
     :ivar azure_resource_id: The alert azure resource id. Required.
@@ -24525,7 +24778,9 @@ class SecurityAlertTimelineItem(EntityTimelineItem, discriminator="SecurityAlert
         self.kind = EntityTimelineKind.SECURITY_ALERT  # type: ignore
 
 
-class SecurityGroupEntity(Entity, discriminator="SecurityGroup"):
+class SecurityGroupEntity(
+    Entity, discriminator="SecurityGroup"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a security group entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -24619,7 +24874,7 @@ class SecurityGroupEntityProperties(EntityCommonProperties):
      the group."""
 
 
-class SecurityMLAnalyticsSettingsDataSource(_Model):
+class SecurityMLAnalyticsSettingsDataSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """security ml analytics settings data sources.
 
     :ivar connector_id: The connector id that provides the following data types.
@@ -24656,7 +24911,7 @@ class SecurityMLAnalyticsSettingsDataSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SentinelEntityMapping(_Model):
+class SentinelEntityMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single sentinel entity mapping.
 
     :ivar column_name: the column name to be mapped to the SentinelEntities.
@@ -24686,7 +24941,7 @@ class SentinelEntityMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SentinelOnboardingState(ProxyResource):
+class SentinelOnboardingState(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sentinel onboarding state.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -24752,7 +25007,7 @@ class SentinelOnboardingState(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SentinelOnboardingStateProperties(_Model):
+class SentinelOnboardingStateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Sentinel onboarding state properties.
 
     :ivar customer_managed_key: Flag that indicates the status of the CMK setting.
@@ -24782,7 +25037,7 @@ class SentinelOnboardingStateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SentinelOnboardingStatesList(_Model):
+class SentinelOnboardingStatesList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of the Sentinel onboarding states.
 
     :ivar value: Array of Sentinel onboarding states. Required.
@@ -24812,7 +25067,7 @@ class SentinelOnboardingStatesList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServicePrincipal(_Model):
+class ServicePrincipal(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Service principal metadata.
 
     :ivar id: Id of service principal.
@@ -24854,7 +25109,9 @@ class ServicePrincipal(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionAuthModel(CcpAuthConfig, discriminator="Session"):
+class SessionAuthModel(
+    CcpAuthConfig, discriminator="Session"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model for API authentication with session cookie.
 
     :ivar user_name: The user name attribute key value. Required.
@@ -24932,7 +25189,7 @@ class SessionAuthModel(CcpAuthConfig, discriminator="Session"):
         self.type = CcpAuthType.SESSION  # type: ignore
 
 
-class SourceControl(ProxyResource):
+class SourceControl(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a SourceControl in Azure Security Insights.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -25012,7 +25269,7 @@ class SourceControl(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SourceControlProperties(_Model):
+class SourceControlProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes source control properties.
 
     :ivar id: The id (a Guid) of the source control.
@@ -25115,7 +25372,9 @@ class SourceControlProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubmissionMailEntity(Entity, discriminator="SubmissionMail"):
+class SubmissionMailEntity(
+    Entity, discriminator="SubmissionMail"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a submission mail entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -25249,7 +25508,7 @@ class SubmissionMailEntityProperties(EntityCommonProperties):
     """The submission type for the given instance. This maps to Junk, Phish, Malware or NotJunk."""
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -25345,7 +25604,7 @@ class TeamInformation(_Model):
     """The description of the team."""
 
 
-class TemplateModel(ProxyResource):
+class TemplateModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Template resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -25439,7 +25698,7 @@ class TemplateModel(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TemplateProperties(_Model):
+class TemplateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Template property bag.
 
     :ivar content_id: Static ID for the content.  Used to identify dependencies and content from
@@ -25671,7 +25930,7 @@ class TemplateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThreatActor(TIObject, discriminator="ThreatActor"):
+class ThreatActor(TIObject, discriminator="ThreatActor"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a threat actor in Azure Security Insights.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -25775,7 +26034,9 @@ class ThreatIntelligence(_Model):
     """Threat type (e.g. \"Botnet\")."""
 
 
-class ThreatIntelligenceAlertRule(AlertRule, discriminator="ThreatIntelligence"):
+class ThreatIntelligenceAlertRule(
+    AlertRule, discriminator="ThreatIntelligence"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Threat Intelligence alert rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -25853,7 +26114,7 @@ class ThreatIntelligenceAlertRule(AlertRule, discriminator="ThreatIntelligence")
             super().__setattr__(key, value)
 
 
-class ThreatIntelligenceAlertRuleProperties(_Model):
+class ThreatIntelligenceAlertRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Threat Intelligence alert rule base property bag.
 
     :ivar alert_rule_template_name: The Name of the alert rule template used to create this rule.
@@ -25921,7 +26182,9 @@ class ThreatIntelligenceAlertRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThreatIntelligenceAlertRuleTemplate(AlertRuleTemplate, discriminator="ThreatIntelligence"):
+class ThreatIntelligenceAlertRuleTemplate(
+    AlertRuleTemplate, discriminator="ThreatIntelligence"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Threat Intelligence alert rule template.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -26000,7 +26263,7 @@ class ThreatIntelligenceAlertRuleTemplate(AlertRuleTemplate, discriminator="Thre
 
 class ThreatIntelligenceAlertRuleTemplateProperties(
     AlertRuleTemplateWithMitreProperties
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Threat Intelligence alert rule template properties.
 
     :ivar alert_rules_created_by_template_count: The number of alert rules that were created by
@@ -26060,7 +26323,7 @@ class ThreatIntelligenceAlertRuleTemplateProperties(
         super().__init__(*args, **kwargs)
 
 
-class ThreatIntelligenceAppendTags(_Model):
+class ThreatIntelligenceAppendTags(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Array of tags to be appended to the threat intelligence indicator.
 
     :ivar threat_intelligence_tags: List of tags to be appended.
@@ -26103,7 +26366,7 @@ class ThreatIntelligenceCount(_Model):
      Required."""
 
 
-class ThreatIntelligenceExternalReference(_Model):
+class ThreatIntelligenceExternalReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes external reference.
 
     :ivar description: External reference description.
@@ -26155,7 +26418,7 @@ class ThreatIntelligenceExternalReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThreatIntelligenceFilteringCriteria(_Model):
+class ThreatIntelligenceFilteringCriteria(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Filtering criteria for querying threat intelligence indicators.
 
     :ivar page_size: Page size.
@@ -26259,7 +26522,7 @@ class ThreatIntelligenceFilteringCriteria(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThreatIntelligenceGranularMarkingModel(_Model):
+class ThreatIntelligenceGranularMarkingModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes threat granular marking model entity.
 
     :ivar language: Language granular marking model.
@@ -26299,7 +26562,7 @@ class ThreatIntelligenceGranularMarkingModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThreatIntelligenceInformation(ProxyResource):
+class ThreatIntelligenceInformation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Threat intelligence information object.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -26351,7 +26614,9 @@ class ThreatIntelligenceInformation(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ThreatIntelligenceIndicatorModel(ThreatIntelligenceInformation, discriminator="indicator"):
+class ThreatIntelligenceIndicatorModel(
+    ThreatIntelligenceInformation, discriminator="indicator"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Threat intelligence indicator entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -26450,7 +26715,9 @@ class ThreatIntelligenceIndicatorModel(ThreatIntelligenceInformation, discrimina
             super().__setattr__(key, value)
 
 
-class ThreatIntelligenceIndicatorProperties(EntityCommonProperties):
+class ThreatIntelligenceIndicatorProperties(
+    EntityCommonProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes threat intelligence entity properties.
 
     :ivar additional_data: A bag of custom fields that should be part of the entity and will be
@@ -26655,7 +26922,7 @@ class ThreatIntelligenceIndicatorProperties(EntityCommonProperties):
         super().__init__(*args, **kwargs)
 
 
-class ThreatIntelligenceKillChainPhase(_Model):
+class ThreatIntelligenceKillChainPhase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes threat kill chain phase entity.
 
     :ivar kill_chain_name: Kill chainName name.
@@ -26690,7 +26957,7 @@ class ThreatIntelligenceKillChainPhase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThreatIntelligenceMetric(_Model):
+class ThreatIntelligenceMetric(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes threat intelligence metric.
 
     :ivar last_updated_time_utc: Last updated indicator metric.
@@ -26744,7 +27011,7 @@ class ThreatIntelligenceMetric(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThreatIntelligenceMetricEntity(_Model):
+class ThreatIntelligenceMetricEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes threat intelligence metric entity.
 
     :ivar metric_name: Metric name.
@@ -26781,7 +27048,7 @@ class ThreatIntelligenceMetricEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThreatIntelligenceMetrics(_Model):
+class ThreatIntelligenceMetrics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Threat intelligence metrics.
 
     :ivar properties: Threat intelligence metrics.
@@ -26811,7 +27078,7 @@ class ThreatIntelligenceMetrics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThreatIntelligenceMetricsList(_Model):
+class ThreatIntelligenceMetricsList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of all the threat intelligence metric fields (type/threat type/source).
 
     :ivar value: Array of threat intelligence metric fields (type/threat type/source). Required.
@@ -26841,7 +27108,7 @@ class ThreatIntelligenceMetricsList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThreatIntelligenceParsedPattern(_Model):
+class ThreatIntelligenceParsedPattern(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes parsed pattern entity.
 
     :ivar pattern_type_key: Pattern type key.
@@ -26879,7 +27146,7 @@ class ThreatIntelligenceParsedPattern(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThreatIntelligenceParsedPatternTypeValue(_Model):
+class ThreatIntelligenceParsedPatternTypeValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes threat kill chain phase entity.
 
     :ivar value_type: Type of the value.
@@ -26912,7 +27179,7 @@ class ThreatIntelligenceParsedPatternTypeValue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThreatIntelligenceSortingCriteria(_Model):
+class ThreatIntelligenceSortingCriteria(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of available columns for sorting.
 
     :ivar item_key: Column name.
@@ -26950,7 +27217,9 @@ class ThreatIntelligenceSortingCriteria(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TICheckRequirements(DataConnectorsCheckRequirements, discriminator="ThreatIntelligence"):
+class TICheckRequirements(
+    DataConnectorsCheckRequirements, discriminator="ThreatIntelligence"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Threat Intelligence Platforms data connector check requirements.
 
     :ivar properties: Threat Intelligence Platforms data connector check required properties.
@@ -27004,7 +27273,9 @@ class TICheckRequirements(DataConnectorsCheckRequirements, discriminator="Threat
             super().__setattr__(key, value)
 
 
-class TICheckRequirementsProperties(DataConnectorTenantId):
+class TICheckRequirementsProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Threat Intelligence Platforms data connector required properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -27029,7 +27300,9 @@ class TICheckRequirementsProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class TIDataConnector(DataConnector, discriminator="ThreatIntelligence"):
+class TIDataConnector(
+    DataConnector, discriminator="ThreatIntelligence"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents threat intelligence data connector.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -27097,7 +27370,7 @@ class TIDataConnector(DataConnector, discriminator="ThreatIntelligence"):
             super().__setattr__(key, value)
 
 
-class TIDataConnectorDataTypes(_Model):
+class TIDataConnectorDataTypes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The available data types for TI (Threat Intelligence) data connector.
 
     :ivar indicators: Data type for indicators connection. Required.
@@ -27127,7 +27400,9 @@ class TIDataConnectorDataTypes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TIDataConnectorDataTypesIndicators(DataConnectorDataTypeCommon):
+class TIDataConnectorDataTypesIndicators(
+    DataConnectorDataTypeCommon
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data type for indicators connection.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -27153,7 +27428,7 @@ class TIDataConnectorDataTypesIndicators(DataConnectorDataTypeCommon):
         super().__init__(*args, **kwargs)
 
 
-class TIDataConnectorProperties(DataConnectorTenantId):
+class TIDataConnectorProperties(DataConnectorTenantId):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TI (Threat Intelligence) data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -27193,7 +27468,7 @@ class TIDataConnectorProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class TimelineAggregation(_Model):
+class TimelineAggregation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """timeline aggregation information per kind.
 
     :ivar count: the total items found for a kind. Required.
@@ -27230,7 +27505,7 @@ class TimelineAggregation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TimelineError(_Model):
+class TimelineError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Timeline Query Errors.
 
     :ivar kind: the query kind. Required. Known values are: "Activity", "Bookmark",
@@ -27272,7 +27547,7 @@ class TimelineError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TimelineResultsMetadata(_Model):
+class TimelineResultsMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Expansion result metadata.
 
     :ivar total_count: the total items found for the timeline request. Required.
@@ -27376,7 +27651,9 @@ class TIObjectCommonProperties(_Model):
      that can be prepended to the object ID in order to efficiently locate the target TI object."""
 
 
-class TiTaxiiCheckRequirements(DataConnectorsCheckRequirements, discriminator="ThreatIntelligenceTaxii"):
+class TiTaxiiCheckRequirements(
+    DataConnectorsCheckRequirements, discriminator="ThreatIntelligenceTaxii"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Threat Intelligence TAXII data connector check requirements.
 
     :ivar properties: Threat Intelligence TAXII check required properties.
@@ -27430,7 +27707,9 @@ class TiTaxiiCheckRequirements(DataConnectorsCheckRequirements, discriminator="T
             super().__setattr__(key, value)
 
 
-class TiTaxiiCheckRequirementsProperties(DataConnectorTenantId):
+class TiTaxiiCheckRequirementsProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Threat Intelligence TAXII data connector required properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -27455,7 +27734,9 @@ class TiTaxiiCheckRequirementsProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class TiTaxiiDataConnector(DataConnector, discriminator="ThreatIntelligenceTaxii"):
+class TiTaxiiDataConnector(
+    DataConnector, discriminator="ThreatIntelligenceTaxii"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data connector to pull Threat intelligence data from TAXII 2.0/2.1 server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -27534,7 +27815,7 @@ class TiTaxiiDataConnector(DataConnector, discriminator="ThreatIntelligenceTaxii
             super().__setattr__(key, value)
 
 
-class TiTaxiiDataConnectorDataTypes(_Model):
+class TiTaxiiDataConnectorDataTypes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The available data types for Threat Intelligence TAXII data connector.
 
     :ivar taxii_client: Data type for TAXII connector. Required.
@@ -27565,7 +27846,9 @@ class TiTaxiiDataConnectorDataTypes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TiTaxiiDataConnectorDataTypesTaxiiClient(DataConnectorDataTypeCommon):
+class TiTaxiiDataConnectorDataTypesTaxiiClient(
+    DataConnectorDataTypeCommon
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data type for TAXII connector.
 
     :ivar state: Describe whether this data type connection is enabled or not. Required. Known
@@ -27591,7 +27874,9 @@ class TiTaxiiDataConnectorDataTypesTaxiiClient(DataConnectorDataTypeCommon):
         super().__init__(*args, **kwargs)
 
 
-class TiTaxiiDataConnectorProperties(DataConnectorTenantId):
+class TiTaxiiDataConnectorProperties(
+    DataConnectorTenantId
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Threat Intelligence TAXII data connector properties.
 
     :ivar tenant_id: The tenant id to connect to, and get the data from. Required.
@@ -27679,7 +27964,7 @@ class TiTaxiiDataConnectorProperties(DataConnectorTenantId):
         super().__init__(*args, **kwargs)
 
 
-class TriggeredAnalyticsRuleRun(ProxyResource):
+class TriggeredAnalyticsRuleRun(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The triggered analytics rule run.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -27751,7 +28036,7 @@ class TriggeredAnalyticsRuleRun(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TriggeredAnalyticsRuleRunProperties(_Model):
+class TriggeredAnalyticsRuleRunProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The triggered analytics rule run Properties.
 
     :ivar execution_time_utc: Required.
@@ -27808,7 +28093,7 @@ class TriggeredAnalyticsRuleRunProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Ueba(Settings, discriminator="Ueba"):
+class Ueba(Settings, discriminator="Ueba"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings with single toggle.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -27876,7 +28161,7 @@ class Ueba(Settings, discriminator="Ueba"):
             super().__setattr__(key, value)
 
 
-class UebaProperties(_Model):
+class UebaProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Ueba property bag.
 
     :ivar data_sources: The relevant data sources that enriched by ueba.
@@ -27906,7 +28191,7 @@ class UebaProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UrlEntity(Entity, discriminator="Url"):
+class UrlEntity(Entity, discriminator="Url"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a url entity.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -27988,7 +28273,7 @@ class UrlEntityProperties(EntityCommonProperties):
     """A full URL the entity points to."""
 
 
-class UserInfo(_Model):
+class UserInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User information that made some action.
 
     :ivar email: The email of the user.
@@ -28024,7 +28309,7 @@ class UserInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidationError(_Model):
+class ValidationError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an error encountered in the file during validation.
 
     :ivar record_index: The number of the record that has the error.
@@ -28096,7 +28381,7 @@ class WarningBody(_Model):
     details: Optional[list["_models.WarningBody"]] = rest_field(visibility=["read"])
 
 
-class Watchlist(ProxyResource):
+class Watchlist(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Watchlist in Azure Security Insights.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -28185,7 +28470,7 @@ class Watchlist(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WatchlistItem(ProxyResource):
+class WatchlistItem(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Watchlist Item in Azure Security Insights.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -28262,7 +28547,7 @@ class WatchlistItem(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WatchlistItemProperties(_Model):
+class WatchlistItemProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes watchlist item properties.
 
     :ivar watchlist_item_type: The type of the watchlist item.
@@ -28351,7 +28636,7 @@ class WatchlistItemProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WatchlistProperties(_Model):
+class WatchlistProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes watchlist properties.
 
     :ivar watchlist_id: The id (a Guid) of the watchlist.
@@ -28403,9 +28688,10 @@ class WatchlistProperties(_Model):
     :ivar upload_status: The status of the Watchlist upload : New, InProgress or Complete. **Note**
      : When a Watchlist upload status is InProgress, the Watchlist cannot be deleted.
     :vartype upload_status: str
-    :ivar provisioning_state: Describes provisioning state. Known values are: "Accepted",
-     "InProgress", "Succeeded", "Failed", and "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.securityinsight.models.ProvisioningState
+    :ivar provisioning_state: Describes provisioning state. Known values are: "New", "InProgress",
+     "Uploading", "Deleting", "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.securityinsight.models.WatchlistProvisioningState
     """
 
     watchlist_id: Optional[str] = rest_field(
@@ -28484,11 +28770,11 @@ class WatchlistProperties(_Model):
     )
     """The status of the Watchlist upload : New, InProgress or Complete. **Note** : When a Watchlist
      upload status is InProgress, the Watchlist cannot be deleted."""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+    provisioning_state: Optional[Union[str, "_models.WatchlistProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """Describes provisioning state. Known values are: \"Accepted\", \"InProgress\", \"Succeeded\",
-     \"Failed\", and \"Canceled\"."""
+    """Describes provisioning state. Known values are: \"New\", \"InProgress\", \"Uploading\",
+     \"Deleting\", \"Succeeded\", \"Failed\", and \"Canceled\"."""
 
     @overload
     def __init__(
@@ -28528,7 +28814,7 @@ class WatchlistProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Webhook(_Model):
+class Webhook(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Detail about the webhook object.
 
     :ivar webhook_id: Unique identifier for the webhook.
@@ -28599,7 +28885,7 @@ class WorkloadIdentityFederation(_Model):
     """Issuer of Workload Identity Federation."""
 
 
-class WorkspaceManagerAssignment(ProxyResource):
+class WorkspaceManagerAssignment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workspace manager assignment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -28664,7 +28950,7 @@ class WorkspaceManagerAssignment(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkspaceManagerAssignmentProperties(_Model):
+class WorkspaceManagerAssignmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workspace manager assignment properties.
 
     :ivar target_resource_name: The resource name of the workspace manager group targeted by the
@@ -28673,9 +28959,9 @@ class WorkspaceManagerAssignmentProperties(_Model):
     :ivar last_job_end_time: The time the last job associated to this assignment ended at.
     :vartype last_job_end_time: ~datetime.datetime
     :ivar last_job_provisioning_state: State of the last job associated to this assignment. Known
-     values are: "Accepted", "InProgress", "Succeeded", "Failed", and "Canceled".
+     values are: "Succeeded", "InProgress", "Canceled", and "Failed".
     :vartype last_job_provisioning_state: str or
-     ~azure.mgmt.securityinsight.models.ProvisioningState
+     ~azure.mgmt.securityinsight.models.JobProvisioningState
     :ivar items_property: List of resources included in this workspace manager assignment.
      Required.
     :vartype items_property: list[~azure.mgmt.securityinsight.models.AssignmentItem]
@@ -28690,11 +28976,11 @@ class WorkspaceManagerAssignmentProperties(_Model):
         name="lastJobEndTime", visibility=["read"], format="rfc3339"
     )
     """The time the last job associated to this assignment ended at."""
-    last_job_provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+    last_job_provisioning_state: Optional[Union[str, "_models.JobProvisioningState"]] = rest_field(
         name="lastJobProvisioningState", visibility=["read"]
     )
-    """State of the last job associated to this assignment. Known values are: \"Accepted\",
-     \"InProgress\", \"Succeeded\", \"Failed\", and \"Canceled\"."""
+    """State of the last job associated to this assignment. Known values are: \"Succeeded\",
+     \"InProgress\", \"Canceled\", and \"Failed\"."""
     items_property: list["_models.AssignmentItem"] = rest_field(
         name="items", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="items"
     )
@@ -28719,7 +29005,7 @@ class WorkspaceManagerAssignmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceManagerConfiguration(ProxyResource):
+class WorkspaceManagerConfiguration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workspace manager configuration.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -28784,7 +29070,7 @@ class WorkspaceManagerConfiguration(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkspaceManagerConfigurationProperties(_Model):
+class WorkspaceManagerConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workspace manager configuration properties.
 
     :ivar mode: The current mode of the workspace manager configuration. Required. Known values
@@ -28814,7 +29100,7 @@ class WorkspaceManagerConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceManagerGroup(ProxyResource):
+class WorkspaceManagerGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workspace manager group.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -28879,7 +29165,7 @@ class WorkspaceManagerGroup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkspaceManagerGroupProperties(_Model):
+class WorkspaceManagerGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workspace manager group properties.
 
     :ivar description: The description of the workspace manager group.
@@ -28920,7 +29206,7 @@ class WorkspaceManagerGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceManagerMember(ProxyResource):
+class WorkspaceManagerMember(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workspace manager member.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -28985,7 +29271,7 @@ class WorkspaceManagerMember(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkspaceManagerMemberProperties(_Model):
+class WorkspaceManagerMemberProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The workspace manager member properties.
 
     :ivar target_workspace_resource_id: Fully qualified resource ID of the target Sentinel

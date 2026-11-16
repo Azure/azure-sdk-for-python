@@ -35,10 +35,10 @@ def extract_metadata(api_markdown_path: pathlib.Path, package_version: str) -> D
         while filtered and not filtered[0].strip():
             filtered.pop(0)
 
-    normalized_text = "\n".join(line.rstrip() for line in filtered)
-    metadata["apiMdSha256"] = hashlib.sha256(normalized_text.encode("utf-8")).hexdigest()
+    api_markdown_bytes = line_ending.join(filtered).encode("utf-8")
+    metadata["apiHash"] = hashlib.sha256(api_markdown_bytes).hexdigest()
 
-    api_markdown_path.write_text(line_ending.join(filtered), encoding="utf-8", newline="")
+    api_markdown_path.write_bytes(api_markdown_bytes)
     metadata_path = api_markdown_path.parent / "api.metadata.yml"
     metadata_text = line_ending.join(f"{key}: {metadata[key]}" for key in sorted(metadata)) + line_ending
     metadata_path.write_text(metadata_text, encoding="utf-8", newline="")

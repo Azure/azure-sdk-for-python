@@ -33,9 +33,10 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_access_create_role_binding_request,
     build_access_delete_role_binding_request,
@@ -47,6 +48,10 @@ from ...operations._operations import (
     build_access_list_role_bindings_request,
     build_access_list_service_accounts_request,
     build_access_list_users_request,
+    build_access_point_resources_create_or_replace_request,
+    build_access_point_resources_delete_request,
+    build_access_point_resources_get_request,
+    build_access_point_resources_list_request,
     build_cluster_create_or_update_request,
     build_cluster_delete_request,
     build_connector_create_or_update_request,
@@ -57,6 +62,11 @@ from ...operations._operations import (
     build_environment_delete_request,
     build_marketplace_agreements_create_request,
     build_marketplace_agreements_list_request,
+    build_network_gateway_resources_create_or_replace_request,
+    build_network_gateway_resources_delete_request,
+    build_network_gateway_resources_get_request,
+    build_network_gateway_resources_list_request,
+    build_organization_activate_resource_request,
     build_organization_create_api_key_request,
     build_organization_create_request,
     build_organization_delete_cluster_api_key_request,
@@ -66,6 +76,8 @@ from ...operations._operations import (
     build_organization_get_environment_by_id_request,
     build_organization_get_request,
     build_organization_get_schema_registry_cluster_by_id_request,
+    build_organization_latest_linked_saa_s_request,
+    build_organization_link_saa_s_request,
     build_organization_list_by_resource_group_request,
     build_organization_list_by_subscription_request,
     build_organization_list_clusters_request,
@@ -85,8 +97,1448 @@ from .._configuration import ConfluentManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
+
+
+class NetworkGatewayResourcesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.confluent.aio.ConfluentManagementClient`'s
+        :attr:`network_gateway_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ConfluentManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "organization_name",
+                "environment_id",
+                "network_gateway_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-06-02-preview"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        **kwargs: Any
+    ) -> _models.NetworkGatewayResource:
+        """Get confluent network gateway by Id.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param network_gateway_id: Confluent network gateway id. Required.
+        :type network_gateway_id: str
+        :return: NetworkGatewayResource. The NetworkGatewayResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.confluent.models.NetworkGatewayResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.NetworkGatewayResource] = kwargs.pop("cls", None)
+
+        _request = build_network_gateway_resources_get_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            environment_id=environment_id,
+            network_gateway_id=network_gateway_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.NetworkGatewayResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "organization_name",
+                "environment_id",
+                "network_gateway_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-06-02-preview"],
+    )
+    async def _create_or_replace_initial(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        resource: Union[_models.NetworkGatewayResource, _types.NetworkGatewayResource, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_network_gateway_resources_create_or_replace_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            environment_id=environment_id,
+            network_gateway_id=network_gateway_id,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_replace(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        resource: _models.NetworkGatewayResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.NetworkGatewayResource]:
+        """Create or replace a confluent network gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param network_gateway_id: Confluent network gateway id. Required.
+        :type network_gateway_id: str
+        :param resource: Confluent Network Gateway resource model. Required.
+        :type resource: ~azure.mgmt.confluent.models.NetworkGatewayResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns NetworkGatewayResource. The
+         NetworkGatewayResource is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.NetworkGatewayResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_replace(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        resource: _types.NetworkGatewayResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.NetworkGatewayResource]:
+        """Create or replace a confluent network gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param network_gateway_id: Confluent network gateway id. Required.
+        :type network_gateway_id: str
+        :param resource: Confluent Network Gateway resource model. Required.
+        :type resource: ~azure.mgmt.confluent.types.NetworkGatewayResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns NetworkGatewayResource. The
+         NetworkGatewayResource is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.NetworkGatewayResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_replace(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.NetworkGatewayResource]:
+        """Create or replace a confluent network gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param network_gateway_id: Confluent network gateway id. Required.
+        :type network_gateway_id: str
+        :param resource: Confluent Network Gateway resource model. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns NetworkGatewayResource. The
+         NetworkGatewayResource is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.NetworkGatewayResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "organization_name",
+                "environment_id",
+                "network_gateway_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-06-02-preview"],
+    )
+    async def begin_create_or_replace(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        resource: Union[_models.NetworkGatewayResource, _types.NetworkGatewayResource, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.NetworkGatewayResource]:
+        """Create or replace a confluent network gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param network_gateway_id: Confluent network gateway id. Required.
+        :type network_gateway_id: str
+        :param resource: Confluent Network Gateway resource model. Is either a NetworkGatewayResource
+         type or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.confluent.models.NetworkGatewayResource or
+         ~azure.mgmt.confluent.types.NetworkGatewayResource or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns NetworkGatewayResource. The
+         NetworkGatewayResource is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.NetworkGatewayResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.NetworkGatewayResource] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_replace_initial(
+                resource_group_name=resource_group_name,
+                organization_name=organization_name,
+                environment_id=environment_id,
+                network_gateway_id=network_gateway_id,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.NetworkGatewayResource, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.NetworkGatewayResource].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.NetworkGatewayResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "organization_name",
+                "environment_id",
+                "network_gateway_id",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-06-02-preview"],
+    )
+    async def _delete_initial(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_network_gateway_resources_delete_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            environment_id=environment_id,
+            network_gateway_id=network_gateway_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "organization_name",
+                "environment_id",
+                "network_gateway_id",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-06-02-preview"],
+    )
+    async def begin_delete(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete confluent network gateway by id.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param network_gateway_id: Confluent network gateway id. Required.
+        :type network_gateway_id: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                organization_name=organization_name,
+                environment_id=environment_id,
+                network_gateway_id=network_gateway_id,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "organization_name",
+                "environment_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-06-02-preview"],
+    )
+    def list(
+        self, resource_group_name: str, organization_name: str, environment_id: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.NetworkGatewayResource"]:
+        """Lists all network gateways in an environment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :return: An iterator like instance of NetworkGatewayResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.confluent.models.NetworkGatewayResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.NetworkGatewayResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_network_gateway_resources_list_request(
+                    resource_group_name=resource_group_name,
+                    organization_name=organization_name,
+                    environment_id=environment_id,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.NetworkGatewayResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class AccessPointResourcesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.confluent.aio.ConfluentManagementClient`'s
+        :attr:`access_point_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ConfluentManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "organization_name",
+                "environment_id",
+                "network_gateway_id",
+                "access_point_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-06-02-preview"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        access_point_id: str,
+        **kwargs: Any
+    ) -> _models.AccessPointResource:
+        """Get confluent access point by Id.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param network_gateway_id: Confluent network gateway id. Required.
+        :type network_gateway_id: str
+        :param access_point_id: Confluent access point id. Required.
+        :type access_point_id: str
+        :return: AccessPointResource. The AccessPointResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.confluent.models.AccessPointResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AccessPointResource] = kwargs.pop("cls", None)
+
+        _request = build_access_point_resources_get_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            environment_id=environment_id,
+            network_gateway_id=network_gateway_id,
+            access_point_id=access_point_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AccessPointResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "organization_name",
+                "environment_id",
+                "network_gateway_id",
+                "access_point_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-06-02-preview"],
+    )
+    async def _create_or_replace_initial(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        access_point_id: str,
+        resource: Union[_models.AccessPointResource, _types.AccessPointResource, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_access_point_resources_create_or_replace_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            environment_id=environment_id,
+            network_gateway_id=network_gateway_id,
+            access_point_id=access_point_id,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_replace(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        access_point_id: str,
+        resource: _models.AccessPointResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AccessPointResource]:
+        """Create or replace a confluent access point.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param network_gateway_id: Confluent network gateway id. Required.
+        :type network_gateway_id: str
+        :param access_point_id: Confluent access point id. Required.
+        :type access_point_id: str
+        :param resource: Confluent Access Point resource model. Required.
+        :type resource: ~azure.mgmt.confluent.models.AccessPointResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AccessPointResource. The
+         AccessPointResource is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.AccessPointResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_replace(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        access_point_id: str,
+        resource: _types.AccessPointResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AccessPointResource]:
+        """Create or replace a confluent access point.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param network_gateway_id: Confluent network gateway id. Required.
+        :type network_gateway_id: str
+        :param access_point_id: Confluent access point id. Required.
+        :type access_point_id: str
+        :param resource: Confluent Access Point resource model. Required.
+        :type resource: ~azure.mgmt.confluent.types.AccessPointResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AccessPointResource. The
+         AccessPointResource is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.AccessPointResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_replace(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        access_point_id: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AccessPointResource]:
+        """Create or replace a confluent access point.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param network_gateway_id: Confluent network gateway id. Required.
+        :type network_gateway_id: str
+        :param access_point_id: Confluent access point id. Required.
+        :type access_point_id: str
+        :param resource: Confluent Access Point resource model. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AccessPointResource. The
+         AccessPointResource is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.AccessPointResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "organization_name",
+                "environment_id",
+                "network_gateway_id",
+                "access_point_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-06-02-preview"],
+    )
+    async def begin_create_or_replace(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        access_point_id: str,
+        resource: Union[_models.AccessPointResource, _types.AccessPointResource, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AccessPointResource]:
+        """Create or replace a confluent access point.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param network_gateway_id: Confluent network gateway id. Required.
+        :type network_gateway_id: str
+        :param access_point_id: Confluent access point id. Required.
+        :type access_point_id: str
+        :param resource: Confluent Access Point resource model. Is either a AccessPointResource type or
+         a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.confluent.models.AccessPointResource or
+         ~azure.mgmt.confluent.types.AccessPointResource or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns AccessPointResource. The
+         AccessPointResource is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.AccessPointResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AccessPointResource] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_replace_initial(
+                resource_group_name=resource_group_name,
+                organization_name=organization_name,
+                environment_id=environment_id,
+                network_gateway_id=network_gateway_id,
+                access_point_id=access_point_id,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.AccessPointResource, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.AccessPointResource].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.AccessPointResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "organization_name",
+                "environment_id",
+                "network_gateway_id",
+                "access_point_id",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-06-02-preview"],
+    )
+    async def _delete_initial(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        access_point_id: str,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_access_point_resources_delete_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            environment_id=environment_id,
+            network_gateway_id=network_gateway_id,
+            access_point_id=access_point_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "organization_name",
+                "environment_id",
+                "network_gateway_id",
+                "access_point_id",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-06-02-preview"],
+    )
+    async def begin_delete(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        access_point_id: str,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete confluent access point by id.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param network_gateway_id: Confluent network gateway id. Required.
+        :type network_gateway_id: str
+        :param access_point_id: Confluent access point id. Required.
+        :type access_point_id: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                organization_name=organization_name,
+                environment_id=environment_id,
+                network_gateway_id=network_gateway_id,
+                access_point_id=access_point_id,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "organization_name",
+                "environment_id",
+                "network_gateway_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-06-02-preview"],
+    )
+    def list(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        environment_id: str,
+        network_gateway_id: str,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.AccessPointResource"]:
+        """Lists all access points in a network gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param environment_id: Confluent environment id. Required.
+        :type environment_id: str
+        :param network_gateway_id: Confluent network gateway id. Required.
+        :type network_gateway_id: str
+        :return: An iterator like instance of AccessPointResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.confluent.models.AccessPointResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AccessPointResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_access_point_resources_list_request(
+                    resource_group_name=resource_group_name,
+                    organization_name=organization_name,
+                    environment_id=environment_id,
+                    network_gateway_id=network_gateway_id,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AccessPointResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
 
 class OrganizationOperationsOperations:
@@ -153,7 +1605,10 @@ class OrganizationOperationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -166,7 +1621,10 @@ class OrganizationOperationsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OperationResult], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.OperationResult],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -193,7 +1651,7 @@ class OrganizationOperationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class OrganizationOperations:
+class OrganizationOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -254,6 +1712,7 @@ class OrganizationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -275,7 +1734,7 @@ class OrganizationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.APIKeyRecord, response.json())
 
@@ -387,6 +1846,7 @@ class OrganizationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -408,7 +1868,7 @@ class OrganizationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.OrganizationResource, response.json())
 
@@ -421,7 +1881,7 @@ class OrganizationOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Optional[Union[_models.OrganizationResource, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.OrganizationResource, _types.OrganizationResource, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -464,6 +1924,7 @@ class OrganizationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -490,7 +1951,7 @@ class OrganizationOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -530,7 +1991,7 @@ class OrganizationOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.OrganizationResource] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -543,7 +2004,7 @@ class OrganizationOperations:
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
         :param body: Organization resource model. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.OrganizationResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -586,7 +2047,7 @@ class OrganizationOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Optional[Union[_models.OrganizationResource, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.OrganizationResource, _types.OrganizationResource, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OrganizationResource]:
         """Create Organization resource.
@@ -596,9 +2057,10 @@ class OrganizationOperations:
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
-        :param body: Organization resource model. Is one of the following types: OrganizationResource,
-         JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.confluent.models.OrganizationResource or JSON or IO[bytes]
+        :param body: Organization resource model. Is either a OrganizationResource type or a IO[bytes]
+         type. Default value is None.
+        :type body: ~azure.mgmt.confluent.models.OrganizationResource or
+         ~azure.mgmt.confluent.types.OrganizationResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OrganizationResource. The
          OrganizationResource is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.OrganizationResource]
@@ -689,7 +2151,7 @@ class OrganizationOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.OrganizationResourceUpdate] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -702,7 +2164,7 @@ class OrganizationOperations:
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
         :param body: Updated Organization resource. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.OrganizationResourceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -743,7 +2205,7 @@ class OrganizationOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Optional[Union[_models.OrganizationResourceUpdate, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.OrganizationResourceUpdate, _types.OrganizationResourceUpdate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.OrganizationResource:
         """Update Organization resource.
@@ -753,9 +2215,10 @@ class OrganizationOperations:
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
-        :param body: Updated Organization resource. Is one of the following types:
-         OrganizationResourceUpdate, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.confluent.models.OrganizationResourceUpdate or JSON or IO[bytes]
+        :param body: Updated Organization resource. Is either a OrganizationResourceUpdate type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.confluent.models.OrganizationResourceUpdate or
+         ~azure.mgmt.confluent.types.OrganizationResourceUpdate or IO[bytes]
         :return: OrganizationResource. The OrganizationResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.confluent.models.OrganizationResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -800,6 +2263,7 @@ class OrganizationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -821,7 +2285,7 @@ class OrganizationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.OrganizationResource, response.json())
 
@@ -859,6 +2323,7 @@ class OrganizationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -883,7 +2348,7 @@ class OrganizationOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1004,7 +2469,10 @@ class OrganizationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1017,7 +2485,10 @@ class OrganizationOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OrganizationResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.OrganizationResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1092,7 +2563,10 @@ class OrganizationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1105,7 +2579,10 @@ class OrganizationOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OrganizationResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.OrganizationResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1164,7 +2641,7 @@ class OrganizationOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: JSON,
+        body: _types.ListAccessRequestModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1177,7 +2654,7 @@ class OrganizationOperations:
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
         :param body: List Access Request Model. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.ListAccessRequestModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1220,7 +2697,7 @@ class OrganizationOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Union[_models.ListAccessRequestModel, JSON, IO[bytes]],
+        body: Union[_models.ListAccessRequestModel, _types.ListAccessRequestModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.ListRegionsSuccessResponse:
         """cloud provider regions available for creating Schema Registry clusters.
@@ -1230,9 +2707,10 @@ class OrganizationOperations:
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
-        :param body: List Access Request Model. Is one of the following types: ListAccessRequestModel,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or JSON or IO[bytes]
+        :param body: List Access Request Model. Is either a ListAccessRequestModel type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or
+         ~azure.mgmt.confluent.types.ListAccessRequestModel or IO[bytes]
         :return: ListRegionsSuccessResponse. The ListRegionsSuccessResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.confluent.models.ListRegionsSuccessResponse
@@ -1274,6 +2752,7 @@ class OrganizationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1295,7 +2774,7 @@ class OrganizationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ListRegionsSuccessResponse, response.json())
 
@@ -1303,6 +2782,560 @@ class OrganizationOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-06-02-preview",
+        params_added_on={
+            "2026-06-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "organization_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-02-preview"],
+    )
+    async def _link_saa_s_initial(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        body: Union[_models.SaaSData, _types.SaaSData, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_organization_link_saa_s_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_link_saa_s(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        body: _models.SaaSData,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OrganizationResource]:
+        """Links a new SaaS to the Confluent organization of the underlying resource.
+
+        Links a new SaaS to the Confluent organization of the underlying resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param body: SaaS data for linking. Required.
+        :type body: ~azure.mgmt.confluent.models.SaaSData
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns OrganizationResource. The
+         OrganizationResource is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.OrganizationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_link_saa_s(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        body: _types.SaaSData,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OrganizationResource]:
+        """Links a new SaaS to the Confluent organization of the underlying resource.
+
+        Links a new SaaS to the Confluent organization of the underlying resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param body: SaaS data for linking. Required.
+        :type body: ~azure.mgmt.confluent.types.SaaSData
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns OrganizationResource. The
+         OrganizationResource is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.OrganizationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_link_saa_s(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OrganizationResource]:
+        """Links a new SaaS to the Confluent organization of the underlying resource.
+
+        Links a new SaaS to the Confluent organization of the underlying resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param body: SaaS data for linking. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns OrganizationResource. The
+         OrganizationResource is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.OrganizationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-06-02-preview",
+        params_added_on={
+            "2026-06-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "organization_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-02-preview"],
+    )
+    async def begin_link_saa_s(
+        self,
+        resource_group_name: str,
+        organization_name: str,
+        body: Union[_models.SaaSData, _types.SaaSData, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OrganizationResource]:
+        """Links a new SaaS to the Confluent organization of the underlying resource.
+
+        Links a new SaaS to the Confluent organization of the underlying resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :param body: SaaS data for linking. Is either a SaaSData type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.confluent.models.SaaSData or ~azure.mgmt.confluent.types.SaaSData or
+         IO[bytes]
+        :return: An instance of AsyncLROPoller that returns OrganizationResource. The
+         OrganizationResource is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.OrganizationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.OrganizationResource] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._link_saa_s_initial(
+                resource_group_name=resource_group_name,
+                organization_name=organization_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+            deserialized = _deserialize(_models.OrganizationResource, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.OrganizationResource].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.OrganizationResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-06-02-preview",
+        params_added_on={
+            "2026-06-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "organization_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-02-preview"],
+    )
+    async def latest_linked_saa_s(
+        self, resource_group_name: str, organization_name: str, **kwargs: Any
+    ) -> _models.LatestLinkedSaaSResponse:
+        """Returns the latest SaaS linked to the Confluent organization of the underlying resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param organization_name: Organization resource name. Required.
+        :type organization_name: str
+        :return: LatestLinkedSaaSResponse. The LatestLinkedSaaSResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.confluent.models.LatestLinkedSaaSResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.LatestLinkedSaaSResponse] = kwargs.pop("cls", None)
+
+        _request = build_organization_latest_linked_saa_s_request(
+            resource_group_name=resource_group_name,
+            organization_name=organization_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.LatestLinkedSaaSResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    async def _activate_resource_initial(
+        self,
+        body: Union[_models.ActivateSaaSParameterRequest, _types.ActivateSaaSParameterRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_organization_activate_resource_request(
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_activate_resource(
+        self, body: _models.ActivateSaaSParameterRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[_models.SaaSResourceDetailsResponse]:
+        """Resolve the token to get the SaaS resource ID and activate the SaaS resource.
+
+        :param body: The request body. Required.
+        :type body: ~azure.mgmt.confluent.models.ActivateSaaSParameterRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SaaSResourceDetailsResponse. The
+         SaaSResourceDetailsResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.SaaSResourceDetailsResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_activate_resource(
+        self, body: _types.ActivateSaaSParameterRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[_models.SaaSResourceDetailsResponse]:
+        """Resolve the token to get the SaaS resource ID and activate the SaaS resource.
+
+        :param body: The request body. Required.
+        :type body: ~azure.mgmt.confluent.types.ActivateSaaSParameterRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SaaSResourceDetailsResponse. The
+         SaaSResourceDetailsResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.SaaSResourceDetailsResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_activate_resource(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[_models.SaaSResourceDetailsResponse]:
+        """Resolve the token to get the SaaS resource ID and activate the SaaS resource.
+
+        :param body: The request body. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns SaaSResourceDetailsResponse. The
+         SaaSResourceDetailsResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.SaaSResourceDetailsResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_activate_resource(
+        self,
+        body: Union[_models.ActivateSaaSParameterRequest, _types.ActivateSaaSParameterRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.SaaSResourceDetailsResponse]:
+        """Resolve the token to get the SaaS resource ID and activate the SaaS resource.
+
+        :param body: The request body. Is either a ActivateSaaSParameterRequest type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.confluent.models.ActivateSaaSParameterRequest or
+         ~azure.mgmt.confluent.types.ActivateSaaSParameterRequest or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns SaaSResourceDetailsResponse. The
+         SaaSResourceDetailsResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.confluent.models.SaaSResourceDetailsResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SaaSResourceDetailsResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._activate_resource_initial(
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.SaaSResourceDetailsResponse, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.SaaSResourceDetailsResponse].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.SaaSResourceDetailsResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def get_environment_by_id(
@@ -1348,6 +3381,7 @@ class OrganizationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1369,7 +3403,7 @@ class OrganizationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SCEnvironmentRecord, response.json())
 
@@ -1449,7 +3483,10 @@ class OrganizationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1462,7 +3499,10 @@ class OrganizationOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SCEnvironmentRecord], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SCEnvironmentRecord],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1563,7 +3603,10 @@ class OrganizationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1576,7 +3619,10 @@ class OrganizationOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SchemaRegistryClusterRecord], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SchemaRegistryClusterRecord],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1650,6 +3696,7 @@ class OrganizationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1671,7 +3718,7 @@ class OrganizationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SchemaRegistryClusterRecord, response.json())
 
@@ -1727,6 +3774,7 @@ class OrganizationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1748,7 +3796,7 @@ class OrganizationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SCClusterRecord, response.json())
 
@@ -1831,7 +3879,10 @@ class OrganizationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1844,7 +3895,10 @@ class OrganizationOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SCClusterRecord], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SCClusterRecord],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1911,7 +3965,7 @@ class OrganizationOperations:
         organization_name: str,
         environment_id: str,
         cluster_id: str,
-        body: JSON,
+        body: _types.CreateAPIKeyModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1929,7 +3983,7 @@ class OrganizationOperations:
         :type cluster_id: str
         :param body: Request payload for get creating API Key for schema registry Cluster ID or Kafka
          Cluster ID under a environment. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.CreateAPIKeyModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1979,7 +4033,7 @@ class OrganizationOperations:
         organization_name: str,
         environment_id: str,
         cluster_id: str,
-        body: Union[_models.CreateAPIKeyModel, JSON, IO[bytes]],
+        body: Union[_models.CreateAPIKeyModel, _types.CreateAPIKeyModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.APIKeyRecord:
         """Creates API key for a schema registry Cluster ID or Kafka Cluster ID under a environment.
@@ -1994,9 +4048,10 @@ class OrganizationOperations:
         :param cluster_id: Confluent kafka or schema registry cluster id. Required.
         :type cluster_id: str
         :param body: Request payload for get creating API Key for schema registry Cluster ID or Kafka
-         Cluster ID under a environment. Is one of the following types: CreateAPIKeyModel, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.confluent.models.CreateAPIKeyModel or JSON or IO[bytes]
+         Cluster ID under a environment. Is either a CreateAPIKeyModel type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.confluent.models.CreateAPIKeyModel or
+         ~azure.mgmt.confluent.types.CreateAPIKeyModel or IO[bytes]
         :return: APIKeyRecord. The APIKeyRecord is compatible with MutableMapping
         :rtype: ~azure.mgmt.confluent.models.APIKeyRecord
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2039,6 +4094,7 @@ class OrganizationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2060,7 +4116,7 @@ class OrganizationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.APIKeyRecord, response.json())
 
@@ -2182,7 +4238,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: JSON,
+        body: _types.ListAccessRequestModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2195,7 +4251,7 @@ class AccessOperations:
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
         :param body: List Access Request Model. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.ListAccessRequestModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2238,7 +4294,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Union[_models.ListAccessRequestModel, JSON, IO[bytes]],
+        body: Union[_models.ListAccessRequestModel, _types.ListAccessRequestModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.AccessListUsersSuccessResponse:
         """Organization users details.
@@ -2248,9 +4304,10 @@ class AccessOperations:
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
-        :param body: List Access Request Model. Is one of the following types: ListAccessRequestModel,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or JSON or IO[bytes]
+        :param body: List Access Request Model. Is either a ListAccessRequestModel type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or
+         ~azure.mgmt.confluent.types.ListAccessRequestModel or IO[bytes]
         :return: AccessListUsersSuccessResponse. The AccessListUsersSuccessResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.confluent.models.AccessListUsersSuccessResponse
@@ -2292,6 +4349,7 @@ class AccessOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2313,7 +4371,7 @@ class AccessOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AccessListUsersSuccessResponse, response.json())
 
@@ -2355,7 +4413,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: JSON,
+        body: _types.ListAccessRequestModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2368,7 +4426,7 @@ class AccessOperations:
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
         :param body: List Access Request Model. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.ListAccessRequestModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2411,7 +4469,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Union[_models.ListAccessRequestModel, JSON, IO[bytes]],
+        body: Union[_models.ListAccessRequestModel, _types.ListAccessRequestModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.AccessListServiceAccountsSuccessResponse:
         """Organization service accounts details.
@@ -2421,9 +4479,10 @@ class AccessOperations:
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
-        :param body: List Access Request Model. Is one of the following types: ListAccessRequestModel,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or JSON or IO[bytes]
+        :param body: List Access Request Model. Is either a ListAccessRequestModel type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or
+         ~azure.mgmt.confluent.types.ListAccessRequestModel or IO[bytes]
         :return: AccessListServiceAccountsSuccessResponse. The AccessListServiceAccountsSuccessResponse
          is compatible with MutableMapping
         :rtype: ~azure.mgmt.confluent.models.AccessListServiceAccountsSuccessResponse
@@ -2465,6 +4524,7 @@ class AccessOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2486,7 +4546,7 @@ class AccessOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AccessListServiceAccountsSuccessResponse, response.json())
 
@@ -2528,7 +4588,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: JSON,
+        body: _types.ListAccessRequestModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2541,7 +4601,7 @@ class AccessOperations:
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
         :param body: List Access Request Model. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.ListAccessRequestModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2584,7 +4644,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Union[_models.ListAccessRequestModel, JSON, IO[bytes]],
+        body: Union[_models.ListAccessRequestModel, _types.ListAccessRequestModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.AccessListInvitationsSuccessResponse:
         """Organization accounts invitation details.
@@ -2594,9 +4654,10 @@ class AccessOperations:
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
-        :param body: List Access Request Model. Is one of the following types: ListAccessRequestModel,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or JSON or IO[bytes]
+        :param body: List Access Request Model. Is either a ListAccessRequestModel type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or
+         ~azure.mgmt.confluent.types.ListAccessRequestModel or IO[bytes]
         :return: AccessListInvitationsSuccessResponse. The AccessListInvitationsSuccessResponse is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.confluent.models.AccessListInvitationsSuccessResponse
@@ -2638,6 +4699,7 @@ class AccessOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2659,7 +4721,7 @@ class AccessOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AccessListInvitationsSuccessResponse, response.json())
 
@@ -2700,7 +4762,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: JSON,
+        body: _types.AccessInviteUserAccountModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2713,7 +4775,7 @@ class AccessOperations:
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
         :param body: Invite user account model. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.AccessInviteUserAccountModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2754,7 +4816,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Union[_models.AccessInviteUserAccountModel, JSON, IO[bytes]],
+        body: Union[_models.AccessInviteUserAccountModel, _types.AccessInviteUserAccountModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.InvitationRecord:
         """Invite user to the organization.
@@ -2764,9 +4826,10 @@ class AccessOperations:
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
-        :param body: Invite user account model. Is one of the following types:
-         AccessInviteUserAccountModel, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.confluent.models.AccessInviteUserAccountModel or JSON or IO[bytes]
+        :param body: Invite user account model. Is either a AccessInviteUserAccountModel type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.confluent.models.AccessInviteUserAccountModel or
+         ~azure.mgmt.confluent.types.AccessInviteUserAccountModel or IO[bytes]
         :return: InvitationRecord. The InvitationRecord is compatible with MutableMapping
         :rtype: ~azure.mgmt.confluent.models.InvitationRecord
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2807,6 +4870,7 @@ class AccessOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2828,7 +4892,7 @@ class AccessOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.InvitationRecord, response.json())
 
@@ -2870,7 +4934,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: JSON,
+        body: _types.ListAccessRequestModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2883,7 +4947,7 @@ class AccessOperations:
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
         :param body: List Access Request Model. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.ListAccessRequestModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2926,7 +4990,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Union[_models.ListAccessRequestModel, JSON, IO[bytes]],
+        body: Union[_models.ListAccessRequestModel, _types.ListAccessRequestModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.AccessListEnvironmentsSuccessResponse:
         """Environment list of an organization.
@@ -2936,9 +5000,10 @@ class AccessOperations:
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
-        :param body: List Access Request Model. Is one of the following types: ListAccessRequestModel,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or JSON or IO[bytes]
+        :param body: List Access Request Model. Is either a ListAccessRequestModel type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or
+         ~azure.mgmt.confluent.types.ListAccessRequestModel or IO[bytes]
         :return: AccessListEnvironmentsSuccessResponse. The AccessListEnvironmentsSuccessResponse is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.confluent.models.AccessListEnvironmentsSuccessResponse
@@ -2980,6 +5045,7 @@ class AccessOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3001,7 +5067,7 @@ class AccessOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AccessListEnvironmentsSuccessResponse, response.json())
 
@@ -3043,7 +5109,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: JSON,
+        body: _types.ListAccessRequestModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3056,7 +5122,7 @@ class AccessOperations:
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
         :param body: List Access Request Model. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.ListAccessRequestModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3099,7 +5165,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Union[_models.ListAccessRequestModel, JSON, IO[bytes]],
+        body: Union[_models.ListAccessRequestModel, _types.ListAccessRequestModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.AccessListClusterSuccessResponse:
         """Cluster details.
@@ -3109,9 +5175,10 @@ class AccessOperations:
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
-        :param body: List Access Request Model. Is one of the following types: ListAccessRequestModel,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or JSON or IO[bytes]
+        :param body: List Access Request Model. Is either a ListAccessRequestModel type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or
+         ~azure.mgmt.confluent.types.ListAccessRequestModel or IO[bytes]
         :return: AccessListClusterSuccessResponse. The AccessListClusterSuccessResponse is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.confluent.models.AccessListClusterSuccessResponse
@@ -3153,6 +5220,7 @@ class AccessOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3174,7 +5242,7 @@ class AccessOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AccessListClusterSuccessResponse, response.json())
 
@@ -3216,7 +5284,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: JSON,
+        body: _types.ListAccessRequestModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3229,7 +5297,7 @@ class AccessOperations:
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
         :param body: List Access Request Model. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.ListAccessRequestModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3272,7 +5340,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Union[_models.ListAccessRequestModel, JSON, IO[bytes]],
+        body: Union[_models.ListAccessRequestModel, _types.ListAccessRequestModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.AccessListRoleBindingsSuccessResponse:
         """Organization role bindings.
@@ -3282,9 +5350,10 @@ class AccessOperations:
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
-        :param body: List Access Request Model. Is one of the following types: ListAccessRequestModel,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or JSON or IO[bytes]
+        :param body: List Access Request Model. Is either a ListAccessRequestModel type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or
+         ~azure.mgmt.confluent.types.ListAccessRequestModel or IO[bytes]
         :return: AccessListRoleBindingsSuccessResponse. The AccessListRoleBindingsSuccessResponse is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.confluent.models.AccessListRoleBindingsSuccessResponse
@@ -3326,6 +5395,7 @@ class AccessOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3347,7 +5417,7 @@ class AccessOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AccessListRoleBindingsSuccessResponse, response.json())
 
@@ -3388,7 +5458,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: JSON,
+        body: _types.AccessCreateRoleBindingRequestModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3401,7 +5471,7 @@ class AccessOperations:
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
         :param body: Create role binding Request Model. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.AccessCreateRoleBindingRequestModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3442,7 +5512,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Union[_models.AccessCreateRoleBindingRequestModel, JSON, IO[bytes]],
+        body: Union[_models.AccessCreateRoleBindingRequestModel, _types.AccessCreateRoleBindingRequestModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.RoleBindingRecord:
         """Organization role bindings.
@@ -3452,10 +5522,10 @@ class AccessOperations:
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
-        :param body: Create role binding Request Model. Is one of the following types:
-         AccessCreateRoleBindingRequestModel, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.confluent.models.AccessCreateRoleBindingRequestModel or JSON or
-         IO[bytes]
+        :param body: Create role binding Request Model. Is either a AccessCreateRoleBindingRequestModel
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.confluent.models.AccessCreateRoleBindingRequestModel or
+         ~azure.mgmt.confluent.types.AccessCreateRoleBindingRequestModel or IO[bytes]
         :return: RoleBindingRecord. The RoleBindingRecord is compatible with MutableMapping
         :rtype: ~azure.mgmt.confluent.models.RoleBindingRecord
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3496,6 +5566,7 @@ class AccessOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3517,7 +5588,7 @@ class AccessOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RoleBindingRecord, response.json())
 
@@ -3559,7 +5630,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: JSON,
+        body: _types.ListAccessRequestModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3572,7 +5643,7 @@ class AccessOperations:
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
         :param body: List Access Request Model. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.ListAccessRequestModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3615,7 +5686,7 @@ class AccessOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Union[_models.ListAccessRequestModel, JSON, IO[bytes]],
+        body: Union[_models.ListAccessRequestModel, _types.ListAccessRequestModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.AccessRoleBindingNameListSuccessResponse:
         """Organization role bindings.
@@ -3625,9 +5696,10 @@ class AccessOperations:
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
-        :param body: List Access Request Model. Is one of the following types: ListAccessRequestModel,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or JSON or IO[bytes]
+        :param body: List Access Request Model. Is either a ListAccessRequestModel type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.confluent.models.ListAccessRequestModel or
+         ~azure.mgmt.confluent.types.ListAccessRequestModel or IO[bytes]
         :return: AccessRoleBindingNameListSuccessResponse. The AccessRoleBindingNameListSuccessResponse
          is compatible with MutableMapping
         :rtype: ~azure.mgmt.confluent.models.AccessRoleBindingNameListSuccessResponse
@@ -3669,6 +5741,7 @@ class AccessOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3690,7 +5763,7 @@ class AccessOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AccessRoleBindingNameListSuccessResponse, response.json())
 
@@ -3753,7 +5826,7 @@ class EnvironmentOperations:
         resource_group_name: str,
         organization_name: str,
         environment_id: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.SCEnvironmentRecord] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3768,7 +5841,7 @@ class EnvironmentOperations:
         :param environment_id: Confluent environment id. Required.
         :type environment_id: str
         :param body: Confluent Environment resource model. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.SCEnvironmentRecord
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3813,7 +5886,7 @@ class EnvironmentOperations:
         resource_group_name: str,
         organization_name: str,
         environment_id: str,
-        body: Optional[Union[_models.SCEnvironmentRecord, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.SCEnvironmentRecord, _types.SCEnvironmentRecord, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.SCEnvironmentRecord:
         """Create confluent environment.
@@ -3825,9 +5898,10 @@ class EnvironmentOperations:
         :type organization_name: str
         :param environment_id: Confluent environment id. Required.
         :type environment_id: str
-        :param body: Confluent Environment resource model. Is one of the following types:
-         SCEnvironmentRecord, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.confluent.models.SCEnvironmentRecord or JSON or IO[bytes]
+        :param body: Confluent Environment resource model. Is either a SCEnvironmentRecord type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.confluent.models.SCEnvironmentRecord or
+         ~azure.mgmt.confluent.types.SCEnvironmentRecord or IO[bytes]
         :return: SCEnvironmentRecord. The SCEnvironmentRecord is compatible with MutableMapping
         :rtype: ~azure.mgmt.confluent.models.SCEnvironmentRecord
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3873,6 +5947,7 @@ class EnvironmentOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3894,7 +5969,7 @@ class EnvironmentOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SCEnvironmentRecord, response.json())
 
@@ -3933,6 +6008,7 @@ class EnvironmentOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3957,7 +6033,7 @@ class EnvironmentOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4084,7 +6160,7 @@ class ClusterOperations:
         organization_name: str,
         environment_id: str,
         cluster_id: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.SCClusterRecord] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4101,7 +6177,7 @@ class ClusterOperations:
         :param cluster_id: Confluent kafka or schema registry cluster id. Required.
         :type cluster_id: str
         :param body: Confluent Cluster resource model. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.SCClusterRecord
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4150,7 +6226,7 @@ class ClusterOperations:
         organization_name: str,
         environment_id: str,
         cluster_id: str,
-        body: Optional[Union[_models.SCClusterRecord, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.SCClusterRecord, _types.SCClusterRecord, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.SCClusterRecord:
         """Create confluent clusters.
@@ -4164,9 +6240,10 @@ class ClusterOperations:
         :type environment_id: str
         :param cluster_id: Confluent kafka or schema registry cluster id. Required.
         :type cluster_id: str
-        :param body: Confluent Cluster resource model. Is one of the following types: SCClusterRecord,
-         JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.confluent.models.SCClusterRecord or JSON or IO[bytes]
+        :param body: Confluent Cluster resource model. Is either a SCClusterRecord type or a IO[bytes]
+         type. Default value is None.
+        :type body: ~azure.mgmt.confluent.models.SCClusterRecord or
+         ~azure.mgmt.confluent.types.SCClusterRecord or IO[bytes]
         :return: SCClusterRecord. The SCClusterRecord is compatible with MutableMapping
         :rtype: ~azure.mgmt.confluent.models.SCClusterRecord
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4213,6 +6290,7 @@ class ClusterOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4234,7 +6312,7 @@ class ClusterOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SCClusterRecord, response.json())
 
@@ -4274,6 +6352,7 @@ class ClusterOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4298,7 +6377,7 @@ class ClusterOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4444,6 +6523,7 @@ class ConnectorOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4465,7 +6545,7 @@ class ConnectorOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ConnectorResource, response.json())
 
@@ -4518,7 +6598,7 @@ class ConnectorOperations:
         environment_id: str,
         cluster_id: str,
         connector_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.ConnectorResource] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4537,7 +6617,7 @@ class ConnectorOperations:
         :param connector_name: Confluent connector name. Required.
         :type connector_name: str
         :param body: Confluent Connector resource model. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.ConnectorResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4590,7 +6670,7 @@ class ConnectorOperations:
         environment_id: str,
         cluster_id: str,
         connector_name: str,
-        body: Optional[Union[_models.ConnectorResource, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.ConnectorResource, _types.ConnectorResource, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.ConnectorResource:
         """Create confluent connector by Name.
@@ -4606,9 +6686,10 @@ class ConnectorOperations:
         :type cluster_id: str
         :param connector_name: Confluent connector name. Required.
         :type connector_name: str
-        :param body: Confluent Connector resource model. Is one of the following types:
-         ConnectorResource, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.confluent.models.ConnectorResource or JSON or IO[bytes]
+        :param body: Confluent Connector resource model. Is either a ConnectorResource type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.confluent.models.ConnectorResource or
+         ~azure.mgmt.confluent.types.ConnectorResource or IO[bytes]
         :return: ConnectorResource. The ConnectorResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.confluent.models.ConnectorResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4656,6 +6737,7 @@ class ConnectorOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4677,7 +6759,7 @@ class ConnectorOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ConnectorResource, response.json())
 
@@ -4724,6 +6806,7 @@ class ConnectorOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4748,7 +6831,7 @@ class ConnectorOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4907,7 +6990,10 @@ class ConnectorOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4920,7 +7006,10 @@ class ConnectorOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ConnectorResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ConnectorResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5020,6 +7109,7 @@ class TopicsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5041,7 +7131,7 @@ class TopicsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.TopicRecord, response.json())
 
@@ -5094,7 +7184,7 @@ class TopicsOperations:
         environment_id: str,
         cluster_id: str,
         topic_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.TopicRecord] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5113,7 +7203,7 @@ class TopicsOperations:
         :param topic_name: Confluent kafka or schema registry topic name. Required.
         :type topic_name: str
         :param body: Confluent Topics resource model. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.TopicRecord
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5166,7 +7256,7 @@ class TopicsOperations:
         environment_id: str,
         cluster_id: str,
         topic_name: str,
-        body: Optional[Union[_models.TopicRecord, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.TopicRecord, _types.TopicRecord, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.TopicRecord:
         """Create confluent topics by Name.
@@ -5182,9 +7272,10 @@ class TopicsOperations:
         :type cluster_id: str
         :param topic_name: Confluent kafka or schema registry topic name. Required.
         :type topic_name: str
-        :param body: Confluent Topics resource model. Is one of the following types: TopicRecord, JSON,
-         IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.confluent.models.TopicRecord or JSON or IO[bytes]
+        :param body: Confluent Topics resource model. Is either a TopicRecord type or a IO[bytes] type.
+         Default value is None.
+        :type body: ~azure.mgmt.confluent.models.TopicRecord or ~azure.mgmt.confluent.types.TopicRecord
+         or IO[bytes]
         :return: TopicRecord. The TopicRecord is compatible with MutableMapping
         :rtype: ~azure.mgmt.confluent.models.TopicRecord
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5232,6 +7323,7 @@ class TopicsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5253,7 +7345,7 @@ class TopicsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.TopicRecord, response.json())
 
@@ -5300,6 +7392,7 @@ class TopicsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5324,7 +7417,7 @@ class TopicsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5483,7 +7576,10 @@ class TopicsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5496,7 +7592,10 @@ class TopicsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TopicRecord], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.TopicRecord],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5591,7 +7690,10 @@ class MarketplaceAgreementsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5604,7 +7706,10 @@ class MarketplaceAgreementsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ConfluentAgreementResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ConfluentAgreementResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5655,14 +7760,18 @@ class MarketplaceAgreementsOperations:
 
     @overload
     async def create(
-        self, body: Optional[JSON] = None, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: Optional[_types.ConfluentAgreementResource] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ConfluentAgreementResource:
         """Create Confluent Marketplace agreement in the subscription.
 
         Create Confluent Marketplace agreement in the subscription.
 
         :param body: The request body. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.ConfluentAgreementResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5693,15 +7802,18 @@ class MarketplaceAgreementsOperations:
 
     @distributed_trace_async
     async def create(
-        self, body: Optional[Union[_models.ConfluentAgreementResource, JSON, IO[bytes]]] = None, **kwargs: Any
+        self,
+        body: Optional[Union[_models.ConfluentAgreementResource, _types.ConfluentAgreementResource, IO[bytes]]] = None,
+        **kwargs: Any
     ) -> _models.ConfluentAgreementResource:
         """Create Confluent Marketplace agreement in the subscription.
 
         Create Confluent Marketplace agreement in the subscription.
 
-        :param body: The request body. Is one of the following types: ConfluentAgreementResource, JSON,
-         IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.confluent.models.ConfluentAgreementResource or JSON or IO[bytes]
+        :param body: The request body. Is either a ConfluentAgreementResource type or a IO[bytes] type.
+         Default value is None.
+        :type body: ~azure.mgmt.confluent.models.ConfluentAgreementResource or
+         ~azure.mgmt.confluent.types.ConfluentAgreementResource or IO[bytes]
         :return: ConfluentAgreementResource. The ConfluentAgreementResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.confluent.models.ConfluentAgreementResource
@@ -5745,6 +7857,7 @@ class MarketplaceAgreementsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5766,7 +7879,7 @@ class MarketplaceAgreementsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ConfluentAgreementResource, response.json())
 
@@ -5827,7 +7940,7 @@ class ValidationsOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: JSON,
+        body: _types.OrganizationResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5842,7 +7955,7 @@ class ValidationsOperations:
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
         :param body: Organization resource model. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.OrganizationResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5885,7 +7998,7 @@ class ValidationsOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Union[_models.OrganizationResource, JSON, IO[bytes]],
+        body: Union[_models.OrganizationResource, _types.OrganizationResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.OrganizationResource:
         """Organization Validate proxy resource.
@@ -5897,9 +8010,10 @@ class ValidationsOperations:
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
-        :param body: Organization resource model. Is one of the following types: OrganizationResource,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.confluent.models.OrganizationResource or JSON or IO[bytes]
+        :param body: Organization resource model. Is either a OrganizationResource type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.confluent.models.OrganizationResource or
+         ~azure.mgmt.confluent.types.OrganizationResource or IO[bytes]
         :return: OrganizationResource. The OrganizationResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.confluent.models.OrganizationResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5940,6 +8054,7 @@ class ValidationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5961,7 +8076,7 @@ class ValidationsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.OrganizationResource, response.json())
 
@@ -6004,7 +8119,7 @@ class ValidationsOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: JSON,
+        body: _types.OrganizationResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6019,7 +8134,7 @@ class ValidationsOperations:
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
         :param body: Organization resource model. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.confluent.types.OrganizationResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6062,7 +8177,7 @@ class ValidationsOperations:
         self,
         resource_group_name: str,
         organization_name: str,
-        body: Union[_models.OrganizationResource, JSON, IO[bytes]],
+        body: Union[_models.OrganizationResource, _types.OrganizationResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ValidationResponse:
         """Organization Validate proxy resource.
@@ -6074,9 +8189,10 @@ class ValidationsOperations:
         :type resource_group_name: str
         :param organization_name: Organization resource name. Required.
         :type organization_name: str
-        :param body: Organization resource model. Is one of the following types: OrganizationResource,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.confluent.models.OrganizationResource or JSON or IO[bytes]
+        :param body: Organization resource model. Is either a OrganizationResource type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.confluent.models.OrganizationResource or
+         ~azure.mgmt.confluent.types.OrganizationResource or IO[bytes]
         :return: ValidationResponse. The ValidationResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.confluent.models.ValidationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6117,6 +8233,7 @@ class ValidationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6138,7 +8255,7 @@ class ValidationsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ValidationResponse, response.json())
 

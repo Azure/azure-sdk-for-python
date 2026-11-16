@@ -1,5 +1,21 @@
 # Release History
 
+## 1.1.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- List, dict, and set fields on models now consistently reflect in-place mutations, whether the value was obtained through dictionary access (`model["field"]`) or property access (`model.field`).
+
+### Other Changes
+
+- Regenerated the client with the latest TypeSpec emitter and removed stale generated files.
+- Dropped support for Python 3.9. The minimum supported Python version is now 3.10.
+- The minimum required `azure-core` version is now 1.37.0.
+
 ## 1.1.0b1 (2025-08-05)
 
 ### Features Added

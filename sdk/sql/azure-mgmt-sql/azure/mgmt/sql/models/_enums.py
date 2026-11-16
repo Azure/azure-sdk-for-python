@@ -849,6 +849,17 @@ class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SystemAssigned,UserAssigned."""
 
 
+class ImmutabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The immutability status of the backups governed by this short term retention policy."""
+
+    DISABLED = "Disabled"
+    """Disabled."""
+    ENABLED = "Enabled"
+    """Enabled."""
+    LOCKED = "Locked"
+    """Locked."""
+
+
 class ImplementationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the method in which this recommended action can be manually implemented. e.g., TSql,
     AzurePowerShell.

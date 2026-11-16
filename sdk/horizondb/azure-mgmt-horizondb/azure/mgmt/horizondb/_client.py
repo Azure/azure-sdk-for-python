@@ -20,15 +20,28 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from ._configuration import HorizonDBMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
-    HorizonDbAdministratorsOperations,
-    HorizonDbClustersOperations,
-    HorizonDbFirewallRulesOperations,
-    HorizonDbParameterGroupsOperations,
-    HorizonDbPoolsOperations,
-    HorizonDbPrivateEndpointConnectionsOperations,
-    HorizonDbPrivateLinkResourcesOperations,
-    HorizonDbReplicasOperations,
+    AuthenticationsOperations,
+    CapabilitiesOperations,
+    ChangeDataCaptureCapabilitiesOperations,
+    ChangeDataCaptureConfigurationsOperations,
+    ChangeDataCaptureDestinationsOperations,
+    ClustersOperations,
+    DefaultParameterGroupsOperations,
+    EndpointsOperations,
+    FirewallRulesOperations,
+    IdentityAssignmentsOperations,
+    LogCaptureConfigurationsOperations,
+    LogFilesOperations,
+    MaintenanceEventsOperations,
+    MicrosoftEntraAdministratorsOperations,
+    MicrosoftEntraAuthenticationsOperations,
+    NodesOperations,
     Operations,
+    ParameterGroupsOperations,
+    PasswordAuthenticationsOperations,
+    PoolsOperations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
 )
 
 if sys.version_info >= (3, 11):
@@ -42,33 +55,62 @@ if TYPE_CHECKING:
 
 
 class HorizonDBMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
-    """Azure Resource Provider API for managing HorizonDB clusters, pools, replicas, and firewall
-    rules.
+    """Azure Resource Provider API for managing HorizonDB clusters, pools, endpoints, nodes, and
+    firewall rules.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.horizondb.operations.Operations
-    :ivar horizon_db_clusters: HorizonDbClustersOperations operations
-    :vartype horizon_db_clusters: azure.mgmt.horizondb.operations.HorizonDbClustersOperations
-    :ivar horizon_db_pools: HorizonDbPoolsOperations operations
-    :vartype horizon_db_pools: azure.mgmt.horizondb.operations.HorizonDbPoolsOperations
-    :ivar horizon_db_replicas: HorizonDbReplicasOperations operations
-    :vartype horizon_db_replicas: azure.mgmt.horizondb.operations.HorizonDbReplicasOperations
-    :ivar horizon_db_firewall_rules: HorizonDbFirewallRulesOperations operations
-    :vartype horizon_db_firewall_rules:
-     azure.mgmt.horizondb.operations.HorizonDbFirewallRulesOperations
-    :ivar horizon_db_private_endpoint_connections: HorizonDbPrivateEndpointConnectionsOperations
-     operations
-    :vartype horizon_db_private_endpoint_connections:
-     azure.mgmt.horizondb.operations.HorizonDbPrivateEndpointConnectionsOperations
-    :ivar horizon_db_private_link_resources: HorizonDbPrivateLinkResourcesOperations operations
-    :vartype horizon_db_private_link_resources:
-     azure.mgmt.horizondb.operations.HorizonDbPrivateLinkResourcesOperations
-    :ivar horizon_db_parameter_groups: HorizonDbParameterGroupsOperations operations
-    :vartype horizon_db_parameter_groups:
-     azure.mgmt.horizondb.operations.HorizonDbParameterGroupsOperations
-    :ivar horizon_db_administrators: HorizonDbAdministratorsOperations operations
-    :vartype horizon_db_administrators:
-     azure.mgmt.horizondb.operations.HorizonDbAdministratorsOperations
+    :ivar capabilities: CapabilitiesOperations operations
+    :vartype capabilities: azure.mgmt.horizondb.operations.CapabilitiesOperations
+    :ivar clusters: ClustersOperations operations
+    :vartype clusters: azure.mgmt.horizondb.operations.ClustersOperations
+    :ivar pools: PoolsOperations operations
+    :vartype pools: azure.mgmt.horizondb.operations.PoolsOperations
+    :ivar firewall_rules: FirewallRulesOperations operations
+    :vartype firewall_rules: azure.mgmt.horizondb.operations.FirewallRulesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections:
+     azure.mgmt.horizondb.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources: azure.mgmt.horizondb.operations.PrivateLinkResourcesOperations
+    :ivar parameter_groups: ParameterGroupsOperations operations
+    :vartype parameter_groups: azure.mgmt.horizondb.operations.ParameterGroupsOperations
+    :ivar default_parameter_groups: DefaultParameterGroupsOperations operations
+    :vartype default_parameter_groups:
+     azure.mgmt.horizondb.operations.DefaultParameterGroupsOperations
+    :ivar microsoft_entra_administrators: MicrosoftEntraAdministratorsOperations operations
+    :vartype microsoft_entra_administrators:
+     azure.mgmt.horizondb.operations.MicrosoftEntraAdministratorsOperations
+    :ivar authentications: AuthenticationsOperations operations
+    :vartype authentications: azure.mgmt.horizondb.operations.AuthenticationsOperations
+    :ivar password_authentications: PasswordAuthenticationsOperations operations
+    :vartype password_authentications:
+     azure.mgmt.horizondb.operations.PasswordAuthenticationsOperations
+    :ivar microsoft_entra_authentications: MicrosoftEntraAuthenticationsOperations operations
+    :vartype microsoft_entra_authentications:
+     azure.mgmt.horizondb.operations.MicrosoftEntraAuthenticationsOperations
+    :ivar change_data_capture_capabilities: ChangeDataCaptureCapabilitiesOperations operations
+    :vartype change_data_capture_capabilities:
+     azure.mgmt.horizondb.operations.ChangeDataCaptureCapabilitiesOperations
+    :ivar change_data_capture_destinations: ChangeDataCaptureDestinationsOperations operations
+    :vartype change_data_capture_destinations:
+     azure.mgmt.horizondb.operations.ChangeDataCaptureDestinationsOperations
+    :ivar identity_assignments: IdentityAssignmentsOperations operations
+    :vartype identity_assignments: azure.mgmt.horizondb.operations.IdentityAssignmentsOperations
+    :ivar change_data_capture_configurations: ChangeDataCaptureConfigurationsOperations operations
+    :vartype change_data_capture_configurations:
+     azure.mgmt.horizondb.operations.ChangeDataCaptureConfigurationsOperations
+    :ivar endpoints: EndpointsOperations operations
+    :vartype endpoints: azure.mgmt.horizondb.operations.EndpointsOperations
+    :ivar maintenance_events: MaintenanceEventsOperations operations
+    :vartype maintenance_events: azure.mgmt.horizondb.operations.MaintenanceEventsOperations
+    :ivar nodes: NodesOperations operations
+    :vartype nodes: azure.mgmt.horizondb.operations.NodesOperations
+    :ivar log_capture_configurations: LogCaptureConfigurationsOperations operations
+    :vartype log_capture_configurations:
+     azure.mgmt.horizondb.operations.LogCaptureConfigurationsOperations
+    :ivar log_files: LogFilesOperations operations
+    :vartype log_files: azure.mgmt.horizondb.operations.LogFilesOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -79,7 +121,7 @@ class HorizonDBMgmtClient:  # pylint: disable=too-many-instance-attributes,docst
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-05-01-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-10-01-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -135,28 +177,53 @@ class HorizonDBMgmtClient:  # pylint: disable=too-many-instance-attributes,docst
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.horizon_db_clusters = HorizonDbClustersOperations(
+        self.capabilities = CapabilitiesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.pools = PoolsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.horizon_db_pools = HorizonDbPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.horizon_db_replicas = HorizonDbReplicasOperations(
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.horizon_db_firewall_rules = HorizonDbFirewallRulesOperations(
+        self.parameter_groups = ParameterGroupsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.horizon_db_private_endpoint_connections = HorizonDbPrivateEndpointConnectionsOperations(
+        self.default_parameter_groups = DefaultParameterGroupsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.horizon_db_private_link_resources = HorizonDbPrivateLinkResourcesOperations(
+        self.microsoft_entra_administrators = MicrosoftEntraAdministratorsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.horizon_db_parameter_groups = HorizonDbParameterGroupsOperations(
+        self.authentications = AuthenticationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.password_authentications = PasswordAuthenticationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.horizon_db_administrators = HorizonDbAdministratorsOperations(
+        self.microsoft_entra_authentications = MicrosoftEntraAuthenticationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.change_data_capture_capabilities = ChangeDataCaptureCapabilitiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.change_data_capture_destinations = ChangeDataCaptureDestinationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.identity_assignments = IdentityAssignmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.change_data_capture_configurations = ChangeDataCaptureConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.endpoints = EndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.maintenance_events = MaintenanceEventsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.nodes = NodesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.log_capture_configurations = LogCaptureConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.log_files = LogFilesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

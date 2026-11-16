@@ -9,6 +9,7 @@
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.fabric import FabricMgmtClient
+from azure.mgmt.fabric.models import FabricCapacity
 
 """
 # PREREQUISITES
@@ -33,18 +34,20 @@ def main():
     response = client.fabric_capacities.begin_create_or_update(
         resource_group_name="TestRG",
         capacity_name="azsdktest",
-        resource={
-            "location": "westcentralus",
-            "properties": {
-                "administration": {"members": ["azsdktest@microsoft.com", "azsdktest2@microsoft.com"]},
-                "overage": {"state": "Enabled", "thresholdCapacityUnitHours": 4},
-            },
-            "sku": {"name": "F2", "tier": "Fabric"},
-        },
+        resource=FabricCapacity(
+            {
+                "location": "westcentralus",
+                "properties": {
+                    "administration": {"members": ["azsdktest@microsoft.com", "azsdktest2@microsoft.com"]},
+                    "overage": {"state": "Enabled", "thresholdCapacityUnitHours": 4},
+                },
+                "sku": {"name": "F2", "tier": "Fabric"},
+            }
+        ),
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-08-01-preview/FabricCapacities_CreateOrUpdate.json
+# x-ms-original-file: 2026-09-01-preview/FabricCapacities_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

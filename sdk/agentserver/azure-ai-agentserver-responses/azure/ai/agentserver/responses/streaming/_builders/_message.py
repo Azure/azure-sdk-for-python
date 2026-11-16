@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+
 from typing import TYPE_CHECKING, Any, Iterator, cast
 
 from ... import models as response_models
@@ -83,7 +84,7 @@ class TextContentBuilder:
             raise ValueError(f"cannot call emit_added in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.ADDED
         return cast(
-            response_models.ResponseContentPartAddedEvent,
+            "response_models.ResponseContentPartAddedEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.content_part.added",
@@ -100,7 +101,7 @@ class TextContentBuilder:
             raise ValueError(f"cannot call emit_delta in '{self._lifecycle_state.value}' state")
         self._delta_fragments.append(text)
         return cast(
-            response_models.ResponseTextDeltaEvent,
+            "response_models.ResponseTextDeltaEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.output_text.delta",
@@ -135,7 +136,7 @@ class TextContentBuilder:
             merged_text = final_text
         self._final_text = merged_text
         return cast(
-            response_models.ResponseTextDoneEvent,
+            "response_models.ResponseTextDoneEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.output_text.done",
@@ -163,7 +164,7 @@ class TextContentBuilder:
             raise ValueError("must call emit_text_done() before emit_done()")
         self._lifecycle_state = BuilderLifecycleState.DONE
         return cast(
-            response_models.ResponseContentPartDoneEvent,
+            "response_models.ResponseContentPartDoneEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.content_part.done",
@@ -195,7 +196,7 @@ class TextContentBuilder:
         self._annotation_index += 1
         annotation_payload = _with_annotation_type(_require_wire_dict(annotation, "annotation"))
         return cast(
-            response_models.ResponseOutputTextAnnotationAddedEvent,
+            "response_models.ResponseOutputTextAnnotationAddedEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.output_text.annotation.added",
@@ -265,7 +266,7 @@ class RefusalContentBuilder:
             raise ValueError(f"cannot call emit_added in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.ADDED
         return cast(
-            response_models.ResponseContentPartAddedEvent,
+            "response_models.ResponseContentPartAddedEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.content_part.added",
@@ -286,7 +287,7 @@ class RefusalContentBuilder:
         :rtype: ResponseRefusalDeltaEvent
         """
         return cast(
-            response_models.ResponseRefusalDeltaEvent,
+            "response_models.ResponseRefusalDeltaEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.refusal.delta",
@@ -316,7 +317,7 @@ class RefusalContentBuilder:
         self._refusal_done = True
         self._final_refusal = final_refusal
         return cast(
-            response_models.ResponseRefusalDoneEvent,
+            "response_models.ResponseRefusalDoneEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.refusal.done",
@@ -343,7 +344,7 @@ class RefusalContentBuilder:
             raise ValueError("must call emit_refusal_done() before emit_done()")
         self._lifecycle_state = BuilderLifecycleState.DONE
         return cast(
-            response_models.ResponseContentPartDoneEvent,
+            "response_models.ResponseContentPartDoneEvent",
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": "response.content_part.done",

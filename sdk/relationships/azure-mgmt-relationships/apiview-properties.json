@@ -3,6 +3,8 @@
     "CrossLanguageDefinitionId": {
         "azure.mgmt.relationships.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
         "azure.mgmt.relationships.models.ExtensionResource": "Azure.ResourceManager.CommonTypes.ExtensionResource",
+        "azure.mgmt.relationships.models.ContainsRelationship": "Microsoft.Relationships.ContainsRelationship",
+        "azure.mgmt.relationships.models.ContainsRelationshipProperties": "Microsoft.Relationships.ContainsRelationshipProperties",
         "azure.mgmt.relationships.models.DependencyOfRelationship": "Microsoft.Relationships.DependencyOfRelationship",
         "azure.mgmt.relationships.models.DependencyOfRelationshipProperties": "Microsoft.Relationships.DependencyOfRelationshipProperties",
         "azure.mgmt.relationships.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
@@ -13,7 +15,7 @@
         "azure.mgmt.relationships.models.RelationshipMetadata": "Microsoft.Relationships.RelationshipMetadata",
         "azure.mgmt.relationships.models.RelationshipOriginInformation": "Microsoft.Relationships.RelationshipOriginInformation",
         "azure.mgmt.relationships.models.ServiceGroupMemberRelationship": "Microsoft.Relationships.ServiceGroupMemberRelationship",
-        "azure.mgmt.relationships.models.ServiceGroupMemberRelationshipProperties": "Microsoft.Relationships.ServiceGroupMemberRelationshipProperties",
+        "azure.mgmt.relationships.models.ServiceGroupMemberRelationshipPropertiesV2": "Microsoft.Relationships.ServiceGroupMemberRelationshipPropertiesV2",
         "azure.mgmt.relationships.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
         "azure.mgmt.relationships.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
         "azure.mgmt.relationships.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
@@ -28,11 +30,28 @@
         "azure.mgmt.relationships.aio.operations.DependencyOfRelationshipsOperations.get": "Microsoft.Relationships.DependencyOfRelationships.get",
         "azure.mgmt.relationships.operations.DependencyOfRelationshipsOperations.begin_delete": "Microsoft.Relationships.DependencyOfRelationships.delete",
         "azure.mgmt.relationships.aio.operations.DependencyOfRelationshipsOperations.begin_delete": "Microsoft.Relationships.DependencyOfRelationships.delete",
+        "azure.mgmt.relationships.operations.DependencyOfRelationshipsOperations.list_by_parent": "Microsoft.Relationships.DependencyOfRelationships.listByParent",
+        "azure.mgmt.relationships.aio.operations.DependencyOfRelationshipsOperations.list_by_parent": "Microsoft.Relationships.DependencyOfRelationships.listByParent",
+        "azure.mgmt.relationships.operations.DependencyOfRelationshipsByServiceGroupOperations.get": "Microsoft.Relationships.DependencyOfRelationshipsByServiceGroup.get",
+        "azure.mgmt.relationships.aio.operations.DependencyOfRelationshipsByServiceGroupOperations.get": "Microsoft.Relationships.DependencyOfRelationshipsByServiceGroup.get",
+        "azure.mgmt.relationships.operations.DependencyOfRelationshipsByServiceGroupOperations.begin_create_or_update": "Microsoft.Relationships.DependencyOfRelationshipsByServiceGroup.createOrUpdate",
+        "azure.mgmt.relationships.aio.operations.DependencyOfRelationshipsByServiceGroupOperations.begin_create_or_update": "Microsoft.Relationships.DependencyOfRelationshipsByServiceGroup.createOrUpdate",
+        "azure.mgmt.relationships.operations.DependencyOfRelationshipsByServiceGroupOperations.begin_delete": "Microsoft.Relationships.DependencyOfRelationshipsByServiceGroup.delete",
+        "azure.mgmt.relationships.aio.operations.DependencyOfRelationshipsByServiceGroupOperations.begin_delete": "Microsoft.Relationships.DependencyOfRelationshipsByServiceGroup.delete",
+        "azure.mgmt.relationships.operations.DependencyOfRelationshipsByServiceGroupOperations.list": "Microsoft.Relationships.DependencyOfRelationshipsByServiceGroup.list",
+        "azure.mgmt.relationships.aio.operations.DependencyOfRelationshipsByServiceGroupOperations.list": "Microsoft.Relationships.DependencyOfRelationshipsByServiceGroup.list",
         "azure.mgmt.relationships.operations.ServiceGroupMemberRelationshipsOperations.begin_create_or_update": "Microsoft.Relationships.ServiceGroupMemberRelationships.createOrUpdate",
         "azure.mgmt.relationships.aio.operations.ServiceGroupMemberRelationshipsOperations.begin_create_or_update": "Microsoft.Relationships.ServiceGroupMemberRelationships.createOrUpdate",
         "azure.mgmt.relationships.operations.ServiceGroupMemberRelationshipsOperations.get": "Microsoft.Relationships.ServiceGroupMemberRelationships.get",
         "azure.mgmt.relationships.aio.operations.ServiceGroupMemberRelationshipsOperations.get": "Microsoft.Relationships.ServiceGroupMemberRelationships.get",
         "azure.mgmt.relationships.operations.ServiceGroupMemberRelationshipsOperations.begin_delete": "Microsoft.Relationships.ServiceGroupMemberRelationships.delete",
-        "azure.mgmt.relationships.aio.operations.ServiceGroupMemberRelationshipsOperations.begin_delete": "Microsoft.Relationships.ServiceGroupMemberRelationships.delete"
-    }
+        "azure.mgmt.relationships.aio.operations.ServiceGroupMemberRelationshipsOperations.begin_delete": "Microsoft.Relationships.ServiceGroupMemberRelationships.delete",
+        "azure.mgmt.relationships.operations.ServiceGroupMemberRelationshipsOperations.list_by_parent": "Microsoft.Relationships.ServiceGroupMemberRelationships.listByParent",
+        "azure.mgmt.relationships.aio.operations.ServiceGroupMemberRelationshipsOperations.list_by_parent": "Microsoft.Relationships.ServiceGroupMemberRelationships.listByParent",
+        "azure.mgmt.relationships.operations.ContainsRelationshipsOperations.list_by_subscription": "Microsoft.Relationships.ContainsRelationships.listBySubscription",
+        "azure.mgmt.relationships.aio.operations.ContainsRelationshipsOperations.list_by_subscription": "Microsoft.Relationships.ContainsRelationships.listBySubscription",
+        "azure.mgmt.relationships.operations.ContainsRelationshipsOperations.list_by_resource_group": "Microsoft.Relationships.ContainsRelationships.listByResourceGroup",
+        "azure.mgmt.relationships.aio.operations.ContainsRelationshipsOperations.list_by_resource_group": "Microsoft.Relationships.ContainsRelationships.listByResourceGroup"
+    },
+    "CrossLanguageVersion": "1f46935e92de"
 }

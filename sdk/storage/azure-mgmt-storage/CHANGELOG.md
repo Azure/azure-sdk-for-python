@@ -1,5 +1,101 @@
 # Release History
 
+## 25.3.0 (2026-10-15)
+
+### Features Added
+
+  - Client `StorageManagementClient` added operation group `blob_access_point_configurations`
+  - Client `StorageManagementClient` added operation group `blob_access_point_connection_tests`
+  - Model `ContainerProperties` added property `blob_access_point_configuration`
+  - Model `NspAccessRuleProperties` added property `service_tags`
+  - Model `StorageAccountProperties` added property `turbo_tier`
+  - Model `StorageAccountPropertiesCreateParameters` added property `turbo_tier`
+  - Model `StorageAccountPropertiesUpdateParameters` added property `turbo_tier`
+  - Model `StorageDataCollaborationPolicyProperties` added property `allow_blob_access_points`
+  - Added model `BlobAccessPointAccessKeyAuthProperties`
+  - Added model `BlobAccessPointAccessKeyAuthPropertiesUpdate`
+  - Added model `BlobAccessPointAzureNetAppFilesSourceProperties`
+  - Added model `BlobAccessPointAzureNetAppFilesSourcePropertiesUpdate`
+  - Added model `BlobAccessPointCommvaultSourceProperties`
+  - Added model `BlobAccessPointCommvaultSourcePropertiesUpdate`
+  - Added model `BlobAccessPointConfiguration`
+  - Added model `BlobAccessPointConfigurationConnection`
+  - Added model `BlobAccessPointConfigurationProperties`
+  - Added model `BlobAccessPointConfigurationPropertiesUpdate`
+  - Added enum `BlobAccessPointConfigurationState`
+  - Added model `BlobAccessPointConfigurationUpdate`
+  - Added model `BlobAccessPointConnectionProperties`
+  - Added model `BlobAccessPointConnectionPropertiesUpdate`
+  - Added model `BlobAccessPointConnectionTestRequest`
+  - Added model `BlobAccessPointConnectionTestResponse`
+  - Added enum `BlobAccessPointConnectionTestStatus`
+  - Added enum `BlobAccessPointConnectionType`
+  - Added model `BlobAccessPointDellOneFsSourceProperties`
+  - Added model `BlobAccessPointDellOneFsSourcePropertiesUpdate`
+  - Added model `BlobAccessPointEndpointConnectionProperties`
+  - Added model `BlobAccessPointEndpointConnectionPropertiesUpdate`
+  - Added model `BlobAccessPointGenericS3SourceProperties`
+  - Added model `BlobAccessPointGenericS3SourcePropertiesUpdate`
+  - Added model `BlobAccessPointNasuniSourceProperties`
+  - Added model `BlobAccessPointNasuniSourcePropertiesUpdate`
+  - Added model `BlobAccessPointNetAppOntapSourceProperties`
+  - Added model `BlobAccessPointNetAppOntapSourcePropertiesUpdate`
+  - Added model `BlobAccessPointPrivateLinkConnectionProperties`
+  - Added model `BlobAccessPointPrivateLinkConnectionPropertiesUpdate`
+  - Added enum `BlobAccessPointPrivateLinkIdType`
+  - Added model `BlobAccessPointProposedConnectionTestRequest`
+  - Added model `BlobAccessPointQumuloSourceProperties`
+  - Added model `BlobAccessPointQumuloSourcePropertiesUpdate`
+  - Added model `BlobAccessPointRemoteAuthProperties`
+  - Added model `BlobAccessPointRemoteAuthPropertiesUpdate`
+  - Added enum `BlobAccessPointRemoteAuthType`
+  - Added model `BlobAccessPointSourceProperties`
+  - Added model `BlobAccessPointSourcePropertiesUpdate`
+  - Added enum `BlobAccessPointSourceType`
+  - Added enum `BlobAccessPointTlsVerification`
+  - Added enum `ContextCacheCheckNameAvailabilityFailureReason`
+  - Added model `ContextCacheCheckNameAvailabilityParameters`
+  - Added model `ContextCacheCheckNameAvailabilityResult`
+  - Added enum `ResourceProvisioningState`
+  - Added model `TurboTier`
+  - Added enum `TurboTierStatus`
+  - Operation group `ContextCachesOperations` added method `check_name_availability`
+  - Added operation group `BlobAccessPointConfigurationsOperations`
+  - Added operation group `BlobAccessPointConnectionTestsOperations`
+
+## 25.2.0 (2026-09-22)
+
+### Features Added
+
+  - Client `StorageManagementClient` added operation group `context_cache_containers`
+  - Client `StorageManagementClient` added operation group `context_caches`
+  - Model `SasPolicy` added property `require_user_bound_user_delegation_sas`
+  - Model `SasPolicy` added property `require_user_bound_user_delegation_sas_action`
+  - Model `StorageAccountProperties` added property `allow_cross_tenant_delegation_sas`
+  - Model `StorageAccountPropertiesCreateParameters` added property `allow_cross_tenant_delegation_sas`
+  - Model `StorageAccountPropertiesUpdateParameters` added property `allow_cross_tenant_delegation_sas`
+  - Added enum `AiProvider`
+  - Added model `ContextCache`
+  - Added enum `ContextCacheAccountKind`
+  - Added model `ContextCacheContainer`
+  - Added model `ContextCacheContainerProperties`
+  - Added model `ContextCacheContainerPropertiesUpdate`
+  - Added model `ContextCacheContainerUpdate`
+  - Added model `ContextCacheProperties`
+  - Added model `ContextCachePropertiesUpdate`
+  - Added enum `ContextCacheProvisioningState`
+  - Added model `ContextCacheUpdate`
+  - Added model `CustomerManagedKeyEncryption`
+  - Added enum `InfrastructureEncryption`
+  - Added model `KeyEncryptionKeyIdentity`
+  - Added enum `KeyEncryptionKeyIdentityType`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added enum `PolicyViolationAction`
+  - Added model `StorageAccountEncryption`
+  - Added operation group `ContextCacheContainersOperations`
+  - Added operation group `ContextCachesOperations`
+
 ## 25.1.0 (2026-06-01)
 
 ### Features Added

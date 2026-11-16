@@ -25,19 +25,14 @@ from .operations import (
     AccountsOperations,
     AgentApplicationsOperations,
     AgentDeploymentsOperations,
-    ArcDeploymentsOperations,
     CommitmentPlansOperations,
     CommitmentTiersOperations,
-    ComputeOperationsOperations,
-    ComputesOperations,
     DefenderForAISettingsOperations,
     DeletedAccountsOperations,
     DeploymentsOperations,
     EncryptionScopesOperations,
     LocationBasedModelCapacitiesOperations,
     ManagedComputeCapacitiesOperations,
-    ManagedComputeDeploymentsOperations,
-    ManagedComputeUsagesOperationGroupOperations,
     ManagedNetworkProvisionsOperations,
     ManagedNetworkSettingsOperations,
     ModelCapacitiesOperations,
@@ -64,7 +59,6 @@ from .operations import (
     SubscriptionRaiPolicyOperations,
     TestRaiExternalSafetyProviderOperations,
     UsagesOperations,
-    WorkbenchesOperations,
     _CognitiveServicesManagementClientOperationsMixin,
 )
 
@@ -132,25 +126,9 @@ class CognitiveServicesManagementClient(
      azure.mgmt.cognitiveservices.operations.ProjectCapabilityHostsOperations
     :ivar quota_tiers: QuotaTiersOperations operations
     :vartype quota_tiers: azure.mgmt.cognitiveservices.operations.QuotaTiersOperations
-    :ivar arc_deployments: ArcDeploymentsOperations operations
-    :vartype arc_deployments: azure.mgmt.cognitiveservices.operations.ArcDeploymentsOperations
     :ivar agent_applications: AgentApplicationsOperations operations
     :vartype agent_applications:
      azure.mgmt.cognitiveservices.operations.AgentApplicationsOperations
-    :ivar managed_compute_deployments: ManagedComputeDeploymentsOperations operations
-    :vartype managed_compute_deployments:
-     azure.mgmt.cognitiveservices.operations.ManagedComputeDeploymentsOperations
-    :ivar compute_operations: ComputeOperationsOperations operations
-    :vartype compute_operations:
-     azure.mgmt.cognitiveservices.operations.ComputeOperationsOperations
-    :ivar managed_compute_usages_operation_group: ManagedComputeUsagesOperationGroupOperations
-     operations
-    :vartype managed_compute_usages_operation_group:
-     azure.mgmt.cognitiveservices.operations.ManagedComputeUsagesOperationGroupOperations
-    :ivar computes: ComputesOperations operations
-    :vartype computes: azure.mgmt.cognitiveservices.operations.ComputesOperations
-    :ivar workbenches: WorkbenchesOperations operations
-    :vartype workbenches: azure.mgmt.cognitiveservices.operations.WorkbenchesOperations
     :ivar managed_compute_capacities: ManagedComputeCapacitiesOperations operations
     :vartype managed_compute_capacities:
      azure.mgmt.cognitiveservices.operations.ManagedComputeCapacitiesOperations
@@ -206,10 +184,9 @@ class CognitiveServicesManagementClient(
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-07-15-preview" and None. Default value is None. If not set, the operation's default API
-     version will be used. Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-11-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -304,21 +281,9 @@ class CognitiveServicesManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.quota_tiers = QuotaTiersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.arc_deployments = ArcDeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agent_applications = AgentApplicationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.managed_compute_deployments = ManagedComputeDeploymentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.compute_operations = ComputeOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.managed_compute_usages_operation_group = ManagedComputeUsagesOperationGroupOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.computes = ComputesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workbenches = WorkbenchesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.managed_compute_capacities = ManagedComputeCapacitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

@@ -234,6 +234,8 @@ class ExtensionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BEST_MATCH_OPERATION_BEGIN."""
     SUBSCRIPTION_LIFECYCLE_NOTIFICATION_DELETION = "SubscriptionLifecycleNotificationDeletion"
     """SUBSCRIPTION_LIFECYCLE_NOTIFICATION_DELETION."""
+    RESOURCE_BILLING_NOTIFICATION = "ResourceBillingNotification"
+    """Resource billing notification extension category."""
 
 
 class ExtensionOptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -327,6 +329,15 @@ class LegacyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DEPLOYMENT_CLEANUP."""
 
 
+class LinkedAccessCheckOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The options for the linked access check."""
+
+    NOT_SPECIFIED = "NotSpecified"
+    """Default value."""
+    IGNORE_EMPTY_STRING_LINKED_TYPE = "IgnoreEmptyStringLinkedType"
+    """Ignore the linked access check when the linked type is an empty string."""
+
+
 class LinkedAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The linked action."""
 
@@ -371,15 +382,13 @@ class LoggingDirections(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESPONSE."""
 
 
-class ManifestResourceDeletionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The resource deletion policy."""
+class ManifestCheckinOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The manifest checkin option."""
 
-    NOT_SPECIFIED = "NotSpecified"
-    """NOT_SPECIFIED."""
-    CASCADE = "Cascade"
-    """CASCADE."""
-    FORCE = "Force"
-    """FORCE."""
+    ATTEMPT_AUTOMATIC_MANIFEST_CHECKIN = "AttemptAutomaticManifestCheckin"
+    """Attempt an automatic manifest checkin as part of the rollout."""
+    DO_NOT_ATTEMPT_AUTOMATIC_MANIFEST_CHECKIN = "DoNotAttemptAutomaticManifestCheckin"
+    """Do not attempt an automatic manifest checkin as part of the rollout."""
 
 
 class MarketplaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -393,6 +402,8 @@ class MarketplaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BYPASS."""
     STORE = "Store"
     """STORE."""
+    PROVIDER_HUB = "ProviderHub"
+    """PROVIDER_HUB."""
 
 
 class MessageScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -640,10 +651,12 @@ class ResourceDeletionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NOT_SPECIFIED = "NotSpecified"
     """NOT_SPECIFIED."""
-    CASCADE_DELETE_ALL = "CascadeDeleteAll"
-    """CASCADE_DELETE_ALL."""
-    CASCADE_DELETE_PROXY_ONLY_CHILDREN = "CascadeDeleteProxyOnlyChildren"
-    """CASCADE_DELETE_PROXY_ONLY_CHILDREN."""
+    CASCADE = "Cascade"
+    """CASCADE."""
+    FORCE = "Force"
+    """FORCE."""
+    SOFT_DELETE = "SoftDelete"
+    """Soft delete deletion policy."""
 
 
 class ResourceProviderCapabilitiesEffect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -676,6 +689,8 @@ class ResourceProviderType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TENANT_ONLY."""
     AUTHORIZATION_FREE = "AuthorizationFree"
     """AUTHORIZATION_FREE."""
+    DECOMMISSIONED = "Decommissioned"
+    """The resource provider has been decommissioned."""
 
 
 class ResourceSubType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -788,6 +803,21 @@ class RoutingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource routing type is location mapping."""
     SERVICE_FANOUT = "ServiceFanout"
     """The resource routing type is service fanout."""
+
+
+class RPaaSResourceDeletionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resource deletion policy."""
+
+    NOT_SPECIFIED = "NotSpecified"
+    """NOT_SPECIFIED."""
+    CASCADE_DELETE_ALL = "CascadeDeleteAll"
+    """CASCADE_DELETE_ALL."""
+    CASCADE_DELETE_PROXY_ONLY_CHILDREN = "CascadeDeleteProxyOnlyChildren"
+    """CASCADE_DELETE_PROXY_ONLY_CHILDREN."""
+    CASCADE = "Cascade"
+    """Cascade deletion policy."""
+    FORCE = "Force"
+    """Force deletion policy."""
 
 
 class ServerFailureResponseMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1009,3 +1039,16 @@ class TrafficRegionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """REST_OF_THE_WORLD_GROUP_ONE."""
     REST_OF_THE_WORLD_GROUP_TWO = "RestOfTheWorldGroupTwo"
     """REST_OF_THE_WORLD_GROUP_TWO."""
+
+
+class WriteLockState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of the write lock feature."""
+
+    DISABLED = "Disabled"
+    """The write lock feature is disabled. The write-operations on the resource will follow the
+    last-write-wins semantics when the write lock feature is disabled."""
+    ENABLED = "Enabled"
+    """The write lock feature is enabled. Ensures that only one write-operation i.e., PUT, PATCH and
+    DELETE, is allowed on a resource at any given time. Other concurrent write-operations, if any,
+    will be rejected until the lock on the resource is released by the ongoing write-operation. The
+    feature overrides the 'resourceConcurrencyControlOptions'."""

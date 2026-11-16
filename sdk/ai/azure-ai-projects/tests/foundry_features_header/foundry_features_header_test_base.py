@@ -35,7 +35,6 @@ FOUNDRY_FEATURES_HEADER = "Foundry-Features"
 # If a new sub-client is added to .beta and is missing from this mapping, the test will
 # fail at collection time with a message asking you to add it here.
 EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
-    "agent_insight_monitors": "AgentInsights=V1Preview",
     "evaluation_taxonomies": "Evaluations=V1Preview",
     "evaluators": "Evaluations=V1Preview",
     "insights": "Insights=V1Preview",
@@ -45,8 +44,8 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "routines": "Routines=V2Preview",
     "schedules": "Schedules=V1Preview",
     "skills": "Skills=V1Preview",
+    "voice_agents": "VoiceAgents=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
-    "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
 }
 
 # Methods on .beta sub-clients that are NOT simple one-HTTP-call wrappers and
@@ -72,6 +71,14 @@ EXCLUDED_BETA_METHODS: dict[str, frozenset] = {
     ),  # multi-step helper: validate -> pending_upload -> azcopy -> pending_create_version -> poll get
 }
 
+# Public `.beta` attributes that are NOT generated REST operations classes and therefore
+# cannot be exercised by the generic header-injection test at all (unlike EXCLUDED_BETA_METHODS,
+# which excludes specific methods on an otherwise-testable sub-client).
+#
+# Realtime is GA and is not excluded as a beta attribute. Its WebSocket header behavior
+# is verified independently in test_realtime_client.py / test_realtime_client_async.py.
+NON_OPERATION_BETA_ATTRIBUTES: frozenset = frozenset()
+
 # Shared test cases for non-beta methods that optionally send the Foundry-Features header.
 # Used by both test_foundry_features_header_optional.py (sync) and
 # test_foundry_features_header_optional_async.py (async).
@@ -84,13 +91,60 @@ _NON_BETA_OPTIONAL_TEST_CASES = [
     #   The test id is derived automatically from method_name.
     pytest.param(
         "agents.create_version",
-        "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,DraftAgents=V1Preview,AgentsOptimization=V2Preview",
+        "A2AAgents=V1Preview,WorkflowAgents=V1Preview,DraftAgents=V1Preview,VoiceAgents=V1Preview,DigitalWorker=V1Preview,GitHubCopilot=V1Preview,Skills=V1Preview,MicrosoftCopilot=V1Preview,ModelRouterControls=V1Preview",
     ),
     pytest.param(
         "evaluation_rules.create_or_update",
         "Evaluations=V1Preview",
     ),
 ]
+
+GA_VOICE_OPERATION_PATHS = (
+    "agents.create_from_prompt",
+    *(
+        f"voice_agents.conversations.{method}"
+        for method in (
+            "delete",
+            "download_audio",
+            "download_audio_item",
+            "download_generated_audio_item",
+            "get",
+            "get_audio",
+            "get_audio_item",
+            "get_generated_audio_item",
+            "get_item",
+            "get_response",
+            "list",
+            "list_items",
+            "list_response_items",
+            "list_responses",
+        )
+    ),
+    *(
+        f"voice_agents.telephony.{method}"
+        for method in (
+            "get_binding",
+            "get_call",
+            "get_call_job",
+            "get_transfer_targets",
+            "list_bindings",
+            "list_call_jobs",
+            "list_calls",
+        )
+    ),
+)
+
+CONDITIONAL_VOICE_TELEPHONY_METHODS = (
+    "cancel_call_job",
+    "create_binding",
+    "create_call_job",
+    "delete_binding",
+    "delete_call_job",
+    "end_call",
+    "replace_transfer_targets",
+    "transfer_call",
+    "update_binding",
+)
 
 # Both sentinel values – used by _make_fake_call to detect required parameters
 # whose defaults are the internal _Unset object (rather than inspect.Parameter.empty).

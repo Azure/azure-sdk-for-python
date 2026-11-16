@@ -10,6 +10,7 @@ from unittest.mock import Mock, patch
 from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from asynctestcase import AppConfigTestCase
+from testcase import create_secret_config_setting
 from test_constants import (
     APPCONFIGURATION_ENDPOINT_STRING,
     APPCONFIGURATION_KEYVAULT_SECRET_URL,
@@ -82,35 +83,30 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
     ):
         """Test that secrets are refreshed with updated values."""
         mock_callback = Mock()
-
-        # Create client with the mock secret resolver
-        client = await self.create_client(
-            endpoint=appconfiguration_endpoint_string,
-            selects={SettingSelector(key_filter="*", label_filter="prod")},
-            keyvault_secret_url=appconfiguration_keyvault_secret_url,
-            keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
-            on_refresh_success=mock_callback,
-            refresh_on=[WatchKey("secret", "prod")],
-            refresh_interval=1,
-            secret_refresh_interval=1,  # Using a short interval for testing
-        )
-
-        # Add a key vault reference to the client (this will use mock resolver)
+        secret_key = f"{self.get_resource_name('test')}-secret"
         appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
-
-        # Get and modify a key vault reference setting
-        kv_setting = await appconfig_client.get_configuration_setting(key="secret", label="prod")
-        assert kv_setting is not None
-
-        # Verify initial value from mock resolver
-        assert client["secret"] == "Very secret value"
-        assert kv_setting is not None
-        assert isinstance(kv_setting, SecretReferenceConfigurationSetting)
-        # Update the secret_id (which is the value for SecretReferenceConfigurationSetting)
-        kv_setting.secret_id = appconfiguration_keyvault_secret_url2
-        await appconfig_client.set_configuration_setting(kv_setting)
-
+        kv_setting = create_secret_config_setting(secret_key, "prod", appconfiguration_keyvault_secret_url)
+        secret_created = False
         try:
+            await appconfig_client.set_configuration_setting(kv_setting)
+            secret_created = True
+
+            client = await self.create_client(
+                endpoint=appconfiguration_endpoint_string,
+                selects={SettingSelector(key_filter=secret_key, label_filter="prod")},
+                keyvault_secret_url=appconfiguration_keyvault_secret_url,
+                keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
+                on_refresh_success=mock_callback,
+                refresh_on=[WatchKey(secret_key, "prod")],
+                refresh_interval=1,
+                secret_refresh_interval=1,
+            )
+
+            assert client[secret_key] == "Very secret value"
+            assert isinstance(kv_setting, SecretReferenceConfigurationSetting)
+            kv_setting.secret_id = appconfiguration_keyvault_secret_url2
+            await appconfig_client.set_configuration_setting(kv_setting)
+
             # Expire the refresh timers to simulate time passing
             client._refresh_timer._next_refresh_time = 0
             client._secret_provider.secret_refresh_timer._next_refresh_time = 0
@@ -119,11 +115,11 @@ class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
             await client.refresh()
 
             # Verify the value was updated
-            assert client["secret"] == "Very secret value 2"
+            assert client[secret_key] == "Very secret value 2"
             assert mock_callback.call_count >= 1
         finally:
-            kv_setting.secret_id = appconfiguration_keyvault_secret_url
-            await appconfig_client.set_configuration_setting(kv_setting)
+            if secret_created:
+                await appconfig_client.delete_configuration_setting(key=secret_key, label="prod")
 
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async

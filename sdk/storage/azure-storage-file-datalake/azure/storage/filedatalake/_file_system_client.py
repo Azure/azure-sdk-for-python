@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -19,7 +20,7 @@ from ._data_lake_file_client import DataLakeFileClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._deserialize import is_file_path, process_storage_error
 from ._file_system_client_helpers import _format_url, _parse_url, _undelete_path_options
-from ._generated import AzureDataLakeStorageRESTAPI
+from ._generated import DataLakeClient as AzureDataLakeStorageRESTAPI
 from ._list_paths_helper import DeletedPathPropertiesPaged, PathPropertiesPaged
 from ._models import (
     DeletedPathProperties,
@@ -71,6 +72,19 @@ class FileSystemClient(StorageAccountHostsMixin):
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
         authentication. Only has an effect when credential is of type TokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+    :keyword bool use_session: If True, enable session-based authentication for this file system.
+        When enabled, eligible GET requests issued by this client will be authenticated using
+        a short-lived session credential obtained from the service instead
+        of the provided TokenCredential. Only supported with a TokenCredential;
+        TypeError is raised otherwise. Defaults to False.
+    :keyword session_provider: Creates, caches, and invalidates the session credentials used for
+        session-based authentication. Supply a shared instance to reuse the session cache across
+        multiple clients; when omitted, one is created and scoped to this client. Only has an
+        effect when `use_session` is True.
+    :paramtype session_provider: ~azure.storage.filedatalake.SessionProvider
+    :keyword str session_account_name: The storage account name used to sign session-authenticated
+        requests. If omitted, it is derived from the account URL. Required when using a custom
+        endpoint, where the account name cannot be determined from the URL.
 
     .. admonition:: Example:
 
@@ -153,7 +167,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
-            url, version=self._api_version, base_url=url, file_system=self.file_system_name, pipeline=self._pipeline
+            url, file_system=self.file_system_name, version=self._api_version, pipeline=self._pipeline
         )
         return client
 
@@ -371,6 +385,16 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         The file system and any files contained within it are later deleted during garbage collection.
         If the file system is not found, a ResourceNotFoundError will be raised.
+
+        When a file system is deleted, a file system with the same name can't be created
+        for at least 30 seconds.  The file system might not be available for more than
+        30 seconds if the service is still processing the request.  While the file system
+        is being deleted, attempts to create a file system of the same name fail with
+        status code 409 (Conflict).  The service indicates that the file system is being
+        deleted.  Operations on files within the file system, including reads and writes,
+        may continue to succeed for up to 30 seconds after the delete request is
+        accepted.  After this period, all operations on the file system and its files
+        fail with status code 404 (Not Found).
 
         :keyword str or ~azure.storage.filedatalake.DataLakeLeaseClient lease:
             If specified, delete_file_system only succeeds if the
@@ -952,7 +976,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             policies=self._pipeline._impl_policies,  # pylint: disable=protected-access
         )
         path_client = AzureDataLakeStorageRESTAPI(
-            url, version=self._api_version, filesystem=self.file_system_name, path=deleted_path_name, pipeline=pipeline
+            url, filesystem=self.file_system_name, path=deleted_path_name, version=self._api_version, pipeline=pipeline
         )
         try:
             is_file = path_client.path.undelete(undelete_source=undelete_source, cls=is_file_path, **kwargs)

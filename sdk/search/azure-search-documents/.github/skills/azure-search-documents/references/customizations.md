@@ -14,7 +14,9 @@ python .github/skills/azure-search-documents/scripts/apply_generator_workarounds
 The script is idempotent and applies exact replacements only. It exits with an error before writing
 files if the emitter output no longer matches either the known generated or patched form. Remove the
 script and these instructions after the emitter produces all four corrected type surfaces and the
-package passes MyPy without the rewriter.
+package passes MyPy and Pylint without the rewriter. Preview-only replacements are skipped when
+their prerequisite surface is absent in a GA build. The GA retrieval-stream statement-count
+suppressions are also reapplied by the script.
 Note: Occasionally, types.py might import packages incorrectly. Verify that the imports are valid and actually reference something valid.
 
 ---

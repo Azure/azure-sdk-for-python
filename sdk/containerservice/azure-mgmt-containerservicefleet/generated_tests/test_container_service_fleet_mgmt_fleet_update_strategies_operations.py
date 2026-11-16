@@ -46,18 +46,60 @@ class TestContainerServiceFleetMgmtFleetUpdateStrategiesOperations(AzureMgmtReco
                         "stages": [
                             {
                                 "name": "str",
-                                "afterGates": [{"type": "str", "displayName": "str"}],
+                                "afterGates": [
+                                    {
+                                        "type": "str",
+                                        "displayName": "str",
+                                        "scheduledStartConfiguration": {
+                                            "startDay": "str",
+                                            "startTime": "str",
+                                            "utcOffset": "str",
+                                        },
+                                    }
+                                ],
                                 "afterStageWaitInSeconds": 0,
-                                "beforeGates": [{"type": "str", "displayName": "str"}],
+                                "beforeGates": [
+                                    {
+                                        "type": "str",
+                                        "displayName": "str",
+                                        "scheduledStartConfiguration": {
+                                            "startDay": "str",
+                                            "startTime": "str",
+                                            "utcOffset": "str",
+                                        },
+                                    }
+                                ],
                                 "groups": [
                                     {
                                         "name": "str",
-                                        "afterGates": [{"type": "str", "displayName": "str"}],
-                                        "beforeGates": [{"type": "str", "displayName": "str"}],
+                                        "afterGates": [
+                                            {
+                                                "type": "str",
+                                                "displayName": "str",
+                                                "scheduledStartConfiguration": {
+                                                    "startDay": "str",
+                                                    "startTime": "str",
+                                                    "utcOffset": "str",
+                                                },
+                                            }
+                                        ],
+                                        "beforeGates": [
+                                            {
+                                                "type": "str",
+                                                "displayName": "str",
+                                                "scheduledStartConfiguration": {
+                                                    "startDay": "str",
+                                                    "startTime": "str",
+                                                    "utcOffset": "str",
+                                                },
+                                            }
+                                        ],
                                         "maxConcurrency": "str",
+                                        "memberSelector": {"byLabel": "str"},
                                     }
                                 ],
                                 "maxConcurrency": "str",
+                                "memberSelector": {"byLabel": "str"},
                             }
                         ]
                     },

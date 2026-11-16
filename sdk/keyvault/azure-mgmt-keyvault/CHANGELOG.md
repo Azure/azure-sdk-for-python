@@ -1,5 +1,16 @@
 # Release History
 
+## 14.1.0 (2026-10-08)
+
+### Features Added
+
+  - Enum `JsonWebKeyType` added member `OCT_HSM`
+  - Enum `ManagedHsmSkuName` added member `STANDARD_B10_V2`
+  - Enum `ManagedHsmSkuName` added member `STANDARD_B15_V2`
+  - Enum `ManagedHsmSkuName` added member `STANDARD_B1_V2`
+  - Enum `ManagedHsmSkuName` added member `STANDARD_B20_V2`
+  - Enum `ManagedHsmSkuName` added member `STANDARD_B5_V2`
+
 ## 14.0.1 (2026-03-27)
 
 ### Bugs Fixed

@@ -14,7 +14,7 @@ import pathlib
 import argparse
 import datetime
 
-import httpx
+import httpx2
 import markdown
 from github import Github, Auth
 from azure.identity import DefaultAzureCredential
@@ -290,7 +290,7 @@ def get_pipelines(
     dataplane: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]]
 ) -> dict[ServiceDirectory, PipelineResults]:
 
-    response = httpx.get(LIST_BUILDS, headers=AUTH_HEADERS)
+    response = httpx2.get(LIST_BUILDS, headers=AUTH_HEADERS)
     if response.status_code != 200:
         raise Exception(f"Failed to get pipelines - {response.status_code} {response.text}")
     pipelines_json = json.loads(response.text)
@@ -413,7 +413,7 @@ def get_ci_result(service: str, pipeline_id: int | None, pipelines: dict[Service
         pipelines[service]["ci"]["link"] = ""
         return
 
-    build_response = httpx.get(get_build_url(pipeline_id), headers=AUTH_HEADERS)
+    build_response = httpx2.get(get_build_url(pipeline_id), headers=AUTH_HEADERS)
     build_result = json.loads(build_response.text)
     if build_response.status_code != 200 or not build_result["value"]:
         print(f"No CI result for {service}")
@@ -430,7 +430,7 @@ def get_ci_result(service: str, pipeline_id: int | None, pipelines: dict[Service
     # get timeline
     pipelines[service]["ci"].update({"result": result["result"]})
     build_id = result["id"]
-    timeline_response = httpx.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
+    timeline_response = httpx2.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
     if timeline_response.status_code != 200:
         record_all_pipeline("tests", pipelines[service], "UNKNOWN")
         return
@@ -456,7 +456,7 @@ def get_tests_result(service: str, pipeline_id: int | None, pipelines: dict[Serv
         pipelines[service]["tests"]["link"] = ""
         return
 
-    build_response = httpx.get(get_build_url(pipeline_id), headers=AUTH_HEADERS)
+    build_response = httpx2.get(get_build_url(pipeline_id), headers=AUTH_HEADERS)
     build_result = json.loads(build_response.text)
     if build_response.status_code != 200 or not build_result["value"]:
         print(f"No live tests result for {service}")
@@ -473,7 +473,7 @@ def get_tests_result(service: str, pipeline_id: int | None, pipelines: dict[Serv
     # get timeline
     pipelines[service]["tests"].update({"result": result["result"]})
     build_id = result["id"]
-    timeline_response = httpx.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
+    timeline_response = httpx2.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
     if timeline_response.status_code != 200:
         record_all_pipeline("tests", pipelines[service], "UNKNOWN")
         return
@@ -493,7 +493,7 @@ def get_tests_weekly_result(service: str, pipeline_id: int | None, pipelines: di
         pipelines[service]["tests_weekly"]["link"] = ""
         return
 
-    build_response = httpx.get(get_build_url(pipeline_id), headers=AUTH_HEADERS)
+    build_response = httpx2.get(get_build_url(pipeline_id), headers=AUTH_HEADERS)
     build_result = json.loads(build_response.text)
     if build_response.status_code != 200 or not build_result["value"]:
         print(f"No tests_weekly result for {service}")
@@ -506,7 +506,7 @@ def get_tests_weekly_result(service: str, pipeline_id: int | None, pipelines: di
     # get timeline
     pipelines[service]["tests_weekly"].update({"result": result["result"]})
     build_id = result["id"]
-    timeline_response = httpx.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
+    timeline_response = httpx2.get(get_build_timeline_url(build_id), headers=AUTH_HEADERS)
     if timeline_response.status_code != 200:
         record_all_pipeline("tests", pipelines[service], "UNKNOWN")
         return
@@ -639,7 +639,7 @@ def map_codeowners_to_label(
     dataplane: dict[ServiceDirectory, dict[LibraryName, LibraryStatus]]
 ) -> dict[str, ServiceDirectory]:
     codeowners_url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/.github/CODEOWNERS"
-    codeowners_response = httpx.get(codeowners_url)
+    codeowners_response = httpx2.get(codeowners_url)
     if codeowners_response.status_code != 200:
         raise Exception("Failed to get CODEOWNERS file")
     codeowners = codeowners_response.text.splitlines()

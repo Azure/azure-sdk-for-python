@@ -8,6 +8,9 @@ import random
 from typing import Optional
 from unittest.mock import patch, Mock
 
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 from opentelemetry.trace import SpanContext, TraceFlags
 
 from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import (
@@ -323,6 +326,7 @@ class TestRateLimitedSampler(unittest.TestCase):
     # Test inheriting sampling decision from sampled parent span with sample rate
     def test_parent_span_sampled_with_sample_rate(self):
         sampler = RateLimitedSampler(10.0)
+        sampler._sampling_percentage_generator.get = Mock(return_value=0.0)
 
         parent_span = create_parent_span(sampled=True, sample_rate=75.0, is_remote=False)
 
@@ -335,12 +339,17 @@ class TestRateLimitedSampler(unittest.TestCase):
 
             self.assertEqual(result.decision, Decision.RECORD_AND_SAMPLE)
             self.assertEqual(result.attributes[_SAMPLE_RATE_KEY], 75.0)
+            sampler._sampling_percentage_generator.get.assert_not_called()
 
     # Test inheriting sampling decision from non-sampled parent span with sample rate
     def test_parent_span_not_sampled_with_sample_rate(self):
         sampler = RateLimitedSampler(10.0)
+        sampler._sampling_percentage_generator.get = Mock(return_value=100.0)
 
         parent_span = create_parent_span(sampled=False, sample_rate=25.0, is_remote=False)
+        # Deliberately disagree with the sampled flag so this test catches a
+        # regression back to using Span.is_recording() for this decision.
+        parent_span.is_recording.return_value = True
 
         with patch(
             "azure.monitor.opentelemetry.exporter.export.trace._utils.get_current_span", return_value=parent_span
@@ -351,6 +360,7 @@ class TestRateLimitedSampler(unittest.TestCase):
 
             self.assertEqual(result.decision, Decision.DROP)
             self.assertEqual(result.attributes[_SAMPLE_RATE_KEY], 0.0)
+            sampler._sampling_percentage_generator.get.assert_not_called()
 
     # Test parent span with 100% sample rate maintains decision
     def test_parent_span_sampled_with_100_percent_sample_rate(self):
@@ -390,9 +400,10 @@ class TestRateLimitedSampler(unittest.TestCase):
 
             self.assertNotEqual(result.attributes[_SAMPLE_RATE_KEY], 80.0)
 
-    # Test parent span without sample rate attribute uses local sampling
-    def test_parent_span_no_sample_rate_attribute(self):
+    # Test that a sampled parent without a rate attribute represents 100% sampling.
+    def test_parent_span_without_sample_rate_is_not_resampled(self):
         sampler = RateLimitedSampler(5.0)
+        sampler._sampling_percentage_generator.get = Mock(return_value=0.0)
 
         parent_span = create_parent_span(sampled=True, sample_rate=None, is_remote=False)
 
@@ -400,19 +411,38 @@ class TestRateLimitedSampler(unittest.TestCase):
             "azure.monitor.opentelemetry.exporter.export.trace._utils.get_current_span", return_value=parent_span
         ):
             context = Mock()
-
-            from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import _State
-
-            initial_time = self.current_time
-            sampler._sampling_percentage_generator._state = _State(0.0, 0.0, initial_time)
-
-            self.advance_time(100_000_000)
-
             result = sampler.should_sample(parent_context=context, trace_id=0xABC123, name="test-span")
 
-            self.assertIn(result.decision, [Decision.RECORD_AND_SAMPLE, Decision.DROP])
-            sample_rate = result.attributes[_SAMPLE_RATE_KEY]
-            self.assertIsInstance(sample_rate, (int, float))
+        self.assertEqual(result.decision, Decision.RECORD_AND_SAMPLE)
+        self.assertNotIn(_SAMPLE_RATE_KEY, result.attributes)
+        sampler._sampling_percentage_generator.get.assert_not_called()
+
+    def test_implicit_parent_context_inherits_sampling_rate(self):
+        sampler = RateLimitedSampler(5.0)
+        sampler._sampling_percentage_generator.get = Mock(return_value=50.0)
+        exporter = InMemorySpanExporter()
+        provider = TracerProvider(sampler=sampler)
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        tracer = provider.get_tracer(__name__)
+
+        try:
+            # Make the root deterministically sample at the non-100% rate.
+            with patch(
+                "azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling._get_DJB2_sample_score",
+                return_value=0.0,
+            ):
+                with tracer.start_as_current_span("parent") as parent:
+                    with tracer.start_as_current_span("child"):
+                        pass
+
+            spans = {span.name: span for span in exporter.get_finished_spans()}
+            self.assertEqual(set(spans), {"parent", "child"})
+            self.assertEqual(spans["child"].parent.span_id, spans["parent"].context.span_id)
+            self.assertEqual(spans["parent"].attributes[_SAMPLE_RATE_KEY], 50.0)
+            self.assertEqual(spans["child"].attributes[_SAMPLE_RATE_KEY], 50.0)
+            self.assertEqual(sampler._sampling_percentage_generator.get.call_count, 1)
+        finally:
+            provider.shutdown()
 
     # Test handling parent span with invalid span context
     def test_parent_span_invalid_context(self):

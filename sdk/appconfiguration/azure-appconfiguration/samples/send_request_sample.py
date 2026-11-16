@@ -16,17 +16,18 @@ USAGE:
     python send_request_sample.py
 
     Set the environment variables with your own values before running the sample:
-    1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
+    1) APPCONFIGURATION_ENDPOINT_STRING: Endpoint URL used to access the Azure App Configuration.
 """
 
 import os
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.core.rest import HttpRequest
+from azure.identity import DefaultAzureCredential
 
 
 def main():
-    CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
-    with AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING) as client:
+    endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
+    with AzureAppConfigurationClient(endpoint, DefaultAzureCredential()) as client:
         request = HttpRequest(
             method="GET",
             url="/kv?api-version=2023-10-01",

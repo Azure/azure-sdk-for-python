@@ -419,6 +419,27 @@ class TestUtils(unittest.TestCase):
         }
         assert result == expected
 
+    def test__get_conversation_history_with_typed_system_message(self):
+        """Test typed text content in system messages."""
+        query = [
+            {
+                "role": "system",
+                "content": [{"type": "text", "text": "This is a system message."}],
+            },
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "What is the weather?"}],
+            },
+        ]
+
+        result = _get_conversation_history(query, include_system_messages=True)
+
+        assert result == {
+            "system_message": "This is a system message.",
+            "user_queries": [[["What is the weather?"]]],
+            "agent_responses": [],
+        }
+
     def test__get_conversation_history_with_invalid_data(self):
         """Test _get_conversation_history with edge cases"""
         # Test with messages missing role
@@ -545,6 +566,29 @@ class TestUtils(unittest.TestCase):
             "  Tell me more.\n\n"
         )
         assert result == expected
+
+    def test_reformat_conversation_history_with_typed_system_message(self):
+        """Test typed system content with both conversation-history paths."""
+        query = [
+            {
+                "role": "system",
+                "content": [{"type": "text", "text": "This is a system message."}],
+            },
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "What is AI?"}],
+            },
+        ]
+        expected = "SYSTEM_PROMPT:\n" "  This is a system message.\n\n" "User turn 1:\n" "  What is AI?\n\n"
+
+        for include_tool_calls in (False, True):
+            with self.subTest(include_tool_calls=include_tool_calls):
+                result = reformat_conversation_history(
+                    query,
+                    include_system_messages=True,
+                    include_tool_calls=include_tool_calls,
+                )
+                assert result == expected
 
     def test__get_agent_response(self):
         """Test _get_agent_response function"""

@@ -25,7 +25,7 @@ class TestComputeManagementTenantLevelSharedGalleryInvitesOperations(AzureMgmtRe
             location="str",
             shared_gallery_subscription_id="str",
             shared_gallery_name="str",
-            api_version="2025-12-03",
+            api_version="2026-03-03",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestComputeManagementTenantLevelSharedGalleryInvitesOperations(AzureMgmtRe
             location="str",
             shared_gallery_subscription_id="str",
             shared_gallery_name="str",
-            api_version="2025-12-03",
+            api_version="2026-03-03",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

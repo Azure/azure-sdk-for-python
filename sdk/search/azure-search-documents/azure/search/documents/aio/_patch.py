@@ -9,8 +9,9 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Union, List, Dict, Optional, cast
+from typing import Any, Union, List, Dict, Mapping, Optional, cast
 import asyncio  # pylint: disable=do-not-import-asyncio
+import inspect
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -21,6 +22,8 @@ from ._client import SearchClient as _SearchClient
 from ._operations._patch import AsyncSearchItemPaged
 from ..models._patch import RequestEntityTooLargeError, IndexDocumentsBatch
 from ..models import IndexAction, IndexingResult
+from .. import types as _types
+from .._operations._patch import _normalize_index_documents_batch
 from ..indexes.aio import SearchIndexClient
 from .._patch import DEFAULT_VERSION, is_retryable_status_code
 
@@ -38,7 +41,7 @@ class SearchClient(_SearchClient):
     :type index_name: str
     :keyword api_version: The API version to use for this operation. Known values are
         listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
-        ``ApiVersion.V2026_08_01_PREVIEW``. Note that overriding this default value may
+        ``ApiVersion.V2026_10_01``. Note that overriding this default value may
         result in unsupported behavior.
     :paramtype api_version: str or ~azure.search.documents.ApiVersion
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
@@ -107,9 +110,10 @@ class SearchIndexingBufferedSender:
         self._retry_counter: Dict[str, int] = {}
 
         self._index_documents_batch = IndexDocumentsBatch()
+        self._client_kwargs = dict(kwargs)
 
         # Create the search client
-        self._client = _SearchClient(
+        self._client = SearchClient(
             endpoint=endpoint, index_name=index_name, credential=credential, api_version=self._api_version, **kwargs
         )
         self._auto_flush_task: Optional[asyncio.Task] = None
@@ -118,7 +122,11 @@ class SearchIndexingBufferedSender:
 
     def _schedule_auto_flush(self) -> None:
         """Schedule the auto flush task."""
-        if self._auto_flush_task and not self._auto_flush_task.done():
+        if (
+            self._auto_flush_task
+            and not self._auto_flush_task.done()
+            and self._auto_flush_task is not asyncio.current_task(loop=self._auto_flush_task.get_loop())
+        ):
             self._auto_flush_task.cancel()
 
         async def auto_flush_worker():
@@ -183,7 +191,7 @@ class SearchIndexingBufferedSender:
                 if self._on_error:
                     actions = self._index_documents_batch.dequeue_actions()
                     for action in actions:
-                        if asyncio.iscoroutinefunction(self._on_error):
+                        if inspect.iscoroutinefunction(self._on_error):
                             await self._on_error(action)
                         else:
                             self._on_error(action)
@@ -201,14 +209,20 @@ class SearchIndexingBufferedSender:
         if not self._index_key:
             try:
                 credential = cast(Union[AzureKeyCredential, AsyncTokenCredential], self._credential)
-                client = SearchIndexClient(self._endpoint, credential)
-                index_result = await client.get_index(self._index_name)
-                if index_result:
-                    for field in index_result.fields:
+                client = SearchIndexClient(
+                    self._endpoint, credential, api_version=self._api_version, **self._client_kwargs
+                )
+                try:
+                    index_result = await client.get_index(self._index_name)
+                    fields = index_result.fields if index_result else []
+                    for field in fields:
                         if field.key:
                             self._index_key = field.name
                             break
-                await client.close()
+                finally:
+                    # User-supplied transports and pipelines remain owned by the sender.
+                    if self._client_kwargs.get("transport") is None and self._client_kwargs.get("pipeline") is None:
+                        await client.close()
             except Exception:  # pylint: disable=broad-except
                 pass
 
@@ -234,9 +248,9 @@ class SearchIndexingBufferedSender:
         except Exception:  # pylint: disable=broad-except
             for action in actions:
                 await self._retry_action(action)
-                if raise_error:
-                    raise
-                return True
+            if raise_error:
+                raise
+            return True
         return has_error
 
     async def _process_if_needed(self) -> bool:
@@ -302,16 +316,21 @@ class SearchIndexingBufferedSender:
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def index_documents(self, batch: IndexDocumentsBatch, **kwargs) -> List[IndexingResult]:
+    async def index_documents(
+        self,
+        batch: Union[IndexDocumentsBatch, _types.IndexDocumentsBatch, Mapping[str, Any]],
+        **kwargs,
+    ) -> List[IndexingResult]:
         """Specify a document operations to perform as a batch.
 
         :param batch: A batch of document operations to perform.
-        :type batch: ~azure.search.documents.models.IndexDocumentsBatch
+        :type batch: ~azure.search.documents.IndexDocumentsBatch or
+         ~azure.search.documents.types.IndexDocumentsBatch or mapping
         :return: Indexing result of each action in the batch.
         :rtype: list[~azure.search.documents.types.IndexingResult]
         :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
         """
-        return await self._index_documents_actions(actions=batch.actions if batch.actions else [], **kwargs)
+        return await self._index_documents_actions(actions=_normalize_index_documents_batch(batch).actions, **kwargs)
 
     async def _index_documents_actions(self, actions: List[IndexAction], **kwargs) -> List[IndexingResult]:
         timeout = kwargs.pop("timeout", 86400)
@@ -375,24 +394,24 @@ class SearchIndexingBufferedSender:
 
     async def _callback_succeed(self, action: IndexAction) -> None:
         if self._on_remove:
-            if asyncio.iscoroutinefunction(self._on_remove):
+            if inspect.iscoroutinefunction(self._on_remove):
                 await self._on_remove(action)
             else:
                 self._on_remove(action)
         if self._on_progress:
-            if asyncio.iscoroutinefunction(self._on_progress):
+            if inspect.iscoroutinefunction(self._on_progress):
                 await self._on_progress(action)
             else:
                 self._on_progress(action)
 
     async def _callback_fail(self, action: IndexAction) -> None:
         if self._on_remove:
-            if asyncio.iscoroutinefunction(self._on_remove):
+            if inspect.iscoroutinefunction(self._on_remove):
                 await self._on_remove(action)
             else:
                 self._on_remove(action)
         if self._on_error:
-            if asyncio.iscoroutinefunction(self._on_error):
+            if inspect.iscoroutinefunction(self._on_error):
                 await self._on_error(action)
             else:
                 self._on_error(action)
@@ -400,7 +419,7 @@ class SearchIndexingBufferedSender:
     async def _callback_new(self, actions: List[IndexAction]) -> None:
         if self._on_new:
             for action in actions:
-                if asyncio.iscoroutinefunction(self._on_new):
+                if inspect.iscoroutinefunction(self._on_new):
                     await self._on_new(action)
                 else:
                     self._on_new(action)

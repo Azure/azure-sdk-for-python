@@ -12,7 +12,13 @@ import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import AdminRuleKind, EffectiveAdminRuleKind, FirewallPolicyRuleCollectionType, FirewallPolicyRuleType
+from ._enums import (
+    AdminRuleKind,
+    EffectiveAdminRuleKind,
+    FirewallPolicyRuleCollectionType,
+    FirewallPolicyRuleType,
+    VirtualNetworkApplianceCapabilityKind,
+)
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -1344,15 +1350,18 @@ class ApplicationGateway(Resource):  # pylint: disable=docstring-keyword-should-
         "listeners",
         "ssl_profiles",
         "url_path_maps",
+        "advanced_routing_maps",
         "request_routing_rules",
         "routing_rules",
         "rewrite_rule_sets",
+        "advanced_routing_condition_sets",
         "redirect_configurations",
         "web_application_firewall_configuration",
         "firewall_policy",
         "enable_http2",
         "enable_fips",
         "autoscale_configuration",
+        "reserved_capacity",
         "private_link_configurations",
         "private_endpoint_connections",
         "resource_guid",
@@ -1406,6 +1415,72 @@ class ApplicationGateway(Resource):  # pylint: disable=docstring-keyword-should-
             super().__setattr__(key, value)
 
 
+class ApplicationGatewayAdvancedRoutingCondition(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A condition evaluated as part of an advanced routing condition set.
+
+    :ivar condition_type: The type of request property the condition is evaluated against.
+     Required. Known values are: "Header", "QueryString", "Path", "ClientIP", and "Method".
+    :vartype condition_type: str or
+     ~azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingConditionType
+    :ivar property_name: Name of the request property the condition is evaluated against. Required
+     when conditionType is Header or QueryString, and not applicable when conditionType is Path,
+     ClientIP or Method.
+    :vartype property_name: str
+    :ivar property_values: Values the request property is matched against. Exactly one of
+     propertyValues or propertyValueMatcher must be specified.
+    :vartype property_values: list[str]
+    :ivar property_value_matcher: Pattern the request property is matched against. Exactly one of
+     propertyValues or propertyValueMatcher must be specified. Not applicable when conditionType is
+     ClientIP or Method.
+    :vartype property_value_matcher:
+     ~azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingPropertyValueMatcher
+    """
+
+    condition_type: Union[str, "_models.ApplicationGatewayAdvancedRoutingConditionType"] = rest_field(
+        name="conditionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of request property the condition is evaluated against. Required. Known values are:
+     \"Header\", \"QueryString\", \"Path\", \"ClientIP\", and \"Method\"."""
+    property_name: Optional[str] = rest_field(
+        name="propertyName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the request property the condition is evaluated against. Required when conditionType is
+     Header or QueryString, and not applicable when conditionType is Path, ClientIP or Method."""
+    property_values: Optional[list[str]] = rest_field(
+        name="propertyValues", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Values the request property is matched against. Exactly one of propertyValues or
+     propertyValueMatcher must be specified."""
+    property_value_matcher: Optional["_models.ApplicationGatewayAdvancedRoutingPropertyValueMatcher"] = rest_field(
+        name="propertyValueMatcher", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Pattern the request property is matched against. Exactly one of propertyValues or
+     propertyValueMatcher must be specified. Not applicable when conditionType is ClientIP or
+     Method."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        condition_type: Union[str, "_models.ApplicationGatewayAdvancedRoutingConditionType"],
+        property_name: Optional[str] = None,
+        property_values: Optional[list[str]] = None,
+        property_value_matcher: Optional["_models.ApplicationGatewayAdvancedRoutingPropertyValueMatcher"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SubResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reference to another subresource.
 
@@ -1421,6 +1496,471 @@ class SubResource(_Model):  # pylint: disable=docstring-keyword-should-match-key
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApplicationGatewayAdvancedRoutingConditionSet(
+    SubResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Advanced routing condition set of an application gateway. Referenced by advanced routing rules
+    to determine whether a request matches.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar properties: Properties of the application gateway advanced routing condition set.
+    :vartype properties:
+     ~azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingConditionSetPropertiesFormat
+    :ivar name: Name of the advanced routing condition set that is unique within an Application
+     Gateway.
+    :vartype name: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    """
+
+    properties: Optional["_models.ApplicationGatewayAdvancedRoutingConditionSetPropertiesFormat"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the application gateway advanced routing condition set."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the advanced routing condition set that is unique within an Application Gateway."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """A unique read-only string that changes whenever the resource is updated."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """Type of the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        properties: Optional["_models.ApplicationGatewayAdvancedRoutingConditionSetPropertiesFormat"] = None,
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApplicationGatewayAdvancedRoutingConditionSetPropertiesFormat(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Properties of advanced routing condition set of the application gateway.
+
+    :ivar routing_conditions: Routing conditions of the condition set. All conditions must be
+     satisfied for the referencing advanced routing rule to match. Required.
+    :vartype routing_conditions:
+     list[~azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingCondition]
+    :ivar provisioning_state: The provisioning state of the advanced routing condition set
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    """
+
+    routing_conditions: list["_models.ApplicationGatewayAdvancedRoutingCondition"] = rest_field(
+        name="routingConditions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Routing conditions of the condition set. All conditions must be satisfied for the referencing
+     advanced routing rule to match. Required."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the advanced routing condition set resource. Known values are:
+     \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        routing_conditions: list["_models.ApplicationGatewayAdvancedRoutingCondition"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApplicationGatewayAdvancedRoutingMap(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Advanced routing map of an application gateway. Holds the advanced routing rules evaluated for
+    requests handled by an AdvancedRouting request routing rule, along with the configuration
+    applied when no rule matches.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar properties: Properties of the application gateway advanced routing map.
+    :vartype properties:
+     ~azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingMapPropertiesFormat
+    :ivar name: Name of the advanced routing map that is unique within an Application Gateway.
+    :vartype name: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    """
+
+    properties: Optional["_models.ApplicationGatewayAdvancedRoutingMapPropertiesFormat"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the application gateway advanced routing map."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the advanced routing map that is unique within an Application Gateway."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """A unique read-only string that changes whenever the resource is updated."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """Type of the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        properties: Optional["_models.ApplicationGatewayAdvancedRoutingMapPropertiesFormat"] = None,
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApplicationGatewayAdvancedRoutingMapPropertiesFormat(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Properties of advanced routing map of the application gateway.
+
+    :ivar default_backend_address_pool: Default backend address pool resource of the advanced
+     routing map. Required unless defaultRedirectConfiguration is specified.
+    :vartype default_backend_address_pool: ~azure.mgmt.network.models.SubResource
+    :ivar default_backend_http_settings: Default backend http settings resource of the advanced
+     routing map. Required unless defaultRedirectConfiguration is specified.
+    :vartype default_backend_http_settings: ~azure.mgmt.network.models.SubResource
+    :ivar default_redirect_configuration: Default redirect configuration resource of the advanced
+     routing map. Cannot be combined with defaultBackendAddressPool or defaultBackendHttpSettings.
+    :vartype default_redirect_configuration: ~azure.mgmt.network.models.SubResource
+    :ivar default_rewrite_rule_set: Default rewrite rule set resource of the advanced routing map.
+    :vartype default_rewrite_rule_set: ~azure.mgmt.network.models.SubResource
+    :ivar default_auth_configs: Default authentication configuration bindings of the advanced
+     routing map. Only one authentication configuration is supported. Authentication configuration
+     names must be unique across the Application Gateway, and an Application Gateway can reference
+     at most 100 distinct authentication policies. Authentication policies can only be bound to
+     Application Gateways using the Standard_v2 or WAF_v2 SKU.
+    :vartype default_auth_configs: list[~azure.mgmt.network.models.ApplicationGatewayAuthConfig]
+    :ivar advanced_routing_rules: Advanced routing rules of the advanced routing map. Each rule
+     must specify a priority that is unique within the map. Required.
+    :vartype advanced_routing_rules:
+     list[~azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingRule]
+    :ivar provisioning_state: The provisioning state of the advanced routing map resource. Known
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    """
+
+    default_backend_address_pool: Optional["_models.SubResource"] = rest_field(
+        name="defaultBackendAddressPool", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default backend address pool resource of the advanced routing map. Required unless
+     defaultRedirectConfiguration is specified."""
+    default_backend_http_settings: Optional["_models.SubResource"] = rest_field(
+        name="defaultBackendHttpSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default backend http settings resource of the advanced routing map. Required unless
+     defaultRedirectConfiguration is specified."""
+    default_redirect_configuration: Optional["_models.SubResource"] = rest_field(
+        name="defaultRedirectConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default redirect configuration resource of the advanced routing map. Cannot be combined with
+     defaultBackendAddressPool or defaultBackendHttpSettings."""
+    default_rewrite_rule_set: Optional["_models.SubResource"] = rest_field(
+        name="defaultRewriteRuleSet", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default rewrite rule set resource of the advanced routing map."""
+    default_auth_configs: Optional[list["_models.ApplicationGatewayAuthConfig"]] = rest_field(
+        name="defaultAuthConfigs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default authentication configuration bindings of the advanced routing map. Only one
+     authentication configuration is supported. Authentication configuration names must be unique
+     across the Application Gateway, and an Application Gateway can reference at most 100 distinct
+     authentication policies. Authentication policies can only be bound to Application Gateways
+     using the Standard_v2 or WAF_v2 SKU."""
+    advanced_routing_rules: list["_models.ApplicationGatewayAdvancedRoutingRule"] = rest_field(
+        name="advancedRoutingRules", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Advanced routing rules of the advanced routing map. Each rule must specify a priority that is
+     unique within the map. Required."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the advanced routing map resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        advanced_routing_rules: list["_models.ApplicationGatewayAdvancedRoutingRule"],
+        default_backend_address_pool: Optional["_models.SubResource"] = None,
+        default_backend_http_settings: Optional["_models.SubResource"] = None,
+        default_redirect_configuration: Optional["_models.SubResource"] = None,
+        default_rewrite_rule_set: Optional["_models.SubResource"] = None,
+        default_auth_configs: Optional[list["_models.ApplicationGatewayAuthConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApplicationGatewayAdvancedRoutingPropertyValueMatcher(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Matches the value of a request property against a fixed string or regular expression.
+
+    :ivar pattern: The pattern, either fixed string or regular expression, that the request
+     property value is evaluated against. Required.
+    :vartype pattern: str
+    :ivar ignore_case: Setting this parameter to truth value with force the pattern to do a case
+     in-sensitive comparison.
+    :vartype ignore_case: bool
+    :ivar negate: Setting this value as truth will force to check the negation of the condition
+     given by the user in the pattern field.
+    :vartype negate: bool
+    """
+
+    pattern: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The pattern, either fixed string or regular expression, that the request property value is
+     evaluated against. Required."""
+    ignore_case: Optional[bool] = rest_field(
+        name="ignoreCase", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Setting this parameter to truth value with force the pattern to do a case in-sensitive
+     comparison."""
+    negate: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Setting this value as truth will force to check the negation of the condition given by the user
+     in the pattern field."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        pattern: str,
+        ignore_case: Optional[bool] = None,
+        negate: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApplicationGatewayAdvancedRoutingRule(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Advanced routing rule of an application gateway.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar properties: Properties of the application gateway advanced routing rule.
+    :vartype properties:
+     ~azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingRulePropertiesFormat
+    :ivar name: Name of the advanced routing rule that is unique within an advanced routing map.
+    :vartype name: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar type: Type of the resource.
+    :vartype type: str
+    """
+
+    properties: Optional["_models.ApplicationGatewayAdvancedRoutingRulePropertiesFormat"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the application gateway advanced routing rule."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the advanced routing rule that is unique within an advanced routing map."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """A unique read-only string that changes whenever the resource is updated."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """Type of the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        properties: Optional["_models.ApplicationGatewayAdvancedRoutingRulePropertiesFormat"] = None,
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApplicationGatewayAdvancedRoutingRulePropertiesFormat(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Properties of advanced routing rule of the application gateway.
+
+    :ivar priority: Priority of the advanced routing rule. Must be unique within the containing
+     advanced routing map. Rules are evaluated in ascending priority order. Required.
+    :vartype priority: int
+    :ivar advanced_routing_condition_set: Advanced routing condition set resource evaluated by this
+     rule.
+    :vartype advanced_routing_condition_set: ~azure.mgmt.network.models.SubResource
+    :ivar backend_address_pool: Backend address pool resource of the advanced routing rule.
+     Required unless redirectConfiguration is specified.
+    :vartype backend_address_pool: ~azure.mgmt.network.models.SubResource
+    :ivar backend_http_settings: Backend http settings resource of the advanced routing rule.
+     Required unless redirectConfiguration is specified.
+    :vartype backend_http_settings: ~azure.mgmt.network.models.SubResource
+    :ivar redirect_configuration: Redirect configuration resource of the advanced routing rule.
+     Cannot be combined with backendAddressPool or backendHttpSettings.
+    :vartype redirect_configuration: ~azure.mgmt.network.models.SubResource
+    :ivar rewrite_rule_set: Rewrite rule set resource of the advanced routing rule.
+    :vartype rewrite_rule_set: ~azure.mgmt.network.models.SubResource
+    :ivar auth_configs: Authentication configuration bindings of the advanced routing rule. Only
+     one authentication configuration is supported. Authentication configuration names must be
+     unique across the Application Gateway, and an Application Gateway can reference at most 100
+     distinct authentication policies. Authentication policies can only be bound to Application
+     Gateways using the Standard_v2 or WAF_v2 SKU.
+    :vartype auth_configs: list[~azure.mgmt.network.models.ApplicationGatewayAuthConfig]
+    :ivar provisioning_state: The provisioning state of the advanced routing rule resource. Known
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    """
+
+    priority: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Priority of the advanced routing rule. Must be unique within the containing advanced routing
+     map. Rules are evaluated in ascending priority order. Required."""
+    advanced_routing_condition_set: Optional["_models.SubResource"] = rest_field(
+        name="advancedRoutingConditionSet", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Advanced routing condition set resource evaluated by this rule."""
+    backend_address_pool: Optional["_models.SubResource"] = rest_field(
+        name="backendAddressPool", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Backend address pool resource of the advanced routing rule. Required unless
+     redirectConfiguration is specified."""
+    backend_http_settings: Optional["_models.SubResource"] = rest_field(
+        name="backendHttpSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Backend http settings resource of the advanced routing rule. Required unless
+     redirectConfiguration is specified."""
+    redirect_configuration: Optional["_models.SubResource"] = rest_field(
+        name="redirectConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Redirect configuration resource of the advanced routing rule. Cannot be combined with
+     backendAddressPool or backendHttpSettings."""
+    rewrite_rule_set: Optional["_models.SubResource"] = rest_field(
+        name="rewriteRuleSet", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Rewrite rule set resource of the advanced routing rule."""
+    auth_configs: Optional[list["_models.ApplicationGatewayAuthConfig"]] = rest_field(
+        name="authConfigs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Authentication configuration bindings of the advanced routing rule. Only one authentication
+     configuration is supported. Authentication configuration names must be unique across the
+     Application Gateway, and an Application Gateway can reference at most 100 distinct
+     authentication policies. Authentication policies can only be bound to Application Gateways
+     using the Standard_v2 or WAF_v2 SKU."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the advanced routing rule resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        priority: int,
+        advanced_routing_condition_set: Optional["_models.SubResource"] = None,
+        backend_address_pool: Optional["_models.SubResource"] = None,
+        backend_http_settings: Optional["_models.SubResource"] = None,
+        redirect_configuration: Optional["_models.SubResource"] = None,
+        rewrite_rule_set: Optional["_models.SubResource"] = None,
+        auth_configs: Optional[list["_models.ApplicationGatewayAuthConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApplicationGatewayAuthConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An authentication configuration binding for an Application Gateway routing rule or routing map.
+
+    :ivar name: The name of the auth configuration. Required.
+    :vartype name: str
+    :ivar authentication_policy: Reference to the authentication policy
+     (Microsoft.Network/authenticationPolicies) resource. Required.
+    :vartype authentication_policy: ~azure.mgmt.network.models.SubResource
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the auth configuration. Required."""
+    authentication_policy: "_models.SubResource" = rest_field(
+        name="authenticationPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reference to the authentication policy (Microsoft.Network/authenticationPolicies) resource.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        authentication_policy: "_models.SubResource",
     ) -> None: ...
 
     @overload
@@ -2845,6 +3385,9 @@ class ApplicationGatewayFirewallManifestRuleSet(
     :ivar status: The rule set status. Known values are: "Preview", "GA", "Supported", and
      "Deprecated".
     :vartype status: str or ~azure.mgmt.network.models.ApplicationGatewayRuleSetStatusOptions
+    :ivar display_name: Human-readable display name for the managed rule set version (e.g.,
+     'Default Ruleset 2.2 (Latest, Recommended)').
+    :vartype display_name: str
     :ivar tiers: Tier of an application gateway that support the rule set.
     :vartype tiers: list[str or ~azure.mgmt.network.models.ApplicationGatewayTierTypes]
     :ivar rule_groups: The rule groups of the web application firewall rule set. Required.
@@ -2861,6 +3404,11 @@ class ApplicationGatewayFirewallManifestRuleSet(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The rule set status. Known values are: \"Preview\", \"GA\", \"Supported\", and \"Deprecated\"."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Human-readable display name for the managed rule set version (e.g., 'Default Ruleset 2.2
+     (Latest, Recommended)')."""
     tiers: Optional[list[Union[str, "_models.ApplicationGatewayTierTypes"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2878,6 +3426,7 @@ class ApplicationGatewayFirewallManifestRuleSet(
         rule_set_version: str,
         rule_groups: list["_models.ApplicationGatewayFirewallRuleGroup"],
         status: Optional[Union[str, "_models.ApplicationGatewayRuleSetStatusOptions"]] = None,
+        display_name: Optional[str] = None,
         tiers: Optional[list[Union[str, "_models.ApplicationGatewayTierTypes"]]] = None,
     ) -> None: ...
 
@@ -2910,6 +3459,10 @@ class ApplicationGatewayFirewallRule(_Model):  # pylint: disable=docstring-keywo
      Known values are: "Low", "Medium", and "High".
     :vartype sensitivity: str or
      ~azure.mgmt.network.models.ApplicationGatewayWafRuleSensitivityTypes
+    :ivar paranoia_level: OWASP CRS paranoia level of a managed rule. Applicable only for DRS and
+     OWASP rules. Known values are: "PL1", "PL2", "PL3", and "PL4".
+    :vartype paranoia_level: str or
+     ~azure.mgmt.network.models.ApplicationGatewayWafRuleParanoiaLevel
     :ivar description: The description of the web application firewall rule.
     :vartype description: str
     """
@@ -2935,6 +3488,11 @@ class ApplicationGatewayFirewallRule(_Model):  # pylint: disable=docstring-keywo
     )
     """The string representation of the web application firewall rule sensitivity. Known values are:
      \"Low\", \"Medium\", and \"High\"."""
+    paranoia_level: Optional[Union[str, "_models.ApplicationGatewayWafRuleParanoiaLevel"]] = rest_field(
+        name="paranoiaLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OWASP CRS paranoia level of a managed rule. Applicable only for DRS and OWASP rules. Known
+     values are: \"PL1\", \"PL2\", \"PL3\", and \"PL4\"."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the web application firewall rule."""
 
@@ -2947,6 +3505,7 @@ class ApplicationGatewayFirewallRule(_Model):  # pylint: disable=docstring-keywo
         state: Optional[Union[str, "_models.ApplicationGatewayWafRuleStateTypes"]] = None,
         action: Optional[Union[str, "_models.ApplicationGatewayWafRuleActionTypes"]] = None,
         sensitivity: Optional[Union[str, "_models.ApplicationGatewayWafRuleSensitivityTypes"]] = None,
+        paranoia_level: Optional[Union[str, "_models.ApplicationGatewayWafRuleParanoiaLevel"]] = None,
         description: Optional[str] = None,
     ) -> None: ...
 
@@ -3024,7 +3583,14 @@ class ApplicationGatewayFirewallRuleSet(Resource):  # pylint: disable=docstring-
     )
     """Properties of the application gateway firewall rule set."""
 
-    __flattened_items = ["provisioning_state", "rule_set_type", "rule_set_version", "rule_groups", "tiers"]
+    __flattened_items = [
+        "provisioning_state",
+        "rule_set_type",
+        "rule_set_version",
+        "display_name",
+        "rule_groups",
+        "tiers",
+    ]
 
     @overload
     def __init__(
@@ -3077,6 +3643,9 @@ class ApplicationGatewayFirewallRuleSetPropertiesFormat(
     :vartype rule_set_type: str
     :ivar rule_set_version: The version of the web application firewall rule set type. Required.
     :vartype rule_set_version: str
+    :ivar display_name: Human-readable display name for the managed rule set version (e.g.,
+     'Default Ruleset 2.2 (Latest, Recommended)').
+    :vartype display_name: str
     :ivar rule_groups: The rule groups of the web application firewall rule set. Required.
     :vartype rule_groups: list[~azure.mgmt.network.models.ApplicationGatewayFirewallRuleGroup]
     :ivar tiers: Tier of an application gateway that support the rule set.
@@ -3094,6 +3663,11 @@ class ApplicationGatewayFirewallRuleSetPropertiesFormat(
         name="ruleSetVersion", visibility=["read", "create", "update", "delete", "query"]
     )
     """The version of the web application firewall rule set type. Required."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Human-readable display name for the managed rule set version (e.g., 'Default Ruleset 2.2
+     (Latest, Recommended)')."""
     rule_groups: list["_models.ApplicationGatewayFirewallRuleGroup"] = rest_field(
         name="ruleGroups", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3110,6 +3684,7 @@ class ApplicationGatewayFirewallRuleSetPropertiesFormat(
         rule_set_type: str,
         rule_set_version: str,
         rule_groups: list["_models.ApplicationGatewayFirewallRuleGroup"],
+        display_name: Optional[str] = None,
         tiers: Optional[list[Union[str, "_models.ApplicationGatewayTierTypes"]]] = None,
     ) -> None: ...
 
@@ -5279,6 +5854,11 @@ class ApplicationGatewayPropertiesFormat(_Model):  # pylint: disable=docstring-k
      `Application Gateway limits
      <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
     :vartype url_path_maps: list[~azure.mgmt.network.models.ApplicationGatewayUrlPathMap]
+    :ivar advanced_routing_maps: Advanced routing maps of the application gateway resource. For
+     default limits, see `Application Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
+    :vartype advanced_routing_maps:
+     list[~azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingMap]
     :ivar request_routing_rules: Request routing rules of the application gateway resource.
     :vartype request_routing_rules:
      list[~azure.mgmt.network.models.ApplicationGatewayRequestRoutingRule]
@@ -5286,6 +5866,11 @@ class ApplicationGatewayPropertiesFormat(_Model):  # pylint: disable=docstring-k
     :vartype routing_rules: list[~azure.mgmt.network.models.ApplicationGatewayRoutingRule]
     :ivar rewrite_rule_sets: Rewrite rules for the application gateway resource.
     :vartype rewrite_rule_sets: list[~azure.mgmt.network.models.ApplicationGatewayRewriteRuleSet]
+    :ivar advanced_routing_condition_sets: Advanced routing condition sets of the application
+     gateway resource. For default limits, see `Application Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
+    :vartype advanced_routing_condition_sets:
+     list[~azure.mgmt.network.models.ApplicationGatewayAdvancedRoutingConditionSet]
     :ivar redirect_configurations: Redirect configurations of the application gateway resource. For
      default limits, see `Application Gateway limits
      <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_.
@@ -5303,6 +5888,9 @@ class ApplicationGatewayPropertiesFormat(_Model):  # pylint: disable=docstring-k
     :ivar autoscale_configuration: Autoscale Configuration.
     :vartype autoscale_configuration:
      ~azure.mgmt.network.models.ApplicationGatewayAutoscaleConfiguration
+    :ivar reserved_capacity: The reserved capacity of the application gateway resource. Applicable
+     to the Basic_v2 and Basic_WAF_v2 SKU tiers.
+    :vartype reserved_capacity: int
     :ivar private_link_configurations: PrivateLink configurations on application gateway.
     :vartype private_link_configurations:
      list[~azure.mgmt.network.models.ApplicationGatewayPrivateLinkConfiguration]
@@ -5441,6 +6029,12 @@ class ApplicationGatewayPropertiesFormat(_Model):  # pylint: disable=docstring-k
     """URL path map of the application gateway resource. For default limits, see `Application Gateway
      limits
      <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_."""
+    advanced_routing_maps: Optional[list["_models.ApplicationGatewayAdvancedRoutingMap"]] = rest_field(
+        name="advancedRoutingMaps", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Advanced routing maps of the application gateway resource. For default limits, see `Application
+     Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_."""
     request_routing_rules: Optional[list["_models.ApplicationGatewayRequestRoutingRule"]] = rest_field(
         name="requestRoutingRules", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5453,6 +6047,12 @@ class ApplicationGatewayPropertiesFormat(_Model):  # pylint: disable=docstring-k
         name="rewriteRuleSets", visibility=["read", "create", "update", "delete", "query"]
     )
     """Rewrite rules for the application gateway resource."""
+    advanced_routing_condition_sets: Optional[list["_models.ApplicationGatewayAdvancedRoutingConditionSet"]] = (
+        rest_field(name="advancedRoutingConditionSets", visibility=["read", "create", "update", "delete", "query"])
+    )
+    """Advanced routing condition sets of the application gateway resource. For default limits, see
+     `Application Gateway limits
+     <https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits>`_."""
     redirect_configurations: Optional[list["_models.ApplicationGatewayRedirectConfiguration"]] = rest_field(
         name="redirectConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5481,6 +6081,11 @@ class ApplicationGatewayPropertiesFormat(_Model):  # pylint: disable=docstring-k
         name="autoscaleConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """Autoscale Configuration."""
+    reserved_capacity: Optional[int] = rest_field(
+        name="reservedCapacity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reserved capacity of the application gateway resource. Applicable to the Basic_v2 and
+     Basic_WAF_v2 SKU tiers."""
     private_link_configurations: Optional[list["_models.ApplicationGatewayPrivateLinkConfiguration"]] = rest_field(
         name="privateLinkConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5547,9 +6152,11 @@ class ApplicationGatewayPropertiesFormat(_Model):  # pylint: disable=docstring-k
         listeners: Optional[list["_models.ApplicationGatewayListener"]] = None,
         ssl_profiles: Optional[list["_models.ApplicationGatewaySslProfile"]] = None,
         url_path_maps: Optional[list["_models.ApplicationGatewayUrlPathMap"]] = None,
+        advanced_routing_maps: Optional[list["_models.ApplicationGatewayAdvancedRoutingMap"]] = None,
         request_routing_rules: Optional[list["_models.ApplicationGatewayRequestRoutingRule"]] = None,
         routing_rules: Optional[list["_models.ApplicationGatewayRoutingRule"]] = None,
         rewrite_rule_sets: Optional[list["_models.ApplicationGatewayRewriteRuleSet"]] = None,
+        advanced_routing_condition_sets: Optional[list["_models.ApplicationGatewayAdvancedRoutingConditionSet"]] = None,
         redirect_configurations: Optional[list["_models.ApplicationGatewayRedirectConfiguration"]] = None,
         web_application_firewall_configuration: Optional[
             "_models.ApplicationGatewayWebApplicationFirewallConfiguration"
@@ -5558,6 +6165,7 @@ class ApplicationGatewayPropertiesFormat(_Model):  # pylint: disable=docstring-k
         enable_http2: Optional[bool] = None,
         enable_fips: Optional[bool] = None,
         autoscale_configuration: Optional["_models.ApplicationGatewayAutoscaleConfiguration"] = None,
+        reserved_capacity: Optional[int] = None,
         private_link_configurations: Optional[list["_models.ApplicationGatewayPrivateLinkConfiguration"]] = None,
         custom_error_configurations: Optional[list["_models.ApplicationGatewayCustomError"]] = None,
         force_firewall_policy_association: Optional[bool] = None,
@@ -5770,10 +6378,12 @@ class ApplicationGatewayRequestRoutingRule(SubResource):  # pylint: disable=docs
         "backend_http_settings",
         "http_listener",
         "url_path_map",
+        "advanced_routing_map",
         "rewrite_rule_set",
         "redirect_configuration",
         "load_distribution_policy",
         "entra_jwt_validation_config",
+        "auth_configs",
         "provisioning_state",
     ]
 
@@ -5820,7 +6430,8 @@ class ApplicationGatewayRequestRoutingRulePropertiesFormat(
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of request routing rule of the application gateway.
 
-    :ivar rule_type: Rule type. Known values are: "Basic" and "PathBasedRouting".
+    :ivar rule_type: Rule type. Known values are: "Basic", "PathBasedRouting", and
+     "AdvancedRouting".
     :vartype rule_type: str or ~azure.mgmt.network.models.ApplicationGatewayRequestRoutingRuleType
     :ivar priority: Priority of the request routing rule.
     :vartype priority: int
@@ -5832,6 +6443,8 @@ class ApplicationGatewayRequestRoutingRulePropertiesFormat(
     :vartype http_listener: ~azure.mgmt.network.models.SubResource
     :ivar url_path_map: URL path map resource of the application gateway.
     :vartype url_path_map: ~azure.mgmt.network.models.SubResource
+    :ivar advanced_routing_map: Advanced routing map resource of the application gateway.
+    :vartype advanced_routing_map: ~azure.mgmt.network.models.SubResource
     :ivar rewrite_rule_set: Rewrite Rule Set resource in Basic rule of the application gateway.
     :vartype rewrite_rule_set: ~azure.mgmt.network.models.SubResource
     :ivar redirect_configuration: Redirect configuration resource of the application gateway.
@@ -5841,6 +6454,12 @@ class ApplicationGatewayRequestRoutingRulePropertiesFormat(
     :ivar entra_jwt_validation_config: Entra JWT validation configuration resource of the
      application gateway.
     :vartype entra_jwt_validation_config: ~azure.mgmt.network.models.SubResource
+    :ivar auth_configs: Authentication configuration bindings of the request routing rule. Only one
+     authentication configuration is supported. Authentication configuration names must be unique
+     across the Application Gateway, and an Application Gateway can reference at most 100 distinct
+     authentication policies. Authentication policies can only be bound to Application Gateways
+     using the Standard_v2 or WAF_v2 SKU.
+    :vartype auth_configs: list[~azure.mgmt.network.models.ApplicationGatewayAuthConfig]
     :ivar provisioning_state: The provisioning state of the request routing rule resource. Known
      values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
@@ -5849,7 +6468,7 @@ class ApplicationGatewayRequestRoutingRulePropertiesFormat(
     rule_type: Optional[Union[str, "_models.ApplicationGatewayRequestRoutingRuleType"]] = rest_field(
         name="ruleType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Rule type. Known values are: \"Basic\" and \"PathBasedRouting\"."""
+    """Rule type. Known values are: \"Basic\", \"PathBasedRouting\", and \"AdvancedRouting\"."""
     priority: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Priority of the request routing rule."""
     backend_address_pool: Optional["_models.SubResource"] = rest_field(
@@ -5868,6 +6487,10 @@ class ApplicationGatewayRequestRoutingRulePropertiesFormat(
         name="urlPathMap", visibility=["read", "create", "update", "delete", "query"]
     )
     """URL path map resource of the application gateway."""
+    advanced_routing_map: Optional["_models.SubResource"] = rest_field(
+        name="advancedRoutingMap", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Advanced routing map resource of the application gateway."""
     rewrite_rule_set: Optional["_models.SubResource"] = rest_field(
         name="rewriteRuleSet", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5884,6 +6507,14 @@ class ApplicationGatewayRequestRoutingRulePropertiesFormat(
         name="entraJWTValidationConfig", visibility=["read", "create", "update", "delete", "query"]
     )
     """Entra JWT validation configuration resource of the application gateway."""
+    auth_configs: Optional[list["_models.ApplicationGatewayAuthConfig"]] = rest_field(
+        name="authConfigs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Authentication configuration bindings of the request routing rule. Only one authentication
+     configuration is supported. Authentication configuration names must be unique across the
+     Application Gateway, and an Application Gateway can reference at most 100 distinct
+     authentication policies. Authentication policies can only be bound to Application Gateways
+     using the Standard_v2 or WAF_v2 SKU."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -5900,10 +6531,12 @@ class ApplicationGatewayRequestRoutingRulePropertiesFormat(
         backend_http_settings: Optional["_models.SubResource"] = None,
         http_listener: Optional["_models.SubResource"] = None,
         url_path_map: Optional["_models.SubResource"] = None,
+        advanced_routing_map: Optional["_models.SubResource"] = None,
         rewrite_rule_set: Optional["_models.SubResource"] = None,
         redirect_configuration: Optional["_models.SubResource"] = None,
         load_distribution_policy: Optional["_models.SubResource"] = None,
         entra_jwt_validation_config: Optional["_models.SubResource"] = None,
+        auth_configs: Optional[list["_models.ApplicationGatewayAuthConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -6246,7 +6879,8 @@ class ApplicationGatewayRoutingRulePropertiesFormat(
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of routing rule of the application gateway.
 
-    :ivar rule_type: Rule type. Known values are: "Basic" and "PathBasedRouting".
+    :ivar rule_type: Rule type. Known values are: "Basic", "PathBasedRouting", and
+     "AdvancedRouting".
     :vartype rule_type: str or ~azure.mgmt.network.models.ApplicationGatewayRequestRoutingRuleType
     :ivar priority: Priority of the routing rule. Required.
     :vartype priority: int
@@ -6264,7 +6898,7 @@ class ApplicationGatewayRoutingRulePropertiesFormat(
     rule_type: Optional[Union[str, "_models.ApplicationGatewayRequestRoutingRuleType"]] = rest_field(
         name="ruleType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Rule type. Known values are: \"Basic\" and \"PathBasedRouting\"."""
+    """Rule type. Known values are: \"Basic\", \"PathBasedRouting\", and \"AdvancedRouting\"."""
     priority: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Priority of the routing rule. Required."""
     backend_address_pool: Optional["_models.SubResource"] = rest_field(
@@ -6309,11 +6943,11 @@ class ApplicationGatewaySku(_Model):  # pylint: disable=docstring-keyword-should
     """SKU of an application gateway.
 
     :ivar name: Name of an application gateway SKU. Known values are: "Standard_Small",
-     "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large", "Standard_v2", "WAF_v2", and
-     "Basic".
+     "Standard_Medium", "Standard_Large", "WAF_Medium", "WAF_Large", "Standard_v2", "WAF_v2",
+     "Basic", "Basic_v2", and "Basic_WAF_v2".
     :vartype name: str or ~azure.mgmt.network.models.ApplicationGatewaySkuName
     :ivar tier: Tier of an application gateway. Known values are: "Standard", "WAF", "Standard_v2",
-     "WAF_v2", and "Basic".
+     "WAF_v2", "Basic", "Basic_v2", and "Basic_WAF_v2".
     :vartype tier: str or ~azure.mgmt.network.models.ApplicationGatewayTier
     :ivar capacity: Capacity (instance count) of an application gateway.
     :vartype capacity: int
@@ -6326,12 +6960,13 @@ class ApplicationGatewaySku(_Model):  # pylint: disable=docstring-keyword-should
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Name of an application gateway SKU. Known values are: \"Standard_Small\", \"Standard_Medium\",
-     \"Standard_Large\", \"WAF_Medium\", \"WAF_Large\", \"Standard_v2\", \"WAF_v2\", and \"Basic\"."""
+     \"Standard_Large\", \"WAF_Medium\", \"WAF_Large\", \"Standard_v2\", \"WAF_v2\", \"Basic\",
+     \"Basic_v2\", and \"Basic_WAF_v2\"."""
     tier: Optional[Union[str, "_models.ApplicationGatewayTier"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Tier of an application gateway. Known values are: \"Standard\", \"WAF\", \"Standard_v2\",
-     \"WAF_v2\", and \"Basic\"."""
+     \"WAF_v2\", \"Basic\", \"Basic_v2\", and \"Basic_WAF_v2\"."""
     capacity: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Capacity (instance count) of an application gateway."""
     family: Optional[Union[str, "_models.ApplicationGatewaySkuFamily"]] = rest_field(
@@ -7236,7 +7871,7 @@ class ApplicationGatewayWafDynamicManifestPropertiesResult(
     )
     """The available rulesets."""
 
-    __flattened_items = ["rule_set_type", "rule_set_version"]
+    __flattened_items = ["rule_set_type", "rule_set_version", "display_name"]
 
     @overload
     def __init__(
@@ -7690,6 +8325,357 @@ class ApplicationSecurityGroupPropertiesFormat(_Model):
     )
     """The provisioning state of the application security group resource. Known values are:
      \"Failed\", \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+
+
+class ApprovalReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Reference to an existing approved private endpoint used to inherit its connection approval
+    state.
+
+    :ivar private_endpoint_id: The ARM resource id of an existing approved private endpoint whose
+     approval state is inherited by this connection.
+    :vartype private_endpoint_id: str
+    """
+
+    private_endpoint_id: Optional[str] = rest_field(
+        name="privateEndpointId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARM resource id of an existing approved private endpoint whose approval state is inherited
+     by this connection."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        private_endpoint_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArmResource(_Model):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class ArmProxyResource(ArmResource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    """
+
+
+class AuthenticationPolicy(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Authentication policy resource for identity integration.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Properties of the authentication policy.
+    :vartype properties: ~azure.mgmt.network.models.AuthenticationPolicyPropertiesFormat
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar identity: The user-assigned identity used by a user sign-in policy to access its Key
+     Vault client secret.
+    :vartype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
+    :ivar system_data: The system metadata related to this resource.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    """
+
+    properties: Optional["_models.AuthenticationPolicyPropertiesFormat"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the authentication policy."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """A unique read-only string that changes whenever the resource is updated."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The user-assigned identity used by a user sign-in policy to access its Key Vault client secret."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """The system metadata related to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.AuthenticationPolicyPropertiesFormat"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AuthenticationPolicyPropertiesFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of the authentication policy.
+
+    :ivar user_trust_provider_type: The type of the user trust provider. Only Microsoft Entra is
+     supported, using the serialized value ``entra``. Required. "entra"
+    :vartype user_trust_provider_type: str or ~azure.mgmt.network.models.UserTrustProviderType
+    :ivar on_unauthenticated_request: The action to take when a request is unauthenticated. When
+     omitted, user sign-in policies default to ``authenticate`` and JWT validation policies default
+     to ``deny``. Known values are: "allow", "authenticate", and "deny".
+    :vartype on_unauthenticated_request: str or ~azure.mgmt.network.models.OnUnauthenticatedRequest
+    :ivar authentication_properties: The authentication provider configuration for the policy.
+     Required.
+    :vartype authentication_properties: ~azure.mgmt.network.models.AuthenticationProviderProperties
+    :ivar associated_resources: A collection of resource IDs that reference this authentication
+     policy.
+    :vartype associated_resources: list[str]
+    :ivar provisioning_state: The provisioning state of the authentication policy resource. Known
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar resource_guid: The resource GUID property of the authentication policy resource.
+    :vartype resource_guid: str
+    """
+
+    user_trust_provider_type: Union[str, "_models.UserTrustProviderType"] = rest_field(
+        name="userTrustProviderType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the user trust provider. Only Microsoft Entra is supported, using the serialized
+     value ``entra``. Required. \"entra\""""
+    on_unauthenticated_request: Optional[Union[str, "_models.OnUnauthenticatedRequest"]] = rest_field(
+        name="onUnauthenticatedRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The action to take when a request is unauthenticated. When omitted, user sign-in policies
+     default to ``authenticate`` and JWT validation policies default to ``deny``. Known values are:
+     \"allow\", \"authenticate\", and \"deny\"."""
+    authentication_properties: "_models.AuthenticationProviderProperties" = rest_field(
+        name="authenticationProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authentication provider configuration for the policy. Required."""
+    associated_resources: Optional[list[str]] = rest_field(name="associatedResources", visibility=["read"])
+    """A collection of resource IDs that reference this authentication policy."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the authentication policy resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+    resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
+    """The resource GUID property of the authentication policy resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        user_trust_provider_type: Union[str, "_models.UserTrustProviderType"],
+        authentication_properties: "_models.AuthenticationProviderProperties",
+        on_unauthenticated_request: Optional[Union[str, "_models.OnUnauthenticatedRequest"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AuthenticationPolicyUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters supplied to update an authentication policy.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The user-assigned identity used by a user sign-in policy to access its Key
+     Vault client secret.
+    :vartype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The user-assigned identity used by a user sign-in policy to access its Key Vault client secret."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AuthenticationProviderProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for authentication provider configuration. A policy must configure either JWT
+    validation fields or user sign-in fields; the two configurations are mutually exclusive and
+    cannot be combined.
+
+    :ivar issuer: The absolute HTTPS URL of the Secure Token Service. Include a trailing slash at
+     the end of the value. Example: `https://login.microsoftonline.com/{Microsoft
+     <https://login.microsoftonline.com/{Microsoft>`_ Entra Tenant ID}/. Required.
+    :vartype issuer: str
+    :ivar jwks_uri: The JSON Web Key Set (JWKS) URI used to retrieve the public keys for JWT
+     validation. Example: `https://login.microsoftonline.com/{Microsoft
+     <https://login.microsoftonline.com/{Microsoft>`_ Entra Tenant ID}/discovery/v2.0/keys.
+    :vartype jwks_uri: str
+    :ivar audience: The intended audience for the JWT. Only a single audience value is supported in
+     this API version. Example: `https://audience.com/{application-id}
+     <https://audience.com/{application-id}>`_.
+    :vartype audience: str
+    :ivar client_id: The Application (client) ID for the related application registered in
+     Microsoft Entra ID, formatted as a GUID. Required.
+    :vartype client_id: str
+    :ivar client_secret: The absolute HTTPS Key Vault secret URL identifying the client secret used
+     for authentication. This property is required for user sign-in policies. It holds only the Key
+     Vault reference; the secret value itself is never accepted or returned by this API and is read
+     from Key Vault at runtime using the resource's user-assigned identity. The secret value stored
+     in Key Vault can contain up to 4096 characters. Example:
+     `https://myvault.vault.azure.net/secrets/mysecret
+     <https://myvault.vault.azure.net/secrets/mysecret>`_.
+    :vartype client_secret: str
+    :ivar scope: The scopes used by an application during authentication to authorize access to a
+     user's details. A maximum of 10 scopes is supported, each scope can contain up to 128
+     characters, and all scopes can contain up to 256 characters combined.
+    :vartype scope: list[str]
+    :ivar session_timeout: The timeout of the session cookie used for user authentication. The
+     service accepts and returns this value as a string containing a base-10 unsigned integer number
+     of seconds with no sign, decimal point, unit suffix, or whitespace (for example ``86400``). The
+     supported range is 1 to 604800 seconds, and the default is 86400 seconds. Applicable to the
+     Application Gateway post-OIDC workflow.
+    :vartype session_timeout: str
+    :ivar session_cookie_name: The name of the session cookie used for user authentication.
+     Applicable to the Application Gateway post-OIDC workflow.
+    :vartype session_cookie_name: str
+    """
+
+    issuer: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The absolute HTTPS URL of the Secure Token Service. Include a trailing slash at the end of the
+     value. Example: `https://login.microsoftonline.com/{Microsoft
+     <https://login.microsoftonline.com/{Microsoft>`_ Entra Tenant ID}/. Required."""
+    jwks_uri: Optional[str] = rest_field(name="jwksUri", visibility=["read", "create", "update", "delete", "query"])
+    """The JSON Web Key Set (JWKS) URI used to retrieve the public keys for JWT validation. Example:
+     `https://login.microsoftonline.com/{Microsoft <https://login.microsoftonline.com/{Microsoft>`_
+     Entra Tenant ID}/discovery/v2.0/keys."""
+    audience: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The intended audience for the JWT. Only a single audience value is supported in this API
+     version. Example: `https://audience.com/{application-id}
+     <https://audience.com/{application-id}>`_."""
+    client_id: str = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
+    """The Application (client) ID for the related application registered in Microsoft Entra ID,
+     formatted as a GUID. Required."""
+    client_secret: Optional[str] = rest_field(
+        name="clientSecret", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The absolute HTTPS Key Vault secret URL identifying the client secret used for authentication.
+     This property is required for user sign-in policies. It holds only the Key Vault reference; the
+     secret value itself is never accepted or returned by this API and is read from Key Vault at
+     runtime using the resource's user-assigned identity. The secret value stored in Key Vault can
+     contain up to 4096 characters. Example: `https://myvault.vault.azure.net/secrets/mysecret
+     <https://myvault.vault.azure.net/secrets/mysecret>`_."""
+    scope: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The scopes used by an application during authentication to authorize access to a user's
+     details. A maximum of 10 scopes is supported, each scope can contain up to 128 characters, and
+     all scopes can contain up to 256 characters combined."""
+    session_timeout: Optional[str] = rest_field(
+        name="sessionTimeout", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The timeout of the session cookie used for user authentication. The service accepts and returns
+     this value as a string containing a base-10 unsigned integer number of seconds with no sign,
+     decimal point, unit suffix, or whitespace (for example ``86400``). The supported range is 1 to
+     604800 seconds, and the default is 86400 seconds. Applicable to the Application Gateway
+     post-OIDC workflow."""
+    session_cookie_name: Optional[str] = rest_field(
+        name="sessionCookieName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the session cookie used for user authentication. Applicable to the Application
+     Gateway post-OIDC workflow."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        issuer: str,
+        client_id: str,
+        jwks_uri: Optional[str] = None,
+        audience: Optional[str] = None,
+        client_secret: Optional[str] = None,
+        scope: Optional[list[str]] = None,
+        session_timeout: Optional[str] = None,
+        session_cookie_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class AuthorizationPropertiesFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -8202,6 +9188,7 @@ class AzureFirewall(Resource):  # pylint: disable=docstring-keyword-should-match
         "additional_properties",
         "autoscale_configuration",
         "afc_configuration",
+        "ai_security_add_on",
     ]
 
     @overload
@@ -9323,6 +10310,9 @@ class AzureFirewallPropertiesFormat(_Model):  # pylint: disable=docstring-keywor
      ~azure.mgmt.network.models.AzureFirewallAutoscaleConfiguration
     :ivar afc_configuration: AFC configuration for the Azure Firewall.
     :vartype afc_configuration: ~azure.mgmt.network.models.AfcConfiguration
+    :ivar ai_security_add_on: Indicates whether the AI security add-on is enabled for the Azure
+     Firewall.
+    :vartype ai_security_add_on: bool
     """
 
     application_rule_collections: Optional[list["_models.AzureFirewallApplicationRuleCollection"]] = rest_field(
@@ -9380,6 +10370,10 @@ class AzureFirewallPropertiesFormat(_Model):  # pylint: disable=docstring-keywor
     """Properties to provide a custom autoscale configuration to this azure firewall."""
     afc_configuration: Optional["_models.AfcConfiguration"] = rest_field(name="afcConfiguration", visibility=["read"])
     """AFC configuration for the Azure Firewall."""
+    ai_security_add_on: Optional[bool] = rest_field(
+        name="aiSecurityAddOn", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether the AI security add-on is enabled for the Azure Firewall."""
 
     @overload
     def __init__(
@@ -9397,6 +10391,7 @@ class AzureFirewallPropertiesFormat(_Model):  # pylint: disable=docstring-keywor
         sku: Optional["_models.AzureFirewallSku"] = None,
         additional_properties: Optional[dict[str, str]] = None,
         autoscale_configuration: Optional["_models.AzureFirewallAutoscaleConfiguration"] = None,
+        ai_security_add_on: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -10074,6 +11069,8 @@ class BastionHost(Resource):  # pylint: disable=docstring-keyword-should-match-k
     :vartype etag: str
     :ivar sku: The sku of this Bastion Host.
     :vartype sku: ~azure.mgmt.network.models.Sku
+    :ivar identity: The identity assigned to the Bastion Host resource.
+    :vartype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
     """
 
     properties: Optional["_models.BastionHostPropertiesFormat"] = rest_field(
@@ -10086,6 +11083,10 @@ class BastionHost(Resource):  # pylint: disable=docstring-keyword-should-match-k
     """A unique read-only string that changes whenever the resource is updated."""
     sku: Optional["_models.Sku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The sku of this Bastion Host."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identity assigned to the Bastion Host resource."""
 
     __flattened_items = [
         "ip_configurations",
@@ -10102,6 +11103,7 @@ class BastionHost(Resource):  # pylint: disable=docstring-keyword-should-match-k
         "enable_kerberos",
         "enable_session_recording",
         "enable_private_only_bastion",
+        "session_recording_configuration",
     ]
 
     @overload
@@ -10114,6 +11116,7 @@ class BastionHost(Resource):  # pylint: disable=docstring-keyword-should-match-k
         properties: Optional["_models.BastionHostPropertiesFormat"] = None,
         zones: Optional[list[str]] = None,
         sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -10301,6 +11304,10 @@ class BastionHostPropertiesFormat(_Model):  # pylint: disable=docstring-keyword-
     :ivar enable_private_only_bastion: Enable/Disable Private Only feature of the Bastion Host
      resource.
     :vartype enable_private_only_bastion: bool
+    :ivar session_recording_configuration: The storage account and identity to use for session
+     recording.
+    :vartype session_recording_configuration:
+     ~azure.mgmt.network.models.BastionSessionRecordingConfiguration
     """
 
     ip_configurations: Optional[list["_models.BastionHostIPConfiguration"]] = rest_field(
@@ -10357,6 +11364,10 @@ class BastionHostPropertiesFormat(_Model):  # pylint: disable=docstring-keyword-
         name="enablePrivateOnlyBastion", visibility=["read", "create", "update", "delete", "query"]
     )
     """Enable/Disable Private Only feature of the Bastion Host resource."""
+    session_recording_configuration: Optional["_models.BastionSessionRecordingConfiguration"] = rest_field(
+        name="sessionRecordingConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The storage account and identity to use for session recording."""
 
     @overload
     def __init__(
@@ -10375,6 +11386,7 @@ class BastionHostPropertiesFormat(_Model):  # pylint: disable=docstring-keyword-
         enable_kerberos: Optional[bool] = None,
         enable_session_recording: Optional[bool] = None,
         enable_private_only_bastion: Optional[bool] = None,
+        session_recording_configuration: Optional["_models.BastionSessionRecordingConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -10405,6 +11417,83 @@ class BastionHostPropertiesFormatNetworkAcls(_Model):  # pylint: disable=docstri
         self,
         *,
         ip_rules: Optional[list["_models.IPRule"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BastionHostUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters supplied to update the Bastion Host identity or tags.
+
+    :ivar identity: The identity of the BastionHost, if configured.
+    :vartype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identity of the BastionHost, if configured."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BastionSessionRecordingConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Bastion Session Recording Configuration.
+
+    :ivar identity: The identity to use for accessing the blob container where recordings will be
+     stored. Required.
+    :vartype identity: ~azure.mgmt.network.models.SessionRecordingIdentity
+    :ivar blob_container_uri: The blob container to store the recordings. Ex:
+     `https://contosostorage.blob.core.windows.net/contosorecordings
+     <https://contosostorage.blob.core.windows.net/contosorecordings>`_. Required.
+    :vartype blob_container_uri: str
+    """
+
+    identity: "_models.SessionRecordingIdentity" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identity to use for accessing the blob container where recordings will be stored. Required."""
+    blob_container_uri: str = rest_field(
+        name="blobContainerUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The blob container to store the recordings. Ex:
+     `https://contosostorage.blob.core.windows.net/contosorecordings
+     <https://contosostorage.blob.core.windows.net/contosorecordings>`_. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: "_models.SessionRecordingIdentity",
+        blob_container_uri: str,
     ) -> None: ...
 
     @overload
@@ -14344,6 +15433,7 @@ class DdosCustomPolicy(Resource):  # pylint: disable=docstring-keyword-should-ma
         "resource_guid",
         "provisioning_state",
         "detection_rules",
+        "mitigation_rules",
         "front_end_ip_configuration",
         "public_ip_addresses",
     ]
@@ -14399,6 +15489,8 @@ class DdosCustomPolicyPropertiesFormat(_Model):  # pylint: disable=docstring-key
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar detection_rules: The list of DDoS detection rules associated with the custom policy.
     :vartype detection_rules: list[~azure.mgmt.network.models.DdosDetectionRule]
+    :ivar mitigation_rules: The list of DDoS mitigation rules associated with the custom policy.
+    :vartype mitigation_rules: list[~azure.mgmt.network.models.DdosMitigationRule]
     :ivar front_end_ip_configuration: The list of frontend IP configurations associated with the
      custom policy.
     :vartype front_end_ip_configuration: list[~azure.mgmt.network.models.SubResource]
@@ -14420,6 +15512,10 @@ class DdosCustomPolicyPropertiesFormat(_Model):  # pylint: disable=docstring-key
         name="detectionRules", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of DDoS detection rules associated with the custom policy."""
+    mitigation_rules: Optional[list["_models.DdosMitigationRule"]] = rest_field(
+        name="mitigationRules", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of DDoS mitigation rules associated with the custom policy."""
     front_end_ip_configuration: Optional[list["_models.SubResource"]] = rest_field(
         name="frontEndIpConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -14434,6 +15530,7 @@ class DdosCustomPolicyPropertiesFormat(_Model):  # pylint: disable=docstring-key
         self,
         *,
         detection_rules: Optional[list["_models.DdosDetectionRule"]] = None,
+        mitigation_rules: Optional[list["_models.DdosMitigationRule"]] = None,
         front_end_ip_configuration: Optional[list["_models.SubResource"]] = None,
     ) -> None: ...
 
@@ -14575,6 +15672,163 @@ class DdosFrontendIpConfigurationSettings(_Model):  # pylint: disable=docstring-
         self,
         *,
         ddos_custom_policy: Optional["_models.SubResource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosGeoMatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A geographic source match. The service validates that at least one of continent or countryCode
+    is specified. If both are specified, the service validates that the country belongs to the
+    continent according to the service-defined mapping. For example, RU, TR, and KZ map to Asia, EG
+    maps to Africa, and CY maps to Europe.
+
+    :ivar continent: The continent to match. Country membership follows the service-defined mapping
+     documented on DdosGeoMatch. Known values are: "Africa", "Antarctica", "Asia", "Europe",
+     "NorthAmerica", "Oceania", and "SouthAmerica".
+    :vartype continent: str or ~azure.mgmt.network.models.DdosContinent
+    :ivar country_code: The uppercase two-letter ISO 3166-1 alpha-2 code for the country or
+     territory to match.
+    :vartype country_code: str
+    """
+
+    continent: Optional[Union[str, "_models.DdosContinent"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The continent to match. Country membership follows the service-defined mapping documented on
+     DdosGeoMatch. Known values are: \"Africa\", \"Antarctica\", \"Asia\", \"Europe\",
+     \"NorthAmerica\", \"Oceania\", and \"SouthAmerica\"."""
+    country_code: Optional[str] = rest_field(
+        name="countryCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The uppercase two-letter ISO 3166-1 alpha-2 code for the country or territory to match."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        continent: Optional[Union[str, "_models.DdosContinent"]] = None,
+        country_code: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosMitigationRule(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A DDoS mitigation rule resource.
+
+    :ivar name: The name of the DDoS mitigation rule. Required.
+    :vartype name: str
+    :ivar id: The resource ID of the DDoS mitigation rule.
+    :vartype id: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar properties: Properties of the DDoS mitigation rule. Required.
+    :vartype properties: ~azure.mgmt.network.models.DdosMitigationRulePropertiesFormat
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the DDoS mitigation rule. Required."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """A unique read-only string that changes whenever the resource is updated."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The resource type."""
+    properties: "_models.DdosMitigationRulePropertiesFormat" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the DDoS mitigation rule. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        properties: "_models.DdosMitigationRulePropertiesFormat",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosMitigationRulePropertiesFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """DDoS mitigation rule properties. The service validates that each rule specifies at least one
+    applicable default mitigation or source policy override and that the default mitigations match
+    the selected trafficScope.
+
+    :ivar provisioning_state: The provisioning state of the DDoS mitigation rule. Known values are:
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar traffic_scope: The traffic protocol to which the mitigation rule applies. Required. Known
+     values are: "Tcp" and "Udp".
+    :vartype traffic_scope: str or ~azure.mgmt.network.models.DdosMitigationTrafficScope
+    :ivar tcp_default_mitigations: The default TCP mitigations. This property is valid only when
+     trafficScope is Tcp.
+    :vartype tcp_default_mitigations: ~azure.mgmt.network.models.DdosTcpDefaultMitigations
+    :ivar udp_default_mitigations: The default UDP mitigations. This property is valid only when
+     trafficScope is Udp.
+    :vartype udp_default_mitigations: ~azure.mgmt.network.models.DdosUdpDefaultMitigations
+    :ivar source_policy_overrides: Source-specific actions that override the default mitigations. A
+     rule supports at most one Deny override and one Permit override.
+    :vartype source_policy_overrides: list[~azure.mgmt.network.models.DdosSourcePolicyOverride]
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the DDoS mitigation rule. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+    traffic_scope: Union[str, "_models.DdosMitigationTrafficScope"] = rest_field(
+        name="trafficScope", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The traffic protocol to which the mitigation rule applies. Required. Known values are: \"Tcp\"
+     and \"Udp\"."""
+    tcp_default_mitigations: Optional["_models.DdosTcpDefaultMitigations"] = rest_field(
+        name="tcpDefaultMitigations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default TCP mitigations. This property is valid only when trafficScope is Tcp."""
+    udp_default_mitigations: Optional["_models.DdosUdpDefaultMitigations"] = rest_field(
+        name="udpDefaultMitigations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default UDP mitigations. This property is valid only when trafficScope is Udp."""
+    source_policy_overrides: Optional[list["_models.DdosSourcePolicyOverride"]] = rest_field(
+        name="sourcePolicyOverrides", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Source-specific actions that override the default mitigations. A rule supports at most one Deny
+     override and one Permit override."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        traffic_scope: Union[str, "_models.DdosMitigationTrafficScope"],
+        tcp_default_mitigations: Optional["_models.DdosTcpDefaultMitigations"] = None,
+        udp_default_mitigations: Optional["_models.DdosUdpDefaultMitigations"] = None,
+        source_policy_overrides: Optional[list["_models.DdosSourcePolicyOverride"]] = None,
     ) -> None: ...
 
     @overload
@@ -14786,6 +16040,278 @@ class DdosSettings(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         super().__init__(*args, **kwargs)
 
 
+class DdosSourceMatchConditions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Source conditions for a DDoS source policy override. A source matches when it matches any IP
+    prefix or any geographic match.
+
+    :ivar ip_prefixes: The IPv4 or IPv6 CIDR prefixes in ``<address>/<prefix-length>`` format.
+     Entries are evaluated with OR semantics.
+    :vartype ip_prefixes: list[str]
+    :ivar geo_matches: The geographic matches. Entries are evaluated with OR semantics.
+    :vartype geo_matches: list[~azure.mgmt.network.models.DdosGeoMatch]
+    """
+
+    ip_prefixes: Optional[list[str]] = rest_field(
+        name="ipPrefixes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The IPv4 or IPv6 CIDR prefixes in ``<address>/<prefix-length>`` format. Entries are evaluated
+     with OR semantics."""
+    geo_matches: Optional[list["_models.DdosGeoMatch"]] = rest_field(
+        name="geoMatches", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The geographic matches. Entries are evaluated with OR semantics."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ip_prefixes: Optional[list[str]] = None,
+        geo_matches: Optional[list["_models.DdosGeoMatch"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosSourcePolicyAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The action to apply to traffic matching a source policy override.
+
+    :ivar action_type: The source policy action type. Required. Known values are: "Deny" and
+     "Permit".
+    :vartype action_type: str or ~azure.mgmt.network.models.DdosSourcePolicyActionType
+    """
+
+    action_type: Union[str, "_models.DdosSourcePolicyActionType"] = rest_field(
+        name="actionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The source policy action type. Required. Known values are: \"Deny\" and \"Permit\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        action_type: Union[str, "_models.DdosSourcePolicyActionType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosSourcePolicyOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A source-specific action that overrides the default mitigations.
+
+    :ivar policy_action: The action to apply to matching traffic. Required.
+    :vartype policy_action: ~azure.mgmt.network.models.DdosSourcePolicyAction
+    :ivar conditions: The source conditions that select traffic for the action. Required.
+    :vartype conditions: ~azure.mgmt.network.models.DdosSourceMatchConditions
+    """
+
+    policy_action: "_models.DdosSourcePolicyAction" = rest_field(
+        name="policyAction", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The action to apply to matching traffic. Required."""
+    conditions: "_models.DdosSourceMatchConditions" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The source conditions that select traffic for the action. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policy_action: "_models.DdosSourcePolicyAction",
+        conditions: "_models.DdosSourceMatchConditions",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosTcpDefaultMitigations(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Default mitigations for TCP traffic.
+
+    :ivar per_source_rate_limiting: The per-source TCP packet rate limit.
+    :vartype per_source_rate_limiting: ~azure.mgmt.network.models.DdosTcpPerSourceRateLimitPolicy
+    :ivar per_source_connection_rate_limiting: The per-source rate limit for new TCP connection
+     establishments.
+    :vartype per_source_connection_rate_limiting:
+     ~azure.mgmt.network.models.DdosTcpPerSourceConnectionRateLimitPolicy
+    """
+
+    per_source_rate_limiting: Optional["_models.DdosTcpPerSourceRateLimitPolicy"] = rest_field(
+        name="perSourceRateLimiting", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The per-source TCP packet rate limit."""
+    per_source_connection_rate_limiting: Optional["_models.DdosTcpPerSourceConnectionRateLimitPolicy"] = rest_field(
+        name="perSourceConnectionRateLimiting", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The per-source rate limit for new TCP connection establishments."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        per_source_rate_limiting: Optional["_models.DdosTcpPerSourceRateLimitPolicy"] = None,
+        per_source_connection_rate_limiting: Optional["_models.DdosTcpPerSourceConnectionRateLimitPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosTcpPerSourceConnectionRateLimitPolicy(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A per-source TCP connection establishment rate limit.
+
+    :ivar connections_per_second: The maximum number of new TCP connections established per second
+     from a source IP. Required.
+    :vartype connections_per_second: int
+    """
+
+    connections_per_second: int = rest_field(
+        name="connectionsPerSecond", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum number of new TCP connections established per second from a source IP. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connections_per_second: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosTcpPerSourceRateLimitPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A per-source TCP packet rate limit.
+
+    :ivar packets_per_second: The maximum number of TCP packets allowed per second from a source
+     IP. Required.
+    :vartype packets_per_second: int
+    """
+
+    packets_per_second: int = rest_field(
+        name="packetsPerSecond", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum number of TCP packets allowed per second from a source IP. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        packets_per_second: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosUdpDefaultMitigations(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Default mitigations for UDP traffic.
+
+    :ivar per_source_rate_limiting: The per-source UDP packet rate limit.
+    :vartype per_source_rate_limiting: ~azure.mgmt.network.models.DdosUdpPerSourceRateLimitPolicy
+    """
+
+    per_source_rate_limiting: Optional["_models.DdosUdpPerSourceRateLimitPolicy"] = rest_field(
+        name="perSourceRateLimiting", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The per-source UDP packet rate limit."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        per_source_rate_limiting: Optional["_models.DdosUdpPerSourceRateLimitPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosUdpPerSourceRateLimitPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A per-source UDP packet rate limit.
+
+    :ivar packets_per_second: The maximum number of UDP packets allowed per second from a source
+     IP. Required.
+    :vartype packets_per_second: int
+    """
+
+    packets_per_second: int = rest_field(
+        name="packetsPerSecond", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum number of UDP packets allowed per second from a source IP. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        packets_per_second: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class DefaultAdminPropertiesFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security default admin rule resource.
 
@@ -14958,6 +16484,9 @@ class DefaultRuleSetPropertyFormat(_Model):  # pylint: disable=docstring-keyword
     :vartype rule_set_type: str
     :ivar rule_set_version: The version of the web application firewall rule set type.
     :vartype rule_set_version: str
+    :ivar display_name: Human-readable display name for the managed rule set version (e.g.,
+     'Default Ruleset 2.2 (Latest, Recommended)').
+    :vartype display_name: str
     """
 
     rule_set_type: Optional[str] = rest_field(
@@ -14968,6 +16497,11 @@ class DefaultRuleSetPropertyFormat(_Model):  # pylint: disable=docstring-keyword
         name="ruleSetVersion", visibility=["read", "create", "update", "delete", "query"]
     )
     """The version of the web application firewall rule set type."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Human-readable display name for the managed rule set version (e.g., 'Default Ruleset 2.2
+     (Latest, Recommended)')."""
 
     @overload
     def __init__(
@@ -14975,6 +16509,7 @@ class DefaultRuleSetPropertyFormat(_Model):  # pylint: disable=docstring-keyword
         *,
         rule_set_type: Optional[str] = None,
         rule_set_version: Optional[str] = None,
+        display_name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -16782,6 +18317,38 @@ class ExplicitProxy(_Model):  # pylint: disable=docstring-keyword-should-match-k
         super().__init__(*args, **kwargs)
 
 
+class ExpressRouteAuthorizationKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The authorization key.
+
+    :ivar authorization_key: The authorization key used to establish connection between resources
+     in different subscriptions.
+    :vartype authorization_key: str
+    """
+
+    authorization_key: Optional[str] = rest_field(
+        name="authorizationKey", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authorization key used to establish connection between resources in different
+     subscriptions."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authorization_key: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ExpressRouteCircuit(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExpressRouteCircuit resource.
 
@@ -16824,6 +18391,7 @@ class ExpressRouteCircuit(Resource):  # pylint: disable=docstring-keyword-should
         "service_provider_notes",
         "service_provider_properties",
         "express_route_port",
+        "express_route_lag",
         "bandwidth_in_gbps",
         "stag",
         "resiliency_level",
@@ -17511,6 +19079,9 @@ class ExpressRouteCircuitPropertiesFormat(_Model):  # pylint: disable=docstring-
     :ivar express_route_port: The reference to the ExpressRoutePort resource when the circuit is
      provisioned on an ExpressRoutePort resource.
     :vartype express_route_port: ~azure.mgmt.network.models.SubResource
+    :ivar express_route_lag: The reference to the ExpressRouteLag resource when the circuit is
+     provisioned on an ExpressRouteLag resource.
+    :vartype express_route_lag: ~azure.mgmt.network.models.SubResource
     :ivar bandwidth_in_gbps: The bandwidth of the circuit when the circuit is provisioned on an
      ExpressRoutePort resource.
     :vartype bandwidth_in_gbps: float
@@ -17578,6 +19149,11 @@ class ExpressRouteCircuitPropertiesFormat(_Model):  # pylint: disable=docstring-
     )
     """The reference to the ExpressRoutePort resource when the circuit is provisioned on an
      ExpressRoutePort resource."""
+    express_route_lag: Optional["_models.SubResource"] = rest_field(
+        name="expressRouteLag", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reference to the ExpressRouteLag resource when the circuit is provisioned on an
+     ExpressRouteLag resource."""
     bandwidth_in_gbps: Optional[float] = rest_field(
         name="bandwidthInGbps", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -17634,6 +19210,7 @@ class ExpressRouteCircuitPropertiesFormat(_Model):  # pylint: disable=docstring-
         service_provider_notes: Optional[str] = None,
         service_provider_properties: Optional["_models.ExpressRouteCircuitServiceProviderProperties"] = None,
         express_route_port: Optional["_models.SubResource"] = None,
+        express_route_lag: Optional["_models.SubResource"] = None,
         bandwidth_in_gbps: Optional[float] = None,
         partner_account_id: Optional[str] = None,
         activation_key: Optional[str] = None,
@@ -19337,6 +20914,95 @@ class ExpressRouteLag(Resource):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
+class ProxyResourceWithReadOnlyID(_Model):
+    """Proxy resource representation.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Resource ID."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """Resource name."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """Resource type."""
+
+
+class ExpressRouteLagAuthorization(
+    ProxyResourceWithReadOnlyID
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ExpressRoute Lag Authorization.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar properties: ExpressRouteLag authorization properties.
+    :vartype properties: ~azure.mgmt.network.models.ExpressRouteLagAuthorizationPropertiesFormat
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    """
+
+    properties: Optional["_models.ExpressRouteLagAuthorizationPropertiesFormat"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ExpressRouteLag authorization properties."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """A unique read-only string that changes whenever the resource is updated."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ExpressRouteLagAuthorizationPropertiesFormat"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExpressRouteLagAuthorizationPropertiesFormat(_Model):  # pylint: disable=name-too-long
+    """ExpressRoute Lag Authorization Properties.
+
+    :ivar authorization_use_status: The authorization use status. Known values are: "Available" and
+     "InUse".
+    :vartype authorization_use_status: str or
+     ~azure.mgmt.network.models.ExpressRouteLagAuthorizationUseStatus
+    :ivar circuit_resource_uri: The reference to the ExpressRoute circuit resource using the
+     authorization.
+    :vartype circuit_resource_uri: str
+    :ivar provisioning_state: The provisioning state of the authorization resource. Known values
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    """
+
+    authorization_use_status: Optional[Union[str, "_models.ExpressRouteLagAuthorizationUseStatus"]] = rest_field(
+        name="authorizationUseStatus", visibility=["read"]
+    )
+    """The authorization use status. Known values are: \"Available\" and \"InUse\"."""
+    circuit_resource_uri: Optional[str] = rest_field(name="circuitResourceUri", visibility=["read"])
+    """The reference to the ExpressRoute circuit resource using the authorization."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the authorization resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+
+
 class ExpressRouteLagLink(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExpressRouteLagLink.
 
@@ -19572,6 +21238,11 @@ class ExpressRouteLagPropertiesFormat(_Model):  # pylint: disable=docstring-keyw
     :vartype ether_type: str
     :ivar links: ExpressRouteLagLink Sub-Resources.
     :vartype links: list[~azure.mgmt.network.models.ExpressRouteLagLink]
+    :ivar circuits: Reference the ExpressRoute circuit(s) that are provisioned on this
+     ExpressRouteLag resource.
+    :vartype circuits: list[~azure.mgmt.network.models.SubResource]
+    :ivar authorizations: ExpressRouteLagAuthorizations Child-Resources.
+    :vartype authorizations: list[~azure.mgmt.network.models.ExpressRouteLagAuthorization]
     :ivar allocation_date: The date and time when the ExpressRouteLag was allocated.
     :vartype allocation_date: str
     :ivar provisioning_state: The provisioning state of the express route LAG resource. Known
@@ -19612,6 +21283,12 @@ class ExpressRouteLagPropertiesFormat(_Model):  # pylint: disable=docstring-keyw
         visibility=["read", "create", "update", "delete", "query"]
     )
     """ExpressRouteLagLink Sub-Resources."""
+    circuits: Optional[list["_models.SubResource"]] = rest_field(visibility=["read"])
+    """Reference the ExpressRoute circuit(s) that are provisioned on this ExpressRouteLag resource."""
+    authorizations: Optional[list["_models.ExpressRouteLagAuthorization"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ExpressRouteLagAuthorizations Child-Resources."""
     allocation_date: Optional[str] = rest_field(name="allocationDate", visibility=["read"])
     """The date and time when the ExpressRouteLag was allocated."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -19647,6 +21324,7 @@ class ExpressRouteLagPropertiesFormat(_Model):  # pylint: disable=docstring-keyw
         bandwidth_in_gbps: Optional[int] = None,
         encapsulation: Optional[Union[str, "_models.ExpressRouteLagEncapsulation"]] = None,
         links: Optional[list["_models.ExpressRouteLagLink"]] = None,
+        authorizations: Optional[list["_models.ExpressRouteLagAuthorization"]] = None,
         billing_type: Optional[Union[str, "_models.ExpressRouteLagBillingType"]] = None,
         number_of_ports: Optional[int] = None,
         minimum_active_ports_required: Optional[int] = None,
@@ -24895,9 +26573,8 @@ class HubVirtualNetworkConnectionProperties(_Model):  # pylint: disable=docstrin
     :ivar routing_configuration: The Routing Configuration indicating the associated and propagated
      route tables on this connection.
     :vartype routing_configuration: ~azure.mgmt.network.models.RoutingConfiguration
-    :ivar enable_only_ipv6_peering: Enable Only IPv6 Peering for this connection. Known values are:
-     "Enabled" and "Disabled".
-    :vartype enable_only_ipv6_peering: str or ~azure.mgmt.network.models.EnableOnlyIpv6PeeringState
+    :ivar enable_only_ipv6_peering: Enable Only IPv6 Peering for this connection.
+    :vartype enable_only_ipv6_peering: bool
     :ivar provisioning_state: The provisioning state of the hub virtual network connection
      resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
      "Deleting".
@@ -24929,10 +26606,8 @@ class HubVirtualNetworkConnectionProperties(_Model):  # pylint: disable=docstrin
     )
     """The Routing Configuration indicating the associated and propagated route tables on this
      connection."""
-    enable_only_ipv6_peering: Optional[Union[str, "_models.EnableOnlyIpv6PeeringState"]] = rest_field(
-        name="enableOnlyIpv6Peering", visibility=["read", "create"]
-    )
-    """Enable Only IPv6 Peering for this connection. Known values are: \"Enabled\" and \"Disabled\"."""
+    enable_only_ipv6_peering: Optional[bool] = rest_field(name="enableOnlyIPv6Peering", visibility=["read", "create"])
+    """Enable Only IPv6 Peering for this connection."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -24949,7 +26624,7 @@ class HubVirtualNetworkConnectionProperties(_Model):  # pylint: disable=docstrin
         connection_policy: Optional["_models.SubResource"] = None,
         enable_internet_security: Optional[bool] = None,
         routing_configuration: Optional["_models.RoutingConfiguration"] = None,
-        enable_only_ipv6_peering: Optional[Union[str, "_models.EnableOnlyIpv6PeeringState"]] = None,
+        enable_only_ipv6_peering: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -26170,6 +27845,14 @@ class IpamPoolProperties(_Model):  # pylint: disable=docstring-keyword-should-ma
     :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
      "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar min_allocation_size: Minimum number of IP addresses required for allocations from this
+     IpamPool to be compliant. Must be less than or equal to the maximum allocation size. If not
+     specified or empty, no minimum is enforced.
+    :vartype min_allocation_size: str
+    :ivar max_allocation_size: Maximum number of IP addresses allowed for allocations from this
+     IpamPool to be compliant. Must be greater than or equal to the minimum allocation size. If not
+     specified or empty, no maximum is enforced.
+    :vartype max_allocation_size: str
     """
 
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -26194,6 +27877,18 @@ class IpamPoolProperties(_Model):  # pylint: disable=docstring-keyword-should-ma
     )
     """Provisioning states of a resource. Known values are: \"Failed\", \"Succeeded\", \"Canceled\",
      \"Creating\", \"Updating\", and \"Deleting\"."""
+    min_allocation_size: Optional[str] = rest_field(
+        name="minAllocationSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Minimum number of IP addresses required for allocations from this IpamPool to be compliant.
+     Must be less than or equal to the maximum allocation size. If not specified or empty, no
+     minimum is enforced."""
+    max_allocation_size: Optional[str] = rest_field(
+        name="maxAllocationSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum number of IP addresses allowed for allocations from this IpamPool to be compliant. Must
+     be greater than or equal to the minimum allocation size. If not specified or empty, no maximum
+     is enforced."""
 
     @overload
     def __init__(
@@ -26203,6 +27898,8 @@ class IpamPoolProperties(_Model):  # pylint: disable=docstring-keyword-should-ma
         description: Optional[str] = None,
         display_name: Optional[str] = None,
         parent_pool_name: Optional[str] = None,
+        min_allocation_size: Optional[str] = None,
+        max_allocation_size: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -26258,6 +27955,14 @@ class IpamPoolUpdateProperties(_Model):  # pylint: disable=docstring-keyword-sho
     :vartype description: str
     :ivar display_name: String representing a friendly name for the resource.
     :vartype display_name: str
+    :ivar min_allocation_size: Minimum number of IP addresses required for allocations from this
+     IpamPool to be compliant. Must be less than or equal to the maximum allocation size. Omit to
+     leave the current value unchanged; set to an empty string to clear it.
+    :vartype min_allocation_size: str
+    :ivar max_allocation_size: Maximum number of IP addresses allowed for allocations from this
+     IpamPool to be compliant. Must be greater than or equal to the minimum allocation size. Omit to
+     leave the current value unchanged; set to an empty string to clear it.
+    :vartype max_allocation_size: str
     """
 
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -26265,6 +27970,18 @@ class IpamPoolUpdateProperties(_Model):  # pylint: disable=docstring-keyword-sho
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
     """String representing a friendly name for the resource."""
+    min_allocation_size: Optional[str] = rest_field(
+        name="minAllocationSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Minimum number of IP addresses required for allocations from this IpamPool to be compliant.
+     Must be less than or equal to the maximum allocation size. Omit to leave the current value
+     unchanged; set to an empty string to clear it."""
+    max_allocation_size: Optional[str] = rest_field(
+        name="maxAllocationSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum number of IP addresses allowed for allocations from this IpamPool to be compliant. Must
+     be greater than or equal to the minimum allocation size. Omit to leave the current value
+     unchanged; set to an empty string to clear it."""
 
     @overload
     def __init__(
@@ -26272,6 +27989,8 @@ class IpamPoolUpdateProperties(_Model):  # pylint: disable=docstring-keyword-sho
         *,
         description: Optional[str] = None,
         display_name: Optional[str] = None,
+        min_allocation_size: Optional[str] = None,
+        max_allocation_size: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -28317,12 +30036,12 @@ class ManagedRuleSetRuleGroup(_Model):  # pylint: disable=docstring-keyword-shou
     :ivar rule_group_name: Name of the rule group. Required.
     :vartype rule_group_name: str
     :ivar rules: List of rules within the rule group.
-    :vartype rules: list[str]
+    :vartype rules: list[int]
     """
 
     rule_group_name: str = rest_field(name="ruleGroupName", visibility=["read", "create", "update", "delete", "query"])
     """Name of the rule group. Required."""
-    rules: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    rules: Optional[list[int]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of rules within the rule group."""
 
     @overload
@@ -28330,7 +30049,7 @@ class ManagedRuleSetRuleGroup(_Model):  # pylint: disable=docstring-keyword-shou
         self,
         *,
         rule_group_name: str,
-        rules: Optional[list[str]] = None,
+        rules: Optional[list[int]] = None,
     ) -> None: ...
 
     @overload
@@ -28549,6 +30268,44 @@ class MatchVariable(_Model):  # pylint: disable=docstring-keyword-should-match-k
         super().__init__(*args, **kwargs)
 
 
+class Metric(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Metric entry for migration peering statistics.
+
+    :ivar name: The metric name.
+    :vartype name: str
+    :ivar value: The metric value.
+    :vartype value: float
+    :ivar unit: The metric unit.
+    :vartype unit: str
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The metric name."""
+    value: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The metric value."""
+    unit: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The metric unit."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        value: Optional[float] = None,
+        unit: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class MetricSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of metrics specification.
 
@@ -28696,6 +30453,232 @@ class MigratedPools(_Model):  # pylint: disable=docstring-keyword-should-match-k
         super().__init__(*args, **kwargs)
 
 
+class MigrateExpressRouteCircuitHealthCheckDetails(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Detailed migration health information.
+
+    :ivar port_migration_infos: Per-port migration details.
+    :vartype port_migration_infos: list[~azure.mgmt.network.models.PortMigrationInfo]
+    """
+
+    port_migration_infos: Optional[list["_models.PortMigrationInfo"]] = rest_field(
+        name="portMigrationInfos", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Per-port migration details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        port_migration_infos: Optional[list["_models.PortMigrationInfo"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MigrateExpressRouteCircuitHealthCheckResponse(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Response for express route circuit migration health check and migration operations.
+
+    :ivar status: The overall status of the migration operation.
+    :vartype status: str
+    :ivar phase: The current phase of the migration operation.
+    :vartype phase: str
+    :ivar failure_reason: The failure reason if the migration operation failed.
+    :vartype failure_reason: str
+    :ivar new_s_tag: The new service tag assigned after migration.
+    :vartype new_s_tag: str
+    :ivar prepared_at: The timestamp when the migration was prepared.
+    :vartype prepared_at: ~datetime.datetime
+    :ivar prepare_expiry_time: The expiry time for the prepare phase.
+    :vartype prepare_expiry_time: ~datetime.datetime
+    :ivar new_cross_connection_url: The URL of the new cross connection after migration.
+    :vartype new_cross_connection_url: str
+    :ivar should_rollback: Indicates whether rollback should be performed.
+    :vartype should_rollback: bool
+    :ivar details: Detailed health check information for migration.
+    :vartype details: ~azure.mgmt.network.models.MigrateExpressRouteCircuitHealthCheckDetails
+    """
+
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The overall status of the migration operation."""
+    phase: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The current phase of the migration operation."""
+    failure_reason: Optional[str] = rest_field(
+        name="failureReason", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The failure reason if the migration operation failed."""
+    new_s_tag: Optional[str] = rest_field(name="newSTag", visibility=["read", "create", "update", "delete", "query"])
+    """The new service tag assigned after migration."""
+    prepared_at: Optional[datetime.datetime] = rest_field(
+        name="preparedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The timestamp when the migration was prepared."""
+    prepare_expiry_time: Optional[datetime.datetime] = rest_field(
+        name="prepareExpiryTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The expiry time for the prepare phase."""
+    new_cross_connection_url: Optional[str] = rest_field(
+        name="newCrossConnectionUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URL of the new cross connection after migration."""
+    should_rollback: Optional[bool] = rest_field(
+        name="shouldRollback", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether rollback should be performed."""
+    details: Optional["_models.MigrateExpressRouteCircuitHealthCheckDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detailed health check information for migration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Optional[str] = None,
+        phase: Optional[str] = None,
+        failure_reason: Optional[str] = None,
+        new_s_tag: Optional[str] = None,
+        prepared_at: Optional[datetime.datetime] = None,
+        prepare_expiry_time: Optional[datetime.datetime] = None,
+        new_cross_connection_url: Optional[str] = None,
+        should_rollback: Optional[bool] = None,
+        details: Optional["_models.MigrateExpressRouteCircuitHealthCheckDetails"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MigrateExpressRouteCircuitRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request model for express route circuit migration operations.
+
+    :ivar target_peering_location: The target peering location for circuit migration.
+    :vartype target_peering_location: str
+    :ivar target_port_mapping: The source-to-target port mappings for circuit migration.
+    :vartype target_port_mapping: list[~azure.mgmt.network.models.PortMapping]
+    :ivar port_id: The port identifier used for shutDownBgp, migrate, restoreBgp, and rollback
+     operations.
+    :vartype port_id: str
+    """
+
+    target_peering_location: Optional[str] = rest_field(
+        name="targetPeeringLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target peering location for circuit migration."""
+    target_port_mapping: Optional[list["_models.PortMapping"]] = rest_field(
+        name="targetPortMapping", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The source-to-target port mappings for circuit migration."""
+    port_id: Optional[str] = rest_field(name="portId", visibility=["read", "create", "update", "delete", "query"])
+    """The port identifier used for shutDownBgp, migrate, restoreBgp, and rollback operations."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_peering_location: Optional[str] = None,
+        target_port_mapping: Optional[list["_models.PortMapping"]] = None,
+        port_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MigrateExpressRouteCircuitValidateAndHealthCheckRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Request model used by validate and health check circuit migration operations.
+
+    :ivar target_peering_location: The target peering location for circuit migration. Required.
+    :vartype target_peering_location: str
+    :ivar target_port_mapping: The source-to-target port mappings for circuit migration. Required.
+    :vartype target_port_mapping: list[~azure.mgmt.network.models.PortMapping]
+    """
+
+    target_peering_location: str = rest_field(
+        name="targetPeeringLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target peering location for circuit migration. Required."""
+    target_port_mapping: list["_models.PortMapping"] = rest_field(
+        name="targetPortMapping", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The source-to-target port mappings for circuit migration. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_peering_location: str,
+        target_port_mapping: list["_models.PortMapping"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MigrateExpressRouteCircuitValidateResponse(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Response for express route circuit migration validation operation.
+
+    :ivar status: The validation status.
+    :vartype status: str
+    """
+
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The validation status."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class MigrateLoadBalancerToIpBasedRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request for a migrateToIpBased API.
 
@@ -28819,6 +30802,150 @@ class MoveIpConfigurationsRequest(_Model):  # pylint: disable=docstring-keyword-
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ProxyResourceVirtualNetworkApplianceCapabilityProperties(
+    ArmProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Concrete proxy resource types can be created by aliasing this type using a specific property
+    type.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
+    """
+
+    properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkApplianceCapability(
+    ProxyResourceVirtualNetworkApplianceCapabilityProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A capability enabled on a virtual network appliance. The top-level ``kind`` discriminator
+    selects the capability family; every kind shares the same ``properties`` schema (see
+    VirtualNetworkApplianceCapabilityProperties). One capability of a given kind may exist per
+    appliance.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    Nat64Capability, PLGatewayCapability, PLGatewayFastpathCapability, PLIPForwardersCapability
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
+    :ivar kind: The kind of capability (the top-level discriminator). Required. Known values are:
+     "PLGatewayFastpath", "PLGateway", "PLIPForwarders", and "NAT64".
+    :vartype kind: str or ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityKind
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The kind of capability (the top-level discriminator). Required. Known values are:
+     \"PLGatewayFastpath\", \"PLGateway\", \"PLIPForwarders\", and \"NAT64\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+        properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Nat64Capability(
+    VirtualNetworkApplianceCapability, discriminator="NAT64"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The NAT64 capability. Enables stateful NAT64 translation (IPv6-only workloads reaching IPv4
+    destinations) on the appliance's floating NIC; supported on a dual-stack appliance. This kind
+    is property-less: it carries no ``ipVersion`` (the parent appliance's dual-stack configuration
+    is the precondition, service-validated) beyond the properties common to every capability.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
+    :ivar kind: The NAT64 capability kind. Required. NAT64 (stateful IPv6-to-IPv4 translation).
+    :vartype kind: str or ~azure.mgmt.network.models.NAT64
+    """
+
+    kind: Literal[VirtualNetworkApplianceCapabilityKind.NAT64] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The NAT64 capability kind. Required. NAT64 (stateful IPv6-to-IPv4 translation)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = VirtualNetworkApplianceCapabilityKind.NAT64  # type: ignore
 
 
 class NatGateway(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -31118,6 +33245,12 @@ class NetworkRule(
     :vartype destination_fqdns: list[str]
     :ivar source_kube_selector_groups: List of source Kubernetes Selector Groups for this rule.
     :vartype source_kube_selector_groups: list[str]
+    :ivar source_geo_locations: List of source geographic location filters (ISO 3166-1 alpha-2
+     country codes, e.g. "US", "CA") for this rule.
+    :vartype source_geo_locations: list[str]
+    :ivar destination_geo_locations: List of destination geographic location filters (ISO 3166-1
+     alpha-2 country codes, e.g. "US", "CA") for this rule.
+    :vartype destination_geo_locations: list[str]
     :ivar rule_type: Rule Type. Required. NetworkRule.
     :vartype rule_type: str or ~azure.mgmt.network.models.NETWORK_RULE
     """
@@ -31154,6 +33287,16 @@ class NetworkRule(
         name="sourceKubeSelectorGroups", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of source Kubernetes Selector Groups for this rule."""
+    source_geo_locations: Optional[list[str]] = rest_field(
+        name="sourceGeoLocations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of source geographic location filters (ISO 3166-1 alpha-2 country codes, e.g. \"US\",
+     \"CA\") for this rule."""
+    destination_geo_locations: Optional[list[str]] = rest_field(
+        name="destinationGeoLocations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of destination geographic location filters (ISO 3166-1 alpha-2 country codes, e.g. \"US\",
+     \"CA\") for this rule."""
     rule_type: Literal[FirewallPolicyRuleType.NETWORK_RULE] = rest_discriminator(name="ruleType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Rule Type. Required. NetworkRule."""
 
@@ -31171,6 +33314,8 @@ class NetworkRule(
         destination_ip_groups: Optional[list[str]] = None,
         destination_fqdns: Optional[list[str]] = None,
         source_kube_selector_groups: Optional[list[str]] = None,
+        source_geo_locations: Optional[list[str]] = None,
+        destination_geo_locations: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -35609,6 +37754,83 @@ class PeerExpressRouteCircuitConnectionPropertiesFormat(
         super().__init__(*args, **kwargs)
 
 
+class PeeringHealth(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Health information for a peering connection.
+
+    :ivar type: The type of peering (for example, Private, Microsoft, Public).
+    :vartype type: str
+    :ivar stats_current: The current peering statistics.
+    :vartype stats_current: ~azure.mgmt.network.models.PeeringStats
+    :ivar stats_at_prepare: The peering statistics captured at prepare phase.
+    :vartype stats_at_prepare: ~azure.mgmt.network.models.PeeringStats
+    """
+
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of peering (for example, Private, Microsoft, Public)."""
+    stats_current: Optional["_models.PeeringStats"] = rest_field(
+        name="statsCurrent", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The current peering statistics."""
+    stats_at_prepare: Optional["_models.PeeringStats"] = rest_field(
+        name="statsAtPrepare", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The peering statistics captured at prepare phase."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[str] = None,
+        stats_current: Optional["_models.PeeringStats"] = None,
+        stats_at_prepare: Optional["_models.PeeringStats"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PeeringStats(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Statistical information for a peering connection.
+
+    :ivar timestamp: The timestamp when these statistics were captured.
+    :vartype timestamp: ~datetime.datetime
+    :ivar metrics: The collection of peering metrics.
+    :vartype metrics: list[~azure.mgmt.network.models.Metric]
+    """
+
+    timestamp: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The timestamp when these statistics were captured."""
+    metrics: Optional[list["_models.Metric"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The collection of peering metrics."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        timestamp: Optional[datetime.datetime] = None,
+        metrics: Optional[list["_models.Metric"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class PeerRoute(_Model):
     """Peer routing details.
 
@@ -35774,6 +37996,146 @@ class PerimeterBasedAccessRule(_Model):
     """Resource guid of the NSP supplied."""
     location: Optional[str] = rest_field(visibility=["read"])
     """Location of the NSP supplied."""
+
+
+class PLGatewayCapability(
+    VirtualNetworkApplianceCapability, discriminator="PLGateway"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Private Link Gateway (slow-path) capability. Private Link programming offloaded to the
+    appliance's gateway; IPv6 on a dual-stack appliance.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
+    :ivar kind: The Private Link Gateway (slow-path) capability kind. Required. Private Link
+     Gateway (slow-path).
+    :vartype kind: str or ~azure.mgmt.network.models.PL_GATEWAY
+    """
+
+    kind: Literal[VirtualNetworkApplianceCapabilityKind.PL_GATEWAY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Private Link Gateway (slow-path) capability kind. Required. Private Link Gateway
+     (slow-path)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = VirtualNetworkApplianceCapabilityKind.PL_GATEWAY  # type: ignore
+
+
+class PLGatewayFastpathCapability(
+    VirtualNetworkApplianceCapability, discriminator="PLGatewayFastpath"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Private Link Gateway FastPath capability. Private Link fast-path programming on the
+    appliance's gateway; supported on a dual-stack appliance.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
+    :ivar kind: The Private Link Gateway FastPath capability kind. Required. Private Link Gateway
+     FastPath.
+    :vartype kind: str or ~azure.mgmt.network.models.PL_GATEWAY_FASTPATH
+    """
+
+    kind: Literal[VirtualNetworkApplianceCapabilityKind.PL_GATEWAY_FASTPATH] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Private Link Gateway FastPath capability kind. Required. Private Link Gateway FastPath."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = VirtualNetworkApplianceCapabilityKind.PL_GATEWAY_FASTPATH  # type: ignore
+
+
+class PLIPForwardersCapability(
+    VirtualNetworkApplianceCapability, discriminator="PLIPForwarders"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Private Link IP-forwarders (NVA) capability. Private Link programming offloaded to the
+    appliance NVA; IPv6 on a dual-stack appliance.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
+    :ivar kind: The Private Link IP-forwarders (NVA) capability kind. Required. Private Link
+     IP-forwarders (NVA).
+    :vartype kind: str or ~azure.mgmt.network.models.PLIP_FORWARDERS
+    """
+
+    kind: Literal[VirtualNetworkApplianceCapabilityKind.PLIP_FORWARDERS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Private Link IP-forwarders (NVA) capability kind. Required. Private Link IP-forwarders
+     (NVA)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = VirtualNetworkApplianceCapabilityKind.PLIP_FORWARDERS  # type: ignore
 
 
 class PolicySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -36048,6 +38410,105 @@ class PoolUsage(_Model):
         name="numberOfAvailableIPAddresses", visibility=["read"]
     )
     """Total number of available IP addresses in the IpamPool."""
+
+
+class PortMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A mapping between source and target ports for migration.
+
+    :ivar source_port_id: The source port identifier. Required.
+    :vartype source_port_id: str
+    :ivar target_port_id: The target port identifier. Required.
+    :vartype target_port_id: str
+    """
+
+    source_port_id: str = rest_field(name="sourcePortId", visibility=["read", "create", "update", "delete", "query"])
+    """The source port identifier. Required."""
+    target_port_id: str = rest_field(name="targetPortId", visibility=["read", "create", "update", "delete", "query"])
+    """The target port identifier. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_port_id: str,
+        target_port_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PortMigrationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Information about a port migration status.
+
+    :ivar port_id: The identifier of the port being migrated.
+    :vartype port_id: str
+    :ivar status: The migration status for the port.
+    :vartype status: str
+    :ivar phase: The current migration phase for the port.
+    :vartype phase: str
+    :ivar failure_reason: The reason for failure if migration failed for the port.
+    :vartype failure_reason: str
+    :ivar peerings: The peering health details for the port.
+    :vartype peerings: list[~azure.mgmt.network.models.PeeringHealth]
+    :ivar source_port_id: The source port identifier before migration.
+    :vartype source_port_id: str
+    :ivar source_port_stats: The source port statistics before migration.
+    :vartype source_port_stats: ~azure.mgmt.network.models.SourcePortStats
+    """
+
+    port_id: Optional[str] = rest_field(name="portId", visibility=["read", "create", "update", "delete", "query"])
+    """The identifier of the port being migrated."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The migration status for the port."""
+    phase: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The current migration phase for the port."""
+    failure_reason: Optional[str] = rest_field(
+        name="failureReason", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reason for failure if migration failed for the port."""
+    peerings: Optional[list["_models.PeeringHealth"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The peering health details for the port."""
+    source_port_id: Optional[str] = rest_field(
+        name="sourcePortId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The source port identifier before migration."""
+    source_port_stats: Optional["_models.SourcePortStats"] = rest_field(
+        name="sourcePortStats", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The source port statistics before migration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        port_id: Optional[str] = None,
+        status: Optional[str] = None,
+        phase: Optional[str] = None,
+        failure_reason: Optional[str] = None,
+        peerings: Optional[list["_models.PeeringHealth"]] = None,
+        source_port_id: Optional[str] = None,
+        source_port_stats: Optional["_models.SourcePortStats"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class PrepareNetworkPoliciesRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -36834,6 +39295,7 @@ class PrivateLinkServiceConnection(SubResource):  # pylint: disable=docstring-ke
         "group_ids",
         "request_message",
         "private_link_service_connection_state",
+        "approval_reference",
     ]
 
     @overload
@@ -36893,6 +39355,9 @@ class PrivateLinkServiceConnectionProperties(_Model):  # pylint: disable=docstri
      state of the connection to the remote resource.
     :vartype private_link_service_connection_state:
      ~azure.mgmt.network.models.PrivateLinkServiceConnectionState
+    :ivar approval_reference: A reference to an existing approved private endpoint whose connection
+     approval state should be inherited by this connection at creation time.
+    :vartype approval_reference: ~azure.mgmt.network.models.ApprovalReference
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -36918,6 +39383,11 @@ class PrivateLinkServiceConnectionProperties(_Model):  # pylint: disable=docstri
         name="privateLinkServiceConnectionState", visibility=["read", "create", "update", "delete", "query"]
     )
     """A collection of read-only information about the state of the connection to the remote resource."""
+    approval_reference: Optional["_models.ApprovalReference"] = rest_field(
+        name="approvalReference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A reference to an existing approved private endpoint whose connection approval state should be
+     inherited by this connection at creation time."""
 
     @overload
     def __init__(
@@ -36927,6 +39397,7 @@ class PrivateLinkServiceConnectionProperties(_Model):  # pylint: disable=docstri
         group_ids: Optional[list[str]] = None,
         request_message: Optional[str] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
+        approval_reference: Optional["_models.ApprovalReference"] = None,
     ) -> None: ...
 
     @overload
@@ -37626,25 +40097,6 @@ class ProtocolSettings(_Model):  # pylint: disable=docstring-keyword-should-matc
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ProxyResourceWithReadOnlyID(_Model):
-    """Proxy resource representation.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Resource ID."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """Resource name."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """Resource type."""
 
 
 class PublicIPAddress(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -42918,6 +45370,51 @@ class SessionIds(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
+class SessionRecordingIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The identity to use for accessing the blob container where recordings will be stored.
+
+    :ivar type: The type of identity to use. Required. Known values are: "SystemAssigned" and
+     "UserAssigned".
+    :vartype type: str or ~azure.mgmt.network.models.SessionRecordingIdentityType
+    :ivar user_assigned_identity_id: User assigned identity to use for accessing blob container
+     Uri. Ex: /subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/<resource
+     group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId. Mutually exclusive with
+     identity type systemAssigned.
+    :vartype user_assigned_identity_id: str
+    """
+
+    type: Union[str, "_models.SessionRecordingIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of identity to use. Required. Known values are: \"SystemAssigned\" and
+     \"UserAssigned\"."""
+    user_assigned_identity_id: Optional[str] = rest_field(
+        name="userAssignedIdentityId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """User assigned identity to use for accessing blob container Uri. Ex:
+     /subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/<resource
+     group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId. Mutually exclusive with
+     identity type systemAssigned."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.SessionRecordingIdentityType"],
+        user_assigned_identity_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SharedKeyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for SharedKey.
 
@@ -43278,6 +45775,36 @@ class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-onl
         self,
         *,
         name: Optional[Union[str, "_models.BastionHostSkuName"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SourcePortStats(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Statistics from the source port before migration.
+
+    :ivar peerings: The peering health information from the source port.
+    :vartype peerings: list[~azure.mgmt.network.models.PeeringHealth]
+    """
+
+    peerings: Optional[list["_models.PeeringHealth"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The peering health information from the source port."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        peerings: Optional[list["_models.PeeringHealth"]] = None,
     ) -> None: ...
 
     @overload
@@ -46574,6 +49101,7 @@ class VirtualNetworkAppliance(Resource):  # pylint: disable=docstring-keyword-sh
 
     __flattened_items = [
         "bandwidth_in_gbps",
+        "capacity_provider",
         "ip_configurations",
         "private_ip_address_version",
         "provisioning_state",
@@ -46618,6 +49146,61 @@ class VirtualNetworkAppliance(Resource):  # pylint: disable=docstring-keyword-sh
             setattr(self.properties, key, value)
         else:
             super().__setattr__(key, value)
+
+
+class VirtualNetworkApplianceCapabilityProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Properties common to every virtual network appliance capability, independent of kind.
+
+    :ivar linked_resource_id: The Azure resource ID of the owning virtual network. System-derived
+     and read-only.
+    :vartype linked_resource_id: str
+    :ivar provisioning_state: The provisioning state of the capability resource. Known values are:
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar ip_version: The IP version the capability applies to. Private Link Gateway FastPath
+     (``PLGatewayFastpath``) only accepts ``DualStack``; Private Link Gateway (``PLGateway``) and
+     Private Link IP-forwarders (``PLIPForwarders``) only accept ``IPv6``. Not applicable to
+     ``NAT64``, which is property-less and must omit this value. The service validates the value
+     against the resource's ``kind`` when the capability is created or updated. Known values are:
+     "IPv6" and "DualStack".
+    :vartype ip_version: str or
+     ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityIpVersion
+    """
+
+    linked_resource_id: Optional[str] = rest_field(name="linkedResourceId", visibility=["read"])
+    """The Azure resource ID of the owning virtual network. System-derived and read-only."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the capability resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+    ip_version: Optional[Union[str, "_models.VirtualNetworkApplianceCapabilityIpVersion"]] = rest_field(
+        name="ipVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The IP version the capability applies to. Private Link Gateway FastPath (``PLGatewayFastpath``)
+     only accepts ``DualStack``; Private Link Gateway (``PLGateway``) and Private Link IP-forwarders
+     (``PLIPForwarders``) only accept ``IPv6``. Not applicable to ``NAT64``, which is property-less
+     and must omit this value. The service validates the value against the resource's ``kind`` when
+     the capability is created or updated. Known values are: \"IPv6\" and \"DualStack\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ip_version: Optional[Union[str, "_models.VirtualNetworkApplianceCapabilityIpVersion"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class VirtualNetworkApplianceIpConfiguration(
@@ -46763,6 +49346,8 @@ class VirtualNetworkAppliancePropertiesFormat(_Model):  # pylint: disable=docstr
 
     :ivar bandwidth_in_gbps: Bandwidth of the VirtualNetworkAppliance resource in Gbps.
     :vartype bandwidth_in_gbps: float
+    :ivar capacity_provider: The reference to the capacity provider resource.
+    :vartype capacity_provider: ~azure.mgmt.network.models.SubResource
     :ivar ip_configurations: A list of IPConfigurations of the virtual network appliance.
     :vartype ip_configurations:
      list[~azure.mgmt.network.models.VirtualNetworkApplianceIpConfiguration]
@@ -46783,6 +49368,10 @@ class VirtualNetworkAppliancePropertiesFormat(_Model):  # pylint: disable=docstr
         name="bandwidthInGbps", visibility=["read", "create", "update", "delete", "query"]
     )
     """Bandwidth of the VirtualNetworkAppliance resource in Gbps."""
+    capacity_provider: Optional["_models.SubResource"] = rest_field(
+        name="capacityProvider", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reference to the capacity provider resource."""
     ip_configurations: Optional[list["_models.VirtualNetworkApplianceIpConfiguration"]] = rest_field(
         name="ipConfigurations", visibility=["read"]
     )
@@ -46807,6 +49396,7 @@ class VirtualNetworkAppliancePropertiesFormat(_Model):  # pylint: disable=docstr
         self,
         *,
         bandwidth_in_gbps: Optional[float] = None,
+        capacity_provider: Optional["_models.SubResource"] = None,
         private_ip_address_version: Optional[Union[str, "_models.VirtualNetworkApplianceIpVersionType"]] = None,
         subnet: Optional["_models.Subnet"] = None,
     ) -> None: ...
@@ -47918,8 +50508,9 @@ class VirtualNetworkGatewayIPConfigurationPropertiesFormat(
 class VirtualNetworkGatewayMigrationParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual network gateway migration parameters.
 
-    :ivar migration_type: MigrationType for the virtual network gateway. Required.
-     "UpgradeDeploymentToStandardIP"
+    :ivar migration_type: MigrationType for the virtual network gateway. Required. Known values
+     are: "UpgradeDeploymentToStandardIP", "UpgradeGatewayToDualStack", and
+     "MigrateGatewayForPointToSiteProfile".
     :vartype migration_type: str or ~azure.mgmt.network.models.VirtualNetworkGatewayMigrationType
     :ivar resource_url: Resource url that needs to be passed in to migration.
     :vartype resource_url: str
@@ -47928,7 +50519,9 @@ class VirtualNetworkGatewayMigrationParameters(_Model):  # pylint: disable=docst
     migration_type: Union[str, "_models.VirtualNetworkGatewayMigrationType"] = rest_field(
         name="migrationType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """MigrationType for the virtual network gateway. Required. \"UpgradeDeploymentToStandardIP\""""
+    """MigrationType for the virtual network gateway. Required. Known values are:
+     \"UpgradeDeploymentToStandardIP\", \"UpgradeGatewayToDualStack\", and
+     \"MigrateGatewayForPointToSiteProfile\"."""
     resource_url: Optional[str] = rest_field(
         name="resourceUrl", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -52782,6 +55375,7 @@ class WebApplicationFirewallPolicy(Resource):  # pylint: disable=docstring-keywo
         "http_listeners",
         "path_based_rules",
         "application_gateway_for_containers",
+        "tier",
     ]
 
     @overload
@@ -52852,6 +55446,9 @@ class WebApplicationFirewallPolicyPropertiesFormat(
      containers.
     :vartype application_gateway_for_containers:
      list[~azure.mgmt.network.models.ApplicationGatewayForContainersReferenceDefinition]
+    :ivar tier: Tier of a web application firewall policy. Known values are: "Standard" and
+     "Basic".
+    :vartype tier: str or ~azure.mgmt.network.models.WebApplicationFirewallPolicyTier
     """
 
     policy_settings: Optional["_models.PolicySettings"] = rest_field(
@@ -52888,6 +55485,10 @@ class WebApplicationFirewallPolicyPropertiesFormat(
         rest_field(name="applicationGatewayForContainers", visibility=["read"])
     )
     """A collection of references to application gateway for containers."""
+    tier: Optional[Union[str, "_models.WebApplicationFirewallPolicyTier"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Tier of a web application firewall policy. Known values are: \"Standard\" and \"Basic\"."""
 
     @overload
     def __init__(
@@ -52896,6 +55497,7 @@ class WebApplicationFirewallPolicyPropertiesFormat(
         managed_rules: "_models.ManagedRulesDefinition",
         policy_settings: Optional["_models.PolicySettings"] = None,
         custom_rules: Optional[list["_models.WebApplicationFirewallCustomRule"]] = None,
+        tier: Optional[Union[str, "_models.WebApplicationFirewallPolicyTier"]] = None,
     ) -> None: ...
 
     @overload

@@ -6,9 +6,12 @@
 
 from __future__ import annotations
 
+import time
+
 from devtools_testutils import AzureRecordedTestCase
 
 from _capabilities import require_capability
+from _search_helpers import log_retrieval_stream_event, log_retrieval_stream_response
 from _search_helpers_async import knowledge_base_resources, live_test
 
 KNOWLEDGE_BASE_RETRIEVAL_DESCRIPTION = "Knowledge base for retrieval client live coverage"
@@ -35,8 +38,6 @@ _RETRIEVAL_CAPABILITIES = (
 )
 _STREAM_CAPABILITIES = (
     "azure.search.documents.knowledgebases.aio.KnowledgeBaseRetrievalClient.retrieve_stream",
-    "KnowledgeBaseRetrievalEvent",
-    "AsyncKnowledgeBaseRetrievalStream",
     "azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStartedEvent",
     "azure.search.documents.knowledgebases.models.KnowledgeBaseResponseCompletedEvent",
 )
@@ -66,6 +67,8 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
             retrieval_request = KnowledgeBaseRetrievalRequest(
                 intents=[KnowledgeRetrievalSemanticIntent(search=RETRIEVAL_QUERY)],
                 retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
+                include_activity=True,
+                output_mode="extractiveData",
             )
 
             async with KnowledgeBaseRetrievalClient(
@@ -76,8 +79,8 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
                 result = await client.retrieve(retrieval_request)
 
             assert isinstance(result, KnowledgeBaseRetrievalResponse)
-            assert hasattr(result, "response")
-            assert hasattr(result, "references")
+            assert result.references
+            assert result.activity
 
     @live_test()
     async def test_retrieve_stream_returns_typed_lifecycle_events(self, endpoint: str) -> None:
@@ -88,12 +91,17 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
         )
         from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
         from azure.search.documents.knowledgebases.models import (
+            KnowledgeBaseActivityRecord,
+            KnowledgeBaseActivityStartedEvent,
+            KnowledgeBaseMessageTextContent,
             KnowledgeBaseResponseCompletedEvent,
             KnowledgeBaseRetrievalRequest,
             KnowledgeBaseRetrievalResponse,
             KnowledgeBaseRetrievalStartedEvent,
+            KnowledgeBaseStreamErrorEvent,
             KnowledgeRetrievalMinimalReasoningEffort,
             KnowledgeRetrievalSemanticIntent,
+            SearchIndexKnowledgeSourceParams,
         )
 
         async with knowledge_base_resources(
@@ -106,7 +114,16 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
         ) as context:
             retrieval_request = KnowledgeBaseRetrievalRequest(
                 intents=[KnowledgeRetrievalSemanticIntent(search=RETRIEVAL_QUERY)],
+                knowledge_source_params=[
+                    SearchIndexKnowledgeSourceParams(
+                        knowledge_source_name=context.knowledge_source_name,
+                        include_references=True,
+                        include_reference_source_data=True,
+                    )
+                ],
                 retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
+                include_activity=True,
+                output_mode="extractiveData",
             )
 
             async with KnowledgeBaseRetrievalClient(
@@ -114,13 +131,39 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
                 credential=context.credential,
                 knowledge_base_name=context.knowledge_base_name,
             ) as client:
-                stream = await client.retrieve_stream(retrieval_request)
+                started_at = time.perf_counter()
+                events = []
+                stream = await client.retrieve_stream(
+                    retrieval_request, raw_response_hook=log_retrieval_stream_response
+                )
                 async with stream:
-                    events = [event async for event in stream]
+                    async for event in stream:
+                        log_retrieval_stream_event(event, event_number=len(events) + 1, started_at=started_at)
+                        assert not isinstance(event, KnowledgeBaseStreamErrorEvent), f"Stream error: {event.as_dict()}"
+                        events.append(event)
 
-            assert events[0].event_type == "retrieval.started"
-            assert isinstance(events[0].data, KnowledgeBaseRetrievalStartedEvent)
-            assert events[-1].event_type == "response.completed"
-            assert isinstance(events[-1].data, KnowledgeBaseResponseCompletedEvent)
-            assert isinstance(events[-1].data.response, KnowledgeBaseRetrievalResponse)
-            assert sum(event.event_type in ("response.completed", "error") for event in events) == 1
+            assert events, "The SSE response did not yield any events"
+            assert isinstance(events[0], KnowledgeBaseRetrievalStartedEvent)
+            assert events[0].knowledge_base_name == context.knowledge_base_name
+            assert events[0].output_mode == "extractiveData"
+            assert isinstance(events[-1], KnowledgeBaseResponseCompletedEvent)
+            assert isinstance(events[-1].response, KnowledgeBaseRetrievalResponse)
+            assert any(isinstance(event, KnowledgeBaseActivityStartedEvent) for event in events[1:-1])
+            assert any(isinstance(event, KnowledgeBaseActivityRecord) for event in events[1:-1])
+            assert any(isinstance(event, list) and event for event in events[1:-1]), "No streamed references"
+            assert events[-1].response.response, "The completed response did not contain any messages"
+            assert any(
+                isinstance(content, KnowledgeBaseMessageTextContent) and content.text
+                for message in events[-1].response.response
+                for content in message.content
+            ), "The completed response did not contain any text"
+            assert events[-1].response.references
+            assert events[-1].response.activity
+            assert events[-1].status_code in (200, 206)
+            assert (
+                sum(
+                    isinstance(event, (KnowledgeBaseResponseCompletedEvent, KnowledgeBaseStreamErrorEvent))
+                    for event in events
+                )
+                == 1
+            )

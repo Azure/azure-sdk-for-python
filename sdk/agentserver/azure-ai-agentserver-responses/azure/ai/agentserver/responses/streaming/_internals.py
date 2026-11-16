@@ -15,7 +15,8 @@ from types import GeneratorType
 from typing import Any, cast
 
 from .. import models as response_models
-from ..models import AgentReference
+from .. import models as _public_models
+
 
 # Event types whose ``response`` field is a full Response snapshot.
 # Only these events should carry id/response_id/object/agent_reference/model.
@@ -49,7 +50,7 @@ def construct_event_model(wire_dict: dict[str, Any]) -> response_models.Response
     :returns: A copied event wire payload.
     :rtype: ~azure.ai.agentserver.responses.models.ResponseStreamEvent
     """
-    return cast(response_models.ResponseStreamEvent, deepcopy(wire_dict))
+    return cast("response_models.ResponseStreamEvent", deepcopy(wire_dict))
 
 
 def enum_value(value: Any) -> Any:
@@ -78,7 +79,7 @@ def coerce_model_mapping(value: Any) -> dict[str, Any] | None:
     return None
 
 
-def response_agent_reference(agent_reference: AgentReference | dict[str, Any] | None) -> dict[str, Any]:
+def response_agent_reference(agent_reference: _public_models.AgentReference | dict[str, Any] | None) -> dict[str, Any]:
     """Return a valid response-level agent reference wire payload.
 
     An empty dict is still used elsewhere as the sentinel for "do not stamp
@@ -102,6 +103,36 @@ def is_default_agent_reference(value: Any) -> bool:
         and value.get("name") == _DEFAULT_AGENT_REFERENCE["name"]
         and not value.get("version")
     )
+
+
+def is_complete_agent_reference(value: Any) -> bool:
+    """Return whether *value* contains a complete response agent identity.
+
+    :param value: A candidate agent reference wire payload.
+    :type value: Any
+    :returns: ``True`` when type, name, and version are valid.
+    :rtype: bool
+    """
+    if not isinstance(value, MutableMapping) or value.get("type") != "agent_reference":
+        return False
+    name = value.get("name")
+    version = value.get("version")
+    return isinstance(name, str) and bool(name.strip()) and isinstance(version, str) and bool(version.strip())
+
+
+def should_replace_agent_reference(existing: Any, canonical: Any) -> bool:
+    """Return whether a response snapshot should use the canonical reference.
+
+    :param existing: The handler-provided response reference.
+    :type existing: Any
+    :param canonical: The request-level canonical reference.
+    :type canonical: Any
+    :returns: ``True`` when the existing value is absent or incomplete.
+    :rtype: bool
+    """
+    if not isinstance(existing, MutableMapping) or not existing:
+        return True
+    return bool(canonical) and (is_default_agent_reference(existing) or not is_complete_agent_reference(existing))
 
 
 def materialize_wire_payload(value: Any) -> Any:
@@ -129,7 +160,7 @@ def apply_common_defaults(
     events: list[response_models.ResponseStreamEvent],
     *,
     response_id: str,
-    agent_reference: AgentReference | dict[str, Any] | None,
+    agent_reference: _public_models.AgentReference | dict[str, Any] | None,
     model: str | None,
     agent_session_id: str | None = None,
     conversation_id: str | None = None,
@@ -179,11 +210,7 @@ def apply_common_defaults(
         snapshot_dict.setdefault("response_id", response_id)
         snapshot_dict.setdefault("object", "response")
         existing_agent_reference = snapshot_dict.get("agent_reference")
-        if (
-            not isinstance(existing_agent_reference, MutableMapping)
-            or not existing_agent_reference
-            or (is_default_agent_reference(existing_agent_reference) and bool(agent_reference))
-        ):
+        if should_replace_agent_reference(existing_agent_reference, agent_reference):
             snapshot_dict["agent_reference"] = response_agent_reference(agent_reference)
         if model is not None:
             snapshot_dict.setdefault("model", model)
@@ -231,7 +258,7 @@ def track_completed_output_item(
     while len(output_items) <= output_index:
         output_items.append(None)
 
-    output_items[output_index] = deepcopy(item_dict)
+    output_items[output_index] = item_dict
 
 
 def coerce_usage(
@@ -254,7 +281,7 @@ def coerce_usage(
 
 def extract_response_fields(
     response: response_models.ResponseObject,
-) -> tuple[AgentReference | dict[str, Any] | None, str | None]:
+) -> tuple[_public_models.AgentReference | dict[str, Any] | None, str | None]:
     """Pull ``agent_reference`` and ``model`` from a response in one pass.
 
     :param response: The response envelope to inspect.
@@ -262,13 +289,12 @@ def extract_response_fields(
     :returns: Tuple of (agent_reference or None, model string or None).
     :rtype: tuple[~azure.ai.agentserver.responses.models.AgentReference | dict[str, Any] | None, str | None]
     """
-    payload = coerce_model_mapping(response)
-    if not isinstance(payload, dict):
+    if not isinstance(response, dict):
         return None, None
-    agent_reference = payload.get("agent_reference")
-    agent_ref: AgentReference | dict[str, Any] | None = (
+    agent_reference = response.get("agent_reference")
+    agent_ref: _public_models.AgentReference | dict[str, Any] | None = (
         dict(deepcopy(agent_reference)) if isinstance(agent_reference, MutableMapping) else None
     )
-    model = payload.get("model")
+    model = response.get("model")
     model_str = model if isinstance(model, str) and model else None
     return agent_ref, model_str

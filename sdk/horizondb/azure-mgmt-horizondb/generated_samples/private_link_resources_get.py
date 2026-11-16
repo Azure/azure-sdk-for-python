@@ -30,14 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.horizon_db_private_link_resources.get(
-        resource_group_name="exampleresourcegroup",
-        cluster_name="examplecluster",
-        group_name="default",
+    response = client.private_link_resources.get(
+        resource_group_name="example-resource-group",
+        cluster_name="example-cluster",
+        group_name="example-cluster",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/PrivateLinkResources_Get.json
+# x-ms-original-file: 2026-10-01-preview/PrivateLinkResources_Get.json
 if __name__ == "__main__":
     main()

@@ -29,9 +29,9 @@ semantics. In particular:
 - ``conversation_id`` membership is tracked alongside the
   ``previous_response_id`` chain so that :meth:`get_history_item_ids`
   walks both, matching :class:`InMemoryResponseProvider`.
-- :class:`PlatformContext` is accepted but ignored, identical to
-  :class:`InMemoryResponseProvider`. If the in-memory provider ever
-  starts partitioning by platform context, this provider should follow suit.
+- State is partitioned by :class:`PlatformContext.user_id_key`, matching
+  :class:`InMemoryResponseProvider`. Missing identity uses a distinct anonymous
+  partition and never bypasses partitioning.
 
 **Not for production use.** This is a local-dev convenience. It does not
 support distributed access, has no SLA, and uses ``asyncio.Lock`` for
@@ -40,20 +40,20 @@ processes will race on the underlying filesystem.
 
 Storage layout under ``storage_dir``::
 
-    responses/
-        {response_id}.json               # envelope; output[] entries are
-                                         #   pointer stubs {"$item_ref": id}
-                                         #   for id'd items (id-less items
-                                         #   stay inline). get_response
-                                         #   rehydrates from items/.
-        {response_id}.indexes.json       # input/output/history id lists
-                                         #   (the only place history_item_ids
-                                         #   is read from)
-        {response_id}.deleted            # soft-delete marker
-    items/                               # THE single copy of each item
-        {item_id}.json
-    conversations/                       # response_id list per conversation
-        {conversation_id}.json
+    partitions-v1/
+        {anonymous|user-{sha256(user_id_key)}}/
+            responses/
+                {response_id}.json
+                {response_id}.indexes.json
+                {response_id}.deleted
+            items/
+                {item_id}.json
+            conversations/
+                {conversation_id}.json
+
+The partition directory is ``anonymous`` when context or ``user_id_key`` is
+missing; otherwise it is ``user-{sha256(user_id_key)}``. Both use the same
+``responses/``, ``items/``, and ``conversations/`` subtree.
 
 Each item is persisted exactly once under ``items/``; the response
 envelope and conversations hold only pointers (spec 028). ``get_items``
@@ -70,18 +70,22 @@ place.
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+import hashlib
 import json
 import os
 import re
 import shutil
 from copy import deepcopy
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable, cast
 
 from .._response_context import PlatformContext
-from ..models._generated import OutputItem, ResponseObject
+
 from ..models._helpers import get_conversation_id
 from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol, ResponseStoreCorruptionError
+from ..models import _generated as _generated_models
+
 
 # Sentinel key marking an ``output[]`` entry as a pointer to an item stored
 # under ``items/{id}.json`` (spec 028). A real response output item is a typed
@@ -94,6 +98,16 @@ _ITEM_REF_KEY = "$item_ref"
 # the Public Task API contract so a value like ``"../../etc"`` cannot escape the
 # store directory (path traversal).
 _VALID_STORE_ID = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
+
+
+@dataclass(frozen=True)
+class _PartitionPaths:
+    """Filesystem paths for one isolated response-store partition."""
+
+    root: Path
+    responses: Path
+    items: Path
+    conversations: Path
 
 
 def _validate_store_id(value: str, kind: str) -> str:
@@ -145,7 +159,7 @@ def _read_json_or_none(path: Path) -> dict[str, Any] | None:
         return None
 
 
-def _deserialize_item(data: dict[str, Any] | None) -> OutputItem | None:
+def _deserialize_item(data: dict[str, Any] | None) -> _generated_models.OutputItem | None:
     """Deserialize a stored item dict into a typed ``OutputItem`` subtype.
 
     Items persist to disk as JSON dicts; consumers (and the typed
@@ -160,10 +174,10 @@ def _deserialize_item(data: dict[str, Any] | None) -> OutputItem | None:
     """
     if data is None:
         return None
-    return cast(OutputItem, data)
+    return cast("_generated_models.OutputItem", data)
 
 
-def _response_to_dict(response: ResponseObject) -> dict[str, Any]:
+def _response_to_dict(response: _generated_models.ResponseObject) -> dict[str, Any]:
     """Convert a ``ResponseObject`` to a JSON-safe dict for persistence.
 
     :param response: The response object to convert.
@@ -179,7 +193,7 @@ def _response_to_dict(response: ResponseObject) -> dict[str, Any]:
     return json.loads(json.dumps(response, default=str))
 
 
-def _dict_to_response(data: dict[str, Any]) -> ResponseObject:
+def _dict_to_response(data: dict[str, Any]) -> _generated_models.ResponseObject:
     """Convert a persisted JSON dict back to a ``ResponseObject``.
 
     :param data: The persisted dict.
@@ -187,7 +201,7 @@ def _dict_to_response(data: dict[str, Any]) -> ResponseObject:
     :returns: A reconstructed response object.
     :rtype: ResponseObject
     """
-    return cast(ResponseObject, data)
+    return cast("_generated_models.ResponseObject", data)
 
 
 def _item_id(item: Any) -> str | None:
@@ -226,8 +240,8 @@ class FileResponseStore(ResponseProviderProtocol):
     by the responses hosting layer.
 
     :param storage_dir: Root directory for the store. Created if it does
-        not exist. Subdirectories ``responses/``, ``items/``, and
-        ``conversations/`` are managed by the store. Defaults to
+        not exist. User-scoped data is managed under ``partitions-v1/``.
+        Defaults to
         ``resolve_state_subdir("responses")`` — a ``responses`` directory
         under the shared agent-server state root (``AGENTSERVER_STATE_ROOT``,
         or ``~/.agentserver`` when unset), alongside ``tasks`` and
@@ -243,38 +257,52 @@ class FileResponseStore(ResponseProviderProtocol):
 
             storage_dir = cast("str | Path", resolve_state_subdir("responses"))
         self._root = Path(storage_dir)
-        self._responses_dir = self._root / "responses"
-        self._items_dir_global = self._root / "items"
-        self._conversations_dir = self._root / "conversations"
-        for d in (
-            self._responses_dir,
-            self._items_dir_global,
-            self._conversations_dir,
-        ):
-            d.mkdir(parents=True, exist_ok=True)
+        self._partitions_dir = self._root / "partitions-v1"
+        self._partitions_dir.mkdir(parents=True, exist_ok=True)
         self._lock = asyncio.Lock()
 
     # ------------------------------------------------------------------
     # Path helpers
     # ------------------------------------------------------------------
 
-    def _response_path(self, response_id: str) -> Path:
-        return self._responses_dir / f"{_validate_store_id(response_id, 'response_id')}.json"
+    def _partition_paths(self, context: PlatformContext | None) -> _PartitionPaths:
+        user_id_key = context.user_id_key if context is not None else None
+        if user_id_key is None:
+            partition_name = "anonymous"
+        else:
+            digest = hashlib.sha256(user_id_key.encode("utf-8")).hexdigest()
+            partition_name = f"user-{digest}"
+        root = self._partitions_dir / partition_name
+        return _PartitionPaths(
+            root=root,
+            responses=root / "responses",
+            items=root / "items",
+            conversations=root / "conversations",
+        )
 
-    def _per_response_items_dir(self, response_id: str) -> Path:
-        return self._responses_dir / f"{_validate_store_id(response_id, 'response_id')}.items"
+    @staticmethod
+    def _response_path(paths: _PartitionPaths, response_id: str) -> Path:
+        return paths.responses / f"{_validate_store_id(response_id, 'response_id')}.json"
 
-    def _indexes_path(self, response_id: str) -> Path:
-        return self._responses_dir / f"{_validate_store_id(response_id, 'response_id')}.indexes.json"
+    @staticmethod
+    def _per_response_items_dir(paths: _PartitionPaths, response_id: str) -> Path:
+        return paths.responses / f"{_validate_store_id(response_id, 'response_id')}.items"
 
-    def _deleted_marker(self, response_id: str) -> Path:
-        return self._responses_dir / f"{_validate_store_id(response_id, 'response_id')}.deleted"
+    @staticmethod
+    def _indexes_path(paths: _PartitionPaths, response_id: str) -> Path:
+        return paths.responses / f"{_validate_store_id(response_id, 'response_id')}.indexes.json"
 
-    def _global_item_path(self, item_id: str) -> Path:
-        return self._items_dir_global / f"{_validate_store_id(item_id, 'item_id')}.json"
+    @staticmethod
+    def _deleted_marker(paths: _PartitionPaths, response_id: str) -> Path:
+        return paths.responses / f"{_validate_store_id(response_id, 'response_id')}.deleted"
 
-    def _conversation_path(self, conversation_id: str) -> Path:
-        return self._conversations_dir / f"{_validate_store_id(conversation_id, 'conversation_id')}.json"
+    @staticmethod
+    def _global_item_path(paths: _PartitionPaths, item_id: str) -> Path:
+        return paths.items / f"{_validate_store_id(item_id, 'item_id')}.json"
+
+    @staticmethod
+    def _conversation_path(paths: _PartitionPaths, conversation_id: str) -> Path:
+        return paths.conversations / f"{_validate_store_id(conversation_id, 'conversation_id')}.json"
 
     # ------------------------------------------------------------------
     # ResponseProviderProtocol — envelope CRUD
@@ -282,8 +310,8 @@ class FileResponseStore(ResponseProviderProtocol):
 
     async def create_response(
         self,
-        response: ResponseObject,
-        input_items: Iterable[OutputItem] | None,
+        response: _generated_models.ResponseObject,
+        input_items: Iterable[_generated_models.OutputItem] | None,
         history_item_ids: Iterable[str] | None,
         *,
         context: PlatformContext | None = None,
@@ -296,18 +324,17 @@ class FileResponseStore(ResponseProviderProtocol):
         :type input_items: Iterable[OutputItem] | None
         :param history_item_ids: Optional history item ids to link.
         :type history_item_ids: Iterable[str] | None
-        :keyword context: Platform context (accepted but unused —
-            matches :class:`InMemoryResponseProvider`).
+        :keyword context: Platform context selecting the isolated user partition.
         :paramtype context: PlatformContext | None
         :rtype: None
         :raises ResponseAlreadyExistsError: If a non-deleted response with
             the same id already exists.
         """
-        del context
+        paths = self._partition_paths(context)
         response_id = str(response.get("id"))
         async with self._lock:
-            target = self._response_path(response_id)
-            deleted_marker = self._deleted_marker(response_id)
+            target = self._response_path(paths, response_id)
+            deleted_marker = self._deleted_marker(paths, response_id)
             if target.exists() and not deleted_marker.exists():
                 raise ResponseAlreadyExistsError(response_id)
             if deleted_marker.exists():
@@ -315,19 +342,19 @@ class FileResponseStore(ResponseProviderProtocol):
 
             # (Spec 028) Best-effort removal of any legacy per-response items
             # directory from a pre-normalization layout — it is dead weight.
-            legacy_items = self._per_response_items_dir(response_id)
+            legacy_items = self._per_response_items_dir(paths, response_id)
             if legacy_items.exists():
                 shutil.rmtree(legacy_items, ignore_errors=True)
 
             # Items first, pointerized envelope last: a crash can never leave
             # the envelope referencing an item file that does not exist.
-            input_ids = self._store_items_unlocked(input_items or [])
-            output_ids = self._store_output_items_unlocked(response)
+            input_ids = self._store_items_unlocked(paths, input_items or [])
+            output_ids = self._store_output_items_unlocked(paths, response)
             history_ids = list(history_item_ids) if history_item_ids is not None else []
 
             _atomic_write_json(target, self._pointerize_output(_response_to_dict(response)))
             _atomic_write_json(
-                self._indexes_path(response_id),
+                self._indexes_path(paths, response_id),
                 {
                     "input_item_ids": input_ids,
                     "output_item_ids": output_ids,
@@ -337,36 +364,39 @@ class FileResponseStore(ResponseProviderProtocol):
             # (Spec 028) Best-effort removal of a legacy per-response
             # history file from a pre-normalization layout — history_item_ids
             # live in indexes.json (the only place any reader consults).
-            legacy_history = self._responses_dir / f"{response_id}.history.json"
+            legacy_history = paths.responses / f"{response_id}.history.json"
             if legacy_history.exists():
                 legacy_history.unlink()
 
             conversation_id = get_conversation_id(response)
             if conversation_id is not None:
-                self._add_response_to_conversation_unlocked(conversation_id, response_id)
+                self._add_response_to_conversation_unlocked(paths, conversation_id, response_id)
 
-    async def get_response(self, response_id: str, *, context: PlatformContext | None = None) -> ResponseObject:
+    async def get_response(
+        self, response_id: str, *, context: PlatformContext | None = None
+    ) -> _generated_models.ResponseObject:
         """Retrieve one response envelope by identifier.
 
         :param response_id: The response identifier.
         :type response_id: str
-        :keyword context: Platform context (accepted but unused —
-            matches :class:`InMemoryResponseProvider`).
+        :keyword context: Platform context selecting the isolated user partition.
         :paramtype context: PlatformContext | None
         :returns: The persisted response envelope (deep-copied).
         :rtype: ResponseObject
         :raises KeyError: If the response does not exist or has been deleted.
         """
-        del context
+        paths = self._partition_paths(context)
         async with self._lock:
-            if self._deleted_marker(response_id).exists():
+            if self._deleted_marker(paths, response_id).exists():
                 raise KeyError(f"response '{response_id}' not found")
-            data = _read_json_or_none(self._response_path(response_id))
+            data = _read_json_or_none(self._response_path(paths, response_id))
             if data is None:
                 raise KeyError(f"response '{response_id}' not found")
-            return _dict_to_response(deepcopy(self._rehydrate_output(data)))
+            return _dict_to_response(deepcopy(self._rehydrate_output(paths, data)))
 
-    async def update_response(self, response: ResponseObject, *, context: PlatformContext | None = None) -> None:
+    async def update_response(
+        self, response: _generated_models.ResponseObject, *, context: PlatformContext | None = None
+    ) -> None:
         """Update a stored response envelope.
 
         Output items present on the updated response are persisted to the
@@ -376,26 +406,25 @@ class FileResponseStore(ResponseProviderProtocol):
 
         :param response: The new response envelope.
         :type response: ResponseObject
-        :keyword context: Platform context (accepted but unused —
-            matches :class:`InMemoryResponseProvider`).
+        :keyword context: Platform context selecting the isolated user partition.
         :paramtype context: PlatformContext | None
         :rtype: None
         :raises KeyError: If the response does not exist or has been deleted.
         """
-        del context
+        paths = self._partition_paths(context)
         response_id = str(response.get("id"))
         async with self._lock:
-            if self._deleted_marker(response_id).exists():
+            if self._deleted_marker(paths, response_id).exists():
                 raise KeyError(f"response '{response_id}' not found")
-            target = self._response_path(response_id)
+            target = self._response_path(paths, response_id)
             if not target.exists():
                 raise KeyError(f"response '{response_id}' not found")
             response_dict = _response_to_dict(response)
             # Items first, pointerized envelope last (spec 028 — same
             # crash-ordering invariant as create_response).
-            output_ids = self._store_output_items_unlocked(response)
+            output_ids = self._store_output_items_unlocked(paths, response)
             _atomic_write_json(target, self._pointerize_output(response_dict))
-            self._update_indexes_unlocked(response_id, output_item_ids=output_ids)
+            self._update_indexes_unlocked(paths, response_id, output_item_ids=output_ids)
 
     async def delete_response(self, response_id: str, *, context: PlatformContext | None = None) -> None:
         """Soft-delete a stored response envelope by identifier.
@@ -407,20 +436,19 @@ class FileResponseStore(ResponseProviderProtocol):
 
         :param response_id: The response identifier.
         :type response_id: str
-        :keyword context: Platform context (accepted but unused —
-            matches :class:`InMemoryResponseProvider`).
+        :keyword context: Platform context selecting the isolated user partition.
         :paramtype context: PlatformContext | None
         :rtype: None
         :raises KeyError: If the response does not exist or has already been deleted.
         """
-        del context
+        paths = self._partition_paths(context)
         async with self._lock:
-            if self._deleted_marker(response_id).exists():
+            if self._deleted_marker(paths, response_id).exists():
                 raise KeyError(f"response '{response_id}' not found")
-            target = self._response_path(response_id)
+            target = self._response_path(paths, response_id)
             if not target.exists():
                 raise KeyError(f"response '{response_id}' not found")
-            self._deleted_marker(response_id).write_text("deleted")
+            self._deleted_marker(paths, response_id).write_text("deleted")
 
     # ------------------------------------------------------------------
     # ResponseProviderProtocol — items + history
@@ -435,7 +463,7 @@ class FileResponseStore(ResponseProviderProtocol):
         before: str | None = None,
         *,
         context: PlatformContext | None = None,
-    ) -> list[OutputItem]:
+    ) -> list[_generated_models.OutputItem]:
         """Retrieve input + history items for a response with cursor paging.
 
         Returns the same ordered union of ``history_item_ids`` followed by
@@ -453,23 +481,22 @@ class FileResponseStore(ResponseProviderProtocol):
         :type after: str | None
         :param before: Cursor — return items before this id.
         :type before: str | None
-        :keyword context: Platform context (accepted but unused —
-            matches :class:`InMemoryResponseProvider`).
+        :keyword context: Platform context selecting the isolated user partition.
         :paramtype context: PlatformContext | None
         :returns: Paginated list of items.
         :rtype: list[OutputItem]
         :raises KeyError: If the response does not exist.
         :raises ValueError: If the response has been deleted.
         """
-        del context
+        paths = self._partition_paths(context)
         async with self._lock:
-            target = self._response_path(response_id)
+            target = self._response_path(paths, response_id)
             if not target.exists():
                 raise KeyError(f"response '{response_id}' not found")
-            if self._deleted_marker(response_id).exists():
+            if self._deleted_marker(paths, response_id).exists():
                 raise ValueError(f"response '{response_id}' has been deleted")
 
-            indexes = _read_json_or_none(self._indexes_path(response_id)) or {}
+            indexes = _read_json_or_none(self._indexes_path(paths, response_id)) or {}
             item_ids = [
                 *(indexes.get("history_item_ids") or []),
                 *(indexes.get("input_item_ids") or []),
@@ -486,9 +513,9 @@ class FileResponseStore(ResponseProviderProtocol):
                 except ValueError:
                     pass
             safe_limit = max(1, min(100, int(limit)))
-            results: list[OutputItem] = []
+            results: list[_generated_models.OutputItem] = []
             for iid in ordered[:safe_limit]:
-                data = _read_json_or_none(self._global_item_path(iid))
+                data = _read_json_or_none(self._global_item_path(paths, iid))
                 item = _deserialize_item(data)
                 if item is not None:
                     results.append(item)
@@ -499,7 +526,7 @@ class FileResponseStore(ResponseProviderProtocol):
         item_ids: Iterable[str],
         *,
         context: PlatformContext | None = None,
-    ) -> list[OutputItem | None]:
+    ) -> list[_generated_models.OutputItem | None]:
         """Retrieve items by id, preserving request order.
 
         Missing ids produce ``None`` entries — matches
@@ -507,17 +534,16 @@ class FileResponseStore(ResponseProviderProtocol):
 
         :param item_ids: The item ids to look up.
         :type item_ids: Iterable[str]
-        :keyword context: Platform context (accepted but unused —
-            matches :class:`InMemoryResponseProvider`).
+        :keyword context: Platform context selecting the isolated user partition.
         :paramtype context: PlatformContext | None
         :returns: Items in the same order as ``item_ids``, ``None`` for misses.
         :rtype: list[OutputItem | None]
         """
-        del context
+        paths = self._partition_paths(context)
         async with self._lock:
-            results: list[OutputItem | None] = []
+            results: list[_generated_models.OutputItem | None] = []
             for iid in item_ids:
-                data = _read_json_or_none(self._global_item_path(iid))
+                data = _read_json_or_none(self._global_item_path(paths, iid))
                 results.append(_deserialize_item(data))
             return results
 
@@ -538,7 +564,8 @@ class FileResponseStore(ResponseProviderProtocol):
         - When ``conversation_id`` is set, iterates all non-deleted
           responses in that conversation and contributes their
           ``history_item_ids + input_item_ids + output_item_ids``.
-        - Both may be set; results are concatenated in the same order.
+        - Both may be set; results are combined in the same order and duplicate
+          item IDs are removed while preserving their first occurrence.
         - When over ``limit``, keeps the most recent N item IDs from the
           resolved chain, preserving chronological order in the returned slice.
 
@@ -548,37 +575,39 @@ class FileResponseStore(ResponseProviderProtocol):
         :type previous_response_id: str | None
         :param conversation_id: Optional conversation id to scope history lookup.
         :type conversation_id: str | None
-        :param limit: Maximum number of item IDs to return (most recent N).
+        :param limit: Maximum number of item IDs to return (most recent N), or -1 for all items.
         :type limit: int
-        :keyword context: Platform context (accepted but unused —
-            matches :class:`InMemoryResponseProvider`).
+        :keyword context: Platform context selecting the isolated user partition.
         :paramtype context: PlatformContext | None
-        :returns: List of item IDs from the resolved chain (possibly empty).
+        :returns: Ordered list of unique item IDs from the resolved chain (possibly empty).
         :rtype: list[str]
         """
-        del context
+        paths = self._partition_paths(context)
         async with self._lock:
             resolved: list[str] = []
 
-            if previous_response_id is not None and not self._deleted_marker(previous_response_id).exists():
-                indexes = _read_json_or_none(self._indexes_path(previous_response_id))
+            if previous_response_id is not None and not self._deleted_marker(paths, previous_response_id).exists():
+                indexes = _read_json_or_none(self._indexes_path(paths, previous_response_id))
                 if indexes is not None:
                     resolved.extend(indexes.get("history_item_ids") or [])
                     resolved.extend(indexes.get("input_item_ids") or [])
                     resolved.extend(indexes.get("output_item_ids") or [])
 
             if conversation_id is not None:
-                conv_data = _read_json_or_none(self._conversation_path(conversation_id))
+                conv_data = _read_json_or_none(self._conversation_path(paths, conversation_id))
                 for rid in (conv_data or {}).get("response_ids", []):
-                    if self._deleted_marker(rid).exists():
+                    if self._deleted_marker(paths, rid).exists():
                         continue
-                    indexes = _read_json_or_none(self._indexes_path(rid))
+                    indexes = _read_json_or_none(self._indexes_path(paths, rid))
                     if indexes is None:
                         continue
                     resolved.extend(indexes.get("history_item_ids") or [])
                     resolved.extend(indexes.get("input_item_ids") or [])
                     resolved.extend(indexes.get("output_item_ids") or [])
 
+            resolved = list(dict.fromkeys(resolved))
+            if limit == -1:
+                return resolved
             if limit <= 0:
                 return []
             # Keep the most recent N item IDs from the resolved chain,
@@ -589,9 +618,11 @@ class FileResponseStore(ResponseProviderProtocol):
     # Internal helpers (must be called with self._lock held)
     # ------------------------------------------------------------------
 
-    def _store_items_unlocked(self, items: Iterable[Any]) -> list[str]:
-        """Persist items to the single global ``items/`` store.
+    def _store_items_unlocked(self, paths: _PartitionPaths, items: Iterable[Any]) -> list[str]:
+        """Persist items to this partition's ``items/`` store.
 
+        :param paths: Storage directories for the user partition.
+        :type paths: _PartitionPaths
         :param items: Iterable of items (each must expose an ``id``).
         :type items: Iterable[Any]
         :returns: Ordered list of stored item ids.
@@ -602,15 +633,19 @@ class FileResponseStore(ResponseProviderProtocol):
             iid = _item_id(item)
             if not iid:
                 continue
-            _atomic_write_json(self._global_item_path(iid), _serialize_item(item))
+            _atomic_write_json(self._global_item_path(paths, iid), _serialize_item(item))
             stored_ids.append(iid)
         return stored_ids
 
-    def _store_output_items_unlocked(self, response: ResponseObject) -> list[str]:
+    def _store_output_items_unlocked(
+        self, paths: _PartitionPaths, response: _generated_models.ResponseObject
+    ) -> list[str]:
         """Extract output items from a response and persist them.
 
         Mirrors :meth:`InMemoryResponseProvider._store_output_items_unlocked`.
 
+        :param paths: Storage directories for the user partition.
+        :type paths: _PartitionPaths
         :param response: The response envelope.
         :type response: ResponseObject
         :returns: Ordered list of stored output item ids.
@@ -619,7 +654,7 @@ class FileResponseStore(ResponseProviderProtocol):
         output = response.get("output")
         if not output:
             return []
-        return self._store_items_unlocked(output)
+        return self._store_items_unlocked(paths, output)
 
     @staticmethod
     def _pointerize_output(envelope: dict[str, Any]) -> dict[str, Any]:
@@ -646,13 +681,15 @@ class FileResponseStore(ResponseProviderProtocol):
         envelope["output"] = new_output
         return envelope
 
-    def _rehydrate_output(self, envelope: dict[str, Any]) -> dict[str, Any]:
+    def _rehydrate_output(self, paths: _PartitionPaths, envelope: dict[str, Any]) -> dict[str, Any]:
         """Substitute ``output[]`` pointer stubs with item content from ``items/``.
 
         Inverse of :meth:`_pointerize_output`. Non-stub entries (id-less
         items, or legacy fully-inline items) are kept as-is, preserving
         order and position.
 
+        :param paths: Storage directories for the user partition.
+        :type paths: _PartitionPaths
         :param envelope: The persisted response envelope dict.
         :type envelope: dict[str, Any]
         :returns: A shallow copy of *envelope* with ``output`` rehydrated.
@@ -674,7 +711,7 @@ class FileResponseStore(ResponseProviderProtocol):
                 and isinstance(entry[_ITEM_REF_KEY], str)
             ):
                 iid = entry[_ITEM_REF_KEY]
-                item = _read_json_or_none(self._global_item_path(iid))
+                item = _read_json_or_none(self._global_item_path(paths, iid))
                 if item is None:
                     raise ResponseStoreCorruptionError(
                         f"FileResponseStore: response envelope references item "
@@ -689,6 +726,7 @@ class FileResponseStore(ResponseProviderProtocol):
 
     def _update_indexes_unlocked(
         self,
+        paths: _PartitionPaths,
         response_id: str,
         *,
         input_item_ids: list[str] | None = None,
@@ -697,6 +735,8 @@ class FileResponseStore(ResponseProviderProtocol):
     ) -> None:
         """Merge the supplied id lists into the persisted indexes file.
 
+        :param paths: Storage directories for the user partition.
+        :type paths: _PartitionPaths
         :param response_id: The response identifier.
         :type response_id: str
         :keyword input_item_ids: New input ids to overwrite.
@@ -704,7 +744,7 @@ class FileResponseStore(ResponseProviderProtocol):
         :keyword history_item_ids: New history ids to overwrite.
         :rtype: None
         """
-        path = self._indexes_path(response_id)
+        path = self._indexes_path(paths, response_id)
         current = _read_json_or_none(path) or {}
         if input_item_ids is not None:
             current["input_item_ids"] = input_item_ids
@@ -714,18 +754,22 @@ class FileResponseStore(ResponseProviderProtocol):
             current["history_item_ids"] = history_item_ids
         _atomic_write_json(path, current)
 
-    def _add_response_to_conversation_unlocked(self, conversation_id: str, response_id: str) -> None:
+    def _add_response_to_conversation_unlocked(
+        self, paths: _PartitionPaths, conversation_id: str, response_id: str
+    ) -> None:
         """Append ``response_id`` to the conversation's response list.
 
         Idempotent: appending the same id twice is a no-op.
 
+        :param paths: Storage directories for the user partition.
+        :type paths: _PartitionPaths
         :param conversation_id: The conversation identifier.
         :type conversation_id: str
         :param response_id: The response identifier to register.
         :type response_id: str
         :rtype: None
         """
-        path = self._conversation_path(conversation_id)
+        path = self._conversation_path(paths, conversation_id)
         data = _read_json_or_none(path) or {"response_ids": []}
         ids = list(data.get("response_ids") or [])
         if response_id not in ids:

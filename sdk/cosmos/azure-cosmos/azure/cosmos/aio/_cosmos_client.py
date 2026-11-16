@@ -192,6 +192,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Default value is False (hedging disabled).
     :paramtype availability_strategy: Union[bool, dict[str, Any]]
     :keyword int availability_strategy_max_concurrency: The max concurrency for parallel requests.
+    :keyword bool enable_compact_utf8_item_writes:
+        Use compact UTF-8 when serializing item bodies for create, upsert, replace, patch, and transactional batch
+        operations. The default is False.
 
     .. admonition:: Example:
 
@@ -216,6 +219,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     ) -> None:
         """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
+        enable_compact_utf8_item_writes = kwargs.pop("enable_compact_utf8_item_writes", False)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
             url_connection=url,
@@ -224,6 +228,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             connection_policy=connection_policy,
             availability_strategy=availability_strategy,
             availability_strategy_max_concurrency=availability_strategy_max_concurrency,
+            enable_compact_utf8_item_writes=enable_compact_utf8_item_writes,
             **kwargs
         )
 

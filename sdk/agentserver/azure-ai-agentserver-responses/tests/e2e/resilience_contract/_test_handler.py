@@ -29,10 +29,8 @@ Env vars consumed:
   (Spec 024 Phase 3a unified storage layout.)
 - ``CONFORMANCE_RESILIENT_BACKGROUND`` — ``"true"`` or ``"false"`` to select
   the server's ``resilient_background`` option. Default ``"true"``.
-- ``CONFORMANCE_RESILIENT_BACKGROUND`` — ``"true"`` to set
-  ``ResponsesServerOptions(resilient_background=True)``.
-  (forces row 4 ephemeral regardless of per-request ``store`` flag).
-  Default ``"false"``.
+- ``CONFORMANCE_STEERABLE_CONVERSATIONS`` — ``"true"`` enables steering.
+  Default ``"false"``. Either Responses feature initializes TaskManager.
 - ``CONFORMANCE_HANDLER_SLEEP_MS`` — milliseconds the handler sleeps
   between the pre-sleep delta burst and the post-sleep delta burst.
   Default ``50`` (fast natural completion).
@@ -53,7 +51,6 @@ from __future__ import annotations
 import asyncio
 import os
 
-from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -100,14 +97,9 @@ _EXPLICIT_EXIT_FOR_RECOVERY = _env_bool("CONFORMANCE_EXPLICIT_EXIT_FOR_RECOVERY"
 
 options = ResponsesServerOptions(
     resilient_background=_RESILIENT_BG,
+    steerable_conversations=_env_bool("CONFORMANCE_STEERABLE_CONVERSATIONS", False),
     shutdown_grace_period_seconds=_SHUTDOWN_GRACE_S,
 )
-# Conformance exercises the durable-response subsystem (Rows 1/2/3), which is
-# gated on the resilient-tasks switch. Row 2 runs with resilient_background=False
-# (which does NOT auto-enable the switch), so enable it explicitly here — the
-# server must construct the TaskManager and run recovery to honour the Row 2
-# mark-failed-on-crash contract.
-set_resilient_tasks_enabled(True)
 app = ResponsesAgentServerHost(options=options)
 
 

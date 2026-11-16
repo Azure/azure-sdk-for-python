@@ -392,6 +392,14 @@ namespace azure.mgmt.compute.aio.operations
                 **kwargs
             ) -> None: ...
 
+        @distributed_trace_async
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                capacity_reservation_group_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
         @overload
         async def create_or_update(
                 self, 
@@ -424,14 +432,6 @@ namespace azure.mgmt.compute.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> CapacityReservationGroup: ...
-
-        @distributed_trace_async
-        async def delete(
-                self, 
-                resource_group_name: str, 
-                capacity_reservation_group_name: str, 
-                **kwargs: Any
-            ) -> None: ...
 
         @distributed_trace_async
         async def get(
@@ -1792,12 +1792,15 @@ namespace azure.mgmt.compute.aio.operations
             ) -> AsyncLROPoller[GalleryImageVersion]: ...
 
         @distributed_trace_async
+        @api_version_validation(params_added_on={'2026-03-03': ['bypass_soft_delete']}, api_versions_list=['2024-03-03', '2025-03-03', '2025-12-03', '2026-03-03'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
                 gallery_name: str, 
                 gallery_image_name: str, 
                 gallery_image_version_name: str, 
+                *, 
+                bypass_soft_delete: Optional[bool] = ..., 
                 **kwargs: Any
             ) -> AsyncLROPoller[None]: ...
 
@@ -2240,7 +2243,7 @@ namespace azure.mgmt.compute.aio.operations
             ) -> AsyncLROPoller[GalleryScriptVersion]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'gallery_script_version_name']}, api_versions_list=['2025-03-03', '2025-12-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'gallery_script_version_name']}, api_versions_list=['2025-03-03', '2025-12-03', '2026-03-03'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2290,7 +2293,7 @@ namespace azure.mgmt.compute.aio.operations
             ) -> AsyncLROPoller[GalleryScriptVersion]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'gallery_script_version_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'gallery_script_version_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03', '2026-03-03'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -2301,7 +2304,7 @@ namespace azure.mgmt.compute.aio.operations
             ) -> GalleryScriptVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03', '2026-03-03'])
         def list_by_gallery_script(
                 self, 
                 resource_group_name: str, 
@@ -2356,7 +2359,7 @@ namespace azure.mgmt.compute.aio.operations
             ) -> AsyncLROPoller[GalleryScript]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name']}, api_versions_list=['2025-03-03', '2025-12-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name']}, api_versions_list=['2025-03-03', '2025-12-03', '2026-03-03'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2402,7 +2405,7 @@ namespace azure.mgmt.compute.aio.operations
             ) -> AsyncLROPoller[GalleryScript]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03', '2026-03-03'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -2412,7 +2415,7 @@ namespace azure.mgmt.compute.aio.operations
             ) -> GalleryScript: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03', '2026-03-03'])
         def list_by_gallery(
                 self, 
                 resource_group_name: str, 
@@ -3132,7 +3135,7 @@ namespace azure.mgmt.compute.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'subscription_id', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03'])
+        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'subscription_id', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03', '2026-03-03'])
         async def begin_gallery_sharing_accept(
                 self, 
                 location: str, 
@@ -3142,7 +3145,7 @@ namespace azure.mgmt.compute.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'subscription_id', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03'])
+        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'subscription_id', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03', '2026-03-03'])
         async def begin_gallery_sharing_reject(
                 self, 
                 location: str, 
@@ -3522,7 +3525,7 @@ namespace azure.mgmt.compute.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03'])
+        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03', '2026-03-03'])
         async def begin_tenant_level_gallery_sharing_accept(
                 self, 
                 location: str, 
@@ -3532,7 +3535,7 @@ namespace azure.mgmt.compute.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03'])
+        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03', '2026-03-03'])
         async def begin_tenant_level_gallery_sharing_reject(
                 self, 
                 location: str, 
@@ -7089,9 +7092,11 @@ namespace azure.mgmt.compute.models
 
     class azure.mgmt.compute.models.CommunityGalleryImageVersionProperties(_Model):
         artifact_tags: Optional[dict[str, str]]
+        consumption_end_time: Optional[datetime]
         disclaimer: Optional[str]
         end_of_life_date: Optional[datetime]
         exclude_from_latest: Optional[bool]
+        image_state: Optional[Union[str, GalleryImageVersionState]]
         published_date: Optional[datetime]
         storage_profile: Optional[SharedGalleryImageVersionStorageProfile]
 
@@ -7178,6 +7183,7 @@ namespace azure.mgmt.compute.models
 
 
     class azure.mgmt.compute.models.ConfidentialVMEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DATA_DISK_ENCRYPTED_WITH_CMK = "DataDiskEncryptedWithCmk"
         ENCRYPTED_VM_GUEST_STATE_ONLY_WITH_PMK = "EncryptedVMGuestStateOnlyWithPmk"
         ENCRYPTED_WITH_CMK = "EncryptedWithCmk"
         ENCRYPTED_WITH_PMK = "EncryptedWithPmk"
@@ -7333,13 +7339,31 @@ namespace azure.mgmt.compute.models
     class azure.mgmt.compute.models.DataDiskImageEncryption(DiskImageEncryption):
         disk_encryption_set_id: str
         lun: int
+        security_profile: Optional[DataDiskImageSecurityProfile]
 
         @overload
         def __init__(
                 self, 
                 *, 
                 disk_encryption_set_id: Optional[str] = ..., 
-                lun: int
+                lun: int, 
+                security_profile: Optional[DataDiskImageSecurityProfile] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.compute.models.DataDiskImageSecurityProfile(_Model):
+        confidential_vm_encryption_type: Optional[Union[str, ConfidentialVMEncryptionType]]
+        secure_vm_disk_encryption_set_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                confidential_vm_encryption_type: Optional[Union[str, ConfidentialVMEncryptionType]] = ..., 
+                secure_vm_disk_encryption_set_id: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -8692,6 +8716,20 @@ namespace azure.mgmt.compute.models
         VHDX = "VHDX"
 
 
+    class azure.mgmt.compute.models.FlexProfile(_Model):
+        preferred_vm_size: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                preferred_vm_size: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.compute.models.Gallery(TrackedResource):
         id: str
         identity: Optional[GalleryIdentity]
@@ -9333,6 +9371,7 @@ namespace azure.mgmt.compute.models
 
 
     class azure.mgmt.compute.models.GalleryImageVersionProperties(_Model):
+        image_metadata_profiles: Optional[list[ImageMetadataProfile]]
         provisioning_state: Optional[Union[str, GalleryProvisioningState]]
         publishing_profile: Optional[GalleryImageVersionPublishingProfile]
         replication_status: Optional[ReplicationStatus]
@@ -9402,6 +9441,11 @@ namespace azure.mgmt.compute.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.compute.models.GalleryImageVersionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACTIVE = "Active"
+        SOFT_DELETED = "SoftDeleted"
 
 
     class azure.mgmt.compute.models.GalleryImageVersionStorageProfile(_Model):
@@ -9937,6 +9981,8 @@ namespace azure.mgmt.compute.models
 
 
     class azure.mgmt.compute.models.GallerySoftDeletedResourceProperties(_Model):
+        consumption_end_time: Optional[datetime]
+        hard_deletion_target_time: Optional[datetime]
         resource_arm_id: Optional[str]
         soft_deleted_artifact_type: Optional[Union[str, SoftDeletedArtifactTypes]]
         soft_deleted_time: Optional[str]
@@ -10241,6 +10287,24 @@ namespace azure.mgmt.compute.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.compute.models.ImageMetadataProfile(_Model):
+        internal_metadata_list: Optional[list[MetadataKeyValue]]
+        public_metadata_list: Optional[list[MetadataKeyValue]]
+        type: Union[str, MetadataType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                internal_metadata_list: Optional[list[MetadataKeyValue]] = ..., 
+                public_metadata_list: Optional[list[MetadataKeyValue]] = ..., 
+                type: Union[str, MetadataType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.compute.models.ImageOSDisk(ImageDisk):
         blob_uri: str
         caching: Union[str, CachingTypes]
@@ -10384,12 +10448,14 @@ namespace azure.mgmt.compute.models
 
 
     class azure.mgmt.compute.models.ImageVersionSecurityProfile(_Model):
+        secrets_provisioning_settings: Optional[SecretsProvisioningSettings]
         uefi_settings: Optional[GalleryImageVersionUefiSettings]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                secrets_provisioning_settings: Optional[SecretsProvisioningSettings] = ..., 
                 uefi_settings: Optional[GalleryImageVersionUefiSettings] = ...
             ) -> None: ...
 
@@ -10939,6 +11005,27 @@ namespace azure.mgmt.compute.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.compute.models.MetadataKeyValue(_Model):
+        metadata_key: str
+        metadata_value: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                metadata_key: str, 
+                metadata_value: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.compute.models.MetadataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        SECRETS_PROVISIONING_IMAGE_METADATA = "SecretsProvisioningImageMetadata"
+        USER_PROVIDED_SECRETS_PROVISIONING_METADATA = "UserProvidedSecretsProvisioningMetadata"
 
 
     class azure.mgmt.compute.models.MigrateToVirtualMachineScaleSetInput(_Model):
@@ -12845,6 +12932,47 @@ namespace azure.mgmt.compute.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.compute.models.SecretsProvisioningComponent(_Model):
+        name: Optional[Union[str, SecretsProvisioningComponentName]]
+        version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Optional[Union[str, SecretsProvisioningComponentName]] = ..., 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.compute.models.SecretsProvisioningComponentName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_GUEST_AGENT = "AzureGuestAgent"
+        CLOUD_INIT = "CloudInit"
+        OS = "OS"
+        SECRETS_PROVISIONING_LIBRARY = "SecretsProvisioningLibrary"
+
+
+    class azure.mgmt.compute.models.SecretsProvisioningSettings(_Model):
+        components: Optional[list[SecretsProvisioningComponent]]
+        is_supported: Optional[bool]
+        os_name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                components: Optional[list[SecretsProvisioningComponent]] = ..., 
+                is_supported: Optional[bool] = ..., 
+                os_name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.compute.models.SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DISK_WITH_VM_GUEST_STATE = "DiskWithVMGuestState"
         NON_PERSISTED_TPM = "NonPersistedTPM"
@@ -13112,8 +13240,10 @@ namespace azure.mgmt.compute.models
 
     class azure.mgmt.compute.models.SharedGalleryImageVersionProperties(_Model):
         artifact_tags: Optional[dict[str, str]]
+        consumption_end_time: Optional[datetime]
         end_of_life_date: Optional[datetime]
         exclude_from_latest: Optional[bool]
+        image_state: Optional[Union[str, GalleryImageVersionState]]
         published_date: Optional[datetime]
         storage_profile: Optional[SharedGalleryImageVersionStorageProfile]
 
@@ -13484,13 +13614,17 @@ namespace azure.mgmt.compute.models
 
 
     class azure.mgmt.compute.models.SoftDeletePolicy(_Model):
+        grace_period_in_days: Optional[int]
         is_soft_delete_enabled: Optional[bool]
+        retention_period_in_days: Optional[int]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                is_soft_delete_enabled: Optional[bool] = ...
+                grace_period_in_days: Optional[int] = ..., 
+                is_soft_delete_enabled: Optional[bool] = ..., 
+                retention_period_in_days: Optional[int] = ...
             ) -> None: ...
 
         @overload
@@ -15244,6 +15378,7 @@ namespace azure.mgmt.compute.models
         application_security_groups: Optional[list[SubResource]]
         load_balancer_backend_address_pools: Optional[list[SubResource]]
         primary: Optional[bool]
+        private_ip_address_prefix_length: Optional[int]
         private_ip_address_version: Optional[Union[str, IPVersions]]
         public_ip_address_configuration: Optional[VirtualMachinePublicIPAddressConfiguration]
         subnet: Optional[SubResource]
@@ -15256,6 +15391,7 @@ namespace azure.mgmt.compute.models
                 application_security_groups: Optional[list[SubResource]] = ..., 
                 load_balancer_backend_address_pools: Optional[list[SubResource]] = ..., 
                 primary: Optional[bool] = ..., 
+                private_ip_address_prefix_length: Optional[int] = ..., 
                 private_ip_address_version: Optional[Union[str, IPVersions]] = ..., 
                 public_ip_address_configuration: Optional[VirtualMachinePublicIPAddressConfiguration] = ..., 
                 subnet: Optional[SubResource] = ...
@@ -15298,6 +15434,7 @@ namespace azure.mgmt.compute.models
         diagnostics_profile: Optional[DiagnosticsProfile]
         eviction_policy: Optional[Union[str, VirtualMachineEvictionPolicyTypes]]
         extensions_time_budget: Optional[str]
+        flex_profile: Optional[FlexProfile]
         hardware_profile: Optional[HardwareProfile]
         host: Optional[SubResource]
         host_group: Optional[SubResource]
@@ -15332,6 +15469,7 @@ namespace azure.mgmt.compute.models
                 diagnostics_profile: Optional[DiagnosticsProfile] = ..., 
                 eviction_policy: Optional[Union[str, VirtualMachineEvictionPolicyTypes]] = ..., 
                 extensions_time_budget: Optional[str] = ..., 
+                flex_profile: Optional[FlexProfile] = ..., 
                 hardware_profile: Optional[HardwareProfile] = ..., 
                 host: Optional[SubResource] = ..., 
                 host_group: Optional[SubResource] = ..., 
@@ -15812,6 +15950,7 @@ namespace azure.mgmt.compute.models
         load_balancer_backend_address_pools: Optional[list[SubResource]]
         load_balancer_inbound_nat_pools: Optional[list[SubResource]]
         primary: Optional[bool]
+        private_ip_address_prefix_length: Optional[int]
         private_ip_address_version: Optional[Union[str, IPVersion]]
         public_ip_address_configuration: Optional[VirtualMachineScaleSetPublicIPAddressConfiguration]
         subnet: Optional[ApiEntityReference]
@@ -15825,6 +15964,7 @@ namespace azure.mgmt.compute.models
                 load_balancer_backend_address_pools: Optional[list[SubResource]] = ..., 
                 load_balancer_inbound_nat_pools: Optional[list[SubResource]] = ..., 
                 primary: Optional[bool] = ..., 
+                private_ip_address_prefix_length: Optional[int] = ..., 
                 private_ip_address_version: Optional[Union[str, IPVersion]] = ..., 
                 public_ip_address_configuration: Optional[VirtualMachineScaleSetPublicIPAddressConfiguration] = ..., 
                 subnet: Optional[ApiEntityReference] = ...
@@ -16337,6 +16477,7 @@ namespace azure.mgmt.compute.models
         load_balancer_backend_address_pools: Optional[list[SubResource]]
         load_balancer_inbound_nat_pools: Optional[list[SubResource]]
         primary: Optional[bool]
+        private_ip_address_prefix_length: Optional[int]
         private_ip_address_version: Optional[Union[str, IPVersion]]
         public_ip_address_configuration: Optional[VirtualMachineScaleSetUpdatePublicIPAddressConfiguration]
         subnet: Optional[ApiEntityReference]
@@ -16350,6 +16491,7 @@ namespace azure.mgmt.compute.models
                 load_balancer_backend_address_pools: Optional[list[SubResource]] = ..., 
                 load_balancer_inbound_nat_pools: Optional[list[SubResource]] = ..., 
                 primary: Optional[bool] = ..., 
+                private_ip_address_prefix_length: Optional[int] = ..., 
                 private_ip_address_version: Optional[Union[str, IPVersion]] = ..., 
                 public_ip_address_configuration: Optional[VirtualMachineScaleSetUpdatePublicIPAddressConfiguration] = ..., 
                 subnet: Optional[ApiEntityReference] = ...
@@ -17618,6 +17760,14 @@ namespace azure.mgmt.compute.operations
                 **kwargs
             ) -> None: ...
 
+        @distributed_trace
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                capacity_reservation_group_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
         @overload
         def create_or_update(
                 self, 
@@ -17650,14 +17800,6 @@ namespace azure.mgmt.compute.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> CapacityReservationGroup: ...
-
-        @distributed_trace
-        def delete(
-                self, 
-                resource_group_name: str, 
-                capacity_reservation_group_name: str, 
-                **kwargs: Any
-            ) -> None: ...
 
         @distributed_trace
         def get(
@@ -19018,12 +19160,15 @@ namespace azure.mgmt.compute.operations
             ) -> LROPoller[GalleryImageVersion]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-03-03': ['bypass_soft_delete']}, api_versions_list=['2024-03-03', '2025-03-03', '2025-12-03', '2026-03-03'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
                 gallery_name: str, 
                 gallery_image_name: str, 
                 gallery_image_version_name: str, 
+                *, 
+                bypass_soft_delete: Optional[bool] = ..., 
                 **kwargs: Any
             ) -> LROPoller[None]: ...
 
@@ -19466,7 +19611,7 @@ namespace azure.mgmt.compute.operations
             ) -> LROPoller[GalleryScriptVersion]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'gallery_script_version_name']}, api_versions_list=['2025-03-03', '2025-12-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'gallery_script_version_name']}, api_versions_list=['2025-03-03', '2025-12-03', '2026-03-03'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -19516,7 +19661,7 @@ namespace azure.mgmt.compute.operations
             ) -> LROPoller[GalleryScriptVersion]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'gallery_script_version_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'gallery_script_version_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03', '2026-03-03'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -19527,7 +19672,7 @@ namespace azure.mgmt.compute.operations
             ) -> GalleryScriptVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03', '2026-03-03'])
         def list_by_gallery_script(
                 self, 
                 resource_group_name: str, 
@@ -19582,7 +19727,7 @@ namespace azure.mgmt.compute.operations
             ) -> LROPoller[GalleryScript]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name']}, api_versions_list=['2025-03-03', '2025-12-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name']}, api_versions_list=['2025-03-03', '2025-12-03', '2026-03-03'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -19628,7 +19773,7 @@ namespace azure.mgmt.compute.operations
             ) -> LROPoller[GalleryScript]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03', '2026-03-03'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -19638,7 +19783,7 @@ namespace azure.mgmt.compute.operations
             ) -> GalleryScript: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03', '2026-03-03'])
         def list_by_gallery(
                 self, 
                 resource_group_name: str, 
@@ -20358,7 +20503,7 @@ namespace azure.mgmt.compute.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'subscription_id', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03'])
+        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'subscription_id', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03', '2026-03-03'])
         def begin_gallery_sharing_accept(
                 self, 
                 location: str, 
@@ -20368,7 +20513,7 @@ namespace azure.mgmt.compute.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'subscription_id', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03'])
+        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'subscription_id', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03', '2026-03-03'])
         def begin_gallery_sharing_reject(
                 self, 
                 location: str, 
@@ -20748,7 +20893,7 @@ namespace azure.mgmt.compute.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03'])
+        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03', '2026-03-03'])
         def begin_tenant_level_gallery_sharing_accept(
                 self, 
                 location: str, 
@@ -20758,7 +20903,7 @@ namespace azure.mgmt.compute.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03'])
+        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03', '2026-03-03'])
         def begin_tenant_level_gallery_sharing_reject(
                 self, 
                 location: str, 
@@ -23785,8 +23930,17 @@ namespace azure.mgmt.compute.types
     class azure.mgmt.compute.types.DataDiskImageEncryption(DiskImageEncryption):
         key "diskEncryptionSetId": str
         key "lun": Required[int]
+        key "securityProfile": ForwardRef('DataDiskImageSecurityProfile', module='types')
         diskEncryptionSetId: str
         lun: int
+        securityProfile: DataDiskImageSecurityProfile
+
+
+    class azure.mgmt.compute.types.DataDiskImageSecurityProfile(TypedDict, total=False):
+        key "confidentialVMEncryptionType": Union[str, ConfidentialVMEncryptionType]
+        key "secureVMDiskEncryptionSetId": str
+        confidentialVMEncryptionType: Union[str, ConfidentialVMEncryptionType]
+        secureVMDiskEncryptionSetId: str
 
 
     class azure.mgmt.compute.types.DataDisksToAttach(TypedDict, total=False):
@@ -24348,6 +24502,11 @@ namespace azure.mgmt.compute.types
         gracePeriod: str
 
 
+    class azure.mgmt.compute.types.FlexProfile(TypedDict, total=False):
+        key "preferredVMSize": Required[str]
+        preferredVMSize: str
+
+
     class azure.mgmt.compute.types.Gallery(TrackedResource):
         key "id": str
         key "identity": ForwardRef('GalleryIdentity', module='types')
@@ -24700,6 +24859,7 @@ namespace azure.mgmt.compute.types
         key "securityProfile": ForwardRef('ImageVersionSecurityProfile', module='types')
         key "storageProfile": Required[GalleryImageVersionStorageProfile]
         key "validationsProfile": ForwardRef('ValidationsProfile', module='types')
+        imageMetadataProfiles: list[ImageMetadataProfile]
         provisioningState: Union[str, GalleryProvisioningState]
         publishingProfile: GalleryImageVersionPublishingProfile
         replicationStatus: ReplicationStatus
@@ -25151,6 +25311,13 @@ namespace azure.mgmt.compute.types
         sharedGalleryImageId: str
 
 
+    class azure.mgmt.compute.types.ImageMetadataProfile(TypedDict, total=False):
+        key "type": Required[Union[str, MetadataType]]
+        internalMetadataList: list[MetadataKeyValue]
+        publicMetadataList: list[MetadataKeyValue]
+        type: Union[str, MetadataType]
+
+
     class azure.mgmt.compute.types.ImageOSDisk(ImageDisk):
         key "blobUri": str
         key "caching": Union[str, CachingTypes]
@@ -25226,7 +25393,9 @@ namespace azure.mgmt.compute.types
 
 
     class azure.mgmt.compute.types.ImageVersionSecurityProfile(TypedDict, total=False):
+        key "secretsProvisioningSettings": ForwardRef('SecretsProvisioningSettings', module='types')
         key "uefiSettings": ForwardRef('GalleryImageVersionUefiSettings', module='types')
+        secretsProvisioningSettings: SecretsProvisioningSettings
         uefiSettings: GalleryImageVersionUefiSettings
 
 
@@ -25506,6 +25675,13 @@ namespace azure.mgmt.compute.types
         key "value": int
         enabled: bool
         value: int
+
+
+    class azure.mgmt.compute.types.MetadataKeyValue(TypedDict, total=False):
+        key "metadataKey": Required[str]
+        key "metadataValue": str
+        metadataKey: str
+        metadataValue: str
 
 
     class azure.mgmt.compute.types.MigrateToVirtualMachineScaleSetInput(TypedDict, total=False):
@@ -26159,6 +26335,21 @@ namespace azure.mgmt.compute.types
         scriptLink: str
 
 
+    class azure.mgmt.compute.types.SecretsProvisioningComponent(TypedDict, total=False):
+        key "name": Union[str, SecretsProvisioningComponentName]
+        key "version": str
+        name: Union[str, SecretsProvisioningComponentName]
+        version: str
+
+
+    class azure.mgmt.compute.types.SecretsProvisioningSettings(TypedDict, total=False):
+        key "isSupported": bool
+        key "osName": str
+        components: list[SecretsProvisioningComponent]
+        isSupported: bool
+        osName: str
+
+
     class azure.mgmt.compute.types.SecurityPostureReference(TypedDict, total=False):
         key "id": Required[str]
         key "isOverridable": bool
@@ -26364,8 +26555,12 @@ namespace azure.mgmt.compute.types
 
 
     class azure.mgmt.compute.types.SoftDeletePolicy(TypedDict, total=False):
+        key "gracePeriodInDays": int
         key "isSoftDeleteEnabled": bool
+        key "retentionPeriodInDays": int
+        gracePeriodInDays: int
         isSoftDeleteEnabled: bool
+        retentionPeriodInDays: int
 
 
     class azure.mgmt.compute.types.SourceVault(TypedDict, total=False):
@@ -27032,6 +27227,7 @@ namespace azure.mgmt.compute.types
 
     class azure.mgmt.compute.types.VirtualMachineNetworkInterfaceIPConfigurationProperties(TypedDict, total=False):
         key "primary": bool
+        key "privateIPAddressPrefixLength": int
         key "privateIPAddressVersion": Union[str, IPVersions]
         key "publicIPAddressConfiguration": ForwardRef('VirtualMachinePublicIPAddressConfiguration', module='types')
         key "subnet": ForwardRef('SubResource', module='types')
@@ -27039,6 +27235,7 @@ namespace azure.mgmt.compute.types
         applicationSecurityGroups: list[SubResource]
         loadBalancerBackendAddressPools: list[SubResource]
         primary: bool
+        privateIPAddressPrefixLength: int
         privateIPAddressVersion: Union[str, IPVersions]
         publicIPAddressConfiguration: VirtualMachinePublicIPAddressConfiguration
         subnet: SubResource
@@ -27061,6 +27258,7 @@ namespace azure.mgmt.compute.types
         key "diagnosticsProfile": ForwardRef('DiagnosticsProfile', module='types')
         key "evictionPolicy": Union[str, VirtualMachineEvictionPolicyTypes]
         key "extensionsTimeBudget": str
+        key "flexProfile": ForwardRef('FlexProfile', module='types')
         key "hardwareProfile": ForwardRef('HardwareProfile', module='types')
         key "host": ForwardRef('SubResource', module='types')
         key "hostGroup": ForwardRef('SubResource', module='types')
@@ -27090,6 +27288,7 @@ namespace azure.mgmt.compute.types
         diagnosticsProfile: DiagnosticsProfile
         evictionPolicy: Union[str, VirtualMachineEvictionPolicyTypes]
         extensionsTimeBudget: str
+        flexProfile: FlexProfile
         hardwareProfile: HardwareProfile
         host: SubResource
         hostGroup: SubResource
@@ -27363,6 +27562,7 @@ namespace azure.mgmt.compute.types
 
     class azure.mgmt.compute.types.VirtualMachineScaleSetIPConfigurationProperties(TypedDict, total=False):
         key "primary": bool
+        key "privateIPAddressPrefixLength": int
         key "privateIPAddressVersion": Union[str, IPVersion]
         key "publicIPAddressConfiguration": ForwardRef('VirtualMachineScaleSetPublicIPAddressConfiguration', module='types')
         key "subnet": ForwardRef('ApiEntityReference', module='types')
@@ -27371,6 +27571,7 @@ namespace azure.mgmt.compute.types
         loadBalancerBackendAddressPools: list[SubResource]
         loadBalancerInboundNatPools: list[SubResource]
         primary: bool
+        privateIPAddressPrefixLength: int
         privateIPAddressVersion: Union[str, IPVersion]
         publicIPAddressConfiguration: VirtualMachineScaleSetPublicIPAddressConfiguration
         subnet: ApiEntityReference
@@ -27640,6 +27841,7 @@ namespace azure.mgmt.compute.types
 
     class azure.mgmt.compute.types.VirtualMachineScaleSetUpdateIPConfigurationProperties(TypedDict, total=False):
         key "primary": bool
+        key "privateIPAddressPrefixLength": Optional[int]
         key "privateIPAddressVersion": Union[str, IPVersion]
         key "publicIPAddressConfiguration": ForwardRef('VirtualMachineScaleSetUpdatePublicIPAddressConfiguration', module='types')
         key "subnet": ForwardRef('ApiEntityReference', module='types')
@@ -27648,6 +27850,7 @@ namespace azure.mgmt.compute.types
         loadBalancerBackendAddressPools: list[SubResource]
         loadBalancerInboundNatPools: list[SubResource]
         primary: bool
+        privateIPAddressPrefixLength: int
         privateIPAddressVersion: Union[str, IPVersion]
         publicIPAddressConfiguration: VirtualMachineScaleSetUpdatePublicIPAddressConfiguration
         subnet: ApiEntityReference

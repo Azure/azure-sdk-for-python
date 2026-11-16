@@ -43,7 +43,6 @@ from azure.storage.queue._encryption import (
     _WrappedContentKey,
 )
 
-
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = "encryptionqueue"
 # ------------------------------------------------------------------------------

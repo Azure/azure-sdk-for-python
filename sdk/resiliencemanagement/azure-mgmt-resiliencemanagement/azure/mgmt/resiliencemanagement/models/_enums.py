@@ -99,6 +99,35 @@ class DrillMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Failover mode."""
 
 
+class DrillReportFinalizationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Finalization state of a Drill Run report."""
+
+    NOT_FINALIZED = "NotFinalized"
+    """The report is not finalized and may still change."""
+    FINALIZED = "Finalized"
+    """The report is finalized and immutable."""
+
+
+class DrillReportFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Format of a Drill Run report."""
+
+    HTML = "Html"
+    """Human readable HTML report."""
+
+
+class DrillReportGenerationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Report generation status."""
+
+    NOT_STARTED = "NotStarted"
+    """Report generation has not been attempted yet."""
+    IN_PROGRESS = "InProgress"
+    """Report generation is currently running."""
+    SUCCEEDED = "Succeeded"
+    """Report generation completed successfully."""
+    FAILED = "Failed"
+    """Report generation failed. Details are captured in the lastError field."""
+
+
 class DrillResourceFaultState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Drill Resource Fault State."""
 
@@ -171,6 +200,19 @@ class DrillRunSubtasks(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ReprotectReverse Subtasks."""
 
 
+class DrillRunTasks(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum for DrillRun Tasks."""
+
+    FAILOVER = "Failover"
+    """Failover task."""
+    REPROTECT = "Reprotect"
+    """Reprotect task."""
+    FAILOVER_REVERSE = "FailoverReverse"
+    """FailoverReverse task."""
+    REPROTECT_REVERSE = "ReprotectReverse"
+    """ReprotectReverse task."""
+
+
 class DrillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum for Drill type object hierarchy."""
 
@@ -195,9 +237,9 @@ class ExclusionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum for the status of the resource in the goal."""
 
     EXCLUDED = "Excluded"
-    """Resource is not included in the goals."""
+    """The resource is excluded from the goals."""
     INCLUDED = "Included"
-    """Resource is excluded from the goals."""
+    """The resource is included in the goals."""
 
 
 class ExecutionReadinessState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -258,20 +300,6 @@ class ForceInclusionAndUpdate(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disable ForceInclusionAndUpdate."""
 
 
-class GoalAssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Supported type of goal assignment."""
-
-    RESILIENCY = "Resiliency"
-    """Resiliency goal assignment type."""
-
-
-class GoalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Supported type of goal."""
-
-    RESILIENCY = "Resiliency"
-    """Resiliency goal type."""
-
-
 class HAStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HA Status."""
 
@@ -288,19 +316,6 @@ class InitialConfig(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Initial config pending."""
     COMPLETE = "Complete"
     """Initial config complete."""
-
-
-class IsoDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ISO 8601 duration formats."""
-
-    PT15_M = "PT15M"
-    """15 minutes."""
-    PT1_H = "PT1H"
-    """1 hour."""
-    PT4_H = "PT4H"
-    """4 hours."""
-    PT24_H = "PT24H"
-    """24 hours."""
 
 
 class JobResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -376,17 +391,6 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """System and user assigned managed identity."""
 
 
-class MembershipType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Membership type of the service group to resource."""
-
-    DIRECT = "Direct"
-    """Resource is direct member of service group."""
-    THROUGH_SUBSCRIPTION = "ThroughSubscription"
-    """Resource is member of service group through subscription."""
-    THROUGH_RESOURCE_GROUP = "ThroughResourceGroup"
-    """Resource is member of service group through resource group."""
-
-
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
@@ -417,6 +421,8 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Deletion in progress."""
     ACCEPTED = "Accepted"
     """Change accepted for processing."""
+    NEEDS_ATTENTION = "NeedsAttention"
+    """The resource needs attention from the user."""
 
 
 class QualificationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -547,24 +553,24 @@ class RelativeResourceCompositionState(str, Enum, metaclass=CaseInsensitiveEnumM
     """Resources out of sync."""
 
 
-class RequirementSelected(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum for the requirement status of the resource in the goal."""
+class ResourceFeasibilityReviewStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Outcome of a resource feasibility review for a recovery resource."""
 
-    NOT_REQUIRED = "NotRequired"
-    """The resource is not required for the specified goal."""
-    REQUIRED = "Required"
-    """The resource is required for the specified goal."""
+    UNAVAILABLE = "Unavailable"
+    """The review could not complete. Advisory only; it never blocks failover."""
+    PASSED = "Passed"
+    """The review identified no risk."""
+    FLAGGED = "Flagged"
+    """The review identified a risk the operator should consider."""
+    NOT_APPLICABLE = "NotApplicable"
+    """The review did not apply to this resource and was skipped."""
 
 
-class ResilienceHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """enum for Resilience health status."""
+class ResourceFeasibilityReviewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The resource feasibility review category for a recovery resource."""
 
-    NOT_EVALUATED = "NotEvaluated"
-    """Resource is not evaluated."""
-    UNHEALTHY = "Unhealthy"
-    """Resource is Unhealthy."""
-    HEALTHY = "Healthy"
-    """Resource is Healthy."""
+    SKU_CAPACITY = "SkuCapacity"
+    """SKU capacity availability check in the target region or zone."""
 
 
 class ResourceInclusionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -624,7 +630,25 @@ class ResourceTypeCategories(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A state type that indicates qualification of a resource for an operation."""
 
     AZURE_SITE_RECOVERY_VMS_PRESENT = "AzureSiteRecoveryVMsPresent"
-    """Indicates that alteast one Azure Site Recovery VMs are present."""
+    """Indicates that at least one Azure Site Recovery VM is present."""
+
+
+class SliType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Category of an SLI selected for Drill monitoring."""
+
+    AVAILABILITY = "Availability"
+    """Availability SLI."""
+    LATENCY = "Latency"
+    """Latency SLI."""
+
+
+class SliTypeMatchState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether the user-declared SLI type matches the SLI's actual category."""
+
+    MATCHED = "Matched"
+    """Declared type matches the SLI's actual category."""
+    MISMATCHED = "Mismatched"
+    """Declared type does not match the SLI's actual category."""
 
 
 class SolutionDisplayName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -647,22 +671,9 @@ class TestFailoverState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """he resource is in test failover cleanup pending state."""
 
 
-class UnifiedResilienceItemRequirementSelected(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum for the requirement status of the resource in the goal."""
-
-    NOT_REQUIRED = "NotRequired"
-    """The resource is not required for the specified goal."""
-    REQUIRED = "Required"
-    """The resource is required for the specified goal."""
-    NOT_SELECTED = "NotSelected"
-    """The resource is not selected for the specified goal."""
-
-
 class UsagePlanType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of usage plan."""
 
-    BASIC = "Basic"
-    """Basic usage plan with restricted functionality without any charges."""
     STANDARD = "Standard"
     """Standard usage plan with comprehensive functionality and usage based charges."""
 
@@ -680,6 +691,6 @@ class VMPresent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum for VM presence."""
 
     PRESENT = "Present"
-    """Atleast one VM Present."""
+    """At least one VM is present."""
     ABSENT = "Absent"
     """No VM present."""

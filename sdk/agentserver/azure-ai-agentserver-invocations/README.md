@@ -4,7 +4,7 @@ The `azure-ai-agentserver-invocations` package provides the invocation protocol 
 
 - **HTTP** (`invocations` protocol) — `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, `GET /invocations/docs/openapi.json`, `GET /invocations/docs/asyncapi.{json,yaml}`.
 - **WebSocket** (`invocations_ws` protocol) — full-duplex streaming at `/invocations_ws`, registered with `@app.ws_handler`.
-- **Voice Live Bridge** — an experimental typed event relay in the `azure.ai.agentserver.invocations.voice` submodule, layered on `invocations_ws`.
+- **Voice Live Bridge** — an experimental typed event relay in the `azure.ai.agentserver.invocations.voice` submodule, available at both `/voice_conversation_engine` and the existing `/invocations_ws` endpoint.
 
 ## Getting started
 
@@ -304,13 +304,27 @@ app.run()
 
 The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`. The full WebSocket API — `iter_text`, `iter_bytes`, `iter_json`, `send_text`, `send_bytes`, `send_json`, `close`, `headers`, `query_params`, `client`, `state` — is available, so application protocols on top of `invocations_ws` are entirely under your control.
 
-[starlette-ws]: https://www.starlette.io/websockets/
+[starlette-ws]: https://starlette.dev/websockets/
 
 ## Typed Voice Live Bridge submodule (preview)
 
-`VoiceAgentServerHost` provides typed `on_<event>` decorators over the existing
-`invocations_ws` transport. Each callback receives an immutable event and a
-send-only `Session`:
+`VoiceAgentServerHost` provides typed `on_<event>` decorators at both `/invocations_ws` and `/voice_conversation_engine`, using the same `VoiceAgentServerHost()` construction. Existing legacy protocol declarations and metadata do not need migration. To use standalone CE, declare `voice_conversation_engine` version `1.0.0` on the deployed hosted agent. Neither legacy Bridge metadata flag is required for CE. The SDK does not create or modify hosted agent protocol declarations; registering the container route alone does not enable the public Foundry CE endpoint.
+
+The Voice Agent configuration field `conversation_engine` is separate from the Hosted Agent protocol name and remains unchanged.
+
+Both endpoints reuse the same typed Bridge messages, callbacks, transport limits,
+tracing, and application-owned lifecycle. The message handshake remains
+`session.start.protocol_version="1.0"`, independent of the container protocol
+version `1.0.0`. The generic `InvocationAgentServerHost.ws_handler` and independent
+`invocations_ws` routes are unchanged. The typed host reserves both paths, applying
+the existing same-scope conflict detection and Host/Mount authority rules to each.
+Use a locally built SDK containing CE support
+until a release containing it is available; enabling CE also requires the Foundry
+CE route and CE-aware Voice Live to be deployed.
+
+Each callback receives an immutable event and a send-only `Session`:
+
+Caller interruptions use `user.barge_in`, the `UserBargeIn` event model, `UserBargeInCallback`, and `@app.on_user_barge_in`. Voice Live senders must use the same event contract. Generic raw WebSocket handlers and application-owned cancellation/history are unchanged.
 
 ```python
 import asyncio
@@ -417,6 +431,8 @@ reconnect state.
 
 ### Voice tracing
 
+Bridge protocol remains `1.0`. `UserMessage.content` contains ordered `InputTextPart` and `InputDataPart` values. `InputDataPart.data` is a deeply immutable application JSON object. Applications can send `ResponseOutputDataDone(response_id=..., item_id=..., data=...)` after `ResponseCreated`, then explicitly finish with `ResponseDone`. Each data item is complete in one frame and cannot interrupt an unfinished text item; it produces no speech. After a successful operation requiring no output, explicitly send `ResponseNone(in_reply_to=(event.item_id,), reason="acknowledged")` only after required persistence finishes. The relay never infers business completion from callback return. Update both the Bridge and SDK before using these additions; there is no version change or runtime negotiation.
+
 The typed Voice endpoint extracts W3C context from each WebSocket upgrade and
 creates one `agentserver.connection` span for the physical connection. Each
 registered event dispatch creates a sibling `voice.callback` span. Application
@@ -477,7 +493,7 @@ code catches cancellation and returns normally, recovery is outside the SDK
 contract; the SDK does not forcibly terminate or retain that callback.
 
 For full-duplex streaming, the agent creates and owns a generation task, returns
-from `on_user_message`, and cancels that task from `on_barge_in`,
+from `on_user_message`, and cancels that task from `on_user_barge_in`,
 `on_response_cancelled`, `on_response_timeout`, or
 `on_connection_terminating`. Each task remains responsible for its own
 asynchronous resource cleanup. See the complete
@@ -488,7 +504,7 @@ sample.
 
 | Environment variable | Default | Description |
 |---|---|---|
-| `SSE_KEEPALIVE_INTERVAL` | unset (disabled) | Platform-injected interval, in seconds, for SSE comments on idle `POST /invocations` streams. `0` disables keep-alive. Surfaced on `app.config.sse_keepalive_interval`. |
+| `SSE_KEEPALIVE_INTERVAL` | `15` | Interval, in seconds, for SSE comments on idle `POST /invocations` streams. `0` disables keep-alive. Surfaced on `app.config.sse_keepalive_interval`. |
 | `WS_KEEPALIVE_INTERVAL` | unset (disabled) | Platform-injected WebSocket Ping interval, in seconds. `0` disables keep-alive. Surfaced on `app.config.ws_ping_interval` and wired into Hypercorn's `websocket_ping_interval` by `AgentServerHost`. |
 
 ### Reference: close codes

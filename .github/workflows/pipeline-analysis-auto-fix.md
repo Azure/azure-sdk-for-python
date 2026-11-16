@@ -30,24 +30,33 @@ on:
       with:
         script: |
           if (!/^\d+$/.test(process.env.PR_NUMBER)) {
-            core.setFailed("The PR number is invalid.");
+            core.info("Skipping fix because the PR number is invalid.");
             return;
           }
           if (!/^\d+$/.test(process.env.PARENT_RUN_ID)) {
-            core.setFailed("The parent run ID is invalid.");
+            core.info("Skipping fix because the parent run ID is invalid.");
             return;
           }
 
-          const { data: pull } = await github.rest.pulls.get({
-            ...context.repo,
-            pull_number: Number(process.env.PR_NUMBER),
-          });
+          let pull;
+          try {
+            ({ data: pull } = await github.rest.pulls.get({
+              ...context.repo,
+              pull_number: Number(process.env.PR_NUMBER),
+            }));
+          } catch (error) {
+            if (error.status === 404) {
+              core.info("Skipping fix because the pull request no longer exists.");
+              return;
+            }
+            throw error;
+          }
           if (
             pull.state !== "open" ||
             pull.head.sha !== process.env.CI_HEAD_SHA ||
             pull.head.repo?.full_name !== `${context.repo.owner}/${context.repo.repo}`
           ) {
-            core.setFailed("The pull request is closed, fork-owned, or no longer points to the failed commit.");
+            core.info("Skipping fix because the pull request is closed, fork-owned, or no longer points to the failed commit.");
             return;
           }
 
@@ -65,11 +74,11 @@ on:
             comment.body.includes(requestedStatus)
           );
           if (matches.length !== 1) {
-            core.setFailed(`Expected one authorized analysis comment, found ${matches.length}.`);
+            core.info(`Skipping fix because exactly one authorized analysis comment was expected; found ${matches.length}.`);
             return;
           }
           core.setOutput("body", matches[0].body);
-if: needs.pre_activation.outputs.fix_request_result == 'success'
+if: needs.pre_activation.outputs.fix_request_result == 'success' && needs.pre_activation.outputs.analysis_comment != ''
 engine: copilot
 
 concurrency:
@@ -111,6 +120,14 @@ tools:
     - "git status:*"
 
 safe-outputs:
+  report-failed-jobs: false
+  report-failure-as-issue: false
+  report-incomplete: false
+  # v0.80.9 requires one concrete safe-output handler to materialize the
+  # safe_outputs job consumed by create-branch.
+  missing-tool:
+    create-issue: false
+  missing-data: false
   noop:
     report-as-issue: false
   jobs:
@@ -129,7 +146,8 @@ safe-outputs:
             ref: ${{ github.event.inputs.ci_head_sha }}
             fetch-depth: 0
         - name: Prepare fix branch
-          shell: bash
+          id: prepare_fix
+          uses: actions/github-script@v9.0.0
           env:
             CI_HEAD_SHA: ${{ github.event.inputs.ci_head_sha }}
             FIX_BRANCH: pipeline-fix/pr-${{ github.event.inputs.pr_number }}-${{ github.event.inputs.ci_head_sha }}/run-${{ github.run_id }}
@@ -138,115 +156,166 @@ safe-outputs:
             GIT_COMMITTER_EMAIL: ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
             GIT_COMMITTER_NAME: ${{ github.actor }}
             PR_NUMBER: ${{ github.event.inputs.pr_number }}
-          run: |
-            mapfile -d '' patches < <(find "$RUNNER_TEMP/gh-aw/safe-jobs" -maxdepth 1 -type f -name 'aw-*.patch' -print0)
-            if [[ ${#patches[@]} -ne 1 ]]; then
-              echo "Expected exactly one staged fix patch, found ${#patches[@]}." >&2
-              exit 1
-            fi
-            patch_size=$(wc -c < "${patches[0]}")
-            if (( patch_size > 4096 * 1024 )); then
-              echo "The fix patch exceeds the 4096 KiB size limit." >&2
-              exit 1
-            fi
+          with:
+            script: |
+              const fs = require("fs");
+              const path = require("path");
 
-            git checkout -b "$FIX_BRANCH" "$CI_HEAD_SHA"
-            git apply --3way --index "${patches[0]}"
-            mapfile -d '' changed_files < <(git diff --cached --name-only --no-renames -z)
-            if [[ ${#changed_files[@]} -eq 0 ]]; then
-              echo "The fix patch did not change any files." >&2
-              exit 1
-            fi
-            if (( ${#changed_files[@]} > 100 )); then
-              echo "The fix patch exceeds the 100-file limit." >&2
-              exit 1
-            fi
-            declare -A protected_files=(
-              [AGENTS.md]=1
-              [bunfig.toml]=1
-              [bun.lockb]=1
-              [build.gradle]=1
-              [build.gradle.kts]=1
-              [CHANGELOG.md]=1
-              [CLAUDE.md]=1
-              [CODE_OF_CONDUCT.md]=1
-              [CODEOWNERS]=1
-              [CONTRIBUTING.md]=1
-              [deno.json]=1
-              [deno.jsonc]=1
-              [deno.lock]=1
-              [DESIGN.md]=1
-              [Directory.Packages.props]=1
-              [Gemfile]=1
-              [Gemfile.lock]=1
-              [GEMINI.md]=1
-              [global.json]=1
-              [go.mod]=1
-              [go.sum]=1
-              [gradle.properties]=1
-              [mix.exs]=1
-              [mix.lock]=1
-              [npm-shrinkwrap.json]=1
-              [NuGet.Config]=1
-              [package.json]=1
-              [package-lock.json]=1
-              [Pipfile]=1
-              [Pipfile.lock]=1
-              [pnpm-lock.yaml]=1
-              [pom.xml]=1
-              [pyproject.toml]=1
-              [README.md]=1
-              [requirements.txt]=1
-              [SECURITY.md]=1
-              [settings.gradle]=1
-              [settings.gradle.kts]=1
-              [setup.cfg]=1
-              [setup.py]=1
-              [stack.yaml]=1
-              [stack.yaml.lock]=1
-              [uv.lock]=1
-              [yarn.lock]=1
-            )
-            for changed_file in "${changed_files[@]}"; do
-              file_name=${changed_file##*/}
-              if [[ "$changed_file" == .*/* ||
-                    "$changed_file" == .github/* ||
-                    "$changed_file" == eng/* ||
-                    "$changed_file" == scripts/* ||
-                    "$changed_file" == *.lock ||
-                    "$changed_file" == *requirements*.txt ||
-                    "$changed_file" == */pyproject.toml ||
-                    -n "${protected_files[$file_name]+x}" ]]; then
-                echo "The fix changes a protected automation or dependency file: $changed_file" >&2
-                exit 1
-              fi
-            done
-            git commit -m "Fix pipeline failure for #$PR_NUMBER"
+              const runGit = async args => {
+                const exitCode = await exec.exec("git", args);
+                if (exitCode !== 0) {
+                  throw new Error(`git ${args[0]} failed with exit code ${exitCode}.`);
+                }
+              };
+              const captureGit = async args => {
+                const chunks = [];
+                const exitCode = await exec.exec("git", args, {
+                  listeners: {
+                    stdout: data => chunks.push(Buffer.from(data)),
+                  },
+                  silent: true,
+                });
+                if (exitCode !== 0) {
+                  throw new Error(`git ${args[0]} failed with exit code ${exitCode}.`);
+                }
+                return Buffer.concat(chunks);
+              };
+
+              core.setOutput("publish_fix", "false");
+              const safeJobsDirectory = path.join(process.env.RUNNER_TEMP, "gh-aw", "safe-jobs");
+              const patches = fs.readdirSync(safeJobsDirectory, { withFileTypes: true })
+                .filter(entry => entry.isFile() && /^aw-.*\.patch$/.test(entry.name))
+                .map(entry => path.join(safeJobsDirectory, entry.name));
+              if (patches.length !== 1) {
+                throw new Error(`Expected exactly one staged fix patch, found ${patches.length}.`);
+              }
+              if (fs.statSync(patches[0]).size > 4096 * 1024) {
+                throw new Error("The fix patch exceeds the 4096 KiB size limit.");
+              }
+
+              await runGit(["checkout", "-b", process.env.FIX_BRANCH, process.env.CI_HEAD_SHA]);
+              await runGit(["apply", "--3way", "--index", patches[0]]);
+              const changedFiles = (await captureGit([
+                "diff", "--cached", "--name-only", "--no-renames", "-z",
+              ]))
+                .toString("utf8")
+                .split("\0")
+                .filter(Boolean);
+              if (changedFiles.length === 0) {
+                core.notice("Skipping publish because the fix patch did not change any files.");
+                return;
+              }
+              if (changedFiles.length > 100) {
+                throw new Error("The fix patch exceeds the 100-file limit.");
+              }
+
+              const protectedFiles = new Set([
+                "AGENTS.md",
+                "bunfig.toml",
+                "bun.lockb",
+                "build.gradle",
+                "build.gradle.kts",
+                "CHANGELOG.md",
+                "CLAUDE.md",
+                "CODE_OF_CONDUCT.md",
+                "CODEOWNERS",
+                "CONTRIBUTING.md",
+                "deno.json",
+                "deno.jsonc",
+                "deno.lock",
+                "DESIGN.md",
+                "Directory.Packages.props",
+                "Gemfile",
+                "Gemfile.lock",
+                "GEMINI.md",
+                "global.json",
+                "go.mod",
+                "go.sum",
+                "gradle.properties",
+                "mix.exs",
+                "mix.lock",
+                "npm-shrinkwrap.json",
+                "NuGet.Config",
+                "package.json",
+                "package-lock.json",
+                "Pipfile",
+                "Pipfile.lock",
+                "pnpm-lock.yaml",
+                "pom.xml",
+                "pyproject.toml",
+                "README.md",
+                "requirements.txt",
+                "SECURITY.md",
+                "settings.gradle",
+                "settings.gradle.kts",
+                "setup.cfg",
+                "setup.py",
+                "stack.yaml",
+                "stack.yaml.lock",
+                "uv.lock",
+                "yarn.lock",
+              ]);
+              for (const changedFile of changedFiles) {
+                const fileName = path.posix.basename(changedFile);
+                const changesProtectedFile =
+                  (changedFile.startsWith(".") && changedFile.includes("/")) ||
+                  changedFile.startsWith(".github/") ||
+                  changedFile.startsWith("eng/") ||
+                  changedFile.startsWith("scripts/") ||
+                  changedFile.endsWith(".lock") ||
+                  (changedFile.includes("requirements") && changedFile.endsWith(".txt")) ||
+                  changedFile.endsWith("/pyproject.toml") ||
+                  protectedFiles.has(fileName);
+                if (changesProtectedFile) {
+                  core.notice(
+                    `Skipping publish because the fix changes a protected automation or dependency file: ${changedFile}`
+                  );
+                  return;
+                }
+              }
+              await runGit(["commit", "-m", `Fix pipeline failure for #${process.env.PR_NUMBER}`]);
+              core.setOutput("publish_fix", "true");
         - name: Revalidate pull request
+          id: revalidate
+          if: steps.prepare_fix.outputs.publish_fix == 'true'
           uses: actions/github-script@v9.0.0
           env:
             CI_HEAD_SHA: ${{ github.event.inputs.ci_head_sha }}
             PR_NUMBER: ${{ github.event.inputs.pr_number }}
           with:
             script: |
-              const { data: pull } = await github.rest.pulls.get({
-                ...context.repo,
-                pull_number: Number(process.env.PR_NUMBER),
-              });
+              core.setOutput("publish_fix", "false");
+              let pull;
+              try {
+                ({ data: pull } = await github.rest.pulls.get({
+                  ...context.repo,
+                  pull_number: Number(process.env.PR_NUMBER),
+                }));
+              } catch (error) {
+                if (error.status === 404) {
+                  core.info("Skipping publish because the pull request no longer exists.");
+                  return;
+                }
+                throw error;
+              }
               if (
                 pull.state !== "open" ||
                 pull.head.sha !== process.env.CI_HEAD_SHA ||
                 pull.head.repo?.full_name !== `${context.repo.owner}/${context.repo.repo}`
               ) {
-                core.setFailed("The pull request is closed, fork-owned, or no longer points to the failed commit.");
+                core.info("Skipping publish because the pull request is closed, fork-owned, or no longer points to the failed commit.");
+                return;
               }
+              core.setOutput("publish_fix", "true");
         - name: Publish fix branch
+          if: steps.revalidate.outputs.publish_fix == 'true'
           shell: bash
           env:
             FIX_BRANCH: pipeline-fix/pr-${{ github.event.inputs.pr_number }}-${{ github.event.inputs.ci_head_sha }}/run-${{ github.run_id }}
           run: |
             git push origin "HEAD:refs/heads/$FIX_BRANCH"
         - name: Update analysis comment
+          if: steps.revalidate.outputs.publish_fix == 'true'
           uses: actions/github-script@v9.0.0
           env:
             CI_HEAD_SHA: ${{ github.event.inputs.ci_head_sha }}
@@ -255,15 +324,24 @@ safe-outputs:
             PR_NUMBER: ${{ github.event.inputs.pr_number }}
           with:
             script: |
-              const { data: pull } = await github.rest.pulls.get({
-                ...context.repo,
-                pull_number: Number(process.env.PR_NUMBER),
-              });
+              let pull;
+              try {
+                ({ data: pull } = await github.rest.pulls.get({
+                  ...context.repo,
+                  pull_number: Number(process.env.PR_NUMBER),
+                }));
+              } catch (error) {
+                if (error.status === 404) {
+                  core.info("Skipping comment update because the pull request no longer exists.");
+                  return;
+                }
+                throw error;
+              }
               if (
                 pull.head.sha !== process.env.CI_HEAD_SHA ||
                 pull.head.repo?.full_name !== `${context.repo.owner}/${context.repo.repo}`
               ) {
-                core.setFailed("The source pull request no longer points to the failed repository commit.");
+                core.info("Skipping comment update because the source pull request no longer points to the failed repository commit.");
                 return;
               }
               const runUrl = `${process.env.GITHUB_SERVER_URL}/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.PARENT_RUN_ID}`;
@@ -280,7 +358,7 @@ safe-outputs:
                 comment.body.includes(requestedStatus)
               );
               if (matches.length !== 1) {
-                core.setFailed(`Expected one authorized analysis comment, found ${matches.length}.`);
+                core.info(`Skipping comment update because exactly one authorized analysis comment was expected; found ${matches.length}.`);
                 return;
               }
               const comment = matches[0];
@@ -309,12 +387,18 @@ ${{ needs.pre_activation.outputs.analysis_comment }}
 
 ## Process
 
-1. Use `noop` unless the verified analysis demonstrates at least one deterministic, high-confidence code change. Infrastructure, authentication, timeout, flaky, live-test, ambiguous, incomplete, and out-of-scope failures are not eligible.
-2. Make the smallest source or test change that fixes the demonstrated failure. Use the `edit`
+1. Inspect `.github/skills` for repository- or language-specific skills that apply to the
+  diagnosed failure, and read the `SKILL.md` files for any useful fixing guidance before editing.
+2. Use `noop` and stop when the workflow cannot proceed or the verified analysis does not
+  demonstrate at least one deterministic, high-confidence code change. Infrastructure,
+  authentication, timeout, flaky, live-test, ambiguous, incomplete, and out-of-scope failures are
+  not eligible. Do not report these expected early exits as workflow failures. Use `noop`, not
+  `missing_tool`, `missing_data`, or `report_incomplete`, for these paths.
+3. Make the smallest source or test change that fixes the demonstrated failure. Use the `edit`
   tool for file-content changes. If the fix requires deleting a tracked file, run
   `git rm <path>` as one standalone shell command; do not combine it with other commands. Leave the
   resulting workspace changes uncommitted: do not create or switch branches, configure Git, commit,
   or push. Do not modify workflow, pipeline, repository automation, or dependency files.
-3. If changes were made, call `create_branch` exactly once. A deterministic post-step packages the
+4. If changes were made, call `create_branch` exactly once. A deterministic post-step packages the
   workspace changes, and the trusted job validates and applies the patch, pushes the branch,
   and links its comparison from the verified analysis comment.

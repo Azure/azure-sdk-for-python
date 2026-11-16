@@ -3,10 +3,93 @@
 # ---------------------------------------------------------
 """Tests for session resolution and required response headers."""
 
+from importlib.metadata import requires, version
+from urllib.parse import unquote
+
 import pytest
+from packaging.requirements import Requirement
+from packaging.version import Version
 from starlette.responses import JSONResponse
 
 from azure.ai.agentserver.activity import ActivityAgentServerHost
+from azure.ai.agentserver.core import FoundryAgentRequestContext, get_request_context
+
+
+def test_original_subject_core_dependency_floor():
+    requirements = (Requirement(value) for value in requires("azure-ai-agentserver-activity") or [])
+    core = next(value for value in requirements if value.name == "azure-ai-agentserver-core")
+    package_version = Version(version("azure-ai-agentserver-activity"))
+    if package_version.pre and package_version.pre[0] == "a":
+        assert core.specifier.contains(Version(version("azure-ai-agentserver-core")), prereleases=True)
+    else:
+        assert "2.3.0b2" in core.specifier
+    assert "2.3.0b1" not in core.specifier
+    assert "2.0.0b8" not in core.specifier
+    assert callable(FoundryAgentRequestContext.model_attribution_headers)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("value", ["malformed", 'oid="one", oid="two"', 'unknown="value"'])
+async def test_malformed_original_subject_is_classified_before_handler(value, asgi_client):
+    handled = []
+
+    async def handle(_request):
+        handled.append(True)
+        return JSONResponse(get_request_context().model_attribution_headers())
+
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
+    payload = {"type": "message", "conversation": {"id": "conversation"}}
+    async with asgi_client(app) as client:
+        response = await client.post(
+            "/activity/messages", json=payload,
+            headers={"x-ms-original-subject": value, "Authorization": "Bearer test-token"},
+        )
+        assert response.status_code == 400
+        assert response.headers["x-platform-error-source"] == "platform"
+        assert response.headers["x-platform-error-detail"] == "invalid_original_subject"
+        assert not handled
+        response = await client.post(
+            "/activity/messages", json=payload, headers={"Authorization": "Bearer test-token"},
+        )
+        assert response.status_code == 200
+        assert response.json() == {}
+    assert get_request_context().original_subject is None
+
+
+@pytest.mark.asyncio
+async def test_original_subject_comes_from_headers_not_activity_payload(asgi_client):
+    async def handle(_request):
+        return JSONResponse(get_request_context().model_attribution_headers())
+
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
+    subject = {
+        "x-ms-original-subject": 'oid="platform-original-oid", tid="platform-original-tid", idtype="user"',
+    }
+    payload = {
+        "type": "message",
+        "from": {"aadObjectId": "payload-spoof"},
+        "channelData": {"tenant": {"id": "payload-spoof"}},
+        "conversation": {"id": "conversation"},
+    }
+    async with asgi_client(app) as client:
+        response = await client.post(
+            "/activity/messages",
+            json=payload,
+            headers={**subject, "Authorization": "Bearer bot-token", "x-agent-user-id": "state-key"},
+        )
+        assert response.status_code == 200
+        forwarded = response.json()
+        assert not any(name.lower().startswith("x-ms-original-subject") for name in forwarded)
+        assert unquote(forwarded["x-ms-foundry-baggage"].split("=", 1)[1]) == subject["x-ms-original-subject"]
+        assert len(forwarded) == 1
+        response = await client.post(
+            "/activity/messages",
+            json=payload,
+            headers={"Authorization": "Bearer bot-token"},
+        )
+        assert response.status_code == 200
+        assert response.json() == {}
+    assert get_request_context().original_subject is None
 
 
 @pytest.mark.asyncio

@@ -42,7 +42,10 @@ class TestCommvaultContentStoreMgmtProtectionGroupsOperations(AzureMgmtRecordedT
                 "name": "str",
                 "properties": {
                     "dataSourceType": "AzureVM",
+                    "lastBackUpTime": 0,
+                    "numberOfProtectedItems": 0,
                     "plan": "str",
+                    "protectionStatus": "str",
                     "resources": {
                         "manual": ["str"],
                         "matchRules": {
@@ -51,9 +54,6 @@ class TestCommvaultContentStoreMgmtProtectionGroupsOperations(AzureMgmtRecordedT
                         },
                     },
                     "backupActivityStatus": "str",
-                    "lastBackUpTime": 0,
-                    "numberOfProtectedItems": 0,
-                    "protectionStatus": "str",
                     "provisioningState": "str",
                 },
                 "systemData": {
