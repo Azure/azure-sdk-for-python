@@ -1,0 +1,193 @@
+name: Update emitter package
+# Updates eng/emitter-package.json dependencies (including @typespec/http-client-python,
+# @azure-tools/typespec-python, and @typespec/*), aligns selected packages with
+# azure-rest-api-specs, regenerates eng/emitter-package-lock.json, and opens or updates
+# a draft pull request when files change.
+on:
+  schedule:
+    - cron: "0 15 * * 1-5" # Weekdays at 15:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-emitter-package
+  cancel-in-progress: false
+
+env:
+  PR_BRANCH: automated/update-emitter-package
+  # Resolve packages only through the Azure SDK CFS feeds (anonymous read on the public project).
+  NPM_CONFIG_REGISTRY: https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-js/npm/registry/
+  PIP_INDEX_URL: https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
+  UV_DEFAULT_INDEX: https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
+
+jobs:
+  update-emitter-package:
+    if: github.repository == 'Azure/azure-sdk-for-python'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: "24.x"
+
+      - name: Install emitter update tools
+        run: npm install --global npm-check-updates @azure-tools/typespec-client-generator-cli
+
+      - name: Update emitter package dependencies
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          . (Join-Path $env:GITHUB_WORKSPACE 'eng' 'common' 'scripts' 'Helpers' 'PSModule-Helpers.ps1')
+          Install-ModuleIfNotInstalled 'powershell-yaml' '0.4.7' | Import-Module
+
+          $packageJsonPath = Join-Path $env:GITHUB_WORKSPACE 'eng' 'emitter-package.json'
+          $alignmentSources = [ordered]@{
+            'azure-rest-api-specs' = @{
+              repository = 'Azure/azure-rest-api-specs'
+              ref = 'main'
+              packages = @(
+                '@azure-tools/openai-typespec'
+                '@azure-tools/typespec-liftr-base'
+              )
+            }
+          }
+
+          Write-Host "Updating dependencies in $packageJsonPath"
+          ncu --packageFile $packageJsonPath --upgrade --registry $env:NPM_CONFIG_REGISTRY
+          if ($LASTEXITCODE) {
+            throw "npm-check-updates failed with exit code $LASTEXITCODE"
+          }
+
+          $packageJson = Get-Content $packageJsonPath -Raw | ConvertFrom-Json -AsHashtable
+
+          foreach ($sourceName in $alignmentSources.Keys | Sort-Object) {
+            $source = $alignmentSources[$sourceName]
+            $encodedRef = [Uri]::EscapeDataString($source.ref)
+            $commitUrl = "https://api.github.com/repos/$($source.repository)/commits/$encodedRef"
+            $commit = Invoke-RestMethod -Uri $commitUrl -Headers @{ Authorization = "Bearer $env:GH_TOKEN" }
+            $sha = $commit.sha
+            if ($sha -notmatch '^[0-9a-f]{40}$') {
+              throw "Could not resolve '$($source.ref)' to a commit for alignment source '$sourceName' ($commitUrl)"
+            }
+
+            # Use immutable URLs so package.json and its catalogs stay consistent.
+            $sourceRoot = "https://raw.githubusercontent.com/$($source.repository)/$sha"
+            $packageJsonUrl = "$sourceRoot/package.json"
+            $workspaceUrl = "$sourceRoot/pnpm-workspace.yaml"
+
+            Write-Host "Reading aligned package versions from $sourceName at $sha ($packageJsonUrl)"
+            $sourcePackageJson = Invoke-RestMethod -Uri $packageJsonUrl
+            $workspace = $null
+
+            foreach ($packageName in $source.packages) {
+              $alignedVersion = $sourcePackageJson.dependencies.$packageName
+              if (-not $alignedVersion) {
+                $alignedVersion = $sourcePackageJson.devDependencies.$packageName
+              }
+              if ($alignedVersion -isnot [string] -or [string]::IsNullOrWhiteSpace($alignedVersion)) {
+                throw "Package '$packageName' has no valid version in dependencies or devDependencies at $packageJsonUrl"
+              }
+
+              if ($alignedVersion.StartsWith('catalog:')) {
+                $catalogReference = $alignedVersion
+                if ($null -eq $workspace) {
+                  Write-Host "Resolving '$catalogReference' for '$packageName' from $sourceName ($workspaceUrl)"
+                  $workspaceResponse = Invoke-WebRequest -Uri $workspaceUrl
+                  $workspace = ConvertFrom-Yaml -Yaml $workspaceResponse.Content
+                  if ($workspace -isnot [System.Collections.IDictionary]) {
+                    throw "Invalid workspace configuration for package '$packageName' from source '$sourceName' at $workspaceUrl"
+                  }
+                }
+
+                $catalogName = $catalogReference.Substring('catalog:'.Length)
+                if ([string]::IsNullOrEmpty($catalogName) -or $catalogName -eq 'default') {
+                  $catalog = $workspace['catalog']
+                } else {
+                  $catalogs = $workspace['catalogs']
+                  $catalog = $null
+                  if ($catalogs -is [System.Collections.IDictionary]) {
+                    $catalog = $catalogs[$catalogName]
+                  }
+                }
+
+                if ($catalog -isnot [System.Collections.IDictionary] -or -not $catalog.Contains($packageName)) {
+                  throw "Cannot resolve '$catalogReference' for package '$packageName' from source '$sourceName': catalog or package entry is missing at $workspaceUrl"
+                }
+
+                $alignedVersion = $catalog[$packageName]
+                if ($alignedVersion -isnot [string] -or [string]::IsNullOrWhiteSpace($alignedVersion)) {
+                  throw "Cannot resolve '$catalogReference' for package '$packageName' from source '$sourceName': the entry at $workspaceUrl must be a nonempty version string"
+                }
+              }
+
+              if ($alignedVersion -match '^\s*(catalog|workspace|link|patch):') {
+                throw "Unsupported reference '$alignedVersion' for package '$packageName' from source '$sourceName' at commit '$sha'. Provide an npm-compatible version in the upstream manifest or catalog."
+              }
+
+              $targetSection = @('dependencies', 'devDependencies') |
+                Where-Object {
+                  $packageJson[$_] -is [System.Collections.IDictionary] -and
+                  $packageJson[$_].Contains($packageName)
+                } |
+                Select-Object -First 1
+              if (-not $targetSection) {
+                throw "Package '$packageName' from alignment source '$sourceName' was not found in $packageJsonPath"
+              }
+
+              Write-Host "Aligning $packageName to $alignedVersion"
+              $packageJson[$targetSection][$packageName] = $alignedVersion
+            }
+          }
+
+          $packageJson | ConvertTo-Json -Depth 100 | Set-Content $packageJsonPath
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Regenerate emitter package lock file
+        run: tsp-client generate-lock-file
+
+      - name: Create or update draft pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- eng/emitter-package.json eng/emitter-package-lock.json; then
+            echo "Emitter package is already up to date."
+            exit 0
+          fi
+
+          git diff -- eng/emitter-package.json
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$PR_BRANCH"
+          git add eng/emitter-package.json eng/emitter-package-lock.json
+          git commit -m "[Automation] Update emitter package dependencies"
+          git push --force origin "$PR_BRANCH"
+
+          existing_pr=$(gh pr list --head "$PR_BRANCH" --base main --state open --json number --jq '.[0].number // empty')
+          if [ -n "$existing_pr" ]; then
+            echo "Updated existing pull request #$existing_pr."
+            exit 0
+          fi
+
+          gh pr create \
+            --draft \
+            --base main \
+            --head "$PR_BRANCH" \
+            --title "[Automation] Update emitter package dependencies" \
+            --body "This automated PR updates the emitter package dependencies through the Azure SDK CFS feed in \`eng/emitter-package.json\` and regenerates \`eng/emitter-package-lock.json\`. Generated by the [Update emitter package workflow](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})."
