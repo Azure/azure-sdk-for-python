@@ -31,6 +31,7 @@ from .operations import (
     BackupsUnderVolumeOperations,
     BucketsOperations,
     CachesOperations,
+    ClusterPeersOperations,
     ElasticAccountsOperations,
     ElasticBackupPoliciesOperations,
     ElasticBackupVaultsOperations,
@@ -39,6 +40,10 @@ from .operations import (
     ElasticSnapshotPoliciesOperations,
     ElasticSnapshotsOperations,
     ElasticVolumesOperations,
+    ExternalCacheConnectionsOperations,
+    ExternalCachesOperations,
+    ExternalClustersOperations,
+    ExternalSvmsOperations,
     NetAppResourceOperations,
     NetAppResourceQuotaLimitsAccountOperations,
     NetAppResourceQuotaLimitsOperations,
@@ -50,6 +55,7 @@ from .operations import (
     SnapshotPoliciesOperations,
     SnapshotsOperations,
     SubvolumesOperations,
+    SvmPeersOperations,
     VolumeGroupsOperations,
     VolumeQuotaRulesOperations,
     VolumesOperations,
@@ -116,6 +122,19 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes,do
     :ivar active_directory_configs: ActiveDirectoryConfigsOperations operations
     :vartype active_directory_configs:
      azure.mgmt.netapp.operations.ActiveDirectoryConfigsOperations
+    :ivar external_clusters: ExternalClustersOperations operations
+    :vartype external_clusters: azure.mgmt.netapp.operations.ExternalClustersOperations
+    :ivar cluster_peers: ClusterPeersOperations operations
+    :vartype cluster_peers: azure.mgmt.netapp.operations.ClusterPeersOperations
+    :ivar external_svms: ExternalSvmsOperations operations
+    :vartype external_svms: azure.mgmt.netapp.operations.ExternalSvmsOperations
+    :ivar svm_peers: SvmPeersOperations operations
+    :vartype svm_peers: azure.mgmt.netapp.operations.SvmPeersOperations
+    :ivar external_caches: ExternalCachesOperations operations
+    :vartype external_caches: azure.mgmt.netapp.operations.ExternalCachesOperations
+    :ivar external_cache_connections: ExternalCacheConnectionsOperations operations
+    :vartype external_cache_connections:
+     azure.mgmt.netapp.operations.ExternalCacheConnectionsOperations
     :ivar net_app_resource_quota_limits: NetAppResourceQuotaLimitsOperations operations
     :vartype net_app_resource_quota_limits:
      azure.mgmt.netapp.operations.NetAppResourceQuotaLimitsOperations
@@ -149,7 +168,7 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes,do
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-06-15-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-08-15-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -246,6 +265,16 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes,do
         )
         self.elastic_backups = ElasticBackupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.active_directory_configs = ActiveDirectoryConfigsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.external_clusters = ExternalClustersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.cluster_peers = ClusterPeersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.external_svms = ExternalSvmsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.svm_peers = SvmPeersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.external_caches = ExternalCachesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.external_cache_connections = ExternalCacheConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.net_app_resource_quota_limits = NetAppResourceQuotaLimitsOperations(

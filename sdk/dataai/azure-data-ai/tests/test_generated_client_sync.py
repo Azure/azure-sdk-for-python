@@ -137,7 +137,8 @@ def test_azure_error_envelope_preserves_details(transport, respond, request_payl
     assert details.details[0].details[0].code == "InvalidField"
     assert isinstance(details.innererror, InnerError)
     assert details.innererror.innererror.code == "InvalidField"
-    assert details.detail == problem["detail"]
+    assert details.explanation == problem["detail"]
+    assert details["detail"] == problem["detail"]
     assert details.extensions == {"diagnostic": "test"}
     assert details["additionalProperty"] == "preserved"
     assert json.dumps(error.model.as_dict(), sort_keys=True) == serialized_before_access
@@ -180,7 +181,6 @@ def test_error_details_preserve_missing_and_normalized_fields():
     missing_details = ProblemDetails(code="Error", message="Failed")
     assert missing_details.details is None
     assert "details" not in missing_details.as_dict()
-    assert not hasattr(ODataV4Format, "as_dict")
 
 
 def test_error_detail_mutations_and_extensions_are_preserved():

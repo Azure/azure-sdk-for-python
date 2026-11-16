@@ -1,5 +1,227 @@
 # Release History
 
+## 2.4.0b1 (Unreleased)
+
+### Features Added
+
+- Apply protocol-specific runtime requirements to deferred snapshot activation,
+  preserving independent Invocations/Responses opt-in and owning-host recovery
+  callback bindings.
+- Allow decorated task submission inside `after_restore_handler`, preparing the
+  session-bound TaskManager before the callback and starting automatic recovery
+  only after application dependencies are ready.
+- Separate process-side task registration from session-bound task activation.
+  `FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true` defers enabled tasks during capture until
+  after-restore; absent or false keeps ordinary cold startup. Resilience opt-out
+  remains disabled for both initialization paths. Preserve
+  best-effort recovery, checkpoint initialization phases by restore ID, wait for
+  owned workers to stop before incompatible configuration rollback, and stop
+  managers created after startup at shutdown.
+
+### Bugs Fixed
+
+- Track task identity throughout inline start/run claims and positional active-
+  run lookup, preventing recovery from dispatching work before claim registration.
+- Coordinate same-task producers across lease claims and worker registration,
+  preventing duplicate execution when inline lookup follows a committed recovery
+  claim whose provider response is still pending. Nested calls from the same
+  producer remain reentrant, and cancelled waiters release their admission.
+- Unpublish incompatible prepared task runtimes before failed or cancelled
+  restore configuration rollback, even when no workers started, preventing
+  subsequent submissions from using the failed provider or session binding.
+- Interrupt blocked recovery reads when shutdown begins, so admission can drain
+  before scanner cancellation while accepted creates and claims settle safely.
+  Host shutdown signals an activating manager before waiting for the serialized
+  manager lock, so a blocked after-restore recovery read cannot stall cleanup.
+- Wait for cancelled task workers during host teardown while a restore rollback is
+  still pending, so their async cleanup cannot observe session or provider
+  configuration reverted underneath it. Preserve unfinished records and inputs
+  before shutdown wakes workers, so a failed restore can recover them on retry.
+  Ordinary shutdown otherwise stays non-joining.
+- Keep the lease instance consistent with live task workers and accepted
+  submissions across compatible in-place restores with a new restore ID.
+  Idle runtimes without owned task work still rotate their lease instance.
+- Validate live provider overrides before publishing restored configuration or
+  rotating lease identity, and defer accepted task callers cancelled during
+  initial watchdog setup before their handlers start.
+- Reject live session GUID changes before rotating lease identity, prevent
+  steering dispatch across shutdown bookkeeping, and defer queued/promoted
+  steering callers without removing their recoverable inputs.
+- Include agent identity and the resolved default task directory in runtime
+  compatibility, preventing rollback from retaining incompatible lease owners
+  or providers rooted in an overridden home directory.
+- Close task admission during manager shutdown and settle accepted submissions
+  before worker snapshots, preventing cancellation cleanup from launching
+  untracked child tasks.
+- Quiesce failed-restore workers before provider configuration rollback even
+  when the session ID/GUID is unchanged, preserving their original task records
+  and allowing retries with omitted provider overrides.
+- Rebuild inactive task providers when hydrated configuration changes, and
+  recreate disposed runtimes for cached restore requests without replaying
+  completed application callbacks.
+- Preserve sanitized lifecycle error responses when required restore cleanup
+  fails, retaining pending rollback state for retry.
+- Preserve environment and configuration rollback snapshots across failed
+  restore cleanup retries so sparse overrides retain the captured baseline.
+- Retry interrupted restore rollback cleanup before activating a replacement
+  TaskManager, retaining queued-input reconciliation handles across transient
+  storage failures.
+- Reset task startup admission when reusing a host across sequential lifespans.
+- Reconcile interrupted steering transitions before restore rollback completes,
+  retaining queued work as recoverable without dispatching a new turn.
+- Preserve unfinished task records and saved inputs when failed restore
+  activation stops workers before rolling back session configuration.
+- Keep the lease instance stable on same-restore retries, retain worker and
+  lease handles until workers finish, and defer steering execution during
+  rollback while keeping queued input eligible for recovery.
+- Close internally created hosted task providers and their credentials before
+  discarding a stopped TaskManager after failed restores or inactive provider
+  replacement, keeping the manager for a cleanup retry if the close fails.
+  Ordinary host shutdown closes after cancelled workers finish. Injected
+  providers remain caller-owned.
+- Let handlers start during the ordinary shutdown grace period so they can defer
+  with `ctx.exit_for_recovery()`, instead of cancelling retried or accepted work
+  before dispatch and deleting one-shot records. Rollback cleanup still retains
+  that work without dispatching it.
+- Release the lease of a steering input staged during ordinary shutdown, making
+  it recoverable without waiting for lease expiry.
+
+## 2.3.1b1 (2026-11-02)
+
+### Bugs Fixed
+
+- Preserve explicit Agent Card name and version attributes on spans emitted
+  by the `Azure.AI.AgentServer.A2A` instrumentation scope. Other spans retain
+  the existing Foundry deployment identity enrichment.
+
+## 2.3.0 (2026-10-29)
+
+### Features Added
+
+- Add one percent-encoded `foundry.original_subject` member containing the full
+  quoted dictionary to custom Foundry baggage for baggage-only model attribution.
+  The experimental `model_attribution_headers` helper accepts optional existing
+  per-call headers, preserving unrelated dimensions without mutating defaults
+  and replacing or clearing competing subject assertions.
+
+### Breaking Changes
+
+- Removed the internal `EXPERIMENTAL_LINK_MESSAGE` constant. When using
+  `azure-ai-agentserver-responses`, upgrade it to `2.4.0` or later alongside
+  Core; older Responses compatibility shims require the removed constant.
+
+### Bugs Fixed
+
+- Removed the broken documentation link from experimental API warnings and docstrings.
+- Stop emitting standalone subject headers on outbound model calls while
+  preserving platform-to-container ingress parsing.
+- Remove stale subject baggage even when a malformed member has properties before
+  its value, while preserving unrelated baggage order, encoding, and duplicates.
+- Reject subject tuples over 256 characters and merged baggage over 1024
+  characters rather than forwarding oversized model-attribution baggage.
+- Place the subject before unrelated baggage so bounded transport normalization
+  cannot displace the attribution member.
+
+### Other Changes
+
+- Stable release of the 2.3.0 preview series, including the protocol-scoped task
+  runtime and recovery protections described in the preview entries below.
+
+## 2.3.0b2 (2026-10-26)
+
+### Features Added
+
+- Added immutable `FoundryOriginalSubject` assertions and invocation-local
+  `FoundryAgentRequestContext.original_subject` with an explicit, model-only
+  `model_attribution_headers()` helper for the proposed `x-ms-original-subject`
+  dictionary contract. The assertions do not establish identity proof or change
+  model authentication; model integration remains an explicit per-call opt-in.
+  Both the assertions class and header helper are marked experimental.
+- Added protocol-scoped task-runtime startup requests so protocol hosts can
+  obtain scoped `TaskManager` access without mutating the process-wide
+  resilient-task switch. This prevents one protocol's enablement from
+  activating another protocol in a mixed host.
+
+### Bugs Fixed
+
+- Preserve host-owned recovery callbacks and task options when loading
+  process-wide task descriptors at startup.
+- Exclude protocol-disabled task functions before startup, periodic or inline
+  recovery can reclaim their leases or dispatch their handlers.
+- Require explicit owning-host registration for protocol-internal recovery
+  callbacks instead of importing them into unrelated managers.
+- Treat a persisted task function identity as authoritative before recovery
+  cleanup or reclaim. Legacy callback fallback applies only when that
+  identity is absent.
+
+## 2.3.0b1 (2026-10-15)
+
+### Features Added
+
+- Added `AgentServerHost.readiness_handler` for replacing the default
+  `GET /readiness` response with application-specific readiness logic. When no
+  handler is registered, the existing healthy response remains unchanged.
+- Added the private `POST /_agent/before-snapshot` and
+  `POST /_agent/after-restore` lifecycle endpoints, with equivalent
+  `POST /_before_snapshot` and `POST /_after_restore` aliases, for safely
+  capturing and restoring hosted agent processes. Applications can register
+  `before_snapshot_handler` and `after_restore_handler` callbacks; lifecycle
+  calls are serialized and idempotent, and restored session environment
+  overrides are applied before the after-restore callback runs. Protocol
+  subclasses can extend the lifecycle through protected hooks without
+  bypassing the host's required hydration and rollback behavior. Later
+  materializations reset omitted overrides to their captured values and expose
+  the restored session through the ambient request context during callbacks.
+  Environment-backed `AgentConfig` values are refreshed in place before
+  callbacks run, and `AgentSessionContext` is marked experimental.
+
+### Bugs Fixed
+
+- Preserve an observed final terminal marker before recovery-time TTL
+  compaction, keeping closed replay logs closed across subsequent restarts.
+- Retain replay backing ownership through deletion: keep POSIX inode locks
+  until unlink and Windows sidecar locks until log removal. Acquire Windows
+  ownership before opening the log, reject stale or replaced locked descriptors,
+  and retry cleanup without unlinking a successor's backing file.
+- Release owned replay-file and writer-lock resources on every rehydration
+  failure, including callback errors and cancellation. Surface cleanup errors
+  with their original failure context and retain exact registry cleanup owners
+  when resource release must be retried.
+- Fail closed after compaction replaces the log but cannot establish a usable
+  writer. Retire stale handles, reject further writes, wake subscribers with an
+  explicit error, and reacquire ownership before deleting a failed replacement.
+  Keep the original writer usable when preparation fails before replacement.
+- Open existing replay logs in non-creating mode during cold lookup and
+  compaction reopen, preventing concurrent removal from recreating an empty
+  log. Preserve explicit creation and propagate backing-lock acquisition errors.
+- Delete cold file-backed replay logs without deserializing their events, so
+  malformed logs remain removable after restart. Preserve locking and retryable
+  cleanup when file access, lock acquisition, or removal fails.
+- Apply explicit task-list limits to the total returned records for both hosted
+  and local providers, clamped to 100. Keep omitted or `None` limits as complete
+  enumeration so recovery and response-ownership scans include every page.
+- Reclaim per-ID stream lifecycle locks after their last holder or waiter exits,
+  including cancellation, without splitting concurrent lookup, creation, or deletion.
+- Enumerate every matching local durable task when no listing limit is
+  requested, matching hosted task enumeration. Reject missing or repeated
+  hosted continuation cursors instead of returning an incomplete task list.
+- Restore existing file-backed replay logs during stream lookup and deletion
+  after restart without creating absent logs. Serialize lookup, creation, and
+  deletion for the same stream ID within the registry.
+- Propagate replay-file deletion failures without installing a successful
+  deletion tombstone, allowing cleanup to be retried.
+- Make Windows replay lock-file removal failures retryable without closing
+  an already-released file descriptor or reporting successful deletion.
+
+### Other Changes
+
+- Removed the experimental marker (docstring note and one-time runtime warning)
+  from the resilient task public APIs (`TaskContext`, `TaskRun`, `@task`,
+  `@multi_turn_task`, `set_resilient_tasks_enabled`, task exceptions, and
+  retry policy).
+- Changed the default SSE keep-alive interval to 15 seconds. Set
+  `SSE_KEEPALIVE_INTERVAL=0` to disable keep-alive comments.
+
 ## 2.2.0 (2026-09-23)
 
 ### Other Changes

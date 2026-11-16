@@ -1,16 +1,40 @@
 # Release History
 
-## 12.27.0b1 (Unreleased)
+## 12.28.0b1 (Unreleased)
 
 ### Features Added
+
+## 12.27.0b1 (2026-11-05)
+
+### Breaking Changes
+- Custom transports that use legacy `azure-core` Request/Response types will no longer be supported and may now cause errors if used. Please ensure custom transports are utilizing types from `azure.core.rest`.
+- Changed the default `max_single_get_size` from 32 MiB to 4 MiB. This means the initial download request will now be 4 MiB rather than 32 MiB which may result in more requests than previous versions depending on file size. This also means some file downloads may use parallel requests when they were not previously, if `max_concurrency` is set greater than 1. To restore the previous behavior, pass `max_single_get_size = 32 * 1024 * 1024` when constructing the client.
+
+### Features Added
+- Added support for service versions 2026-12-06 and 2027-03-07.
+- Added opt-in client session-based authentication via the new `use_session` keyword argument. When enabled, eligible file read requests are authenticated with a short-lived, per-file-system session credential obtained from the service rather than the bearer token. Requires a `TokenCredential`. Sessions are managed by a session provider, which can be shared across clients via the `session_provider` keyword, and the account name used for signing can be set explicitly with `session_account_name`.
 
 ### Bugs Fixed
 - Fixed an issue where a SAS generated for a path containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
 
 ### Other Changes
 - Content-Type for append_data has changed from application/json to octet-stream
-- Dropped support for legacy transports
-- Removed support for Python 3.9; Python 3.10 or later is now required.
+- Migrated generated code to use the new TypeSpec generator.
+
+## 12.26.1 (2026-10-29)
+
+### Bugs Fixed
+- Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_file_system_sas`,
+  `generate_directory_sas`, `generate_file_sas`, and `DataLakeServiceClient.get_user_delegation_key` (sync and async).
+  Datetimes without timezone information continue to be treated as UTC.
+- Fixed an issue where certain headers were not being properly redacted when DEBUG logging was enabled.
+
+## 12.26.0 (2026-09-30)
+
+This version and all future versions will require Python 3.10+. Python 3.9 is no longer supported.
+
+### Features Added
+- Stable release of features from 12.26.0b1
 
 ## 12.26.0b1 (2026-08-10)
 

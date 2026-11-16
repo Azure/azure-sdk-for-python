@@ -424,6 +424,7 @@ async def test_all_persistence_callsites_use_exact_request_resolver(
 async def test_task_handoff_keeps_fresh_cache_but_resets_recovered_lifetime(monkeypatch, mode):
     from azure.ai.agentserver.responses.hosting import _resilient_orchestrator as resilient
     from azure.ai.agentserver.responses.hosting._resilient_input import ResilientResponseInput, RuntimeRefs
+    from azure.ai.agentserver.responses.hosting._task_id import derive_lifecycle_id
 
     provider = _provider()
     owner = _context(provider, ["history"])
@@ -446,7 +447,7 @@ async def test_task_handoff_keeps_fresh_cache_but_resets_recovered_lifetime(monk
     assert "history" not in str(params)
     monkeypatch.setitem(
         resilient._RUNTIME_REFS,
-        "response",
+        derive_lifecycle_id("response", "user"),
         RuntimeRefs(record=MagicMock(), context=owner, parsed=parsed, cancel=asyncio.Event()),
     )
     seen = []

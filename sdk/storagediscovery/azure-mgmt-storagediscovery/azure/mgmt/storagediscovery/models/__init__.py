@@ -14,12 +14,20 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    AzureBlobStorageCapability,
+    AzureBlobStorageCapabilityUpdate,
+    CapacityDetails,
+    CapacityDetailsUpdate,
     ErrorAdditionalInfo,
     ErrorDetail,
     ErrorResponse,
     Operation,
     OperationDisplay,
+    PrefixConfiguration,
+    PrefixConfigurationUpdate,
     Resource,
+    StorageDiscoveryCapabilities,
+    StorageDiscoveryCapabilitiesUpdate,
     StorageDiscoveryScope,
     StorageDiscoveryWorkspace,
     StorageDiscoveryWorkspaceProperties,
@@ -31,6 +39,7 @@ from ._models import (  # type: ignore
 
 from ._enums import (  # type: ignore
     ActionType,
+    CapabilityStatus,
     CreatedByType,
     Origin,
     ResourceProvisioningState,
@@ -42,12 +51,20 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AzureBlobStorageCapability",
+    "AzureBlobStorageCapabilityUpdate",
+    "CapacityDetails",
+    "CapacityDetailsUpdate",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
     "Operation",
     "OperationDisplay",
+    "PrefixConfiguration",
+    "PrefixConfigurationUpdate",
     "Resource",
+    "StorageDiscoveryCapabilities",
+    "StorageDiscoveryCapabilitiesUpdate",
     "StorageDiscoveryScope",
     "StorageDiscoveryWorkspace",
     "StorageDiscoveryWorkspaceProperties",
@@ -56,6 +73,7 @@ __all__ = [
     "SystemData",
     "TrackedResource",
     "ActionType",
+    "CapabilityStatus",
     "CreatedByType",
     "Origin",
     "ResourceProvisioningState",

@@ -55,27 +55,27 @@ class AgentConfiguration(TypedDict, total=False):
     """Configurable properties that the user can set locally via the azcmagent config command, or
     remotely via ARM.
 
-    :ivar proxy_url: Specifies the URL of the proxy to be used.
-    :vartype proxy_url: str
-    :ivar incoming_connections_ports: Specifies the list of ports that the agent will be able to
+    :ivar proxyUrl: Specifies the URL of the proxy to be used.
+    :vartype proxyUrl: str
+    :ivar incomingConnectionsPorts: Specifies the list of ports that the agent will be able to
      listen on.
-    :vartype incoming_connections_ports: list[str]
-    :ivar extensions_allow_list: Array of extensions that are allowed to be installed or updated.
-    :vartype extensions_allow_list: list["ConfigurationExtension"]
-    :ivar extensions_block_list: Array of extensions that are blocked (cannot be installed or
+    :vartype incomingConnectionsPorts: list[str]
+    :ivar extensionsAllowList: Array of extensions that are allowed to be installed or updated.
+    :vartype extensionsAllowList: list["ConfigurationExtension"]
+    :ivar extensionsBlockList: Array of extensions that are blocked (cannot be installed or
      updated).
-    :vartype extensions_block_list: list["ConfigurationExtension"]
-    :ivar proxy_bypass: List of service names which should not use the specified proxy server.
-    :vartype proxy_bypass: list[str]
-    :ivar extensions_enabled: Specifies whether the extension service is enabled or disabled.
-    :vartype extensions_enabled: str
-    :ivar guest_configuration_enabled: Specified whether the guest configuration service is enabled
+    :vartype extensionsBlockList: list["ConfigurationExtension"]
+    :ivar proxyBypass: List of service names which should not use the specified proxy server.
+    :vartype proxyBypass: list[str]
+    :ivar extensionsEnabled: Specifies whether the extension service is enabled or disabled.
+    :vartype extensionsEnabled: str
+    :ivar guestConfigurationEnabled: Specified whether the guest configuration service is enabled
      or disabled.
-    :vartype guest_configuration_enabled: str
-    :ivar config_mode: Name of configuration mode to use. Modes are pre-defined configurations of
+    :vartype guestConfigurationEnabled: str
+    :ivar configMode: Name of configuration mode to use. Modes are pre-defined configurations of
      security controls, extension allowlists and guest configuration, maintained by Microsoft. Known
      values are: "full" and "monitor".
-    :vartype config_mode: Union[str, "AgentConfigurationMode"]
+    :vartype configMode: Union[str, "AgentConfigurationMode"]
     """
 
     proxyUrl: str
@@ -101,21 +101,21 @@ class AgentConfiguration(TypedDict, total=False):
 class AgentUpgrade(TypedDict, total=False):
     """The info w.r.t Agent Upgrade.
 
-    :ivar desired_version: Specifies the version info w.r.t AgentUpgrade for the machine.
-    :vartype desired_version: str
-    :ivar correlation_id: The correlation ID associated with an agent upgrade operation.
-    :vartype correlation_id: str
-    :ivar enable_automatic_upgrade: Specifies if the machine's agent should be upgraded.
-    :vartype enable_automatic_upgrade: bool
-    :ivar last_attempt_desired_version: Specifies the version of the last attempt.
-    :vartype last_attempt_desired_version: str
-    :ivar last_attempt_timestamp: Timestamp of last upgrade attempt.
-    :vartype last_attempt_timestamp: str
-    :ivar last_attempt_status: Specifies the status of Agent Upgrade. Known values are: "Success"
-     and "Failed".
-    :vartype last_attempt_status: Union[str, "LastAttemptStatusEnum"]
-    :ivar last_attempt_message: Failure message of last upgrade attempt if any.
-    :vartype last_attempt_message: str
+    :ivar desiredVersion: Specifies the version info w.r.t AgentUpgrade for the machine.
+    :vartype desiredVersion: str
+    :ivar correlationId: The correlation ID associated with an agent upgrade operation.
+    :vartype correlationId: str
+    :ivar enableAutomaticUpgrade: Specifies if the machine's agent should be upgraded.
+    :vartype enableAutomaticUpgrade: bool
+    :ivar lastAttemptDesiredVersion: Specifies the version of the last attempt.
+    :vartype lastAttemptDesiredVersion: str
+    :ivar lastAttemptTimestamp: Timestamp of last upgrade attempt.
+    :vartype lastAttemptTimestamp: str
+    :ivar lastAttemptStatus: Specifies the status of Agent Upgrade. Known values are: "Success" and
+     "Failed".
+    :vartype lastAttemptStatus: Union[str, "LastAttemptStatusEnum"]
+    :ivar lastAttemptMessage: Failure message of last upgrade attempt if any.
+    :vartype lastAttemptMessage: str
     """
 
     desiredVersion: str
@@ -165,18 +165,18 @@ class Disk(TypedDict, total=False):
 
     :ivar path: The path of the disk.
     :vartype path: str
-    :ivar disk_type: The type of the disk.
-    :vartype disk_type: str
-    :ivar generated_id: The generated ID of the disk.
-    :vartype generated_id: str
+    :ivar diskType: The type of the disk.
+    :vartype diskType: str
+    :ivar generatedId: The generated ID of the disk.
+    :vartype generatedId: str
     :ivar id: The ID of the disk.
     :vartype id: str
     :ivar name: The name of the disk.
     :vartype name: str
-    :ivar max_size_in_bytes: The size of the disk, in bytes.
-    :vartype max_size_in_bytes: int
-    :ivar used_space_in_bytes: The amount of space used on the disk, in bytes.
-    :vartype used_space_in_bytes: int
+    :ivar maxSizeInBytes: The size of the disk, in bytes.
+    :vartype maxSizeInBytes: int
+    :ivar usedSpaceInBytes: The amount of space used on the disk, in bytes.
+    :vartype usedSpaceInBytes: int
     """
 
     path: str
@@ -221,8 +221,8 @@ class ErrorDetail(TypedDict, total=False):
     :vartype target: str
     :ivar details: The error details.
     :vartype details: list["ErrorDetail"]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
+    :ivar additionalInfo: The error additional info.
+    :vartype additionalInfo: list["ErrorAdditionalInfo"]
     """
 
     code: str
@@ -242,9 +242,9 @@ class EsuKey(TypedDict, total=False):
 
     :ivar sku: SKU number.
     :vartype sku: str
-    :ivar license_status: The current status of the license profile key. Represented by the same
+    :ivar licenseStatus: The current status of the license profile key. Represented by the same
      integer value that is presented on the machine itself when querying the license key status.
-    :vartype license_status: int
+    :vartype licenseStatus: int
     """
 
     sku: str
@@ -257,8 +257,8 @@ class EsuKey(TypedDict, total=False):
 class EsuProfileUpdateProperties(TypedDict, total=False):
     """Describes the Update properties of a ESU License Profile.
 
-    :ivar assigned_license: The resource id of the license.
-    :vartype assigned_license: str
+    :ivar assignedLicense: The resource id of the license.
+    :vartype assignedLicense: str
     """
 
     assignedLicense: str
@@ -272,8 +272,8 @@ class ExtensionsResourceStatus(TypedDict, total=False):
     :vartype code: str
     :ivar level: The level code. Known values are: "Info", "Warning", and "Error".
     :vartype level: Union[str, "ExtensionsStatusLevelTypes"]
-    :ivar display_status: The short localizable label for the status.
-    :vartype display_status: str
+    :ivar displayStatus: The short localizable label for the status.
+    :vartype displayStatus: str
     :ivar message: The detailed status message, including for alerts and error messages.
     :vartype message: str
     :ivar time: The time of the status.
@@ -295,8 +295,8 @@ class ExtensionsResourceStatus(TypedDict, total=False):
 class ExtensionTargetProperties(TypedDict, total=False):
     """Describes the Machine Extension Target Version Properties.
 
-    :ivar target_version: Properties for the specified Extension to Upgrade.
-    :vartype target_version: str
+    :ivar targetVersion: Properties for the specified Extension to Upgrade.
+    :vartype targetVersion: str
     """
 
     targetVersion: str
@@ -314,9 +314,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -342,17 +342,17 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
 class FirmwareProfile(TypedDict, total=False):
     """Describes the firmware of the machine.
 
-    :ivar serial_number: The serial number of the firmware.
-    :vartype serial_number: str
+    :ivar serialNumber: The serial number of the firmware.
+    :vartype serialNumber: str
     :ivar type: The type of the firmware.
     :vartype type: str
     """
@@ -374,9 +374,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -400,9 +400,9 @@ class Gateway(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -418,21 +418,21 @@ class Gateway(TrackedResource):
 class GatewayProperties(TypedDict, total=False):
     """Describes the properties of a Gateway Profile.
 
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+    :ivar provisioningState: The provisioning state, which only appears in the response. Known
      values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Accepted", "Canceled",
      and "Deleted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar gateway_id: A unique, immutable, identifier for the Gateway.
-    :vartype gateway_id: str
-    :ivar gateway_type: The type of the Gateway resource. "Public"
-    :vartype gateway_type: Union[str, "GatewayType"]
-    :ivar gateway_endpoint: The endpoint fqdn for the Gateway.
-    :vartype gateway_endpoint: str
-    :ivar allowed_features: Specifies the list of features that are enabled for this Gateway.
-    :vartype allowed_features: list[str]
-    :ivar gateway_bypass: Specifies the list of domain names that should bypass the gateway. Each
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar gatewayId: A unique, immutable, identifier for the Gateway.
+    :vartype gatewayId: str
+    :ivar gatewayType: The type of the Gateway resource. "Public"
+    :vartype gatewayType: Union[str, "GatewayType"]
+    :ivar gatewayEndpoint: The endpoint fqdn for the Gateway.
+    :vartype gatewayEndpoint: str
+    :ivar allowedFeatures: Specifies the list of features that are enabled for this Gateway.
+    :vartype allowedFeatures: list[str]
+    :ivar gatewayBypass: Specifies the list of domain names that should bypass the gateway. Each
      entry must be a valid DNS hostname.
-    :vartype gateway_bypass: list[str]
+    :vartype gatewayBypass: list[str]
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -479,11 +479,11 @@ class GatewayUpdate(ResourceUpdate):
 class GatewayUpdateProperties(TypedDict, total=False):
     """Describes the Update properties of a Gateway Profile.
 
-    :ivar allowed_features: Specifies the list of features that are enabled for this Gateway.
-    :vartype allowed_features: list[str]
-    :ivar gateway_bypass: Specifies the list of domain names that should bypass the gateway. Each
+    :ivar allowedFeatures: Specifies the list of features that are enabled for this Gateway.
+    :vartype allowedFeatures: list[str]
+    :ivar gatewayBypass: Specifies the list of domain names that should bypass the gateway. Each
      entry must be a valid DNS hostname.
-    :vartype gateway_bypass: list[str]
+    :vartype gatewayBypass: list[str]
     """
 
     allowedFeatures: list[str]
@@ -496,10 +496,10 @@ class GatewayUpdateProperties(TypedDict, total=False):
 class HardwareProfile(TypedDict, total=False):
     """Describes the hardware of the machine.
 
-    :ivar total_physical_memory_in_bytes: The total physical memory on the machine.
-    :vartype total_physical_memory_in_bytes: int
-    :ivar number_of_cpu_sockets: The total number of CPU sockets available on the machine.
-    :vartype number_of_cpu_sockets: int
+    :ivar totalPhysicalMemoryInBytes: The total physical memory on the machine.
+    :vartype totalPhysicalMemoryInBytes: int
+    :ivar numberOfCpuSockets: The total number of CPU sockets available on the machine.
+    :vartype numberOfCpuSockets: int
     :ivar processors: The physical processors of the machine.
     :vartype processors: list["Processor"]
     """
@@ -523,9 +523,9 @@ class HybridComputePrivateLinkScope(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -541,20 +541,20 @@ class HybridComputePrivateLinkScope(TrackedResource):
 class HybridComputePrivateLinkScopeProperties(TypedDict, total=False):
     """Properties that define a Azure Arc PrivateLinkScope resource.
 
-    :ivar public_network_access: Indicates whether machines associated with the private link scope
+    :ivar publicNetworkAccess: Indicates whether machines associated with the private link scope
      can also use public Azure Arc service endpoints. Known values are: "Enabled", "Disabled", and
      "SecuredByPerimeter".
-    :vartype public_network_access: Union[str, "PublicNetworkAccessType"]
-    :ivar provisioning_state: Current state of this PrivateLinkScope: whether or not is has been
+    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccessType"]
+    :ivar provisioningState: Current state of this PrivateLinkScope: whether or not is has been
      provisioned within the resource group it is defined. Users cannot change this value but are
      able to read from it. Values will include Provisioning ,Succeeded, Canceled and Failed.
-    :vartype provisioning_state: str
-    :ivar private_link_scope_id: The Guid id of the private link scope.
-    :vartype private_link_scope_id: str
-    :ivar private_endpoint_connections: The collection of associated Private Endpoint Connections.
-    :vartype private_endpoint_connections: list["PrivateEndpointConnectionDataModel"]
-    :ivar service_extensions: Enable private link validation for an Azure Arc Extension.
-    :vartype service_extensions: list["ServiceExtension"]
+    :vartype provisioningState: str
+    :ivar privateLinkScopeId: The Guid id of the private link scope.
+    :vartype privateLinkScopeId: str
+    :ivar privateEndpointConnections: The collection of associated Private Endpoint Connections.
+    :vartype privateEndpointConnections: list["PrivateEndpointConnectionDataModel"]
+    :ivar serviceExtensions: Enable private link validation for an Azure Arc Extension.
+    :vartype serviceExtensions: list["ServiceExtension"]
     """
 
     publicNetworkAccess: Union[str, "PublicNetworkAccessType"]
@@ -577,8 +577,8 @@ class IpAddress(TypedDict, total=False):
 
     :ivar address: Represents the IP Address.
     :vartype address: str
-    :ivar ip_address_version: Represents the Ip Address Version.
-    :vartype ip_address_version: str
+    :ivar ipAddressVersion: Represents the Ip Address Version.
+    :vartype ipAddressVersion: str
     :ivar subnet: The subnet to which this IP address belongs.
     :vartype subnet: "Subnet"
     """
@@ -602,9 +602,9 @@ class License(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -634,12 +634,12 @@ class LicenseDetails(TypedDict, total=False):
     :vartype type: Union[str, "LicenseCoreType"]
     :ivar processors: Describes the number of processors.
     :vartype processors: int
-    :ivar assigned_licenses: Describes the number of assigned licenses.
-    :vartype assigned_licenses: int
-    :ivar immutable_id: Describes the immutable id.
-    :vartype immutable_id: str
-    :ivar volume_license_details: A list of volume license details.
-    :vartype volume_license_details: list["VolumeLicenseDetails"]
+    :ivar assignedLicenses: Describes the number of assigned licenses.
+    :vartype assignedLicenses: int
+    :ivar immutableId: Describes the immutable id.
+    :vartype immutableId: str
+    :ivar volumeLicenseDetails: A list of volume license details.
+    :vartype volumeLicenseDetails: list["VolumeLicenseDetails"]
     """
 
     state: Union[str, "LicenseState"]
@@ -673,9 +673,9 @@ class LicenseProfile(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -691,10 +691,10 @@ class LicenseProfile(TrackedResource):
 class LicenseProfileStorageModelEsuProperties(TypedDict, total=False):
     """License profile storage model for ESU properties.
 
-    :ivar assigned_license_immutable_id: The guid id of the license.
-    :vartype assigned_license_immutable_id: str
-    :ivar esu_keys: The list of ESU keys.
-    :vartype esu_keys: list["EsuKey"]
+    :ivar assignedLicenseImmutableId: The guid id of the license.
+    :vartype assignedLicenseImmutableId: str
+    :ivar esuKeys: The list of ESU keys.
+    :vartype esuKeys: list["EsuKey"]
     """
 
     assignedLicenseImmutableId: str
@@ -708,18 +708,18 @@ class LicenseProfileArmEsuPropertiesWithoutAssignedLicense(
 ):  # pylint: disable=name-too-long
     """Describes the properties of a License Profile ARM model.
 
-    :ivar assigned_license_immutable_id: The guid id of the license.
-    :vartype assigned_license_immutable_id: str
-    :ivar esu_keys: The list of ESU keys.
-    :vartype esu_keys: list["EsuKey"]
-    :ivar server_type: The type of the Esu servers. Known values are: "Standard" and "Datacenter".
-    :vartype server_type: Union[str, "EsuServerType"]
-    :ivar esu_eligibility: Indicates the eligibility state of Esu. Known values are: "Eligible",
+    :ivar assignedLicenseImmutableId: The guid id of the license.
+    :vartype assignedLicenseImmutableId: str
+    :ivar esuKeys: The list of ESU keys.
+    :vartype esuKeys: list["EsuKey"]
+    :ivar serverType: The type of the Esu servers. Known values are: "Standard" and "Datacenter".
+    :vartype serverType: Union[str, "EsuServerType"]
+    :ivar esuEligibility: Indicates the eligibility state of Esu. Known values are: "Eligible",
      "Ineligible", and "Unknown".
-    :vartype esu_eligibility: Union[str, "EsuEligibility"]
-    :ivar esu_key_state: Indicates whether there is an ESU Key currently active for the machine.
+    :vartype esuEligibility: Union[str, "EsuEligibility"]
+    :ivar esuKeyState: Indicates whether there is an ESU Key currently active for the machine.
      Known values are: "Inactive" and "Active".
-    :vartype esu_key_state: Union[str, "EsuKeyState"]
+    :vartype esuKeyState: Union[str, "EsuKeyState"]
     """
 
     serverType: Union[str, "EsuServerType"]
@@ -735,20 +735,20 @@ class LicenseProfileArmEsuPropertiesWithoutAssignedLicense(
 class LicenseProfileArmEsuProperties(LicenseProfileArmEsuPropertiesWithoutAssignedLicense):
     """Describes the properties of a License Profile ARM model.
 
-    :ivar assigned_license_immutable_id: The guid id of the license.
-    :vartype assigned_license_immutable_id: str
-    :ivar esu_keys: The list of ESU keys.
-    :vartype esu_keys: list["EsuKey"]
-    :ivar server_type: The type of the Esu servers. Known values are: "Standard" and "Datacenter".
-    :vartype server_type: Union[str, "EsuServerType"]
-    :ivar esu_eligibility: Indicates the eligibility state of Esu. Known values are: "Eligible",
+    :ivar assignedLicenseImmutableId: The guid id of the license.
+    :vartype assignedLicenseImmutableId: str
+    :ivar esuKeys: The list of ESU keys.
+    :vartype esuKeys: list["EsuKey"]
+    :ivar serverType: The type of the Esu servers. Known values are: "Standard" and "Datacenter".
+    :vartype serverType: Union[str, "EsuServerType"]
+    :ivar esuEligibility: Indicates the eligibility state of Esu. Known values are: "Eligible",
      "Ineligible", and "Unknown".
-    :vartype esu_eligibility: Union[str, "EsuEligibility"]
-    :ivar esu_key_state: Indicates whether there is an ESU Key currently active for the machine.
+    :vartype esuEligibility: Union[str, "EsuEligibility"]
+    :ivar esuKeyState: Indicates whether there is an ESU Key currently active for the machine.
      Known values are: "Inactive" and "Active".
-    :vartype esu_key_state: Union[str, "EsuKeyState"]
-    :ivar assigned_license: The resource id of the license.
-    :vartype assigned_license: str
+    :vartype esuKeyState: Union[str, "EsuKeyState"]
+    :ivar assignedLicense: The resource id of the license.
+    :vartype assignedLicense: str
     """
 
     assignedLicense: str
@@ -758,24 +758,24 @@ class LicenseProfileArmEsuProperties(LicenseProfileArmEsuPropertiesWithoutAssign
 class LicenseProfileArmProductProfileProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """Describes the properties of a Product License Profile ARM model.
 
-    :ivar subscription_status: Indicates the subscription status of the product. Known values are:
+    :ivar subscriptionStatus: Indicates the subscription status of the product. Known values are:
      "Unknown", "Enabling", "Enabled", "Disabled", "Disabling", and "Failed".
-    :vartype subscription_status: Union[str, "LicenseProfileSubscriptionStatus"]
-    :ivar product_type: Indicates the product type of the license. Known values are:
-     "WindowsServer" and "WindowsIoTEnterprise".
-    :vartype product_type: Union[str, "LicenseProfileProductType"]
-    :ivar enrollment_date: The timestamp in UTC when the user enrolls the feature.
-    :vartype enrollment_date: str
-    :ivar billing_start_date: The timestamp in UTC when the billing starts.
-    :vartype billing_start_date: str
-    :ivar disenrollment_date: The timestamp in UTC when the user disenrolled the feature.
-    :vartype disenrollment_date: str
-    :ivar billing_end_date: The timestamp in UTC when the billing ends.
-    :vartype billing_end_date: str
+    :vartype subscriptionStatus: Union[str, "LicenseProfileSubscriptionStatus"]
+    :ivar productType: Indicates the product type of the license. Known values are: "WindowsServer"
+     and "WindowsIoTEnterprise".
+    :vartype productType: Union[str, "LicenseProfileProductType"]
+    :ivar enrollmentDate: The timestamp in UTC when the user enrolls the feature.
+    :vartype enrollmentDate: str
+    :ivar billingStartDate: The timestamp in UTC when the billing starts.
+    :vartype billingStartDate: str
+    :ivar disenrollmentDate: The timestamp in UTC when the user disenrolled the feature.
+    :vartype disenrollmentDate: str
+    :ivar billingEndDate: The timestamp in UTC when the billing ends.
+    :vartype billingEndDate: str
     :ivar error: The errors that were encountered during the feature enrollment or disenrollment.
     :vartype error: "ErrorDetail"
-    :ivar product_features: The list of product features.
-    :vartype product_features: list["ProductFeature"]
+    :ivar productFeatures: The list of product features.
+    :vartype productFeatures: list["ProductFeature"]
     """
 
     subscriptionStatus: Union[str, "LicenseProfileSubscriptionStatus"]
@@ -801,17 +801,17 @@ class LicenseProfileArmProductProfileProperties(TypedDict, total=False):  # pyli
 class LicenseProfileMachineInstanceView(TypedDict, total=False):
     """License Profile Instance View in Machine Properties.
 
-    :ivar license_status: Indicates the license status of the OS. Known values are: "Unlicensed",
+    :ivar licenseStatus: Indicates the license status of the OS. Known values are: "Unlicensed",
      "Licensed", "OOBGrace", "OOTGrace", "NonGenuineGrace", "Notification", and "ExtendedGrace".
-    :vartype license_status: Union[str, "LicenseStatus"]
-    :ivar license_channel: Indicates the license channel.
-    :vartype license_channel: str
-    :ivar software_assurance:
-    :vartype software_assurance: "LicenseProfileMachineInstanceViewSoftwareAssurance"
-    :ivar esu_profile: Properties for the Machine ESU profile.
-    :vartype esu_profile: "LicenseProfileMachineInstanceViewEsuProperties"
-    :ivar product_profile: Hybrid Compute Product Profile properties.
-    :vartype product_profile: "LicenseProfileArmProductProfileProperties"
+    :vartype licenseStatus: Union[str, "LicenseStatus"]
+    :ivar licenseChannel: Indicates the license channel.
+    :vartype licenseChannel: str
+    :ivar softwareAssurance:
+    :vartype softwareAssurance: "LicenseProfileMachineInstanceViewSoftwareAssurance"
+    :ivar esuProfile: Properties for the Machine ESU profile.
+    :vartype esuProfile: "LicenseProfileMachineInstanceViewEsuProperties"
+    :ivar productProfile: Hybrid Compute Product Profile properties.
+    :vartype productProfile: "LicenseProfileArmProductProfileProperties"
     """
 
     licenseStatus: Union[str, "LicenseStatus"]
@@ -831,23 +831,23 @@ class LicenseProfileMachineInstanceViewEsuProperties(
 ):  # pylint: disable=name-too-long
     """Properties for the Machine ESU profile.
 
-    :ivar assigned_license_immutable_id: The guid id of the license.
-    :vartype assigned_license_immutable_id: str
-    :ivar esu_keys: The list of ESU keys.
-    :vartype esu_keys: list["EsuKey"]
-    :ivar server_type: The type of the Esu servers. Known values are: "Standard" and "Datacenter".
-    :vartype server_type: Union[str, "EsuServerType"]
-    :ivar esu_eligibility: Indicates the eligibility state of Esu. Known values are: "Eligible",
+    :ivar assignedLicenseImmutableId: The guid id of the license.
+    :vartype assignedLicenseImmutableId: str
+    :ivar esuKeys: The list of ESU keys.
+    :vartype esuKeys: list["EsuKey"]
+    :ivar serverType: The type of the Esu servers. Known values are: "Standard" and "Datacenter".
+    :vartype serverType: Union[str, "EsuServerType"]
+    :ivar esuEligibility: Indicates the eligibility state of Esu. Known values are: "Eligible",
      "Ineligible", and "Unknown".
-    :vartype esu_eligibility: Union[str, "EsuEligibility"]
-    :ivar esu_key_state: Indicates whether there is an ESU Key currently active for the machine.
+    :vartype esuEligibility: Union[str, "EsuEligibility"]
+    :ivar esuKeyState: Indicates whether there is an ESU Key currently active for the machine.
      Known values are: "Inactive" and "Active".
-    :vartype esu_key_state: Union[str, "EsuKeyState"]
-    :ivar assigned_license: The assigned license resource.
-    :vartype assigned_license: "License"
-    :ivar license_assignment_state: Describes the license assignment state (Assigned or
-     NotAssigned). Known values are: "Assigned" and "NotAssigned".
-    :vartype license_assignment_state: Union[str, "LicenseAssignmentState"]
+    :vartype esuKeyState: Union[str, "EsuKeyState"]
+    :ivar assignedLicense: The assigned license resource.
+    :vartype assignedLicense: "License"
+    :ivar licenseAssignmentState: Describes the license assignment state (Assigned or NotAssigned).
+     Known values are: "Assigned" and "NotAssigned".
+    :vartype licenseAssignmentState: Union[str, "LicenseAssignmentState"]
     """
 
     assignedLicense: "License"
@@ -860,9 +860,9 @@ class LicenseProfileMachineInstanceViewEsuProperties(
 class LicenseProfileMachineInstanceViewSoftwareAssurance(TypedDict, total=False):  # pylint: disable=name-too-long
     """LicenseProfileMachineInstanceViewSoftwareAssurance.
 
-    :ivar software_assurance_customer: Specifies if this machine is licensed as part of a Software
+    :ivar softwareAssuranceCustomer: Specifies if this machine is licensed as part of a Software
      Assurance agreement.
-    :vartype software_assurance_customer: bool
+    :vartype softwareAssuranceCustomer: bool
     """
 
     softwareAssuranceCustomer: bool
@@ -872,16 +872,16 @@ class LicenseProfileMachineInstanceViewSoftwareAssurance(TypedDict, total=False)
 class LicenseProfileProperties(TypedDict, total=False):
     """Describe the properties of a license profile.
 
-    :ivar software_assurance:
-    :vartype software_assurance: "LicenseProfilePropertiesSoftwareAssurance"
-    :ivar esu_profile: Hybrid Compute ESU Profile properties.
-    :vartype esu_profile: "LicenseProfileArmEsuProperties"
-    :ivar product_profile: Hybrid Compute Product Profile properties.
-    :vartype product_profile: "LicenseProfileArmProductProfileProperties"
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+    :ivar softwareAssurance:
+    :vartype softwareAssurance: "LicenseProfilePropertiesSoftwareAssurance"
+    :ivar esuProfile: Hybrid Compute ESU Profile properties.
+    :vartype esuProfile: "LicenseProfileArmEsuProperties"
+    :ivar productProfile: Hybrid Compute Product Profile properties.
+    :vartype productProfile: "LicenseProfileArmProductProfileProperties"
+    :ivar provisioningState: The provisioning state, which only appears in the response. Known
      values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Accepted", "Canceled",
      and "Deleted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     softwareAssurance: "LicenseProfilePropertiesSoftwareAssurance"
@@ -898,9 +898,9 @@ class LicenseProfileProperties(TypedDict, total=False):
 class LicenseProfilePropertiesSoftwareAssurance(TypedDict, total=False):  # pylint: disable=name-too-long
     """LicenseProfilePropertiesSoftwareAssurance.
 
-    :ivar software_assurance_customer: Specifies if this machine is licensed as part of a Software
+    :ivar softwareAssuranceCustomer: Specifies if this machine is licensed as part of a Software
      Assurance agreement.
-    :vartype software_assurance_customer: bool
+    :vartype softwareAssuranceCustomer: bool
     """
 
     softwareAssuranceCustomer: bool
@@ -923,12 +923,12 @@ class LicenseProfileUpdate(ResourceUpdate):
 class LicenseProfileUpdateProperties(TypedDict, total=False):
     """Describe the Update properties of a license profile.
 
-    :ivar software_assurance:
-    :vartype software_assurance: "LicenseProfileUpdatePropertiesSoftwareAssurance"
-    :ivar esu_profile: Hybrid Compute ESU Profile Update properties.
-    :vartype esu_profile: "EsuProfileUpdateProperties"
-    :ivar product_profile: Hybrid Compute Product Profile Update properties.
-    :vartype product_profile: "ProductProfileUpdateProperties"
+    :ivar softwareAssurance:
+    :vartype softwareAssurance: "LicenseProfileUpdatePropertiesSoftwareAssurance"
+    :ivar esuProfile: Hybrid Compute ESU Profile Update properties.
+    :vartype esuProfile: "EsuProfileUpdateProperties"
+    :ivar productProfile: Hybrid Compute Product Profile Update properties.
+    :vartype productProfile: "ProductProfileUpdateProperties"
     """
 
     softwareAssurance: "LicenseProfileUpdatePropertiesSoftwareAssurance"
@@ -941,9 +941,9 @@ class LicenseProfileUpdateProperties(TypedDict, total=False):
 class LicenseProfileUpdatePropertiesSoftwareAssurance(TypedDict, total=False):  # pylint: disable=name-too-long
     """LicenseProfileUpdatePropertiesSoftwareAssurance.
 
-    :ivar software_assurance_customer: Specifies if this machine is licensed as part of a Software
+    :ivar softwareAssuranceCustomer: Specifies if this machine is licensed as part of a Software
      Assurance agreement.
-    :vartype software_assurance_customer: bool
+    :vartype softwareAssuranceCustomer: bool
     """
 
     softwareAssuranceCustomer: bool
@@ -953,16 +953,16 @@ class LicenseProfileUpdatePropertiesSoftwareAssurance(TypedDict, total=False):  
 class LicenseProperties(TypedDict, total=False):
     """Describes the properties of a License Profile.
 
-    :ivar provisioning_state: The provisioning state, which only appears in the response. Known
+    :ivar provisioningState: The provisioning state, which only appears in the response. Known
      values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Accepted", "Canceled",
      and "Deleted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar tenant_id: Describes the tenant id.
-    :vartype tenant_id: str
-    :ivar license_type: The type of the license resource. "ESU"
-    :vartype license_type: Union[str, "LicenseType"]
-    :ivar license_details: Describes the properties of a License.
-    :vartype license_details: "LicenseDetails"
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar tenantId: Describes the tenant id.
+    :vartype tenantId: str
+    :ivar licenseType: The type of the license resource. "ESU"
+    :vartype licenseType: Union[str, "LicenseType"]
+    :ivar licenseDetails: Describes the properties of a License.
+    :vartype licenseDetails: "LicenseDetails"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -993,10 +993,10 @@ class LicenseUpdate(ResourceUpdate):
 class LicenseUpdateProperties(TypedDict, total=False):
     """Describes the Update properties of a License Profile.
 
-    :ivar license_type: The type of the license resource. "ESU"
-    :vartype license_type: Union[str, "LicenseType"]
-    :ivar license_details:
-    :vartype license_details: "LicenseUpdatePropertiesLicenseDetails"
+    :ivar licenseType: The type of the license resource. "ESU"
+    :vartype licenseType: Union[str, "LicenseType"]
+    :ivar licenseDetails:
+    :vartype licenseDetails: "LicenseUpdatePropertiesLicenseDetails"
     """
 
     licenseType: Union[str, "LicenseType"]
@@ -1040,15 +1040,15 @@ class LicenseUpdatePropertiesLicenseDetails(TypedDict, total=False):
 class LinuxParameters(TypedDict, total=False):
     """Input for InstallPatches on a Linux VM, as directly received by the API.
 
-    :ivar classifications_to_include: The update classifications to select when installing patches
+    :ivar classificationsToInclude: The update classifications to select when installing patches
      for Linux.
-    :vartype classifications_to_include: list[Union[str, "VMGuestPatchClassificationLinux"]]
-    :ivar package_name_masks_to_include: packages to include in the patch operation. Format:
+    :vartype classificationsToInclude: list[Union[str, "VMGuestPatchClassificationLinux"]]
+    :ivar packageNameMasksToInclude: packages to include in the patch operation. Format:
      packageName_packageVersion.
-    :vartype package_name_masks_to_include: list[str]
-    :ivar package_name_masks_to_exclude: packages to exclude in the patch operation. Format:
+    :vartype packageNameMasksToInclude: list[str]
+    :ivar packageNameMasksToExclude: packages to exclude in the patch operation. Format:
      packageName_packageVersion.
-    :vartype package_name_masks_to_exclude: list[str]
+    :vartype packageNameMasksToExclude: list[str]
     """
 
     classificationsToInclude: list[Union[str, "VMGuestPatchClassificationLinux"]]
@@ -1068,8 +1068,8 @@ class LocationData(TypedDict, total=False):
     :vartype city: str
     :ivar district: The district, state, or province where the resource is located.
     :vartype district: str
-    :ivar country_or_region: The country or region where the resource is located.
-    :vartype country_or_region: str
+    :ivar countryOrRegion: The country or region where the resource is located.
+    :vartype countryOrRegion: str
     """
 
     name: Required[str]
@@ -1093,9 +1093,9 @@ class Machine(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1133,9 +1133,9 @@ class MachineExtension(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1155,8 +1155,8 @@ class MachineExtensionInstanceView(TypedDict, total=False):
     :vartype name: str
     :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
     :vartype type: str
-    :ivar type_handler_version: Specifies the version of the script handler.
-    :vartype type_handler_version: str
+    :ivar typeHandlerVersion: Specifies the version of the script handler.
+    :vartype typeHandlerVersion: str
     :ivar status: Instance view status.
     :vartype status: "MachineExtensionInstanceViewStatus"
     """
@@ -1178,8 +1178,8 @@ class MachineExtensionInstanceViewStatus(TypedDict, total=False):
     :vartype code: str
     :ivar level: The level code. Known values are: "Info", "Warning", and "Error".
     :vartype level: Union[str, "StatusLevelTypes"]
-    :ivar display_status: The short localizable label for the status.
-    :vartype display_status: str
+    :ivar displayStatus: The short localizable label for the status.
+    :vartype displayStatus: str
     :ivar message: The detailed status message, including for alerts and error messages.
     :vartype message: str
     :ivar time: The time of the status.
@@ -1201,31 +1201,31 @@ class MachineExtensionInstanceViewStatus(TypedDict, total=False):
 class MachineExtensionProperties(TypedDict, total=False):
     """Describes the properties of a Machine Extension.
 
-    :ivar force_update_tag: How the extension handler should be forced to update even if the
+    :ivar forceUpdateTag: How the extension handler should be forced to update even if the
      extension configuration has not changed.
-    :vartype force_update_tag: str
+    :vartype forceUpdateTag: str
     :ivar publisher: The name of the extension handler publisher.
     :vartype publisher: str
     :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
     :vartype type: str
-    :ivar type_handler_version: Specifies the version of the script handler.
-    :vartype type_handler_version: str
-    :ivar enable_automatic_upgrade: Indicates whether the extension should be automatically
-     upgraded by the platform if there is a newer version available.
-    :vartype enable_automatic_upgrade: bool
-    :ivar auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
-     version if one is available at deployment time. Once deployed, however, the extension will not
-     upgrade minor versions unless redeployed, even with this property set to true.
-    :vartype auto_upgrade_minor_version: bool
+    :ivar typeHandlerVersion: Specifies the version of the script handler.
+    :vartype typeHandlerVersion: str
+    :ivar enableAutomaticUpgrade: Indicates whether the extension should be automatically upgraded
+     by the platform if there is a newer version available.
+    :vartype enableAutomaticUpgrade: bool
+    :ivar autoUpgradeMinorVersion: Indicates whether the extension should use a newer minor version
+     if one is available at deployment time. Once deployed, however, the extension will not upgrade
+     minor versions unless redeployed, even with this property set to true.
+    :vartype autoUpgradeMinorVersion: bool
     :ivar settings: Json formatted public settings for the extension.
     :vartype settings: dict[str, Any]
-    :ivar protected_settings: The extension can contain either protectedSettings or
+    :ivar protectedSettings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: dict[str, Any]
-    :ivar provisioning_state: The provisioning state, which only appears in the response.
-    :vartype provisioning_state: str
-    :ivar instance_view: The machine extension instance view.
-    :vartype instance_view: "MachineExtensionInstanceView"
+    :vartype protectedSettings: dict[str, Any]
+    :ivar provisioningState: The provisioning state, which only appears in the response.
+    :vartype provisioningState: str
+    :ivar instanceView: The machine extension instance view.
+    :vartype instanceView: "MachineExtensionInstanceView"
     """
 
     forceUpdateTag: str
@@ -1271,27 +1271,27 @@ class MachineExtensionUpdate(ResourceUpdate):
 class MachineExtensionUpdateProperties(TypedDict, total=False):
     """Describes the properties of a Machine Extension.
 
-    :ivar force_update_tag: How the extension handler should be forced to update even if the
+    :ivar forceUpdateTag: How the extension handler should be forced to update even if the
      extension configuration has not changed.
-    :vartype force_update_tag: str
+    :vartype forceUpdateTag: str
     :ivar publisher: The name of the extension handler publisher.
     :vartype publisher: str
     :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
     :vartype type: str
-    :ivar type_handler_version: Specifies the version of the script handler.
-    :vartype type_handler_version: str
-    :ivar enable_automatic_upgrade: Indicates whether the extension should be automatically
-     upgraded by the platform if there is a newer version available.
-    :vartype enable_automatic_upgrade: bool
-    :ivar auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
-     version if one is available at deployment time. Once deployed, however, the extension will not
-     upgrade minor versions unless redeployed, even with this property set to true.
-    :vartype auto_upgrade_minor_version: bool
+    :ivar typeHandlerVersion: Specifies the version of the script handler.
+    :vartype typeHandlerVersion: str
+    :ivar enableAutomaticUpgrade: Indicates whether the extension should be automatically upgraded
+     by the platform if there is a newer version available.
+    :vartype enableAutomaticUpgrade: bool
+    :ivar autoUpgradeMinorVersion: Indicates whether the extension should use a newer minor version
+     if one is available at deployment time. Once deployed, however, the extension will not upgrade
+     minor versions unless redeployed, even with this property set to true.
+    :vartype autoUpgradeMinorVersion: bool
     :ivar settings: Json formatted public settings for the extension.
     :vartype settings: dict[str, Any]
-    :ivar protected_settings: The extension can contain either protectedSettings or
+    :ivar protectedSettings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :vartype protected_settings: dict[str, Any]
+    :vartype protectedSettings: dict[str, Any]
     """
 
     forceUpdateTag: str
@@ -1320,8 +1320,8 @@ class MachineExtensionUpdateProperties(TypedDict, total=False):
 class MachineExtensionUpgrade(TypedDict, total=False):
     """Describes the Machine Extension Upgrade Properties.
 
-    :ivar extension_targets: Describes the Extension Target Properties.
-    :vartype extension_targets: dict[str, "ExtensionTargetProperties"]
+    :ivar extensionTargets: Describes the Extension Target Properties.
+    :vartype extensionTargets: dict[str, "ExtensionTargetProperties"]
     """
 
     extensionTargets: dict[str, "ExtensionTargetProperties"]
@@ -1331,18 +1331,17 @@ class MachineExtensionUpgrade(TypedDict, total=False):
 class MachineInstallPatchesParameters(TypedDict, total=False):
     """Input for InstallPatches as directly received by the API.
 
-    :ivar maximum_duration: Specifies the maximum amount of time that the operation will run. It
+    :ivar maximumDuration: Specifies the maximum amount of time that the operation will run. It
      must be an ISO 8601-compliant duration string such as PT4H (4 hours). Required.
-    :vartype maximum_duration: str
-    :ivar reboot_setting: Defines when it is acceptable to reboot a VM during a software update
+    :vartype maximumDuration: str
+    :ivar rebootSetting: Defines when it is acceptable to reboot a VM during a software update
      operation. Required. Known values are: "IfRequired", "Never", and "Always".
-    :vartype reboot_setting: Union[str, "VMGuestPatchRebootSetting"]
-    :ivar windows_parameters: Input for InstallPatches on a Windows VM, as directly received by the
+    :vartype rebootSetting: Union[str, "VMGuestPatchRebootSetting"]
+    :ivar windowsParameters: Input for InstallPatches on a Windows VM, as directly received by the
      API.
-    :vartype windows_parameters: "WindowsParameters"
-    :ivar linux_parameters: Input for InstallPatches on a Linux VM, as directly received by the
-     API.
-    :vartype linux_parameters: "LinuxParameters"
+    :vartype windowsParameters: "WindowsParameters"
+    :ivar linuxParameters: Input for InstallPatches on a Linux VM, as directly received by the API.
+    :vartype linuxParameters: "LinuxParameters"
     """
 
     maximumDuration: Required[str]
@@ -1360,91 +1359,91 @@ class MachineInstallPatchesParameters(TypedDict, total=False):
 class MachineProperties(TypedDict, total=False):
     """Describes the properties of a hybrid machine.
 
-    :ivar location_data: Metadata pertaining to the geographic location of the resource.
-    :vartype location_data: "LocationData"
-    :ivar agent_configuration: Configurable properties that the user can set locally via the
+    :ivar locationData: Metadata pertaining to the geographic location of the resource.
+    :vartype locationData: "LocationData"
+    :ivar agentConfiguration: Configurable properties that the user can set locally via the
      azcmagent config command, or remotely via ARM.
-    :vartype agent_configuration: "AgentConfiguration"
-    :ivar service_statuses: Statuses of dependent services that are reported back to ARM.
-    :vartype service_statuses: "ServiceStatuses"
-    :ivar hardware_profile: Information about the machine's hardware.
-    :vartype hardware_profile: "HardwareProfile"
-    :ivar storage_profile: Information about the machine's storage.
-    :vartype storage_profile: "StorageProfile"
-    :ivar firmware_profile: Information about the machine's firmware.
-    :vartype firmware_profile: "FirmwareProfile"
-    :ivar cloud_metadata: The metadata of the cloud environment (Azure/GCP/AWS/OCI...).
-    :vartype cloud_metadata: "CloudMetadata"
-    :ivar agent_upgrade: The info of the machine w.r.t Agent Upgrade.
-    :vartype agent_upgrade: "AgentUpgrade"
-    :ivar os_profile: Specifies the operating system settings for the hybrid machine.
-    :vartype os_profile: "OSProfile"
-    :ivar license_profile: Specifies the License related properties for a machine.
-    :vartype license_profile: "LicenseProfileMachineInstanceView"
-    :ivar status_reason: Indicates whether the service has detected that this Arc machine is a
-     clone of another onboarded machine. Service-computed; not settable by the user. "Cloned"
-    :vartype status_reason: Union[str, "MachineStatusReason"]
-    :ivar provisioning_state: The provisioning state, which only appears in the response.
-    :vartype provisioning_state: str
+    :vartype agentConfiguration: "AgentConfiguration"
+    :ivar serviceStatuses: Statuses of dependent services that are reported back to ARM.
+    :vartype serviceStatuses: "ServiceStatuses"
+    :ivar hardwareProfile: Information about the machine's hardware.
+    :vartype hardwareProfile: "HardwareProfile"
+    :ivar storageProfile: Information about the machine's storage.
+    :vartype storageProfile: "StorageProfile"
+    :ivar firmwareProfile: Information about the machine's firmware.
+    :vartype firmwareProfile: "FirmwareProfile"
+    :ivar cloudMetadata: The metadata of the cloud environment (Azure/GCP/AWS/OCI...).
+    :vartype cloudMetadata: "CloudMetadata"
+    :ivar agentUpgrade: The info of the machine w.r.t Agent Upgrade.
+    :vartype agentUpgrade: "AgentUpgrade"
+    :ivar osProfile: Specifies the operating system settings for the hybrid machine.
+    :vartype osProfile: "OSProfile"
+    :ivar licenseProfile: Specifies the License related properties for a machine.
+    :vartype licenseProfile: "LicenseProfileMachineInstanceView"
+    :ivar statusReason: Indicates whether the service has detected that this Arc machine is a clone
+     of another onboarded machine. Service-computed; not settable by the user. "Cloned"
+    :vartype statusReason: Union[str, "MachineStatusReason"]
+    :ivar provisioningState: The provisioning state, which only appears in the response.
+    :vartype provisioningState: str
     :ivar status: The status of the hybrid machine agent. Known values are: "Connected",
      "Disconnected", "Error", and "AwaitingConnection".
     :vartype status: Union[str, "StatusTypes"]
-    :ivar last_status_change: The time of the last status change.
-    :vartype last_status_change: str
-    :ivar error_details: Details about the error state.
-    :vartype error_details: list["ErrorDetail"]
-    :ivar agent_version: The hybrid machine agent full version.
-    :vartype agent_version: str
-    :ivar vm_id: Specifies the hybrid machine unique ID.
-    :vartype vm_id: str
-    :ivar display_name: Specifies the hybrid machine display name.
-    :vartype display_name: str
-    :ivar machine_fqdn: Specifies the hybrid machine FQDN.
-    :vartype machine_fqdn: str
-    :ivar client_public_key: Public Key that the client provides to be used during initial resource
+    :ivar lastStatusChange: The time of the last status change.
+    :vartype lastStatusChange: str
+    :ivar errorDetails: Details about the error state.
+    :vartype errorDetails: list["ErrorDetail"]
+    :ivar agentVersion: The hybrid machine agent full version.
+    :vartype agentVersion: str
+    :ivar vmId: Specifies the hybrid machine unique ID.
+    :vartype vmId: str
+    :ivar displayName: Specifies the hybrid machine display name.
+    :vartype displayName: str
+    :ivar machineFqdn: Specifies the hybrid machine FQDN.
+    :vartype machineFqdn: str
+    :ivar clientPublicKey: Public Key that the client provides to be used during initial resource
      onboarding.
-    :vartype client_public_key: str
-    :ivar identity_key_store: Specifies the identity key store a machine is using. Known values
-     are: "TPM" and "Default".
-    :vartype identity_key_store: Union[str, "IdentityKeyStore"]
-    :ivar tpm_ek_certificate: Endorsement Key Certificate of the Trusted Platform Module (TPM) that
+    :vartype clientPublicKey: str
+    :ivar identityKeyStore: Specifies the identity key store a machine is using. Known values are:
+     "TPM", "Default", and "TpmTransition".
+    :vartype identityKeyStore: Union[str, "IdentityKeyStore"]
+    :ivar tpmEkCertificate: Endorsement Key Certificate of the Trusted Platform Module (TPM) that
      the client provides to be used during initial resource onboarding.
-    :vartype tpm_ek_certificate: str
-    :ivar os_name: The Operating System running on the hybrid machine.
-    :vartype os_name: str
-    :ivar os_version: The version of Operating System running on the hybrid machine.
-    :vartype os_version: str
-    :ivar os_type: The type of Operating System (windows/linux).
-    :vartype os_type: str
-    :ivar vm_uuid: Specifies the Arc Machine's unique SMBIOS ID.
-    :vartype vm_uuid: str
+    :vartype tpmEkCertificate: str
+    :ivar osName: The Operating System running on the hybrid machine.
+    :vartype osName: str
+    :ivar osVersion: The version of Operating System running on the hybrid machine.
+    :vartype osVersion: str
+    :ivar osType: The type of Operating System (windows/linux).
+    :vartype osType: str
+    :ivar vmUuid: Specifies the Arc Machine's unique SMBIOS ID.
+    :vartype vmUuid: str
     :ivar extensions: Machine Extensions information (deprecated field).
     :vartype extensions: list["MachineExtensionInstanceView"]
-    :ivar os_sku: Specifies the Operating System product SKU.
-    :vartype os_sku: str
-    :ivar os_edition: The edition of the Operating System.
-    :vartype os_edition: str
-    :ivar domain_name: Specifies the Windows domain name.
-    :vartype domain_name: str
-    :ivar ad_fqdn: Specifies the AD fully qualified display name.
-    :vartype ad_fqdn: str
-    :ivar dns_fqdn: Specifies the DNS fully qualified display name.
-    :vartype dns_fqdn: str
-    :ivar private_link_scope_resource_id: The resource id of the private link scope this machine is
+    :ivar osSku: Specifies the Operating System product SKU.
+    :vartype osSku: str
+    :ivar osEdition: The edition of the Operating System.
+    :vartype osEdition: str
+    :ivar domainName: Specifies the Windows domain name.
+    :vartype domainName: str
+    :ivar adFqdn: Specifies the AD fully qualified display name.
+    :vartype adFqdn: str
+    :ivar dnsFqdn: Specifies the DNS fully qualified display name.
+    :vartype dnsFqdn: str
+    :ivar privateLinkScopeResourceId: The resource id of the private link scope this machine is
      assigned to, if any.
-    :vartype private_link_scope_resource_id: str
-    :ivar parent_cluster_resource_id: The resource id of the parent cluster (Azure HCI) this
-     machine is assigned to, if any.
-    :vartype parent_cluster_resource_id: str
-    :ivar hardware_resource_id: Specifies the resource ID of the associated hardware device. Only
+    :vartype privateLinkScopeResourceId: str
+    :ivar parentClusterResourceId: The resource id of the parent cluster (Azure HCI) this machine
+     is assigned to, if any.
+    :vartype parentClusterResourceId: str
+    :ivar hardwareResourceId: Specifies the resource ID of the associated hardware device. Only
      settable by HCI RP.
-    :vartype hardware_resource_id: str
-    :ivar mssql_discovered: Specifies whether any MS SQL instance is discovered on the machine.
-    :vartype mssql_discovered: str
-    :ivar detected_properties: Detected properties from the machine.
-    :vartype detected_properties: dict[str, str]
-    :ivar network_profile: Information about the network the machine is on.
-    :vartype network_profile: "NetworkProfile"
+    :vartype hardwareResourceId: str
+    :ivar mssqlDiscovered: Specifies whether any MS SQL instance is discovered on the machine.
+    :vartype mssqlDiscovered: str
+    :ivar detectedProperties: Detected properties from the machine.
+    :vartype detectedProperties: dict[str, str]
+    :ivar networkProfile: Information about the network the machine is on.
+    :vartype networkProfile: "NetworkProfile"
     """
 
     locationData: "LocationData"
@@ -1491,7 +1490,8 @@ class MachineProperties(TypedDict, total=False):
     clientPublicKey: str
     """Public Key that the client provides to be used during initial resource onboarding."""
     identityKeyStore: Union[str, "IdentityKeyStore"]
-    """Specifies the identity key store a machine is using. Known values are: \"TPM\" and \"Default\"."""
+    """Specifies the identity key store a machine is using. Known values are: \"TPM\", \"Default\",
+     and \"TpmTransition\"."""
     tpmEkCertificate: str
     """Endorsement Key Certificate of the Trusted Platform Module (TPM) that the client provides to be
      used during initial resource onboarding."""
@@ -1540,9 +1540,9 @@ class MachineRunCommand(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1558,21 +1558,21 @@ class MachineRunCommand(TrackedResource):
 class MachineRunCommandInstanceView(TypedDict, total=False):
     """The instance view of a machine run command.
 
-    :ivar execution_state: Script execution status. Known values are: "Unknown", "Pending",
+    :ivar executionState: Script execution status. Known values are: "Unknown", "Pending",
      "Running", "Failed", "Succeeded", "TimedOut", and "Canceled".
-    :vartype execution_state: Union[str, "ExecutionState"]
-    :ivar execution_message: Communicate script configuration errors or execution messages.
-    :vartype execution_message: str
-    :ivar exit_code: Exit code returned from script execution.
-    :vartype exit_code: int
+    :vartype executionState: Union[str, "ExecutionState"]
+    :ivar executionMessage: Communicate script configuration errors or execution messages.
+    :vartype executionMessage: str
+    :ivar exitCode: Exit code returned from script execution.
+    :vartype exitCode: int
     :ivar output: Script output stream.
     :vartype output: str
     :ivar error: Script error stream.
     :vartype error: str
-    :ivar start_time: Script start time.
-    :vartype start_time: str
-    :ivar end_time: Script end time.
-    :vartype end_time: str
+    :ivar startTime: Script start time.
+    :vartype startTime: str
+    :ivar endTime: Script end time.
+    :vartype endTime: str
     :ivar statuses: The  status information.
     :vartype statuses: list["ExtensionsResourceStatus"]
     """
@@ -1603,46 +1603,46 @@ class MachineRunCommandProperties(TypedDict, total=False):
     :vartype source: "MachineRunCommandScriptSource"
     :ivar parameters: The parameters used by the script.
     :vartype parameters: list["RunCommandInputParameter"]
-    :ivar protected_parameters: The parameters used by the script.
-    :vartype protected_parameters: list["RunCommandInputParameter"]
-    :ivar async_execution: Optional. If set to true, provisioning will complete as soon as script
+    :ivar protectedParameters: The parameters used by the script.
+    :vartype protectedParameters: list["RunCommandInputParameter"]
+    :ivar asyncExecution: Optional. If set to true, provisioning will complete as soon as script
      starts and will not wait for script to complete.
-    :vartype async_execution: bool
-    :ivar run_as_user: Specifies the user account on the machine when executing the run command.
-    :vartype run_as_user: str
-    :ivar run_as_password: Specifies the user account password on the machine when executing the
-     run command.
-    :vartype run_as_password: str
-    :ivar timeout_in_seconds: The timeout in seconds to execute the run command.
-    :vartype timeout_in_seconds: int
-    :ivar output_blob_uri: Specifies the Azure storage blob where script output stream will be
+    :vartype asyncExecution: bool
+    :ivar runAsUser: Specifies the user account on the machine when executing the run command.
+    :vartype runAsUser: str
+    :ivar runAsPassword: Specifies the user account password on the machine when executing the run
+     command.
+    :vartype runAsPassword: str
+    :ivar timeoutInSeconds: The timeout in seconds to execute the run command.
+    :vartype timeoutInSeconds: int
+    :ivar outputBlobUri: Specifies the Azure storage blob where script output stream will be
      uploaded. Use a SAS URI with read, append, create, write access OR use managed identity to
      provide the VM access to the blob. Refer outputBlobManagedIdentity parameter.
-    :vartype output_blob_uri: str
-    :ivar error_blob_uri: Specifies the Azure storage blob where script error stream will be
+    :vartype outputBlobUri: str
+    :ivar errorBlobUri: Specifies the Azure storage blob where script error stream will be
      uploaded. Use a SAS URI with read, append, create, write access OR use managed identity to
      provide the VM access to the blob. Refer errorBlobManagedIdentity parameter.
-    :vartype error_blob_uri: str
-    :ivar output_blob_managed_identity: User-assigned managed identity that has access to
+    :vartype errorBlobUri: str
+    :ivar outputBlobManagedIdentity: User-assigned managed identity that has access to
      outputBlobUri storage blob. Use an empty object in case of system-assigned identity. Make sure
      managed identity has been given access to blob's container with 'Storage Blob Data Contributor'
      role assignment. In case of user-assigned identity, make sure you add it under VM's identity.
      For more info on managed identity and Run Command, refer `https://aka.ms/ManagedIdentity
      <https://aka.ms/ManagedIdentity>`_ and `https://aka.ms/RunCommandManaged
      <https://aka.ms/RunCommandManaged>`_.
-    :vartype output_blob_managed_identity: "RunCommandManagedIdentity"
-    :ivar error_blob_managed_identity: User-assigned managed identity that has access to
-     errorBlobUri storage blob. Use an empty object in case of system-assigned identity. Make sure
-     managed identity has been given access to blob's container with 'Storage Blob Data Contributor'
-     role assignment. In case of user-assigned identity, make sure you add it under VM's identity.
-     For more info on managed identity and Run Command, refer `https://aka.ms/ManagedIdentity
+    :vartype outputBlobManagedIdentity: "RunCommandManagedIdentity"
+    :ivar errorBlobManagedIdentity: User-assigned managed identity that has access to errorBlobUri
+     storage blob. Use an empty object in case of system-assigned identity. Make sure managed
+     identity has been given access to blob's container with 'Storage Blob Data Contributor' role
+     assignment. In case of user-assigned identity, make sure you add it under VM's identity. For
+     more info on managed identity and Run Command, refer `https://aka.ms/ManagedIdentity
      <https://aka.ms/ManagedIdentity>`_ and `https://aka.ms/RunCommandManaged
      <https://aka.ms/RunCommandManaged>`_.
-    :vartype error_blob_managed_identity: "RunCommandManagedIdentity"
-    :ivar provisioning_state: The provisioning state, which only appears in the response.
-    :vartype provisioning_state: str
-    :ivar instance_view: The machine run command instance view.
-    :vartype instance_view: "MachineRunCommandInstanceView"
+    :vartype errorBlobManagedIdentity: "RunCommandManagedIdentity"
+    :ivar provisioningState: The provisioning state, which only appears in the response.
+    :vartype provisioningState: str
+    :ivar instanceView: The machine run command instance view.
+    :vartype instanceView: "MachineRunCommandInstanceView"
     """
 
     source: "MachineRunCommandScriptSource"
@@ -1693,19 +1693,19 @@ class MachineRunCommandScriptSource(TypedDict, total=False):
 
     :ivar script: Specifies the script content to be executed on the machine.
     :vartype script: str
-    :ivar script_uri: Specifies the script download location. It can be either SAS URI of an Azure
+    :ivar scriptUri: Specifies the script download location. It can be either SAS URI of an Azure
      storage blob with read access or public URI.
-    :vartype script_uri: str
-    :ivar command_id: Specifies the commandId of predefined built-in script.
-    :vartype command_id: str
-    :ivar script_uri_managed_identity: User-assigned managed identity that has access to scriptUri
-     in case of Azure storage blob. Use an empty object in case of system-assigned identity. Make
-     sure the Azure storage blob exists, and managed identity has been given access to blob's
-     container with 'Storage Blob Data Reader' role assignment. In case of user-assigned identity,
-     make sure you add it under VM's identity. For more info on managed identity and Run Command,
-     refer `https://aka.ms/ManagedIdentity <https://aka.ms/ManagedIdentity>`_ and
+    :vartype scriptUri: str
+    :ivar commandId: Specifies the commandId of predefined built-in script.
+    :vartype commandId: str
+    :ivar scriptUriManagedIdentity: User-assigned managed identity that has access to scriptUri in
+     case of Azure storage blob. Use an empty object in case of system-assigned identity. Make sure
+     the Azure storage blob exists, and managed identity has been given access to blob's container
+     with 'Storage Blob Data Reader' role assignment. In case of user-assigned identity, make sure
+     you add it under VM's identity. For more info on managed identity and Run Command, refer
+     `https://aka.ms/ManagedIdentity <https://aka.ms/ManagedIdentity>`_ and
      `https://aka.ms/RunCommandManaged <https://aka.ms/RunCommandManaged>`_.
-    :vartype script_uri_managed_identity: "RunCommandManagedIdentity"
+    :vartype scriptUriManagedIdentity: "RunCommandManagedIdentity"
     """
 
     script: str
@@ -1751,25 +1751,28 @@ class MachineUpdate(ResourceUpdate):
 class MachineUpdateProperties(TypedDict, total=False):
     """Describes the ARM updatable properties of a hybrid machine.
 
-    :ivar location_data: Metadata pertaining to the geographic location of the resource.
-    :vartype location_data: "LocationData"
-    :ivar os_profile: Specifies the operating system settings for the hybrid machine.
-    :vartype os_profile: "OSProfile"
-    :ivar cloud_metadata: The metadata of the cloud environment (Azure/GCP/AWS/OCI...).
-    :vartype cloud_metadata: "CloudMetadata"
-    :ivar agent_upgrade: The info of the machine w.r.t Agent Upgrade.
-    :vartype agent_upgrade: "AgentUpgrade"
-    :ivar parent_cluster_resource_id: The resource id of the parent cluster (Azure HCI) this
-     machine is assigned to, if any.
-    :vartype parent_cluster_resource_id: str
-    :ivar private_link_scope_resource_id: The resource id of the private link scope this machine is
+    :ivar locationData: Metadata pertaining to the geographic location of the resource.
+    :vartype locationData: "LocationData"
+    :ivar osProfile: Specifies the operating system settings for the hybrid machine.
+    :vartype osProfile: "OSProfile"
+    :ivar cloudMetadata: The metadata of the cloud environment (Azure/GCP/AWS/OCI...).
+    :vartype cloudMetadata: "CloudMetadata"
+    :ivar agentUpgrade: The info of the machine w.r.t Agent Upgrade.
+    :vartype agentUpgrade: "AgentUpgrade"
+    :ivar parentClusterResourceId: The resource id of the parent cluster (Azure HCI) this machine
+     is assigned to, if any.
+    :vartype parentClusterResourceId: str
+    :ivar privateLinkScopeResourceId: The resource id of the private link scope this machine is
      assigned to, if any.
-    :vartype private_link_scope_resource_id: str
-    :ivar identity_key_store: Identity key store type of the machine.
-    :vartype identity_key_store: str
-    :ivar tpm_ek_certificate: Endorsement Key Certificate of the Trusted Platform Module (TPM) that
+    :vartype privateLinkScopeResourceId: str
+    :ivar identityKeyStore: Identity key store type of the machine.
+    :vartype identityKeyStore: str
+    :ivar tpmEkCertificate: Endorsement Key Certificate of the Trusted Platform Module (TPM) that
      the client provides to be used during initial resource onboarding.
-    :vartype tpm_ek_certificate: str
+    :vartype tpmEkCertificate: str
+    :ivar clientPublicKey: Public Key that the client provides to be used during initial resource
+     onboarding.
+    :vartype clientPublicKey: str
     """
 
     locationData: "LocationData"
@@ -1789,22 +1792,24 @@ class MachineUpdateProperties(TypedDict, total=False):
     tpmEkCertificate: str
     """Endorsement Key Certificate of the Trusted Platform Module (TPM) that the client provides to be
      used during initial resource onboarding."""
+    clientPublicKey: str
+    """Public Key that the client provides to be used during initial resource onboarding."""
 
 
 class ManagedServiceIdentity(TypedDict, total=False):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -1823,14 +1828,14 @@ class ManagedServiceIdentity(TypedDict, total=False):
 class NetworkInterface(TypedDict, total=False):
     """Describes a network interface.
 
-    :ivar mac_address: Represents MAC address of the network interface.
-    :vartype mac_address: str
+    :ivar macAddress: Represents MAC address of the network interface.
+    :vartype macAddress: str
     :ivar id: Represents the ID of the network interface.
     :vartype id: str
     :ivar name: Represents the name of the network interface.
     :vartype name: str
-    :ivar ip_addresses: The list of IP addresses in this interface.
-    :vartype ip_addresses: list["IpAddress"]
+    :ivar ipAddresses: The list of IP addresses in this interface.
+    :vartype ipAddresses: list["IpAddress"]
     """
 
     macAddress: str
@@ -1846,8 +1851,8 @@ class NetworkInterface(TypedDict, total=False):
 class NetworkProfile(TypedDict, total=False):
     """Describes the network information on this machine.
 
-    :ivar network_interfaces: The list of network interfaces.
-    :vartype network_interfaces: list["NetworkInterface"]
+    :ivar networkInterfaces: The list of network interfaces.
+    :vartype networkInterfaces: list["NetworkInterface"]
     """
 
     networkInterfaces: list["NetworkInterface"]
@@ -1857,12 +1862,12 @@ class NetworkProfile(TypedDict, total=False):
 class OSProfile(TypedDict, total=False):
     """Specifies the operating system settings for the hybrid machine.
 
-    :ivar computer_name: Specifies the host OS name of the hybrid machine.
-    :vartype computer_name: str
-    :ivar windows_configuration: Specifies the windows configuration for update management.
-    :vartype windows_configuration: "OSProfileWindowsConfiguration"
-    :ivar linux_configuration: Specifies the linux configuration for update management.
-    :vartype linux_configuration: "OSProfileLinuxConfiguration"
+    :ivar computerName: Specifies the host OS name of the hybrid machine.
+    :vartype computerName: str
+    :ivar windowsConfiguration: Specifies the windows configuration for update management.
+    :vartype windowsConfiguration: "OSProfileWindowsConfiguration"
+    :ivar linuxConfiguration: Specifies the linux configuration for update management.
+    :vartype linuxConfiguration: "OSProfileLinuxConfiguration"
     """
 
     computerName: str
@@ -1876,8 +1881,8 @@ class OSProfile(TypedDict, total=False):
 class OSProfileLinuxConfiguration(TypedDict, total=False):
     """Specifies the linux configuration for update management.
 
-    :ivar patch_settings: Specifies the patch settings.
-    :vartype patch_settings: "PatchSettings"
+    :ivar patchSettings: Specifies the patch settings.
+    :vartype patchSettings: "PatchSettings"
     """
 
     patchSettings: "PatchSettings"
@@ -1887,8 +1892,8 @@ class OSProfileLinuxConfiguration(TypedDict, total=False):
 class OSProfileWindowsConfiguration(TypedDict, total=False):
     """Specifies the windows configuration for update management.
 
-    :ivar patch_settings: Specifies the patch settings.
-    :vartype patch_settings: "PatchSettings"
+    :ivar patchSettings: Specifies the patch settings.
+    :vartype patchSettings: "PatchSettings"
     """
 
     patchSettings: "PatchSettings"
@@ -1898,15 +1903,15 @@ class OSProfileWindowsConfiguration(TypedDict, total=False):
 class PatchSettings(TypedDict, total=False):
     """Specifies the patch settings.
 
-    :ivar assessment_mode: Specifies the assessment mode. Known values are: "ImageDefault" and
+    :ivar assessmentMode: Specifies the assessment mode. Known values are: "ImageDefault" and
      "AutomaticByPlatform".
-    :vartype assessment_mode: Union[str, "AssessmentModeTypes"]
-    :ivar patch_mode: Specifies the patch mode. Known values are: "ImageDefault",
+    :vartype assessmentMode: Union[str, "AssessmentModeTypes"]
+    :ivar patchMode: Specifies the patch mode. Known values are: "ImageDefault",
      "AutomaticByPlatform", "AutomaticByOS", and "Manual".
-    :vartype patch_mode: Union[str, "PatchModeTypes"]
-    :ivar enable_hotpatching: Captures the hotpatch capability enrollment intent of the customers,
+    :vartype patchMode: Union[str, "PatchModeTypes"]
+    :ivar enableHotpatching: Captures the hotpatch capability enrollment intent of the customers,
      which enables customers to patch their Windows machines without requiring a reboot.
-    :vartype enable_hotpatching: bool
+    :vartype enableHotpatching: bool
     :ivar status: Status of the hotpatch capability enrollment or disenrollment.
     :vartype status: "PatchSettingsStatus"
     """
@@ -1926,10 +1931,10 @@ class PatchSettings(TypedDict, total=False):
 class PatchSettingsStatus(TypedDict, total=False):
     """Status of the hotpatch capability enrollment or disenrollment.
 
-    :ivar hotpatch_enablement_status: Indicates the current status of the hotpatch being enabled or
+    :ivar hotpatchEnablementStatus: Indicates the current status of the hotpatch being enabled or
      disabled. Known values are: "Unknown", "PendingEvaluation", "Disabled", "ActionRequired", and
      "Enabled".
-    :vartype hotpatch_enablement_status: Union[str, "HotpatchEnablementStatus"]
+    :vartype hotpatchEnablementStatus: Union[str, "HotpatchEnablementStatus"]
     :ivar error: The errors that were encountered during the hotpatch capability enrollment or
      disenrollment.
     :vartype error: "ErrorDetail"
@@ -1953,9 +1958,9 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Resource properties.
     :vartype properties: "PrivateEndpointConnectionProperties"
     """
@@ -1990,15 +1995,14 @@ class PrivateEndpointConnectionDataModel(TypedDict, total=False):
 class PrivateEndpointConnectionProperties(TypedDict, total=False):
     """Properties of a private endpoint connection.
 
-    :ivar private_endpoint: Private endpoint which the connection belongs to.
-    :vartype private_endpoint: "PrivateEndpointProperty"
-    :ivar private_link_service_connection_state: Connection state of the private endpoint
-     connection.
-    :vartype private_link_service_connection_state: "PrivateLinkServiceConnectionStateProperty"
-    :ivar provisioning_state: State of the private endpoint connection.
-    :vartype provisioning_state: str
-    :ivar group_ids: List of group IDs.
-    :vartype group_ids: list[str]
+    :ivar privateEndpoint: Private endpoint which the connection belongs to.
+    :vartype privateEndpoint: "PrivateEndpointProperty"
+    :ivar privateLinkServiceConnectionState: Connection state of the private endpoint connection.
+    :vartype privateLinkServiceConnectionState: "PrivateLinkServiceConnectionStateProperty"
+    :ivar provisioningState: State of the private endpoint connection.
+    :vartype provisioningState: str
+    :ivar groupIds: List of group IDs.
+    :vartype groupIds: list[str]
     """
 
     privateEndpoint: "PrivateEndpointProperty"
@@ -2029,8 +2033,8 @@ class PrivateLinkServiceConnectionStateProperty(TypedDict, total=False):  # pyli
     :vartype status: str
     :ivar description: The private link service connection description. Required.
     :vartype description: str
-    :ivar actions_required: The actions required for private link service connection.
-    :vartype actions_required: str
+    :ivar actionsRequired: The actions required for private link service connection.
+    :vartype actionsRequired: str
     """
 
     status: Required[str]
@@ -2046,8 +2050,8 @@ class Processor(TypedDict, total=False):
 
     :ivar name: The name of the processor.
     :vartype name: str
-    :ivar number_of_cores: The total number of physical cores on the processor.
-    :vartype number_of_cores: int
+    :ivar numberOfCores: The total number of physical cores on the processor.
+    :vartype numberOfCores: int
     """
 
     name: str
@@ -2061,17 +2065,17 @@ class ProductFeature(TypedDict, total=False):
 
     :ivar name: Product feature name.
     :vartype name: str
-    :ivar subscription_status: Indicates the current status of the product features. Known values
+    :ivar subscriptionStatus: Indicates the current status of the product features. Known values
      are: "Unknown", "Enabling", "Enabled", "Disabled", "Disabling", and "Failed".
-    :vartype subscription_status: Union[str, "LicenseProfileSubscriptionStatus"]
-    :ivar enrollment_date: The timestamp in UTC when the user enrolls the feature.
-    :vartype enrollment_date: str
-    :ivar billing_start_date: The timestamp in UTC when the billing starts.
-    :vartype billing_start_date: str
-    :ivar disenrollment_date: The timestamp in UTC when the user disenrolled the feature.
-    :vartype disenrollment_date: str
-    :ivar billing_end_date: The timestamp in UTC when the billing ends.
-    :vartype billing_end_date: str
+    :vartype subscriptionStatus: Union[str, "LicenseProfileSubscriptionStatus"]
+    :ivar enrollmentDate: The timestamp in UTC when the user enrolls the feature.
+    :vartype enrollmentDate: str
+    :ivar billingStartDate: The timestamp in UTC when the billing starts.
+    :vartype billingStartDate: str
+    :ivar disenrollmentDate: The timestamp in UTC when the user disenrolled the feature.
+    :vartype disenrollmentDate: str
+    :ivar billingEndDate: The timestamp in UTC when the billing ends.
+    :vartype billingEndDate: str
     :ivar error: The errors that were encountered during the feature enrollment or disenrollment.
     :vartype error: "ErrorDetail"
     """
@@ -2098,9 +2102,9 @@ class ProductFeatureUpdate(TypedDict, total=False):
 
     :ivar name: Product feature name.
     :vartype name: str
-    :ivar subscription_status: Indicates the new status of the product feature. Known values are:
+    :ivar subscriptionStatus: Indicates the new status of the product feature. Known values are:
      "Enable" and "Disable".
-    :vartype subscription_status: Union[str, "LicenseProfileSubscriptionStatusUpdate"]
+    :vartype subscriptionStatus: Union[str, "LicenseProfileSubscriptionStatusUpdate"]
     """
 
     name: str
@@ -2112,14 +2116,14 @@ class ProductFeatureUpdate(TypedDict, total=False):
 class ProductProfileUpdateProperties(TypedDict, total=False):
     """Describes the Update properties of a Product Profile.
 
-    :ivar subscription_status: Indicates the subscription status of the product. Known values are:
+    :ivar subscriptionStatus: Indicates the subscription status of the product. Known values are:
      "Enable" and "Disable".
-    :vartype subscription_status: Union[str, "LicenseProfileSubscriptionStatusUpdate"]
-    :ivar product_type: Indicates the product type of the license. Known values are:
-     "WindowsServer" and "WindowsIoTEnterprise".
-    :vartype product_type: Union[str, "LicenseProfileProductType"]
-    :ivar product_features: The list of product feature updates.
-    :vartype product_features: list["ProductFeatureUpdate"]
+    :vartype subscriptionStatus: Union[str, "LicenseProfileSubscriptionStatusUpdate"]
+    :ivar productType: Indicates the product type of the license. Known values are: "WindowsServer"
+     and "WindowsIoTEnterprise".
+    :vartype productType: Union[str, "LicenseProfileProductType"]
+    :ivar productFeatures: The list of product feature updates.
+    :vartype productFeatures: list["ProductFeatureUpdate"]
     """
 
     subscriptionStatus: Union[str, "LicenseProfileSubscriptionStatusUpdate"]
@@ -2157,12 +2161,12 @@ class RunCommandManagedIdentity(TypedDict, total=False):
     `https://aka.ms/ManagedIdentity <https://aka.ms/ManagedIdentity>`_ and
     `https://aka.ms/RunCommandManaged <https://aka.ms/RunCommandManaged>`_.
 
-    :ivar client_id: Client Id (GUID value) of the user-assigned managed identity. ObjectId should
+    :ivar clientId: Client Id (GUID value) of the user-assigned managed identity. ObjectId should
      not be used if this is provided.
-    :vartype client_id: str
-    :ivar object_id: Object Id (GUID value) of the user-assigned managed identity. ClientId should
+    :vartype clientId: str
+    :ivar objectId: Object Id (GUID value) of the user-assigned managed identity. ClientId should
      not be used if this is provided.
-    :vartype object_id: str
+    :vartype objectId: str
     """
 
     clientId: str
@@ -2176,14 +2180,13 @@ class RunCommandManagedIdentity(TypedDict, total=False):
 class ServiceExtension(TypedDict, total=False):
     """Enable private link validation for an Azure Arc Extension.
 
-    :ivar service_extension_type: The name of the Azure Arc Extension. Is one of the following
-     types: str
-    :vartype service_extension_type: "_unions.ServiceExtensionType"
-    :ivar service_extension_public_network_access: The network access policy to determine if the
+    :ivar serviceExtensionType: The name of the Azure Arc Extension. Is one of the following types:
+     str
+    :vartype serviceExtensionType: "_unions.ServiceExtensionType"
+    :ivar serviceExtensionPublicNetworkAccess: The network access policy to determine if the
      specified Azure Arc Extension can use public Azure Arc Extension service endpoints. Known
      values are: "Enabled" and "Disabled".
-    :vartype service_extension_public_network_access: Union[str,
-     "ServiceExtensionPublicNetworkAccess"]
+    :vartype serviceExtensionPublicNetworkAccess: Union[str, "ServiceExtensionPublicNetworkAccess"]
     """
 
     serviceExtensionType: "_unions.ServiceExtensionType"
@@ -2198,8 +2201,8 @@ class ServiceStatus(TypedDict, total=False):
 
     :ivar status: The current status of the service.
     :vartype status: str
-    :ivar startup_type: The behavior of the service when the Arc-enabled machine starts up.
-    :vartype startup_type: str
+    :ivar startupType: The behavior of the service when the Arc-enabled machine starts up.
+    :vartype startupType: str
     """
 
     status: str
@@ -2211,11 +2214,11 @@ class ServiceStatus(TypedDict, total=False):
 class ServiceStatuses(TypedDict, total=False):
     """Reports the state and behavior of dependent services.
 
-    :ivar extension_service: The state of the extension service on the Arc-enabled machine.
-    :vartype extension_service: "ServiceStatus"
-    :ivar guest_configuration_service: The state of the guest configuration service on the
+    :ivar extensionService: The state of the extension service on the Arc-enabled machine.
+    :vartype extensionService: "ServiceStatus"
+    :ivar guestConfigurationService: The state of the guest configuration service on the
      Arc-enabled machine.
-    :vartype guest_configuration_service: "ServiceStatus"
+    :vartype guestConfigurationService: "ServiceStatus"
     """
 
     extensionService: "ServiceStatus"
@@ -2236,9 +2239,9 @@ class Settings(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Settings properties.
     :vartype properties: "SettingsProperties"
     """
@@ -2250,8 +2253,8 @@ class Settings(ProxyResource):
 class SettingsGatewayProperties(TypedDict, total=False):
     """Settings Gateway properties.
 
-    :ivar gateway_resource_id: Associated Gateway Resource Id.
-    :vartype gateway_resource_id: str
+    :ivar gatewayResourceId: Associated Gateway Resource Id.
+    :vartype gatewayResourceId: str
     """
 
     gatewayResourceId: str
@@ -2261,10 +2264,10 @@ class SettingsGatewayProperties(TypedDict, total=False):
 class SettingsProperties(TypedDict, total=False):
     """Settings properties.
 
-    :ivar tenant_id: Azure resource tenant Id.
-    :vartype tenant_id: str
-    :ivar gateway_properties: Settings Gateway properties.
-    :vartype gateway_properties: "SettingsGatewayProperties"
+    :ivar tenantId: Azure resource tenant Id.
+    :vartype tenantId: str
+    :ivar gatewayProperties: Settings Gateway properties.
+    :vartype gatewayProperties: "SettingsGatewayProperties"
     """
 
     tenantId: str
@@ -2298,8 +2301,8 @@ class StorageProfile(TypedDict, total=False):
 class Subnet(TypedDict, total=False):
     """Describes the subnet.
 
-    :ivar address_prefix: Represents address prefix.
-    :vartype address_prefix: str
+    :ivar addressPrefix: Represents address prefix.
+    :vartype addressPrefix: str
     """
 
     addressPrefix: str
@@ -2309,20 +2312,20 @@ class Subnet(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -2356,10 +2359,10 @@ class TagsResource(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -2368,14 +2371,207 @@ class UserAssignedIdentity(TypedDict, total=False):
     """The client ID of the assigned identity."""
 
 
+class VmApplication(TrackedResource):
+    """A VM application installed on a hybrid machine.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The VM application properties.
+    :vartype properties: "VmApplicationProperties"
+    """
+
+    properties: "VmApplicationProperties"
+    """The VM application properties."""
+
+
+class VmApplicationInstanceView(TypedDict, total=False):
+    """The instance view of a VM application.
+
+    :ivar name: The application name.
+    :vartype name: str
+    :ivar version: The application version.
+    :vartype version: str
+    :ivar result: The current installation result.
+    :vartype result: str
+    :ivar actionsPerformed: The recent actions performed for the application.
+    :vartype actionsPerformed: list["VmApplicationInstanceViewAction"]
+    """
+
+    name: str
+    """The application name."""
+    version: str
+    """The application version."""
+    result: str
+    """The current installation result."""
+    actionsPerformed: list["VmApplicationInstanceViewAction"]
+    """The recent actions performed for the application."""
+
+
+class VmApplicationInstanceViewAction(TypedDict, total=False):
+    """An action recently performed for a VM application.
+
+    :ivar operation: The operation that was performed.
+    :vartype operation: str
+    :ivar result: The result of the operation.
+    :vartype result: str
+    """
+
+    operation: str
+    """The operation that was performed."""
+    result: str
+    """The result of the operation."""
+
+
+class VmApplicationProperties(TypedDict, total=False):
+    """The properties of a VM application. Exactly one gallery application reference must be specified
+    when creating or replacing the resource.
+
+    :ivar order: The order in which the application is installed.
+    :vartype order: int
+    :ivar packageReferenceId: The resource ID of the gallery application version. The version name
+     can be ``latest`` or a specific version. This property is mutually exclusive with
+     sharedGalleryApplicationId and communityGalleryApplicationId.
+    :vartype packageReferenceId: str
+    :ivar sharedGalleryApplicationId: The identifier of a direct shared gallery application
+     version. Use
+     ``/sharedGalleries/{sharedGalleryUniqueName}/applications/{applicationName}/versions/{versionName}``,
+     where the version name can be ``latest`` or a specific version. This property is mutually
+     exclusive with packageReferenceId and communityGalleryApplicationId.
+    :vartype sharedGalleryApplicationId: str
+    :ivar communityGalleryApplicationId: The identifier of a community gallery application version.
+     Use
+     ``/communityGalleries/{communityGalleryPublicName}/applications/{applicationName}/versions/{versionName}``,
+     where the version name can be ``latest`` or a specific version. This property is mutually
+     exclusive with packageReferenceId and sharedGalleryApplicationId.
+    :vartype communityGalleryApplicationId: str
+    :ivar configurationReference: The URI of configuration data that replaces the package's default
+     configuration.
+    :vartype configurationReference: str
+    :ivar treatFailureAsDeploymentFailure: Indicates whether an application operation failure
+     causes the deployment to fail.
+    :vartype treatFailureAsDeploymentFailure: bool
+    :ivar provisioningState: The provisioning state of the VM application. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Accepted", "Canceled", and
+     "Deleted".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar instanceView: The instance view of the VM application.
+    :vartype instanceView: "VmApplicationInstanceView"
+    """
+
+    order: int
+    """The order in which the application is installed."""
+    packageReferenceId: str
+    """The resource ID of the gallery application version. The version name can be ``latest`` or a
+     specific version. This property is mutually exclusive with sharedGalleryApplicationId and
+     communityGalleryApplicationId."""
+    sharedGalleryApplicationId: str
+    """The identifier of a direct shared gallery application version. Use
+     ``/sharedGalleries/{sharedGalleryUniqueName}/applications/{applicationName}/versions/{versionName}``,
+     where the version name can be ``latest`` or a specific version. This property is mutually
+     exclusive with packageReferenceId and communityGalleryApplicationId."""
+    communityGalleryApplicationId: str
+    """The identifier of a community gallery application version. Use
+     ``/communityGalleries/{communityGalleryPublicName}/applications/{applicationName}/versions/{versionName}``,
+     where the version name can be ``latest`` or a specific version. This property is mutually
+     exclusive with packageReferenceId and sharedGalleryApplicationId."""
+    configurationReference: str
+    """The URI of configuration data that replaces the package's default configuration."""
+    treatFailureAsDeploymentFailure: bool
+    """Indicates whether an application operation failure causes the deployment to fail."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the VM application. Known values are: \"Creating\", \"Updating\",
+     \"Deleting\", \"Succeeded\", \"Failed\", \"Accepted\", \"Canceled\", and \"Deleted\"."""
+    instanceView: "VmApplicationInstanceView"
+    """The instance view of the VM application."""
+
+
+class VmApplicationUpdate(TypedDict, total=False):
+    """The update request for a VM application.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "VmApplicationUpdateProperties"
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+    properties: "VmApplicationUpdateProperties"
+    """The resource-specific properties for this resource."""
+
+
+class VmApplicationUpdateProperties(TypedDict, total=False):
+    """The updatable properties of the VmApplication.
+
+    :ivar order: The order in which the application is installed.
+    :vartype order: int
+    :ivar packageReferenceId: The resource ID of the gallery application version. The version name
+     can be ``latest`` or a specific version. This property is mutually exclusive with
+     sharedGalleryApplicationId and communityGalleryApplicationId.
+    :vartype packageReferenceId: str
+    :ivar sharedGalleryApplicationId: The identifier of a direct shared gallery application
+     version. Use
+     ``/sharedGalleries/{sharedGalleryUniqueName}/applications/{applicationName}/versions/{versionName}``,
+     where the version name can be ``latest`` or a specific version. This property is mutually
+     exclusive with packageReferenceId and communityGalleryApplicationId.
+    :vartype sharedGalleryApplicationId: str
+    :ivar communityGalleryApplicationId: The identifier of a community gallery application version.
+     Use
+     ``/communityGalleries/{communityGalleryPublicName}/applications/{applicationName}/versions/{versionName}``,
+     where the version name can be ``latest`` or a specific version. This property is mutually
+     exclusive with packageReferenceId and sharedGalleryApplicationId.
+    :vartype communityGalleryApplicationId: str
+    :ivar configurationReference: The URI of configuration data that replaces the package's default
+     configuration.
+    :vartype configurationReference: str
+    :ivar treatFailureAsDeploymentFailure: Indicates whether an application operation failure
+     causes the deployment to fail.
+    :vartype treatFailureAsDeploymentFailure: bool
+    """
+
+    order: int
+    """The order in which the application is installed."""
+    packageReferenceId: str
+    """The resource ID of the gallery application version. The version name can be ``latest`` or a
+     specific version. This property is mutually exclusive with sharedGalleryApplicationId and
+     communityGalleryApplicationId."""
+    sharedGalleryApplicationId: str
+    """The identifier of a direct shared gallery application version. Use
+     ``/sharedGalleries/{sharedGalleryUniqueName}/applications/{applicationName}/versions/{versionName}``,
+     where the version name can be ``latest`` or a specific version. This property is mutually
+     exclusive with packageReferenceId and communityGalleryApplicationId."""
+    communityGalleryApplicationId: str
+    """The identifier of a community gallery application version. Use
+     ``/communityGalleries/{communityGalleryPublicName}/applications/{applicationName}/versions/{versionName}``,
+     where the version name can be ``latest`` or a specific version. This property is mutually
+     exclusive with packageReferenceId and sharedGalleryApplicationId."""
+    configurationReference: str
+    """The URI of configuration data that replaces the package's default configuration."""
+    treatFailureAsDeploymentFailure: bool
+    """Indicates whether an application operation failure causes the deployment to fail."""
+
+
 class VolumeLicenseDetails(TypedDict, total=False):
     """VolumeLicenseDetails.
 
-    :ivar program_year: Describes the program year the volume license is for. Known values are:
+    :ivar programYear: Describes the program year the volume license is for. Known values are:
      "Year 1", "Year 2", and "Year 3".
-    :vartype program_year: Union[str, "ProgramYear"]
-    :ivar invoice_id: The invoice id for the volume license.
-    :vartype invoice_id: str
+    :vartype programYear: Union[str, "ProgramYear"]
+    :ivar invoiceId: The invoice id for the volume license.
+    :vartype invoiceId: str
     """
 
     programYear: Union[str, "ProgramYear"]
@@ -2388,29 +2584,29 @@ class VolumeLicenseDetails(TypedDict, total=False):
 class WindowsParameters(TypedDict, total=False):
     """Input for InstallPatches on a Windows VM, as directly received by the API.
 
-    :ivar classifications_to_include: The update classifications to select when installing patches
+    :ivar classificationsToInclude: The update classifications to select when installing patches
      for Windows.
-    :vartype classifications_to_include: list[Union[str, "VMGuestPatchClassificationWindows"]]
-    :ivar kb_numbers_to_include: Kbs to include in the patch operation.
-    :vartype kb_numbers_to_include: list[str]
-    :ivar kb_numbers_to_exclude: Kbs to exclude in the patch operation.
-    :vartype kb_numbers_to_exclude: list[str]
-    :ivar exclude_kbs_requiring_reboot: Filters out Kbs that don't have an
-     InstallationRebootBehavior of 'NeverReboots' when this is set to true.
-    :vartype exclude_kbs_requiring_reboot: bool
-    :ivar max_patch_publish_date: This is used to install patches that were published on or before
+    :vartype classificationsToInclude: list[Union[str, "VMGuestPatchClassificationWindows"]]
+    :ivar kbNumbersToInclude: Kbs to include in the patch operation.
+    :vartype kbNumbersToInclude: list[str]
+    :ivar kbNumbersToExclude: Kbs to exclude in the patch operation.
+    :vartype kbNumbersToExclude: list[str]
+    :ivar excludeKbsRequiringReboot: Filters out Kbs that don't have an InstallationRebootBehavior
+     of 'NeverReboots' when this is set to true.
+    :vartype excludeKbsRequiringReboot: bool
+    :ivar maxPatchPublishDate: This is used to install patches that were published on or before
      this given max published date.
-    :vartype max_patch_publish_date: str
-    :ivar patch_name_masks_to_include: This is used to include patches that match the given patch
-     name masks. Alphanumeric strings and wildcard expressions consisting of * and ? are only
-     supported as input values in the list. Null, empty and only whitespaces strings as inputs
-     values are not supported.
-    :vartype patch_name_masks_to_include: list[str]
-    :ivar patch_name_masks_to_exclude: This is used to exclude patches that match the given patch
-     name masks. Alphanumeric strings and wildcard expressions consisting of * and ? are only
-     supported as input values in the list. Null, empty and only whitespaces strings as inputs
-     values are not supported.
-    :vartype patch_name_masks_to_exclude: list[str]
+    :vartype maxPatchPublishDate: str
+    :ivar patchNameMasksToInclude: This is used to include patches that match the given patch name
+     masks. Alphanumeric strings and wildcard expressions consisting of * and ? are only supported
+     as input values in the list. Null, empty and only whitespaces strings as inputs values are not
+     supported.
+    :vartype patchNameMasksToInclude: list[str]
+    :ivar patchNameMasksToExclude: This is used to exclude patches that match the given patch name
+     masks. Alphanumeric strings and wildcard expressions consisting of * and ? are only supported
+     as input values in the list. Null, empty and only whitespaces strings as inputs values are not
+     supported.
+    :vartype patchNameMasksToExclude: list[str]
     """
 
     classificationsToInclude: list[Union[str, "VMGuestPatchClassificationWindows"]]

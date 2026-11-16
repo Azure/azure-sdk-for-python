@@ -27,6 +27,9 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: 'not-specified'
+  - name: ReleasePlanId
+    type: string
+    default: '0'
   - name: TestPipeline
     type: boolean
     default: false
@@ -61,6 +64,7 @@ stages:
     variables:
       - template: /eng/pipelines/templates/variables/image.yml
       - template: /eng/common/pipelines/templates/variables/api-review-break-glass.yml
+      - template: /eng/pipelines/templates/variables/globals.yml
     # Auto-release CI: only release when the shared prepare stage flagged this artifact as changed.
     # Manual runs: every declared artifact remains eligible (existing behavior).
     ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(parameters.SignedArtifactTargetingStage, '')) }}:
@@ -241,6 +245,13 @@ stages:
       - job: MarkPackageReleaseCompletion
         displayName: "Mark package release completion"
         dependsOn: PublishPackage
+        variables:
+          # Release stages only exist for manual runs and post-merge CI on 'main', so a run from an individual CI
+          # is an auto-release. Only then does the AutoReleasePrepare stage exist to read the triggering SDK PR from.
+          ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+            AutoReleaseSdkPullRequestUrl: $[ stageDependencies.AutoReleasePrepare.ResolveAutoReleasePackages.outputs['resolve.AutoReleaseSdkPullRequestUrl'] ]
+          ${{ else }}:
+            AutoReleaseSdkPullRequestUrl: ''
 
         pool:
           image: ubuntu-24.04
@@ -261,10 +272,22 @@ stages:
               EnablePipAuth: true
               EnableUvAuth: false
 
+          # Log whether this is an auto-release or a manual release, and the auto-release SDK PR.
+          - pwsh: |
+              $type = if ($env:BUILD_REASON -eq 'IndividualCI') { 'auto-release' } else { 'manual release' }
+              $pr = if ($env:AUTO_RELEASE_SDK_PR) { $env:AUTO_RELEASE_SDK_PR } else { 'none' }
+              Write-Host "Release type: $type"
+              Write-Host "Auto-release SDK PR: $pr"
+            displayName: Show release type and auto-release SDK PR
+            env:
+              BUILD_REASON: $(Build.Reason)
+              AUTO_RELEASE_SDK_PR: $(AutoReleaseSdkPullRequestUrl)
+
           - template: /eng/common/pipelines/templates/steps/mark-release-completion.yml
             parameters:
               ConfigFileDir: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo'
               PackageArtifactName: ${{parameters.Artifact.name}}
+              ReleasePlanId: ${{ parameters.ReleasePlanId }}
 
           # Management-plane-only workaround: skip marking packages that do not generate an APIView revision.
           - pwsh: |
@@ -315,7 +338,8 @@ stages:
               os: windows
 
             steps:
-              - checkout: self
+              # Job only reads from eng/, so the default sparse-checkout baseline is sufficient.
+              - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
 
               - download: current
                 artifact: ${{parameters.ArtifactName}}

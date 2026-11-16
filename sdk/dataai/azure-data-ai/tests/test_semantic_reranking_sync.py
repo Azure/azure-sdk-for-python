@@ -32,13 +32,13 @@ from azure.data.ai.models import (
 )
 
 
-def test_public_api_exposes_generated_models_without_embeddings():
+def test_public_api_exposes_generated_models_and_embeddings():
     assert azure.data.ai.__version__ == version("azure-data-ai")
     assert azure.data.ai.__all__ == ["InferenceClient"]
     assert find_spec("azure.data.ai.models") is not None
     assert find_spec("azure.data.ai.types") is not None
     assert hasattr(InferenceClient, "semantic_rerank")
-    assert not hasattr(InferenceClient, "generate_embeddings")
+    assert hasattr(InferenceClient, "get_embeddings")
     assert hasattr(InferenceClient, "send_request")
     assert not inspect.iscoroutinefunction(InferenceClient.semantic_rerank)
     assert InferenceClient.__module__ == "azure.data.ai._client"
@@ -101,7 +101,7 @@ def test_dictionary_round_trip(respond, transport, request_payload, result_paylo
     sent = transport.send.call_args.args[0]
     assert sent.method == "POST"
     assert sent.url == (
-        "https://example.inference.azure.com/inference/semanticReranking?api-version=2026-09-01-preview"
+        "https://example.inference.azure.com/inference/semanticReranking?api-version=2026-11-01-preview"
     )
     assert sent.headers["Content-Type"] == "application/json"
     assert sent.headers["Accept"] == "application/json"
@@ -237,7 +237,7 @@ def test_token_authentication(respond, transport, token_credential, request_payl
     assert "Ocp-Apim-Subscription-Key" not in sent.headers
 
 
-@pytest.mark.parametrize("api_version", ["2026-09-01-preview", "test-api-version"])
+@pytest.mark.parametrize("api_version", ["2026-10-30", "test-api-version"])
 def test_diagnostic_hook_and_request_options(respond, transport, request_payload, result_payload, api_version):
     captured = []
     respond((200, result_payload, {}))
@@ -281,7 +281,7 @@ def test_request_options_and_endpoint_path_are_preserved(respond, transport, req
     sent = transport.send.call_args.args[0]
     assert urlsplit(sent.url).path == "/prefix/inference/semanticReranking"
     assert parse_qs(urlsplit(sent.url).query) == {
-        "api-version": ["2026-09-01-preview"],
+        "api-version": ["2026-11-01-preview"],
         "custom": ["value"],
     }
     assert sent.headers["Accept"] == "application/json"

@@ -48,7 +48,6 @@ def main():
                 "eventHubEndpoints": {"events": {"partitionCount": 2, "retentionTimeInDays": 1}},
                 "features": "None",
                 "ipFilterRules": [],
-                "ipVersion": "ipv4ipv6",
                 "messagingEndpoints": {
                     "fileNotifications": {
                         "lockDurationAsIso8601": "PT1M",
@@ -65,7 +64,6 @@ def main():
                         {"action": "Allow", "filterName": "rule2", "ipMask": "157.55.59.128/25"},
                     ],
                 },
-                "rootCertificate": {"enableRootCertificateV2": True},
                 "routing": {
                     "endpoints": {
                         "eventHubs": [],
@@ -104,6 +102,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/iothub_createOrUpdate.json
+# x-ms-original-file: 2026-11-01/iothub_createOrUpdate.json
 if __name__ == "__main__":
     main()

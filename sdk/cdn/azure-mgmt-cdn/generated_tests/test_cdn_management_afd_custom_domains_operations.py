@@ -46,6 +46,7 @@ class TestCdnManagementAFDCustomDomainsOperations(AzureMgmtRecordedTestCase):
                     "deploymentStatus": "str",
                     "domainValidationState": "str",
                     "extendedProperties": {"str": "str"},
+                    "mtlsSettings": "afd_domain_mtls_parameters",
                     "preValidatedCustomDomainResourceId": {"id": "str"},
                     "profileName": "str",
                     "provisioningState": "str",
@@ -58,6 +59,8 @@ class TestCdnManagementAFDCustomDomainsOperations(AzureMgmtRecordedTestCase):
                         },
                         "minimumTlsVersion": "str",
                         "secret": {"id": "str"},
+                        "serverTlsGroupPolicy": "str",
+                        "serverTlsGroups": ["str"],
                     },
                     "validationProperties": {"expirationDate": "str", "validationToken": "str"},
                 },
@@ -86,6 +89,7 @@ class TestCdnManagementAFDCustomDomainsOperations(AzureMgmtRecordedTestCase):
             custom_domain_update_properties={
                 "properties": {
                     "azureDnsZone": {"id": "str"},
+                    "mtlsSettings": "afd_domain_mtls_parameters",
                     "preValidatedCustomDomainResourceId": {"id": "str"},
                     "profileName": "str",
                     "tlsSettings": {
@@ -97,6 +101,8 @@ class TestCdnManagementAFDCustomDomainsOperations(AzureMgmtRecordedTestCase):
                         },
                         "minimumTlsVersion": "str",
                         "secret": {"id": "str"},
+                        "serverTlsGroupPolicy": "str",
+                        "serverTlsGroups": ["str"],
                     },
                 }
             },

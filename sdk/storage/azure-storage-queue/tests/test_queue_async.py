@@ -35,7 +35,6 @@ from azure.storage.queue import (
 )
 from azure.storage.queue.aio import QueueClient, QueueServiceClient
 
-
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = "pyqueueasync"
 # ------------------------------------------------------------------------------

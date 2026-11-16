@@ -1,10 +1,13 @@
 import os
 import shutil
 import re
+import json
 from tempfile import mkdtemp
 
 import pytest
+from packaging.requirements import Requirement
 
+from ci_tools import functions
 from ci_tools.parsing import ParsedSetup
 from ci_tools.versioning.version_set_dev import set_dev_version
 from ci_tools.versioning.version_shared import get_classification, DEV_STATUS_REGEX
@@ -92,3 +95,42 @@ def test_set_dev_version_on_setup():
     # Expect version to have 'a' suffix with zero-padded build id
     assert parsed_after.version == "1.0.0a20250813001"
     assert "Development Status :: 4 - Beta" in parsed_after.classifiers
+
+
+@pytest.mark.parametrize("filename", ["setup.py", "pyproject.toml"])
+@pytest.mark.parametrize(
+    "requirement",
+    [
+        "azure-ai-agentserver-core>=2.3.0b2,<3.0.0",
+        "azure-ai-agentserver-core<3.0.0,>=2.3.0b2",
+        "azure-ai-agentserver-core >= 2.3.0b2, < 3.0.0",
+    ],
+)
+@pytest.mark.parametrize("is_dev_build, available_on_pypi", [(False, False), (True, True), (False, True)])
+def test_process_requires_updates_original_requirement_text(
+    tmp_path, monkeypatch, filename, requirement, is_dev_build, available_on_pypi
+):
+    dependencies = json.dumps([requirement, "requests>=2.0.0"])
+    if filename == "pyproject.toml":
+        contents = f'[project]\nname = "test-package"\nversion = "1.0.0"\ndependencies = {dependencies}\n'
+    else:
+        contents = (
+            "from setuptools import setup\n"
+            f'setup(name="test-package", version="1.0.0", install_requires={dependencies})\n'
+        )
+    path = tmp_path / filename
+    path.write_text(contents, encoding="utf-8")
+    monkeypatch.setattr(functions, "is_required_version_on_pypi", lambda *args: available_on_pypi)
+    monkeypatch.setattr(functions, "get_version_from_repo", lambda *args: "2.3.0b3")
+    monkeypatch.setattr(functions, "get_base_version", lambda *args: "2.3.0")
+
+    functions.process_requires(str(path), is_dev_build=is_dev_build)
+
+    replacement = "azure-ai-agentserver-core<3.0.0,>=2.3.0a1,<2.3.0b0"
+    should_update = is_dev_build or not available_on_pypi
+    expected = contents.replace(requirement, replacement) if should_update else contents
+    assert path.read_text(encoding="utf-8") == expected
+    requirements = [Requirement(value) for value in ParsedSetup.from_path(str(path)).requires]
+    core = next(value for value in requirements if value.name == "azure-ai-agentserver-core")
+    assert core.specifier.contains("2.3.0a20261029003", prereleases=True) is should_update
+    assert core.specifier.contains("2.3.0b2", prereleases=True) is not should_update

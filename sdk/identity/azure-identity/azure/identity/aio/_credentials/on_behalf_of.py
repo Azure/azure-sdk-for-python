@@ -102,7 +102,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
             raise TypeError('Either "client_certificate", "client_secret", or "client_assertion_func" must be provided')
 
         # note AadClient handles "authority" and any pipeline kwargs
-        self._client = AadClient(tenant_id, client_id, **kwargs)
+        self._client = AadClient(tenant_id, client_id, obo_assertion=self._assertion, **kwargs)
 
     async def __aenter__(self) -> "OnBehalfOfCredential":
         await self._client.__aenter__()
@@ -113,12 +113,11 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         await self._client.close()
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
+        # The cache namespace binds tokens to the exact assertion, not this instance or decoded account claims.
+        # This permits per-request credentials to reuse tokens without trusting an assertion Entra hasn't accepted.
         return self._client.get_cached_access_token(scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
-        # Note we assume the cache has tokens for one user only. That's okay because each instance of this class is
-        # locked to a single user (assertion). This assumption will become unsafe if this class allows applications
-        # to change an instance's assertion.
         refresh_tokens = self._client.get_cached_refresh_tokens(scopes, **kwargs)
         if len(refresh_tokens) == 1:  # there should be only one
             try:
@@ -132,5 +131,6 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
                 # this is purely defensive, hasn't been observed in practice
                 _LOGGER.debug("silent authentication failed due to malformed refresh token: %s", ex, exc_info=True)
 
-        # we don't have a refresh token, or silent auth failed: acquire a new token from the assertion
+        # we don't have a refresh token bound to this credential's assertion, or silent auth failed:
+        # acquire a new token from the assertion
         return await self._client.obtain_token_on_behalf_of(scopes, self._client_credential, self._assertion, **kwargs)

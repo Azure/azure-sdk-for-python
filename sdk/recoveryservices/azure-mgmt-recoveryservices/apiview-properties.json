@@ -152,5 +152,5 @@
         "azure.mgmt.recoveryservices.RecoveryServicesClient.get_operation_result": "Microsoft.RecoveryServices.getOperationResult",
         "azure.mgmt.recoveryservices.aio.RecoveryServicesClient.get_operation_result": "Microsoft.RecoveryServices.getOperationResult"
     },
-    "CrossLanguageVersion": "4cffd300683a"
+    "CrossLanguageVersion": "b3762aed96a0"
 }

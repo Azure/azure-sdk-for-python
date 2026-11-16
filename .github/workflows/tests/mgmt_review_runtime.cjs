@@ -8,6 +8,12 @@ global.core = Object.fromEntries(
 );
 
 async function main() {
+  const prNumber = request.prNumber || 49107;
+  global.context = {
+    eventName: request.eventName || "pull_request_target", runId: 1, serverUrl: "https://github.com",
+    repo: { owner: "Azure", repo: "azure-sdk-for-python" },
+    payload: request.eventName === "workflow_dispatch" ? { inputs: { pr_number: String(prNumber) } } : { pull_request: { number: prNumber } },
+  };
   if (request.mode === "preflight-tool") {
     const { parseToolArgs } = require(path.join(root, "mcp_cli_bridge.cjs"));
     const { createPythonHandler } = require(path.join(root, "mcp_handler_python.cjs"));
@@ -26,7 +32,7 @@ async function main() {
     const server = { debug() {}, debugError() {} };
     const { createHandlers } = require(path.join(root, "safe_outputs_handlers.cjs"));
     const handler = createHandlers(server, item => appended.push(item), {
-      add_comment: { max: 1, target: "49107", data_enabled: true, data_schema: request.schema },
+      add_comment: request.toolConfig,
     }).addCommentHandler;
     const responses = [];
     for (const submission of request.submissions) {
@@ -42,11 +48,6 @@ async function main() {
     return { appended, responses, ingestion };
   }
   let comment, writes = 0, hides = 0;
-  global.context = {
-    eventName: request.eventName || "pull_request_target", runId: 1, serverUrl: "https://github.com",
-    repo: { owner: "Azure", repo: "azure-sdk-for-python" },
-    payload: request.eventName === "workflow_dispatch" ? { inputs: { pr_number: "49107" } } : { pull_request: { number: 49107 } },
-  };
   global.github = {
     graphql: async () => {
       hides++;
@@ -66,7 +67,8 @@ async function main() {
   process.env.GH_AW_WORKFLOW_ID = "mgmt-sdk-pr-review";
   process.env.GH_AW_WORKFLOW_NAME = "Management SDK PR Review";
   process.env.GH_AW_PROMPTS_DIR = path.join(root, "..", "md");
-  const { main: createHandler } = require(path.join(root, "add_comment.cjs"));
+  const handlerFile = request.payload.items[0]?.type === "noop" ? "noop_handler.cjs" : "add_comment.cjs";
+  const { main: createHandler } = require(path.join(root, handlerFile));
   const handler = await createHandler(request.handlerConfig || { target: "49107", max: 1, hide_older_comments: true, footer: false, discussions: false });
   const result = request.payload.items.length ? await handler(request.payload.items[0]) : null;
   return { result, comment, writes, hides };

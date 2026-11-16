@@ -126,6 +126,7 @@
         "azure.mgmt.compute.models.ExtensionFeatureMetadata": "Compute.ExtensionFeatureMetadata",
         "azure.mgmt.compute.models.ExtensionFeatureTag": "Compute.ExtensionFeatureTag",
         "azure.mgmt.compute.models.ExternalHealthPolicy": "Compute.ExternalHealthPolicy",
+        "azure.mgmt.compute.models.FlexProfile": "Compute.FlexProfile",
         "azure.mgmt.compute.models.Gallery": "ComputeGallery.Gallery",
         "azure.mgmt.compute.models.GalleryApplication": "ComputeGallery.GalleryApplication",
         "azure.mgmt.compute.models.GalleryApplicationCustomAction": "ComputeGallery.GalleryApplicationCustomAction",
@@ -940,8 +941,8 @@
         "azure.mgmt.compute.aio.operations.CapacityReservationGroupsOperations.create_or_update": "Compute.CapacityReservationGroups.createOrUpdate",
         "azure.mgmt.compute.operations.CapacityReservationGroupsOperations.update": "Compute.CapacityReservationGroups.update",
         "azure.mgmt.compute.aio.operations.CapacityReservationGroupsOperations.update": "Compute.CapacityReservationGroups.update",
-        "azure.mgmt.compute.operations.CapacityReservationGroupsOperations.delete": "Compute.CapacityReservationGroups.delete",
-        "azure.mgmt.compute.aio.operations.CapacityReservationGroupsOperations.delete": "Compute.CapacityReservationGroups.delete",
+        "azure.mgmt.compute.operations.CapacityReservationGroupsOperations.begin_delete": "Compute.CapacityReservationGroups.delete",
+        "azure.mgmt.compute.aio.operations.CapacityReservationGroupsOperations.begin_delete": "Compute.CapacityReservationGroups.delete",
         "azure.mgmt.compute.operations.CapacityReservationGroupsOperations.list_by_resource_group": "Compute.CapacityReservationGroups.listByResourceGroup",
         "azure.mgmt.compute.aio.operations.CapacityReservationGroupsOperations.list_by_resource_group": "Compute.CapacityReservationGroups.listByResourceGroup",
         "azure.mgmt.compute.operations.CapacityReservationGroupsOperations.list_by_subscription": "Compute.CapacityReservationGroups.listBySubscription",
@@ -1311,5 +1312,5 @@
         "azure.mgmt.compute.operations.GallerySharingProfileOperations.begin_update": "ComputeGallery.Galleries.gallerySharingProfileUpdate",
         "azure.mgmt.compute.aio.operations.GallerySharingProfileOperations.begin_update": "ComputeGallery.Galleries.gallerySharingProfileUpdate"
     },
-    "CrossLanguageVersion": "8d018ae98667"
+    "CrossLanguageVersion": "2833220a88bf"
 }

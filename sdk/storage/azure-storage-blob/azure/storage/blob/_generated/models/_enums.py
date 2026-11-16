@@ -77,6 +77,15 @@ class ArchiveStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The archive status is rehydrating pending to Smart."""
 
 
+class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of authentication required to create the session. The only type currently supported is
+    HMAC.
+    """
+
+    HMAC = "HMAC"
+    """HMAC authentication."""
+
+
 class BlobCopySourceTags(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The blob copy source tags types."""
 
@@ -148,6 +157,13 @@ class DeleteSnapshotsOptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Only delete the snapshots."""
     INCLUDE = "include"
     """Delete the blob and snapshots."""
+
+
+class DownloadHint(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The download hint for a blob."""
+
+    LAYOUT = "layout"
+    """The blob layout can be retrieved with the Get Blob Layout operation."""
 
 
 class EncryptionAlgorithmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -492,6 +508,8 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Copy ID mismatch."""
     FEATURE_VERSION_MISMATCH = "FeatureVersionMismatch"
     """Feature version mismatch."""
+    FEATURE_NOT_ENABLED = "FeatureNotEnabled"
+    """Feature is not enabled."""
     INCREMENTAL_COPY_BLOB_MISMATCH = "IncrementalCopyBlobMismatch"
     """Incremental copy blob mismatch."""
     INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED = "IncrementalCopyOfEarlierVersionSnapshotNotAllowed"

@@ -285,9 +285,9 @@ class TestAsyncTerminalPersist:
             await asyncio.wait_for(fallback_task, 5)
             await asyncio.wait_for(shutdown_task, 5)
 
-            assert not shutdown_completed_before_registration, (
-                "shutdown completed before the already-created fallback task registered itself"
-            )
+            assert (
+                not shutdown_completed_before_registration
+            ), "shutdown completed before the already-created fallback task registered itself"
         finally:
             monkeypatch.setattr(asyncio, "create_task", original_create_task)
             release.set()
@@ -329,7 +329,7 @@ class TestAsyncTerminalPersist:
             json_body={"model": "m", "input": "hi", "stream": True, "store": True},
         )
 
-        assert response.status_code == 200
+        assert response.status_code == 503
         assert handler_called is False
 
     @pytest.mark.asyncio

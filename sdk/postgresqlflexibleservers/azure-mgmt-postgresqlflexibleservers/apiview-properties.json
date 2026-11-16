@@ -148,7 +148,6 @@
         "azure.mgmt.postgresqlflexibleservers.models.Cancel": "Microsoft.DBforPostgreSQL.Cancel",
         "azure.mgmt.postgresqlflexibleservers.models.MigrationListFilter": "Microsoft.DBforPostgreSQL.MigrationListFilter",
         "azure.mgmt.postgresqlflexibleservers.models.MigrationNameAvailabilityReason": "Microsoft.DBforPostgreSQL.MigrationNameAvailabilityReason",
-        "azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion": "Microsoft.DBforPostgreSQL.PostgresMajorVersion",
         "azure.mgmt.postgresqlflexibleservers.models.ServerState": "Microsoft.DBforPostgreSQL.ServerState",
         "azure.mgmt.postgresqlflexibleservers.models.StorageAutoGrow": "Microsoft.DBforPostgreSQL.StorageAutoGrow",
         "azure.mgmt.postgresqlflexibleservers.models.AzureManagedDiskPerformanceTier": "Microsoft.DBforPostgreSQL.AzureManagedDiskPerformanceTier",
@@ -158,6 +157,7 @@
         "azure.mgmt.postgresqlflexibleservers.models.DataEncryptionType": "Microsoft.DBforPostgreSQL.DataEncryptionType",
         "azure.mgmt.postgresqlflexibleservers.models.EncryptionKeyStatus": "Microsoft.DBforPostgreSQL.EncryptionKeyStatus",
         "azure.mgmt.postgresqlflexibleservers.models.GeographicallyRedundantBackup": "Microsoft.DBforPostgreSQL.GeographicallyRedundantBackup",
+        "azure.mgmt.postgresqlflexibleservers.models.ImmutableBackup": "Microsoft.DBforPostgreSQL.ImmutableBackup",
         "azure.mgmt.postgresqlflexibleservers.models.ServerPublicNetworkAccessState": "Microsoft.DBforPostgreSQL.ServerPublicNetworkAccessState",
         "azure.mgmt.postgresqlflexibleservers.models.PostgreSqlFlexibleServerHighAvailabilityMode": "Microsoft.DBforPostgreSQL.PostgreSqlFlexibleServerHighAvailabilityMode",
         "azure.mgmt.postgresqlflexibleservers.models.HighAvailabilityState": "Microsoft.DBforPostgreSQL.HighAvailabilityState",
@@ -168,6 +168,7 @@
         "azure.mgmt.postgresqlflexibleservers.models.CreateMode": "Microsoft.DBforPostgreSQL.CreateMode",
         "azure.mgmt.postgresqlflexibleservers.models.PrivateEndpointServiceConnectionStatus": "Azure.ResourceManager.CommonTypes.PrivateEndpointServiceConnectionStatus",
         "azure.mgmt.postgresqlflexibleservers.models.PrivateEndpointConnectionProvisioningState": "Azure.ResourceManager.CommonTypes.PrivateEndpointConnectionProvisioningState",
+        "azure.mgmt.postgresqlflexibleservers.models.FipsMode": "Microsoft.DBforPostgreSQL.FipsMode",
         "azure.mgmt.postgresqlflexibleservers.models.IdentityType": "Microsoft.DBforPostgreSQL.IdentityType",
         "azure.mgmt.postgresqlflexibleservers.models.CreateModeForPatch": "Microsoft.DBforPostgreSQL.CreateModeForPatch",
         "azure.mgmt.postgresqlflexibleservers.models.FailoverMode": "Microsoft.DBforPostgreSQL.FailoverMode",
@@ -346,5 +347,5 @@
         "azure.mgmt.postgresqlflexibleservers.operations.VirtualNetworkSubnetUsageOperations.list": "Microsoft.DBforPostgreSQL.VirtualNetworkSubnetUsageOperationGroup.list",
         "azure.mgmt.postgresqlflexibleservers.aio.operations.VirtualNetworkSubnetUsageOperations.list": "Microsoft.DBforPostgreSQL.VirtualNetworkSubnetUsageOperationGroup.list"
     },
-    "CrossLanguageVersion": "8394ed03d5f6"
+    "CrossLanguageVersion": "ed9da1dd95bd"
 }

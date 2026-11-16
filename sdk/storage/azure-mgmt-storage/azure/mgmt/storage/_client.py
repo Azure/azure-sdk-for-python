@@ -22,6 +22,8 @@ from ._configuration import StorageManagementClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     AdvancedPlatformMetricsOperations,
+    BlobAccessPointConfigurationsOperations,
+    BlobAccessPointConnectionTestsOperations,
     BlobContainersOperations,
     BlobInventoryPoliciesOperations,
     BlobServicesOperations,
@@ -108,6 +110,12 @@ class StorageManagementClient:  # pylint: disable=too-many-instance-attributes,d
     :ivar context_cache_containers: ContextCacheContainersOperations operations
     :vartype context_cache_containers:
      azure.mgmt.storage.operations.ContextCacheContainersOperations
+    :ivar blob_access_point_configurations: BlobAccessPointConfigurationsOperations operations
+    :vartype blob_access_point_configurations:
+     azure.mgmt.storage.operations.BlobAccessPointConfigurationsOperations
+    :ivar blob_access_point_connection_tests: BlobAccessPointConnectionTestsOperations operations
+    :vartype blob_access_point_connection_tests:
+     azure.mgmt.storage.operations.BlobAccessPointConnectionTestsOperations
     :ivar advanced_platform_metrics: AdvancedPlatformMetricsOperations operations
     :vartype advanced_platform_metrics:
      azure.mgmt.storage.operations.AdvancedPlatformMetricsOperations
@@ -143,7 +151,7 @@ class StorageManagementClient:  # pylint: disable=too-many-instance-attributes,d
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-06-01"
+    :keyword api_version: The API version to use for this operation. Known values are "2026-09-01"
      and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -233,6 +241,12 @@ class StorageManagementClient:  # pylint: disable=too-many-instance-attributes,d
         self.data_shares = DataSharesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.context_caches = ContextCachesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.context_cache_containers = ContextCacheContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.blob_access_point_configurations = BlobAccessPointConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.blob_access_point_connection_tests = BlobAccessPointConnectionTestsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.advanced_platform_metrics = AdvancedPlatformMetricsOperations(

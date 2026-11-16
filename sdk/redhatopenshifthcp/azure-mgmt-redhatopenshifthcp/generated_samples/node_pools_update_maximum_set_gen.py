@@ -56,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-09-01-preview/NodePools_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-10-01/NodePools_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

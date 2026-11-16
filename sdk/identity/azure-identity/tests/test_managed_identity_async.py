@@ -1073,19 +1073,90 @@ async def test_azure_arc_tenant_id(tmpdir, get_token_method):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
-async def test_azure_arc_client_id(get_token_method):
-    """Azure Arc doesn't support user-assigned managed identity"""
+@pytest.mark.parametrize(
+    "identity_type,request_parameter,response_parameter",
+    [
+        ("client_id", "client_id", "client_id"),
+        ("object_id", "object_id", "object_id"),
+        ("resource_id", "msi_res_id", "msi_res_id"),
+        ("resource_id", "msi_res_id", "mi_res_id"),
+    ],
+)
+@pytest.mark.parametrize("response_identity", ["matching", "missing", "mismatched"])
+async def test_azure_arc_user_assigned_identity(
+    tmp_path, get_token_method, identity_type, request_parameter, response_parameter, response_identity
+):
+    access_token = "****"
+    api_version = "2020-06-01"
+    expires_on = 42
+    identity_endpoint = "http://localhost:42/token"
+    imds_endpoint = "http://localhost:42"
+    scope = "scope"
+    secret_key = "XXXX"
+    requested_identity = "some-identity"
+
+    key_file = tmp_path / "key_file.key"
+    key_file.write_text(secret_key)
+
+    required_params = {
+        "api-version": api_version,
+        "resource": scope,
+        request_parameter: requested_identity,
+    }
+    response_payload = {
+        "access_token": access_token,
+        "expires_on": expires_on,
+        "resource": scope,
+        "token_type": "Bearer",
+    }
+    if response_identity != "missing":
+        response_payload[response_parameter] = (
+            requested_identity.upper() if response_identity == "matching" else "another-identity"
+        )
+
+    transport = async_validating_transport(
+        requests=[
+            Request(
+                base_url=identity_endpoint,
+                method="GET",
+                required_headers={"Metadata": "true"},
+                required_params=required_params,
+            ),
+            Request(
+                base_url=identity_endpoint,
+                method="GET",
+                required_headers={"Metadata": "true", "Authorization": "Basic {}".format(secret_key)},
+                required_params=required_params,
+            ),
+        ],
+        responses=[
+            mock_response(status_code=401, headers={"WWW-Authenticate": "Basic realm={}".format(key_file)}),
+            mock_response(json_payload=response_payload),
+        ],
+    )
+
     with mock.patch(
         "os.environ",
         {
-            EnvironmentVariables.IDENTITY_ENDPOINT: "http://localhost:42/token",
-            EnvironmentVariables.IMDS_ENDPOINT: "http://localhost:42",
+            EnvironmentVariables.IDENTITY_ENDPOINT: identity_endpoint,
+            EnvironmentVariables.IMDS_ENDPOINT: imds_endpoint,
         },
     ):
-        credential = ManagedIdentityCredential(client_id="some-guid")
+        with mock.patch("azure.identity._credentials.azure_arc._validate_key_file", lambda x: None):
+            if identity_type == "client_id":
+                credential = ManagedIdentityCredential(transport=transport, client_id=requested_identity)
+            else:
+                credential = ManagedIdentityCredential(
+                    transport=transport, identity_config={identity_type: requested_identity}
+                )
 
-    with pytest.raises(ClientAuthenticationError):
-        await getattr(credential, get_token_method)("scope")
+            if response_identity == "matching":
+                token = await getattr(credential, get_token_method)(scope)
+                assert token.token == access_token
+                assert token.expires_on == expires_on
+            else:
+                with pytest.raises(ClientAuthenticationError, match="did not confirm"):
+                    await getattr(credential, get_token_method)(scope)
 
 
 @pytest.mark.asyncio

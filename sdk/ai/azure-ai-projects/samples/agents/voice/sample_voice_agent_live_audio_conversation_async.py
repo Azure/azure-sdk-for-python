@@ -6,477 +6,493 @@
 
 """
 DESCRIPTION:
-    End-to-end hands-free, bidirectional voice conversation using the
-    ``client.beta.voice_agents.realtime`` namespace added on top of the generated
-    azure-ai-projects client (see ``azure.ai.projects.aio.operations.AsyncBetaRealtime``).
-    This mirrors the ergonomics of the OpenAI Python realtime client.
-
-      1. Create a voice agent with conversation persistence enabled
-         (`store=True`) so the conversation can be read back afterward.
-      2. Stream live mic audio and let the agent's server-side VAD detect your
-         turns: your speech is transcribed, the agent replies through the
-         speakers, and talking over it barges in.
-      3. Fetch the persisted conversation back by id.
-      4. Delete the agent created for this sample.
-
-    Capture and playback use non-blocking pyaudio callbacks; reply audio is
-    sequence-numbered so a barge-in can skip whatever is still queued. The
-    agent owns turn detection and noise suppression server-side. Use a headset
-    to avoid echo.
-
-    Mic audio is sent as base64 PCM16; the reply arrives as typed
-    ``response.output_audio.*`` events, decoded to PCM16, mono, 24 kHz.
-    Requires ``aiohttp`` and ``pyaudio``.
-
-      pip install "azure-ai-projects[voice]>=2.7.0" azure-identity pyaudio
+    Send the bundled spoken question to GPT-Live (preview) and print the reply transcript
+    and audio size. The sample deletes its temporary agent version afterward.
 
 USAGE:
     python sample_voice_agent_live_audio_conversation_async.py
 
-    Environment variables:
-    1) FOUNDRY_PROJECT_ENDPOINT (required) - Foundry project endpoint:
-       https://<account>.services.ai.azure.com/api/projects/<project>
-    2) FOUNDRY_VOICE_MODEL - Optional. The realtime model deployment name.
-       Defaults to "gpt-realtime".
-    3) FOUNDRY_VOICE_AGENT_NAME - Optional. Name for the agent created by this
-       sample. Defaults to "sample-live-audio-conversation-agent-async".
+    Settings in this file:
+    - USE_MICROPHONE = False (default): send audio/question.wav; no devices needed.
+    - USE_MICROPHONE = True: use a microphone and speakers. Use headphones
+      to avoid feedback; press Ctrl-C to stop.
+    - SAVE_AUDIO = True: save reply audio in a printed temporary folder.
+      These files contain conversation content; remove them when finished.
 
-    Runs until you press Ctrl-C. Authenticates with DefaultAzureCredential, so
-    sign in first (e.g. `az login`).
+    pip install "azure-ai-projects[voice]>=2.11.0" azure-identity python-dotenv
+    pip install pyaudio  # Only required for microphone mode.
+
+    Environment variables:
+    1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
+    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT-Live deployment name.
+    3) FOUNDRY_VOICE_AUDIO_INPUT_PATH (optional) - Override audio/question.wav
+       with your own uncompressed PCM16, mono, 24-kHz WAV.
+    4) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for the temporary agent name.
+
+    Uses DefaultAzureCredential. Capture ends after three quiet seconds;
+    a long pause can cut off a reply. Audio is not saved by default.
 """
 
+from __future__ import annotations
+
 import asyncio
+import base64
 import concurrent.futures
+from contextlib import ExitStack
+from dataclasses import dataclass
 import os
+from pathlib import Path
 import queue
-import sys
-from typing import Any, Final, Optional
+from tempfile import mkdtemp
+import time
+from typing import Any, Optional, TYPE_CHECKING
+import wave
 
 from dotenv import load_dotenv
-from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
-
-# AsyncBetaRealtimeConnection is re-exported dynamically via aio/operations/_patch.py's `__all__`;
-# pylint's static import resolution cannot trace that, but the symbol is valid (verified by
-# Pyright/mypy).
-from azure.ai.projects.aio.operations import AsyncBetaRealtimeConnection  # pylint: disable=no-name-in-module
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import (
-    RealtimeServerEventConversationItemInputAudioTranscriptionCompleted,
-    RealtimeServerEventInputAudioBufferSpeechStarted,
-    RealtimeServerEventResponseAudioDelta,
-    RealtimeServerEventResponseAudioTranscriptDone,
-    RealtimeServerEventResponseCreated,
-    RealtimeServerEventResponseDone,
-    RealtimeServerEventSessionCreated,
-    RealtimeServerEventError,
-    VoiceAgentAudioConfig,
-    VoiceAgentAudioOutputConfig,
-    VoiceAgentDefinition,
-    VoiceModelType,
-    VoiceOutputModality,
-    VoiceType,
+from azure.ai.projects import models
+
+from live_sample_utils import (
+    audio_settings,
+    check_event,
+    check_session_open,
+    close_session_async,
+    input_audio_path,
+    remaining_time,
+    safe_print,
+    sample_agent_name,
+    wait_for_event_async,
 )
 
-load_dotenv()
+if TYPE_CHECKING:
+    from azure.ai.projects.aio.operations import AsyncBetaLiveConnection
 
 
-def _safe_print(text: str) -> None:
-    """Print text that may contain characters the current console can't display.
+USE_MICROPHONE = False
+SAVE_AUDIO = False
 
-    The agent's replies below are model-generated and can contain characters (curly
-    quotes, em-dashes, etc.) outside some legacy, non-Unicode console encodings
-    (for example when stdout is piped/redirected on Windows). Rather than crashing
-    with UnicodeEncodeError, fall back to replacing just the unsupported characters;
-    a real interactive UTF-8 console prints unaffected.
-    """
+_SAMPLE_RATE = 24000
+_CHUNK_FRAMES = 1200
+_OUTPUT_IDLE_SECONDS = 3.0
+_SILENCE_PEAK_THRESHOLD = 256
+
+
+@dataclass
+class _AudioOutput:
+    num_bytes: int = 0
+    chunks: int = 0
+    input_transcript: str = ""
+    output_transcript: str = ""
+    has_audio_activity: bool = False
+
+
+def _microphone_backend() -> Any:
     try:
-        print(text)
-    except UnicodeEncodeError:
-        encoding = sys.stdout.encoding or "ascii"
-        print(text.encode(encoding, errors="replace").decode(encoding))
+        import pyaudio
+    except ImportError as exc:
+        raise RuntimeError("Microphone mode requires PyAudio. Install it with: pip install pyaudio") from exc
+    return pyaudio
 
 
-# Audio is streamed both ways as PCM16, mono, 24 kHz.
-_SAMPLE_RATE: Final = 24000
+class _MicrophoneAudio:
+    """Bounded, nonblocking microphone capture and PCM speaker playback."""
 
-# pyaudio callback buffer size (~50 ms of PCM16 audio per callback).
-_CHUNK_SAMPLES: Final = 1200
-
-try:
-    import pyaudio  # type: ignore[import-not-found]
-except ImportError:  # pragma: no cover - required audio dependency
-    pyaudio: Any = None  # type: ignore[no-redef]
-
-
-def _format_size(num_bytes: int) -> str:
-    """Format a byte count as a human-readable string.
-
-    :param num_bytes: The size in bytes.
-    :type num_bytes: int
-    :return: A string like "12345 bytes (12.1 KB)" or "2097152 bytes (2.00 MB)".
-    :rtype: str
-    """
-    if num_bytes < 1024:
-        return f"{num_bytes} bytes"
-    if num_bytes < 1024 * 1024:
-        return f"{num_bytes} bytes ({num_bytes / 1024:.1f} KB)"
-    return f"{num_bytes} bytes ({num_bytes / (1024 * 1024):.2f} MB)"
-
-
-class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
-    """Real-time mic capture and speaker playback via non-blocking pyaudio callbacks.
-
-    * Capture appends each raw PCM16 frame to the input buffer (the realtime
-      client base64-encodes it).
-    * Playback pulls sequence-numbered PCM16 from a queue, always returning the
-      exact sample count pyaudio asked for (a wrong size corrupts audio).
-    * ``skip_pending_audio`` bumps a base sequence number so audio queued before
-      a barge-in is dropped, stopping playback the instant the user speaks.
-    """
-
-    def __init__(self, connection: "AsyncBetaRealtimeConnection") -> None:
-        self._conn = connection
+    def __init__(self, connection: AsyncBetaLiveConnection, backend: Any) -> None:
+        self._connection = connection
+        self._backend = backend
+        self._audio = backend.PyAudio()
         self._loop: Optional[asyncio.AbstractEventLoop] = None
-        self._audio = pyaudio.PyAudio()
+        self._input_stream: Any = None
+        self._output_stream: Any = None
+        self._pending_send: Optional[concurrent.futures.Future[None]] = None
+        self._capture_error: Optional[BaseException] = None
+        self._capture_active = False
+        self._playback_queue: queue.Queue[bytes] = queue.Queue(maxsize=200)
+        self._playback_remaining = b""
+        self.input_bytes = 0
+        self.output_bytes = 0
+        self.dropped_frames = 0
 
-        # Playback with sequence numbers for interrupt handling.
-        self._playback_queue: "queue.Queue[tuple[int, Optional[bytes]]]" = queue.Queue()
-        self._playback_base = 0
-        self._next_seq = 0
-        self._output_bytes = 0
+    async def _append_input_audio(self, pcm: bytes) -> None:
+        await self._connection.session.input_audio.append(audio=pcm)
+        self.input_bytes += len(pcm)
 
-        # Bounds capture backpressure to a single in-flight send (see start_capture).
-        self._pending_send: "Optional[concurrent.futures.Future[None]]" = None
-        self._dropped_frames = 0
-        # Only counts bytes actually handed to input_audio_buffer.append() -- frames dropped
-        # above due to backpressure are never sent, so they must not be counted here.
-        self._input_bytes = 0
+    def _capture_callback(self, pcm: bytes, _frame_count: int, _time_info: Any, status: int) -> tuple[None, int]:
+        if not self._capture_active:
+            return None, self._backend.paAbort
+        if status:
+            self._capture_error = RuntimeError(f"Microphone callback reported audio status {status}.")
+            return None, self._backend.paAbort
+        if self._pending_send is not None:
+            if not self._pending_send.done():
+                self.dropped_frames += 1
+                return None, self._backend.paContinue
+            if self._pending_send.cancelled():
+                self._capture_error = RuntimeError("The microphone audio send was cancelled.")
+                return None, self._backend.paAbort
+            failure = self._pending_send.exception()
+            if failure is not None:
+                self._capture_error = failure
+                return None, self._backend.paAbort
+        assert self._loop is not None
+        self._pending_send = asyncio.run_coroutine_threadsafe(self._append_input_audio(pcm), self._loop)
+        return None, self._backend.paContinue
 
-        self._input_stream = None
-        self._output_stream = None
+    def _playback_callback(self, _pcm: Any, frame_count: int, _time_info: Any, status: int) -> tuple[bytes, int]:
+        wanted = frame_count * 2
+        if status:
+            self._capture_error = RuntimeError(f"Speaker callback reported audio status {status}.")
+            return bytes(wanted), self._backend.paAbort
+        output = self._playback_remaining[:wanted]
+        self._playback_remaining = self._playback_remaining[wanted:]
+        while len(output) < wanted:
+            try:
+                chunk = self._playback_queue.get_nowait()
+            except queue.Empty:
+                output += bytes(wanted - len(output))
+                break
+            take = wanted - len(output)
+            output += chunk[:take]
+            self._playback_remaining = chunk[take:]
+        return output, self._backend.paContinue
 
-    # -- capture -----------------------------------------------------------
-
-    def start_capture(self) -> None:
-        """Start streaming microphone audio to the service via a callback."""
-        if self._input_stream is not None:
-            return
+    def start(self) -> None:
+        audio = self._audio
+        if audio is None:
+            raise RuntimeError("Cannot restart closed microphone audio devices.")
         self._loop = asyncio.get_running_loop()
-
-        def _capture_callback(in_data, _frame_count, _time_info, _status):
-            # Runs on a pyaudio thread: hand the frame to the event loop to append. Each call
-            # schedules a coroutine on the loop via a thread-safe handoff; if sending falls
-            # behind real-time capture (for example, network backpressure on the WebSocket),
-            # unconditionally scheduling a new one every callback would let pending sends
-            # accumulate without bound. Instead, only keep at most one in flight and drop
-            # (skip sending) this frame if the previous send hasn't completed yet.
-            assert self._loop is not None
-            if self._pending_send is not None and not self._pending_send.done():
-                self._dropped_frames += 1
-                return (None, pyaudio.paContinue)
-            self._input_bytes += len(in_data)
-            self._pending_send = asyncio.run_coroutine_threadsafe(
-                self._conn.input_audio_buffer.append(audio=in_data), self._loop
-            )
-            return (None, pyaudio.paContinue)
-
-        self._input_stream = self._audio.open(
-            format=pyaudio.paInt16,
-            channels=1,
-            rate=_SAMPLE_RATE,
-            input=True,
-            frames_per_buffer=_CHUNK_SAMPLES,
-            stream_callback=_capture_callback,
-        )
-
-    # -- playback ------------------------------------------------------------
-
-    def start_playback(self) -> None:
-        """Initialize the speaker playback callback."""
-        if self._output_stream is not None:
-            return
-        remaining = b""
-        # The sequence number the currently-buffered `remaining` bytes were dequeued from, so a
-        # barge-in that lands *between* callback invocations can still discard them below.
-        remaining_seq = -1
-
-        def _playback_callback(_in_data, frame_count, _time_info, _status):
-            nonlocal remaining, remaining_seq
-            if remaining and remaining_seq < self._playback_base:
-                remaining = b""  # a barge-in advanced the base since this chunk was dequeued
-
-            wanted = frame_count * pyaudio.get_sample_size(pyaudio.paInt16)
-            out = remaining[:wanted]
-            remaining = remaining[wanted:]
-
-            while len(out) < wanted:
-                try:
-                    seq, data = self._playback_queue.get_nowait()
-                except queue.Empty:
-                    out = out + bytes(wanted - len(out))  # pad with silence
-                    continue
-                if not data:
-                    # end-of-stream marker: pad up to the exact frame size pyaudio asked for
-                    # instead of returning a short buffer, which would corrupt playback on close.
-                    out = out + bytes(wanted - len(out))
-                    break
-                if seq < self._playback_base:
-                    remaining = b""  # skipped by a barge-in
-                    continue
-                take = wanted - len(out)
-                out = out + data[:take]
-                remaining = data[take:]
-                remaining_seq = seq
-
-            return (out, pyaudio.paContinue)
-
-        self._output_stream = self._audio.open(
-            format=pyaudio.paInt16,
+        self._output_stream = audio.open(
+            format=self._backend.paInt16,
             channels=1,
             rate=_SAMPLE_RATE,
             output=True,
-            frames_per_buffer=_CHUNK_SAMPLES,
-            stream_callback=_playback_callback,
+            frames_per_buffer=_CHUNK_FRAMES,
+            stream_callback=self._playback_callback,
+            start=False,
         )
+        self._input_stream = audio.open(
+            format=self._backend.paInt16,
+            channels=1,
+            rate=_SAMPLE_RATE,
+            input=True,
+            frames_per_buffer=_CHUNK_FRAMES,
+            stream_callback=self._capture_callback,
+            start=False,
+        )
+        self._capture_active = True
+        self._output_stream.start_stream()
+        self._input_stream.start_stream()
 
-    def _next_seq_num(self) -> int:
-        seq = self._next_seq
-        self._next_seq += 1
-        return seq
+    def check_capture_error(self) -> None:
+        if self._capture_error is not None:
+            raise self._capture_error
+        if self._pending_send is not None and self._pending_send.done():
+            self._pending_send.result()
 
-    def queue_audio(self, pcm: bytes) -> None:
-        """Queue one decoded PCM16 chunk of the agent's reply for playback.
-
-        :param pcm: Decoded PCM16 audio bytes.
-        :type pcm: bytes
-        """
-        self._output_bytes += len(pcm)
-        self._playback_queue.put((self._next_seq_num(), pcm))
-
-    def skip_pending_audio(self) -> None:
-        """Drop audio still queued for playback (used on barge-in)."""
-        self._playback_base = self._next_seq_num()
-
-    def shutdown(self) -> None:
-        """Stop capture and playback and release the audio device."""
-        if self._input_stream is not None:
-            self._input_stream.stop_stream()
-            self._input_stream.close()
-            self._input_stream = None
-            if self._dropped_frames:
-                print(f"(dropped {self._dropped_frames} mic frame(s) while a send was still in flight)")
-        if self._output_stream is not None:
-            self.skip_pending_audio()
-            self._playback_queue.put((self._next_seq_num(), None))
-            self._output_stream.stop_stream()
-            self._output_stream.close()
-            self._output_stream = None
-        self._audio.terminate()
-
-    @property
-    def input_bytes_sent(self) -> int:
-        """Total raw PCM16 mic-audio bytes actually sent to the service (excludes dropped frames).
-
-        :rtype: int
-        """
-        return self._input_bytes
-
-    @property
-    def output_bytes_received(self) -> int:
-        """Total decoded PCM16 reply-audio bytes received from the service.
-
-        :rtype: int
-        """
-        return self._output_bytes
-
-    @property
-    def input_seconds(self) -> float:
-        """Total mic audio sent, in seconds (PCM16 = 2 bytes/sample).
-
-        :rtype: float
-        """
-        return self._input_bytes / 2 / _SAMPLE_RATE
-
-    @property
-    def seconds(self) -> float:
-        """Total reply audio received, in seconds (PCM16 = 2 bytes/sample).
-
-        :rtype: float
-        """
-        return self._output_bytes / 2 / _SAMPLE_RATE
-
-
-async def _run_audio_conversation(client: AIProjectClient, agent_name: str) -> Optional[str]:
-    """Hold a live, hands-free conversation with barge-in.
-
-    :param client: The Foundry project client.
-    :param agent_name: The existing voice agent name.
-    :type client: ~azure.ai.projects.aio.AIProjectClient
-    :type agent_name: str
-    :return: The persisted conversation id, if one is created.
-    :rtype: str or None
-    """
-    if pyaudio is None:
-        print("This sample needs pyaudio for audio: pip install pyaudio")
-        return None
-
-    conversation_id: Optional[str] = None
-    response_active = False
-
-    # Open the realtime session on the voice agent's dedicated route.
-    async with client.beta.voice_agents.realtime.connect(agent_name=agent_name) as conn:
-        # A voice agent owns its model, instructions, voice, turn detection, and
-        # noise suppression server-side, so this client sends no ``session.update``.
-        ap = _AudioProcessor(conn)
-        ap.start_playback()
-        ap.start_capture()
-
-        print("Speak now -- the agent replies after you pause.")
-        print("(talk over the agent to interrupt it; press Ctrl-C to end the session)")
-
+    def enqueue_audio(self, pcm: bytes) -> None:
+        if len(pcm) % 2:
+            raise ValueError("The service returned an incomplete PCM16 sample.")
+        self.output_bytes += len(pcm)
         try:
-            async for event in conn:
-                if isinstance(event, RealtimeServerEventSessionCreated):
-                    # The persisted conversation id (only present when conversation
-                    # persistence is enabled) is set here, not on response.done.
-                    conversation_id = event.conversation_id or conversation_id
-                elif isinstance(event, RealtimeServerEventInputAudioBufferSpeechStarted):
-                    # speech_started fires for every user turn, including the very first one,
-                    # when no response is active yet. Always drop whatever reply audio is still
-                    # queued locally -- the speaker can lag well behind the server finishing
-                    # generation, so buffered audio can outlive response_active going false and
-                    # must still be cleared here. Only cancel the *server-side* response (a
-                    # separate RPC) and announce the barge-in when a response is actually in
-                    # flight; canceling with none active is a service error.
-                    ap.skip_pending_audio()
-                    if response_active:
-                        await conn.response.cancel()
-                        print("(listening...)")
-                elif isinstance(event, RealtimeServerEventConversationItemInputAudioTranscriptionCompleted):
-                    print(f"You:  {event.transcript.strip()}")
-                elif isinstance(event, RealtimeServerEventError):
-                    # Non-fatal errors are reported; a fatal one closes the socket.
-                    print(f"Session error: {event.error.message}")
-                elif isinstance(event, RealtimeServerEventResponseCreated):
-                    response_active = True
-                elif isinstance(event, RealtimeServerEventResponseAudioDelta):
-                    # Each delta is a decoded PCM16 chunk; queue it.
-                    ap.queue_audio(event.delta)
-                elif isinstance(event, RealtimeServerEventResponseAudioTranscriptDone):
-                    _safe_print(f"Agent: {event.transcript}")
-                elif isinstance(event, RealtimeServerEventResponseDone):
-                    response_active = False
-        except (KeyboardInterrupt, asyncio.CancelledError):
-            # Ctrl-C ends the session; read back whatever was persisted so far.
-            print("\n(ending session...)")
+            self._playback_queue.put_nowait(pcm)
+        except queue.Full as exc:
+            raise RuntimeError("Speaker playback fell behind; the audio buffer is full.") from exc
+
+    async def stop(self) -> None:
+        self._capture_active = False
+        try:
+            try:
+                if self._input_stream is not None:
+                    stream, self._input_stream = self._input_stream, None
+                    try:
+                        stream.stop_stream()
+                    finally:
+                        stream.close()
+            finally:
+                if self._pending_send is not None:
+                    pending, self._pending_send = self._pending_send, None
+                    if pending.cancelled():
+                        raise RuntimeError("The microphone audio send was cancelled.")
+                    await asyncio.wrap_future(pending)
         finally:
-            input_bytes = ap.input_bytes_sent
-            output_bytes = ap.output_bytes_received
-            print(f"(received {ap.seconds:.2f}s of reply audio this session)")
+            try:
+                if self._output_stream is not None:
+                    stream, self._output_stream = self._output_stream, None
+                    try:
+                        stream.stop_stream()
+                    finally:
+                        stream.close()
+            finally:
+                if self._audio is not None:
+                    audio, self._audio = self._audio, None
+                    audio.terminate()
+
+
+async def _stream_microphone(
+    connection: AsyncBetaLiveConnection, backend: Any, output_file: Optional[wave.Wave_write]
+) -> bool:
+    audio = _MicrophoneAudio(connection, backend)
+    last_role = ""
+    try:
+        audio.start()
+        print("Speak now -- GPT Live replies through your speakers. Use headphones to avoid feedback.")
+        print("Press Ctrl-C to stop the microphone, close the session, and clean up.")
+        while True:
+            audio.check_capture_error()
+            try:
+                event = await asyncio.wait_for(connection.recv(), timeout=0.5)
+            except asyncio.TimeoutError:
+                continue
+            check_event(event)
+            if event.get("type") == "session.closed":
+                reason = event.get("reason")
+                if reason not in ("close_requested", "expired", "remote_hangup"):
+                    raise RuntimeError(f"Live session ended unexpectedly: {reason}")
+                print(f"\nSession closed: {reason}")
+                return True
+            if isinstance(event, models.LiveOutputAudioDelta):
+                pcm = base64.b64decode(event.delta, validate=True)
+                audio.enqueue_audio(pcm)
+                if output_file is not None:
+                    output_file.writeframesraw(pcm)
+            elif isinstance(
+                event, (models.LiveServerEventLiveInputTranscriptDelta, models.LiveServerEventLiveOutputTranscriptDelta)
+            ):
+                role = "You" if isinstance(event, models.LiveServerEventLiveInputTranscriptDelta) else "Agent"
+                if role != last_role:
+                    safe_print(f"\n{role}: ", end="")
+                    last_role = role
+                safe_print(event.delta, end="")
+            elif isinstance(event, models.LiveServerEventLiveDelegationCreated):
+                if event.delegation.target == "client":
+                    await connection.session.commentary.append(
+                        content="This sample cannot look up external information. Briefly acknowledge the spoken request.",
+                        delegation_id=event.delegation.id,
+                    )
+    finally:
+        try:
+            await audio.stop()
+        finally:
             print(
-                f"Input audio (mic -> service): format=PCM16, sample_rate={_SAMPLE_RATE} Hz, channels=1, "
-                f"duration={ap.input_seconds:.2f}s, size={_format_size(input_bytes)}"
+                f"\nInput audio: {audio.input_bytes} bytes ({audio.input_bytes / 1048576:.2f} MiB), "
+                f"PCM16, 24000 Hz, mono, {audio.input_bytes / 48000:.2f}s."
             )
             print(
-                f"Output audio (service -> speakers): format=PCM16, sample_rate={_SAMPLE_RATE} Hz, channels=1, "
-                f"duration={ap.seconds:.2f}s, size={_format_size(output_bytes)}"
+                f"Output audio: {audio.output_bytes} bytes ({audio.output_bytes / 1048576:.2f} MiB), "
+                f"PCM16, 24000 Hz, mono, {audio.output_bytes / 48000:.2f}s."
             )
-            print(f"Total audio transferred: size={_format_size(input_bytes + output_bytes)}")
-            ap.shutdown()
-
-    return conversation_id
-
-
-async def _read_conversation(client: AIProjectClient, agent_name: str, conversation_id: str) -> None:
-    """Read the persisted conversation back over the read-only conversation API.
-
-    :param client: The Foundry project client.
-    :param agent_name: The voice agent name.
-    :param conversation_id: The persisted conversation id.
-    :type client: ~azure.ai.projects.aio.AIProjectClient
-    :type agent_name: str
-    :type conversation_id: str
-    """
-    conversations = client.beta.voice_agents.conversations
-
-    conversation = await conversations.get(agent_name, conversation_id)
-    print(f"Conversation {conversation.id}: status={conversation.status}, created_at={conversation.created_at}")
-
-    print("Items (transcript):")
-    async for item in conversations.list_items(agent_name, conversation_id):
-        role = item.get("role") or item.get("type")
-        # Audio turns expose ``transcript``; text turns expose ``text``.
-        parts = [(part.get("transcript") or part.get("text") or "").strip() for part in (item.get("content") or [])]
-        transcript = " ".join(p for p in parts if p)
-        print(f"  - {role} id={item.get('id')}")
-        if transcript:
-            _safe_print(f"      {transcript}")
+            print(f"Total audio transferred: {audio.input_bytes + audio.output_bytes} bytes.")
+            if audio.dropped_frames:
+                print(f"Dropped {audio.dropped_frames} microphone frame(s) while a previous send was in flight.")
 
 
-async def audio_conversation() -> None:
-    endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-    model = os.environ.get("FOUNDRY_VOICE_MODEL") or "gpt-realtime"
-    agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "sample-live-audio-conversation-agent-async"
+def _has_audio_activity(pcm: bytes) -> bool:
+    return any(
+        abs(int.from_bytes(pcm[offset : offset + 2], "little", signed=True)) > _SILENCE_PEAK_THRESHOLD
+        for offset in range(0, len(pcm), 2)
+    )
 
-    async with (
-        DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+
+def _validate_recording(recording: wave.Wave_read) -> None:
+    if (
+        recording.getnchannels() != 1
+        or recording.getsampwidth() != 2
+        or recording.getframerate() != _SAMPLE_RATE
+        or recording.getcomptype() != "NONE"
     ):
-        created_version = None
+        raise ValueError("FOUNDRY_VOICE_AUDIO_INPUT_PATH must be an uncompressed PCM16, mono, 24000 Hz WAV file.")
+    if recording.getnframes() == 0:
+        raise ValueError("The input WAV contains no audio frames.")
+
+
+async def _send_audio(connection: AsyncBetaLiveConnection, recording: wave.Wave_read, finished: asyncio.Event) -> int:
+    num_bytes = 0
+    while chunk := recording.readframes(_CHUNK_FRAMES):
+        await connection.session.input_audio.append(audio=chunk)
+        num_bytes += len(chunk)
+        await asyncio.sleep(len(chunk) / (2 * _SAMPLE_RATE))
+    if num_bytes == 0:
+        raise RuntimeError("No recorded audio frames were sent.")
+    # Trailing silence lets the model finish the recorded speech turn.
+    for _ in range(_SAMPLE_RATE // _CHUNK_FRAMES):
+        silence = b"\x00\x00" * _CHUNK_FRAMES
+        await connection.session.input_audio.append(audio=silence)
+        num_bytes += len(silence)
+        await asyncio.sleep(_CHUNK_FRAMES / _SAMPLE_RATE)
+    finished.set()
+    return num_bytes
+
+
+async def _receive_audio(
+    connection: AsyncBetaLiveConnection,
+    finished: asyncio.Event,
+    timeout: float,
+    output_file: Optional[wave.Wave_write],
+) -> _AudioOutput:
+    output = _AudioOutput()
+    deadline = time.monotonic() + timeout
+    last_content = time.monotonic()
+    while True:
+        if finished.is_set() and output.has_audio_activity and time.monotonic() - last_content >= _OUTPUT_IDLE_SECONDS:
+            return output
+        remaining = remaining_time(deadline, "GPT Live reply audio")
         try:
-            # 1) Create a voice agent with conversation persistence enabled (`store=True`) so the
-            #    session's conversation can be fetched back by id afterward.
-            definition = VoiceAgentDefinition(
-                model_type=VoiceModelType.MANAGED,
-                model=model,
-                instructions="You are a friendly voice assistant. Keep replies short and natural.",
-                audio=VoiceAgentAudioConfig(
-                    output=VoiceAgentAudioOutputConfig(voice="en-US-AvaNeural", voice_type=VoiceType.AZURE_STANDARD),
-                ),
-                output_modalities=[VoiceOutputModality.AUDIO],
-                store=True,
-            )
-            created_version = await project_client.agents.create_version(
-                agent_name=agent_name,
-                definition=definition,
-            )
+            event = await asyncio.wait_for(connection.recv(), timeout=min(remaining, 1.0))
+        except asyncio.TimeoutError:
+            continue
+        check_event(event)
+        check_session_open(event)
+        if isinstance(event, models.LiveOutputAudioDelta):
+            pcm = base64.b64decode(event.delta, validate=True)
+            if len(pcm) % 2:
+                raise ValueError("The service returned an incomplete PCM16 sample.")
+            output.num_bytes += len(pcm)
+            output.chunks += 1
+            if output_file is not None:
+                output_file.writeframesraw(pcm)
+            if _has_audio_activity(pcm):
+                output.has_audio_activity = True
+                last_content = time.monotonic()
+        elif isinstance(event, models.LiveServerEventLiveInputTranscriptDelta):
+            output.input_transcript += event.delta
+        elif isinstance(event, models.LiveServerEventLiveOutputTranscriptDelta):
+            output.output_transcript += event.delta
+            if event.delta.strip():
+                last_content = time.monotonic()
+        elif isinstance(event, models.LiveServerEventLiveDelegationCreated):
+            if event.delegation.target == "client":
+                await connection.session.commentary.append(
+                    content="This sample cannot look up external information. Briefly acknowledge the recorded request.",
+                    delegation_id=event.delegation.id,
+                )
+                print("Replied to a client-owned delegation with associated commentary.")
 
-            # 2) Hold a live microphone conversation with the freshly created agent.
-            print(f"Starting realtime session with agent: {agent_name}")
-            conversation_id = await _run_audio_conversation(project_client, agent_name)
 
-            # 3) Fetch the persisted conversation back by id.
-            if conversation_id:
-                print(f"Reading persisted conversation {conversation_id!r}...")
+async def _stream_recording(
+    connection: AsyncBetaLiveConnection, recording: wave.Wave_read, output_file: Optional[wave.Wave_write]
+) -> None:
+    finished = asyncio.Event()
+    timeout = recording.getnframes() / _SAMPLE_RATE + 60
+    sender = asyncio.create_task(_send_audio(connection, recording, finished))
+    receiver = asyncio.create_task(_receive_audio(connection, finished, timeout, output_file))
+    try:
+        input_bytes, output = await asyncio.wait_for(asyncio.gather(sender, receiver), timeout=timeout)
+    except asyncio.TimeoutError as exc:
+        raise TimeoutError("Timed out streaming the recording or waiting for nonempty GPT Live reply audio.") from exc
+    finally:
+        # Live has no response.cancel. Cancel local work and then request session.close.
+        for task in (sender, receiver):
+            if not task.done():
+                task.cancel()
+        await asyncio.gather(sender, receiver, return_exceptions=True)
+    if input_bytes <= 0 or output.num_bytes <= 0 or not output.has_audio_activity:
+        raise RuntimeError("A successful conversation requires nonzero input and non-silent reply audio.")
+    for label, transcript in (("Input", output.input_transcript), ("Output", output.output_transcript)):
+        if transcript and not transcript.strip():
+            raise RuntimeError(f"{label} transcript events contained no usable text.")
+        safe_print(f"{label} transcript: {transcript.strip() or '(not emitted by the service)'}")
+    print(f"Sent {input_bytes} PCM16 bytes, including 48000 bytes of trailing silence.")
+    print(f"Received {output.num_bytes} PCM16 bytes in {output.chunks} chunks ({output.num_bytes / 48000:.2f}s).")
+
+
+async def _run_audio_conversation(
+    project_client: AIProjectClient,
+    agent_name: str,
+    agent_version: str,
+    recording: Optional[wave.Wave_read],
+    output_file: Optional[wave.Wave_write],
+    *,
+    audio_backend: Any = None,
+) -> None:
+    if recording is None and audio_backend is None:
+        raise ValueError("Microphone mode requires an audio backend.")
+    session_closed = False
+    cancelled = False
+    async with project_client.beta.voice_agents.live.connect(
+        agent_name=agent_name, agent_version=agent_version, store=False
+    ) as connection:
+        try:
+            await wait_for_event_async(connection, "session.started")
+            if recording is None:
                 try:
-                    await _read_conversation(project_client, agent_name, conversation_id)
-                except HttpResponseError as e:
-                    print(f"Could not read conversation: {e.status_code} {e.reason}")
-                # To fetch this session's audio afterward, use
-                # `project_client.beta.voice_agents.conversations`:
-                #   - get_audio(agent_name, conversation_id) for the merged
-                #     whole-call stereo recording's metadata, then
-                #     download_audio(agent_name, conversation_id) to stream
-                #     the WAV bytes.
-                #   - get_audio_item(agent_name, conversation_id, item_id) for a
-                #     single turn's audio metadata, then
-                #     download_audio_item(agent_name, conversation_id, item_id)
-                #     to stream that turn's bytes.
-                # See sample_voice_agent_read_conversation_audio.py for a full example.
+                    session_closed = await _stream_microphone(connection, audio_backend, output_file)
+                except asyncio.CancelledError:
+                    print("\n(ending microphone conversation...)")
+                    cancelled = True
             else:
-                print("No conversation id was returned; nothing to read.")
-        except HttpResponseError as e:
-            print(f"Service responded with an error: {e.status_code} {e.reason}")
+                print("Live session started; sending the recording and receiving audio concurrently.")
+                await _stream_recording(connection, recording, output_file)
         finally:
-            # 4) Clean up the agent created for this sample.
-            if created_version is not None:
-                await project_client.agents.delete_version(agent_name=agent_name, agent_version=created_version.version)
-                print(f"Deleted voice agent version: {created_version.version}")
+            if not session_closed:
+                await close_session_async(connection)
+    if cancelled:
+        raise asyncio.CancelledError
+
+
+async def main() -> None:
+    load_dotenv()
+    endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+    model = os.environ["FOUNDRY_VOICE_AGENT_MODEL"]
+    backend = _microphone_backend() if USE_MICROPHONE else None
+    input_path = None if USE_MICROPHONE else input_audio_path()
+    output_path: Optional[Path] = None
+    agent_name = sample_agent_name("audio")
+
+    with ExitStack() as files:
+        recording = files.enter_context(wave.open(str(input_path), "rb")) if input_path is not None else None
+        if recording is not None:
+            _validate_recording(recording)
+        output_file: Optional[wave.Wave_write] = None
+        if SAVE_AUDIO:
+            output_directory = Path(mkdtemp(prefix="voice-agent-live-audio-"))
+            output_path = output_directory / "reply.wav"
+            print(f"Audio output directory: {output_directory}")
+            output_stream = files.enter_context(output_path.open("xb"))
+            output_file = files.enter_context(wave.open(output_stream, "wb"))
+            output_file.setnchannels(1)
+            output_file.setsampwidth(2)
+            output_file.setframerate(_SAMPLE_RATE)
+        async with (
+            DefaultAzureCredential() as credential,
+            AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+        ):
+            created_version = None
+            try:
+                created_version = await project_client.agents.create_version(
+                    agent_name=agent_name,
+                    definition=models.VoiceAgentLiveDefinition(
+                        model=model,
+                        model_type=models.VoiceModelType.SELF_DEPLOYED,
+                        instructions=(
+                            "You are a friendly voice assistant. Briefly answer the user's speech. "
+                            "Keep replies to one short sentence. Delegate external lookups to the client."
+                        ),
+                        audio=audio_settings(),
+                        delegation=models.VoiceAgentLiveClientDelegation(),
+                        store=False,
+                    ),
+                )
+                if USE_MICROPHONE:
+                    await _run_audio_conversation(
+                        project_client, agent_name, created_version.version, None, output_file, audio_backend=backend
+                    )
+                else:
+                    await _run_audio_conversation(
+                        project_client, agent_name, created_version.version, recording, output_file
+                    )
+            finally:
+                if created_version is not None:
+                    await project_client.agents.delete_version(
+                        agent_name=agent_name, agent_version=created_version.version
+                    )
+                    print(f"Deleted sample agent version: {created_version.version}")
+    if output_path:
+        print(f"Saved actual returned PCM16 WAV audio: {output_path} (not telemetry).")
 
 
 if __name__ == "__main__":
     try:
-        asyncio.run(audio_conversation())
+        asyncio.run(main())
     except KeyboardInterrupt:
-        print("\nInterrupted.")
+        print("\nStopped.")

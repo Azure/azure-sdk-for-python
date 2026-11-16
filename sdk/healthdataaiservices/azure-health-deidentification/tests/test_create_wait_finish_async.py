@@ -32,7 +32,7 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
 
         lro: AsyncLROPoller = await client.begin_deidentify_documents(jobname, job)
 
-        finished_job: DeidentificationJob = await lro.result()
+        finished_job: DeidentificationJob = await self.wait_for_job_async(client, lro, jobname)
 
         assert finished_job.status == OperationStatus.SUCCEEDED
         assert finished_job.job_name == jobname
@@ -54,7 +54,9 @@ class TestHealthDeidentificationCreateJobWaitUntil(DeidBaseTestCase):
         async for my_file in files:
             assert len(my_file.id) == 36  # GUID
             assert input_prefix in my_file.input_location.location
-            assert my_file.status == OperationStatus.SUCCEEDED
+            assert (
+                my_file.status == OperationStatus.SUCCEEDED
+            ), f"{my_file.input_location.location}: status={my_file.status} error={my_file.error}"
             assert my_file.output_location is not None
             assert self.OUTPUT_PATH in my_file.output_location.location
             count += 1

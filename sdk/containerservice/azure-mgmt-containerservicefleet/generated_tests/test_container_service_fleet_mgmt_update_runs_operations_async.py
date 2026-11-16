@@ -51,7 +51,6 @@ class TestContainerServiceFleetMgmtUpdateRunsOperationsAsync(AzureMgmtRecordedTe
                         "autoUpgradeProfileId": "str",
                         "provisioningState": "str",
                         "status": {
-                            "failureCount": 0,
                             "nodeImageSelection": {"selectedNodeImageVersions": [{"version": "str"}]},
                             "stages": [
                                 {
@@ -106,7 +105,6 @@ class TestContainerServiceFleetMgmtUpdateRunsOperationsAsync(AzureMgmtRecordedTe
                                             },
                                         }
                                     ],
-                                    "failureCount": 0,
                                     "groups": [
                                         {
                                             "afterGates": [
@@ -145,8 +143,6 @@ class TestContainerServiceFleetMgmtUpdateRunsOperationsAsync(AzureMgmtRecordedTe
                                                     },
                                                 }
                                             ],
-                                            "failureCount": 0,
-                                            "maxAllowedFailures": 0,
                                             "maxConcurrency": 0,
                                             "members": [
                                                 {
@@ -183,7 +179,6 @@ class TestContainerServiceFleetMgmtUpdateRunsOperationsAsync(AzureMgmtRecordedTe
                                             },
                                         }
                                     ],
-                                    "maxAllowedFailures": 0,
                                     "maxConcurrency": 0,
                                     "name": "str",
                                     "status": {
@@ -265,12 +260,10 @@ class TestContainerServiceFleetMgmtUpdateRunsOperationsAsync(AzureMgmtRecordedTe
                                                     },
                                                 }
                                             ],
-                                            "maxAllowedFailures": "str",
                                             "maxConcurrency": "str",
                                             "memberSelector": {"byLabel": "str"},
                                         }
                                     ],
-                                    "maxAllowedFailures": "str",
                                     "maxConcurrency": "str",
                                     "memberSelector": {"byLabel": "str"},
                                 }

@@ -14,8 +14,11 @@
 
 * Fixed `ORDER BY RANK` queries using `partition_key` returning unranked results in synchronous and asynchronous clients. Full-text and RRF queries now use the query-plan pipeline while retaining the partition key filter and respecting the full-text statistics scope. See [issue 42241](https://github.com/Azure/azure-sdk-for-python/issues/42241).
 * Fixed undefined projections raising `KeyError` in full-text and hybrid search queries. Missing `SELECT VALUE` projections are omitted without dropping explicit nulls, scalars, or empty object projections.
-* Fixed hybrid search queries returning incomplete results when component queries span multiple backend pages, and skipping RRF ranking when only one of multiple components returns results.
+* Fixed hybrid search queries returning incomplete results when component queries span multiple backend pages, and skipping RRF ranking when only one of multiple components returns results. Also fixed partition-split recovery double-counting full-text statistics or querying retired partitions in synchronous and asynchronous clients.
 * Fixed statistics substitution for `FullTextScore` expressions in projections and filter predicates, including parameterized vector and weighted RRF queries. These expressions require service-side full-text preview support.
+* Fixed hybrid-search reciprocal rank fusion (RRF) results being ranked incorrectly when component scores are tied.
+  Each result now receives a unique ordinal rank, with deterministic tie-breaking based on the decoded document ID
+  portion of `_rid`. See [PR 49623](https://github.com/Azure/azure-sdk-for-python/pull/49623).
 
 #### Other Changes
 
@@ -203,6 +206,7 @@ This version and all future versions will require Python 3.9+.
 * Fixed bug where exclusion list was not honored before falling back to global endpoint for multi-write region accounts. See[PR 43297](https://github.com/Azure/azure-sdk-for-python/pull/43297)
  
 #### Other Changes
+* Made `max_concurrency` optional for `read_items`. When omitted or set to `None`, the sync client uses Python's `ThreadPoolExecutor` default instead of 10 (unless a custom executor is provided), and the async client uses an internal default of 5 instead of the preview default of 10. Async callers can explicitly pass `max_concurrency=10` to retain the previous limit. See [PR 43269](https://github.com/Azure/azure-sdk-for-python/pull/43269).
 * Removed dual endpoint tracking from the sdk. See [PR 40451](https://github.com/Azure/azure-sdk-for-python/pull/40451).
 * Reverted typehints to fix the mismatch issue. See [PR 43124](https://github.com/Azure/azure-sdk-for-python/pull/43124)
 * Corrected type hints for `ConsistencyPolicy` in `DatabaseAccount` class. See [PR 43150](https://github.com/Azure/azure-sdk-for-python/pull/43150)

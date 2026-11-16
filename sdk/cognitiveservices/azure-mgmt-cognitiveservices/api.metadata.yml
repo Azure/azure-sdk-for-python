@@ -1,3 +1,4 @@
-apiMdSha256: ed21aa59fbccc38d40f94b41825f516149cd6b342610337c8a2596e1f12f6d1d
+apiHash: ba5931de0cf7233d00d4e838b206e7c5ea2945a8325a8ca327300470985ba71e
+packageVersion: 15.0.0
 parserVersion: 0.3.31
-pythonVersion: 3.13.15
+pythonVersion: 3.13.18

@@ -196,5 +196,49 @@ try:
                 if setting_created:
                     await appconfig_client.delete_configuration_setting(key=refresh_key)
 
+        @AppConfigProviderPreparer()
+        @recorded_by_proxy_async
+        @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
+        @pytest.mark.asyncio
+        async def test_refresh_empty_feature_flags(
+            self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url
+        ):
+            appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
+            mock_callback = Mock()
+            test_prefix = self.get_resource_name("test")
+            feature_id = f"{test_prefix}-alpha"
+            feature_flag = FeatureFlagConfigurationSetting(feature_id=feature_id, enabled=False)
+            feature_flag_created = False
+            feature_flag_deleted = False
+            try:
+                await appconfig_client.set_configuration_setting(feature_flag)
+                feature_flag_created = True
+
+                async with await self.create_client(
+                    endpoint=appconfiguration_endpoint_string,
+                    keyvault_secret_url=appconfiguration_keyvault_secret_url,
+                    selects=[],
+                    refresh_interval=1,
+                    on_refresh_success=mock_callback,
+                    feature_flag_enabled=True,
+                    feature_flag_refresh_enabled=True,
+                    feature_flag_selectors=[SettingSelector(key_filter=feature_id)],
+                    refresh_enabled=False,
+                ) as client:
+
+                    assert has_feature_flag(client, feature_id)
+
+                    await appconfig_client.delete_configuration_setting(key=feature_flag.key)
+                    feature_flag_deleted = True
+
+                    client._feature_flag_refresh_timer._next_refresh_time = 0
+                    await client.refresh()
+                    assert FEATURE_MANAGEMENT_KEY in client
+                    assert not has_feature_flag(client, feature_id)
+                    assert mock_callback.call_count == 1
+            finally:
+                if feature_flag_created and not feature_flag_deleted:
+                    await appconfig_client.delete_configuration_setting(key=feature_flag.key)
+
 except ImportError:
     pass

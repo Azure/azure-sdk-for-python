@@ -67,6 +67,7 @@ class TestRedHatOpenShiftHcpMgmtNodePoolsOperations(AzureMgmtRecordedTestCase):
                     "provisioningState": "str",
                     "replicas": 0,
                     "status": {
+                        "activeVersions": [{"version": "str"}],
                         "conditions": [
                             {
                                 "lastTransitionTime": "2020-02-20 00:00:00",
@@ -75,7 +76,7 @@ class TestRedHatOpenShiftHcpMgmtNodePoolsOperations(AzureMgmtRecordedTestCase):
                                 "status": "str",
                                 "type": "str",
                             }
-                        ]
+                        ],
                     },
                     "taints": [{"effect": "str", "key": "str", "value": "str"}],
                     "version": {"id": "str", "channelGroup": "str"},
@@ -133,6 +134,7 @@ class TestRedHatOpenShiftHcpMgmtNodePoolsOperations(AzureMgmtRecordedTestCase):
                     "provisioningState": "str",
                     "replicas": 0,
                     "status": {
+                        "activeVersions": [{"version": "str"}],
                         "conditions": [
                             {
                                 "lastTransitionTime": "2020-02-20 00:00:00",
@@ -141,7 +143,7 @@ class TestRedHatOpenShiftHcpMgmtNodePoolsOperations(AzureMgmtRecordedTestCase):
                                 "status": "str",
                                 "type": "str",
                             }
-                        ]
+                        ],
                     },
                     "taints": [{"effect": "str", "key": "str", "value": "str"}],
                     "version": {"id": "str", "channelGroup": "str"},

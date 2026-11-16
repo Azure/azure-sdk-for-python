@@ -33,13 +33,7 @@ from ._operations import ProjectsOperations  # type: ignore
 from ._operations import ProjectConnectionsOperations  # type: ignore
 from ._operations import ProjectCapabilityHostsOperations  # type: ignore
 from ._operations import QuotaTiersOperations  # type: ignore
-from ._operations import ArcDeploymentsOperations  # type: ignore
 from ._operations import AgentApplicationsOperations  # type: ignore
-from ._operations import ManagedComputeDeploymentsOperations  # type: ignore
-from ._operations import ComputeOperationsOperations  # type: ignore
-from ._operations import ManagedComputeUsagesOperationGroupOperations  # type: ignore
-from ._operations import ComputesOperations  # type: ignore
-from ._operations import WorkbenchesOperations  # type: ignore
 from ._operations import ManagedComputeCapacitiesOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import TestRaiExternalSafetyProviderOperations  # type: ignore
@@ -85,13 +79,7 @@ __all__ = [
     "ProjectConnectionsOperations",
     "ProjectCapabilityHostsOperations",
     "QuotaTiersOperations",
-    "ArcDeploymentsOperations",
     "AgentApplicationsOperations",
-    "ManagedComputeDeploymentsOperations",
-    "ComputeOperationsOperations",
-    "ManagedComputeUsagesOperationGroupOperations",
-    "ComputesOperations",
-    "WorkbenchesOperations",
     "ManagedComputeCapacitiesOperations",
     "PrivateLinkResourcesOperations",
     "TestRaiExternalSafetyProviderOperations",

@@ -35,10 +35,10 @@ class TestRecommenderMgmtSpotPlacementScoresOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.spot_placement_scores.post(
             location="str",
             spot_placement_scores_input={
+                "desiredSizes": [{"sku": "str"}],
                 "availabilityZones": bool,
                 "desiredCount": 0,
                 "desiredLocations": ["str"],
-                "desiredSizes": [{"sku": "str"}],
             },
         )
 

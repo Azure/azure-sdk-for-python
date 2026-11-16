@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, IO, Literal, Optional, TypeVar, Union, overload
+from typing import Any, AsyncIterator, Callable, IO, Literal, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient, MatchConditions
@@ -26,6 +26,8 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -59,18 +61,22 @@ from ..._operations._operations import (
     build_search_index_get_index_request,
     build_search_index_get_index_statistics_request,
     build_search_index_get_knowledge_base_request,
+    build_search_index_get_knowledge_source_file_ingestion_operation_request,
     build_search_index_get_knowledge_source_request,
     build_search_index_get_knowledge_source_status_request,
     build_search_index_get_service_statistics_request,
     build_search_index_get_synonym_map_request,
-    build_search_index_get_synonym_maps_request,
+    build_search_index_ingest_knowledge_source_file_multipart_request,
+    build_search_index_ingest_knowledge_source_file_replacement_request,
     build_search_index_list_aliases_request,
     build_search_index_list_index_stats_summary_request,
     build_search_index_list_indexes_request,
     build_search_index_list_indexes_with_selected_properties_request,
     build_search_index_list_knowledge_bases_request,
+    build_search_index_list_knowledge_source_file_ingestion_operations_request,
     build_search_index_list_knowledge_source_files_request,
     build_search_index_list_knowledge_sources_request,
+    build_search_index_list_synonym_maps_request,
     build_search_index_update_knowledge_source_file_request,
     build_search_index_upload_knowledge_source_file_multipart_request,
     build_search_index_upload_knowledge_source_file_request,
@@ -84,12 +90,12 @@ from ..._operations._operations import (
     build_search_indexer_delete_indexer_request,
     build_search_indexer_delete_skillset_request,
     build_search_indexer_get_data_source_connection_request,
-    build_search_indexer_get_data_source_connections_request,
     build_search_indexer_get_indexer_request,
     build_search_indexer_get_indexer_status_request,
-    build_search_indexer_get_indexers_request,
     build_search_indexer_get_skillset_request,
-    build_search_indexer_get_skillsets_request,
+    build_search_indexer_list_data_source_connections_request,
+    build_search_indexer_list_indexers_request,
+    build_search_indexer_list_skillsets_request,
     build_search_indexer_reset_documents_request,
     build_search_indexer_reset_indexer_request,
     build_search_indexer_reset_skills_request,
@@ -377,9 +383,16 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+            "2026-11-01-preview",
+        ],
     )
-    def _get_synonym_maps(
+    def list_synonym_maps(
         self,
         *,
         select: Optional[list[str]] = None,
@@ -425,7 +438,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_search_index_get_synonym_maps_request(
+                _request = build_search_index_list_synonym_maps_request(
                     select=select,
                     search=search,
                     page_size=page_size,
@@ -639,7 +652,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     async def _create_or_update_index(
         self,
         name: str,
-        index: _types_models2.SearchIndex,
+        index: Union[_types_models2.SearchIndex, _types_models2.SearchIndexInput],
         *,
         allow_index_downtime: Optional[bool] = None,
         content_type: str = "application/json",
@@ -664,7 +677,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     async def _create_or_update_index(
         self,
         name: str,
-        index: Union[_models2.SearchIndex, _types_models2.SearchIndex, IO[bytes]],
+        index: Union[_models2.SearchIndex, _types_models2.SearchIndex, _types_models2.SearchIndexInput, IO[bytes]],
         *,
         allow_index_downtime: Optional[bool] = None,
         etag: Optional[str] = None,
@@ -678,7 +691,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         :param index: The definition of the index to create or update. Is either a SearchIndex type or
          a IO[bytes] type. Required.
         :type index: ~azure.search.documents.indexes.models.SearchIndex or
-         ~azure.search.documents.indexes.types.SearchIndex or IO[bytes]
+         ~azure.search.documents.indexes.types.SearchIndex or
+         ~azure.search.documents.indexes.types.SearchIndexInput or IO[bytes]
         :keyword allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
          to be added to an index by taking the index offline for at least a few seconds. This
          temporarily causes indexing and query requests to fail. Performance and write availability of
@@ -908,9 +922,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={
-            "2026-08-01-preview": ["api_version", "accept", "search", "page_size", "search_type", "client_request_id"]
+            "2026-08-01-preview": ["api_version", "client_request_id", "accept", "search", "page_size", "search_type"]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-10-01", "2026-11-01-preview"],
     )
     def _list_indexes(
         self,
@@ -1030,15 +1044,15 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         params_added_on={
             "2026-08-01-preview": [
                 "api_version",
+                "client_request_id",
                 "accept",
                 "select",
                 "search",
                 "page_size",
                 "search_type",
-                "client_request_id",
             ]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-10-01", "2026-11-01-preview"],
     )
     def _list_indexes_with_selected_properties(
         self,
@@ -1176,12 +1190,17 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     async def create_index(
-        self, index: _types_models2.SearchIndex, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        index: Union[_types_models2.SearchIndex, _types_models2.SearchIndexInput],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models2.SearchIndex:
         """Creates a new search index.
 
         :param index: The definition of the index to create. Required.
-        :type index: ~azure.search.documents.indexes.types.SearchIndex
+        :type index: ~azure.search.documents.indexes.types.SearchIndex or
+         ~azure.search.documents.indexes.types.SearchIndexInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1208,14 +1227,17 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace_async
     async def create_index(
-        self, index: Union[_models2.SearchIndex, _types_models2.SearchIndex, IO[bytes]], **kwargs: Any
+        self,
+        index: Union[_models2.SearchIndex, _types_models2.SearchIndex, _types_models2.SearchIndexInput, IO[bytes]],
+        **kwargs: Any
     ) -> _models2.SearchIndex:
         """Creates a new search index.
 
         :param index: The definition of the index to create. Is either a SearchIndex type or a
          IO[bytes] type. Required.
         :type index: ~azure.search.documents.indexes.models.SearchIndex or
-         ~azure.search.documents.indexes.types.SearchIndex or IO[bytes]
+         ~azure.search.documents.indexes.types.SearchIndex or
+         ~azure.search.documents.indexes.types.SearchIndexInput or IO[bytes]
         :return: SearchIndex. The SearchIndex is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1724,7 +1746,14 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+            "2026-11-01-preview",
+        ],
     )
     def list_aliases(
         self,
@@ -1979,7 +2008,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     async def _create_or_update_knowledge_base(
         self,
         name: str,
-        knowledge_base: _types_models2.KnowledgeBase,
+        knowledge_base: Union[_types_models2.KnowledgeBase, _types_models2.KnowledgeBaseInput],
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -2002,7 +2031,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     async def _create_or_update_knowledge_base(
         self,
         name: str,
-        knowledge_base: Union[_models2.KnowledgeBase, _types_models2.KnowledgeBase, IO[bytes]],
+        knowledge_base: Union[
+            _models2.KnowledgeBase, _types_models2.KnowledgeBase, _types_models2.KnowledgeBaseInput, IO[bytes]
+        ],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -2015,7 +2046,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         :param knowledge_base: The definition of the knowledge base to create or update. Is either a
          KnowledgeBase type or a IO[bytes] type. Required.
         :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or
-         ~azure.search.documents.indexes.types.KnowledgeBase or IO[bytes]
+         ~azure.search.documents.indexes.types.KnowledgeBase or
+         ~azure.search.documents.indexes.types.KnowledgeBaseInput or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2235,7 +2267,14 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+            "2026-11-01-preview",
+        ],
     )
     def list_knowledge_bases(
         self,
@@ -2367,12 +2406,17 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     async def create_knowledge_base(
-        self, knowledge_base: _types_models2.KnowledgeBase, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        knowledge_base: Union[_types_models2.KnowledgeBase, _types_models2.KnowledgeBaseInput],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models2.KnowledgeBase:
         """Creates a new knowledge base.
 
         :param knowledge_base: The definition of the knowledge base to create. Required.
-        :type knowledge_base: ~azure.search.documents.indexes.types.KnowledgeBase
+        :type knowledge_base: ~azure.search.documents.indexes.types.KnowledgeBase or
+         ~azure.search.documents.indexes.types.KnowledgeBaseInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2399,14 +2443,19 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @distributed_trace_async
     async def create_knowledge_base(
-        self, knowledge_base: Union[_models2.KnowledgeBase, _types_models2.KnowledgeBase, IO[bytes]], **kwargs: Any
+        self,
+        knowledge_base: Union[
+            _models2.KnowledgeBase, _types_models2.KnowledgeBase, _types_models2.KnowledgeBaseInput, IO[bytes]
+        ],
+        **kwargs: Any
     ) -> _models2.KnowledgeBase:
         """Creates a new knowledge base.
 
         :param knowledge_base: The definition of the knowledge base to create. Is either a
          KnowledgeBase type or a IO[bytes] type. Required.
         :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or
-         ~azure.search.documents.indexes.types.KnowledgeBase or IO[bytes]
+         ~azure.search.documents.indexes.types.KnowledgeBase or
+         ~azure.search.documents.indexes.types.KnowledgeBaseInput or IO[bytes]
         :return: KnowledgeBase. The KnowledgeBase is compatible with MutableMapping
         :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2746,7 +2795,14 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+            "2026-11-01-preview",
+        ],
     )
     def list_knowledge_sources(
         self,
@@ -3082,14 +3138,14 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         params_added_on={
             "2026-05-01-preview": [
                 "api_version",
-                "content_type",
-                "content_disposition",
                 "client_request_id",
                 "name",
+                "content_type",
+                "content_disposition",
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01-preview"],
     )
     async def _upload_knowledge_source_file(
         self, name: str, file: Union[bytes, IO[bytes]], *, content_disposition: str, **kwargs: Any
@@ -3207,7 +3263,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={"2026-08-01-preview": ["api_version", "client_request_id", "name", "content_type", "accept"]},
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-10-01", "2026-11-01-preview"],
     )
     async def upload_knowledge_source_file_multipart(
         self,
@@ -3291,14 +3347,206 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-11-01-preview",
+        params_added_on={"2026-11-01-preview": ["api_version", "client_request_id", "name", "content_type", "accept"]},
+        api_versions_list=["2026-11-01-preview"],
+    )
+    async def _ingest_knowledge_source_file_multipart_initial(  # pylint: disable=name-too-long
+        self,
+        name: str,
+        body: Union[
+            _models2.UploadKnowledgeSourceFileMultipartRequest, _types_models2.UploadKnowledgeSourceFileMultipartRequest
+        ],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _body = body.as_dict() if isinstance(body, _Model) else body
+        _file_fields: list[str] = ["content"]
+        _data_fields: list[str] = ["metadata"]
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+
+        _request = build_search_index_ingest_knowledge_source_file_multipart_request(
+            name=name,
+            api_version=self._config.api_version,
+            files=_files,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models3.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Operation-Id"] = self._deserialize("str", response.headers.get("Operation-Id"))
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_ingest_knowledge_source_file_multipart(  # pylint: disable=name-too-long
+        self, name: str, body: _models2.UploadKnowledgeSourceFileMultipartRequest, **kwargs: Any
+    ) -> AsyncLROPoller[_models2.KnowledgeSourceFile]:
+        """Starts asynchronous ingestion of a new file into a File knowledge source, processed on a
+        Content Processor. Poll the returned operation to retrieve the created file.
+
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :param body: The multipart/form-data body containing the metadata and content parts. Required.
+        :type body: ~azure.search.documents.indexes.models.UploadKnowledgeSourceFileMultipartRequest
+        :return: An instance of AsyncLROPoller that returns KnowledgeSourceFile. The
+         KnowledgeSourceFile is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.search.documents.indexes.models.KnowledgeSourceFile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_ingest_knowledge_source_file_multipart(  # pylint: disable=name-too-long
+        self, name: str, body: _types_models2.UploadKnowledgeSourceFileMultipartRequest, **kwargs: Any
+    ) -> AsyncLROPoller[_models2.KnowledgeSourceFile]:
+        """Starts asynchronous ingestion of a new file into a File knowledge source, processed on a
+        Content Processor. Poll the returned operation to retrieve the created file.
+
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :param body: The multipart/form-data body containing the metadata and content parts. Required.
+        :type body: ~azure.search.documents.indexes.types.UploadKnowledgeSourceFileMultipartRequest
+        :return: An instance of AsyncLROPoller that returns KnowledgeSourceFile. The
+         KnowledgeSourceFile is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.search.documents.indexes.models.KnowledgeSourceFile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01-preview",
+        params_added_on={"2026-11-01-preview": ["api_version", "client_request_id", "name", "content_type", "accept"]},
+        api_versions_list=["2026-11-01-preview"],
+    )
+    async def begin_ingest_knowledge_source_file_multipart(  # pylint: disable=name-too-long
+        self,
+        name: str,
+        body: Union[
+            _models2.UploadKnowledgeSourceFileMultipartRequest, _types_models2.UploadKnowledgeSourceFileMultipartRequest
+        ],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models2.KnowledgeSourceFile]:
+        """Starts asynchronous ingestion of a new file into a File knowledge source, processed on a
+        Content Processor. Poll the returned operation to retrieve the created file.
+
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :param body: The multipart/form-data body containing the metadata and content parts. Is one of
+         the following types: UploadKnowledgeSourceFileMultipartRequest Required.
+        :type body: ~azure.search.documents.indexes.models.UploadKnowledgeSourceFileMultipartRequest or
+         ~azure.search.documents.indexes.types.UploadKnowledgeSourceFileMultipartRequest
+        :return: An instance of AsyncLROPoller that returns KnowledgeSourceFile. The
+         KnowledgeSourceFile is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.search.documents.indexes.models.KnowledgeSourceFile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models2.KnowledgeSourceFile] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._ingest_knowledge_source_file_multipart_initial(
+                name=name, body=body, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Id"] = self._deserialize("str", response.headers.get("Operation-Id"))
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+            deserialized = _deserialize(_models2.KnowledgeSourceFile, response.json().get("result", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models2.KnowledgeSourceFile].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models2.KnowledgeSourceFile](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
     @distributed_trace
     @api_version_validation(
         method_added_on="2026-05-01-preview",
         params_added_on={
-            "2026-05-01-preview": ["api_version", "accept", "client_request_id", "name"],
+            "2026-05-01-preview": ["api_version", "client_request_id", "name", "accept"],
             "2026-08-01-preview": ["prefix", "search", "page_size", "search_type"],
         },
-        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-10-01", "2026-11-01-preview"],
     )
     def list_knowledge_source_files(
         self,
@@ -3424,16 +3672,16 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2026-05-01-preview",
-        params_added_on={"2026-05-01-preview": ["api_version", "file_id", "accept", "client_request_id", "name"]},
-        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
+        params_added_on={"2026-05-01-preview": ["api_version", "client_request_id", "name", "file_id", "accept"]},
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-10-01", "2026-11-01-preview"],
     )
-    async def _delete_knowledge_source_file(self, file_id: str, name: str, **kwargs: Any) -> None:
+    async def _delete_knowledge_source_file(self, name: str, file_id: str, **kwargs: Any) -> None:
         """Deletes a file from a File knowledge source and removes all indexed content derived from it.
 
-        :param file_id: The unique identifier of the file to delete. Required.
-        :type file_id: str
         :param name: The name of the knowledge source. Required.
         :type name: str
+        :param file_id: The unique identifier of the file to delete. Required.
+        :type file_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3452,8 +3700,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_search_index_delete_knowledge_source_file_request(
-            file_id=file_id,
             name=name,
+            file_id=file_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3483,16 +3731,16 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     async def update_knowledge_source_file(
-        self, file_id: str, name: str, body: _models2.UpdateKnowledgeSourceFileRequest, **kwargs: Any
+        self, name: str, file_id: str, body: _models2.UpdateKnowledgeSourceFileRequest, **kwargs: Any
     ) -> _models2.KnowledgeSourceFile:
         """Updates an existing file in a File knowledge source in place, replacing its indexed content.
         Uses multipart/form-data: a JSON 'metadata' part (file name and custom metadata) and a
         'content' part with the raw file bytes.
 
-        :param file_id: The unique identifier of the file to update. Required.
-        :type file_id: str
         :param name: The name of the knowledge source. Required.
         :type name: str
+        :param file_id: The unique identifier of the file to update. Required.
+        :type file_id: str
         :param body: The multipart/form-data body containing the metadata and content parts. Required.
         :type body: ~azure.search.documents.indexes.models.UpdateKnowledgeSourceFileRequest
         :return: KnowledgeSourceFile. The KnowledgeSourceFile is compatible with MutableMapping
@@ -3502,16 +3750,16 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
     @overload
     async def update_knowledge_source_file(
-        self, file_id: str, name: str, body: _types_models2.UpdateKnowledgeSourceFileRequest, **kwargs: Any
+        self, name: str, file_id: str, body: _types_models2.UpdateKnowledgeSourceFileRequest, **kwargs: Any
     ) -> _models2.KnowledgeSourceFile:
         """Updates an existing file in a File knowledge source in place, replacing its indexed content.
         Uses multipart/form-data: a JSON 'metadata' part (file name and custom metadata) and a
         'content' part with the raw file bytes.
 
-        :param file_id: The unique identifier of the file to update. Required.
-        :type file_id: str
         :param name: The name of the knowledge source. Required.
         :type name: str
+        :param file_id: The unique identifier of the file to update. Required.
+        :type file_id: str
         :param body: The multipart/form-data body containing the metadata and content parts. Required.
         :type body: ~azure.search.documents.indexes.types.UpdateKnowledgeSourceFileRequest
         :return: KnowledgeSourceFile. The KnowledgeSourceFile is compatible with MutableMapping
@@ -3523,14 +3771,14 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={
-            "2026-08-01-preview": ["api_version", "file_id", "client_request_id", "name", "content_type", "accept"]
+            "2026-08-01-preview": ["api_version", "client_request_id", "name", "file_id", "content_type", "accept"]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-10-01", "2026-11-01-preview"],
     )
     async def update_knowledge_source_file(
         self,
-        file_id: str,
         name: str,
+        file_id: str,
         body: Union[_models2.UpdateKnowledgeSourceFileRequest, _types_models2.UpdateKnowledgeSourceFileRequest],
         **kwargs: Any
     ) -> _models2.KnowledgeSourceFile:
@@ -3538,10 +3786,10 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         Uses multipart/form-data: a JSON 'metadata' part (file name and custom metadata) and a
         'content' part with the raw file bytes.
 
-        :param file_id: The unique identifier of the file to update. Required.
-        :type file_id: str
         :param name: The name of the knowledge source. Required.
         :type name: str
+        :param file_id: The unique identifier of the file to update. Required.
+        :type file_id: str
         :param body: The multipart/form-data body containing the metadata and content parts. Is one of
          the following types: UpdateKnowledgeSourceFileRequest Required.
         :type body: ~azure.search.documents.indexes.models.UpdateKnowledgeSourceFileRequest or
@@ -3569,8 +3817,8 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_search_index_update_knowledge_source_file_request(
-            file_id=file_id,
             name=name,
+            file_id=file_id,
             api_version=self._config.api_version,
             files=_files,
             headers=_headers,
@@ -3611,6 +3859,411 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-11-01-preview",
+        params_added_on={
+            "2026-11-01-preview": ["api_version", "client_request_id", "name", "file_id", "content_type", "accept"]
+        },
+        api_versions_list=["2026-11-01-preview"],
+    )
+    async def _ingest_knowledge_source_file_replacement_initial(  # pylint: disable=name-too-long
+        self,
+        name: str,
+        file_id: str,
+        body: Union[_models2.UpdateKnowledgeSourceFileRequest, _types_models2.UpdateKnowledgeSourceFileRequest],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _body = body.as_dict() if isinstance(body, _Model) else body
+        _file_fields: list[str] = ["content"]
+        _data_fields: list[str] = ["metadata"]
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+
+        _request = build_search_index_ingest_knowledge_source_file_replacement_request(
+            name=name,
+            file_id=file_id,
+            api_version=self._config.api_version,
+            files=_files,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models3.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Operation-Id"] = self._deserialize("str", response.headers.get("Operation-Id"))
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_ingest_knowledge_source_file_replacement(  # pylint: disable=name-too-long
+        self, name: str, file_id: str, body: _models2.UpdateKnowledgeSourceFileRequest, **kwargs: Any
+    ) -> AsyncLROPoller[_models2.KnowledgeSourceFile]:
+        """Starts asynchronous ingestion that replaces an existing file in a File knowledge source,
+        processed on a Content Processor. Poll the returned operation to retrieve the updated file.
+
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :param file_id: The unique identifier of the file to update. Required.
+        :type file_id: str
+        :param body: The multipart/form-data body containing the metadata and content parts. Required.
+        :type body: ~azure.search.documents.indexes.models.UpdateKnowledgeSourceFileRequest
+        :return: An instance of AsyncLROPoller that returns KnowledgeSourceFile. The
+         KnowledgeSourceFile is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.search.documents.indexes.models.KnowledgeSourceFile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_ingest_knowledge_source_file_replacement(  # pylint: disable=name-too-long
+        self, name: str, file_id: str, body: _types_models2.UpdateKnowledgeSourceFileRequest, **kwargs: Any
+    ) -> AsyncLROPoller[_models2.KnowledgeSourceFile]:
+        """Starts asynchronous ingestion that replaces an existing file in a File knowledge source,
+        processed on a Content Processor. Poll the returned operation to retrieve the updated file.
+
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :param file_id: The unique identifier of the file to update. Required.
+        :type file_id: str
+        :param body: The multipart/form-data body containing the metadata and content parts. Required.
+        :type body: ~azure.search.documents.indexes.types.UpdateKnowledgeSourceFileRequest
+        :return: An instance of AsyncLROPoller that returns KnowledgeSourceFile. The
+         KnowledgeSourceFile is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.search.documents.indexes.models.KnowledgeSourceFile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01-preview",
+        params_added_on={
+            "2026-11-01-preview": ["api_version", "client_request_id", "name", "file_id", "content_type", "accept"]
+        },
+        api_versions_list=["2026-11-01-preview"],
+    )
+    async def begin_ingest_knowledge_source_file_replacement(  # pylint: disable=name-too-long
+        self,
+        name: str,
+        file_id: str,
+        body: Union[_models2.UpdateKnowledgeSourceFileRequest, _types_models2.UpdateKnowledgeSourceFileRequest],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models2.KnowledgeSourceFile]:
+        """Starts asynchronous ingestion that replaces an existing file in a File knowledge source,
+        processed on a Content Processor. Poll the returned operation to retrieve the updated file.
+
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :param file_id: The unique identifier of the file to update. Required.
+        :type file_id: str
+        :param body: The multipart/form-data body containing the metadata and content parts. Is one of
+         the following types: UpdateKnowledgeSourceFileRequest Required.
+        :type body: ~azure.search.documents.indexes.models.UpdateKnowledgeSourceFileRequest or
+         ~azure.search.documents.indexes.types.UpdateKnowledgeSourceFileRequest
+        :return: An instance of AsyncLROPoller that returns KnowledgeSourceFile. The
+         KnowledgeSourceFile is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.search.documents.indexes.models.KnowledgeSourceFile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models2.KnowledgeSourceFile] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._ingest_knowledge_source_file_replacement_initial(
+                name=name, file_id=file_id, body=body, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Id"] = self._deserialize("str", response.headers.get("Operation-Id"))
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+            deserialized = _deserialize(_models2.KnowledgeSourceFile, response.json().get("result", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models2.KnowledgeSourceFile].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models2.KnowledgeSourceFile](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01-preview",
+        params_added_on={"2026-11-01-preview": ["api_version", "client_request_id", "name", "accept", "operation_id"]},
+        api_versions_list=["2026-11-01-preview"],
+    )
+    async def get_knowledge_source_file_ingestion_operation(  # pylint: disable=name-too-long
+        self, name: str, operation_id: str, **kwargs: Any
+    ) -> _models2.KnowledgeSourceFileIngestionOperation:
+        """Gets the status and, when successful, the result of a file ingestion operation.
+
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :param operation_id: The server-generated identifier returned when ingestion was accepted.
+         Required.
+        :type operation_id: str
+        :return: KnowledgeSourceFileIngestionOperation. The KnowledgeSourceFileIngestionOperation is
+         compatible with MutableMapping
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSourceFileIngestionOperation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models2.KnowledgeSourceFileIngestionOperation] = kwargs.pop("cls", None)
+
+        _request = build_search_index_get_knowledge_source_file_ingestion_operation_request(
+            name=name,
+            operation_id=operation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models3.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models2.KnowledgeSourceFileIngestionOperation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-01-preview",
+        params_added_on={
+            "2026-11-01-preview": [
+                "api_version",
+                "client_request_id",
+                "name",
+                "accept",
+                "page_size",
+                "continuation_token_parameter",
+            ]
+        },
+        api_versions_list=["2026-11-01-preview"],
+    )
+    def list_knowledge_source_file_ingestion_operations(  # pylint: disable=name-too-long
+        self,
+        name: str,
+        *,
+        page_size: Optional[int] = None,
+        continuation_token_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models2.KnowledgeSourceFileIngestionOperation"]:
+        """Lists retained file ingestion operations for this knowledge source.
+
+        :param name: The name of the knowledge source. Required.
+        :type name: str
+        :keyword page_size: The maximum number of operations to return. Default value is None.
+        :paramtype page_size: int
+        :keyword continuation_token_parameter: An opaque continuation token returned by the service.
+         Default value is None.
+        :paramtype continuation_token_parameter: str
+        :return: An iterator like instance of KnowledgeSourceFileIngestionOperation
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.KnowledgeSourceFileIngestionOperation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models2.KnowledgeSourceFileIngestionOperation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_search_index_list_knowledge_source_file_ingestion_operations_request(
+                    name=name,
+                    page_size=page_size,
+                    continuation_token_parameter=continuation_token_parameter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models2.KnowledgeSourceFileIngestionOperation],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("@odata.nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models3.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def get_service_statistics(self, **kwargs: Any) -> _models2.SearchServiceStatistics:
@@ -3678,9 +4331,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={
-            "2026-08-01-preview": ["api_version", "accept", "search", "page_size", "search_type", "client_request_id"]
+            "2026-08-01-preview": ["api_version", "client_request_id", "accept", "search", "page_size", "search_type"]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-10-01", "2026-11-01-preview"],
     )
     def list_index_stats_summary(
         self,
@@ -3839,7 +4492,14 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-05-01-preview": ["skip_indexer_reset_requirement_for_cache"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+            "2026-11-01-preview",
+        ],
     )
     async def _create_or_update_data_source_connection(
         self,
@@ -4086,9 +4746,16 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+            "2026-11-01-preview",
+        ],
     )
-    def _get_data_source_connections(
+    def list_data_source_connections(
         self,
         *,
         select: Optional[list[str]] = None,
@@ -4134,7 +4801,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_search_indexer_get_data_source_connections_request(
+                _request = build_search_indexer_list_data_source_connections_request(
                     select=select,
                     search=search,
                     page_size=page_size,
@@ -4429,8 +5096,8 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2026-05-01-preview",
-        params_added_on={"2026-05-01-preview": ["api_version", "accept", "client_request_id", "name", "content_type"]},
-        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
+        params_added_on={"2026-05-01-preview": ["api_version", "client_request_id", "name", "accept", "content_type"]},
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-10-01", "2026-11-01-preview"],
     )
     async def _resync(
         self,
@@ -4537,9 +5204,9 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @api_version_validation(
         method_added_on="2026-05-01-preview",
         params_added_on={
-            "2026-05-01-preview": ["api_version", "accept", "overwrite", "client_request_id", "name", "content_type"]
+            "2026-05-01-preview": ["api_version", "client_request_id", "name", "accept", "overwrite", "content_type"]
         },
-        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01-preview"],
     )
     async def _reset_documents(
         self,
@@ -4723,7 +5390,14 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 "disable_cache_reprocessing_change_detection",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+            "2026-11-01-preview",
+        ],
     )
     async def _create_or_update_indexer(
         self,
@@ -4971,9 +5645,16 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+            "2026-11-01-preview",
+        ],
     )
-    def _get_indexers(
+    def list_indexers(
         self,
         *,
         select: Optional[list[str]] = None,
@@ -5019,7 +5700,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_search_indexer_get_indexers_request(
+                _request = build_search_indexer_list_indexers_request(
                     select=select,
                     search=search,
                     page_size=page_size,
@@ -5330,7 +6011,14 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
                 "disable_cache_reprocessing_change_detection",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+            "2026-11-01-preview",
+        ],
     )
     async def _create_or_update_skillset(
         self,
@@ -5578,9 +6266,16 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @distributed_trace
     @api_version_validation(
         params_added_on={"2026-08-01-preview": ["search", "page_size", "search_type"]},
-        api_versions_list=["2025-11-01-preview", "2026-04-01", "2026-05-01-preview", "2026-08-01-preview"],
+        api_versions_list=[
+            "2025-11-01-preview",
+            "2026-04-01",
+            "2026-05-01-preview",
+            "2026-08-01-preview",
+            "2026-10-01",
+            "2026-11-01-preview",
+        ],
     )
-    def _get_skillsets(
+    def list_skillsets(
         self,
         *,
         select: Optional[list[str]] = None,
@@ -5626,7 +6321,7 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_search_indexer_get_skillsets_request(
+                _request = build_search_indexer_list_skillsets_request(
                     select=select,
                     search=search,
                     page_size=page_size,
@@ -5850,8 +6545,8 @@ class _SearchIndexerClientOperationsMixin(  # pylint: disable=too-many-public-me
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2026-05-01-preview",
-        params_added_on={"2026-05-01-preview": ["api_version", "accept", "client_request_id", "name", "content_type"]},
-        api_versions_list=["2026-05-01-preview", "2026-08-01-preview"],
+        params_added_on={"2026-05-01-preview": ["api_version", "client_request_id", "name", "accept", "content_type"]},
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01-preview"],
     )
     async def _reset_skills(
         self, name: str, skill_names: Union[_models2.SkillNames, _types_models2.SkillNames, IO[bytes]], **kwargs: Any

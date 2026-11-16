@@ -72,7 +72,11 @@ def test_none_content_handling():
         client = AadClient("tenant id", "client id", transport=transport)
 
         with pytest.raises(ClientAuthenticationError):
-            client._process_response(mock_pipeline_response, int(1234567890))
+            client._process_response(
+                mock_pipeline_response,
+                int(1234567890),
+                token_endpoint="https://login.microsoftonline.com/tenant/oauth2/v2.0/token",
+            )
 
 
 @pytest.mark.skip(reason="Adding body to HttpResponseError str. Not an issue bc we don't automatically log errors")

@@ -4,7 +4,7 @@ The AI Projects client library is part of the Microsoft Foundry SDK, and provide
 resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 
 * **Create and run Agents** using methods on the `.agents` client property. This includes **Hosted Agents**, which let you run your own containerized agent runtime while using Microsoft Foundry for managed hosting and scaling.
-* **Build and run Voice Agents (preview)** for real-time, speech-to-speech conversational AI, reachable over a WebSocket (`.beta.voice_agents.realtime`) or telephony (`.beta.voice_agents.telephony`), with persisted conversation transcripts and audio through `.beta.voice_agents.conversations`.
+* **Build and run Voice Agents** for real-time, speech-to-speech conversational AI, reachable over a WebSocket (`.voice_agents.realtime`) or telephony (`.voice_agents.telephony`), with persisted conversation transcripts and audio through `.voice_agents.conversations`. Generate agents from a prompt with `.agents.create_from_prompt()`. These generally available features do not require preview opt-in.
 * **Enhance Agents with specialized tools and toolbox tools** such as:
   * Agent-to-Agent (A2A)
   * Azure AI Search
@@ -42,8 +42,29 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 * **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using `.beta.red_teams` operations.
 * **Create and manage routines (preview)** that execute triggered actions based on configured conditions, using `.beta.routines` operations.
 * **Manage skills (preview)** as reusable capabilities that can be included in toolboxes and agents, using `.beta.skills` operations.
+* **Analyze agent traces** using `.agent_insight_monitors` operations to create monitors, run analyses, and manage insights.
 
 **Important:** This stable package includes Preview features. Preview features available through stable methods require setting `allow_preview=True` when constructing the client, while Preview features exposed via the .beta sub-clients do not. Preview features may change or be removed in future versions and are not recommended for production use.
+
+Voice Agents includes both generally available APIs and preview features:
+
+| Voice Agents feature | Scope and client path |
+|---|---|
+| Realtime sessions and stored conversation/audio readback | GA: `.voice_agents.realtime` and `.voice_agents.conversations`; no preview opt-in |
+| Generate a voice agent from a prompt | GA: `.agents.create_from_prompt()`; no automatic preview header |
+| Teams Phone Extensibility and Twilio telephony | GA: `.voice_agents.telephony`; no preview opt-in |
+| SIP, inline subagent handoff, and post-call delivery | Preview options on GA operations; set `allow_preview=True` |
+| GPT-Live sessions and stored Live conversations | Preview: `.beta.voice_agents.live` and `.beta.voice_agents.live_conversations`; creating a GPT-Live definition also requires `allow_preview=True` |
+| Outbound campaigns | Preview: `.beta.voice_agents.telephony`; operations automatically include the required preview header |
+
+GA generation, conversation operations, and telephony reads do not automatically send preview headers,
+even when the client has `allow_preview=True`. That setting enables opt-in on conditional telephony
+writes for SIP; caller-supplied headers are preserved.
+
+Realtime uses `Realtime`, `RealtimeConnection`, and `RealtimeConnectionManager` from
+`azure.ai.projects.operations`. Their asynchronous counterparts are `AsyncRealtime`,
+`AsyncRealtimeConnection`, and `AsyncRealtimeConnectionManager` from `azure.ai.projects.aio.operations`.
+These GA types do not have `Beta` aliases.
 
 The client library uses version `v1` of the Microsoft Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
 
@@ -63,9 +84,10 @@ To report an issue with the client library, or request additional features, plea
 
 ### Prerequisite
 
-* Python 3.9 or later.
+* Python 3.10 or later.
 * An [Azure subscription][azure_sub].
 * A [project in Microsoft Foundry](https://learn.microsoft.com/azure/foundry/how-to/create-projects).
+* An [Application Insights resource connected to your Foundry project](https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-setup) for agent tracing.
 * A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project home page. Below we will assume the environment variable `FOUNDRY_PROJECT_ENDPOINT` was defined to hold this value.
 * Client authentication is done using Entra ID. To authenticate, your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
   * An appropriate role assignment. See [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry). Role assignment can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
@@ -162,6 +184,7 @@ See the **responses** folder in the [samples][samples] for additional samples in
 See Foundry documentation:
 
 * **[Microsoft Foundry Agents overview](https://learn.microsoft.com/azure/foundry/agents/overview)** — concepts, setup, and quick-starts.
+* **[Quickstart: Set up Microsoft Foundry resources](https://learn.microsoft.com/azure/foundry/tutorials/quickstart-create-foundry-resources)** — create a project, deploy a model, and connect Application Insights for agent tracing.
 * **[Runtime components](https://learn.microsoft.com/azure/foundry/agents/concepts/runtime-components?tabs=python)** — deep-dive into agent architecture.
 * **[Tool catalog](https://learn.microsoft.com/azure/foundry/agents/concepts/tool-catalog)** — all available tools and agent capabilities.
 * **[SDK samples folder][samples]** — fully runnable Python code for synchronous and asynchronous clients covering all operations below.
@@ -173,7 +196,7 @@ The table below lists the operation groups supported by the client library, with
 | Topic | Foundry documentation | Samples folder |
 |---|---|---|
 | Agents (create, run, stream) | [Agents overview](https://learn.microsoft.com/azure/foundry/agents/overview) | `samples/agents/` |
-| Agent Insights (preview) | | [On-demand analysis and scheduled monitors](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/agent_insights) |
+| Agent Insights | | [On-demand analysis and scheduled monitors](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/agent_insights) |
 | Hosted agents | [Hosted agents concepts](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents), [Deploy your first hosted agent](https://learn.microsoft.com/azure/foundry/agents/quickstarts/quickstart-hosted-agent) | `samples/hosted_agents/` |
 | Agents tools | [Tool catalog](https://learn.microsoft.com/azure/foundry/agents/concepts/tool-catalog) | `samples/agents/tools/` |
 | Agents optimization | [Prompt optimizer](https://learn.microsoft.com/azure/foundry/observability/how-to/prompt-optimizer), [Agent optimizer overview](https://learn.microsoft.com/azure/foundry/agents/concepts/agent-optimizer-overview) | `samples/agents/optimization/` |
@@ -193,12 +216,122 @@ The table below lists the operation groups supported by the client library, with
 | Sessions | [Manage hosted sessions](https://learn.microsoft.com/azure/foundry/agents/how-to/manage-hosted-sessions?pivots=python) | `samples/hosted_agents/` |
 | Skills (preview) | | `samples/skills/` |
 | Toolboxes | [Curate intent-based toolbox in Foundry](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox?pivots=python) | `samples/hosted_agents/`, `samples/toolboxes/` |
-| Voice agents (preview) | | `samples/agents/voice/` |
+| Voice agents | | [Voice Agents samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/agents/voice) |
 
+### Voice Agent realtime transport
+
+Use `project_client.voice_agents.realtime` for agents created with `VoiceAgentDefinition`.
+Connections use WebSocket by default. You can also select the transport explicitly:
+
+```python
+from azure.ai.projects.models import VoiceAgentTransport
+
+with project_client.voice_agents.realtime.connect(
+    agent_name="my-voice-agent",
+    transport=VoiceAgentTransport.WEBSOCKET,
+) as connection:
+    print("Voice Agent connection is ready.")
+```
+
+The asynchronous client uses the same keyword:
+
+```python
+async with async_project_client.voice_agents.realtime.connect(
+    agent_name="my-voice-agent",
+    transport=VoiceAgentTransport.WEBSOCKET,
+) as connection:
+    print("Voice Agent connection is ready.")
+```
+
+Use `transport`, not `extra_query`, to select a transport. `VoiceAgentTransport.WEBRTC` enables
+WebRTC signaling over the WebSocket, but your app must handle the peer connection, audio/video,
+and SDP offer/answer exchange (`rtc.call.sdp.create` and `rtc.call.sdp.created`).
+
+Start with the [text conversation sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_realtime_text_conversation_async.py)
+or [microphone sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_realtime_audio_conversation_async.py).
+The [async interruption sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_realtime_interruption_async.py)
+cancels a spoken response and confirms truncation over the WebSocket.
+It requires no audio devices: because it plays no audio, it reports zero heard milliseconds.
+A real player must report its actual playback position.
+The separate [sync REST example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_read_generated_audio.py)
+reads an existing generated-audio artifact and optionally saves it to a new output file.
+It requires the stored item ID from REST and a deployment that persists unheard audio.
+
+### Voice Agent campaigns (preview)
+
+The [campaign sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_campaign.py)
+create an outbound campaign scheduled for the next day, wait for preparation, then cancel
+and delete the sample campaign. They use `.beta.voice_agents.telephony` and the SDK's
+automatic long-running-operation polling, including operation-guarded final reads and
+conditional cancellation/deletion with fresh ETags.
+
+Use an existing voice agent, an outbound-capable telephony connection, and phone numbers
+you have permission to use. Creation authorizes dialing; if execution is interrupted before
+cancellation, the campaign may place calls at its scheduled time. The samples preserve the
+existing agent and connection.
+
+### Voice Agent GPT-Live (preview)
+
+Use `.beta.voice_agents.live` for GPT-Live sessions and `.beta.voice_agents.live_conversations`
+for their stored conversations. Realtime uses separate clients and agent definitions.
+
+**Get started**
+
+1. Install the sample dependencies:
+
+```powershell
+pip install "azure-ai-projects[voice]" azure-identity python-dotenv
+```
+
+2. Set `FOUNDRY_PROJECT_ENDPOINT` and `FOUNDRY_VOICE_AGENT_MODEL` in your environment or `.env`.
+   The model value must be your GPT-Live **deployment name**, not a model catalog ID.
+3. Choose an example below and follow its `USAGE` instructions. Samples authenticate with
+   `DefaultAzureCredential` and opt in to preview features.
+
+**Choose an example**
+
+| Task | Example | Additional settings |
+|---|---|---|
+| Open, update, and close a session | [Async connection](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_connection_async.py) | None |
+| Send text messages | [Async text](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_text_conversation_async.py) | `FOUNDRY_MODEL_NAME` for the Responses backend |
+| Run a local function tool | [Async function tool](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_function_tool_async.py) | `FOUNDRY_MODEL_NAME` for the Responses backend |
+| Ask a same-project prompt agent a spoken question | [Async managed agent](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_managed_agent_async.py) | `FOUNDRY_MODEL_NAME` for the prompt agent |
+| Send a WAV file or use a microphone | [Async audio](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_audio_conversation_async.py) | None; a spoken question is included |
+| Read a stored conversation and download audio | [Sync REST readback](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_read_conversation.py) | Optional existing conversation and agent IDs |
+
+**Inputs and cleanup**
+
+- Audio examples use the included `audio/question.wav`; no input-path setting or audio device
+  is needed. It asks, "What is two plus two? Please ask the backend agent to answer my question."
+  To use your own **PCM16, mono, 24-kHz WAV**, set `FOUNDRY_VOICE_AUDIO_INPUT_PATH`.
+  The managed-agent example accepts up to 30 seconds and creates both agents in the same project.
+  For microphone mode, install `pyaudio` and set `USE_MICROPHONE = True`.
+- For multiple text turns, set `TEXT_PROMPTS` in the text example. The examples delete only
+  resources they create; existing agents and conversations are never changed by REST readback.
+- To read an existing stored conversation, set `FOUNDRY_VOICE_AGENT_NAME` and
+  `FOUNDRY_VOICE_CONVERSATION_ID`. Use the ID from `session.started.conversation_id`, not
+  `session.id`, after a session with `store=True`. Without an ID, the REST example creates
+  and cleans up its own greeting conversation.
+- Audio is not saved by default. `SAVE_AUDIO = True` saves replies in the audio example;
+  REST downloads use a unique temporary folder. These files contain conversation content;
+  remove them when finished. Customer-storage (BYOS) audio requires your own storage credentials.
+
+**Session notes**
+
+- Wait for `session.started` before sending commands. Foundry starts the session automatically.
+  To finish, send `session.close` and wait for `session.closed`; Live has no `response.cancel`.
+- Keep input audio paced while waiting for context updates. The connection example sends
+  silent frames for this purpose; it needs no microphone.
+- Responses commands require a Responses backend. Foundry handles managed-agent delegation;
+  the client must not answer those requests itself. Session updates cannot change the saved
+  delegation target, frontend model, or audio format.
+- Printed backend text is not proof that speech finished. Audio examples wait for three
+  quiet seconds, so a long pause can end capture early. Unsupported REST routes return HTTP 404.
 
 ## Client-side tracing
 
 See [Add client-side tracing to Foundry agents (preview)](https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side?tabs=python).
+The same global Foundry tracing configuration applies to Voice Agents REST and realtime tracing.
 
 **Important:** GenAI tracing instrumentation is an experimental preview feature. Spans, attributes, and events may be modified in future versions. 
 
@@ -231,7 +364,7 @@ Operation returned an invalid status 'Unauthorized'
 
 ### Logging
 
-The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). The logs include HTTP request and response headers and body, which are often useful when troubleshooting or reporting an issue to Microsoft.
+The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). Logs can include request, response, and transport details that are useful when troubleshooting or reporting an issue to Microsoft.
 
 #### Default console logging
 
@@ -261,13 +394,21 @@ openai_logger.setLevel(logging.DEBUG)
 openai_logger.propagate = False
 openai_logger.addHandler(handler)
 
+# Optional: Voice Agent Realtime WebSocket transport logger.
+# For GPT Live, use "azure.ai.projects.live" instead.
+voice_logger = logging.getLogger("azure.ai.projects.realtime")
+voice_logger.setLevel(logging.DEBUG)
+voice_logger.propagate = False
+voice_logger.addHandler(handler)
 
 # Optional: change the default logging format. Here we add a timestamp.
-#formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
-#handler.setFormatter(formatter)
+# formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
+# handler.setFormatter(formatter)
 ```
 
-By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, add `logging_enable=True` to the client constructor:
+The `azure` logger includes logs from `azure-ai-projects` and `azure-core`, including Voice Agent WebSocket transport logs. The dedicated OpenAI and Voice Agent loggers shown above can be used when you want only those transport logs. At `DEBUG` level, the Voice Agent logger records connection and close events and the type and byte count of each event sent or received. It does not log event payloads, URL query strings, request headers, or authentication tokens.
+
+By default, logs redact URL query values, some HTTP request and response headers (including `Authorization`), and request and response payloads. To create HTTP pipeline logs without redaction, add `logging_enable=True` to the client constructor:
 
 ```python
 project_client = AIProjectClient(
@@ -279,7 +420,7 @@ project_client = AIProjectClient(
 
 Note that the log level must be set to `logging.DEBUG` (see above code). Logs will be redacted with any other log level.
 
-See the logging samples in the `samples/logs/` folder for complete end-to-end examples, including console logging, file logging, and OpenAI transport logging.
+See the logging samples in the `samples/logs/` folder for complete end-to-end examples, including console logging, file logging, OpenAI transport logging, and Voice Agent realtime logging.
 
 Be sure to protect non-redacted logs to avoid compromising security.
 

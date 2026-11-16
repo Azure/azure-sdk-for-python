@@ -16,6 +16,7 @@ if TYPE_CHECKING:
         ActiveDirectoryStatus,
         ActualRansomwareProtectionState,
         ApplicationType,
+        AsyncDirectoryDeleteStatus,
         AvsDataStore,
         BackupType,
         BindAuthenticationLevel,
@@ -56,6 +57,7 @@ if TYPE_CHECKING:
         EncryptionType,
         EndpointType,
         Exclude,
+        ExternalConnectionSetupState,
         ExternalReplicationSetupStatus,
         FileAccessLogs,
         GlobalFileLockingState,
@@ -71,6 +73,7 @@ if TYPE_CHECKING:
         NetAppProvisioningState,
         NetworkFeatures,
         OnCertificateConflictAction,
+        OriginVolume,
         PolicyStatus,
         ProtocolTypes,
         QosType,
@@ -84,6 +87,7 @@ if TYPE_CHECKING:
         SmbAccessBasedEnumeration,
         SmbEncryptionState,
         SmbNonBrowsable,
+        SmbOplocks,
         SnapshotDirectoryVisibility,
         SnapshotUsage,
         VolumeLanguage,
@@ -114,6 +118,30 @@ class AccountEncryption(TypedDict, total=False):
     keyVaultProperties: "KeyVaultProperties"
     """Properties provided by KeVault. Applicable if keySource is 'Microsoft.KeyVault'."""
     identity: "EncryptionIdentity"
+    """Identity used to authenticate to KeyVault. Applicable if keySource is 'Microsoft.KeyVault'."""
+
+
+class AccountEncryptionPatch(TypedDict, total=False):
+    """Encryption settings for PATCH operations (no default values).
+
+    :ivar keySource: The encryption keySource (provider). Possible values (case-insensitive):
+     Microsoft.NetApp, Microsoft.KeyVault. Known values are: "Microsoft.NetApp" and
+     "Microsoft.KeyVault".
+    :vartype keySource: Union[str, "KeySource"]
+    :ivar keyVaultProperties: Properties provided by KeVault. Applicable if keySource is
+     'Microsoft.KeyVault'.
+    :vartype keyVaultProperties: "KeyVaultPropertiesPatch"
+    :ivar identity: Identity used to authenticate to KeyVault. Applicable if keySource is
+     'Microsoft.KeyVault'.
+    :vartype identity: "EncryptionIdentityPatch"
+    """
+
+    keySource: Union[str, "KeySource"]
+    """The encryption keySource (provider). Possible values (case-insensitive):  Microsoft.NetApp,
+     Microsoft.KeyVault. Known values are: \"Microsoft.NetApp\" and \"Microsoft.KeyVault\"."""
+    keyVaultProperties: "KeyVaultPropertiesPatch"
+    """Properties provided by KeVault. Applicable if keySource is 'Microsoft.KeyVault'."""
+    identity: "EncryptionIdentityPatch"
     """Identity used to authenticate to KeyVault. Applicable if keySource is 'Microsoft.KeyVault'."""
 
 
@@ -164,9 +192,9 @@ class AccountPropertiesPatch(TypedDict, total=False):
     """NetApp account patch properties.
 
     :ivar activeDirectories: Active Directories.
-    :vartype activeDirectories: list["ActiveDirectory"]
+    :vartype activeDirectories: list["ActiveDirectoryPatch"]
     :ivar encryption: Encryption settings.
-    :vartype encryption: "AccountEncryption"
+    :vartype encryption: "AccountEncryptionPatch"
     :ivar nfsV4IDDomain: Domain for NFSv4 user ID mapping. This property will be set for all NetApp
      accounts in the subscription and region and only affect non ldap NFSv4 volumes.
     :vartype nfsV4IDDomain: str
@@ -176,9 +204,9 @@ class AccountPropertiesPatch(TypedDict, total=False):
     :vartype ldapConfiguration: "LdapConfigurationPatch"
     """
 
-    activeDirectories: list["ActiveDirectory"]
+    activeDirectories: list["ActiveDirectoryPatch"]
     """Active Directories."""
-    encryption: "AccountEncryption"
+    encryption: "AccountEncryptionPatch"
     """Encryption settings."""
     nfsV4IDDomain: Optional[str]
     """Domain for NFSv4 user ID mapping. This property will be set for all NetApp accounts in the
@@ -435,8 +463,8 @@ class ActiveDirectoryConfigProperties(TypedDict, total=False):
     :ivar activeDirectoryStatus: Status of the Active Directory. Known values are: "Created",
      "InUse", "Deleted", "Error", and "Updating".
     :vartype activeDirectoryStatus: Union[str, "ActiveDirectoryStatus"]
-    :ivar provisioningState: Azure lifecycle management. Known values are: "Accepted", "Creating",
-     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :ivar provisioningState: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
     :vartype provisioningState: Union[str, "NetAppProvisioningState"]
     :ivar domain: Name of the Active Directory domain. Required.
     :vartype domain: str
@@ -469,8 +497,8 @@ class ActiveDirectoryConfigProperties(TypedDict, total=False):
     """Status of the Active Directory. Known values are: \"Created\", \"InUse\", \"Deleted\",
      \"Error\", and \"Updating\"."""
     provisioningState: Union[str, "NetAppProvisioningState"]
-    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
     domain: Required[str]
     """Name of the Active Directory domain. Required."""
     secretPassword: Required["SecretPassword"]
@@ -550,6 +578,141 @@ class ActiveDirectoryConfigUpdateProperties(TypedDict, total=False):
     """Name of the Active Directory domain."""
     secretPassword: "SecretPassword"
     """Access password from Azure KeyVault Secrets to connect Active Directory."""
+
+
+class ActiveDirectoryPatch(TypedDict, total=False):
+    """Active Directory settings for PATCH operations (no default values).
+
+    :ivar activeDirectoryId: Id of the Active Directory.
+    :vartype activeDirectoryId: str
+    :ivar username: A domain user account with permission to create machine accounts.
+    :vartype username: str
+    :ivar password: Plain text password of Active Directory domain administrator, value is masked
+     in the response.
+    :vartype password: str
+    :ivar domain: Name of the Active Directory domain.
+    :vartype domain: str
+    :ivar dns: Comma separated list of DNS server IP addresses (IPv4 only) for the Active Directory
+     domain.
+    :vartype dns: str
+    :ivar smbServerName: NetBIOS name of the SMB server. This name will be registered as a computer
+     account in the AD and used to mount volumes.
+    :vartype smbServerName: str
+    :ivar organizationalUnit: The Organizational Unit (OU) within the Windows Active Directory.
+    :vartype organizationalUnit: str
+    :ivar site: The Active Directory site the service will limit Domain Controller discovery to.
+    :vartype site: str
+    :ivar backupOperators: Users to be added to the Built-in Backup Operator active directory
+     group. A list of unique usernames without domain specifier.
+    :vartype backupOperators: list[str]
+    :ivar administrators: Users to be added to the Built-in Administrators active directory group.
+     A list of unique usernames without domain specifier.
+    :vartype administrators: list[str]
+    :ivar kdcIP: kdc server IP address for the active directory machine. This optional parameter is
+     used only while creating kerberos volume.
+    :vartype kdcIP: str
+    :ivar adName: Name of the active directory machine. This optional parameter is used only while
+     creating kerberos volume.
+    :vartype adName: str
+    :ivar serverRootCACertificate: When LDAP over SSL/TLS is enabled, the LDAP client is required
+     to have base64 encoded Active Directory Certificate Service's self-signed root CA certificate,
+     this optional parameter is used only for dual protocol with LDAP user-mapping volumes.
+    :vartype serverRootCACertificate: str
+    :ivar aesEncryption: If enabled, AES encryption will be enabled for SMB communication.
+    :vartype aesEncryption: bool
+    :ivar ldapSigning: Specifies whether or not the LDAP traffic needs to be signed.
+    :vartype ldapSigning: bool
+    :ivar securityOperators: Domain Users in the Active directory to be given SeSecurityPrivilege
+     privilege (Needed for SMB Continuously available shares for SQL). A list of unique usernames
+     without domain specifier.
+    :vartype securityOperators: list[str]
+    :ivar ldapOverTLS: Specifies whether or not the LDAP traffic needs to be secured via TLS.
+    :vartype ldapOverTLS: bool
+    :ivar allowLocalNfsUsersWithLdap: If enabled, NFS client local users can also (in addition to
+     LDAP users) access the NFS volumes.
+    :vartype allowLocalNfsUsersWithLdap: bool
+    :ivar encryptDCConnections: If enabled, Traffic between the SMB server to Domain Controller
+     (DC) will be encrypted.
+    :vartype encryptDCConnections: bool
+    :ivar ldapSearchScope: LDAP Search scope options.
+    :vartype ldapSearchScope: "LdapSearchScopeOpt"
+    :ivar preferredServersForLdapClient: Comma separated list of IPv4 addresses of preferred
+     servers for LDAP client. At most two comma separated IPv4 addresses can be passed.
+    :vartype preferredServersForLdapClient: str
+    """
+
+    activeDirectoryId: Optional[str]
+    """Id of the Active Directory."""
+    username: str
+    """A domain user account with permission to create machine accounts."""
+    password: str
+    """Plain text password of Active Directory domain administrator, value is masked in the response."""
+    domain: str
+    """Name of the Active Directory domain."""
+    dns: str
+    """Comma separated list of DNS server IP addresses (IPv4 only) for the Active Directory domain."""
+    smbServerName: str
+    """NetBIOS name of the SMB server. This name will be registered as a computer account in the AD
+     and used to mount volumes."""
+    organizationalUnit: str
+    """The Organizational Unit (OU) within the Windows Active Directory."""
+    site: str
+    """The Active Directory site the service will limit Domain Controller discovery to."""
+    backupOperators: list[str]
+    """Users to be added to the Built-in Backup Operator active directory group. A list of unique
+     usernames without domain specifier."""
+    administrators: list[str]
+    """Users to be added to the Built-in Administrators active directory group. A list of unique
+     usernames without domain specifier."""
+    kdcIP: str
+    """kdc server IP address for the active directory machine. This optional parameter is used only
+     while creating kerberos volume."""
+    adName: str
+    """Name of the active directory machine. This optional parameter is used only while creating
+     kerberos volume."""
+    serverRootCACertificate: str
+    """When LDAP over SSL/TLS is enabled, the LDAP client is required to have base64 encoded Active
+     Directory Certificate Service's self-signed root CA certificate, this optional parameter is
+     used only for dual protocol with LDAP user-mapping volumes."""
+    aesEncryption: bool
+    """If enabled, AES encryption will be enabled for SMB communication."""
+    ldapSigning: bool
+    """Specifies whether or not the LDAP traffic needs to be signed."""
+    securityOperators: list[str]
+    """Domain Users in the Active directory to be given SeSecurityPrivilege privilege (Needed for SMB
+     Continuously available shares for SQL). A list of unique usernames without domain specifier."""
+    ldapOverTLS: bool
+    """Specifies whether or not the LDAP traffic needs to be secured via TLS."""
+    allowLocalNfsUsersWithLdap: bool
+    """If enabled, NFS client local users can also (in addition to LDAP users) access the NFS volumes."""
+    encryptDCConnections: bool
+    """If enabled, Traffic between the SMB server to Domain Controller (DC) will be encrypted."""
+    ldapSearchScope: "LdapSearchScopeOpt"
+    """LDAP Search scope options."""
+    preferredServersForLdapClient: str
+    """Comma separated list of IPv4 addresses of preferred servers for LDAP client. At most two comma
+     separated IPv4 addresses can be passed."""
+
+
+class AsyncDirectoryDelete(TypedDict, total=False):
+    """Async Directory Delete configuration for the volume.
+
+    :ivar status: Specifies whether Async Directory Delete is enabled for the volume. Known values
+     are: "Enabled" and "Disabled".
+    :vartype status: Union[str, "AsyncDirectoryDeleteStatus"]
+    :ivar trashBinName: The name of the Trash bin folder for deleted files. Max length of 255. Must
+     contain at least one alphanumeric character (A-Z, a-z, 0-9) and may include dots (.),
+     underscores (_), and hyphens (-).
+    :vartype trashBinName: str
+    """
+
+    status: Union[str, "AsyncDirectoryDeleteStatus"]
+    """Specifies whether Async Directory Delete is enabled for the volume. Known values are:
+     \"Enabled\" and \"Disabled\"."""
+    trashBinName: str
+    """The name of the Trash bin folder for deleted files. Max length of 255. Must contain at least
+     one alphanumeric character (A-Z, a-z, 0-9) and may include dots (.), underscores (_), and
+     hyphens (-)."""
 
 
 class AuthorizeRequest(TypedDict, total=False):
@@ -1047,8 +1210,8 @@ class BucketPatchProperties(TypedDict, total=False):
      user's uid and gid. For Windows, this is the user's username. Note that the Unix and Windows
      user details are mutually exclusive, meaning one or other must be supplied, but not both.
     :vartype fileSystemUser: "FileSystemUser"
-    :ivar provisioningState: Provisioning state of the resource. Known values are: "Accepted",
-     "Creating", "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
     :vartype provisioningState: Union[str, "NetAppProvisioningState"]
     :ivar server: Properties of the server managing the lifecycle of volume buckets.
     :vartype server: "BucketServerPatchProperties"
@@ -1076,8 +1239,8 @@ class BucketPatchProperties(TypedDict, total=False):
      Windows, this is the user's username. Note that the Unix and Windows user details are mutually
      exclusive, meaning one or other must be supplied, but not both."""
     provisioningState: Union[str, "NetAppProvisioningState"]
-    """Provisioning state of the resource. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
     server: "BucketServerPatchProperties"
     """Properties of the server managing the lifecycle of volume buckets."""
     permissions: Union[str, "BucketPatchPermissions"]
@@ -1109,8 +1272,8 @@ class BucketProperties(TypedDict, total=False):
      user's uid and gid. For Windows, this is the user's username. Note that the Unix and Windows
      user details are mutually exclusive, meaning one or other must be supplied, but not both.
     :vartype fileSystemUser: "FileSystemUser"
-    :ivar provisioningState: Provisioning state of the resource. Known values are: "Accepted",
-     "Creating", "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :ivar provisioningState: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
     :vartype provisioningState: Union[str, "NetAppProvisioningState"]
     :ivar status: The bucket credentials status. There states:
 
@@ -1149,8 +1312,8 @@ class BucketProperties(TypedDict, total=False):
      Windows, this is the user's username. Note that the Unix and Windows user details are mutually
      exclusive, meaning one or other must be supplied, but not both."""
     provisioningState: Union[str, "NetAppProvisioningState"]
-    """Provisioning state of the resource. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
     status: Union[str, "CredentialsStatus"]
     """The bucket credentials status. There states:
      
@@ -1836,16 +1999,16 @@ class ElasticAccount(TrackedResource):
 class ElasticAccountProperties(TypedDict, total=False):
     """NetApp elastic account properties.
 
-    :ivar provisioningState: Azure lifecycle management. Known values are: "Accepted", "Creating",
-     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :ivar provisioningState: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
     :vartype provisioningState: Union[str, "NetAppProvisioningState"]
     :ivar encryption: Encryption settings.
     :vartype encryption: "ElasticEncryption"
     """
 
     provisioningState: Union[str, "NetAppProvisioningState"]
-    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
     encryption: "ElasticEncryption"
     """Encryption settings."""
 
@@ -1941,8 +2104,8 @@ class ElasticBackupPolicy(TrackedResource):
 class ElasticBackupPolicyProperties(TypedDict, total=False):
     """Elastic Backup Policy properties.
 
-    :ivar provisioningState: Azure lifecycle management. Known values are: "Accepted", "Creating",
-     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :ivar provisioningState: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
     :vartype provisioningState: Union[str, "NetAppProvisioningState"]
     :ivar dailyBackupsToKeep: Daily backups count to keep.
     :vartype dailyBackupsToKeep: int
@@ -1958,8 +2121,8 @@ class ElasticBackupPolicyProperties(TypedDict, total=False):
     """
 
     provisioningState: Union[str, "NetAppProvisioningState"]
-    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
     dailyBackupsToKeep: int
     """Daily backups count to keep."""
     weeklyBackupsToKeep: int
@@ -2022,8 +2185,8 @@ class ElasticBackupProperties(TypedDict, total=False):
     :vartype snapshotCreationDate: str
     :ivar completionDate: The completion date of the backup.
     :vartype completionDate: str
-    :ivar provisioningState: Azure lifecycle management. Known values are: "Accepted", "Creating",
-     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :ivar provisioningState: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
     :vartype provisioningState: Union[str, "NetAppProvisioningState"]
     :ivar size: Size of backup in bytes.
     :vartype size: int
@@ -2057,8 +2220,8 @@ class ElasticBackupProperties(TypedDict, total=False):
     completionDate: str
     """The completion date of the backup."""
     provisioningState: Union[str, "NetAppProvisioningState"]
-    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
     size: int
     """Size of backup in bytes."""
     label: str
@@ -2121,14 +2284,14 @@ class ElasticBackupVault(TrackedResource):
 class ElasticBackupVaultProperties(TypedDict, total=False):
     """Elastic Backup Vault properties.
 
-    :ivar provisioningState: Azure lifecycle management. Known values are: "Accepted", "Creating",
-     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :ivar provisioningState: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
     :vartype provisioningState: Union[str, "NetAppProvisioningState"]
     """
 
     provisioningState: Union[str, "NetAppProvisioningState"]
-    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
 
 
 class ElasticBackupVaultUpdate(TypedDict, total=False):
@@ -2192,8 +2355,8 @@ class ElasticCapacityPoolProperties(TypedDict, total=False):
     :vartype size: int
     :ivar serviceLevel: The service level of the elastic capacity pool. Required. "ZoneRedundant"
     :vartype serviceLevel: Union[str, "ElasticServiceLevel"]
-    :ivar provisioningState: Azure lifecycle management. Known values are: "Accepted", "Creating",
-     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :ivar provisioningState: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
     :vartype provisioningState: Union[str, "NetAppProvisioningState"]
     :ivar encryption: Encryption settings.
     :vartype encryption: "ElasticEncryptionConfiguration"
@@ -2221,8 +2384,8 @@ class ElasticCapacityPoolProperties(TypedDict, total=False):
     serviceLevel: Required[Union[str, "ElasticServiceLevel"]]
     """The service level of the elastic capacity pool. Required. \"ZoneRedundant\""""
     provisioningState: Union[str, "NetAppProvisioningState"]
-    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
     encryption: "ElasticEncryptionConfiguration"
     """Encryption settings."""
     totalThroughputMibps: float
@@ -2606,8 +2769,8 @@ class ElasticSnapshotPolicyProperties(TypedDict, total=False):
     :ivar policyStatus: Configures if the snapshot policy is enabled on the volumes connected to
      the policy. Known values are: "Enabled" and "Disabled".
     :vartype policyStatus: Union[str, "PolicyStatus"]
-    :ivar provisioningState: Azure lifecycle management. Known values are: "Accepted", "Creating",
-     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :ivar provisioningState: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
     :vartype provisioningState: Union[str, "NetAppProvisioningState"]
     """
 
@@ -2623,8 +2786,8 @@ class ElasticSnapshotPolicyProperties(TypedDict, total=False):
     """Configures if the snapshot policy is enabled on the volumes connected to the policy. Known
      values are: \"Enabled\" and \"Disabled\"."""
     provisioningState: Union[str, "NetAppProvisioningState"]
-    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
 
 
 class ElasticSnapshotPolicyUpdate(TypedDict, total=False):
@@ -2699,14 +2862,14 @@ class ElasticSnapshotPolicyWeeklySchedule(TypedDict, total=False):
 class ElasticSnapshotProperties(TypedDict, total=False):
     """Elastic Snapshot properties.
 
-    :ivar provisioningState: Azure lifecycle management. Known values are: "Accepted", "Creating",
-     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :ivar provisioningState: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
     :vartype provisioningState: Union[str, "NetAppProvisioningState"]
     """
 
     provisioningState: Union[str, "NetAppProvisioningState"]
-    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
 
 
 class ElasticVolume(TrackedResource):
@@ -2814,8 +2977,8 @@ class ElasticVolumeProperties(TypedDict, total=False):
     :vartype exportPolicy: "ElasticExportPolicy"
     :ivar protocolTypes: Set of support protocol types for the elastic volume. Required.
     :vartype protocolTypes: list[Union[str, "ElasticProtocolType"]]
-    :ivar provisioningState: Azure lifecycle management. Known values are: "Accepted", "Creating",
-     "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :ivar provisioningState: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
     :vartype provisioningState: Union[str, "NetAppProvisioningState"]
     :ivar availabilityStatus: Current availability status of the resource. Known values are:
      "Online" and "Offline".
@@ -2851,8 +3014,8 @@ class ElasticVolumeProperties(TypedDict, total=False):
     protocolTypes: Required[list[Union[str, "ElasticProtocolType"]]]
     """Set of support protocol types for the elastic volume. Required."""
     provisioningState: Union[str, "NetAppProvisioningState"]
-    """Azure lifecycle management. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
     availabilityStatus: Union[str, "ElasticResourceAvailabilityStatus"]
     """Current availability status of the resource. Known values are: \"Online\" and \"Offline\"."""
     snapshotResourceId: str
@@ -2960,6 +3123,26 @@ class EncryptionIdentity(TypedDict, total=False):
 
     principalId: str
     """The principal ID (object ID) of the identity used to authenticate with key vault. Read-only."""
+    userAssignedIdentity: str
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault.
+     Applicable if identity.type has 'UserAssigned'. It should match key of
+     identity.userAssignedIdentities."""
+    federatedClientId: str
+    """ClientId of the multi-tenant Entra ID Application. Used to access cross-tenant keyvaults."""
+
+
+class EncryptionIdentityPatch(TypedDict, total=False):
+    """Identity used to authenticate with key vault for PATCH operations.
+
+    :ivar userAssignedIdentity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault. Applicable if identity.type has 'UserAssigned'. It should match
+     key of identity.userAssignedIdentities.
+    :vartype userAssignedIdentity: str
+    :ivar federatedClientId: ClientId of the multi-tenant Entra ID Application. Used to access
+     cross-tenant keyvaults.
+    :vartype federatedClientId: str
+    """
+
     userAssignedIdentity: str
     """The ARM resource identifier of the user assigned identity used to authenticate with key vault.
      Applicable if identity.type has 'UserAssigned'. It should match key of
@@ -3170,6 +3353,240 @@ class ExportPolicyRule(TypedDict, total=False):
      ownership of files that they own. Known values are: \"Restricted\" and \"Unrestricted\"."""
 
 
+class ExternalCacheConnection(TrackedResource):
+    """External Cache Connection resource, representing a cache connection relationship between
+    External and Azure NetApp Files volumes.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ExternalCacheConnectionProperties"
+    """
+
+    properties: "ExternalCacheConnectionProperties"
+    """The resource-specific properties for this resource."""
+
+
+class ExternalCacheConnectionProperties(TypedDict, total=False):
+    """External Cache Connection properties.
+
+    :ivar provisioningState: Current status of the operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioningState: Union[str, "NetAppProvisioningState"]
+    :ivar originVolumeResourceId: Origin volume resource ID, the ANF volume that acts as the origin
+     for the cache connection. Required.
+    :vartype originVolumeResourceId: str
+    :ivar externalCacheName: Name of the cache associated with this connection. Required.
+    :vartype externalCacheName: str
+    :ivar externalSvmResourceId: External SVM resource ID, the external storage virtual machine
+     associated with this cache connection. Required.
+    :vartype externalSvmResourceId: str
+    :ivar clusterPeerSubnetResourceId: The Azure Resource URI for a delegated subnet used for
+     cluster peering.
+    :vartype clusterPeerSubnetResourceId: str
+    :ivar clusterPeerResourceId: Resource ID of the cluster peer.
+    :vartype clusterPeerResourceId: str
+    :ivar svmPeerResourceId: Resource ID of the SVM peer.
+    :vartype svmPeerResourceId: str
+    :ivar setupInformation: Setup information for the external cache connection.
+    :vartype setupInformation: "SetupInformation"
+    """
+
+    provisioningState: Union[str, "NetAppProvisioningState"]
+    """Current status of the operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+    originVolumeResourceId: Required[str]
+    """Origin volume resource ID, the ANF volume that acts as the origin for the cache connection.
+     Required."""
+    externalCacheName: Required[str]
+    """Name of the cache associated with this connection. Required."""
+    externalSvmResourceId: Required[str]
+    """External SVM resource ID, the external storage virtual machine associated with this cache
+     connection. Required."""
+    clusterPeerSubnetResourceId: str
+    """The Azure Resource URI for a delegated subnet used for cluster peering."""
+    clusterPeerResourceId: str
+    """Resource ID of the cluster peer."""
+    svmPeerResourceId: str
+    """Resource ID of the SVM peer."""
+    setupInformation: "SetupInformation"
+    """Setup information for the external cache connection."""
+
+
+class ExternalCacheConnectionTagsUpdate(TypedDict, total=False):
+    """The type used for updating tags in ExternalCacheConnection resources.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+
+
+class ExternalCluster(TrackedResource):
+    """External Cluster resource, representing a cluster on an external NetApp ONTAP system.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ExternalClusterProperties"
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: "ManagedServiceIdentity"
+    """
+
+    properties: "ExternalClusterProperties"
+    """The resource-specific properties for this resource."""
+    identity: "ManagedServiceIdentity"
+    """The managed service identities assigned to this resource."""
+
+
+class ExternalClusterProperties(TypedDict, total=False):
+    """External Cluster properties.
+
+    :ivar provisioningState: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioningState: Union[str, "NetAppProvisioningState"]
+    :ivar interclusterLifsIpAddresses: Intercluster LIFs, external cluster IPs for cluster peer
+     connection. Required.
+    :vartype interclusterLifsIpAddresses: list[str]
+    :ivar clusterPeerPassphraseKeyVault: Key Vault authentication configuration for cluster peering
+     passphrase. Required.
+    :vartype clusterPeerPassphraseKeyVault: "KeyVaultClusterPeerPassphraseProperties"
+    """
+
+    provisioningState: Union[str, "NetAppProvisioningState"]
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+    interclusterLifsIpAddresses: Required[list[str]]
+    """Intercluster LIFs, external cluster IPs for cluster peer connection. Required."""
+    clusterPeerPassphraseKeyVault: Required["KeyVaultClusterPeerPassphraseProperties"]
+    """Key Vault authentication configuration for cluster peering passphrase. Required."""
+
+
+class ExternalClusterUpdate(TypedDict, total=False):
+    """The type used for update operations of the ExternalCluster.
+
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: "ManagedServiceIdentity"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ExternalClusterUpdateProperties"
+    """
+
+    identity: "ManagedServiceIdentity"
+    """The managed service identities assigned to this resource."""
+    tags: dict[str, str]
+    """Resource tags."""
+    properties: "ExternalClusterUpdateProperties"
+    """The resource-specific properties for this resource."""
+
+
+class ExternalClusterUpdateProperties(TypedDict, total=False):
+    """The updatable properties of the ExternalCluster.
+
+    :ivar interclusterLifsIpAddresses: Intercluster LIFs, external cluster IPs for cluster peer
+     connection.
+    :vartype interclusterLifsIpAddresses: list[str]
+    :ivar clusterPeerPassphraseKeyVault: Key Vault authentication configuration for cluster peering
+     passphrase.
+    :vartype clusterPeerPassphraseKeyVault: "KeyVaultClusterPeerPassphrasePatchProperties"
+    """
+
+    interclusterLifsIpAddresses: list[str]
+    """Intercluster LIFs, external cluster IPs for cluster peer connection."""
+    clusterPeerPassphraseKeyVault: "KeyVaultClusterPeerPassphrasePatchProperties"
+    """Key Vault authentication configuration for cluster peering passphrase."""
+
+
+class ExternalSvm(TrackedResource):
+    """External SVM (Storage Virtual Machine, Vserver) resource, representing an SVM on an external
+    NetApp ONTAP system.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "ExternalSvmProperties"
+    """
+
+    properties: "ExternalSvmProperties"
+    """The resource-specific properties for this resource."""
+
+
+class ExternalSvmProperties(TypedDict, total=False):
+    """External SVM properties.
+
+    :ivar provisioningState: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioningState: Union[str, "NetAppProvisioningState"]
+    :ivar ontapSvmName: Name of the external ONTAP SVM (different from Azure resource name). Must
+     be unique across the cluster. Required.
+    :vartype ontapSvmName: str
+    :ivar svmPeerResourceIds: Resource IDs of associated SVM Peer relationships.
+    :vartype svmPeerResourceIds: list[str]
+    """
+
+    provisioningState: Union[str, "NetAppProvisioningState"]
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+    ontapSvmName: Required[str]
+    """Name of the external ONTAP SVM (different from Azure resource name). Must be unique across the
+     cluster. Required."""
+    svmPeerResourceIds: list[str]
+    """Resource IDs of associated SVM Peer relationships."""
+
+
+class ExternalSvmTagsUpdate(TypedDict, total=False):
+    """The type used for updating tags in ExternalSvm resources.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+
+
 class FilePathAvailabilityRequest(TypedDict, total=False):
     """File path availability request content - availability is based on the name and the subnetId.
 
@@ -3241,6 +3658,54 @@ class HourlySchedule(TypedDict, total=False):
     """Resource size in bytes, current storage usage for the volume in bytes."""
 
 
+class KeyVaultClusterPeerPassphrasePatchProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Key Vault authentication properties for PATCH operations.
+
+    :ivar keyVaultUri: The Azure Key Vault URI where the passphrase for cluster peering handshake
+     is stored.
+    :vartype keyVaultUri: str
+    :ivar secretName: The name of the secret in Azure Key Vault. Passphrase for cluster peering
+     handshake is stored in this secret.
+    :vartype secretName: str
+    :ivar userAssignedIdentityResourceId: The ARM resource identifier of the user assigned identity
+     used to authenticate with key vault. If not provided, system-assigned identity will be used.
+    :vartype userAssignedIdentityResourceId: str
+    """
+
+    keyVaultUri: str
+    """The Azure Key Vault URI where the passphrase for cluster peering handshake is stored."""
+    secretName: str
+    """The name of the secret in Azure Key Vault. Passphrase for cluster peering handshake is stored
+     in this secret."""
+    userAssignedIdentityResourceId: str
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault.
+     If not provided, system-assigned identity will be used."""
+
+
+class KeyVaultClusterPeerPassphraseProperties(TypedDict, total=False):
+    """Key Vault authentication properties.
+
+    :ivar keyVaultUri: The Azure Key Vault URI where the passphrase for cluster peering handshake
+     is stored. Required.
+    :vartype keyVaultUri: str
+    :ivar secretName: The name of the secret in Azure Key Vault. Passphrase for cluster peering
+     handshake is stored in this secret. Required.
+    :vartype secretName: str
+    :ivar userAssignedIdentityResourceId: The ARM resource identifier of the user assigned identity
+     used to authenticate with key vault. If not provided, system-assigned identity will be used.
+    :vartype userAssignedIdentityResourceId: str
+    """
+
+    keyVaultUri: Required[str]
+    """The Azure Key Vault URI where the passphrase for cluster peering handshake is stored. Required."""
+    secretName: Required[str]
+    """The name of the secret in Azure Key Vault. Passphrase for cluster peering handshake is stored
+     in this secret. Required."""
+    userAssignedIdentityResourceId: str
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault.
+     If not provided, system-assigned identity will be used."""
+
+
 class KeyVaultPrivateEndpoint(TypedDict, total=False):
     """Pairs of virtual network ID and private endpoint ID. Every virtual network that has volumes
     encrypted with customer-managed keys needs its own key vault private endpoint.
@@ -3284,6 +3749,25 @@ class KeyVaultProperties(TypedDict, total=False):
     status: Union[str, "KeyVaultStatus"]
     """Status of the KeyVault connection. Known values are: \"Created\", \"InUse\", \"Deleted\",
      \"Error\", and \"Updating\"."""
+
+
+class KeyVaultPropertiesPatch(TypedDict, total=False):
+    """Properties of key vault for PATCH operations (no required properties).
+
+    :ivar keyVaultUri: The Uri of KeyVault.
+    :vartype keyVaultUri: str
+    :ivar keyName: The name of KeyVault key.
+    :vartype keyName: str
+    :ivar keyVaultResourceId: The resource ID of KeyVault.
+    :vartype keyVaultResourceId: str
+    """
+
+    keyVaultUri: str
+    """The Uri of KeyVault."""
+    keyName: str
+    """The name of KeyVault key."""
+    keyVaultResourceId: str
+    """The resource ID of KeyVault."""
 
 
 class LdapConfiguration(TypedDict, total=False):
@@ -4118,6 +4602,27 @@ class SecretPasswordKeyVaultProperties(TypedDict, total=False):
     """The name of KeyVault password secret. Required."""
 
 
+class SetupInformation(TypedDict, total=False):
+    """Setup Information for External Connection Setups.
+
+    :ivar setupStatus: Setup status indicating the current step in the setup process. Known values
+     are: "ClusterPeerPending", "VServerPeerRequired", and "NoActionRequired".
+    :vartype setupStatus: Union[str, "ExternalConnectionSetupState"]
+    :ivar statusInformation: Additional status information.
+    :vartype statusInformation: str
+    :ivar command: Command to execute.
+    :vartype command: str
+    """
+
+    setupStatus: Union[str, "ExternalConnectionSetupState"]
+    """Setup status indicating the current step in the setup process. Known values are:
+     \"ClusterPeerPending\", \"VServerPeerRequired\", and \"NoActionRequired\"."""
+    statusInformation: str
+    """Additional status information."""
+    command: str
+    """Command to execute."""
+
+
 class SmbSettings(TypedDict, total=False):
     """SMB settings for the cache.
 
@@ -4125,12 +4630,14 @@ class SmbSettings(TypedDict, total=False):
      SMB/DualProtocol cache. Known values are: "Disabled" and "Enabled".
     :vartype smbEncryption: Union[str, "SmbEncryptionState"]
     :ivar smbAccessBasedEnumeration: Enables access-based enumeration share property for SMB
-     Shares. Only applicable for SMB/DualProtocol volume. Known values are: "Disabled" and
-     "Enabled".
+     Shares. Only applicable for SMB/DualProtocol cache. Known values are: "Disabled" and "Enabled".
     :vartype smbAccessBasedEnumeration: Union[str, "SmbAccessBasedEnumeration"]
     :ivar smbNonBrowsable: Enables non-browsable property for SMB Shares. Only applicable for
-     SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
+     SMB/DualProtocol cache. Known values are: "Disabled" and "Enabled".
     :vartype smbNonBrowsable: Union[str, "SmbNonBrowsable"]
+    :ivar smbOplocks: Enables or disables SMB opportunistic lock property for SMB Shares. Only
+     applicable for SMB/DualProtocol cache. Known values are: "Disabled" and "Enabled".
+    :vartype smbOplocks: Union[str, "SmbOplocks"]
     """
 
     smbEncryption: Union[str, "SmbEncryptionState"]
@@ -4138,10 +4645,13 @@ class SmbSettings(TypedDict, total=False):
      values are: \"Disabled\" and \"Enabled\"."""
     smbAccessBasedEnumeration: Union[str, "SmbAccessBasedEnumeration"]
     """Enables access-based enumeration share property for SMB Shares. Only applicable for
-     SMB/DualProtocol volume. Known values are: \"Disabled\" and \"Enabled\"."""
+     SMB/DualProtocol cache. Known values are: \"Disabled\" and \"Enabled\"."""
     smbNonBrowsable: Union[str, "SmbNonBrowsable"]
-    """Enables non-browsable property for SMB Shares. Only applicable for SMB/DualProtocol volume.
+    """Enables non-browsable property for SMB Shares. Only applicable for SMB/DualProtocol cache.
      Known values are: \"Disabled\" and \"Enabled\"."""
+    smbOplocks: Union[str, "SmbOplocks"]
+    """Enables or disables SMB opportunistic lock property for SMB Shares. Only applicable for
+     SMB/DualProtocol cache. Known values are: \"Disabled\" and \"Enabled\"."""
 
 
 class Snapshot(ProxyResource):
@@ -4647,6 +5157,19 @@ class VolumeGroupVolumeProperties(TypedDict, total=False):
     """Volume properties. Required."""
 
 
+class VolumeNamespaceProperties(TypedDict, total=False):
+    """Geographic namespace properties for a volume.
+
+    :ivar originVolume: Indicates whether this volume is designated as an origin for cache volumes.
+     Known values are: "Disabled" and "Enabled".
+    :vartype originVolume: Union[str, "OriginVolume"]
+    """
+
+    originVolume: Union[str, "OriginVolume"]
+    """Indicates whether this volume is designated as an origin for cache volumes. Known values are:
+     \"Disabled\" and \"Enabled\"."""
+
+
 class VolumePatch(TypedDict, total=False):
     """Volume patch resource.
 
@@ -4678,6 +5201,19 @@ class VolumePatch(TypedDict, total=False):
     """Patchable volume properties."""
 
 
+class VolumePatchNamespaceProperties(TypedDict, total=False):
+    """Geographic namespace properties for a volume patch operation.
+
+    :ivar originVolume: Indicates whether this volume is designated as an origin for cache volumes.
+     Known values are: "Disabled" and "Enabled".
+    :vartype originVolume: Union[str, "OriginVolume"]
+    """
+
+    originVolume: Union[str, "OriginVolume"]
+    """Indicates whether this volume is designated as an origin for cache volumes. Known values are:
+     \"Disabled\" and \"Enabled\"."""
+
+
 class VolumePatchProperties(TypedDict, total=False):
     """Patchable volume properties.
 
@@ -4704,6 +5240,8 @@ class VolumePatchProperties(TypedDict, total=False):
     :vartype dataProtection: "VolumePatchPropertiesDataProtection"
     :ivar isDefaultQuotaEnabled: Specifies if default quota is enabled for the volume.
     :vartype isDefaultQuotaEnabled: bool
+    :ivar asyncDirectoryDelete: Async Directory Delete configuration for the volume.
+    :vartype asyncDirectoryDelete: "AsyncDirectoryDelete"
     :ivar defaultUserQuotaInKiBs: Default user quota for volume in KiBs. If isDefaultQuotaEnabled
      is set, the minimum value of 4 KiBs applies .
     :vartype defaultUserQuotaInKiBs: int
@@ -4747,6 +5285,11 @@ class VolumePatchProperties(TypedDict, total=False):
     :ivar smbNonBrowsable: Enables non-browsable property for SMB Shares. Only applicable for
      SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
     :vartype smbNonBrowsable: Union[str, "SmbNonBrowsable"]
+    :ivar smbOplocks: Enables or disables SMB opportunistic lock property for SMB Shares. Only
+     applicable for SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
+    :vartype smbOplocks: Union[str, "SmbOplocks"]
+    :ivar geoNamespaceProperties: Geographic namespace properties for this volume.
+    :vartype geoNamespaceProperties: "VolumePatchNamespaceProperties"
     """
 
     serviceLevel: Union[str, "ServiceLevel"]
@@ -4771,6 +5314,8 @@ class VolumePatchProperties(TypedDict, total=False):
     """DataProtection type volumes include an object containing details of the replication."""
     isDefaultQuotaEnabled: bool
     """Specifies if default quota is enabled for the volume."""
+    asyncDirectoryDelete: "AsyncDirectoryDelete"
+    """Async Directory Delete configuration for the volume."""
     defaultUserQuotaInKiBs: int
     """Default user quota for volume in KiBs. If isDefaultQuotaEnabled is set, the minimum value of 4
      KiBs applies ."""
@@ -4809,6 +5354,11 @@ class VolumePatchProperties(TypedDict, total=False):
     smbNonBrowsable: Union[str, "SmbNonBrowsable"]
     """Enables non-browsable property for SMB Shares. Only applicable for SMB/DualProtocol volume.
      Known values are: \"Disabled\" and \"Enabled\"."""
+    smbOplocks: Union[str, "SmbOplocks"]
+    """Enables or disables SMB opportunistic lock property for SMB Shares. Only applicable for
+     SMB/DualProtocol volume. Known values are: \"Disabled\" and \"Enabled\"."""
+    geoNamespaceProperties: "VolumePatchNamespaceProperties"
+    """Geographic namespace properties for this volume."""
 
 
 class VolumePatchPropertiesDataProtection(TypedDict, total=False):
@@ -4931,6 +5481,9 @@ class VolumeProperties(TypedDict, total=False):
     :ivar smbContinuouslyAvailable: Enables continuously available share property for smb volume.
      Only applicable for SMB volume.
     :vartype smbContinuouslyAvailable: bool
+    :ivar smbOplocks: Enables or disables SMB opportunistic lock property for SMB Shares. Only
+     applicable for SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
+    :vartype smbOplocks: Union[str, "SmbOplocks"]
     :ivar throughputMibps: Maximum throughput in MiB/s that can be achieved by this volume and this
      will be accepted as input only for manual qosType volume.
     :vartype throughputMibps: float
@@ -4994,6 +5547,8 @@ class VolumeProperties(TypedDict, total=False):
     :vartype dataStoreResourceId: list[str]
     :ivar isDefaultQuotaEnabled: Specifies if default quota is enabled for the volume.
     :vartype isDefaultQuotaEnabled: bool
+    :ivar asyncDirectoryDelete: Async Directory Delete configuration for the volume.
+    :vartype asyncDirectoryDelete: "AsyncDirectoryDelete"
     :ivar defaultUserQuotaInKiBs: Default user quota for volume in KiBs. If isDefaultQuotaEnabled
      is set, the minimum value of 4 KiBs applies .
     :vartype defaultUserQuotaInKiBs: int
@@ -5053,6 +5608,8 @@ class VolumeProperties(TypedDict, total=False):
     :ivar breakthroughMode: Specifies whether the volume operates in Breakthrough Mode. Known
      values are: "Enabled" and "Disabled".
     :vartype breakthroughMode: Union[str, "BreakthroughMode"]
+    :ivar geoNamespaceProperties: Geographic namespace properties for this volume.
+    :vartype geoNamespaceProperties: "VolumeNamespaceProperties"
     """
 
     fileSystemId: str
@@ -5133,6 +5690,9 @@ class VolumeProperties(TypedDict, total=False):
      Known values are: \"Disabled\" and \"Enabled\"."""
     smbContinuouslyAvailable: bool
     """Enables continuously available share property for smb volume. Only applicable for SMB volume."""
+    smbOplocks: Union[str, "SmbOplocks"]
+    """Enables or disables SMB opportunistic lock property for SMB Shares. Only applicable for
+     SMB/DualProtocol volume. Known values are: \"Disabled\" and \"Enabled\"."""
     throughputMibps: Optional[float]
     """Maximum throughput in MiB/s that can be achieved by this volume and this will be accepted as
      input only for manual qosType volume."""
@@ -5188,6 +5748,8 @@ class VolumeProperties(TypedDict, total=False):
     """Data store resource unique identifier."""
     isDefaultQuotaEnabled: bool
     """Specifies if default quota is enabled for the volume."""
+    asyncDirectoryDelete: "AsyncDirectoryDelete"
+    """Async Directory Delete configuration for the volume."""
     defaultUserQuotaInKiBs: int
     """Default user quota for volume in KiBs. If isDefaultQuotaEnabled is set, the minimum value of 4
      KiBs applies ."""
@@ -5247,6 +5809,8 @@ class VolumeProperties(TypedDict, total=False):
     breakthroughMode: Union[str, "BreakthroughMode"]
     """Specifies whether the volume operates in Breakthrough Mode. Known values are: \"Enabled\" and
      \"Disabled\"."""
+    geoNamespaceProperties: "VolumeNamespaceProperties"
+    """Geographic namespace properties for this volume."""
 
 
 class VolumePropertiesDataProtection(TypedDict, total=False):
@@ -5332,8 +5896,8 @@ class VolumeQuotaRulesProperties(TypedDict, total=False):
     """Volume Quota Rule properties.
 
     :ivar provisioningState: Gets the status of the VolumeQuotaRule at the time the operation was
-     called. Known values are: "Accepted", "Creating", "Patching", "Updating", "Deleting", "Moving",
-     "Failed", and "Succeeded".
+     called. Known values are: "Succeeded", "Failed", "Canceled", "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", and "Moving".
     :vartype provisioningState: Union[str, "NetAppProvisioningState"]
     :ivar quotaSizeInKiBs: Size of quota.
     :vartype quotaSizeInKiBs: int
@@ -5348,8 +5912,8 @@ class VolumeQuotaRulesProperties(TypedDict, total=False):
 
     provisioningState: Union[str, "NetAppProvisioningState"]
     """Gets the status of the VolumeQuotaRule at the time the operation was called. Known values are:
-     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", \"Moving\", \"Failed\",
-     and \"Succeeded\"."""
+     \"Succeeded\", \"Failed\", \"Canceled\", \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", and \"Moving\"."""
     quotaSizeInKiBs: int
     """Size of quota."""
     quotaType: Union[str, "QuotaType"]

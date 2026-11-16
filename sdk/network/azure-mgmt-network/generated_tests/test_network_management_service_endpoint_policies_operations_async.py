@@ -26,7 +26,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
         response = await self.client.service_endpoint_policies.get(
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2980,7 +2980,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2026-01-01",
+                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2994,7 +2994,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3007,7 +3007,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
             await self.client.service_endpoint_policies.begin_delete(
                 resource_group_name=resource_group.name,
                 service_endpoint_policy_name="str",
-                api_version="2026-01-01",
+                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -3019,7 +3019,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
     async def test_service_endpoint_policies_list_by_resource_group(self, resource_group):
         response = self.client.service_endpoint_policies.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -3029,7 +3029,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
     @recorded_by_proxy_async
     async def test_service_endpoint_policies_list(self, resource_group):
         response = self.client.service_endpoint_policies.list(
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

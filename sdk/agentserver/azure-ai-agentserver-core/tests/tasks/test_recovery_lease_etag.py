@@ -26,6 +26,7 @@ from pathlib import Path
 import pytest
 
 import azure.ai.agentserver.core.tasks._manager as mgr_mod
+from azure.ai.agentserver.core.tasks import TaskContext
 from azure.ai.agentserver.core.tasks._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.tasks._manager import TaskManager
 from azure.ai.agentserver.core.tasks._models import TaskCreateRequest, TaskPatchRequest
@@ -42,6 +43,17 @@ def _config_stub():
             "is_hosted": False,
         },
     )()
+
+
+def _recovery_manager(provider: LocalFileTaskProvider) -> TaskManager:
+    manager = TaskManager(config=_config_stub(), provider=provider)
+
+    async def reclaim_target(ctx: TaskContext[str]) -> str:
+        await ctx.shutdown.wait()
+        return ctx.input
+
+    manager.register_resume_callback("reclaim_target", reclaim_target)
+    return manager
 
 
 async def _seed_stale_in_progress_task(provider: LocalFileTaskProvider, task_id: str = "t-recover") -> None:
@@ -79,7 +91,7 @@ async def test_recovery_reclaim_refreshes_tracked_etag(tmp_path: Path) -> None:
     pre = await provider.get(task_id)
     assert pre is not None
 
-    manager = TaskManager(config=_config_stub(), provider=provider)
+    manager = _recovery_manager(provider)
     mgr_mod._manager = manager
     await manager.startup()
     try:
@@ -98,7 +110,7 @@ async def test_recovery_reclaim_refreshes_tracked_etag(tmp_path: Path) -> None:
             "renewal heartbeat would 412 and cancel recovery as 'lost ownership'"
         )
     finally:
-        await manager.shutdown()
+        await manager.shutdown(wait_for_workers=True)
         mgr_mod._manager = None
 
 
@@ -114,7 +126,7 @@ async def test_lease_renewal_after_recovery_does_not_412(tmp_path: Path) -> None
     task_id = "t-recover"
     await _seed_stale_in_progress_task(provider, task_id)
 
-    manager = TaskManager(config=_config_stub(), provider=provider)
+    manager = _recovery_manager(provider)
     mgr_mod._manager = manager
     await manager.startup()
     try:
@@ -133,5 +145,5 @@ async def test_lease_renewal_after_recovery_does_not_412(tmp_path: Path) -> None
         assert renewed.lease.instance_id == manager._instance_id  # noqa: SLF001
         assert manager._get_tracked_etag(task_id) == renewed.etag  # noqa: SLF001
     finally:
-        await manager.shutdown()
+        await manager.shutdown(wait_for_workers=True)
         mgr_mod._manager = None

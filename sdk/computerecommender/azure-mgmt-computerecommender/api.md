@@ -2,6 +2,7 @@
 namespace azure.mgmt.computerecommender
 
     class azure.mgmt.computerecommender.RecommenderMgmtClient: implements ContextManager 
+        compute_placement_scores: ComputePlacementScoresOperations
         operations: Operations
         sku_mix_placement_scores: SkuMixPlacementScoresOperations
         spot_placement_scores: SpotPlacementScoresOperations
@@ -31,6 +32,7 @@ namespace azure.mgmt.computerecommender
 namespace azure.mgmt.computerecommender.aio
 
     class azure.mgmt.computerecommender.aio.RecommenderMgmtClient: implements AsyncContextManager 
+        compute_placement_scores: ComputePlacementScoresOperations
         operations: Operations
         sku_mix_placement_scores: SkuMixPlacementScoresOperations
         spot_placement_scores: SpotPlacementScoresOperations
@@ -59,6 +61,53 @@ namespace azure.mgmt.computerecommender.aio
 
 namespace azure.mgmt.computerecommender.aio.operations
 
+    class azure.mgmt.computerecommender.aio.operations.ComputePlacementScoresOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-05-preview', params_added_on={'2026-10-05-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-10-05-preview'])
+        async def get(
+                self, 
+                location: str, 
+                **kwargs: Any
+            ) -> ComputePlacementScoresBase: ...
+
+        @overload
+        async def post(
+                self, 
+                location: str, 
+                compute_placement_scores_input: ComputePlacementScoresInput, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ComputePlacementScoresResponse: ...
+
+        @overload
+        async def post(
+                self, 
+                location: str, 
+                compute_placement_scores_input: ComputePlacementScoresInput, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ComputePlacementScoresResponse: ...
+
+        @overload
+        async def post(
+                self, 
+                location: str, 
+                compute_placement_scores_input: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ComputePlacementScoresResponse: ...
+
+
     class azure.mgmt.computerecommender.aio.operations.Operations:
 
         def __init__(
@@ -80,7 +129,7 @@ namespace azure.mgmt.computerecommender.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-05-preview', params_added_on={'2026-05-05-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-05-05-preview', '2026-09-05-preview'])
+        @api_version_validation(method_added_on='2026-05-05-preview', params_added_on={'2026-05-05-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-05-05-preview', '2026-09-05-preview', '2026-10-05-preview'])
         async def get(
                 self, 
                 location: str, 
@@ -131,7 +180,7 @@ namespace azure.mgmt.computerecommender.aio.operations
                 self, 
                 location: str, 
                 **kwargs: Any
-            ) -> ComputeDiagnosticBase: ...
+            ) -> SpotPlacementScoresBase: ...
 
         @overload
         async def post(
@@ -170,10 +219,10 @@ namespace azure.mgmt.computerecommender.models
         INTERNAL = "Internal"
 
 
-    class azure.mgmt.computerecommender.models.ComputeDiagnosticBase(ProxyResource):
+    class azure.mgmt.computerecommender.models.ComputePlacementScoresBase(ProxyResource):
         id: str
         name: str
-        properties: Optional[DiagnosticProperties]
+        properties: Optional[PlacementScoresProperties]
         system_data: SystemData
         type: str
 
@@ -181,7 +230,49 @@ namespace azure.mgmt.computerecommender.models
         def __init__(
                 self, 
                 *, 
-                properties: Optional[DiagnosticProperties] = ...
+                properties: Optional[PlacementScoresProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.computerecommender.models.ComputePlacementScoresInput(_Model):
+        availability_zones: Optional[bool]
+        desired_count: Optional[int]
+        desired_locations: Optional[list[str]]
+        desired_sizes: list[ResourceSize]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                availability_zones: Optional[bool] = ..., 
+                desired_count: Optional[int] = ..., 
+                desired_locations: Optional[list[str]] = ..., 
+                desired_sizes: list[ResourceSize]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.computerecommender.models.ComputePlacementScoresResponse(_Model):
+        availability_zones: Optional[bool]
+        desired_count: Optional[int]
+        desired_locations: Optional[list[str]]
+        desired_sizes: Optional[list[ResourceSize]]
+        placement_scores: Optional[list[PlacementScore]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                availability_zones: Optional[bool] = ..., 
+                desired_count: Optional[int] = ..., 
+                desired_locations: Optional[list[str]] = ..., 
+                desired_sizes: Optional[list[ResourceSize]] = ..., 
+                placement_scores: Optional[list[PlacementScore]] = ...
             ) -> None: ...
 
         @overload
@@ -193,20 +284,6 @@ namespace azure.mgmt.computerecommender.models
         KEY = "Key"
         MANAGED_IDENTITY = "ManagedIdentity"
         USER = "User"
-
-
-    class azure.mgmt.computerecommender.models.DiagnosticProperties(_Model):
-        supported_resource_types: Optional[list[str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                supported_resource_types: Optional[list[str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.computerecommender.models.ErrorAdditionalInfo(_Model):
@@ -269,9 +346,9 @@ namespace azure.mgmt.computerecommender.models
 
     class azure.mgmt.computerecommender.models.PlacementScore(_Model):
         availability_zone: Optional[str]
-        is_quota_available: Optional[bool]
+        placement_preference: Optional[int]
         region: Optional[str]
-        score: Optional[str]
+        score: Optional[Union[str, PlacementScoreValue]]
         sku: Optional[str]
 
         @overload
@@ -279,10 +356,33 @@ namespace azure.mgmt.computerecommender.models
                 self, 
                 *, 
                 availability_zone: Optional[str] = ..., 
-                is_quota_available: Optional[bool] = ..., 
+                placement_preference: Optional[int] = ..., 
                 region: Optional[str] = ..., 
-                score: Optional[str] = ..., 
+                score: Optional[Union[str, PlacementScoreValue]] = ..., 
                 sku: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.computerecommender.models.PlacementScoreValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DATA_NOT_FOUND_OR_STALE = "DataNotFoundOrStale"
+        HIGH = "High"
+        INSUFFICIENT_QUOTA = "InsufficientQuota"
+        LOW = "Low"
+        MEDIUM = "Medium"
+        RESTRICTED_SKU_NOT_AVAILABLE = "RestrictedSkuNotAvailable"
+
+
+    class azure.mgmt.computerecommender.models.PlacementScoresProperties(_Model):
+        supported_resource_types: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                supported_resource_types: Optional[list[str]] = ...
             ) -> None: ...
 
         @overload
@@ -591,11 +691,29 @@ namespace azure.mgmt.computerecommender.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.computerecommender.models.SpotPlacementScoresBase(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[PlacementScoresProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[PlacementScoresProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.computerecommender.models.SpotPlacementScoresInput(_Model):
         availability_zones: Optional[bool]
         desired_count: Optional[int]
         desired_locations: Optional[list[str]]
-        desired_sizes: Optional[list[ResourceSize]]
+        desired_sizes: list[ResourceSize]
 
         @overload
         def __init__(
@@ -604,7 +722,7 @@ namespace azure.mgmt.computerecommender.models
                 availability_zones: Optional[bool] = ..., 
                 desired_count: Optional[int] = ..., 
                 desired_locations: Optional[list[str]] = ..., 
-                desired_sizes: Optional[list[ResourceSize]] = ...
+                desired_sizes: list[ResourceSize]
             ) -> None: ...
 
         @overload
@@ -659,6 +777,53 @@ namespace azure.mgmt.computerecommender.models
 
 namespace azure.mgmt.computerecommender.operations
 
+    class azure.mgmt.computerecommender.operations.ComputePlacementScoresOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-05-preview', params_added_on={'2026-10-05-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-10-05-preview'])
+        def get(
+                self, 
+                location: str, 
+                **kwargs: Any
+            ) -> ComputePlacementScoresBase: ...
+
+        @overload
+        def post(
+                self, 
+                location: str, 
+                compute_placement_scores_input: ComputePlacementScoresInput, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ComputePlacementScoresResponse: ...
+
+        @overload
+        def post(
+                self, 
+                location: str, 
+                compute_placement_scores_input: ComputePlacementScoresInput, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ComputePlacementScoresResponse: ...
+
+        @overload
+        def post(
+                self, 
+                location: str, 
+                compute_placement_scores_input: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ComputePlacementScoresResponse: ...
+
+
     class azure.mgmt.computerecommender.operations.Operations:
 
         def __init__(
@@ -680,7 +845,7 @@ namespace azure.mgmt.computerecommender.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-05-preview', params_added_on={'2026-05-05-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-05-05-preview', '2026-09-05-preview'])
+        @api_version_validation(method_added_on='2026-05-05-preview', params_added_on={'2026-05-05-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-05-05-preview', '2026-09-05-preview', '2026-10-05-preview'])
         def get(
                 self, 
                 location: str, 
@@ -731,7 +896,7 @@ namespace azure.mgmt.computerecommender.operations
                 self, 
                 location: str, 
                 **kwargs: Any
-            ) -> ComputeDiagnosticBase: ...
+            ) -> SpotPlacementScoresBase: ...
 
         @overload
         def post(
@@ -765,6 +930,16 @@ namespace azure.mgmt.computerecommender.operations
 
 
 namespace azure.mgmt.computerecommender.types
+
+    class azure.mgmt.computerecommender.types.ComputePlacementScoresInput(TypedDict, total=False):
+        key "availabilityZones": bool
+        key "desiredCount": int
+        key "desiredSizes": Required[list[ResourceSize]]
+        availabilityZones: bool
+        desiredCount: int
+        desiredLocations: list[str]
+        desiredSizes: list[ResourceSize]
+
 
     class azure.mgmt.computerecommender.types.ResourceSize(TypedDict, total=False):
         key "sku": str
@@ -831,6 +1006,7 @@ namespace azure.mgmt.computerecommender.types
     class azure.mgmt.computerecommender.types.SpotPlacementScoresInput(TypedDict, total=False):
         key "availabilityZones": bool
         key "desiredCount": int
+        key "desiredSizes": Required[list[ResourceSize]]
         availabilityZones: bool
         desiredCount: int
         desiredLocations: list[str]

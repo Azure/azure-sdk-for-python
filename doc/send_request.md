@@ -166,7 +166,7 @@ with DefaultAzureCredential() as credential:
 
 ### Errors
 
-All errors thrown by `.raise_for_error()` are [exceptions defined in `azure-core`][azure_core_exceptions].
+All errors thrown by `.raise_for_status()` are [exceptions defined in `azure-core`][azure_core_exceptions].
 
 ### Logging
 

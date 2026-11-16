@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-15/networkSecurityPerimeterConfiguration/NetworkSecurityPerimeterConfigurationGet.json
+# x-ms-original-file: 2026-09-01/networkSecurityPerimeterConfiguration/NetworkSecurityPerimeterConfigurationGet.json
 if __name__ == "__main__":
     main()

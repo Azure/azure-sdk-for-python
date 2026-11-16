@@ -83,6 +83,7 @@ from ._credentials import (
     UsernamePasswordConfiguration,
 )
 from ._data_import.data_import import DataImport
+from ._data.resolved_data_path import ResolvedDataPath
 from ._data_import.schedule import ImportDataSchedule
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
 from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
@@ -291,6 +292,7 @@ __all__ = [
     "Endpoint",
     "OnlineDeployment",
     "Data",
+    "ResolvedDataPath",
     "KubernetesOnlineEndpoint",
     "ManagedOnlineEndpoint",
     "KubernetesOnlineDeployment",

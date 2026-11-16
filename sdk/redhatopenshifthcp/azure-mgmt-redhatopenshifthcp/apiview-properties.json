@@ -2,10 +2,13 @@
     "CrossLanguagePackageId": "Microsoft.RedHatOpenShift",
     "CrossLanguageDefinitionId": {
         "azure.mgmt.redhatopenshifthcp.models.ApiProfile": "Microsoft.RedHatOpenShift.ApiProfile",
+        "azure.mgmt.redhatopenshifthcp.models.ClusterActiveVersion": "Microsoft.RedHatOpenShift.ClusterActiveVersion",
         "azure.mgmt.redhatopenshifthcp.models.ClusterAutoscalingProfile": "Microsoft.RedHatOpenShift.ClusterAutoscalingProfile",
         "azure.mgmt.redhatopenshifthcp.models.ClusterImageRegistryProfile": "Microsoft.RedHatOpenShift.ClusterImageRegistryProfile",
+        "azure.mgmt.redhatopenshifthcp.models.ClusterResourceStatus": "Microsoft.RedHatOpenShift.ClusterResourceStatus",
         "azure.mgmt.redhatopenshifthcp.models.Condition": "Microsoft.RedHatOpenShift.Condition",
         "azure.mgmt.redhatopenshifthcp.models.ConsoleProfile": "Microsoft.RedHatOpenShift.ConsoleProfile",
+        "azure.mgmt.redhatopenshifthcp.models.ContainerRegistryProfile": "Microsoft.RedHatOpenShift.ContainerRegistryProfile",
         "azure.mgmt.redhatopenshifthcp.models.CustomerManagedEncryptionProfile": "Microsoft.RedHatOpenShift.CustomerManagedEncryptionProfile",
         "azure.mgmt.redhatopenshifthcp.models.DnsProfile": "Microsoft.RedHatOpenShift.DnsProfile",
         "azure.mgmt.redhatopenshifthcp.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
@@ -20,6 +23,7 @@
         "azure.mgmt.redhatopenshifthcp.models.ExternalAuthClientComponentProfile": "Microsoft.RedHatOpenShift.ExternalAuthClientComponentProfile",
         "azure.mgmt.redhatopenshifthcp.models.ExternalAuthClientProfile": "Microsoft.RedHatOpenShift.ExternalAuthClientProfile",
         "azure.mgmt.redhatopenshifthcp.models.ExternalAuthProperties": "Microsoft.RedHatOpenShift.ExternalAuthProperties",
+        "azure.mgmt.redhatopenshifthcp.models.ExternalAuthResourceStatus": "Microsoft.RedHatOpenShift.ExternalAuthResourceStatus",
         "azure.mgmt.redhatopenshifthcp.models.GroupClaimProfile": "Microsoft.RedHatOpenShift.GroupClaimProfile",
         "azure.mgmt.redhatopenshifthcp.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
         "azure.mgmt.redhatopenshifthcp.models.HcpOpenShiftCluster": "Microsoft.RedHatOpenShift.HcpOpenShiftCluster",
@@ -38,9 +42,11 @@
         "azure.mgmt.redhatopenshifthcp.models.ManagedServiceIdentity": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentity",
         "azure.mgmt.redhatopenshifthcp.models.NetworkProfile": "Microsoft.RedHatOpenShift.NetworkProfile",
         "azure.mgmt.redhatopenshifthcp.models.NodePool": "Microsoft.RedHatOpenShift.NodePool",
+        "azure.mgmt.redhatopenshifthcp.models.NodePoolActiveVersion": "Microsoft.RedHatOpenShift.NodePoolActiveVersion",
         "azure.mgmt.redhatopenshifthcp.models.NodePoolAutoScaling": "Microsoft.RedHatOpenShift.NodePoolAutoScaling",
         "azure.mgmt.redhatopenshifthcp.models.NodePoolPlatformProfile": "Microsoft.RedHatOpenShift.NodePoolPlatformProfile",
         "azure.mgmt.redhatopenshifthcp.models.NodePoolProperties": "Microsoft.RedHatOpenShift.NodePoolProperties",
+        "azure.mgmt.redhatopenshifthcp.models.NodePoolResourceStatus": "Microsoft.RedHatOpenShift.NodePoolResourceStatus",
         "azure.mgmt.redhatopenshifthcp.models.NodePoolVersionProfile": "Microsoft.RedHatOpenShift.NodePoolVersionProfile",
         "azure.mgmt.redhatopenshifthcp.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
         "azure.mgmt.redhatopenshifthcp.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
@@ -48,7 +54,6 @@
         "azure.mgmt.redhatopenshifthcp.models.OperatorsAuthenticationProfile": "Microsoft.RedHatOpenShift.OperatorsAuthenticationProfile",
         "azure.mgmt.redhatopenshifthcp.models.OsDiskProfile": "Microsoft.RedHatOpenShift.OsDiskProfile",
         "azure.mgmt.redhatopenshifthcp.models.PlatformProfile": "Microsoft.RedHatOpenShift.PlatformProfile",
-        "azure.mgmt.redhatopenshifthcp.models.ResourceStatus": "Microsoft.RedHatOpenShift.ResourceStatus",
         "azure.mgmt.redhatopenshifthcp.models.RoleDefinition": "Microsoft.RedHatOpenShift.RoleDefinition",
         "azure.mgmt.redhatopenshifthcp.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
         "azure.mgmt.redhatopenshifthcp.models.Taint": "Microsoft.RedHatOpenShift.Taint",
@@ -71,6 +76,7 @@
         "azure.mgmt.redhatopenshifthcp.models.EtcdDataEncryptionKeyManagementModeType": "Microsoft.RedHatOpenShift.EtcdDataEncryptionKeyManagementModeType",
         "azure.mgmt.redhatopenshifthcp.models.CustomerManagedEncryptionType": "Microsoft.RedHatOpenShift.CustomerManagedEncryptionType",
         "azure.mgmt.redhatopenshifthcp.models.KeyVaultVisibility": "Microsoft.RedHatOpenShift.KeyVaultVisibility",
+        "azure.mgmt.redhatopenshifthcp.models.KmsKeyVaultType": "Microsoft.RedHatOpenShift.KmsKeyVaultType",
         "azure.mgmt.redhatopenshifthcp.models.ClusterImageRegistryState": "Microsoft.RedHatOpenShift.ClusterImageRegistryState",
         "azure.mgmt.redhatopenshifthcp.models.ConditionType": "Microsoft.RedHatOpenShift.ConditionType",
         "azure.mgmt.redhatopenshifthcp.models.StatusType": "Microsoft.RedHatOpenShift.StatusType",
@@ -131,5 +137,5 @@
         "azure.mgmt.redhatopenshifthcp.operations.HcpOperatorIdentityRoleSetsOperations.get": "Microsoft.RedHatOpenShift.HcpOperatorIdentityRoleSets.get",
         "azure.mgmt.redhatopenshifthcp.aio.operations.HcpOperatorIdentityRoleSetsOperations.get": "Microsoft.RedHatOpenShift.HcpOperatorIdentityRoleSets.get"
     },
-    "CrossLanguageVersion": "1f776ff90d3f"
+    "CrossLanguageVersion": "06d177f774d6"
 }

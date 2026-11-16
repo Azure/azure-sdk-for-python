@@ -15,14 +15,10 @@ from typing import Any, TypeVar, overload
 
 from typing_extensions import ParamSpec, TypeGuard
 
-DOCSTRING_TEMPLATE = ".. note::    {0} {1}\n\n"
+DOCSTRING_TEMPLATE = ".. note::    {0}\n\n"
 DOCSTRING_DEFAULT_INDENTATION = 8
-EXPERIMENTAL_CLASS_MESSAGE = "This is an experimental class,"
-EXPERIMENTAL_METHOD_MESSAGE = "This is an experimental method,"
-EXPERIMENTAL_LINK_MESSAGE = (
-    "and may change at any time. Please see https://aka.ms/azure-ai-agentserver-experimental "
-    "for more information."
-)
+EXPERIMENTAL_CLASS_MESSAGE = "This is an experimental class, and may change at any time."
+EXPERIMENTAL_METHOD_MESSAGE = "This is an experimental method, and may change at any time."
 DISABLE_EXPERIMENTAL_WARNING_ENV_VAR = "AZURE_AI_AGENTSERVER_DISABLE_EXPERIMENTAL_WARNING"
 _EXPERIMENTAL_CACHE_KEY_ATTR = "_azure_agentserver_experimental_cache_key"
 _EXPERIMENTAL_MESSAGE_ATTR = "_azure_agentserver_experimental_message"
@@ -67,11 +63,11 @@ def experimental(wrapped: type[T] | Callable[P, T]) -> type[T] | Callable[P, T]:
 
 def _add_class_docstring(cls: type[T]) -> type[T]:
     cache_key = f"class:{cls.__module__}.{cls.__qualname__}"
-    message = f"Class {cls.__module__}.{cls.__qualname__}: {EXPERIMENTAL_CLASS_MESSAGE} {EXPERIMENTAL_LINK_MESSAGE}"
+    message = f"Class {cls.__module__}.{cls.__qualname__}: {EXPERIMENTAL_CLASS_MESSAGE}"
     setattr(cls, _EXPERIMENTAL_CACHE_KEY_ATTR, cache_key)
     setattr(cls, _EXPERIMENTAL_MESSAGE_ATTR, message)
 
-    doc_string = DOCSTRING_TEMPLATE.format(EXPERIMENTAL_CLASS_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
+    doc_string = DOCSTRING_TEMPLATE.format(EXPERIMENTAL_CLASS_MESSAGE)
     if cls.__doc__:
         cls.__doc__ = _add_note_to_docstring(cls.__doc__, doc_string)
     else:
@@ -121,7 +117,7 @@ def _add_async_function_docstring(
     :return: The wrapped coroutine function.
     :rtype: Callable[P, Coroutine[Any, Any, T]]
     """
-    doc_string = DOCSTRING_TEMPLATE.format(EXPERIMENTAL_METHOD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
+    doc_string = DOCSTRING_TEMPLATE.format(EXPERIMENTAL_METHOD_MESSAGE)
     if func.__doc__:
         func.__doc__ = _add_note_to_docstring(func.__doc__, doc_string)
     else:
@@ -130,10 +126,7 @@ def _add_async_function_docstring(
     @functools.wraps(func)
     async def wrapped(*args: P.args, **kwargs: P.kwargs) -> T:
         cache_key = f"function:{func.__module__}.{func.__qualname__}"
-        message = (
-            f"Method {func.__module__}.{func.__qualname__}: "
-            f"{EXPERIMENTAL_METHOD_MESSAGE} {EXPERIMENTAL_LINK_MESSAGE}"
-        )
+        message = f"Method {func.__module__}.{func.__qualname__}: {EXPERIMENTAL_METHOD_MESSAGE}"
         if not _should_skip_warning() and not _is_warning_cached(cache_key):
             module_logger.warning(message)
         return await func(*args, **kwargs)
@@ -142,7 +135,7 @@ def _add_async_function_docstring(
 
 
 def _add_function_docstring(func: Callable[P, T]) -> Callable[P, T]:
-    doc_string = DOCSTRING_TEMPLATE.format(EXPERIMENTAL_METHOD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
+    doc_string = DOCSTRING_TEMPLATE.format(EXPERIMENTAL_METHOD_MESSAGE)
     if func.__doc__:
         func.__doc__ = _add_note_to_docstring(func.__doc__, doc_string)
     else:
@@ -151,10 +144,7 @@ def _add_function_docstring(func: Callable[P, T]) -> Callable[P, T]:
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> T:
         cache_key = f"function:{func.__module__}.{func.__qualname__}"
-        message = (
-            f"Method {func.__module__}.{func.__qualname__}: "
-            f"{EXPERIMENTAL_METHOD_MESSAGE} {EXPERIMENTAL_LINK_MESSAGE}"
-        )
+        message = f"Method {func.__module__}.{func.__qualname__}: {EXPERIMENTAL_METHOD_MESSAGE}"
         if not _should_skip_warning() and not _is_warning_cached(cache_key):
             module_logger.warning(message)
         return func(*args, **kwargs)

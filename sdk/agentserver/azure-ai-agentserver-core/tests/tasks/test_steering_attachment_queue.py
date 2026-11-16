@@ -26,16 +26,19 @@ import pytest_asyncio
 
 from azure.ai.agentserver.core.tasks import TaskContext, task, multi_turn_task
 from azure.ai.agentserver.core.tasks._attachments import (
+    _FUNCTION_INPUT_KEY,
+    _INPUT_THRESHOLD_BYTES,
     _STEERING_INPUT_KEY_PREFIX,
     _STEERING_QUEUE_CAP,
     _STEERING_THRESHOLD_BYTES,
     _is_ref,
+    _read_input_value,
     _ref_key,
 )
 from azure.ai.agentserver.core.tasks._exceptions import SteeringQueueFull
 from azure.ai.agentserver.core.tasks._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.tasks._manager import TaskManager, set_task_manager
-from azure.ai.agentserver.core.tasks._models import TaskPatchRequest
+from azure.ai.agentserver.core.tasks._models import TaskInfo, TaskPatchRequest
 
 
 def _config_stub(session_id: str = "s018-steer-session"):
@@ -154,6 +157,65 @@ async def test_largesteering_input_promoted(manager_local: TaskManager) -> None:
 # --------------------------------------------------------------------------- #
 # Monotonic seq invariant — the user's key concern
 # --------------------------------------------------------------------------- #
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("size", [0, _STEERING_THRESHOLD_BYTES + 100, _INPUT_THRESHOLD_BYTES + 100])
+async def test_drain_persists_current_input_before_handler(
+    manager_local: TaskManager, monkeypatch: pytest.MonkeyPatch, size: int
+) -> None:
+    """The promoted turn is the persisted current input, in the same drain write."""
+    first_started = asyncio.Event()
+    second_started = asyncio.Event()
+    finish = asyncio.Event()
+    snapshots: list[TaskInfo] = []
+    drain_inputs: list[Any] = []
+    task_id = "t-steer-current-input"
+    second_input = {"turn": "second", "value": "x" * size}
+    original_update = manager_local.provider.update
+
+    async def capture_update(task_key: str, patch: TaskPatchRequest) -> TaskInfo:
+        if (patch.payload or {}).get("steering", {}).get("drain_in_progress"):
+            drain_inputs.append(_read_input_value((patch.payload or {}).get("input"), patch.attachments))
+        return await original_update(task_key, patch)
+
+    monkeypatch.setattr(manager_local.provider, "update", capture_update)
+
+    @multi_turn_task(name="t-steer-current-input", steerable=True)
+    async def runner(ctx: TaskContext[dict[str, Any]]) -> None:
+        if ctx.input["turn"] == "first":
+            first_started.set()
+            await ctx.cancel.wait()
+            return
+        info = await manager_local.provider.get(task_id)
+        assert info is not None
+        snapshots.append(info)
+        second_started.set()
+        await finish.wait()
+
+    try:
+        await runner.start(task_id=task_id, input={"turn": "first"})
+        await asyncio.wait_for(first_started.wait(), timeout=3)
+        queued = await runner.start(task_id=task_id, input=second_input)
+        assert queued.is_queued
+        await asyncio.wait_for(second_started.wait(), timeout=3)
+
+        assert drain_inputs == [second_input]
+        info = snapshots[0]
+        assert _read_input_value(info.payload["input"], info.attachments) == second_input
+        assert info.payload["steering"]["pending_inputs"] == []
+        assert not any(key.startswith(_STEERING_INPUT_KEY_PREFIX) for key in info.attachments or {})
+        if size > _INPUT_THRESHOLD_BYTES:
+            assert _is_ref(info.payload["input"])
+            assert _ref_key(info.payload["input"]) == _FUNCTION_INPUT_KEY
+            assert info.attachments is not None
+            assert info.attachments[_FUNCTION_INPUT_KEY] == second_input
+        else:
+            assert info.payload["input"] == second_input
+    finally:
+        finish.set()
+
+    await asyncio.wait_for(queued.result(), timeout=3)
 
 
 @pytest.mark.asyncio

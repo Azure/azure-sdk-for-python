@@ -37,7 +37,9 @@ def main():
         parameters={
             "identity": {"type": "None", "userAssignedIdentities": {"key2350": {}}},
             "properties": {
+                "deleteRetentionPolicy": {"policyState": "Enabled", "retentionPeriodDays": 14},
                 "encryption": "EncryptionAtRestWithPlatformKey",
+                "encryptionInTransit": True,
                 "encryptionProperties": {
                     "identity": {"userAssignedIdentity": "vgbeephfgecgg"},
                     "keyVaultProperties": {
@@ -55,6 +57,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/VolumeGroups_Create_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/VolumeGroups_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

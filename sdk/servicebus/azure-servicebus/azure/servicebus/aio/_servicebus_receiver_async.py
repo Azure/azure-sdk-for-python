@@ -20,6 +20,7 @@ from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
     CONSUMER_IDENTIFIER,
     DEFAULT_RECEIVE_WAIT_TIME_SECS,
+    DEFAULT_SERVER_TIMEOUT_MS,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_PEEK_OPERATION,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
@@ -559,7 +560,14 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             message.update(dead_letter_details)
 
         return await self._mgmt_request_response(
-            REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION, message, mgmt_handlers.default
+            REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
+            message,
+            mgmt_handlers.default,
+            timeout=(
+                self._config.try_timeout
+                if self._config.try_timeout is not None
+                else DEFAULT_SERVER_TIMEOUT_MS / 1000
+            ),
         )
 
     async def _renew_locks(self, *lock_tokens: str, timeout: Optional[float] = None) -> Any:

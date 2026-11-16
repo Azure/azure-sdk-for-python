@@ -44,7 +44,6 @@ from azure.storage.queue._encryption import (
 )
 from azure.storage.queue._shared import decode_base64_to_bytes
 
-
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = "encryptionqueue"
 # ------------------------------------------------------------------------------
