@@ -14,7 +14,10 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.identity import CredentialUnavailableError
-from azure.identity._credentials.github_actions import ACTIONS_ID_TOKEN_REQUEST_URL, ACTIONS_ID_TOKEN_REQUEST_TOKEN
+from azure.identity._credentials.github_actions import (
+    ACTIONS_ID_TOKEN_REQUEST_URL,
+    ACTIONS_ID_TOKEN_REQUEST_TOKEN,
+)
 from azure.identity._internal.aad_client_base import JWT_BEARER_ASSERTION
 from azure.identity.aio import ChainedTokenCredential, GitHubActionsCredential
 
@@ -38,14 +41,18 @@ def github_environment():
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
-@pytest.mark.parametrize("missing", [ACTIONS_ID_TOKEN_REQUEST_URL, ACTIONS_ID_TOKEN_REQUEST_TOKEN])
+@pytest.mark.parametrize(
+    "missing", [ACTIONS_ID_TOKEN_REQUEST_URL, ACTIONS_ID_TOKEN_REQUEST_TOKEN]
+)
 async def test_missing_github_environment(get_token_method, missing):
     credential = GitHubActionsCredential()
     os.environ.pop(missing)
     credential._client_assertion_credential = AsyncMock()
     with pytest.raises(CredentialUnavailableError, match=missing):
         await getattr(credential, get_token_method)("scope")
-    getattr(credential._client_assertion_credential, get_token_method).assert_not_awaited()
+    getattr(
+        credential._client_assertion_credential, get_token_method
+    ).assert_not_awaited()
 
 
 @pytest.mark.asyncio
@@ -54,7 +61,9 @@ async def test_delegation(get_token_method):
     credential = GitHubActionsCredential()
     credential._client_assertion_credential = AsyncMock()
     expected = (
-        AccessToken("access-token", 123) if get_token_method == "get_token" else AccessTokenInfo("access-token", 123)
+        AccessToken("access-token", 123)
+        if get_token_method == "get_token"
+        else AccessTokenInfo("access-token", 123)
     )
     method = getattr(credential._client_assertion_credential, get_token_method)
     method.return_value = expected
@@ -119,19 +128,26 @@ async def test_token_exchange_and_cache(get_token_method, use_context_manager):
             response.json = Mock(return_value={"value": "github-assertion"})
             return response
         assert request.method == "POST"
-        assert request.url == "https://login.microsoftonline.com/environment-tenant/oauth2/v2.0/token"
+        assert (
+            request.url
+            == "https://login.microsoftonline.com/environment-tenant/oauth2/v2.0/token"
+        )
         assert request.data["client_id"] == "environment-client"
         assert request.data["client_assertion"] == "github-assertion"
         assert request.data["client_assertion_type"] == JWT_BEARER_ASSERTION
         assert request.data["scope"] == "scope"
-        return mock_response(json_payload=build_aad_response(access_token="azure-token"))
+        return mock_response(
+            json_payload=build_aad_response(access_token="azure-token")
+        )
 
     transport = AsyncMock(send=AsyncMock(side_effect=send))
     credential = GitHubActionsCredential(transport=transport)
 
     async def get_tokens():
         for _ in range(2):
-            assert (await getattr(credential, get_token_method)("scope")).token == "azure-token"
+            assert (
+                await getattr(credential, get_token_method)("scope")
+            ).token == "azure-token"
 
     if use_context_manager:
         async with credential:
@@ -180,12 +196,24 @@ async def test_close():
 @pytest.mark.asyncio
 @pytest.mark.parametrize("status_code", [200, 401])
 @pytest.mark.parametrize("use_custom_transport", [False, True])
-async def test_real_transport_closes_after_oidc_request(status_code, use_custom_transport):
+async def test_real_transport_closes_after_oidc_request(
+    status_code, use_custom_transport
+):
     requests = []
 
     async def oidc_endpoint(request):
-        requests.append((request.method, request.headers.get("Authorization"), request.query.get("audience")))
-        payload = {"value": "github-assertion"} if status_code == 200 else {"error": "unauthorized"}
+        requests.append(
+            (
+                request.method,
+                request.headers.get("Authorization"),
+                request.query.get("audience"),
+            )
+        )
+        payload = (
+            {"value": "github-assertion"}
+            if status_code == 200
+            else {"error": "unauthorized"}
+        )
         return web.json_response(payload, status=status_code)
 
     app = web.Application()
@@ -213,12 +241,16 @@ async def test_real_transport_closes_after_oidc_request(status_code, use_custom_
                 return await credential._get_oidc_token()
 
         if status_code == 200:
-            assert await asyncio.wait_for(authenticate(), timeout=5) == "github-assertion"
+            assert (
+                await asyncio.wait_for(authenticate(), timeout=5) == "github-assertion"
+            )
         else:
             with pytest.raises(ClientAuthenticationError) as error:
                 await asyncio.wait_for(authenticate(), timeout=5)
             assert error.value.status_code == status_code
-        assert requests == [("GET", "Bearer request-token", "api://AzureADTokenExchange")]
+        assert requests == [
+            ("GET", "Bearer request-token", "api://AzureADTokenExchange")
+        ]
         assert session is not None and session.closed
         assert transport.session is None
     finally:
