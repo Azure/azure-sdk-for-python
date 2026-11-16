@@ -125,6 +125,10 @@ synchronize-version-metadata = true
 mypy = true
 pyright = false
 pylint = true
+# Windows ARM64 wheels are cross-compiled with a generated PyO3 config. This
+# tells that config to build the stable ABI (abi3) for Python 3.10 and newer,
+# matching pyo3's "abi3-py310" feature and requires-python.
+pyo3-abi3-minimum = "3.10"
 
 [tool.azure-sdk-conda]
 in_bundle = false

@@ -139,15 +139,38 @@ def test_change_feed_partition_range_id_parity(backend, asynchronous, partition_
                 assert outside
 
             async def exercise(target):
+                hooks = []
+
+                def inspect_page(headers, body):
+                    hooks.append((headers, body.get_response_headers()))
+
+                def check_page(pages):
+                    headers, body_headers = hooks[-1]
+                    assert headers["etag"] == body_headers["etag"]
+                    assert headers["etag"] != pages.continuation_token
+                    assert headers["x-ms-continuation"] == pages.continuation_token
+
                 async def collect(pages):
+                    rows = []
+                    previous_hooks = len(hooks)
                     if asynchronous:
-                        return [row async for page in pages async for row in page]
-                    return [row for page in pages for row in page]
+                        async for page in pages:
+                            assert len(hooks) == previous_hooks + 1
+                            check_page(pages)
+                            rows.extend([row async for row in page])
+                            previous_hooks = len(hooks)
+                    else:
+                        for page in pages:
+                            assert len(hooks) == previous_hooks + 1
+                            check_page(pages)
+                            rows.extend(page)
+                            previous_hooks = len(hooks)
+                    return rows
 
                 def pages(**kwargs):
                     with pytest.warns(DeprecationWarning, match="partition_key_range_id"):
                         return target.query_items_change_feed(
-                            partition_key_range_id=selected["id"], timeout=30, **kwargs
+                            partition_key_range_id=selected["id"], timeout=30, response_hook=inspect_page, **kwargs
                         ).by_page()
 
                 current = pages()
@@ -170,11 +193,12 @@ def test_change_feed_partition_range_id_parity(backend, asynchronous, partition_
                     for channel in ("keyword", "by_page"):
                         with pytest.warns(DeprecationWarning, match="partition_key_range_id"):
                             resumed = _pages(
-                                target, token, channel, size, partition_key_range_id=selected["id"]
+                                target, token, channel, size, partition_key_range_id=selected["id"],
+                                response_hook=inspect_page,
                             )
                         _assert_ids(await collect(resumed), {"doc2", "doc3"})
                 # The wrapper bookmark must also restore the ID without a new scope argument.
-                resumed = _pages(target, token, "keyword", 1)
+                resumed = _pages(target, token, "keyword", 1, response_hook=inspect_page)
                 _assert_ids(await collect(resumed), {"doc2", "doc3"})
                 beginning = pages(start_time="Beginning")
                 _assert_ids(await collect(beginning), {"doc1", "doc2", "doc3"})

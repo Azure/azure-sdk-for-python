@@ -449,8 +449,6 @@ class ChangeFeedPageState(FeedPageState):
     def finish(
         self, rows: list[dict[str, Any]], deadline: Optional[float], *, notify_hook: bool = True
     ) -> tuple[Optional[str], list[dict[str, Any]]]:
-        if self.token is not None:
-            self.accumulated.headers["etag"] = self.token
         result = super().finish(rows, deadline, notify_hook=notify_hook)
         self.done = not rows
         if self.done:

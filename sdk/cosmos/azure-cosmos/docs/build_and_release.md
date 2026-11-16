@@ -866,6 +866,12 @@ filename:
 | Windows | `azure\cosmos\_rust.pyd` |
 | Linux and macOS | `azure\cosmos\_rust.abi3.so` |
 
+In a development checkout, this compiled file is a build output, not source.
+The package `.gitignore` lists the extension names (`_rust*.pyd`,
+`_rust*.so`, `_rust*.dylib`) so git does not offer to commit them. The
+`_rust.pyi` file beside the extension is different: it is hand-written source
+and is committed (section 9 explains what it is for).
+
 Python can then import it with:
 
 ```python
@@ -1377,6 +1383,33 @@ development tools. For example:
 
 Forgetting a data file can break a feature even when importing the SDK works.
 
+### `_rust.pyi` is written by hand
+
+Nothing generates `_rust.pyi` from the Rust code. When a binding function is
+renamed or gains a parameter, someone must update the stub too. Type checkers
+and editors trust the stub, so a stale one hides the mistake until the call
+runs.
+
+The stub declares only part of the extension: runtime creation and settings,
+acquiring and releasing a driver handle, the item batch calls, and four
+classes (`_CosmosRuntime`, `_DriverHandle`, `_ItemFeedCursor`,
+`_AsyncOperationProbe`). Every other export, such as `create_item` or
+`query_items`, falls through the stub's `__getattr__` and is treated as `Any`,
+so type checkers do not check those calls.
+
+The unit test `test_type_stub_matches_the_installed_rust_module_rust`
+(`tests\common\test_naming_contracts_unit.py`) reads the stub that sits next
+to the installed extension and compares each declared name with the real
+module:
+
+| Declared in the stub | Must match in the extension |
+|---|---|
+| Function | Name, and each parameter's name, kind (positional or keyword-only), and default |
+| Class | Name, properties, and constructor parameters |
+
+`_AsyncOperationProbe` exists only in `test-probes` builds (section 7), so the
+test checks it only when it is present.
+
 ### The extension is one compiled file for this target
 
 On Windows, `_rust.pyd` contains the compiled binding and driver.
@@ -1506,6 +1539,11 @@ Three decisions remain separate:
 
 An extension that imports successfully is not enough to establish full SDK
 support on that Python version.
+
+One more setting must agree with `abi3-py310`. The Windows ARM64 wheel is
+cross-compiled with a generated PyO3 config file, and
+`pyo3-abi3-minimum = "3.10"` in `pyproject.toml` keeps that file on the same
+stable-ABI baseline. Section 12 explains why.
 
 A **test matrix** lists the combinations that must be checked, such as
 Windows x64 with Python 3.10 and Windows x64 with Python 3.13. Reusing one
@@ -2116,6 +2154,23 @@ These are environment variables, not new commands to run. PyO3's
 `generate-import-lib` feature helps create the Python-linking files needed
 by this Windows build arrangement.
 
+When the pipeline supplies its own ARM64 Python libraries, the shared build
+tool (`eng\tools\azure-sdk-tools\ci_tools\windows_wheels.py`) also writes a
+**PyO3 config file**: a small text file that tells PyO3 which Python it is
+building for, instead of letting PyO3 inspect the x64 Python running the build.
+That file must also say the extension uses the stable binary interface, or it
+would describe a version-specific build. The SDK supplies this in
+`pyproject.toml`:
+
+```toml
+[tool.azure-sdk-build]
+pyo3-abi3-minimum = "3.10"
+```
+
+The value must match PyO3's `abi3-py310` feature and `requires-python`. The
+tool rejects it for free-threaded Python builds, which this configuration does
+not select.
+
 Linux wheel builds run inside the prepared containers introduced in section
 11. The compiler setup, required credentials, and input files must be available
 where the build actually runs, not just on the host.
@@ -2425,6 +2480,24 @@ The driver source need not be copied into the archive if Cargo can obtain the
 approved source through the declared dependency. No active dependency may
 require an unrelated local directory outside the archive.
 
+**What today's archive contains.** A Maturin source archive built from this
+branch has 596 files. Maturin copies the whole driver crate from the
+neighboring `azure-sdk-for-rust` checkout into it. Whether the archive builds
+on a clean machine has not been tested. It is also missing files the earlier
+setuptools archive carried:
+
+| Missing from the archive | Required by the table above? |
+|---|---|
+| `LICENSE` | Yes |
+| `samples\` | No; the setuptools archive shipped them |
+| Python `tests\` | No; the setuptools archive shipped them |
+| `doc\*.rst`, `api.md`, `Contributing.md` | No |
+
+The preview release publishes wheels only, so this does not block it. Before
+any release that publishes a source archive, add the needed paths to
+`[tool.maturin] include` in `pyproject.toml` with `format = "sdist"`, and
+review the license notices for the copied driver source.
+
 Likewise, one target's QueryPlanInterop binary must not be included as if it
 worked on every target. If the source-installation promise includes that
 provider, define how the customer obtains matching files.
@@ -2462,12 +2535,15 @@ For customers, `pip --no-binary` requests installation from source rather than
 a prebuilt wheel. Under the required wheels-only policy, that option will not
 provide an installation path for this release.
 
-The legacy setuptools path uses different file-selection rules, including
-`MANIFEST.in`, a file containing source-inclusion instructions.
-Changing that file does not automatically change a Maturin archive, and
-changing Maturin settings does not prove the legacy archive is complete.
+Only Maturin's file selection matters for this package. `MANIFEST.in`, the
+file that chose archive contents for the old setuptools build, no longer
+controls anything: Maturin does not read it, and `setup.py` refuses to build
+archives (section 4). The file keeps a single `py.typed` line only because the
+repository's shared sdist check (`verify_sdist.py`) looks for that line when
+the file exists. To change what the archive contains, edit `include` and
+`exclude` under `[tool.maturin]` in `pyproject.toml`.
 
-The release tooling must use and validate the selected path. Preserving the
+The release tooling must use and validate this path. Preserving the
 production packaging path does not mean we can assume its source archive is
 sufficient for the Rust build.
 
@@ -2513,7 +2589,11 @@ Two additional checks use the existing `AfterTestSteps` hook:
 - **Native Rust tests:** `run_rust_ci.py native` first runs `cargo clippy`. Clippy
   errors, such as a denied `large_futures` lint, fail the step; warnings don't.
   It then runs `cargo test` and checks that test bodies actually ran. Building a
-  wheel alone does not run them.
+  wheel alone does not run them. Some Rust tests start Python inside the test
+  process and import `azure.cosmos`. They put this checkout's package first on
+  Python's search path (`test_support.rs`), so an older `azure-cosmos`
+  installed on the machine cannot be tested by mistake. The script requires
+  `--results <folder>` and writes `cargo-clippy.log` and `cargo-test.log` there.
 
 These steps run only in the existing Windows Python 3.13 standard test job
 (`ChecksOverride=whl,sdist`). They reuse that job's checkout and downloaded

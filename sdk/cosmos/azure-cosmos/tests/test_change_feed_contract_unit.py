@@ -32,6 +32,7 @@ from azure.cosmos._routing.routing_range import Range
 
 @pytest.fixture
 def feed(base_feed):
+    base_feed.etag_name = "etag"
     base_feed.pages = [
         (
             [
@@ -60,6 +61,8 @@ def feed(base_feed):
         )
         rows, following = base_feed.pages[index]
         headers = {"x-ms-request-charge": "2", "x-ms-session-token": "session"}
+        if base_feed.etag_name is not None:
+            headers[base_feed.etag_name] = f'"service-{index}"'
         if following is not None:
             headers["x-ms-continuation"] = following
         base_feed.prepared = prepared
@@ -130,16 +133,23 @@ def test_first_execution_service_error_still_invalidates(feed):
 
 
 @pytest.mark.parametrize("prefix", ["c1.", "c2."])
-def test_caught_up_page_publishes_bookmark_and_new_pager_polls_again(feed, prefix):
+@pytest.mark.parametrize("etag_name", ["etag", "ETag", None])
+def test_caught_up_page_publishes_bookmark_and_new_pager_polls_again(feed, prefix, etag_name):
     feed.pages = [(rows, token.replace("c1.", prefix)) for rows, token in feed.pages]
+    feed.pages[0][0][0]["current"]["_etag"] = '"item-version"'
     calls = []
     pager = feed.proxy.query_items_change_feed(
         response_hook=lambda h, b: calls.append((h, b))
     )
     pages = pager.by_page()
     assert feed.calls == []
-    assert feed.next_page(pages) == [{"id": "a", "nested": [1]}]
+    assert feed.next_page(pages) == [{"id": "a", "nested": [1], "_etag": '"item-version"'}]
     first_token = pages.continuation_token
+    assert calls[-1][0]["etag"] == pager.get_response_headers()["etag"] == '"service-0"'
+    assert calls[-1][1].get_response_headers()["etag"] == '"service-0"'
+    assert calls[-1][1]["Documents"][0]["_etag"] == '"item-version"'
+    assert first_token != calls[-1][0]["etag"]
+    feed.etag_name = etag_name
     feed.status = 304
     assert feed.next_page(pages) == []
     caught_up = pages.continuation_token
@@ -147,7 +157,14 @@ def test_caught_up_page_publishes_bookmark_and_new_pager_polls_again(feed, prefi
     with pytest.raises((StopIteration, StopAsyncIteration)):
         feed.next_page(pages)
     assert len(feed.calls) == len(calls) == 2
-    assert calls[-1][0]["etag"] == caught_up
+    for headers in (calls[-1][0], calls[-1][1].get_response_headers(), pager.get_response_headers()):
+        if etag_name is None:
+            assert "etag" not in headers
+        else:
+            assert headers["etag"] == '"service-1"'
+            assert headers["etag"] != caught_up
+        assert headers["x-ms-continuation"] == caught_up
+    assert calls[0][0]["etag"] == '"service-0"'
     assert pager.get_response_headers()["x-ms-continuation"] == caught_up
     feed.status = 200
     resumed = feed.proxy.query_items_change_feed(continuation=caught_up).by_page()
@@ -512,15 +529,22 @@ def test_continuation_settings_are_validated_at_call_rust(feed, source):
 @pytest.mark.parametrize("key", [None, False, 0, ""])
 def test_core_python_modes_empty_checkpoint_and_authoritative_resume(legacy, mode, key):
     options = {"maxItemCount": 1}
+    hooks = []
     pager = legacy.proxy.query_items_change_feed(
-        mode=mode, partition_key=key, request_options=options
+        mode=mode, partition_key=key, request_options=options,
+        response_hook=lambda headers, body: hooks.append((headers, body)),
     )
     legacy.metadata.assert_not_called()
     assert options == {"maxItemCount": 1}
     pages = pager.by_page()
     assert legacy.next_page(pages) == [{"id": "a"}]
+    assert hooks[-1][0]["etag"] == pager.get_response_headers()["etag"] == '"1"'
     assert legacy.next_page(pages) == []
     token = pages.continuation_token
+    assert hooks[-1][0]["etag"] == pager.get_response_headers()["etag"] == '"2"'
+    assert hooks[-1][1].get_response_headers()["etag"] == '"2"'
+    assert hooks[-1][0]["x-ms-continuation"] == token != '"2"'
+    assert hooks[0][0]["etag"] == '"1"'
     decoded = json.loads(base64.b64decode(token))
     assert decoded["mode"] == mode
     with pytest.raises((StopIteration, StopAsyncIteration)):
@@ -845,7 +869,7 @@ def test_change_feed_samples_resume_from_pager(feed, legacy, backend, scenario, 
     if context.async_mode:
         asyncio.run(result)
     for index in range(1, len(requests)):
-        assert requests[index]["continuation"] == pagers[index - 1].get_response_headers()["etag"]
+        assert requests[index]["continuation"] == pagers[index - 1].get_response_headers()["x-ms-continuation"]
     documents = [value for value in printed if isinstance(value, dict)]
     assert documents == ([created, deleted] if full_fidelity else [{"id": "old"}, {"id": "created"}])
     assert len(context.calls) == len(rows)

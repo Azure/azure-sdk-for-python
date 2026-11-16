@@ -167,7 +167,9 @@ def test_caught_up_poll_and_resume_keep_per_fetch_ownership(
         parents.append(consumer.get_span_context().span_id)
     token = pages.continuation_token
     assert token != first and token.startswith("cf1.")
-    assert hooks[-1]["etag"] == pager.get_response_headers()["x-ms-continuation"] == token
+    assert hooks[-1]["etag"] == pager.get_response_headers()["etag"] == '"service-1"'
+    assert hooks[-1]["x-ms-continuation"] == pager.get_response_headers()["x-ms-continuation"] == token
+    assert hooks[-1]["etag"] != token
     with pytest.raises(StopAsyncIteration if f.async_mode else StopIteration):
         f.next_page(pages)
     assert len(h.calls) == 2 and pages.state.done and pages.state.cursor is None

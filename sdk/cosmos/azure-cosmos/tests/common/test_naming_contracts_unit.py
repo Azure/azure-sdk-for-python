@@ -21,6 +21,7 @@ code.
 Between them these are what make the names in this layer worth trusting.
 """
 
+import ast
 import asyncio
 import inspect
 import json
@@ -828,6 +829,78 @@ def test_native_observation_and_contract_exports_are_explicitly_private_rust():
     ):
         assert not hasattr(native, name)
         assert callable(getattr(native, "_" + name))
+
+
+def _stub_parameters(function):
+    """Return (name, kind, default) for each parameter a stub function declares."""
+    args = function.args
+    positional = args.posonlyargs + args.args
+    if positional and positional[0].arg == "self":
+        positional = positional[1:]
+    missing = len(positional) - len(args.defaults)
+    defaults = [inspect.Parameter.empty] * missing + [ast.literal_eval(d) for d in args.defaults]
+    declared = [
+        (arg.arg, inspect.Parameter.POSITIONAL_OR_KEYWORD, default)
+        for arg, default in zip(positional, defaults)
+    ]
+    declared += [
+        (arg.arg, inspect.Parameter.KEYWORD_ONLY,
+         inspect.Parameter.empty if default is None else ast.literal_eval(default))
+        for arg, default in zip(args.kwonlyargs, args.kw_defaults)
+    ]
+    return declared
+
+
+def _runtime_parameters(callable_object):
+    return [
+        (p.name, p.kind, p.default)
+        for p in inspect.signature(callable_object).parameters.values()
+    ]
+
+
+def test_type_stub_matches_the_installed_rust_module_rust():
+    """Every name _rust.pyi declares exists in the built module with the same shape.
+
+    The stub is written by hand; nothing generates it from the Rust code. Type checkers
+    and editors trust it, so a renamed export or a changed parameter would type-check
+    cleanly and fail only when called. This compares the stub shipped next to the module
+    with the module itself: function parameters (name, kind, default), class properties,
+    and declared constructors.
+
+    Names the stub leaves to ``__getattr__`` are untyped on purpose and not checked here.
+    ``_AsyncOperationProbe`` exists only in builds made with the ``test-probes`` feature,
+    so it is checked only when present.
+    """
+    native = pytest.importorskip("azure.cosmos._rust")
+    stub_path = Path(native.__file__).with_name("_rust.pyi")
+    stub = ast.parse(stub_path.read_text(encoding="utf-8"))
+    test_build_only = {"_AsyncOperationProbe"}
+    checked = 0
+    for node in stub.body:
+        if isinstance(node, ast.FunctionDef) and node.name != "__getattr__":
+            assert hasattr(native, node.name), f"stub declares missing function {node.name}"
+            assert _runtime_parameters(getattr(native, node.name)) == _stub_parameters(node), node.name
+            checked += 1
+        elif isinstance(node, ast.ClassDef):
+            if node.name in test_build_only and not hasattr(native, node.name):
+                continue
+            assert hasattr(native, node.name), f"stub declares missing class {node.name}"
+            runtime_class = getattr(native, node.name)
+            methods = [m for m in node.body if isinstance(m, ast.FunctionDef)]
+            stub_properties = {
+                m.name for m in methods
+                if any(isinstance(d, ast.Name) and d.id == "property" for d in m.decorator_list)
+            }
+            runtime_properties = {
+                name for name, value in vars(runtime_class).items()
+                if type(value).__name__ == "getset_descriptor" and not name.startswith("__")
+            }
+            assert stub_properties == runtime_properties, node.name
+            for method in methods:
+                if method.name == "__init__":
+                    assert _runtime_parameters(runtime_class) == _stub_parameters(method), node.name
+            checked += 1
+    assert checked >= 10, "stub parsing found too few declarations; the check is not running"
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
