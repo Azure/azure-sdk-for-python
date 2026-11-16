@@ -1,0 +1,226 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+# --------------------------------------------------------------------------
+"""Ownership and observable-result checks for the new preview feature samples."""
+
+import asyncio
+import importlib.util
+from pathlib import Path
+from types import SimpleNamespace
+from unittest import mock
+
+import pytest
+
+from azure.core import MatchConditions
+from azure.core.exceptions import ResourceExistsError
+
+from _capabilities import require_capability
+
+
+@pytest.fixture(name="feature_samples")
+def _feature_samples(monkeypatch):
+    samples = Path(__file__).resolve().parents[1] / "samples"
+    monkeypatch.syspath_prepend(str(samples))
+    monkeypatch.setenv("AZURE_SEARCH_SERVICE_ENDPOINT", "https://sample.search.windows.net")
+    monkeypatch.setenv("AZURE_SEARCH_API_KEY", "fake-search-key")
+    return samples
+
+
+@pytest.mark.usefixtures("feature_samples")
+class TestPreviewFeatureSamples:
+    @pytest.mark.parametrize("is_async", [False, True])
+    def test_random_scoring_collisions_never_delete_existing_resources(self, feature_samples, monkeypatch, is_async):
+        require_capability("azure.search.documents.indexes.models.RandomScoringFunction")
+        import azure.search.documents.indexes as sync_indexes
+        import azure.search.documents.indexes.aio as async_indexes
+
+        name = "sample_random_scoring_preview" + ("_async" if is_async else "")
+        spec = importlib.util.spec_from_file_location(name, feature_samples / (name + ".py"))
+        sample = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(sample)
+        operation = mock.AsyncMock if is_async else mock.Mock
+        client = mock.MagicMock()
+        client.__enter__.return_value = client
+        client.__aenter__.return_value = client
+        client.create_or_update_index = operation(side_effect=ResourceExistsError("existing index"))
+        client.delete_index = operation()
+        client.delete_knowledge_source = operation()
+        monkeypatch.setattr(
+            async_indexes if is_async else sync_indexes, "SearchIndexClient", mock.Mock(return_value=client)
+        )
+        with pytest.raises(ResourceExistsError):
+            if is_async:
+                asyncio.run(sample.main())
+            else:
+                sample.main()
+        client.delete_index.assert_not_called()
+        client.delete_knowledge_source.assert_not_called()
+
+    @pytest.mark.parametrize("is_async", [False, True])
+    def test_random_scoring_upload_failure_deletes_only_owned_index(self, feature_samples, monkeypatch, is_async):
+        require_capability("azure.search.documents.indexes.models.RandomScoringFunction")
+        import azure.search.documents as sync_search
+        import azure.search.documents.aio as async_search
+        import azure.search.documents.indexes as sync_indexes
+        import azure.search.documents.indexes.aio as async_indexes
+
+        name = "sample_random_scoring_preview" + ("_async" if is_async else "")
+        spec = importlib.util.spec_from_file_location(name, feature_samples / (name + ".py"))
+        sample = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(sample)
+        operation = mock.AsyncMock if is_async else mock.Mock
+        client = mock.MagicMock()
+        client.__enter__.return_value = client
+        client.__aenter__.return_value = client
+        profile = SimpleNamespace(
+            name="randomUnseeded", functions=[SimpleNamespace(as_dict=lambda: {"type": "random", "magnitude": None})]
+        )
+        owned = SimpleNamespace(e_tag="etag", scoring_profiles=[profile])
+        client.create_or_update_index = operation()
+        client.get_index = operation(return_value=owned)
+        client.delete_index = operation()
+        search = mock.MagicMock()
+        search.__enter__.return_value = search
+        search.__aenter__.return_value = search
+        search.upload_documents = operation(return_value=[SimpleNamespace(succeeded=False)])
+        monkeypatch.setattr(
+            async_indexes if is_async else sync_indexes, "SearchIndexClient", mock.Mock(return_value=client)
+        )
+        monkeypatch.setattr(async_search if is_async else sync_search, "SearchClient", mock.Mock(return_value=search))
+        with pytest.raises(RuntimeError, match="could not be uploaded"):
+            if is_async:
+                asyncio.run(sample.main())
+            else:
+                sample.main()
+        client.delete_index.assert_called_once_with(owned, match_condition=MatchConditions.IfNotModified)
+
+    @pytest.mark.parametrize("is_async", [False, True])
+    @pytest.mark.parametrize("collision", ["source", "base"])
+    def test_kb_tools_collision_cleans_only_successfully_created_resources(
+        self, feature_samples, monkeypatch, is_async, collision
+    ):
+        require_capability("azure.search.documents.indexes.models.KnowledgeBaseTool")
+        import azure.search.documents.indexes as sync_indexes
+        import azure.search.documents.indexes.aio as async_indexes
+
+        name = "sample_knowledge_base_tools_preview" + ("_async" if is_async else "")
+        spec = importlib.util.spec_from_file_location(name, feature_samples / (name + ".py"))
+        sample = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(sample)
+        operation = mock.AsyncMock if is_async else mock.Mock
+        client = mock.MagicMock()
+        client.__enter__.return_value = client
+        client.__aenter__.return_value = client
+        client.create_or_update_knowledge_source = operation(
+            side_effect=ResourceExistsError("existing source") if collision == "source" else None
+        )
+        client.create_or_update_knowledge_base = operation(side_effect=ResourceExistsError("existing KB"))
+        for kind in ("index", "knowledge_source", "knowledge_base"):
+            setattr(client, "get_" + kind, operation(return_value=SimpleNamespace(e_tag="etag")))
+            setattr(client, "delete_" + kind, operation())
+
+        def prepare(_client, _endpoint, _credential, index_name, _documents, created):
+            created.append(("index", index_name))
+
+        monkeypatch.setattr(
+            sample,
+            "prepare_preview_hotel_index_async" if is_async else "prepare_preview_hotel_index",
+            operation(side_effect=prepare),
+        )
+        monkeypatch.setattr(
+            sample,
+            "wait_for_knowledge_source_active_async" if is_async else "wait_for_knowledge_source_active",
+            operation(),
+        )
+        monkeypatch.setattr(
+            async_indexes if is_async else sync_indexes, "SearchIndexClient", mock.Mock(return_value=client)
+        )
+        with pytest.raises(ResourceExistsError):
+            if is_async:
+                asyncio.run(sample.main())
+            else:
+                sample.main()
+        client.delete_knowledge_base.assert_not_called()
+        assert client.delete_index.call_count == (1 if collision == "source" else 2)
+        assert client.delete_knowledge_source.call_count == (0 if collision == "source" else 2)
+        for call in client.delete_index.call_args_list + client.delete_knowledge_source.call_args_list:
+            assert call.kwargs["match_condition"] == MatchConditions.IfNotModified
+
+    @pytest.mark.parametrize(
+        "headers,audience",
+        [
+            (None, None),
+            ('{"api-key":"fake-key"}', "00000000-0000-0000-0000-000000000001"),
+            ("{}", None),
+            ('{"api-key":""}', None),
+            ('{"api-key":42}', None),
+            (None, "https://cognitiveservices.azure.com"),
+            (None, "api://00000000-0000-0000-0000-000000000001"),
+        ],
+    )
+    def test_provider_auth_rejects_ambiguous_or_invalid_configuration(self, monkeypatch, headers, audience):
+        from sample_utils import compatible_provider_auth
+
+        prefix = "SAMPLE_PROVIDER"
+        for suffix, value in (("_HEADERS_JSON", headers), ("_MI_AUDIENCE", audience)):
+            if value is None:
+                monkeypatch.delenv(prefix + suffix, raising=False)
+            else:
+                monkeypatch.setenv(prefix + suffix, value)
+        with pytest.raises(ValueError):
+            compatible_provider_auth(prefix)
+
+    @pytest.mark.parametrize("missing", ["references", "activity", "filter", "scope", "error"])
+    def test_auto_hints_require_references_and_observable_filter_without_errors(self, missing):
+        require_capability("azure.search.documents.knowledgebases.models.KnowledgeBaseSearchIndexActivityRecord")
+        from azure.search.documents.knowledgebases.models import (
+            KnowledgeBaseErrorDetail,
+            KnowledgeBaseQueryHintProcessing,
+            KnowledgeBaseSearchIndexActivityRecord,
+            KnowledgeBaseSearchIndexReference,
+        )
+        from sample_utils import validate_preview_auto_hint
+
+        activity = KnowledgeBaseSearchIndexActivityRecord(
+            id=1,
+            knowledge_source_name="source",
+            query_hint_processing=KnowledgeBaseQueryHintProcessing(generated_filter="country eq 'Canada'"),
+        )
+        result = SimpleNamespace(
+            references=[KnowledgeBaseSearchIndexReference(id="ref", activity_source=1, doc_key="hotel-ca-1")],
+            activity=[activity],
+        )
+        if missing == "references":
+            result.references = []
+        elif missing == "activity":
+            result.activity = []
+        elif missing == "filter":
+            activity.query_hint_processing = None
+        elif missing == "scope":
+            activity.knowledge_source_name = "other-source"
+        else:
+            activity.error = KnowledgeBaseErrorDetail(code="failed", message="query failed")
+        with pytest.raises(RuntimeError):
+            validate_preview_auto_hint(result, "Canada", "source", {"hotel-ca-1"})
+
+    def test_auto_hints_accept_actual_filter_and_matching_references(self):
+        require_capability("azure.search.documents.knowledgebases.models.KnowledgeBaseSearchIndexActivityRecord")
+        from azure.search.documents.knowledgebases.models import (
+            KnowledgeBaseQueryHintProcessing,
+            KnowledgeBaseSearchIndexActivityRecord,
+            KnowledgeBaseSearchIndexReference,
+        )
+        from sample_utils import validate_preview_auto_hint
+
+        result = SimpleNamespace(
+            references=[KnowledgeBaseSearchIndexReference(id="ref", activity_source=1, doc_key="hotel-ca-1")],
+            activity=[
+                KnowledgeBaseSearchIndexActivityRecord(
+                    id=1,
+                    knowledge_source_name="source",
+                    query_hint_processing=KnowledgeBaseQueryHintProcessing(generated_filter="country eq 'Canada'"),
+                )
+            ],
+        )
+        validate_preview_auto_hint(result, "Canada", "source", {"hotel-ca-1"})

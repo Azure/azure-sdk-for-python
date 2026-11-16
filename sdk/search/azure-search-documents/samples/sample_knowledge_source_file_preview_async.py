@@ -75,7 +75,6 @@ async def main():  # pylint: disable=too-many-locals
                 file_parameters=FileKnowledgeSourceParameters(
                     ingestion_parameters=KnowledgeSourceIngestionParameters(
                         content_extraction_mode="minimal",
-                        network_access_mode="public",
                         embedding_model=KnowledgeSourceAzureOpenAIVectorizer(
                             azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
                                 resource_url=os.environ["AZURE_OPENAI_ENDPOINT"],
