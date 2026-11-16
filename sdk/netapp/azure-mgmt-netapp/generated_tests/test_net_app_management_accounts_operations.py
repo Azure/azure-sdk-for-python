@@ -86,16 +86,6 @@ class TestNetAppManagementAccountsOperations(AzureMgmtRecordedTestCase):
                             "status": "str",
                         },
                     },
-                    "entraIdConfig": {
-                        "applicationId": "str",
-                        "domain": "str",
-                        "serverNamePrefix": "str",
-                        "entraIdAkvConfig": {
-                            "azureKeyVaultUri": "str",
-                            "certificateName": "str",
-                            "userAssignedIdentity": "str",
-                        },
-                    },
                     "ldapConfiguration": {
                         "bindAuthenticationLevel": "str",
                         "bindDN": "str",
@@ -178,16 +168,6 @@ class TestNetAppManagementAccountsOperations(AzureMgmtRecordedTestCase):
                         "identity": {"federatedClientId": "str", "userAssignedIdentity": "str"},
                         "keySource": "str",
                         "keyVaultProperties": {"keyName": "str", "keyVaultResourceId": "str", "keyVaultUri": "str"},
-                    },
-                    "entraIdConfig": {
-                        "applicationId": "str",
-                        "domain": "str",
-                        "entraIdAkvConfig": {
-                            "azureKeyVaultUri": "str",
-                            "certificateName": "str",
-                            "userAssignedIdentity": "str",
-                        },
-                        "serverNamePrefix": "str",
                     },
                     "ldapConfiguration": {
                         "bindAuthenticationLevel": "str",
