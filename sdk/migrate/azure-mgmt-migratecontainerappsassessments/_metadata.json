@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2025-09-09-preview",
+  "apiVersions": {
+    "Microsoft.Migrate": "2025-09-09-preview"
+  },
+  "commit": "2848d3070416778357d51f77cfb953318e36d48a",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/migrate/resource-manager/Microsoft.Migrate/ContainerAppsAssessments",
+  "emitterVersion": "0.63.12",
+  "httpClientPythonVersion": "0.40.1"
+}
