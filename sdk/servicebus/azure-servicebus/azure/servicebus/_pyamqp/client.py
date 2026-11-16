@@ -46,7 +46,8 @@ from .constants import (
     OUTGOING_WINDOW,
     DEFAULT_AUTH_TIMEOUT,
     MESSAGE_DELIVERY_DONE_STATES,
-    LINK_MAX_MESSAGE_SIZE
+    LINK_MAX_MESSAGE_SIZE,
+    ManagementOpenResult,
 )
 
 from .management_operation import ManagementOperation
@@ -68,6 +69,15 @@ def _get_mgmt_request_remaining_timeout(timeout, started):
             )
         return remaining
     return timeout
+
+
+def _mgmt_link_failed(mgmt_link):
+    # A management operation whose link pair failed re-raises on every use, so it must not stay cached.
+    # pylint: disable=protected-access
+    return mgmt_link._mgmt_link_failed or mgmt_link._mgmt_link_open_status in (
+        ManagementOpenResult.ERROR,
+        ManagementOpenResult.CANCELLED,
+    )
 
 
 class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
@@ -487,16 +497,30 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
                 break
             time.sleep(min(0.05, remaining) if remaining else 0.05)
 
-        while not mgmt_link.ready():
-            _get_mgmt_request_remaining_timeout(timeout, started)
-            self._connection.listen(wait=False)
-        operation_type = operation_type or b"empty"
-        status, description, response = mgmt_link.execute(
-            message,
-            operation=operation,
-            operation_type=operation_type,
-            timeout=_get_mgmt_request_remaining_timeout(timeout, started),
-        )
+        try:
+            while not mgmt_link.ready():
+                _get_mgmt_request_remaining_timeout(timeout, started)
+                self._connection.listen(wait=False)
+            operation_type = operation_type or b"empty"
+            status, description, response = mgmt_link.execute(
+                message,
+                operation=operation,
+                operation_type=operation_type,
+                timeout=_get_mgmt_request_remaining_timeout(timeout, started),
+            )
+        except Exception:
+            if _mgmt_link_failed(mgmt_link):
+                # Evict it so the next request opens a fresh link pair on the session.
+                with self._mgmt_link_lock:
+                    evicted = self._mgmt_links.get(node) is mgmt_link
+                    if evicted:
+                        del self._mgmt_links[node]
+                if evicted:
+                    try:
+                        mgmt_link.close()
+                    except Exception:  # pylint: disable=broad-except
+                        _logger.debug("Failed to close the broken management link.", exc_info=True)
+            raise
         _get_mgmt_request_remaining_timeout(timeout, started)
         return status, description, response
 

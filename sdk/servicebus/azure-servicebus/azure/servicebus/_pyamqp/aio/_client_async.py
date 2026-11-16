@@ -22,6 +22,7 @@ from ..client import (
     SendClient as SendClientSync,
     Outcomes,
     _get_mgmt_request_remaining_timeout,
+    _mgmt_link_failed,
 )
 from ..message import _MessageDelivery, Message
 from ..constants import (
@@ -389,17 +390,31 @@ class AMQPClientAsync(AMQPClientSync):
                 break
             await asyncio.sleep(min(0.05, remaining) if remaining else 0.05)
 
-        while not await mgmt_link.ready():
-            _get_mgmt_request_remaining_timeout(timeout, started)
-            await self._connection.listen(wait=False)
+        try:
+            while not await mgmt_link.ready():
+                _get_mgmt_request_remaining_timeout(timeout, started)
+                await self._connection.listen(wait=False)
 
-        operation_type = operation_type or b"empty"
-        status, description, response = await mgmt_link.execute(
-            message,
-            operation=operation,
-            operation_type=operation_type,
-            timeout=_get_mgmt_request_remaining_timeout(timeout, started),
-        )
+            operation_type = operation_type or b"empty"
+            status, description, response = await mgmt_link.execute(
+                message,
+                operation=operation,
+                operation_type=operation_type,
+                timeout=_get_mgmt_request_remaining_timeout(timeout, started),
+            )
+        except Exception:
+            if _mgmt_link_failed(mgmt_link):
+                # Evict it so the next request opens a fresh link pair on the session.
+                async with self._mgmt_link_lock_async:
+                    evicted = self._mgmt_links.get(node) is mgmt_link
+                    if evicted:
+                        del self._mgmt_links[node]
+                if evicted:
+                    try:
+                        await mgmt_link.close()
+                    except Exception:  # pylint: disable=broad-except
+                        _logger.debug("Failed to close the broken management link.", exc_info=True)
+            raise
         return status, description, response
 
 
@@ -744,7 +759,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :rtype: bool
         """
         try:
-            if self._link.current_link_credit<= 0:
+            if self._link.current_link_credit <= 0:
                 await self._link.flow(link_credit=self._link_credit)
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
