@@ -69,8 +69,23 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "$PR_BRANCH"
           git add eng/emitter-package.json eng/emitter-package-lock.json
-          git commit -m "[Automation] Update emitter package dependencies"
-          git push --force origin "$PR_BRANCH"
+          unchanged=false
+          remote_head=$(git ls-remote --heads origin "refs/heads/$PR_BRANCH")
+          if [ -n "$remote_head" ]; then
+            git fetch --no-tags origin "refs/heads/$PR_BRANCH"
+            candidate_tree=$(git write-tree)
+            existing_tree=$(git rev-parse 'FETCH_HEAD^{tree}')
+            if [ "$candidate_tree" = "$existing_tree" ]; then
+              unchanged=true
+            fi
+          fi
+
+          if [ "$unchanged" = true ]; then
+            echo "Automation branch already contains this update."
+          else
+            git commit -m "[Automation] Update emitter package dependencies"
+            git push --force origin "$PR_BRANCH"
+          fi
 
           existing_pr=$(gh pr list --head "$PR_BRANCH" --base main --state open --json number --jq '.[0].number // empty')
           if [ -n "$existing_pr" ]; then
