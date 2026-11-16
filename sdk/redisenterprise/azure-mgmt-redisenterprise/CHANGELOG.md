@@ -1,5 +1,17 @@
 # Release History
 
+## 4.1.0b1 (2026-11-09)
+
+### Features Added
+
+  - Model `AccessPolicyAssignmentProperties` added property `access_string`
+  - Model `AccessPolicyAssignmentProperties` added property `provisioning_error`
+  - Model `ClusterCreateProperties` added property `firewall_rules`
+  - Model `ClusterProperties` added property `firewall_rules`
+  - Model `ClusterUpdateProperties` added property `firewall_rules`
+  - Added model `AccessPolicyAssignmentProvisioningError`
+  - Added model `FirewallRule`
+
 ## 4.0.0 (2026-10-16)
 
 ### Features Added

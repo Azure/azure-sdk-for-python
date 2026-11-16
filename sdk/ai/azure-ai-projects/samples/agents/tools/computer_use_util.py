@@ -80,59 +80,60 @@ def load_screenshot_assets():
     return screenshots
 
 
-def handle_computer_action_and_take_screenshot(action, current_state, screenshots):
-    """Process a computer action and simulate its execution.
+def handle_computer_action_and_take_screenshot(actions, current_state, screenshots):
+    """Process computer actions and simulate execution.
 
     In a real implementation, you might want to execute real browser operations
     instead of just printing, take screenshots, and return actual screenshot data.
 
     Args:
-        action: The computer action to process (click, type, key press, etc.)
+        actions: List of computer actions to process (click, type, key press, etc.)
         current_state: Current SearchState of the simulation
         screenshots: Dictionary of screenshot data
 
     Returns:
         tuple: (screenshot_info, updated_current_state)
     """
-    print(f"Executing computer action: {action.type}")
+    for action in actions:
+        print(f"Executing computer action: {action.type}")
 
-    # State transitions based on actions
-    if action.type == "type" and hasattr(action, "text") and action.text:
-        current_state = SearchState.TYPED
-        print(f"  Typing text: '{action.text}' - Simulating keyboard input")
+        # State transitions based on actions
+        if action.type == "type" and hasattr(action, "text") and action.text:
+            current_state = SearchState.TYPED
+            print(f"  Typing text: '{action.text}' - Simulating keyboard input")
 
-    # Check for ENTER key press
-    elif (
-        action.type in ["key", "keypress"]
-        and hasattr(action, "keys")
-        and action.keys
-        and ("Return" in str(action.keys) or "ENTER" in str(action.keys))
-    ):
-        current_state = SearchState.PRESSED_ENTER
-        print("  -> Detected ENTER key press")
+        # Check for ENTER key press
+        elif (
+            action.type in ["key", "keypress"]
+            and hasattr(action, "keys")
+            and action.keys
+            and ("Return" in str(action.keys) or "ENTER" in str(action.keys) or "Enter" in str(action.keys))
+        ):
+            current_state = SearchState.PRESSED_ENTER
+            print("  -> Detected ENTER key press")
 
-    # Check for click after typing (alternative submit method)
-    elif action.type == "click" and current_state == SearchState.TYPED:
-        current_state = SearchState.PRESSED_ENTER
-        print("  -> Detected click after typing")
+        # Check for click after typing (alternative submit method)
+        elif action.type == "click" and current_state == SearchState.TYPED:
+            current_state = SearchState.PRESSED_ENTER
+            print("  -> Detected click after typing")
 
-    # Provide more realistic feedback based on action type
-    if hasattr(action, "x") and hasattr(action, "y"):
-        if action.type == "click":
-            print(f"  Click at ({action.x}, {action.y}) - Simulating click on UI element")
-        elif action.type == "drag":
-            path_str = " -> ".join([f"({p.x}, {p.y})" for p in action.path])
-            print(f"  Drag path: {path_str} - Simulating drag operation")
-        elif action.type == "scroll":
-            print(f"  Scroll at ({action.x}, {action.y}) - Simulating scroll action")
+        # Provide more realistic feedback based on action type
+        if hasattr(action, "x") and hasattr(action, "y"):
+            if action.type == "click":
+                print(f"  Click at ({action.x}, {action.y}) - Simulating click on UI element")
+            elif action.type == "drag":
+                path_str = " -> ".join([f"({p.x}, {p.y})" for p in action.path])
+                print(f"  Drag path: {path_str} - Simulating drag operation")
+            elif action.type == "scroll":
+                print(f"  Scroll at ({action.x}, {action.y}) - Simulating scroll action")
 
-    if hasattr(action, "keys") and action.keys:
-        print(f"  Key press: {action.keys} - Simulating key combination")
+        if hasattr(action, "keys") and action.keys:
+            print(f"  Key press: {action.keys} - Simulating key combination")
 
-    if action.type == "screenshot":
-        print("  Taking screenshot - Capturing current screen state")
+        if action.type == "screenshot":
+            print("  Taking screenshot - Capturing current screen state")
 
-    print(f"  -> Action processed: {action.type}")
+        print(f"  -> Action processed: {action.type}")
 
     # Determine screenshot based on current state
     if current_state == SearchState.PRESSED_ENTER:

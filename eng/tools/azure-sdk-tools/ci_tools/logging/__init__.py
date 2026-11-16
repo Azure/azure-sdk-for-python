@@ -98,9 +98,18 @@ def run_logged(
             # Stream live, no capturing
             return subprocess.run(cmd, cwd=cwd, check=check, text=True, stderr=subprocess.STDOUT, env=env)
         else:
-            # Capture merged output but don't print unless there's a failure
+            # Native build tools emit UTF-8 even when Windows defaults to a legacy code page.
+            # Preserve unexpected bytes as escapes rather than masking the command's exit status.
             return subprocess.run(
-                cmd, cwd=cwd, check=check, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=env
+                cmd,
+                cwd=cwd,
+                check=check,
+                text=True,
+                encoding="utf-8",
+                errors="backslashreplace",
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                env=env,
             )
     except subprocess.CalledProcessError as e:
         logger.error(f"Command failed: {' '.join(cmd)}")

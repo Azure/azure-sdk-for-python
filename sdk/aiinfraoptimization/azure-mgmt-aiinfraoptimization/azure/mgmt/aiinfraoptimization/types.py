@@ -171,19 +171,23 @@ class RecommendVmSkuTokenBudget(TypedDict, total=False):
     """The per-request token budget used to size the inference key-value cache.
 
     :ivar promptTokens: The number of prompt, or input, tokens per inference request. Must be
-     supplied together with ``maxOutputTokens``, and the two must total from 1 through 131072.
+     supplied together with ``maxOutputTokens``, and the two must total from 1 through 2147483647
+     without exceeding the model's maximum context length.
     :vartype promptTokens: int
     :ivar maxOutputTokens: The maximum number of generated output tokens per inference request.
-     Must be supplied together with ``promptTokens``, and the two must total from 1 through 131072.
+     Must be supplied together with ``promptTokens``, and the two must total from 1 through
+     2147483647 without exceeding the model's maximum context length.
     :vartype maxOutputTokens: int
     """
 
     promptTokens: int
     """The number of prompt, or input, tokens per inference request. Must be supplied together with
-     ``maxOutputTokens``, and the two must total from 1 through 131072."""
+     ``maxOutputTokens``, and the two must total from 1 through 2147483647 without exceeding the
+     model's maximum context length."""
     maxOutputTokens: int
     """The maximum number of generated output tokens per inference request. Must be supplied together
-     with ``promptTokens``, and the two must total from 1 through 131072."""
+     with ``promptTokens``, and the two must total from 1 through 2147483647 without exceeding the
+     model's maximum context length."""
 
 
 class RecommendVmSkuWorkload(TypedDict, total=False):

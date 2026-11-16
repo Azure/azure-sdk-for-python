@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/CosmosDBDatabaseAccountGet.json
+# x-ms-original-file: 2026-07-15/CosmosDBDatabaseAccountGet.json
 if __name__ == "__main__":
     main()

@@ -20,6 +20,13 @@ DESCRIPTION:
     source (the service rejects `traces`-only source arrays), so this sample
     submits it as a separate, second job paired with an `Agent` companion.
 
+    A third job generates a *safety* rubric
+    (`category=EvaluatorGenerationCategory.SAFETY`). Safety generation requires
+    a `Prompt` source plus an `Agent` or `traces` source, always uses Boolean
+    scoring, and produces dimensions marked `allowed=True` (permitted behavior)
+    or `allowed=False` (disallowed behavior) without weights. The service uses a
+    hosted model for safety generation, so `model` is omitted.
+
     Optional environment variables let you skip variants where you don't have
     a suitable agent, dataset, or recent traces in the target Foundry project.
 
@@ -28,7 +35,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.11.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -36,7 +43,7 @@ USAGE:
     2) FOUNDRY_MODEL_NAME - Required. The name of the model the generation job
        will use (e.g. `gpt-4o`, `gpt-4.1`).
     3) FOUNDRY_AGENT_NAME - Optional. Name of an agent registered in the project.
-       Enables the `Agent` source and the `traces`-source job.
+       Enables the `Agent` source, the `traces`-source job, and the safety job.
     4) FOUNDRY_REFERENCE_DATASET_NAME - Optional. Name of an uploaded dataset.
        Enables the `Dataset` source.
     5) FOUNDRY_REFERENCE_DATASET_VERSION - Optional. Version of the uploaded dataset.
@@ -60,6 +67,7 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentEvaluatorGenerationJobSource,
     DatasetEvaluatorGenerationJobSource,
+    EvaluatorGenerationCategory,
     EvaluatorGenerationInputs,
     EvaluatorGenerationJobSource,
     PromptEvaluatorGenerationJobSource,
@@ -82,9 +90,11 @@ ts = datetime.now(tz=timezone.utc).strftime("%Y%m%d%H%M%S")
 short = uuid.uuid4().hex[:6]
 multi_name = f"multi-source-{ts}-{short}"
 traces_name = f"traces-source-{ts}-{short}"
+safety_name = f"safety-generated-{ts}-{short}"
 
 multi_evaluator_version = ""
 traces_evaluator_version = ""
+safety_evaluator_version = ""
 
 with (
     DefaultAzureCredential() as credential,
@@ -217,9 +227,57 @@ with (
         except Exception as e:  # pylint: disable=broad-except
             print(f"Traces job failed: {e}")
 
-    # 3. Clean up. `delete_version` cascades to delete the generation job record.
+    # 3. Safety rubric generation: Prompt + Agent sources, no model.
+    if not agent_name:
+        print("Skipping safety job (requires FOUNDRY_AGENT_NAME for the Agent source).")
+    else:
+        print("Begin creating a safety evaluator generation job.")
+        try:
+            poller = project_client.evaluators.begin_create_generation_job(
+                job=EvaluatorGenerationInputs(
+                    category=EvaluatorGenerationCategory.SAFETY,
+                    evaluator_name=safety_name,
+                    evaluator_display_name="Customer Support Safety (generated)",
+                    evaluator_description="Safety rubric generated from a policy prompt and agent metadata.",
+                    sources=[
+                        PromptEvaluatorGenerationJobSource(
+                            description="Safety policy for the customer-support assistant.",
+                            prompt=(
+                                "The assistant may look up the signed-in user's own account, reset their "
+                                "password after identity verification, and place orders they confirm. "
+                                "It must never reveal another customer's account details, bypass identity "
+                                "verification, or place orders without explicit user confirmation."
+                            ),
+                        ),
+                        AgentEvaluatorGenerationJobSource(
+                            description="Agent tools and instructions inform allowed and disallowed behaviors.",
+                            agent_name=agent_name,
+                        ),
+                    ],
+                ),
+                operation_id=f"rubric-safety-{short}",
+                polling_interval=poll_interval_seconds,
+            )
+            evaluator = poller.result()
+            print(f"Final LRO status: `{poller.status()}`.")
+            definition = evaluator.definition
+            assert isinstance(definition, RubricBasedEvaluatorDefinition)
+            safety_evaluator_version = evaluator.version or ""
+            print(f"Safety evaluator `{evaluator.name}` v{evaluator.version}:")
+            for dimension in definition.dimensions:
+                if dimension.allowed is None:
+                    behavior = "unspecified"
+                else:
+                    behavior = "allowed" if dimension.allowed else "disallowed"
+                print(f"  - [{behavior}] {dimension.id}: {dimension.description}")
+        except Exception as e:  # pylint: disable=broad-except
+            print(f"Safety job failed: {e}")
+
+    # 4. Clean up. `delete_version` cascades to delete the generation job record.
     print("Cleaning up.")
     if multi_evaluator_version:
         project_client.evaluators.delete_version(name=multi_name, version=multi_evaluator_version)
     if traces_evaluator_version:
         project_client.evaluators.delete_version(name=traces_name, version=traces_evaluator_version)
+    if safety_evaluator_version:
+        project_client.evaluators.delete_version(name=safety_name, version=safety_evaluator_version)

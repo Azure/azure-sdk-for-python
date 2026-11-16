@@ -64,8 +64,6 @@ pytyped = ["py.typed"]
 [tool.azure-sdk-conda]
 in_bundle = false
 
-# Keep static quality gates enabled instead of copying another package's
-# verifytypes opt-out solely to satisfy a metadata-shape comment.
 [tool.azure-sdk-build]
 mypy = true
 pyright = true

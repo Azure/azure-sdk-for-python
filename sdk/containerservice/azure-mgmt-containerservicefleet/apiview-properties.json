@@ -223,5 +223,5 @@
         "azure.mgmt.containerservicefleet.operations.AutoUpgradeProfileOperationsOperations.begin_generate_update_run": "Microsoft.ContainerService.AutoUpgradeProfileOperations.generateUpdateRun",
         "azure.mgmt.containerservicefleet.aio.operations.AutoUpgradeProfileOperationsOperations.begin_generate_update_run": "Microsoft.ContainerService.AutoUpgradeProfileOperations.generateUpdateRun"
     },
-    "CrossLanguageVersion": "ae90de37cc7e"
+    "CrossLanguageVersion": "f1410a3a3872"
 }

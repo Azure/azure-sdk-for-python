@@ -16,16 +16,27 @@ if TYPE_CHECKING:
 from ._models import (  # type: ignore
     ChatConversation,
     ChatMessage,
+    ChatMessageUpdate,
     ChatRole,
+    ChatRoleCreateOrReplace,
     ChatRoom,
+    ChatRoomCreateOrReplace,
     ChatRoomMember,
+    ChatRoomMemberCreateOrReplace,
+    ChatTopic,
+    ChatTopicCreateOrReplace,
+    ChatTopicUpdate,
     ChatUser,
+    ChatUserCreateOrReplace,
+    ChatUserRoom,
     HumanChatUser,
+    HumanChatUserCreateOrReplace,
     MessageContent,
 )
 
 from ._enums import (  # type: ignore
     ChatPermission,
+    ChatTopicState,
     ChatUserKind,
 )
 from ._patch import __all__ as _patch_all
@@ -35,13 +46,24 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "ChatConversation",
     "ChatMessage",
+    "ChatMessageUpdate",
     "ChatRole",
+    "ChatRoleCreateOrReplace",
     "ChatRoom",
+    "ChatRoomCreateOrReplace",
     "ChatRoomMember",
+    "ChatRoomMemberCreateOrReplace",
+    "ChatTopic",
+    "ChatTopicCreateOrReplace",
+    "ChatTopicUpdate",
     "ChatUser",
+    "ChatUserCreateOrReplace",
+    "ChatUserRoom",
     "HumanChatUser",
+    "HumanChatUserCreateOrReplace",
     "MessageContent",
     "ChatPermission",
+    "ChatTopicState",
     "ChatUserKind",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

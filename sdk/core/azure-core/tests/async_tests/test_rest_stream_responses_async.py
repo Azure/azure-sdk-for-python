@@ -31,6 +31,7 @@ async def test_iter_raw_on_iterable(client):
         assert raw == b"Hello, world!"
 
 
+@pytest.mark.skip(reason="1ES network-isolation proxy can return HTTP errors for unknown hosts instead of DNS errors.")
 @pytest.mark.asyncio
 async def test_iter_with_error(client):
     request = HttpRequest("GET", "/errors/403")

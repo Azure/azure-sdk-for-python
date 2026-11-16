@@ -37,12 +37,12 @@ def main():
         agent_fabric_membership_name="default",
         resource={
             "managedBy": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.NetworkSecurity/agentFabrics/fabric1",
-            "properties": {"sku": "Standard"},
+            "sku": {"name": "Standard"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-08-02-preview/AgentFabricMemberships_CreateOrUpdate.json
+# x-ms-original-file: 2026-09-02-preview/AgentFabricMemberships_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

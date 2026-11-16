@@ -42,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-09-01/RedisEnterpriseMigrationValidateWithDataMigration.json
+# x-ms-original-file: 2026-10-01-preview/RedisEnterpriseMigrationValidateWithDataMigration.json
 if __name__ == "__main__":
     main()

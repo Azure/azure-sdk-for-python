@@ -1785,15 +1785,6 @@ class UpdateGroup(TypedDict, total=False):
     :ivar name: Name of the group. It must match a group name of an existing fleet member.
      Required.
     :vartype name: str
-    :ivar maxAllowedFailures: Limits the number of member (cluster) upgrade failures tolerated
-     within this group. Failures are evaluated over members within this group only. Accepts either:
-     • A fixed count n, where n >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at
-     stage start using: resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and
-     N is the number of members in this group at scope start. Examples: • "3"   --> up to 3 member
-     upgrade failures are tolerated within this group. The 4th failure causes the group to fail. •
-     "25%" --> up to 25% of the members in this group can fail their upgrade before the group is
-     considered failed.
-    :vartype maxAllowedFailures: str
     :ivar maxConcurrency: The max number of upgrades that can run concurrently in this specific
      group. Acts as a ceiling (and not a quota) for the number of concurrent upgrades within the
      group you want to tolerate at a time. Actual concurrency may be lower depending on stage-level
@@ -1821,14 +1812,6 @@ class UpdateGroup(TypedDict, total=False):
 
     name: Required[str]
     """Name of the group. It must match a group name of an existing fleet member. Required."""
-    maxAllowedFailures: str
-    """Limits the number of member (cluster) upgrade failures tolerated within this group. Failures
-     are evaluated over members within this group only. Accepts either: • A fixed count n, where n
-     >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at stage start using:
-     resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and N is the number of
-     members in this group at scope start. Examples: • \"3\"   --> up to 3 member upgrade failures
-     are tolerated within this group. The 4th failure causes the group to fail. • \"25%\" --> up to
-     25% of the members in this group can fail their upgrade before the group is considered failed."""
     maxConcurrency: str
     """The max number of upgrades that can run concurrently in this specific group. Acts as a ceiling
      (and not a quota) for the number of concurrent upgrades within the group you want to tolerate
@@ -1861,11 +1844,6 @@ class UpdateGroupStatus(TypedDict, total=False):
     :vartype status: "UpdateStatus"
     :ivar name: The name of the UpdateGroup.
     :vartype name: str
-    :ivar failureCount: The total member upgrade failures within the group.
-    :vartype failureCount: int
-    :ivar maxAllowedFailures: The max number of member upgrade failures allowed within this group,
-     resolved from the UpdateStrategy.UpdateGroup.maxAllowedFailures value.
-    :vartype maxAllowedFailures: int
     :ivar maxConcurrency:   The max number of upgrades that can run concurrently in this group,
      resolved from the UpdateStrategy.UpdateGroup.maxConcurrency value. If no value was provided,
      this value defaults to "1".
@@ -1882,11 +1860,6 @@ class UpdateGroupStatus(TypedDict, total=False):
     """The status of the UpdateGroup."""
     name: str
     """The name of the UpdateGroup."""
-    failureCount: int
-    """The total member upgrade failures within the group."""
-    maxAllowedFailures: int
-    """The max number of member upgrade failures allowed within this group, resolved from the
-     UpdateStrategy.UpdateGroup.maxAllowedFailures value."""
     maxConcurrency: int
     """The max number of upgrades that can run concurrently in this group, resolved from the
      UpdateStrategy.UpdateGroup.maxConcurrency value. If no value was provided, this value defaults
@@ -2032,8 +2005,6 @@ class UpdateRunStatus(TypedDict, total=False):
     :ivar nodeImageSelection: The node image upgrade specs for the update run. It is only set in
      update run when ``NodeImageSelection.type`` is ``Consistent``.
     :vartype nodeImageSelection: "NodeImageSelectionStatus"
-    :ivar failureCount: Total member upgrade failures across the entire UpdateRun.
-    :vartype failureCount: int
     """
 
     status: "UpdateStatus"
@@ -2043,8 +2014,6 @@ class UpdateRunStatus(TypedDict, total=False):
     nodeImageSelection: "NodeImageSelectionStatus"
     """The node image upgrade specs for the update run. It is only set in update run when
      ``NodeImageSelection.type`` is ``Consistent``."""
-    failureCount: int
-    """Total member upgrade failures across the entire UpdateRun."""
 
 
 class UpdateRunStrategy(TypedDict, total=False):
@@ -2084,15 +2053,6 @@ class UpdateStage(TypedDict, total=False):
     :ivar afterStageWaitInSeconds: The time in seconds to wait at the end of this stage before
      starting the next one. Defaults to 0 seconds if unspecified.
     :vartype afterStageWaitInSeconds: int
-    :ivar maxAllowedFailures: Limits the number of member (cluster) upgrade failures tolerated
-     within this stage. Failures are evaluated over all members within all groups within this stage.
-     Accepts either: • A fixed count n, where n >= 0 • A percentage p%, where 0 <= p <= 100
-     Percentage resolves at stage start using: resolvedThreshold = ceil(p * N), where p is the
-     percentage as a decimal and N is the number of members in this stage at scope start. Examples:
-     • "3"   --> up to 3 member upgrade failures are tolerated within this stage. The 4th failure
-     would cause the entire stage to fail. • "25%" --> up to 25% of the members in this stage can
-     fail their upgrade before the stage is considered failed.
-    :vartype maxAllowedFailures: str
     :ivar maxConcurrency: The max number of upgrades that can run concurrently across all groups in
      this stage. Acts as a ceiling (and not a quota) for the number of concurrent upgrades within
      the stage you want to tolerate at a time. Actual concurrency may be lower depending on
@@ -2126,15 +2086,6 @@ class UpdateStage(TypedDict, total=False):
     afterStageWaitInSeconds: int
     """The time in seconds to wait at the end of this stage before starting the next one. Defaults to
      0 seconds if unspecified."""
-    maxAllowedFailures: str
-    """Limits the number of member (cluster) upgrade failures tolerated within this stage. Failures
-     are evaluated over all members within all groups within this stage. Accepts either: • A fixed
-     count n, where n >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at stage start
-     using: resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and N is the
-     number of members in this stage at scope start. Examples: • \"3\"   --> up to 3 member upgrade
-     failures are tolerated within this stage. The 4th failure would cause the entire stage to fail.
-     • \"25%\" --> up to 25% of the members in this stage can fail their upgrade before the stage is
-     considered failed."""
     maxConcurrency: str
     """The max number of upgrades that can run concurrently across all groups in this stage. Acts as a
      ceiling (and not a quota) for the number of concurrent upgrades within the stage you want to
@@ -2159,11 +2110,6 @@ class UpdateStageStatus(TypedDict, total=False):
     :vartype status: "UpdateStatus"
     :ivar name: The name of the UpdateStage.
     :vartype name: str
-    :ivar failureCount: The total member upgrade failures within the stage.
-    :vartype failureCount: int
-    :ivar maxAllowedFailures: The max number of member upgrade failures allowed within this stage,
-     resolved from the UpdateStrategy.UpdateStage.maxAllowedFailures value.
-    :vartype maxAllowedFailures: int
     :ivar maxConcurrency: The max number of upgrades that can run concurrently across all groups in
      this stage, resolved from the UpdateStrategy.UpdateStage.maxConcurrency value.
     :vartype maxConcurrency: int
@@ -2181,11 +2127,6 @@ class UpdateStageStatus(TypedDict, total=False):
     """The status of the UpdateStage."""
     name: str
     """The name of the UpdateStage."""
-    failureCount: int
-    """The total member upgrade failures within the stage."""
-    maxAllowedFailures: int
-    """The max number of member upgrade failures allowed within this stage, resolved from the
-     UpdateStrategy.UpdateStage.maxAllowedFailures value."""
     maxConcurrency: int
     """The max number of upgrades that can run concurrently across all groups in this stage, resolved
      from the UpdateStrategy.UpdateStage.maxConcurrency value."""

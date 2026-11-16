@@ -2,19 +2,24 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import os
 import logging
 import math
-from typing import Dict, List, Union, Optional
+import os
+from typing import Dict, List, Optional, Union
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_score
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase, hoist_messages_to_conversation
 from azure.ai.evaluation._evaluators._common._decision_rubric import decode_message_list, rubric_strategy
-from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_score
+from azure.ai.evaluation._evaluators._common._prompty_strategy import (
+    judge_output_diagnostic,
+    log_judge_output_diagnostic,
+    parse_judge_score,
+)
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import Conversation, Message
-from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
 
@@ -217,7 +222,7 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 reason = llm_output.get("reason", "")
                 return self._return_not_applicable_result(reason, self._threshold)
 
-            score = float(llm_output.get("score", math.nan))
+            score = parse_judge_score(llm_output.get("score", math.nan), result, missing="score" not in llm_output)
             reason = llm_output.get("reason", "")
             llm_properties = llm_output.get("properties", {}) or {}
             score_result = self._get_binary_result(score)
@@ -235,8 +240,10 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_properties": llm_properties,
             }
 
+        diagnostic = judge_output_diagnostic(result)
+        log_judge_output_diagnostic(diagnostic)
         raise EvaluationException(
-            message="Evaluator returned invalid output.",
+            message=f"Evaluator returned invalid output. {diagnostic}",
             blame=ErrorBlame.SYSTEM_ERROR,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.EVALUATE,
