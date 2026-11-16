@@ -334,7 +334,9 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_get(self):
         now = _now()
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "foo")) as stor:
+        with self.assertNoLogs(STORAGE_MODULE, level="DEBUG"), LocalFileStorage(
+            os.path.join(TEST_FOLDER, "foo")
+        ) as stor:
             stor.put((1, 2, 3), lease_period=10)
             with mock.patch("azure.monitor.opentelemetry.exporter._storage._now") as m:
                 m.return_value = now - _seconds(30 * 24 * 60 * 60)
@@ -391,6 +393,58 @@ class TestLocalFileStorage(unittest.TestCase):
             stor.put(test_input)
             self.assertEqual(stor.get(), None)
 
+    @mock.patch(f"{STORAGE_MODULE}.PeriodicTask")
+    def test_routed_cleanup_reports_data_loss(self, _task):
+        now = _now()
+        for suffix in (".blob", ".tmp"):
+            with self.subTest(suffix=suffix):
+                with LocalFileStorage(
+                    os.path.join(TEST_FOLDER, suffix[1:]), capacity_path=TEST_FOLDER, retention_period=60
+                ) as stor:
+                    with mock.patch(f"{STORAGE_MODULE}._now", return_value=now):
+                        stor.put([{"private": "secret-telemetry"}], lease_period=0)
+                        path = stor.get().fullpath
+                    if suffix == ".tmp":
+                        os.rename(path, path + suffix)
+                        path += suffix
+                    with mock.patch(f"{STORAGE_MODULE}._now", return_value=now + _seconds(61)):
+                        with self.assertLogs(STORAGE_MODULE, level="WARNING") as logs:
+                            self.assertEqual(list(stor.gets()), [])
+                    self.assertFalse(os.path.exists(path))
+                    self.assertEqual(logs.records[0].levelname, "WARNING")
+                    self.assertNotIn("secret-telemetry", logs.output[0])
+                    self.assertNotIn(TEST_FOLDER, logs.output[0])
+
+    @mock.patch(f"{STORAGE_MODULE}.PeriodicTask")
+    def test_routed_eviction_failure_remains_silent(self, _task):
+        now = _now()
+        for cleanup, suffix in (
+            ("gets", ".blob"),
+            ("gets", ".tmp"),
+            ("_check_storage_size", ".blob"),
+            ("_check_storage_size", ".tmp"),
+        ):
+            with self.subTest(cleanup=cleanup, suffix=suffix):
+                with LocalFileStorage(
+                    os.path.join(TEST_FOLDER, f"{cleanup}-{suffix[1:]}"),
+                    capacity_path=TEST_FOLDER,
+                    retention_period=60,
+                ) as stor:
+                    with mock.patch(f"{STORAGE_MODULE}._now", return_value=now):
+                        stor.put([{"private": "secret-telemetry"}], lease_period=0)
+                        path = stor.get().fullpath
+                    if suffix == ".tmp":
+                        os.rename(path, path + suffix)
+                        path += suffix
+                    with mock.patch(f"{STORAGE_MODULE}._now", return_value=now + _seconds(61)):
+                        with mock.patch(f"{STORAGE_MODULE}.os.remove", side_effect=PermissionError("secret-path")):
+                            with self.assertNoLogs(STORAGE_MODULE, level="DEBUG"):
+                                if cleanup == "gets":
+                                    self.assertEqual(list(stor.gets()), [])
+                                else:
+                                    self.assertTrue(stor._check_storage_size())
+                    self.assertTrue(os.path.exists(path))
+
     def test_check_storage_size_full(self):
         test_input = (1, 2, 3)
         test_path = os.path.join(TEST_FOLDER, "asd2")
@@ -437,7 +491,9 @@ class TestLocalFileStorage(unittest.TestCase):
                 stor.put(test_input)
                 with mock.patch("os.path.islink") as os_mock:
                     os_mock.return_value = True
-                self.assertTrue(stor._check_storage_size())
+                with mock.patch(f"{STORAGE_MODULE}.logger") as log:
+                    self.assertTrue(stor._check_storage_size())
+                log.error.assert_called_once()
 
     def test_maintenance_routine(self):
         with mock.patch("os.makedirs") as m:
@@ -536,9 +592,12 @@ class TestLocalFileStorage(unittest.TestCase):
                 write_timeout=10,
                 capacity_path=capacity_path,
             ) as stor:
-                result = stor.put([{"value": 1}], lease_period=0)
+                with self.assertLogs(STORAGE_MODULE, level="WARNING") as logs:
+                    result = stor.put([{"value": 1}], lease_period=0)
 
         self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
+        self.assertEqual([record.levelname for record in logs.records], ["WARNING"] * 3)
+        self.assertNotIn(TEST_FOLDER, "\n".join(logs.output))
         self.assertFalse(os.path.exists(expired_blob))
         self.assertFalse(os.path.exists(expired_lock))
         self.assertFalse(os.path.exists(stale_tmp))

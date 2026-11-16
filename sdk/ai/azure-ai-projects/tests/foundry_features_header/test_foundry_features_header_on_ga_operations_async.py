@@ -13,6 +13,7 @@ Foundry-Features header and verify both modes:
 
 import inspect
 from typing import Any, ClassVar, Iterator, List, Tuple
+from unittest.mock import patch
 
 import pytest
 from azure.core.pipeline.transport import AsyncHttpTransport
@@ -127,6 +128,23 @@ class TestFoundryFeaturesHeaderOnGaOperationsAsync(FoundryFeaturesHeaderTestBase
         request = await cls._capture_async(call)
         cls._record_header_assertion(label, request, expected_value)
 
+    @pytest.mark.asyncio
+    async def test_session_log_stream_transport_mode_async(
+        self, async_client_preview_disabled: AsyncAIProjectClient
+    ) -> None:
+        with patch.object(
+            CapturingAsyncTransport, "send", autospec=True, side_effect=CapturingAsyncTransport.send
+        ) as send:
+            request = await self._capture_async(
+                lambda: async_client_preview_disabled.agents.get_session_log_stream(
+                    agent_name="agent-test",
+                    agent_version="1",
+                    session_id="session-test",
+                )
+            )
+        assert send.call_args.kwargs["stream"] is True
+        assert "Foundry-Features" not in request.headers
+
     @classmethod
     async def _assert_header_absent_async(cls, label: str, call: Any) -> None:
         request = await cls._capture_async(call)
@@ -157,6 +175,21 @@ class TestFoundryFeaturesHeaderOnGaOperationsAsync(FoundryFeaturesHeaderTestBase
         sc = getattr(async_client_preview_disabled, subclient_name)
         method = getattr(sc, method_attr)
         await self._assert_header_absent_async(method_name, self._make_fake_call(method))
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("subclient_name", ["agent_insight_monitors"])
+    @pytest.mark.parametrize("allow_preview", [False, True])
+    async def test_promoted_operations_do_not_require_preview_async(
+        self,
+        async_client_preview_enabled: AsyncAIProjectClient,
+        async_client_preview_disabled: AsyncAIProjectClient,
+        subclient_name: str,
+        allow_preview: bool,
+    ) -> None:
+        client = async_client_preview_enabled if allow_preview else async_client_preview_disabled
+        assert not hasattr(client.beta, subclient_name)
+        subclient = getattr(client, subclient_name)
+        await self._assert_header_absent_async(f"{subclient_name}.get", lambda: subclient.get("resource-test"))
 
 
 # ---------------------------------------------------------------------------

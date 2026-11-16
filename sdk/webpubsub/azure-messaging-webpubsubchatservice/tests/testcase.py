@@ -5,14 +5,7 @@
 # --------------------------------------------------------------------------
 import functools
 
-from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
-
-from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
-from azure.messaging.webpubsubchatservice.aio import (
-    WebPubSubChatServiceClient as AsyncWebPubSubChatServiceClient,
-)
-
 from chat_message_seed import (
     create_chat_message,
     create_chat_message_async,
@@ -20,20 +13,28 @@ from chat_message_seed import (
     verify_chat_connection_async,
 )
 
+from azure.core.exceptions import HttpResponseError
+from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
+from azure.messaging.webpubsubchatservice.aio import (
+    WebPubSubChatServiceClient as AsyncWebPubSubChatServiceClient,
+)
+
 
 class WebPubSubChatTest(AzureRecordedTestCase):
-    def create_client(self, endpoint):
+    def create_client(self, endpoint, **kwargs):
         return WebPubSubChatServiceClient(
             endpoint,
             "test_hub",
             self.get_credential(WebPubSubChatServiceClient),
+            **kwargs,
         )
 
-    def create_async_client(self, endpoint):
+    def create_async_client(self, endpoint, **kwargs):
         return AsyncWebPubSubChatServiceClient(
             endpoint,
             "test_hub",
             self.get_credential(AsyncWebPubSubChatServiceClient, is_async=True),
+            **kwargs,
         )
 
     @staticmethod

@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-06-02-preview/ClusterMeshProfiles_Delete.json
+# x-ms-original-file: 2026-11-01/ClusterMeshProfiles_Delete.json
 if __name__ == "__main__":
     main()

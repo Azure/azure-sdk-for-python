@@ -2681,4 +2681,6 @@ class TestMultiEndpointRouting(unittest.TestCase):
         with mock.patch.object(exporter, "_transmit_routed", side_effect=RuntimeError("test failure")):
             with self.assertLogs("azure.monitor.opentelemetry.exporter.export.trace._exporter", level="ERROR") as logs:
                 self.assertEqual(exporter.export([self._span()]), SpanExportResult.FAILURE)
-        self.assertIn("test failure", logs.output[0])
+        self.assertEqual(logs.records[0].levelname, "ERROR")
+        self.assertNotIn("test failure", logs.output[0])
+        self.assertIsNone(logs.records[0].exc_info)

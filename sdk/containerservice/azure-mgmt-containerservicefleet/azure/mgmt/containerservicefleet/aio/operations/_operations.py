@@ -234,7 +234,7 @@ class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview", "2026-11-01"],
     )
     async def get(
         self, resource_group_name: str, fleet_name: str, cluster_mesh_profile_name: str, **kwargs: Any
@@ -325,7 +325,7 @@ class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview", "2026-11-01"],
     )
     async def _create_or_update_initial(
         self,
@@ -547,7 +547,7 @@ class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview", "2026-11-01"],
     )
     async def begin_create_or_update(
         self,
@@ -652,7 +652,7 @@ class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview", "2026-11-01"],
     )
     async def _delete_initial(
         self,
@@ -745,7 +745,7 @@ class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview", "2026-11-01"],
     )
     async def begin_delete(
         self,
@@ -828,7 +828,7 @@ class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-03-02-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
         },
-        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview", "2026-11-01"],
     )
     def list_by_fleet(
         self, resource_group_name: str, fleet_name: str, **kwargs: Any
@@ -946,7 +946,7 @@ class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview", "2026-11-01"],
     )
     async def _apply_initial(
         self,
@@ -1040,7 +1040,7 @@ class ClusterMeshProfilesOperations:  # pylint: disable=docstring-missing-param
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-03-02-preview", "2026-06-02-preview"],
+        api_versions_list=["2026-03-02-preview", "2026-06-02-preview", "2026-11-01"],
     )
     async def begin_apply(
         self,
@@ -1518,6 +1518,7 @@ class FleetsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def _begin_update_initial(
@@ -1740,6 +1741,7 @@ class FleetsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def begin_update(
@@ -2664,6 +2666,7 @@ class FleetMembersOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def _begin_update_initial(
@@ -2901,6 +2904,7 @@ class FleetMembersOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def begin_update(
@@ -3305,6 +3309,7 @@ class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-par
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def get(
@@ -3402,6 +3407,7 @@ class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-par
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def _create_or_update_initial(
@@ -3633,6 +3639,7 @@ class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-par
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def begin_create_or_update(
@@ -3744,6 +3751,7 @@ class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-par
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def _delete_initial(
@@ -3843,6 +3851,7 @@ class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-par
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def begin_delete(
@@ -3932,6 +3941,7 @@ class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-par
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def list_by_fleet(
@@ -4051,7 +4061,7 @@ class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-par
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-06-02-preview", "2026-11-01"],
     )
     async def _update_initial(
         self,
@@ -4274,7 +4284,7 @@ class FleetManagedNamespacesOperations:  # pylint: disable=docstring-missing-par
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-06-02-preview", "2026-11-01"],
     )
     async def begin_update(
         self,
@@ -4406,6 +4416,7 @@ class GatesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def get(self, resource_group_name: str, fleet_name: str, gate_name: str, **kwargs: Any) -> _models.Gate:
@@ -4502,6 +4513,7 @@ class GatesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def _update_initial(
@@ -4729,6 +4741,7 @@ class GatesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def begin_update(
@@ -4842,6 +4855,7 @@ class GatesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def list_by_fleet(
@@ -5010,6 +5024,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def get(
@@ -5116,6 +5131,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def _create_or_update_initial(
@@ -5350,6 +5366,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def begin_create_or_update(
@@ -5469,6 +5486,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def _delete_initial(
@@ -5577,6 +5595,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def begin_delete(
@@ -5683,6 +5702,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def list_by_fleet(
@@ -5829,6 +5849,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def _start_initial(
@@ -5938,6 +5959,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def begin_start(
@@ -6050,6 +6072,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def _stop_initial(
@@ -6159,6 +6182,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def begin_stop(
@@ -6268,6 +6292,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def _skip_initial(
@@ -6499,6 +6524,7 @@ class UpdateRunsOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def begin_skip(
@@ -6636,6 +6662,7 @@ class FleetUpdateStrategiesOperations:  # pylint: disable=docstring-missing-para
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def get(
@@ -6740,6 +6767,7 @@ class FleetUpdateStrategiesOperations:  # pylint: disable=docstring-missing-para
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def _create_or_update_initial(
@@ -6975,6 +7003,7 @@ class FleetUpdateStrategiesOperations:  # pylint: disable=docstring-missing-para
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def begin_create_or_update(
@@ -7093,6 +7122,7 @@ class FleetUpdateStrategiesOperations:  # pylint: disable=docstring-missing-para
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def _delete_initial(
@@ -7163,6 +7193,9 @@ class FleetUpdateStrategiesOperations:  # pylint: disable=docstring-missing-para
         response_headers = {}
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -7199,6 +7232,7 @@ class FleetUpdateStrategiesOperations:  # pylint: disable=docstring-missing-para
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def begin_delete(
@@ -7303,6 +7337,7 @@ class FleetUpdateStrategiesOperations:  # pylint: disable=docstring-missing-para
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def list_by_fleet(
@@ -7462,6 +7497,7 @@ class AutoUpgradeProfilesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def get(
@@ -7562,6 +7598,7 @@ class AutoUpgradeProfilesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def _create_or_update_initial(
@@ -7796,6 +7833,7 @@ class AutoUpgradeProfilesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def begin_create_or_update(
@@ -7910,6 +7948,7 @@ class AutoUpgradeProfilesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def _delete_initial(
@@ -8012,6 +8051,7 @@ class AutoUpgradeProfilesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def begin_delete(
@@ -8112,6 +8152,7 @@ class AutoUpgradeProfilesOperations:  # pylint: disable=docstring-missing-param
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     def list_by_fleet(
@@ -8269,6 +8310,7 @@ class AutoUpgradeProfileOperationsOperations:  # pylint: disable=docstring-missi
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def _generate_update_run_initial(
@@ -8357,6 +8399,7 @@ class AutoUpgradeProfileOperationsOperations:  # pylint: disable=docstring-missi
             "2026-03-02-preview",
             "2026-06-01",
             "2026-06-02-preview",
+            "2026-11-01",
         ],
     )
     async def begin_generate_update_run(

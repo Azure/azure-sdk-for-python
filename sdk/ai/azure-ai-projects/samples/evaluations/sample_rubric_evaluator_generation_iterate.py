@@ -12,10 +12,10 @@ DESCRIPTION:
     weighting or add custom dimensions. The sample:
 
       1. Generates v1 of an evaluator from a single `Prompt` source.
-      2. Edits the dimensions locally - boosts the highest-weight editable
-         dimension to 10, drops the lowest-weight editable dimension, and
-         adds a new custom dimension. The non-editable `general_quality`
-         ALWAYS-ON dimension is preserved verbatim.
+      2. Edits the dimensions locally - drops the lowest-weight editable
+         dimension, adds a new custom dimension, and boosts the highest weight
+         when weights can be configured. The `general_quality` ALWAYS-ON
+         dimension is preserved.
       3. Saves the edited definition as v2 with `create_version`.
       4. Calls `list_versions` to enumerate v1 and v2.
       5. Cleans up by deleting both versions.
@@ -25,7 +25,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.11.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -39,6 +39,7 @@ USAGE:
 import os
 import time
 import uuid
+from contextlib import ExitStack
 from datetime import datetime, timezone
 
 from dotenv import load_dotenv
@@ -46,11 +47,14 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    Dimension,
     EvaluatorCategory,
     EvaluatorDefinitionType,
     EvaluatorGenerationInputs,
     PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
+    RubricScoring,
+    RubricScoringMode,
 )
 
 load_dotenv()
@@ -67,12 +71,14 @@ evaluator_name = f"reservation-quality-iterate-{ts}-{short}"
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    ExitStack() as cleanup,
 ):
     # 1. Generate v1 of the evaluator from a single `Prompt` source.
     print("Begin creating an evaluator generation job.")
     poller = project_client.evaluators.begin_create_generation_job(
         job=EvaluatorGenerationInputs(
             model=model_name,
+            scoring=RubricScoring(mode=RubricScoringMode.LIKERT),
             evaluator_name=evaluator_name,
             evaluator_display_name="Reservation Quality (iterate)",
             evaluator_description="Starting point for human-in-the-loop iteration.",
@@ -101,6 +107,8 @@ with (
     # Since done() is true, result() returns the final deserialized job result without
     # waiting further. It also propagates any LRO polling exception.
     v1 = poller.result()
+    if v1.version:
+        cleanup.callback(project_client.evaluators.delete_version, name=evaluator_name, version=v1.version)
     print(f"Final LRO status: `{poller.status()}`.")
     print(f"Evaluator generation result: {v1}")
 
@@ -114,25 +122,41 @@ with (
     # 2. Edit dimensions locally.
     # Domain-expert edits:
     #   * Always preserve the ALWAYS-ON `general_quality` residual dimension
-    #     exactly as-is (id, weight, description, always_applicable).
-    #   * Boost the most important editable dimension to weight 10.
-    #   * Drop the lowest-weight editable dimension as redundant.
+    #     (id, weight, description, always_applicable).
+    #   * Drop the lowest-weight editable dimension when there is more than one.
+    #   * Boost the most important editable dimension when weights can be set.
     #   * Add a new custom dimension specific to this assistant.
+    # A dimension's weight controls how much it contributes to the final score.
+    # Generated dimensions can omit `weight` and instead suggest a value in
+    # `generated_weight`. We rank dimensions using `weight` if set, otherwise
+    # the suggestion, or 1 if neither is available.
+    # Likert scoring requires weights on all dimensions or none. This sample
+    # preserves every ALWAYS-ON dimension, including non-editable
+    # `general_quality`. If any has no weight, keep all dimensions unweighted.
+    def effective_weight(dim: Dimension) -> int:
+        if dim.weight is not None:
+            return dim.weight
+        return dim.generated_weight or 1
+
     editable = [d for d in v1_definition.dimensions if not d.always_applicable]
     always_on = [d for d in v1_definition.dimensions if d.always_applicable]
+    can_set_weights = all(dim.weight is not None for dim in always_on)
+    if not can_set_weights:
+        print("Keeping all dimensions unweighted to preserve the ALWAYS-ON dimensions.")
 
     edited_dimensions = []
     if editable:
-        top = max(editable, key=lambda d: d.weight)
-        lowest = min(editable, key=lambda d: d.weight)
+        ranked = sorted(editable, key=effective_weight)
+        top = ranked[-1]
+        lowest = ranked[0] if len(ranked) > 1 else None
         for dim in editable:
-            if dim.id == lowest.id:
+            if lowest is not None and dim.id == lowest.id:
                 continue
             edited_dimensions.append(
                 {
                     "id": dim.id,
                     "description": dim.description,
-                    "weight": 10 if dim.id == top.id else dim.weight,
+                    **({"weight": 10 if dim.id == top.id else effective_weight(dim)} if can_set_weights else {}),
                 }
             )
 
@@ -143,17 +167,17 @@ with (
                 "Sets clear expectations about wait time, table readiness, or confirmation "
                 "delivery so the user knows what happens next."
             ),
-            "weight": 4,
+            **({"weight": 4} if can_set_weights else {}),
         }
     )
 
-    # Preserve every ALWAYS-ON dimension verbatim. These are non-editable.
+    # Keep every ALWAYS-ON dimension unchanged.
     for dim in always_on:
         edited_dimensions.append(
             {
                 "id": dim.id,
                 "description": dim.description,
-                "weight": dim.weight,
+                **({"weight": dim.weight} if dim.weight is not None else {}),
                 "always_applicable": True,
             }
         )
@@ -171,10 +195,13 @@ with (
             "definition": {
                 "type": EvaluatorDefinitionType.RUBRIC,
                 "dimensions": edited_dimensions,
-                "pass_threshold": v1_definition.pass_threshold or 0.6,
+                "scoring": {"mode": RubricScoringMode.LIKERT},
+                "pass_threshold": v1_definition.pass_threshold if v1_definition.pass_threshold is not None else 0.5,
             },
         },
     )
+    if v2.version:
+        cleanup.callback(project_client.evaluators.delete_version, name=evaluator_name, version=v2.version)
     v2_definition = v2.definition
     assert isinstance(v2_definition, RubricBasedEvaluatorDefinition)
     print(
@@ -188,8 +215,5 @@ with (
         assert isinstance(ver_definition, RubricBasedEvaluatorDefinition)
         print(f"  - v{ver.version}: {len(ver_definition.dimensions)} dimensions")
 
-    # 5. Clean up. Delete the highest version first to avoid any ordering issues.
+    # 5. The exit stack deletes the highest version first, even on failure.
     print("Cleaning up.")
-    for version in (v2.version, v1.version):
-        if version:
-            project_client.evaluators.delete_version(name=evaluator_name, version=version)
