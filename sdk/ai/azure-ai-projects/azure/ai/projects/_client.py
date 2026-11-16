@@ -17,6 +17,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from ._configuration import AIProjectClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
+    AgentInsightMonitorsOperations,
     AgentsOperations,
     BetaOperations,
     ConnectionsOperations,
@@ -26,6 +27,7 @@ from .operations import (
     EvaluatorsOperations,
     IndexesOperations,
     ToolboxesOperations,
+    VoiceAgentsOperations,
 )
 
 if sys.version_info >= (3, 11):
@@ -42,12 +44,16 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
 
     :ivar beta: BetaOperations operations
     :vartype beta: azure.ai.projects.operations.BetaOperations
+    :ivar voice_agents: VoiceAgentsOperations operations
+    :vartype voice_agents: azure.ai.projects.operations.VoiceAgentsOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.operations.AgentsOperations
     :ivar evaluation_rules: EvaluationRulesOperations operations
     :vartype evaluation_rules: azure.ai.projects.operations.EvaluationRulesOperations
     :ivar datasets: DatasetsOperations operations
     :vartype datasets: azure.ai.projects.operations.DatasetsOperations
+    :ivar agent_insight_monitors: AgentInsightMonitorsOperations operations
+    :vartype agent_insight_monitors: azure.ai.projects.operations.AgentInsightMonitorsOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.operations.ConnectionsOperations
     :ivar deployments: DeploymentsOperations operations
@@ -108,11 +114,15 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.beta = BetaOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.voice_agents = VoiceAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluation_rules = EvaluationRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.agent_insight_monitors = AgentInsightMonitorsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)

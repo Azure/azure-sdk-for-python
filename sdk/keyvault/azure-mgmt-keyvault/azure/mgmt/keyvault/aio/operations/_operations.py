@@ -36,6 +36,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_keys_create_if_not_exist_request,
     build_keys_get_request,
@@ -63,6 +64,9 @@ from ...operations._operations import (
     build_mhsm_private_endpoint_connections_put_request,
     build_mhsm_private_link_resources_list_by_mhsm_resource_request,
     build_mhsm_regions_list_by_resource_request,
+    build_network_security_perimeter_configurations_get_configuration_request,
+    build_network_security_perimeter_configurations_list_configurations_request,
+    build_network_security_perimeter_configurations_reconcile_configuration_request,
     build_operations_list_request,
     build_private_endpoint_connections_delete_request,
     build_private_endpoint_connections_get_request,
@@ -2195,6 +2199,309 @@ class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+
+class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.keyvault.aio.KeyVaultManagementClient`'s
+        :attr:`network_security_perimeter_configurations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: KeyVaultManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01-preview",
+        params_added_on={
+            "2026-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "network_security_perimeter_configuration_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01-preview"],
+    )
+    async def get_configuration(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        network_security_perimeter_configuration_name: str,
+        **kwargs: Any
+    ) -> _models.NetworkSecurityPerimeterConfiguration:
+        """Gets the specified network security perimeter configuration for a key vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the key vault. Required.
+        :type vault_name: str
+        :param network_security_perimeter_configuration_name: The name of the
+         NetworkSecurityPerimeterConfiguration. Required.
+        :type network_security_perimeter_configuration_name: str
+        :return: NetworkSecurityPerimeterConfiguration. The NetworkSecurityPerimeterConfiguration is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.keyvault.models.NetworkSecurityPerimeterConfiguration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.NetworkSecurityPerimeterConfiguration] = kwargs.pop("cls", None)
+
+        _request = build_network_security_perimeter_configurations_get_configuration_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            network_security_perimeter_configuration_name=network_security_perimeter_configuration_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.NetworkSecurityPerimeterConfiguration, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01-preview",
+        params_added_on={
+            "2026-10-01-preview": ["api_version", "subscription_id", "resource_group_name", "vault_name", "accept"]
+        },
+        api_versions_list=["2026-10-01-preview"],
+    )
+    def list_configurations(
+        self, resource_group_name: str, vault_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.NetworkSecurityPerimeterConfiguration"]:
+        """Lists the network security perimeter configurations associated with a key vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the key vault. Required.
+        :type vault_name: str
+        :return: An iterator like instance of NetworkSecurityPerimeterConfiguration
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.keyvault.models.NetworkSecurityPerimeterConfiguration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.NetworkSecurityPerimeterConfiguration]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_network_security_perimeter_configurations_list_configurations_request(
+                    resource_group_name=resource_group_name,
+                    vault_name=vault_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.NetworkSecurityPerimeterConfiguration],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01-preview",
+        params_added_on={
+            "2026-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "network_security_perimeter_configuration_name",
+            ]
+        },
+        api_versions_list=["2026-10-01-preview"],
+    )
+    async def reconcile_configuration(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        network_security_perimeter_configuration_name: str,
+        **kwargs: Any
+    ) -> None:
+        """Reconciles the specified network security perimeter configuration for a key vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the key vault. Required.
+        :type vault_name: str
+        :param network_security_perimeter_configuration_name: The name of the
+         NetworkSecurityPerimeterConfiguration. Required.
+        :type network_security_perimeter_configuration_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_network_security_perimeter_configurations_reconcile_configuration_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            network_security_perimeter_configuration_name=network_security_perimeter_configuration_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class ManagedHsmsOperations:  # pylint: disable=docstring-missing-param

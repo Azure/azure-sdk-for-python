@@ -583,6 +583,8 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The HorizonDB resource operation is actively running."""
     PROVISIONING = "Provisioning"
     """The HorizonDB resource is still provisioning."""
+    UPDATING = "Updating"
+    """The resource is being updated."""
 
 
 class PublicNetworkAccessState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

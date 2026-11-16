@@ -11,6 +11,8 @@ adaptation; they do not suppress argument or implementation checking.
 """
 
 from collections.abc import MutableMapping
+from os import PathLike
+from pathlib import Path
 from typing import Any, IO, Literal, Optional, Union, overload
 
 from azure.core.polling import LROPoller
@@ -18,6 +20,12 @@ from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
 from ..models._enums import FoundryFeaturesOptInKeys
+from .._checkpoint_download import (
+    _download_checkpoint_files,
+    _prepare_checkpoint_download,
+    _validate_checkpoint_output_path,
+)
+from .._checkpoint_files import _CheckpointOutput
 from .._operation_compat import _begin, _read, _build_sampling_request
 from . import _operations as _generated
 
@@ -278,6 +286,38 @@ class TrainingOperations(_generated.TrainingOperations):
 
 
 class CheckpointsOperations(_generated.CheckpointsOperations):
+    def download_weights(self, session_id: str, checkpoint_id: str, output_path: Union[str, PathLike[str]]) -> None:
+        """Download checkpoint files to an empty or absent local destination.
+
+        First check ``output_path/<session_id>/<checkpoint_id>``. The checkpoint directory must
+        be empty or absent; parent directories may contain unrelated entries.
+        Identifiers are used verbatim and must be single portable directory names.
+        Resolved session/checkpoint paths must remain inside the output root.
+        Prepare and validate the manifest, then stream every file with exact ETag/size
+        checks and nested filenames. Exclusive creation rejects symlinks/reparse points
+        below the resolved root. Failures retain partial output without deleting or
+        overwriting entries; inspect/remove it before retrying.
+
+        :param str session_id: Identifier of the session that owns the checkpoint.
+        :param str checkpoint_id: Identifier of the checkpoint within the session.
+        :param output_path: Local output root, which may already contain other files.
+        :type output_path: str or ~os.PathLike[str]
+        :return: None only after every advertised file is complete locally.
+        :rtype: None
+        :raises TypeError: If an identifier or output path has an incompatible type.
+        :raises ValueError: If an identifier is unsafe, a path escapes the output root,
+            the checkpoint directory is nonempty, or a request option is invalid.
+        :raises OSError: If a needed directory is a file or another filesystem check fails.
+        :raises ~azure.ai.finetuningsessions.FineTuningSessionsError: If preparation fails.
+        :raises ~azure.core.exceptions.HttpResponseError: If a service request fails.
+        :raises ~azure.ai.finetuningsessions.MalformedResponseError: If preparation status, file metadata,
+            response headers, or streamed byte counts are invalid.
+        """
+        _validate_checkpoint_output_path(session_id, checkpoint_id, output_path)
+        destination = _CheckpointOutput(Path(output_path), session_id, checkpoint_id)
+        manifest = _prepare_checkpoint_download(self, session_id, checkpoint_id)
+        _download_checkpoint_files(self, manifest, destination)
+
     # Preserve the published preview 'body' keyword across overloads and implementation.
     @overload  # type: ignore[override]
     def begin_save(  # pylint: disable=arguments-renamed

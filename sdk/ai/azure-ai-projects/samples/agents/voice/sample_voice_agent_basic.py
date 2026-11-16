@@ -6,28 +6,20 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates the voice-agent management lifecycle using the
-    synchronous AIProjectClient: creating a voice agent, retrieving it,
-    listing the voice agents in the project, and deleting it.
-
-    Voice agents are exposed through `project_client.agents` with
-    `kind="voice"`, the same surface used for prompt, workflow, hosted, and
-    external agents.
+    Create a voice agent, read its settings, add a version, and list voice
+    agents in the project. Delete the versions created by this sample.
+    Voice agents use project_client.agents with kind="voice".
 
 USAGE:
     python sample_voice_agent_basic.py
 
-    Before running the sample:
+    pip install "azure-ai-projects>=2.11.0" python-dotenv
 
-    pip install "azure-ai-projects>=2.7.0" python-dotenv
-
-    Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-       page of your Microsoft Foundry portal.
-    2) FOUNDRY_VOICE_AGENT_MODEL - Optional. The managed (service-hosted) realtime model
-       identifier. Defaults to "gpt-realtime".
-    3) FOUNDRY_VOICE_AGENT_NAME - Optional. The name of the voice agent. If not
-       set, defaults to "MyVoiceAgent".
+    Environment variables:
+    1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
+    2) FOUNDRY_VOICE_AGENT_MODEL (optional) - Managed Realtime model;
+       defaults to "gpt-realtime".
+    3) FOUNDRY_VOICE_AGENT_NAME (optional) - Agent name; defaults to "MyVoiceAgent".
 """
 
 import os
@@ -52,7 +44,7 @@ agent_name = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or "MyVoiceAgent"
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     created_versions = []
     try:

@@ -148,7 +148,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[AgentFabricMembership]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_fabric_membership_name']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_fabric_membership_name']}, api_versions_list=['2026-09-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -158,7 +158,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_fabric_membership_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_fabric_membership_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -168,7 +168,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AgentFabricMembership: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -195,7 +195,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name']}, api_versions_list=['2026-09-02-preview'])
         async def begin_complete_upgrade(
                 self, 
                 resource_group_name: str, 
@@ -380,39 +380,13 @@ namespace azure.mgmt.containerservice.aio.operations
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentPool]: ...
 
-        @overload
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         async def list_bootstrap_data(
                 self, 
                 resource_group_name: str, 
                 resource_name: str, 
                 agent_pool_name: str, 
-                body: ListBootstrapDataRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> PoolBootstrapData: ...
-
-        @overload
-        async def list_bootstrap_data(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                body: ListBootstrapDataRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> PoolBootstrapData: ...
-
-        @overload
-        async def list_bootstrap_data(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
                 **kwargs: Any
             ) -> PoolBootstrapData: ...
 
@@ -462,7 +436,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[AlertConfiguration]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name']}, api_versions_list=['2026-09-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -472,7 +446,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -482,7 +456,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AlertConfiguration: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -552,7 +526,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[IdentityBinding]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-09-01', '2026-09-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -562,7 +536,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-09-01', '2026-09-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -572,7 +546,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> IdentityBinding: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-09-01', '2026-09-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -626,7 +600,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[JWTAuthenticator]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name']}, api_versions_list=['2026-09-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -636,7 +610,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -646,7 +620,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> JWTAuthenticator: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -664,7 +638,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name']}, api_versions_list=['2026-09-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -710,7 +684,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> LoadBalancer: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -720,7 +694,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> LoadBalancer: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -915,7 +889,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[MaintenanceWindowResource]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name']}, api_versions_list=['2026-09-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -924,7 +898,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -933,7 +907,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> MaintenanceWindowResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -941,7 +915,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncItemPaged[MaintenanceWindowResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[MaintenanceWindowResource]: ...
 
         @overload
@@ -1020,7 +994,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> ManagedClusterSnapshot: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name']}, api_versions_list=['2026-09-02-preview'])
         async def delete(
                 self, 
                 resource_group_name: str, 
@@ -1029,7 +1003,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1038,11 +1012,11 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> ManagedClusterSnapshot: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list(self, **kwargs: Any) -> AsyncItemPaged[ManagedClusterSnapshot]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -1139,7 +1113,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[ManagedCluster]: ...
 
         @distributed_trace_async
-        @api_version_validation(params_added_on={'2026-08-02-preview': ['ignore_pod_disruption_budget']}, api_versions_list=['2025-10-01', '2026-01-01', '2026-02-01', '2026-03-01', '2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-08-02-preview'])
+        @api_version_validation(params_added_on={'2026-09-02-preview': ['ignore_pod_disruption_budget']}, api_versions_list=['2025-10-01', '2026-01-01', '2026-02-01', '2026-03-01', '2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-09-01', '2026-09-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1668,7 +1642,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[MeshMembership]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name']}, api_versions_list=['2026-09-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1678,7 +1652,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1688,7 +1662,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> MeshMembership: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -1706,7 +1680,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'operation_id', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'operation_id', 'accept']}, api_versions_list=['2026-09-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1716,7 +1690,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> OperationStatusResult: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'operation_id', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'operation_id', 'accept']}, api_versions_list=['2026-09-02-preview'])
         async def get_by_agent_pool(
                 self, 
                 resource_group_name: str, 
@@ -1727,7 +1701,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> OperationStatusResult: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -1736,7 +1710,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncItemPaged[OperationStatusResult]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'active_only', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'active_only', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_by_agent_pool(
                 self, 
                 resource_group_name: str, 
@@ -2120,7 +2094,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> UpgradeInsight: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'upgrade_insight_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'upgrade_insight_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -2130,7 +2104,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> UpgradeInsight: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -2296,6 +2270,7 @@ namespace azure.mgmt.containerservice.models
         managed_by: str
         name: str
         properties: Optional[AgentFabricMembershipProperties]
+        sku: AgentFabricMembershipSku
         system_data: SystemData
         type: str
 
@@ -2304,7 +2279,8 @@ namespace azure.mgmt.containerservice.models
                 self, 
                 *, 
                 managed_by: str, 
-                properties: Optional[AgentFabricMembershipProperties] = ...
+                properties: Optional[AgentFabricMembershipProperties] = ..., 
+                sku: AgentFabricMembershipSku
             ) -> None: ...
 
         @overload
@@ -2313,17 +2289,6 @@ namespace azure.mgmt.containerservice.models
 
     class azure.mgmt.containerservice.models.AgentFabricMembershipProperties(_Model):
         provisioning_state: Optional[Union[str, AgentFabricMembershipProvisioningState]]
-        sku: Union[str, AgentFabricMembershipSkuName]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                sku: Union[str, AgentFabricMembershipSkuName]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.containerservice.models.AgentFabricMembershipProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2333,6 +2298,20 @@ namespace azure.mgmt.containerservice.models
         FAILED = "Failed"
         SUCCEEDED = "Succeeded"
         UPDATING = "Updating"
+
+
+    class azure.mgmt.containerservice.models.AgentFabricMembershipSku(_Model):
+        name: Union[str, AgentFabricMembershipSkuName]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Union[str, AgentFabricMembershipSkuName]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.containerservice.models.AgentFabricMembershipSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4481,9 +4460,6 @@ namespace azure.mgmt.containerservice.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.ListBootstrapDataRequest(_Model):
 
 
     class azure.mgmt.containerservice.models.LoadBalancer(ProxyResource):
@@ -7522,12 +7498,14 @@ namespace azure.mgmt.containerservice.models
 
 
     class azure.mgmt.containerservice.models.PrivateEndpointConnectionListResult(_Model):
+        next_link: Optional[str]
         value: Optional[list[PrivateEndpointConnection]]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                next_link: Optional[str] = ..., 
                 value: Optional[list[PrivateEndpointConnection]] = ...
             ) -> None: ...
 
@@ -7584,12 +7562,14 @@ namespace azure.mgmt.containerservice.models
 
 
     class azure.mgmt.containerservice.models.PrivateLinkResourcesListResult(_Model):
+        next_link: Optional[str]
         value: Optional[list[PrivateLinkResource]]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                next_link: Optional[str] = ..., 
                 value: Optional[list[PrivateLinkResource]] = ...
             ) -> None: ...
 
@@ -8641,7 +8621,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[AgentFabricMembership]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_fabric_membership_name']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_fabric_membership_name']}, api_versions_list=['2026-09-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -8651,7 +8631,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_fabric_membership_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_fabric_membership_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -8661,7 +8641,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> AgentFabricMembership: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -8688,7 +8668,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name']}, api_versions_list=['2026-09-02-preview'])
         def begin_complete_upgrade(
                 self, 
                 resource_group_name: str, 
@@ -8873,39 +8853,13 @@ namespace azure.mgmt.containerservice.operations
                 **kwargs: Any
             ) -> ItemPaged[AgentPool]: ...
 
-        @overload
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_bootstrap_data(
                 self, 
                 resource_group_name: str, 
                 resource_name: str, 
                 agent_pool_name: str, 
-                body: ListBootstrapDataRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> PoolBootstrapData: ...
-
-        @overload
-        def list_bootstrap_data(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                body: ListBootstrapDataRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> PoolBootstrapData: ...
-
-        @overload
-        def list_bootstrap_data(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
                 **kwargs: Any
             ) -> PoolBootstrapData: ...
 
@@ -8955,7 +8909,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[AlertConfiguration]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name']}, api_versions_list=['2026-09-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -8965,7 +8919,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -8975,7 +8929,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> AlertConfiguration: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -9045,7 +8999,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[IdentityBinding]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-09-01', '2026-09-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -9055,7 +9009,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-09-01', '2026-09-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -9065,7 +9019,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> IdentityBinding: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-09-01', '2026-09-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -9119,7 +9073,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[JWTAuthenticator]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name']}, api_versions_list=['2026-09-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -9129,7 +9083,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -9139,7 +9093,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> JWTAuthenticator: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -9157,7 +9111,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name']}, api_versions_list=['2026-09-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -9203,7 +9157,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LoadBalancer: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -9213,7 +9167,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LoadBalancer: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -9408,7 +9362,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[MaintenanceWindowResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name']}, api_versions_list=['2026-09-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -9417,7 +9371,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -9426,7 +9380,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> MaintenanceWindowResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -9434,7 +9388,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> ItemPaged[MaintenanceWindowResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[MaintenanceWindowResource]: ...
 
         @overload
@@ -9513,7 +9467,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> ManagedClusterSnapshot: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name']}, api_versions_list=['2026-09-02-preview'])
         def delete(
                 self, 
                 resource_group_name: str, 
@@ -9522,7 +9476,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -9531,11 +9485,11 @@ namespace azure.mgmt.containerservice.operations
             ) -> ManagedClusterSnapshot: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list(self, **kwargs: Any) -> ItemPaged[ManagedClusterSnapshot]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -9632,7 +9586,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[ManagedCluster]: ...
 
         @distributed_trace
-        @api_version_validation(params_added_on={'2026-08-02-preview': ['ignore_pod_disruption_budget']}, api_versions_list=['2025-10-01', '2026-01-01', '2026-02-01', '2026-03-01', '2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-08-02-preview'])
+        @api_version_validation(params_added_on={'2026-09-02-preview': ['ignore_pod_disruption_budget']}, api_versions_list=['2025-10-01', '2026-01-01', '2026-02-01', '2026-03-01', '2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-09-01', '2026-09-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -10161,7 +10115,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[MeshMembership]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name']}, api_versions_list=['2026-09-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -10171,7 +10125,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -10181,7 +10135,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> MeshMembership: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -10199,7 +10153,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'operation_id', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'operation_id', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -10209,7 +10163,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> OperationStatusResult: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'operation_id', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'operation_id', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def get_by_agent_pool(
                 self, 
                 resource_group_name: str, 
@@ -10220,7 +10174,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> OperationStatusResult: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -10229,7 +10183,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> ItemPaged[OperationStatusResult]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'active_only', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'active_only', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list_by_agent_pool(
                 self, 
                 resource_group_name: str, 
@@ -10613,7 +10567,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> UpgradeInsight: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'upgrade_insight_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'upgrade_insight_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -10623,7 +10577,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> UpgradeInsight: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        @api_version_validation(method_added_on='2026-09-02-preview', params_added_on={'2026-09-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-09-02-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -10699,21 +10653,26 @@ namespace azure.mgmt.containerservice.types
         key "managedBy": Required[str]
         key "name": str
         key "properties": ForwardRef('AgentFabricMembershipProperties', module='types')
+        key "sku": Required[AgentFabricMembershipSku]
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         id: str
         managedBy: str
         name: str
         properties: AgentFabricMembershipProperties
+        sku: AgentFabricMembershipSku
         systemData: SystemData
         type: str
 
 
     class azure.mgmt.containerservice.types.AgentFabricMembershipProperties(TypedDict, total=False):
         key "provisioningState": Union[str, AgentFabricMembershipProvisioningState]
-        key "sku": Required[Union[str, AgentFabricMembershipSkuName]]
         provisioningState: Union[str, AgentFabricMembershipProvisioningState]
-        sku: Union[str, AgentFabricMembershipSkuName]
+
+
+    class azure.mgmt.containerservice.types.AgentFabricMembershipSku(TypedDict, total=False):
+        key "name": Required[Union[str, AgentFabricMembershipSkuName]]
+        name: Union[str, AgentFabricMembershipSkuName]
 
 
     class azure.mgmt.containerservice.types.AgentPool(ProxyResource):
@@ -11492,9 +11451,6 @@ namespace azure.mgmt.containerservice.types
         sysctls: SysctlConfig
         transparentHugePageDefrag: str
         transparentHugePageEnabled: str
-
-
-    class azure.mgmt.containerservice.types.ListBootstrapDataRequest(TypedDict, total=False):
 
 
     class azure.mgmt.containerservice.types.LoadBalancer(ProxyResource):

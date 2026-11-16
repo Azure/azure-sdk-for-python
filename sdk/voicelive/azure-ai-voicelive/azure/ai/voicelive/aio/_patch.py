@@ -538,10 +538,18 @@ class VoiceLiveConnection:
                 log.debug("Received websocket binary message: %s", msg.data)
                 return msg.data
             if msg.type == aiohttp.WSMsgType.CLOSE:
-                code = self._connection.close_code or 1000
-                reason = ""
+                # For CLOSE frames aiohttp puts the close code in ``msg.data`` and the
+                # close reason sent by the peer in ``msg.extra``.
+                code = msg.data or self._connection.close_code or 1000
+                reason = msg.extra or ""
                 log.debug("WebSocket connection closed with code %s: %s", code, reason)
                 raise ConnectionClosed(code, reason)
+            if msg.type == aiohttp.WSMsgType.CLOSING:
+                # aiohttp returns CLOSING when the connection is being closed (for example
+                # ``close()`` was called from another task while ``receive()`` was waiting).
+                code = self._connection.close_code or 1000
+                log.debug("WebSocket connection closing with code %s", code)
+                raise ConnectionClosed(code, "Connection closing")
             if msg.type == aiohttp.WSMsgType.ERROR:
                 log.error("WebSocket connection error: %s", self._connection.exception())
                 raise ConnectionClosed(1006, str(self._connection.exception()))

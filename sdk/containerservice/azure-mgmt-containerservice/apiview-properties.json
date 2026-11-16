@@ -12,6 +12,7 @@
         "azure.mgmt.containerservice.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
         "azure.mgmt.containerservice.models.AgentFabricMembership": "Microsoft.ContainerService.AgentFabricMembership",
         "azure.mgmt.containerservice.models.AgentFabricMembershipProperties": "Microsoft.ContainerService.AgentFabricMembershipProperties",
+        "azure.mgmt.containerservice.models.AgentFabricMembershipSku": "Microsoft.ContainerService.AgentFabricMembershipSku",
         "azure.mgmt.containerservice.models.AgentPool": "Microsoft.ContainerService.AgentPoolCustomize",
         "azure.mgmt.containerservice.models.AgentPoolArtifactStreamingProfile": "Microsoft.ContainerService.AgentPoolArtifactStreamingProfile",
         "azure.mgmt.containerservice.models.AgentPoolAvailableVersions": "Microsoft.ContainerService.AgentPoolAvailableVersions",
@@ -126,7 +127,6 @@
         "azure.mgmt.containerservice.models.LabelSelector": "Microsoft.ContainerService.LabelSelector",
         "azure.mgmt.containerservice.models.LabelSelectorRequirement": "Microsoft.ContainerService.LabelSelectorRequirement",
         "azure.mgmt.containerservice.models.LinuxOSConfig": "Microsoft.ContainerService.LinuxOSConfig",
-        "azure.mgmt.containerservice.models.ListBootstrapDataRequest": "Microsoft.ContainerService.ListBootstrapDataRequest",
         "azure.mgmt.containerservice.models.LoadBalancer": "Microsoft.ContainerService.LoadBalancer",
         "azure.mgmt.containerservice.models.LoadBalancerProperties": "Microsoft.ContainerService.LoadBalancerProperties",
         "azure.mgmt.containerservice.models.LocalDNSOverride": "Microsoft.ContainerService.LocalDNSOverride",
@@ -672,5 +672,5 @@
         "azure.mgmt.containerservice.operations.VmSkusOperations.list": "Microsoft.ContainerService.VmSkusOperationGroup.list",
         "azure.mgmt.containerservice.aio.operations.VmSkusOperations.list": "Microsoft.ContainerService.VmSkusOperationGroup.list"
     },
-    "CrossLanguageVersion": "f6cb04c07165"
+    "CrossLanguageVersion": "c64a5310a61f"
 }

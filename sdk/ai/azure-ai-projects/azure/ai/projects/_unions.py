@@ -11,11 +11,45 @@ from typing import Literal, TYPE_CHECKING, TypeAlias, Union
 if TYPE_CHECKING:
     from . import models as _models
 Filters: TypeAlias = Union["_models.ComparisonFilter", "_models.CompoundFilter"]
+RoutineRunStatus: TypeAlias = str
 VoiceAgentToolChoice: TypeAlias = Union[
     Literal["none"], Literal["auto"], Literal["required"], "_models.ToolChoiceFunction", "_models.ToolChoiceMCP"
 ]
 VoiceAgentMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
-RoutineRunStatus: TypeAlias = str
-VoiceAgentSessionUpdate: TypeAlias = "_models.VoiceAgentSessionUpdateConfig"
+VoiceAgentHandoffMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
+UserConversationSimulationSource: TypeAlias = Union[
+    "_models.EvalJsonlFileContentSource",
+    "_models.EvalJsonlFileIdSource",
+    "_models.UserConversationSimulationInlineTestCasesSource",
+]
+EvalItemContentItem: TypeAlias = Union[str, "_models.EvalItemContentItemObject"]
+EvalItemContent: TypeAlias = Union[EvalItemContentItem, list[EvalItemContentItem]]
+DatasetEvaluationSource: TypeAlias = Union[
+    "_models.CreateEvalJsonlRunDataSource",
+    "_models.CsvEvalRunDataSource",
+    "_models.CreateEvalCompletionsRunDataSource",
+    "_models.TargetCompletionEvalRunDataSource",
+    "_models.UserConversationSimulationEvalRunDataSource",
+    "_models.UserConversationSimulationPreviewEvalRunDataSource",
+]
+TraceEvaluationSource: TypeAlias = Union[
+    "_models.TracesEvalRunDataSource",
+    "_models.TraceSourceEvalRunDataSource",
+    "_models.TracesPreviewEvalRunDataSource",
+    "_models.TraceSourcePreviewEvalRunDataSource",
+]
 VoiceAgentSessionResponse: TypeAlias = "_models.VoiceAgentSessionResponseConfig"
+RealtimeResponseInputItem: TypeAlias = Union[
+    "_models.RealtimeResponseInputMessage",
+    "_models.RealtimeResponseInputFunctionCall",
+    "_models.RealtimeResponseInputFunctionCallOutput",
+    "_models.RealtimeResponseItemReference",
+]
+VoiceAgentSessionUpdate: TypeAlias = "_models.VoiceAgentSessionUpdateConfig"
+VoiceAgentDtmfCompletionMode: TypeAlias = Union[
+    "_models.VoiceAgentDtmfFixedLengthCompletionMode",
+    "_models.VoiceAgentDtmfTerminatorCompletionMode",
+    "_models.VoiceAgentDtmfInterDigitSilenceCompletionMode",
+]
+ChoiceValueResource: TypeAlias = Union[str, bool]
 GenerateAgentRequest: TypeAlias = "_models.GenerateVoiceAgentRequest"

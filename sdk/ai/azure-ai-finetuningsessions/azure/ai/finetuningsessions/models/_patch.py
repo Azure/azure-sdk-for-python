@@ -12,9 +12,26 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, Dict, Literal, Mapping, Optional, Union, overload
 
 from .. import _unions
+from .._scalar_serialization import install_scalar_serialization as _install_scalar_serialization
 from .._utils.model_base import Model as _Model, rest_field
 from . import _models
 from ._enums import SessionType, TrainingType
+from ._text_only import (
+    TextOnlyFunctionCall,
+    TextOnlyToolCall,
+    TextOnlyContextMessage,
+    TextOnlyAssistantMessage,
+    TextOnlyToolMessage,
+    TextOnlyMessage,
+    TextOnlyFunctionDefinition,
+    TextOnlyTool,
+    TextOnlySampleInput,
+    TextOnlyTrainingSample,
+    TextOnlyTrainingInput,
+    TextOnlySampleChoice,
+    TextOnlyInvalidSampleChoice,
+    TextOnlySampleOperationResult,
+)
 
 MAX_IMAGE_BYTES = 10_000_000
 MAX_IMAGES_PER_EXAMPLE = 64
@@ -208,11 +225,10 @@ def _deserialize_prompt_tokens(value: Any) -> Optional[int]:
 
 
 class SampleOperationResult(_models.SampleOperationResult, discriminator="sample"):
-    """Sampling result with the tested preview's nested nullable annotations.
+    """Sampling result with optional prompt-level evidence and log probabilities.
 
-    The pinned emitter cannot represent nested nullable tuple arrays. These
-    two fields therefore use the supported model override, not generated-file
-    rewriting. Wire pairs remain JSON arrays, just as in the Loom preview.
+    Log-probability entries can be absent at individual prompt positions.
+    Token/log-probability pairs are represented as JSON arrays on the wire.
 
     :ivar prompt_tokens: Backend ``usage.prompt_tokens`` for the single prompt,
         counted once regardless of the number of sampled sequences. Missing or
@@ -312,13 +328,28 @@ __all__: list[str] = [
     "SampleOperationResult",
     "SamplingOperationResult",
     "SaveCheckpointRequest",
+    "TextOnlyFunctionCall",
+    "TextOnlyToolCall",
+    "TextOnlyContextMessage",
+    "TextOnlyAssistantMessage",
+    "TextOnlyToolMessage",
+    "TextOnlyMessage",
+    "TextOnlyFunctionDefinition",
+    "TextOnlyTool",
+    "TextOnlySampleInput",
+    "TextOnlyTrainingSample",
+    "TextOnlyTrainingInput",
+    "TextOnlySampleChoice",
+    "TextOnlyInvalidSampleChoice",
+    "TextOnlySampleOperationResult",
 ]
 
 
-def patch_sdk():
+def patch_sdk() -> None:
     """Do not remove from this file.
 
     `patch_sdk` is a last resort escape hatch that allows you to do customizations
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    _install_scalar_serialization()

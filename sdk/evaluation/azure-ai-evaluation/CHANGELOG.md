@@ -1,10 +1,12 @@
 # Release History
 
-## 1.18.12 (Unreleased)
+## 1.18.13 (Unreleased)
 
-### Features Added
+### Other Changes
 
-### Breaking Changes
+- Added WARNING-level diagnostics for malformed JSON, missing or unusable judge output, including a cause and SDK-controlled response metadata when available. Diagnostics do not log model response content. JSON-decoding, invalid-output, and score-validation exception messages now include the cause and metadata; existing score fallbacks and exception types are unchanged.
+
+## 1.18.12 (2026-11-09)
 
 ### Bugs Fixed
 
@@ -12,8 +14,7 @@
 - A Decision evaluator that the judge model rates as not applicable gives a readable reason, for example `Not applicable: the judge model's applicability probability 0.2000 is below the 0.5000 cutoff, so the evaluator was skipped. No model rationale is available.` It used to read `Status completion probability 0.2000 is below 0.5000; evaluation skipped.`, which named an internal question.
 - `TaskAdherenceEvaluator` with a Decision model reports a threshold of 1 when none is requested, the only score at which its binary result passes, as `_TaskCompletionEvaluator` does. It reported 0. A requested threshold is still reported as given and still does not decide whether a binary result passes. The evaluator's `threshold` attribute now also defaults to 1 for chat models; chat results are unchanged.
 - A Decision reason names a question by the part of its key after the last `/`, so a namespaced key such as `grade/confirm_details`, which the hosted evaluation service uses for rubric dimensions, reads `Confirm details probability 0.1645 is below the 0.7500 cutoff.` It used to read `Grade/confirm details probability ...`.
-
-### Other Changes
+- A prompt template that fails to parse or render raises `JinjaTemplateError`, a subclass of `PromptyException` classified as a user error, instead of a generic `PromptyException`. Code that catches `PromptyException` still catches it. A template blocked by the sandbox still raises `PromptyException`.
 
 ## 1.18.11 (2026-11-03)
 

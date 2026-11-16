@@ -65,6 +65,13 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         )
         cls._collect_customer_sdkstats_patch.start()
 
+        # Keep internal Statsbeat exports out of customer SDK-stat tracking assertions.
+        cls._collect_statsbeat_patch = mock.patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics"
+        )
+        cls._collect_statsbeat_patch.start()
+        cls.addClassCleanup(cls._collect_statsbeat_patch.stop)
+
         # Create reusable test data structure for TelemetryItem
         base_data = TelemetryEventData(name="test_event", properties={"test_property": "test_value"})
         monitor_base = MonitorBase(base_type="EventData", base_data=base_data)
@@ -321,8 +328,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         """Test that track_dropped_items is called on circular redirect errors"""
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
 
-        # Mock the consecutive redirects counter to simulate exceeding max redirects
-        exporter._consecutive_redirects = 10  # Set to a high value to simulate circular redirects
+        exporter.client._config.redirect_policy.max_redirects = 1
 
         # Simulate redirect responses that would cause circular redirects
         with mock.patch.object(AzureMonitorClient, "track") as track_mock:
