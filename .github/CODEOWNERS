@@ -791,6 +791,9 @@
 # PRLabel: %WebPubSub
 /sdk/webpubsub/    @chenkennt @Y-Sindo
 
+# PRLabel: %WebPubSub
+/sdk/webpubsub/azure-messaging-webpubsubchatservice/    @chenkennt @JialinXin @vicancy @Y-Sindo
+
 # ServiceLabel: %SQL
 # ServiceOwners: @azureSQLGitHub
 
