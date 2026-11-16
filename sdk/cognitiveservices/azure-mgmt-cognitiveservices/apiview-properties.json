@@ -828,5 +828,5 @@
         "azure.mgmt.cognitiveservices.CognitiveServicesManagementClient.calculate_model_capacity": "Microsoft.CognitiveServices.calculateModelCapacity",
         "azure.mgmt.cognitiveservices.aio.CognitiveServicesManagementClient.calculate_model_capacity": "Microsoft.CognitiveServices.calculateModelCapacity"
     },
-    "CrossLanguageVersion": "6785fc37138e"
+    "CrossLanguageVersion": "481dd7ea6b0f"
 }
