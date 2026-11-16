@@ -13,7 +13,7 @@ from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY_TENT
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
 from test_per_partition_circuit_breaker_mm import create_doc, write_operations_and_errors, operations, REGION_1, \
-    REGION_2, PK_VALUE, perform_write_operation, perform_read_operation, CREATE, READ, validate_stats, user_agent_hook
+    REGION_2, PK_VALUE, perform_write_operation, perform_read_operation, CREATE, READ, validate_stats, assert_circuit_breaker_user_agent
 
 COLLECTION = "created_collection"
 
@@ -244,8 +244,10 @@ class TestPerPartitionCircuitBreakerSmMrr:
         custom_setup = self.setup_method_with_custom_transport(None)
         container = custom_setup['col']
         # Create a document to check the response headers
-        container.upsert_item(body={'id': str(uuid.uuid4()), 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'},
-                                              raw_response_hook=user_agent_hook)
+        with test_config.capture_requests(container, resource_type='docs') as requests:
+            container.upsert_item(body={'id': str(uuid.uuid4()), 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'})
+        for request in requests:
+            assert_circuit_breaker_user_agent(request)
 
     # test cosmos client timeout
 

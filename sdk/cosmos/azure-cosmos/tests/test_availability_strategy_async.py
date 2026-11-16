@@ -55,7 +55,7 @@ async def setup():
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
     test_client = test_config.TestConfig.create_data_client_async()
-    database_account = await test_client._get_database_account()
+    database_account = await test_client.client_connection.GetDatabaseAccount()
     write_locations = [loc["name"] for loc in database_account._WritableLocations]
     read_locations = [loc["name"] for loc in database_account._ReadableLocations]
     region_1, region_2 = _select_primary_and_failover_region(write_locations, read_locations)

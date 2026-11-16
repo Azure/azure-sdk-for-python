@@ -508,8 +508,10 @@ class TestPerPartitionCircuitBreakerMM:
         custom_setup = self.setup_method_with_custom_transport(None)
         container = custom_setup['col']
         # Create a document to check the response headers
-        container.upsert_item(body={'id': str(uuid.uuid4()), 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'},
-                                              raw_response_hook=user_agent_hook)
+        with test_config.capture_requests(container, resource_type='docs') as requests:
+            container.upsert_item(body={'id': str(uuid.uuid4()), 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'})
+        for request in requests:
+            assert_circuit_breaker_user_agent(request)
 
     # test cosmos client timeout
 
@@ -534,7 +536,7 @@ def validate_stats(global_endpoint_manager,
         assert health_info.read_success_count == expected_read_success_count
         assert health_info.write_success_count == expected_write_success_count
 
-def user_agent_hook(raw_response):
+def assert_circuit_breaker_user_agent(request):
     # Used to verify the user agent feature flags
-    user_agent = raw_response.http_request.headers.get('user-agent')
+    user_agent = request.headers.get('user-agent')
     assert user_agent.endswith('| F2')

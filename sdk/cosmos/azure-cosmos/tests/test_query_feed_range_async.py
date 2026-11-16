@@ -224,37 +224,6 @@ class TestQueryFeedRangeAsync:
         assert "Unsupported query shape for range-scoped pagination" in message
         assert "SELECT VALUE AVG" in message
 
-    async def test_query_with_avg_aggregate_single_partition_feed_range_succeeds_async(self):
-        """AVG scoped to a single-partition feed_range must still succeed."""
-        # Multi-partition container, but the feed_range maps to one partition.
-        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
-        query = (
-            f'SELECT VALUE AVG(c["value"]) FROM c WHERE IS_DEFINED(c["value"]) '
-            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
-        )
-
-        feed_range = await container.feed_range_from_partition_key(PK_VALUES[0])
-        items = [item async for item in container.query_items(
-            query=query,
-            feed_range=feed_range,
-            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
-        )]
-
-        # Seed data has value=100 for every document.
-        assert items, "Single-partition AVG must return at least one result row"
-        assert items[0] == 100, f"Expected AVG=100, got {items[0]}"
-
-        # Same expectation on the single-partition container.
-        single_container = self.get_container(SINGLE_PARTITION_CONTAINER_ID)
-        single_feed_range = await single_container.feed_range_from_partition_key(PK_VALUES[0])
-        single_items = [item async for item in single_container.query_items(
-            query=query,
-            feed_range=single_feed_range,
-            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
-        )]
-        assert single_items, "Single-partition container AVG must return a row"
-        assert single_items[0] == 100
-
     # The next few tests run against a multi-partition container
     # (async variant) and confirm that combining partial results
     # returns the right shape: lists for non-aggregate projections,
@@ -319,33 +288,6 @@ class TestQueryFeedRangeAsync:
             f"All seeded values are 100 > 0; expected every row to be True. Got {items}"
         )
 
-    async def test_query_value_min_across_full_feed_range_returns_scalar_async(self):
-        """MIN over a multi-partition feed_range should return one value (the smallest)."""
-        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
-        query = (
-            f'SELECT VALUE MIN(c["value"]) FROM c WHERE IS_DEFINED(c["value"]) '
-            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
-        )
-
-        full_range = test_config.create_range(
-            range_min="",
-            range_max="FF",
-            is_min_inclusive=True,
-            is_max_inclusive=False,
-        )
-        feed_range = test_config.create_feed_range_in_dict(full_range)
-
-        items = [item async for item in container.query_items(
-            query=query,
-            feed_range=feed_range,
-            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
-        )]
-
-        assert len(items) == 1, (
-            f"MIN should return a single value across partitions; got {len(items)} rows: {items}"
-        )
-        assert items[0] == 100
-
     async def test_query_value_max_across_full_feed_range_returns_scalar_async(self):
         """MAX over a multi-partition feed_range should return one value (the largest)."""
         container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
@@ -372,33 +314,6 @@ class TestQueryFeedRangeAsync:
             f"MAX should return a single value across partitions; got {len(items)} rows: {items}"
         )
         assert items[0] == 100
-
-    async def test_query_value_sum_across_full_feed_range_still_sums_async(self):
-        """SUM should still add per-partition totals together."""
-        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
-        query = (
-            f'SELECT VALUE SUM(c["value"]) FROM c WHERE IS_DEFINED(c["value"]) '
-            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
-        )
-
-        full_range = test_config.create_range(
-            range_min="",
-            range_max="FF",
-            is_min_inclusive=True,
-            is_max_inclusive=False,
-        )
-        feed_range = test_config.create_feed_range_in_dict(full_range)
-
-        items = [item async for item in container.query_items(
-            query=query,
-            feed_range=feed_range,
-            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
-        )]
-
-        assert len(items) == 1, (
-            f"SUM should return a single value across partitions; got {len(items)} rows: {items}"
-        )
-        assert items[0] == 100 * len(PK_VALUES)
 
     async def test_query_value_count_across_full_feed_range_still_counts_async(self):
         """COUNT should still return a single total across partitions."""

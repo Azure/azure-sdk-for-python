@@ -40,6 +40,7 @@ class CrossRegionHedgingStrategy:
     - threshold_steps_ms: Time interval between routing attempts (default: 100)
     """
     def __init__(self, config: Optional[dict[str, Any]] = None) -> None:
+        self._explicit_threshold_steps = config is not None and "threshold_steps_ms" in config
         if config is None:
             self.threshold_ms = DEFAULT_THRESHOLD_MS
             self.threshold_steps_ms = DEFAULT_THRESHOLD_STEPS_MS
@@ -53,6 +54,18 @@ class CrossRegionHedgingStrategy:
             raise ValueError("threshold_steps_ms must be positive")
 
 
+def reject_rust_threshold_steps(config: Any) -> None:
+    """Keep legacy step configuration from silently becoming threshold-only."""
+    if (
+        isinstance(config, dict) and "threshold_steps_ms" in config
+        or isinstance(config, CrossRegionHedgingStrategy) and config._explicit_threshold_steps
+    ):
+        raise TypeError(
+            "threshold_steps_ms is not supported by the Rust-backed APIs; "
+            "availability_strategy accepts threshold_ms only."
+        )
+
+
 def _validate_request_hedging_strategy(
         config: Optional[Union[bool, dict[str, Any]]]
 ) -> Union[CrossRegionHedgingStrategy, bool, None]:
@@ -60,7 +73,7 @@ def _validate_request_hedging_strategy(
     
     :param config: Configuration for availability strategy. Can be:
         - None: Returns None (no strategy, uses client default if available)
-        - True: Returns strategy with default values (threshold_ms=500, threshold_steps_ms=100)
+        - True: Retained for request preparation to select client settings, or defaults if no client strategy exists
         - False: Returns False (explicitly disabled, overrides client configs)
         - dict: Returns strategy with values from dict, using defaults for missing keys
     :type config: Optional[Union[bool, Dict[str, Any]]]

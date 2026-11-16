@@ -290,7 +290,7 @@ class TestAvailabilityStrategy:
         logger.setLevel(logging.DEBUG)
 
         cls.client_without_fault = test_config.TestConfig.create_data_client()
-        database_account = cls.client_without_fault.get_database_account()
+        database_account = cls.client_without_fault.client_connection.GetDatabaseAccount()
         cls.write_locations = [loc["name"] for loc in database_account._WritableLocations]
         cls.read_locations = [loc["name"] for loc in database_account._ReadableLocations]
         # Use first writable location as primary region and any distinct region as failover.

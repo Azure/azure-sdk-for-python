@@ -1,0 +1,390 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
+"""In-process unit tests for ``_helpers/_exceptions.py`` — no network, no Cosmos emulator.
+
+When a backend (Rust today, eventually only Rust) returns a non-2xx
+``BackendResponse``, the helper layer turns that response into the
+right ``CosmosHttpResponseError`` subclass and stamps it with the
+metadata customer code expects (``status_code``, ``sub_status``,
+``response.headers``, ``response.text()``). This file covers every
+piece of that translation:
+
+* The status-code → typed-exception mapping (409 must be
+  ``CosmosResourceExistsError``, 404 must be
+  ``CosmosResourceNotFoundError``, 412 must be
+  ``CosmosAccessConditionFailedError``, the rest fall back to
+  ``CosmosHttpResponseError``).
+* The exception's metadata mirrors the response (status, sub-status,
+  headers, decoded body, custom message).
+* ``error_message_from_body`` returns the whole decoded error body as
+  ``http_error_message``, matching the legacy path, and never raises on
+  malformed input.
+* ``is_success_status`` agrees with the rest of the SDK on what
+  counts as a success (the 2xx range, nothing else).
+* The ``_ResponseAdapter`` exposes the same surface customer
+  code already uses on ``e.response`` (``status_code``, ``headers``,
+
+  ``text()``, ``body()``) and never raises on weird body bytes.
+
+The duplicate-id 409 → ``CosmosResourceExistsError`` mapping is the
+one customer code most often relies on (`except
+CosmosResourceExistsError` as a cheap idempotency check); locking down it
+here makes that contract impossible to break silently.
+"""
+import json
+import unittest
+
+from azure.core.utils import CaseInsensitiveDict
+
+from azure.cosmos._backend.contracts import BackendResponse
+from azure.cosmos._helpers._exceptions import (
+    _ResponseAdapter,
+    error_message_from_body,
+    is_success_status,
+    map_backend_response_to_exception,
+)
+from azure.cosmos.exceptions import (
+    CosmosAccessConditionFailedError,
+    CosmosHttpResponseError,
+    CosmosResourceExistsError,
+    CosmosResourceNotFoundError,
+)
+
+
+def _make_response(*, status_code, sub_status=0, headers=None, body=b""):
+    """Tiny ``BackendResponse`` factory so the test bodies stay readable."""
+    return BackendResponse(
+        status_code=status_code,
+        sub_status=sub_status,
+        headers=CaseInsensitiveDict(headers or {}),
+        body=body,
+    )
+
+
+class TestStatusToExceptionMapping(unittest.TestCase):
+    """Cover the status-code → typed-exception table.
+
+    These four mappings are the contract customer code relies on.
+    The first three are the "named" failures with dedicated subclass
+    handlers; the rest of the 4xx/5xx range falls back to the base
+    ``CosmosHttpResponseError`` plus the ``sub_status`` field for
+    finer-grained discrimination.
+    """
+
+    def test_409_maps_to_resource_exists_rust(self):
+        """409 → ``CosmosResourceExistsError`` (the duplicate-id contract customers ``except`` on)."""
+        exc = map_backend_response_to_exception(_make_response(status_code=409))
+        self.assertIsInstance(exc, CosmosResourceExistsError)
+
+    def test_404_maps_to_resource_not_found_rust(self):
+        """404 → ``CosmosResourceNotFoundError``."""
+        exc = map_backend_response_to_exception(_make_response(status_code=404))
+        self.assertIsInstance(exc, CosmosResourceNotFoundError)
+
+    def test_412_maps_to_access_condition_failed_rust(self):
+        """412 → ``CosmosAccessConditionFailedError`` (etag / If-Match precondition)."""
+        exc = map_backend_response_to_exception(_make_response(status_code=412))
+        self.assertIsInstance(exc, CosmosAccessConditionFailedError)
+
+    def test_429_falls_back_to_base_class_rust(self):
+        """429 has no dedicated subclass today; it must be the base ``CosmosHttpResponseError``.
+
+        If someone later adds a ``CosmosThrottlingError`` subclass,
+        this test will fail and force a deliberate review of whether
+        existing customer ``except`` handlers still catch it.
+        """
+        exc = map_backend_response_to_exception(_make_response(status_code=429))
+        self.assertIsInstance(exc, CosmosHttpResponseError)
+        # Belt-and-braces: not silently downgraded to one of the typed subclasses.
+        self.assertNotIsInstance(exc, CosmosResourceExistsError)
+        self.assertNotIsInstance(exc, CosmosResourceNotFoundError)
+
+    def test_500_falls_back_to_base_class_rust(self):
+        """500 (and any other unmapped status) → base ``CosmosHttpResponseError``."""
+        exc = map_backend_response_to_exception(_make_response(status_code=500))
+        self.assertIsInstance(exc, CosmosHttpResponseError)
+
+
+class TestExceptionMetadataIsCopiedAcross(unittest.TestCase):
+    """The exception carries the response's status, sub-status, headers, body and message.
+
+    Customer code reads these off the exception (``e.status_code``,
+    ``e.sub_status``, ``e.response.headers``, ``e.response.text()``,
+
+    ``str(e)``) and the legacy core-python path always populated
+    them. The helper layer must do the same so a Rust round-trip
+    surfaces an indistinguishable exception object.
+    """
+
+    def test_status_code_is_propagated_rust(self):
+        """``BackendResponse.status_code`` → ``exc.status_code``."""
+        exc = map_backend_response_to_exception(_make_response(status_code=409))
+        self.assertEqual(exc.status_code, 409)
+
+    def test_sub_status_from_typed_field_is_propagated_rust(self):
+        """``BackendResponse.sub_status`` is honoured even when the headers map omits it.
+
+        The Rust path fills the typed ``sub_status`` field directly
+        rather than only via the ``x-ms-substatus`` header, so the
+        helper must read the typed field as the source of truth.
+        """
+        exc = map_backend_response_to_exception(
+            _make_response(status_code=429, sub_status=3200)
+        )
+        self.assertEqual(exc.sub_status, 3200)
+
+    def test_response_adapter_exposes_status_code_and_headers_rust(self):
+        """``e.response.status_code`` and ``e.response.headers`` mirror the underlying response."""
+        exc = map_backend_response_to_exception(
+            _make_response(status_code=409, headers={"x-ms-x": "1"})
+        )
+        self.assertEqual(exc.response.status_code, 409)
+        self.assertEqual(exc.response.headers["x-ms-x"], "1")
+
+    def test_response_adapter_text_decodes_body_as_utf8_rust(self):
+        """``e.response.text()`` returns the body decoded as UTF-8 (the documented surface)."""
+        exc = map_backend_response_to_exception(
+            _make_response(status_code=400, body=b'{"message":"bad"}')
+        )
+        self.assertEqual(exc.response.text(), '{"message":"bad"}')
+
+    def test_response_adapter_body_returns_raw_bytes_rust(self):
+        """``e.response.body()`` returns the raw bytes, undecoded."""
+        exc = map_backend_response_to_exception(
+            _make_response(status_code=400, body=b"raw")
+        )
+        self.assertEqual(exc.response.body(), b"raw")
+
+    def test_message_is_used_in_exception_text_rust(self):
+        """A ``message=`` argument shows up in ``str(exc)`` (used by logs and tracebacks)."""
+        exc = map_backend_response_to_exception(
+            _make_response(status_code=409),
+            message="duplicate id detected",
+        )
+        # CosmosHttpResponseError formats as "Status code: NNN\n<message>".
+        self.assertIn("duplicate id detected", str(exc))
+
+
+class TestRequestEntityTooLargeFormatting(unittest.TestCase):
+    """Preserve the public error code without replacing the native response body."""
+
+    def test_native_errors_envelope_preserves_413_prefix_and_response_rust(self):
+        body = b'{"Errors":["Request size is too large"]}'
+        response = _make_response(
+            status_code=413,
+            sub_status=1001,
+            body=body,
+            headers={"x-ms-activity-id": "activity", "x-ms-request-charge": "2.5"},
+        )
+        message = error_message_from_body(body, 413)
+        exc = map_backend_response_to_exception(response, message=message)
+        self.assertEqual(exc.status_code, 413)
+        self.assertEqual(exc.sub_status, 1001)
+        self.assertTrue(exc.message.startswith("(RequestEntityTooLarge)"))
+        self.assertTrue(str(exc).startswith("(RequestEntityTooLarge)"))
+        self.assertEqual(exc.error.code, "RequestEntityTooLarge")
+        self.assertEqual(exc.error.message, "Request size is too large")
+        self.assertEqual(exc.http_error_message, message)
+        self.assertEqual(exc.response.body(), body)
+        self.assertEqual(exc.response.text(), body.decode("utf-8"))
+        self.assertEqual(exc.headers, response.headers)
+        self.assertEqual(response.body, body)
+
+    def test_all_native_errors_and_unicode_are_retained_rust(self):
+        messages = ["Request size is too large", "Payload: caf\u00e9"]
+        body = json.dumps({"Errors": messages}).encode("utf-8")
+        exc = map_backend_response_to_exception(
+            _make_response(status_code=413, body=body)
+        )
+        self.assertEqual(exc.error.message, "\n".join(messages))
+        self.assertEqual(exc.response.body(), body)
+
+    def test_explicit_service_codes_and_messages_are_preserved_rust(self):
+        bodies = [
+            {
+                "code": "SpecificLimit",
+                "message": "Specific server explanation",
+                "Errors": ["detail"],
+            },
+            {
+                "error": {
+                    "code": "SpecificLimit",
+                    "message": "Specific server explanation",
+                },
+                "Errors": ["detail"],
+            },
+        ]
+        for payload in bodies:
+            with self.subTest(payload=payload):
+                body = json.dumps(payload).encode("utf-8")
+                exc = map_backend_response_to_exception(
+                    _make_response(status_code=413, body=body)
+                )
+                self.assertEqual(exc.error.code, "SpecificLimit")
+                self.assertEqual(exc.error.message, "Specific server explanation")
+                self.assertTrue(exc.message.startswith("(SpecificLimit)"))
+                self.assertEqual(exc.response.body(), body)
+
+    def test_native_envelope_retains_explicit_message_rust(self):
+        body = b'{"Errors":["detail"],"message":"Server summary"}'
+        exc = map_backend_response_to_exception(
+            _make_response(status_code=413, body=body)
+        )
+        self.assertEqual(exc.error.code, "RequestEntityTooLarge")
+        self.assertEqual(exc.error.message, "Server summary")
+
+    def test_other_statuses_do_not_acquire_413_code_rust(self):
+        body = b'{"Errors":["Request size is too large"]}'
+        for status in (400, 404, 409, 429, 500):
+            with self.subTest(status=status):
+                exc = map_backend_response_to_exception(
+                    _make_response(status_code=status, body=body),
+                    message=error_message_from_body(body, status),
+                )
+                self.assertEqual(exc.status_code, status)
+                self.assertIsNone(exc.error)
+                self.assertFalse(exc.message.startswith("(RequestEntityTooLarge)"))
+
+    def test_unrecognized_bodies_keep_existing_error_format_rust(self):
+        for body in (
+            b"",
+            b"not json",
+            b"\xff",
+            b"[]",
+            b"null",
+            b'{"Errors":[]}',
+            b'{"Errors":"not an array"}',
+            b'{"Errors":[123]}',
+            b'{"message":"Unstructured message"}',
+        ):
+            with self.subTest(body=body):
+                response = _make_response(status_code=413, body=body)
+                message = error_message_from_body(body, 413)
+                original = CosmosHttpResponseError(
+                    status_code=413,
+                    message=message,
+                    response=_ResponseAdapter(response),
+                )
+                actual = map_backend_response_to_exception(response, message=message)
+                self.assertEqual(actual.message, original.message)
+                self.assertEqual(actual.http_error_message, original.http_error_message)
+                self.assertEqual(actual.response.body(), body)
+
+
+class TestErrorMessageFromBody(unittest.TestCase):
+    """``http_error_message`` is the whole decoded error body, as on the legacy path.
+
+    Customer code may ``json.loads(e.http_error_message)``. It must never
+    raise; a malformed body should never mask the underlying error.
+    """
+
+    def test_json_body_with_message_field_keeps_whole_body_rust(self):
+        body = b'{"code":"BadRequest","message":"Message: {\\"Errors\\":[\\"bad\\"]}"}'
+        message = error_message_from_body(body, 400)
+        self.assertEqual(message, body.decode("utf-8"))
+        self.assertEqual(json.loads(message)["code"], "BadRequest")
+
+    def test_exception_http_error_message_is_whole_body_rust(self):
+        body = b'{"code":"NotFound","message":"Resource Not Found"}'
+        exc = map_backend_response_to_exception(
+            _make_response(status_code=404, body=body),
+            message=error_message_from_body(body, 404),
+        )
+        self.assertEqual(exc.http_error_message, body.decode("utf-8"))
+
+    def test_empty_body_returns_empty_string_rust(self):
+        self.assertEqual(error_message_from_body(b"", 400), "")
+
+    def test_invalid_utf8_body_uses_replacement_characters_rust(self):
+        result = error_message_from_body(b"\xff\xfe invalid utf8", 400)
+        self.assertEqual(result, b"\xff\xfe invalid utf8".decode("utf-8", errors="replace"))
+
+
+class TestIsSuccessStatus(unittest.TestCase):
+    """Cover the success-status range used by the helper.
+
+    The whole 2xx range counts as success; everything else is a
+    failure. 3xx in particular is *not* treated as success today —
+    Cosmos operations don't use it as a normal-path response.
+    """
+
+    def test_200_is_success_rust(self):
+        """200 OK → success."""
+        self.assertTrue(is_success_status(200))
+
+    def test_204_is_success_rust(self):
+        """204 No Content → success (this is what the ``no_response=True`` path returns)."""
+        self.assertTrue(is_success_status(204))
+
+    def test_299_is_success_rust(self):
+        """The whole 2xx range is success, including the upper edge."""
+        self.assertTrue(is_success_status(299))
+
+    def test_300_is_not_success_rust(self):
+        """3xx is not treated as success (Cosmos doesn't use redirects on the data plane)."""
+        self.assertFalse(is_success_status(300))
+
+    def test_404_is_not_success_rust(self):
+        """404 Not Found → failure."""
+        self.assertFalse(is_success_status(404))
+
+    def test_500_is_not_success_rust(self):
+        """500 Internal Server Error → failure."""
+        self.assertFalse(is_success_status(500))
+
+
+class TestResponseAdapterDirectly(unittest.TestCase):
+    """The adapter is what customer ``except`` handlers see as ``e.response``.
+
+    Customer code reaches into ``e.response`` for ``status_code``,
+
+    ``headers``, ``text()`` and ``body()``. The adapter must expose all
+    of those, must never crash on weird inputs (missing headers,
+    invalid UTF-8 body, bogus encoding name), and must always return
+    a string from ``text()`` so it cannot mask the original Cosmos
+    error inside the customer's handler.
+    """
+
+    def test_adapter_status_code_matches_inner_response_rust(self):
+        """``adapter.status_code`` mirrors the inner ``BackendResponse.status_code``."""
+        adapter = _ResponseAdapter(_make_response(status_code=200))
+        self.assertEqual(adapter.status_code, 200)
+
+    def test_adapter_headers_default_to_empty_dict_when_none_rust(self):
+        """A response with no headers still exposes a usable headers mapping (no ``AttributeError``)."""
+        empty = BackendResponse(status_code=409)
+        adapter = _ResponseAdapter(empty)
+        self.assertEqual(dict(adapter.headers), {})
+
+    def test_adapter_text_falls_back_on_invalid_utf8_bytes_rust(self):
+        """``text()`` on invalid UTF-8 bytes returns a string (replacement chars), never raises.
+
+        If this method raised inside a customer's
+        ``except CosmosHttpResponseError`` handler, the original
+        Cosmos error would be masked by a confusing
+        ``UnicodeDecodeError`` and the handler would crash.
+        """
+        bad_bytes = b"\xff\xfe\xfd not valid utf-8"
+        adapter = _ResponseAdapter(BackendResponse(status_code=500, body=bad_bytes))
+        text = adapter.text()
+        self.assertIsInstance(text, str)
+        # The decodable substring round-trips so the body isn't lost entirely.
+        self.assertIn("not valid utf-8", text)
+
+    def test_adapter_text_falls_back_on_invalid_encoding_name_rust(self):
+        """An unknown ``encoding=`` name still returns a string instead of raising."""
+        adapter = _ResponseAdapter(BackendResponse(status_code=500, body=b"hello"))
+        text = adapter.text(encoding="not-a-real-encoding")
+        self.assertIsInstance(text, str)
+
+    def test_adapter_text_returns_empty_string_when_body_is_empty_rust(self):
+        """Empty body → empty string from ``text()``."""
+        adapter = _ResponseAdapter(BackendResponse(status_code=204))
+        self.assertEqual(adapter.text(), "")
+
+
+if __name__ == "__main__":
+    unittest.main()

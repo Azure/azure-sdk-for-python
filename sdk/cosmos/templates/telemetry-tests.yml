@@ -1,0 +1,41 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+steps:
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      $results = '$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-telemetry'
+      New-Item -ItemType Directory -Force $results | Out-Null
+      Write-Host '##vso[task.setvariable variable=uploadLlmArtifacts]true'
+      Push-Location sdk/cosmos/azure-cosmos
+      try {
+        python -m pip install -r dev_requirements.txt -r samples/requirements-telemetry.txt
+      } finally {
+        Pop-Location
+      }
+      $wheels = @(Get-ChildItem '$(Build.ArtifactStagingDirectory)' -Recurse -Filter 'azure_cosmos-*-win_amd64.whl')
+      if ($wheels.Count -ne 1) {
+        throw "Expected exactly one built Cosmos Windows x64 wheel; found $($wheels.Count)."
+      }
+      python -m pip install --no-deps --force-reinstall $wheels[0].FullName
+      python -I sdk/cosmos/azure-cosmos/scripts/run_rust_ci.py telemetry `
+        --require-installed-wheel --results $results 2>&1 |
+        Tee-Object -FilePath "$results/live.txt"
+      exit $LASTEXITCODE
+    displayName: Run required offline telemetry checks against the built Rust wheel
+    timeoutInMinutes: 20
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['PythonVersion'], '3.13'), eq(variables['ChecksOverride'], 'whl,sdist'))
+    env:
+      COSMOS_BACKEND: rust
+      APPLICATIONINSIGHTS_CONNECTION_STRING: ''
+      COSMOSDBCONNECTIONSTRING: ''
+  - task: PublishTestResults@2
+    displayName: Publish required telemetry results
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['PythonVersion'], '3.13'), eq(variables['ChecksOverride'], 'whl,sdist'))
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: $(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-telemetry/pytest.xml
+      testRunTitle: Cosmos Rust telemetry
+      failTaskOnFailedTests: true
+      failTaskOnMissingResultsFile: true

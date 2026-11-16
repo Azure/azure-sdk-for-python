@@ -29,7 +29,7 @@ import json
 import uuid
 import re
 import binascii
-from typing import Any, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
+from typing import Any, Dict, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
 
 from urllib.parse import quote as urllib_quote
 from urllib.parse import unquote as urllib_unquote
@@ -44,10 +44,18 @@ from ._query_aggregate_utils import (
     _classify_aggregate_partial,
     _get_select_value_aggregate_function,
 )
+from ._backend.capabilities import reject_removed_options
 from ._constants import _Constants as Constants
 from .auth import _get_authorization_header
 from .offer import ThroughputProperties
 from .partition_key import _Empty, _Undefined
+# COMMON_OPTIONS (kwarg name -> internal option-key) lives in
+# ``_helpers/_request_settings.py`` so the rust-backend item helper and the
+# core-python ``build_options`` consume the same mapping table.
+# The leading-underscore alias is kept here for source compatibility.
+from ._helpers._request_settings import COMMON_OPTIONS as _COMMON_OPTIONS, get_match_headers
+from ._helpers._paths import parse_paths
+from ._helpers._resource_validation import validate_resource as _validate_resource
 
 if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
@@ -60,68 +68,18 @@ if TYPE_CHECKING:
 # pylint: disable=protected-access
 #cspell:ignore PPAF, ppaf
 
-_COMMON_OPTIONS = {
-    'initial_headers': 'initialHeaders',
-    'pre_trigger_include': 'preTriggerInclude',
-    'post_trigger_include': 'postTriggerInclude',
-    'access_condition': 'accessCondition',
-    'session_token': 'sessionToken',
-    'resource_token_expiry_seconds': 'resourceTokenExpirySeconds',
-    'offer_enable_ru_per_minute_throughput': 'offerEnableRUPerMinuteThroughput',
-    'disable_ru_per_minute_usage': 'disableRUPerMinuteUsage',
-    'continuation': 'continuation',
-    'content_type': 'contentType',
-    'is_query_plan_request': 'isQueryPlanRequest',
-    'supported_query_features': 'supportedQueryFeatures',
-    'query_version': 'queryVersion',
-    'priority': 'priorityLevel',
-    'no_response': 'responsePayloadOnWriteDisabled',
-    'retry_write': Constants.Kwargs.RETRY_WRITE,
-    'max_item_count': 'maxItemCount',
-    'throughput_bucket': 'throughputBucket',
-    'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS,
-    "availability_strategy": Constants.Kwargs.AVAILABILITY_STRATEGY
-}
-
-# Cosmos resource ID validation regex breakdown:
-# ^ Match start of string.
-# [^/\#?] Match any character that is not /\#?\n\r\t.
-# $ End of string
-_VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]*$")
-
 
 def _get_match_headers(kwargs: dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
-    if_match = kwargs.pop('if_match', None)
-    if_none_match = kwargs.pop('if_none_match', None)
-    match_condition = kwargs.pop('match_condition', None)
-    if match_condition == MatchConditions.IfNotModified:
-        if_match = kwargs.pop('etag', None)
-        if not if_match:
-            raise ValueError("'match_condition' specified without 'etag'.")
-    elif match_condition == MatchConditions.IfPresent:
-        if_match = '*'
-    elif match_condition == MatchConditions.IfModified:
-        if_none_match = kwargs.pop('etag', None)
-        if not if_none_match:
-            raise ValueError("'match_condition' specified without 'etag'.")
-    elif match_condition == MatchConditions.IfMissing:
-        if_none_match = '*'
-    elif match_condition is None:
-        etag = kwargs.pop('etag', None)
-        if etag is not None:
-            raise ValueError("'etag' specified without 'match_condition'.")
-    else:
-        raise TypeError("Invalid match condition: {}".format(match_condition))
-    return if_match, if_none_match
+    """Compatibility entrypoint for the shared public conditional-request utility."""
+    return get_match_headers(kwargs)
 
 
 def build_options(kwargs: dict[str, Any]) -> dict[str, Any]:
+    reject_removed_options(kwargs)
     options = kwargs.pop('request_options', kwargs.pop('feed_options', {}))
     for key, value in _COMMON_OPTIONS.items():
         if key in kwargs:
             options[value] = kwargs.pop(key)
-    if Constants.Kwargs.READ_TIMEOUT in kwargs:
-        options[Constants.Kwargs.READ_TIMEOUT] = kwargs[Constants.Kwargs.READ_TIMEOUT]
     if Constants.Kwargs.TIMEOUT in kwargs:
         options[Constants.Kwargs.TIMEOUT] = kwargs[Constants.Kwargs.TIMEOUT]
 
@@ -279,6 +237,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     """
     headers = dict(default_headers)
     options = options or {}
+    reject_removed_options(options)
 
     # SDK supported capabilities header for partition merge support
     headers[http_constants.HttpHeaders.SDKSupportedCapabilities] = \
@@ -320,9 +279,6 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if options.get("enableScanInQuery"):
         headers[http_constants.HttpHeaders.EnableScanInQuery] = options["enableScanInQuery"]
-
-    if options.get("resourceTokenExpirySeconds"):
-        headers[http_constants.HttpHeaders.ResourceTokenExpiry] = options["resourceTokenExpirySeconds"]
 
     if options.get("offerType"):
         headers[http_constants.HttpHeaders.OfferType] = options["offerType"]
@@ -383,7 +339,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     # formatdate guarantees RFC 1123 date format regardless of current locale
     headers[http_constants.HttpHeaders.XDate] = formatdate(timeval=None, localtime=False, usegmt=True)
 
-    if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
+    if cosmos_client_connection.master_key:
         resource_type = _internal_resourcetype(resource_type)
         authorization = _get_authorization_header(
             cosmos_client_connection, verb, path, resource_id, IsNameBased(resource_id), resource_type, headers
@@ -468,6 +424,32 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     headers[http_constants.HttpHeaders.ThinClientProxyOperationType] = operation_type
 
     return headers
+
+def resolve_initial_headers(
+        default_headers: Mapping[str, Any],
+        options: Optional[Mapping[str, Any]]) -> Optional[Dict[str, Any]]:
+    """Return the header map a resource method should hand to ``GetHeaders``.
+
+    A caller can pass ``initial_headers`` to a public method; ``build_options``
+    stores it under ``initialHeaders``. ``GetHeaders`` starts from whatever map
+    it is given, so the caller's headers have to be layered over the client's
+    default headers here or they never reach the wire. The caller wins on a
+    name collision, which is the point of passing them.
+
+    Returns ``None`` when the caller supplied nothing, so the resource method
+    keeps the existing "fall back to the client's default headers" behaviour.
+
+    Written once and shared by the sync and async connections. Without it each
+    connection merges the two maps itself, and the copies drift -- one gets the
+    override order right and the other does not, with nothing failing to say so.
+    A customer's routing or audit header then arrives on some calls and not
+    others.
+    """
+    initial_headers = (options or {}).get("initialHeaders")
+    if not initial_headers:
+        return None
+    return {**default_headers, **initial_headers}
+
 
 def _is_session_token_request(
         cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
@@ -659,8 +641,6 @@ def IsMasterResource(resourceType: str) -> bool:
     return resourceType in (
         http_constants.ResourceType.Offer,
         http_constants.ResourceType.Database,
-        http_constants.ResourceType.User,
-        http_constants.ResourceType.Permission,
         http_constants.ResourceType.Topology,
         http_constants.ResourceType.DatabaseAccount,
         http_constants.ResourceType.PartitionKeyRange,
@@ -858,55 +838,8 @@ def TrimBeginningAndEndingSlashes(path: str) -> str:
 
 # Parses the paths into a list of token each representing a property
 def ParsePaths(paths: list[str]) -> list[str]:
-    segmentSeparator = "/"
-    tokens = []
-    for path in paths:
-        currentIndex = 0
-
-        while currentIndex < len(path):
-            if path[currentIndex] != segmentSeparator:
-                raise ValueError(f"Invalid path character at index {currentIndex}")
-
-            currentIndex += 1
-            if currentIndex == len(path):
-                break
-
-            # " and ' are treated specially in the sense that they can have the / (segment separator)
-            # between them which is considered part of the token
-            if path[currentIndex] == '"' or path[currentIndex] == "'":
-                quote = path[currentIndex]
-                newIndex = currentIndex + 1
-
-                while True:
-                    newIndex = path.find(quote, newIndex)
-                    if newIndex == -1:
-                        raise ValueError(f"Invalid path character at index {currentIndex}")
-
-                    # check if the quote itself is escaped by a preceding \ in which case it's part of the token
-                    if path[newIndex - 1] != "\\":
-                        break
-                    newIndex += 1
-
-                # This will extract the token excluding the quote chars
-                token = path[currentIndex + 1: newIndex]
-                tokens.append(token)
-                currentIndex = newIndex + 1
-            else:
-                newIndex = path.find(segmentSeparator, currentIndex)
-                token = None
-                if newIndex == -1:
-                    # This will extract the token from currentIndex to end of the string
-                    token = path[currentIndex:]
-                    currentIndex = len(path)
-                else:
-                    # This will extract the token from currentIndex to the char before the segmentSeparator
-                    token = path[currentIndex:newIndex]
-                    currentIndex = newIndex
-
-                token = token.strip()
-                tokens.append(token)
-
-    return tokens
+    """Compatibility entrypoint for the transport-independent property-path parser."""
+    return parse_paths(paths)
 
 
 def create_scope_from_url(url: str) -> str:
@@ -921,18 +854,6 @@ def validate_cache_staleness_value(max_integrated_cache_staleness: Any) -> None:
     if max_integrated_cache_staleness < 0:
         raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be an "
                          "integer greater than or equal to zero")
-
-
-def _validate_resource(resource: Mapping[str, Any]) -> None:
-    id_: Optional[str] = resource.get("id")
-    if id_:
-        try:
-            if _VALID_COSMOS_RESOURCE.match(id_) is None:
-                raise ValueError("Id contains illegal chars.")
-            if id_[-1] in [" ", "\n"]:
-                raise ValueError("Id ends with a space or newline.")
-        except TypeError as e:
-            raise TypeError("Id type must be a string.") from e
 
 
 def _stringify_auto_scale(offer: ThroughputProperties) -> str:
@@ -997,8 +918,11 @@ def _replace_throughput(
             increment_percent = throughput.auto_scale_increment_percent
             if max_throughput is not None:
                 new_throughput_properties['content']['offerAutopilotSettings']['maxThroughput'] = max_throughput
-                if increment_percent:
-                    new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'] = increment_percent  # pylint: disable=line-too-long
+                if increment_percent is not None:
+                    policy = new_throughput_properties['content']['offerAutopilotSettings'].setdefault(
+                        'autoUpgradePolicy', {}
+                    ).setdefault('throughputPolicy', {})
+                    policy['incrementPercent'] = increment_percent
             if throughput.offer_throughput:
                 new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
         except AttributeError as e:

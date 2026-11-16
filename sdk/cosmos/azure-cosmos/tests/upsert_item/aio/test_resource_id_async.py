@@ -1,0 +1,182 @@
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
+"""Original async resource-id tests that upsert items, re-run on the Rust path.
+
+Source: ``tests/test_resource_id_async.py::TestResourceIdsAsync``. Each method
+keeps the original steps and assertions; only setup changed. The
+key-authenticated setup client and the data client both use
+``_backend="rust"``. The originals create their own uniquely named databases;
+any that a failed test leaves behind are deleted afterwards.
+"""
+
+import unittest
+import uuid
+
+import pytest
+
+from azure.cosmos import PartitionKey, http_constants, exceptions
+from azure.cosmos.aio import CosmosClient, DatabaseProxy
+from config import clients
+from config.settings import TestSettings, unique_database_id
+
+
+@pytest.mark.cosmosLong
+@pytest.mark.cosmosAADLong
+class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
+    last_headers = []
+    client: CosmosClient = None
+    key_client: CosmosClient = None
+    created_database: DatabaseProxy = None
+
+    async def asyncSetUp(self):
+        self._owned_database_ids = []
+        self.key_client = CosmosClient(TestSettings.host, TestSettings.masterKey, _backend="rust")
+        self.client = clients.create_data_client_async(_backend="rust")
+        await self.key_client.__aenter__()
+        await self.client.__aenter__()
+
+    async def asyncTearDown(self):
+        try:
+            for database_id in self._owned_database_ids:
+                try:
+                    await self.key_client.delete_database(database_id)
+                except exceptions.CosmosResourceNotFoundError:
+                    pass
+        finally:
+            await self.client.close()
+            await self.key_client.close()
+
+    def _unique_database_id(self, label=""):
+        database_id = unique_database_id(("upsert_item_" + label) if label else "upsert_item")
+        self._owned_database_ids.append(database_id)
+        return database_id
+
+    async def test_id_unicode_validation_async_rust(self):
+        # Source: tests/test_resource_id_async.py::TestResourceIdsAsync.test_id_unicode_validation_async
+        # Ids are prefixed so the databases are attributable to this run; the unicode and
+        # special-character content this test exercises is preserved verbatim after it.
+        # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
+        resource_id1 = self._unique_database_id("unicode") + (
+            u'\u0939\u093f\u0928\u094d\u0926\u0940 '
+            u'\u092d\u093e\u0930\u0924 '
+            u'\u0915\u0940 '
+            u'\u0930\u093e\u0937\u094d\u091f\u094d\u0930\u0940\u092f '
+            u'\u092d\u093e\u0937\u093e '
+            u'\u0939\u0948'
+        )
+        self._owned_database_ids.append(resource_id1)
+
+        # Special allowed chars for Id
+        resource_id2 = self._unique_database_id("special-chars") + "!@$%^&*()-~`'_[]{}|;:,.<>"
+        self._owned_database_ids.append(resource_id2)
+
+        # verify that databases are created with specified IDs (control-plane -> key_client)
+        created_db1 = await self.key_client.create_database_if_not_exists(resource_id1)
+        created_db2 = await self.key_client.create_database_if_not_exists(resource_id2)
+
+        assert resource_id1 == created_db1.id
+        assert resource_id2 == created_db2.id
+
+        # verify that collections are created with specified IDs (control-plane -> key_client db)
+        created_collection1_ref = await created_db1.create_container(
+            id=resource_id1,
+            partition_key=PartitionKey(path='/id', kind='Hash'))
+        created_collection2_ref = await created_db2.create_container(
+            id=resource_id2,
+            partition_key=PartitionKey(path='/id', kind='Hash'))
+
+        assert resource_id1 == created_collection1_ref.id
+        assert resource_id2 == created_collection2_ref.id
+
+        # Get data-plane container proxies via AAD client
+        created_collection1 = self.client.get_database_client(resource_id1).get_container_client(created_collection1_ref.id)
+        created_collection2 = self.client.get_database_client(resource_id2).get_container_client(created_collection2_ref.id)
+
+        # verify that items are created with specified IDs (data-plane -> AAD client)
+        item1 = await created_collection1.upsert_item({"id": resource_id1})
+        item2 = await created_collection1.upsert_item({"id": resource_id2})
+
+        assert resource_id1 == item1.get("id")
+        assert resource_id2 == item2.get("id")
+
+        # Cleanup (control-plane -> key_client)
+        await self.key_client.delete_database(resource_id1)
+        await self.key_client.delete_database(resource_id2)
+
+    async def test_create_illegal_characters_async_rust(self):
+        # Source: tests/test_resource_id_async.py::TestResourceIdsAsync.test_create_illegal_characters_async
+        database_id = self._unique_database_id()
+        container_id = str(uuid.uuid4())
+        partition_key = PartitionKey(path="/id")
+
+        # Control-plane: create database and container via key_client
+        created_database = await self.key_client.create_database(id=database_id)
+        created_container_ref = await created_database.create_container(id=container_id, partition_key=partition_key)
+        # Data-plane container via AAD client
+        created_container = self.client.get_database_client(database_id).get_container_client(created_container_ref.id)
+
+        # Define errors returned by checks
+        error_strings = ['Id contains illegal chars.', 'Id ends with a space or newline.']
+
+        # Define illegal strings
+        illegal_strings = [
+            "ID_with_back/slash",
+            "ID_\\with_forward_slashes",
+            "ID_with_question?_mark",
+            "ID_with_#pound",
+            "ID_with_tab\t",
+            "ID\r_with_return_carriage",
+            "ID_with_newline\n",
+            "ID_with_newline\n2",
+            "ID_with_more_than_255" + "_added" * 255,
+            "ID_with_trailing_spaces   "
+        ]
+
+        # test illegal resource id's for all resources
+        for resource_id in illegal_strings:
+            # Database create is control-plane -> key_client
+            try:
+                await self.key_client.create_database(resource_id)
+                self.fail("Database create should have failed for id {}".format(resource_id))
+            except ValueError as e:
+                assert str(e) in error_strings
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+                assert "Ensure to provide a unique non-empty string less than '255' characters." in e.message
+
+            # Container create is control-plane -> key_client db
+            try:
+                await created_database.create_container(id=resource_id, partition_key=partition_key)
+                self.fail("Container create should have failed for id {}".format(resource_id))
+            except ValueError as e:
+                assert str(e) in error_strings
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+                assert "Ensure to provide a unique non-empty string less than '255' characters." in e.message
+
+            # Item create is data-plane -> AAD client container
+            try:
+                await created_container.create_item({"id": resource_id})
+                self.fail("Item create should have failed for id {}".format(resource_id))
+            except ValueError as e:
+                assert str(e) in error_strings
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+                assert "Ensure to provide a unique non-empty string less than '1024' characters." in e.message
+
+            # Item upsert is data-plane -> AAD client container
+            try:
+                await created_container.upsert_item({"id": resource_id})
+                self.fail("Item upsert should have failed for id {}".format(resource_id))
+            except ValueError as e:
+                assert str(e) in error_strings
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
+                assert "Ensure to provide a unique non-empty string less than '1024' characters." in e.message
+
+        # Cleanup (control-plane -> key_client)
+        await self.key_client.delete_database(created_database)
+
+
+if __name__ == '__main__':
+    unittest.main()

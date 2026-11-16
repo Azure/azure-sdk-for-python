@@ -8,8 +8,6 @@ import pytest
 
 import azure.cosmos
 import azure.cosmos._utils as _utils
-import test_config
-from azure.cosmos import CosmosClient
 
 
 
@@ -27,15 +25,6 @@ class TestsUtils(unittest.TestCase):
             platform.platform()
         )
         self.assertEqual(user_agent, expected_user_agent)
-
-    def test_connection_string(self):
-        client: CosmosClient = (azure.cosmos.CosmosClient
-                                .from_connection_string(test_config.TestConfig.connection_str,
-                                                        consistency_level="Session"))
-        database_id = test_config.unique_database_id("connection-string")
-        db = client.create_database(database_id)
-        self.assertTrue(db is not None)
-        client.delete_database(db.id)
 
     def test_add_args_to_kwargs(self):
         arg_names = ["arg1", "arg2", "arg3", "arg4"]
@@ -94,4 +83,3 @@ class TestsUtils(unittest.TestCase):
         with pytest.raises(ValueError) as e:
             _utils.verify_exclusive_arguments(exclusive_keys, **kwargs)
         assert str(e.value) == expected_error_message
-

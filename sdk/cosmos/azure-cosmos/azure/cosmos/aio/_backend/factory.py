@@ -1,0 +1,75 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
+"""Construct the asynchronous Python backend using shared preparation rules.
+
+``azure.cosmos._backend.factory._make_backend`` decides which Python backend to
+use and checks its startup inputs. It also cleans up the async credential bridge
+if construction fails.
+This module supplies AsyncBindingAdapter and the shared AsyncLegacyBackend instance.
+Legacy-path selection is a migration control, not a release execution choice.
+
+Construction itself is synchronous: make_async_backend(...) returns a Python
+object without acquiring a driver handle. Operations on AsyncBindingAdapter later
+call the binding and await its results.
+"""
+from __future__ import annotations
+
+from typing import Any, Mapping, Optional, Sequence
+
+from azure.cosmos._backend.factory import _make_backend
+from azure.cosmos.runtime import CosmosRuntime
+
+from .cosmos_backend import AsyncCosmosBackend
+from .legacy import ASYNC_LEGACY_BACKEND
+from .binding_adapter import AsyncBindingAdapter
+
+
+def make_async_backend(
+    explicit: Optional[str],
+    *,
+    url: Optional[str] = None,
+    credential: Any = None,
+    runtime: Optional[CosmosRuntime] = None,
+    operation_timeout: Optional[float] = None,
+    preferred_locations: Optional[Sequence[str]] = None,
+    excluded_locations: Optional[Sequence[str]] = None,
+    throttling_max_retry_count: Optional[int] = None,
+    throttling_max_retry_wait_time_seconds: Optional[float] = None,
+    availability_strategy: Any = None,
+    user_agent_suffix: Optional[str] = None,
+    consistency_level: Optional[str] = None,
+    proxy_allowed: Optional[bool] = None,
+    connection_timeout_seconds: Optional[float] = None,
+    fault_injection_rules: Any = None,
+    headers: Optional[Mapping[str, str]] = None,
+) -> AsyncCosmosBackend:
+    """Return a Python backend for async operations; this factory is not awaited.
+
+    For example, endpoint and preferred-region inputs become the stored settings
+    of AsyncBindingAdapter. Construction retains the selected runtime and
+    rejects retired network settings, without initializing the default runtime.
+    """
+    return _make_backend(
+        explicit,
+        rust_backend_type=AsyncBindingAdapter,
+        legacy_backend=ASYNC_LEGACY_BACKEND,
+        allow_async_credential=True,
+        url=url,
+        credential=credential,
+        runtime=runtime,
+        operation_timeout=operation_timeout,
+        preferred_locations=preferred_locations,
+        excluded_locations=excluded_locations,
+        throttling_max_retry_count=throttling_max_retry_count,
+        throttling_max_retry_wait_time_seconds=throttling_max_retry_wait_time_seconds,
+        availability_strategy=availability_strategy,
+        user_agent_suffix=user_agent_suffix,
+        consistency_level=consistency_level,
+        proxy_allowed=proxy_allowed,
+        connection_timeout_seconds=connection_timeout_seconds,
+        fault_injection_rules=fault_injection_rules,
+        headers=headers,
+    )
