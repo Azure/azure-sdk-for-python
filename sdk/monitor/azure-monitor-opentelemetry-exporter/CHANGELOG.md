@@ -3,17 +3,29 @@
 ## 1.0.0b60 (Unreleased)
 
 ### Features Added
+- Align experimental feature bits with shared bitmap
+  ([49967](https://github.com/Azure/azure-sdk-for-python/pull/49967))
+- Track accepted experimental feature opt-ins through existing Statsbeat feature metrics.
+  ([49964](https://github.com/Azure/azure-sdk-for-python/pull/49964))
+- Add actionable multi-endpoint routing diagnostics
+  for invalid routing attributes, export/storage failures, retention evictions,
+  and capacity limits, without including sensitive routing or telemetry values.
+  ([#49946](https://github.com/Azure/azure-sdk-for-python/pull/49946))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
+- Fixed Statsbeat routing after accepted ingestion redirects so EU SDK statistics use the EU destination, including Germany North, without resetting metric collection. Preserve OneSettings destination overrides and keep collection and export on the same route.
+- Allow Statsbeat configurations with an unknown region to apply OneSettings defaults and resume collection after being re-enabled.
+- Allowed ingestion redirects across trusted Azure Monitor domain suffixes within the same cloud.
 - Isolate multi-endpoint Microsoft Entra authentication from the host connection
   string's audience. Configure routed audiences with
   `APPLICATIONINSIGHTS_MULTI_ENDPOINT_AAD_AUDIENCE`; the default is the public cloud.
   Reject custom authentication policies in routing mode and refuse credential-bearing,
   port-changing, or untrusted routed redirects. Preserve the complete path of accepted
   routed redirects. Single-endpoint behavior is unchanged.
+  ([#49875](https://github.com/Azure/azure-sdk-for-python/pull/49875))
 
 ### Other Changes
 

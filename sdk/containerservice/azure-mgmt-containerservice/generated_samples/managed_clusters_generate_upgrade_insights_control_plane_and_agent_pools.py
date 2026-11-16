@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-08-02-preview/ManagedClustersGenerateUpgradeInsights_ControlPlaneAndAgentPools.json
+# x-ms-original-file: 2026-09-02-preview/ManagedClustersGenerateUpgradeInsights_ControlPlaneAndAgentPools.json
 if __name__ == "__main__":
     main()

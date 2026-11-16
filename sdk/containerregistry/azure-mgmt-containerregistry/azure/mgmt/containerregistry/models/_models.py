@@ -64,10 +64,12 @@ class AdditionalAuthenticationProperties(_Model):  # pylint: disable=docstring-k
     """Authentication configuration used by a cache rule to access an upstream registry.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    EcrAuthenticationProperties, EntraFederatedIdentityCredentialAuthenticationProperties,
     GarAuthenticationProperties
 
-    :ivar authentication_type: Authentication type discriminator. Required.
-     "GoogleArtifactRegistry"
+    :ivar authentication_type: Authentication type discriminator. The authentication type cannot
+     change once configured. Required. Known values are: "GoogleArtifactRegistry",
+     "AwsElasticContainerRegistry", and "EntraFederatedIdentityCredential".
     :vartype authentication_type: str or
      ~azure.mgmt.containerregistry.models.AdditionalAuthenticationType
     """
@@ -76,7 +78,55 @@ class AdditionalAuthenticationProperties(_Model):  # pylint: disable=docstring-k
     authentication_type: str = rest_discriminator(
         name="authenticationType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Authentication type discriminator. Required. \"GoogleArtifactRegistry\""""
+    """Authentication type discriminator. The authentication type cannot change once configured.
+     Required. Known values are: \"GoogleArtifactRegistry\", \"AwsElasticContainerRegistry\", and
+     \"EntraFederatedIdentityCredential\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        authentication_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AdditionalAuthenticationUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Partial authentication configuration for a cache rule. Omitted fields retain their current
+    values. When authentication is first configured, all required fields of the selected
+    authentication type must be supplied. Changing an existing authentication type is not
+    supported.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    EcrAuthenticationUpdateProperties,
+    EntraFederatedIdentityCredentialAuthenticationUpdateProperties,
+    GarAuthenticationUpdateProperties
+
+    :ivar authentication_type: The existing authentication type, or the type to configure when no
+     authentication exists. This discriminator is required, but changing an existing authentication
+     type is not supported. Required. Known values are: "GoogleArtifactRegistry",
+     "AwsElasticContainerRegistry", and "EntraFederatedIdentityCredential".
+    :vartype authentication_type: str or
+     ~azure.mgmt.containerregistry.models.AdditionalAuthenticationType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    authentication_type: str = rest_discriminator(
+        name="authenticationType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The existing authentication type, or the type to configure when no authentication exists. This
+     discriminator is required, but changing an existing authentication type is not supported.
+     Required. Known values are: \"GoogleArtifactRegistry\", \"AwsElasticContainerRegistry\", and
+     \"EntraFederatedIdentityCredential\"."""
 
     @overload
     def __init__(
@@ -767,26 +817,31 @@ class CacheRuleUpdateProperties(_Model):  # pylint: disable=docstring-keyword-sh
      associated with the Cache rule.
     :vartype credential_set_resource_id: str
     :ivar additional_authentication_properties: Authentication configuration used by the cache rule
-     to access the upstream source repository.
+     to access the upstream source repository. Omitted fields retain their current values. When
+     authentication is first configured, all required fields of the selected authentication type
+     must be supplied. Changing an existing authentication type is not supported.
     :vartype additional_authentication_properties:
-     ~azure.mgmt.containerregistry.models.AdditionalAuthenticationProperties
+     ~azure.mgmt.containerregistry.models.AdditionalAuthenticationUpdateProperties
     """
 
     credential_set_resource_id: Optional[str] = rest_field(
         name="credentialSetResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
     """The ARM resource ID of the credential store which is associated with the Cache rule."""
-    additional_authentication_properties: Optional["_models.AdditionalAuthenticationProperties"] = rest_field(
+    additional_authentication_properties: Optional["_models.AdditionalAuthenticationUpdateProperties"] = rest_field(
         name="additionalAuthenticationProperties", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Authentication configuration used by the cache rule to access the upstream source repository."""
+    """Authentication configuration used by the cache rule to access the upstream source repository.
+     Omitted fields retain their current values. When authentication is first configured, all
+     required fields of the selected authentication type must be supplied. Changing an existing
+     authentication type is not supported."""
 
     @overload
     def __init__(
         self,
         *,
         credential_set_resource_id: Optional[str] = None,
-        additional_authentication_properties: Optional["_models.AdditionalAuthenticationProperties"] = None,
+        additional_authentication_properties: Optional["_models.AdditionalAuthenticationUpdateProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -1410,6 +1465,170 @@ class CredentialSetUpdateProperties(_Model):  # pylint: disable=docstring-keywor
         super().__init__(*args, **kwargs)
 
 
+class EcrAuthenticationProperties(
+    AdditionalAuthenticationProperties, discriminator="AwsElasticContainerRegistry"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Amazon Elastic Container Registry (ECR) authentication configuration.
+
+    :ivar authentication_type: Required. Amazon Elastic Container Registry (ECR) authentication via
+     workload identity federation.
+    :vartype authentication_type: str or
+     ~azure.mgmt.containerregistry.models.AdditionalAuthenticationType
+    :ivar account_number: The AWS account that owns the IAM role used for authentication. The IAM
+     role is assumed via AWS Security Token Service (STS) when exchanging a federated Entra access
+     token for an ECR access token. The full IAM role ARN is derived from ``accountNumber``,
+     ``rolePath``, and ``roleName`` as ``arn:aws:iam::{accountNumber}:role{rolePath}{roleName}``
+     (the initial path defaults to ``/``). Required.
+    :vartype account_number: str
+    :ivar region: The AWS region of the upstream Elastic Container Registry (e.g. ``us-west-2``).
+     Only commercial AWS regions are supported; the GovCloud (``us-gov-*``), China (``cn-*``), and
+     Secret/Top Secret ISO (``us-iso*``) partitions are rejected. The pattern stays
+     forward-compatible for new commercial regions without requiring a contract change. Required.
+    :vartype region: str
+    :ivar role_name: The name of the AWS IAM role assumed for authentication. This is the role name
+     only, not the full ARN; the IAM path is supplied separately via ``rolePath``, so '/' is not
+     permitted here. Required.
+    :vartype role_name: str
+    :ivar role_path: Optional IAM path of the role (for example ``/team/`` or ``/division/team/``).
+     The value must be supplied in canonical form with a leading and trailing '/'; it is validated
+     as-is and is never normalized. A non-root path must contain at least one character between the
+     surrounding slashes. When authentication is first configured, an omitted path defaults to the
+     root (``/``). When updating an existing authentication configuration, an omitted path retains
+     its current value.
+    :vartype role_path: str
+    """
+
+    authentication_type: Literal[AdditionalAuthenticationType.AWS_ELASTIC_CONTAINER_REGISTRY] = rest_discriminator(name="authenticationType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Amazon Elastic Container Registry (ECR) authentication via workload identity
+     federation."""
+    account_number: str = rest_field(name="accountNumber", visibility=["read", "create", "update", "delete", "query"])
+    """The AWS account that owns the IAM role used for authentication. The IAM role is assumed via AWS
+     Security Token Service (STS) when exchanging a federated Entra access token for an ECR access
+     token. The full IAM role ARN is derived from ``accountNumber``, ``rolePath``, and ``roleName``
+     as ``arn:aws:iam::{accountNumber}:role{rolePath}{roleName}`` (the initial path defaults to
+     ``/``). Required."""
+    region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The AWS region of the upstream Elastic Container Registry (e.g. ``us-west-2``). Only commercial
+     AWS regions are supported; the GovCloud (``us-gov-*``), China (``cn-*``), and Secret/Top Secret
+     ISO (``us-iso*``) partitions are rejected. The pattern stays forward-compatible for new
+     commercial regions without requiring a contract change. Required."""
+    role_name: str = rest_field(name="roleName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the AWS IAM role assumed for authentication. This is the role name only, not the
+     full ARN; the IAM path is supplied separately via ``rolePath``, so '/' is not permitted here.
+     Required."""
+    role_path: Optional[str] = rest_field(name="rolePath", visibility=["read", "create", "update", "delete", "query"])
+    """Optional IAM path of the role (for example ``/team/`` or ``/division/team/``). The value must
+     be supplied in canonical form with a leading and trailing '/'; it is validated as-is and is
+     never normalized. A non-root path must contain at least one character between the surrounding
+     slashes. When authentication is first configured, an omitted path defaults to the root (``/``).
+     When updating an existing authentication configuration, an omitted path retains its current
+     value."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        account_number: str,
+        region: str,
+        role_name: str,
+        role_path: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.authentication_type = AdditionalAuthenticationType.AWS_ELASTIC_CONTAINER_REGISTRY  # type: ignore
+
+
+class EcrAuthenticationUpdateProperties(
+    AdditionalAuthenticationUpdateProperties, discriminator="AwsElasticContainerRegistry"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Partial Amazon Elastic Container Registry (ECR) authentication configuration. When
+    authentication is first configured, accountNumber, region, and roleName must be supplied.
+
+    :ivar authentication_type: Required. Amazon Elastic Container Registry (ECR) authentication via
+     workload identity federation.
+    :vartype authentication_type: str or
+     ~azure.mgmt.containerregistry.models.AdditionalAuthenticationType
+    :ivar account_number: The AWS account that owns the IAM role used for authentication. The IAM
+     role is assumed via AWS Security Token Service (STS) when exchanging a federated Entra access
+     token for an ECR access token. The full IAM role ARN is derived from ``accountNumber``,
+     ``rolePath``, and ``roleName`` as ``arn:aws:iam::{accountNumber}:role{rolePath}{roleName}``
+     (the initial path defaults to ``/``).
+    :vartype account_number: str
+    :ivar region: The AWS region of the upstream Elastic Container Registry (e.g. ``us-west-2``).
+     Only commercial AWS regions are supported; the GovCloud (``us-gov-*``), China (``cn-*``), and
+     Secret/Top Secret ISO (``us-iso*``) partitions are rejected. The pattern stays
+     forward-compatible for new commercial regions without requiring a contract change.
+    :vartype region: str
+    :ivar role_name: The name of the AWS IAM role assumed for authentication. This is the role name
+     only, not the full ARN; the IAM path is supplied separately via ``rolePath``, so '/' is not
+     permitted here.
+    :vartype role_name: str
+    :ivar role_path: Optional IAM path of the role (for example ``/team/`` or ``/division/team/``).
+     The value must be supplied in canonical form with a leading and trailing '/'; it is validated
+     as-is and is never normalized. A non-root path must contain at least one character between the
+     surrounding slashes. When authentication is first configured, an omitted path defaults to the
+     root (``/``). When updating an existing authentication configuration, an omitted path retains
+     its current value.
+    :vartype role_path: str
+    """
+
+    authentication_type: Literal[AdditionalAuthenticationType.AWS_ELASTIC_CONTAINER_REGISTRY] = rest_discriminator(name="authenticationType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Amazon Elastic Container Registry (ECR) authentication via workload identity
+     federation."""
+    account_number: Optional[str] = rest_field(
+        name="accountNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The AWS account that owns the IAM role used for authentication. The IAM role is assumed via AWS
+     Security Token Service (STS) when exchanging a federated Entra access token for an ECR access
+     token. The full IAM role ARN is derived from ``accountNumber``, ``rolePath``, and ``roleName``
+     as ``arn:aws:iam::{accountNumber}:role{rolePath}{roleName}`` (the initial path defaults to
+     ``/``)."""
+    region: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The AWS region of the upstream Elastic Container Registry (e.g. ``us-west-2``). Only commercial
+     AWS regions are supported; the GovCloud (``us-gov-*``), China (``cn-*``), and Secret/Top Secret
+     ISO (``us-iso*``) partitions are rejected. The pattern stays forward-compatible for new
+     commercial regions without requiring a contract change."""
+    role_name: Optional[str] = rest_field(name="roleName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the AWS IAM role assumed for authentication. This is the role name only, not the
+     full ARN; the IAM path is supplied separately via ``rolePath``, so '/' is not permitted here."""
+    role_path: Optional[str] = rest_field(name="rolePath", visibility=["read", "create", "update", "delete", "query"])
+    """Optional IAM path of the role (for example ``/team/`` or ``/division/team/``). The value must
+     be supplied in canonical form with a leading and trailing '/'; it is validated as-is and is
+     never normalized. A non-root path must contain at least one character between the surrounding
+     slashes. When authentication is first configured, an omitted path defaults to the root (``/``).
+     When updating an existing authentication configuration, an omitted path retains its current
+     value."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        account_number: Optional[str] = None,
+        region: Optional[str] = None,
+        role_name: Optional[str] = None,
+        role_path: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.authentication_type = AdditionalAuthenticationType.AWS_ELASTIC_CONTAINER_REGISTRY  # type: ignore
+
+
 class EncryptionProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EncryptionProperty.
 
@@ -1447,6 +1666,122 @@ class EncryptionProperty(_Model):  # pylint: disable=docstring-keyword-should-ma
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class EntraFederatedIdentityCredentialAuthenticationProperties(
+    AdditionalAuthenticationProperties, discriminator="EntraFederatedIdentityCredential"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Microsoft Entra federated identity credential authentication configuration.
+
+    :ivar authentication_type: Required. Microsoft Entra authentication via a federated identity
+     credential on an application in another tenant.
+    :vartype authentication_type: str or
+     ~azure.mgmt.containerregistry.models.AdditionalAuthenticationType
+    :ivar source_tenant_id: The upstream tenant that issues the token for
+     ``federatedApplicationClientId`` and contains the application's enterprise application (service
+     principal). Required.
+    :vartype source_tenant_id: str
+    :ivar federated_application_client_id: The client ID of the multi-tenant application. Its
+     application registration and federated identity credential must be in the cache rule managed
+     identity's home tenant. The credential's subject is the managed identity's principal/object ID,
+     not its client ID. Its enterprise application (service principal) must exist in
+     ``sourceTenantId``. Required.
+    :vartype federated_application_client_id: str
+    """
+
+    authentication_type: Literal[AdditionalAuthenticationType.ENTRA_FEDERATED_IDENTITY_CREDENTIAL] = rest_discriminator(name="authenticationType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Microsoft Entra authentication via a federated identity credential on an application
+     in another tenant."""
+    source_tenant_id: str = rest_field(
+        name="sourceTenantId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The upstream tenant that issues the token for ``federatedApplicationClientId`` and contains the
+     application's enterprise application (service principal). Required."""
+    federated_application_client_id: str = rest_field(
+        name="federatedApplicationClientId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client ID of the multi-tenant application. Its application registration and federated
+     identity credential must be in the cache rule managed identity's home tenant. The credential's
+     subject is the managed identity's principal/object ID, not its client ID. Its enterprise
+     application (service principal) must exist in ``sourceTenantId``. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_tenant_id: str,
+        federated_application_client_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.authentication_type = AdditionalAuthenticationType.ENTRA_FEDERATED_IDENTITY_CREDENTIAL  # type: ignore
+
+
+class EntraFederatedIdentityCredentialAuthenticationUpdateProperties(
+    AdditionalAuthenticationUpdateProperties, discriminator="EntraFederatedIdentityCredential"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Partial Microsoft Entra federated identity credential authentication configuration. When
+    authentication is first configured, sourceTenantId and federatedApplicationClientId must be
+    supplied.
+
+    :ivar authentication_type: Required. Microsoft Entra authentication via a federated identity
+     credential on an application in another tenant.
+    :vartype authentication_type: str or
+     ~azure.mgmt.containerregistry.models.AdditionalAuthenticationType
+    :ivar source_tenant_id: The upstream tenant that issues the token for
+     ``federatedApplicationClientId`` and contains the application's enterprise application (service
+     principal).
+    :vartype source_tenant_id: str
+    :ivar federated_application_client_id: The client ID of the multi-tenant application. Its
+     application registration and federated identity credential must be in the cache rule managed
+     identity's home tenant. The credential's subject is the managed identity's principal/object ID,
+     not its client ID. Its enterprise application (service principal) must exist in
+     ``sourceTenantId``.
+    :vartype federated_application_client_id: str
+    """
+
+    authentication_type: Literal[AdditionalAuthenticationType.ENTRA_FEDERATED_IDENTITY_CREDENTIAL] = rest_discriminator(name="authenticationType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Microsoft Entra authentication via a federated identity credential on an application
+     in another tenant."""
+    source_tenant_id: Optional[str] = rest_field(
+        name="sourceTenantId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The upstream tenant that issues the token for ``federatedApplicationClientId`` and contains the
+     application's enterprise application (service principal)."""
+    federated_application_client_id: Optional[str] = rest_field(
+        name="federatedApplicationClientId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The client ID of the multi-tenant application. Its application registration and federated
+     identity credential must be in the cache rule managed identity's home tenant. The credential's
+     subject is the managed identity's principal/object ID, not its client ID. Its enterprise
+     application (service principal) must exist in ``sourceTenantId``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_tenant_id: Optional[str] = None,
+        federated_application_client_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.authentication_type = AdditionalAuthenticationType.ENTRA_FEDERATED_IDENTITY_CREDENTIAL  # type: ignore
 
 
 class ErrorAdditionalInfo(_Model):
@@ -1971,7 +2306,7 @@ class GarAuthenticationProperties(
     :ivar authentication_type: Required. Google Artifact Registry (GAR) authentication via workload
      identity federation.
     :vartype authentication_type: str or
-     ~azure.mgmt.containerregistry.models.GOOGLE_ARTIFACT_REGISTRY
+     ~azure.mgmt.containerregistry.models.AdditionalAuthenticationType
     :ivar project_number: The Google Cloud Platform project that is configured for authentication
      Permissions should be granted to
      principal://iam.googleapis.com/projects/{ProjectNumber}/locations/global/workloadIdentityPools/{WorkloadIdentityPool}/providers/{WorkloadIdentityProvider}/subject/{ManagedIdentityPrincipal}.
@@ -2008,6 +2343,67 @@ class GarAuthenticationProperties(
         project_number: str,
         workload_identity_pool: str,
         workload_identity_provider: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.authentication_type = AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY  # type: ignore
+
+
+class GarAuthenticationUpdateProperties(
+    AdditionalAuthenticationUpdateProperties, discriminator="GoogleArtifactRegistry"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Partial Google Artifact Registry (GAR) authentication configuration. When authentication is
+    first configured, projectNumber, workloadIdentityPool, and workloadIdentityProvider must be
+    supplied.
+
+    :ivar authentication_type: Required. Google Artifact Registry (GAR) authentication via workload
+     identity federation.
+    :vartype authentication_type: str or
+     ~azure.mgmt.containerregistry.models.AdditionalAuthenticationType
+    :ivar project_number: The Google Cloud Platform project that is configured for authentication
+     Permissions should be granted to
+     principal://iam.googleapis.com/projects/{ProjectNumber}/locations/global/workloadIdentityPools/{WorkloadIdentityPool}/providers/{WorkloadIdentityProvider}/subject/{ManagedIdentityPrincipal}.
+    :vartype project_number: str
+    :ivar workload_identity_pool: The Google Cloud platform workload identity pool used for
+     authentication.
+    :vartype workload_identity_pool: str
+    :ivar workload_identity_provider: The Google Cloud Platform workload identity provider used for
+     authentication.
+    :vartype workload_identity_provider: str
+    """
+
+    authentication_type: Literal[AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY] = rest_discriminator(name="authenticationType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Google Artifact Registry (GAR) authentication via workload identity federation."""
+    project_number: Optional[str] = rest_field(
+        name="projectNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Google Cloud Platform project that is configured for authentication Permissions should be
+     granted to
+     principal://iam.googleapis.com/projects/{ProjectNumber}/locations/global/workloadIdentityPools/{WorkloadIdentityPool}/providers/{WorkloadIdentityProvider}/subject/{ManagedIdentityPrincipal}."""
+    workload_identity_pool: Optional[str] = rest_field(
+        name="workloadIdentityPool", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Google Cloud platform workload identity pool used for authentication."""
+    workload_identity_provider: Optional[str] = rest_field(
+        name="workloadIdentityProvider", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Google Cloud Platform workload identity provider used for authentication."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_number: Optional[str] = None,
+        workload_identity_pool: Optional[str] = None,
+        workload_identity_provider: Optional[str] = None,
     ) -> None: ...
 
     @overload

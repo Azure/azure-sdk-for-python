@@ -9,6 +9,34 @@ Use recorded tests to validate samples with `SyncSampleExecutor` and `AsyncSampl
 
 **VS Code tip (record a single sample):** Open the **Testing** tab, expand the pytest tree to find the specific sample test case (for example, one parameterized case for a particular `sample_path`), then right-click it and choose **Run Test** (or **Debug Test**). Make sure your `.env` (or your test run environment) includes `AZURE_TEST_RUN_LIVE=true` and `AZURE_SKIP_LIVE_RECORDING=false` so that run captures a new recording for just that sample.
 
+## Voice evaluation recordings
+
+The dedicated `audio_conversation_sample` and `voice_agent_simulation_sample`
+tests execute the existing synchronous and asynchronous samples. Both Azure Core
+and OpenAI HTTPX transports use Test Proxy. Playback uses sanitized preparer
+values and requires no Azure credentials.
+
+For re-recording, follow the [voice evaluation setup](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/README.md#voice-evaluation)
+and provide these environment variables:
+
+| Workflow | Variables |
+| --- | --- |
+| Recorded audio | `FOUNDRY_PROJECT_ENDPOINT`, `FOUNDRY_MODEL_NAME`, `FOUNDRY_DATASET_ID` |
+| Voice simulation | `FOUNDRY_PROJECT_ENDPOINT`, `FOUNDRY_MODEL_NAME`, `FOUNDRY_AGENT_NAME`, `FOUNDRY_AGENT_VERSION`, `FOUNDRY_SIMULATOR_MODEL_NAME`, `FOUNDRY_SIMULATOR_VOICE` |
+
+Use an audio-input judge deployment for `FOUNDRY_MODEL_NAME`. Prepare one short
+synthetic store-hours call as WAV, register its recording asset, and register a
+one-row JSONL dataset referencing that WAV through `conversation_artifacts.audio`.
+The transcript can be omitted. For simulation, use an existing store-hours voice
+agent and the sample's inline seed.
+
+Record each workflow with its matching configuration if the projects differ.
+Then run both workflows in playback with the real environment variables unset.
+The tests require completed, finite scores for all four audio evaluators, or task
+completion for simulation; low scores remain valid results. Publish the
+recordings and commit the updated package `assets.json` reference using the
+[repository recording workflow](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md).
+
 ## Sample test logging
 
 In live mode, sample execution always writes a log file to the system temp directory.

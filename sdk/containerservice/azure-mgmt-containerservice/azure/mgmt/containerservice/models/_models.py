@@ -368,6 +368,9 @@ class AgentFabricMembership(ProxyResource):  # pylint: disable=docstring-keyword
     :vartype system_data: ~azure.mgmt.containerservice.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.containerservice.models.AgentFabricMembershipProperties
+    :ivar sku: The SKU of the AgentFabric membership. Determines which AgentFabric components are
+     deployed to the cluster. Required.
+    :vartype sku: ~azure.mgmt.containerservice.models.AgentFabricMembershipSku
     :ivar managed_by: Resource ID of the AgentFabric that this cluster is a member of. The
      AgentFabric must be in the same tenant and subscription as the managed cluster. As the ARM
      envelope property, it also stops a complete mode deployment from deleting the membership and
@@ -379,7 +382,10 @@ class AgentFabricMembership(ProxyResource):  # pylint: disable=docstring-keyword
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
-    managed_by: str = rest_field(name="managedBy", visibility=["read", "create", "update"])
+    sku: "_models.AgentFabricMembershipSku" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The SKU of the AgentFabric membership. Determines which AgentFabric components are deployed to
+     the cluster. Required."""
+    managed_by: str = rest_field(name="managedBy", visibility=["read", "create"])
     """Resource ID of the AgentFabric that this cluster is a member of. The AgentFabric must be in the
      same tenant and subscription as the managed cluster. As the ARM envelope property, it also
      stops a complete mode deployment from deleting the membership and silently detaching the
@@ -389,6 +395,7 @@ class AgentFabricMembership(ProxyResource):  # pylint: disable=docstring-keyword
     def __init__(
         self,
         *,
+        sku: "_models.AgentFabricMembershipSku",
         managed_by: str,
         properties: Optional["_models.AgentFabricMembershipProperties"] = None,
     ) -> None: ...
@@ -404,16 +411,13 @@ class AgentFabricMembership(ProxyResource):  # pylint: disable=docstring-keyword
         super().__init__(*args, **kwargs)
 
 
-class AgentFabricMembershipProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AgentFabricMembershipProperties(_Model):
     """Properties of the AgentFabric membership of a managed cluster.
 
     :ivar provisioning_state: The current provisioning state of the AgentFabric membership. Known
      values are: "Canceled", "Creating", "Deleting", "Failed", "Succeeded", and "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerservice.models.AgentFabricMembershipProvisioningState
-    :ivar sku: The SKU of the AgentFabric membership. Determines which AgentFabric components are
-     deployed to the cluster. Required. Known values are: "Standard" and "Premium".
-    :vartype sku: str or ~azure.mgmt.containerservice.models.AgentFabricMembershipSkuName
     """
 
     provisioning_state: Optional[Union[str, "_models.AgentFabricMembershipProvisioningState"]] = rest_field(
@@ -421,17 +425,27 @@ class AgentFabricMembershipProperties(_Model):  # pylint: disable=docstring-keyw
     )
     """The current provisioning state of the AgentFabric membership. Known values are: \"Canceled\",
      \"Creating\", \"Deleting\", \"Failed\", \"Succeeded\", and \"Updating\"."""
-    sku: Union[str, "_models.AgentFabricMembershipSkuName"] = rest_field(
+
+
+class AgentFabricMembershipSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The SKU of the AgentFabric membership.
+
+    :ivar name: The SKU name that determines which AgentFabric components are deployed to the
+     cluster. Required. Known values are: "Standard" and "Premium".
+    :vartype name: str or ~azure.mgmt.containerservice.models.AgentFabricMembershipSkuName
+    """
+
+    name: Union[str, "_models.AgentFabricMembershipSkuName"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The SKU of the AgentFabric membership. Determines which AgentFabric components are deployed to
-     the cluster. Required. Known values are: \"Standard\" and \"Premium\"."""
+    """The SKU name that determines which AgentFabric components are deployed to the cluster.
+     Required. Known values are: \"Standard\" and \"Premium\"."""
 
     @overload
     def __init__(
         self,
         *,
-        sku: Union[str, "_models.AgentFabricMembershipSkuName"],
+        name: Union[str, "_models.AgentFabricMembershipSkuName"],
     ) -> None: ...
 
     @overload
@@ -934,7 +948,7 @@ class AgentPoolGenerateUpgradeInsightsContent(
     """Request body to evaluate a single agent pool Kubernetes version upgrade.
 
     :ivar upgrade_type: Required. An agent pool (node pool) Kubernetes version upgrade.
-    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.AGENT_POOL
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.UpgradeType
     :ivar agent_pool_name: The name of the agent pool to evaluate. Required.
     :vartype agent_pool_name: str
     :ivar target_kubernetes_version: The target Kubernetes version to evaluate. Required.
@@ -2245,7 +2259,7 @@ class AgentPoolUpgradeInsightProperties(UpgradeInsightProperties, discriminator=
     :vartype expires_at: ~datetime.datetime
     :ivar upgrade_type: The type of upgrade this insight evaluates. Required. An agent pool (node
      pool) Kubernetes version upgrade.
-    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.AGENT_POOL
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.UpgradeType
     :ivar agent_pool_name: The name of the agent pool this insight applies to.
     :vartype agent_pool_name: str
     :ivar target_kubernetes_version: The target Kubernetes version that was evaluated.
@@ -2890,7 +2904,7 @@ class ArmImpactedResource(UpgradeInsightImpactedResource, discriminator="Arm"):
     :vartype resource_type: str
     :ivar kind: The category of the impacted resource. Required. An Azure Resource Manager (ARM)
      resource.
-    :vartype kind: str or ~azure.mgmt.containerservice.models.ARM
+    :vartype kind: str or ~azure.mgmt.containerservice.models.ImpactedResourceKind
     :ivar resource_id: The ARM resource ID of the impacted resource.
     :vartype resource_id: str
     """
@@ -4176,7 +4190,7 @@ class ControlPlaneAndAgentPoolsGenerateUpgradeInsightsContent(
      for a single target Kubernetes version. This scope covers Kubernetes version upgrades only;
      node OS image upgrades are not included and must be evaluated separately using the NodeImage
      scope.
-    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.CONTROL_PLANE_AND_AGENT_POOLS
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.UpgradeType
     :ivar target_kubernetes_version: The target Kubernetes version to evaluate for all scopes.
      Required.
     :vartype target_kubernetes_version: str
@@ -4239,7 +4253,7 @@ class ControlPlaneAndAgentPoolsUpgradeInsightProperties(
      of the control plane plus every agent pool for a single target Kubernetes version. This scope
      covers Kubernetes version upgrades only; node OS image upgrades are not included and must be
      evaluated separately using the NodeImage scope.
-    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.CONTROL_PLANE_AND_AGENT_POOLS
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.UpgradeType
     :ivar target_kubernetes_version: The target Kubernetes version that was evaluated for all
      scopes.
     :vartype target_kubernetes_version: str
@@ -4286,7 +4300,7 @@ class ControlPlaneGenerateUpgradeInsightsContent(
     """Request body to evaluate a control plane (managed cluster) Kubernetes version upgrade.
 
     :ivar upgrade_type: Required. The control plane (managed cluster) Kubernetes version upgrade.
-    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.CONTROL_PLANE
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.UpgradeType
     :ivar target_kubernetes_version: The target Kubernetes version to evaluate. Required.
     :vartype target_kubernetes_version: str
     """
@@ -4338,7 +4352,7 @@ class ControlPlaneUpgradeInsightProperties(UpgradeInsightProperties, discriminat
     :vartype expires_at: ~datetime.datetime
     :ivar upgrade_type: The type of upgrade this insight evaluates. Required. The control plane
      (managed cluster) Kubernetes version upgrade.
-    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.CONTROL_PLANE
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.UpgradeType
     :ivar target_kubernetes_version: The target Kubernetes version that was evaluated.
     :vartype target_kubernetes_version: str
     :ivar current_kubernetes_version: The Kubernetes version the scope was evaluated from (the
@@ -6105,7 +6119,7 @@ class KubernetesImpactedResource(UpgradeInsightImpactedResource, discriminator="
      Microsoft.Network/virtualNetworks/subnets or PodDisruptionBudget).
     :vartype resource_type: str
     :ivar kind: The category of the impacted resource. Required. A Kubernetes resource.
-    :vartype kind: str or ~azure.mgmt.containerservice.models.KUBERNETES
+    :vartype kind: str or ~azure.mgmt.containerservice.models.ImpactedResourceKind
     :ivar namespace: The Kubernetes namespace of the impacted resource, if applicable.
     :vartype namespace: str
     :ivar name: The name of the impacted Kubernetes resource.
@@ -6471,10 +6485,6 @@ class LinuxOSConfig(_Model):  # pylint: disable=docstring-keyword-should-match-k
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ListBootstrapDataRequest(_Model):
-    """Empty request body for listing FlexNode bootstrap data."""
 
 
 class LoadBalancer(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -13741,7 +13751,7 @@ class MeshMembership(ProxyResource):  # pylint: disable=docstring-keyword-should
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Mesh membership properties of a managed cluster."""
-    managed_by: Optional[str] = rest_field(name="managedBy", visibility=["read", "create", "update"])
+    managed_by: Optional[str] = rest_field(name="managedBy", visibility=["read", "create"])
     """The fully qualified resource ID of the resource that manages this resource. Indicates if this
      resource is managed by another Azure resource. If this is present, complete mode deployment
      will not delete the resource if it is removed from the template since it is managed by another
@@ -14304,7 +14314,7 @@ class NodeImageGenerateUpgradeInsightsContent(
      are evaluated per agent pool, mirroring the per-pool node-image upgrade API
      (.../agentPools/{name}), and cover the node OS image only; agent-pool Kubernetes version
      readiness is evaluated separately via the AgentPool or ControlPlaneAndAgentPools scopes.
-    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.NODE_IMAGE
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.UpgradeType
     :ivar agent_pool_name: The name of the agent pool to evaluate. Required.
     :vartype agent_pool_name: str
     :ivar target_node_image_version: The target node OS image version to evaluate. If omitted, the
@@ -14371,7 +14381,7 @@ class NodeImageUpgradeInsightProperties(UpgradeInsightProperties, discriminator=
      node-image upgrade API (.../agentPools/{name}), and cover the node OS image only; agent-pool
      Kubernetes version readiness is evaluated separately via the AgentPool or
      ControlPlaneAndAgentPools scopes.
-    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.NODE_IMAGE
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.UpgradeType
     :ivar agent_pool_name: The name of the agent pool this insight applies to.
     :vartype agent_pool_name: str
     :ivar current_node_image_version: The node OS image version the agent pool was evaluated from
@@ -14971,18 +14981,24 @@ class PrivateEndpointConnectionListResult(_Model):  # pylint: disable=docstring-
 
     :ivar value: The collection value.
     :vartype value: list[~azure.mgmt.containerservice.models.PrivateEndpointConnection]
+    :ivar next_link: The link to the next page, if any. Omitted when all results are returned in a
+     single response.
+    :vartype next_link: str
     """
 
     value: Optional[list["_models.PrivateEndpointConnection"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection value."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """The link to the next page, if any. Omitted when all results are returned in a single response."""
 
     @overload
     def __init__(
         self,
         *,
         value: Optional[list["_models.PrivateEndpointConnection"]] = None,
+        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -15107,18 +15123,24 @@ class PrivateLinkResourcesListResult(_Model):  # pylint: disable=docstring-keywo
 
     :ivar value: The collection value.
     :vartype value: list[~azure.mgmt.containerservice.models.PrivateLinkResource]
+    :ivar next_link: The link to the next page, if any. Omitted when all results are returned in a
+     single response.
+    :vartype next_link: str
     """
 
     value: Optional[list["_models.PrivateLinkResource"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection value."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """The link to the next page, if any. Omitted when all results are returned in a single response."""
 
     @overload
     def __init__(
         self,
         *,
         value: Optional[list["_models.PrivateLinkResource"]] = None,
+        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload

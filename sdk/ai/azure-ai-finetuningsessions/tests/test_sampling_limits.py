@@ -25,6 +25,7 @@ import pytest
 
 from azure.ai.finetuningsessions._exceptions import (
     _classify_http_error,
+    MalformedResponseError,
     NoCapacityError,
     RateLimitedError,
 )
@@ -223,6 +224,42 @@ async def test_sample_submit_retries_transient_network_error_then_succeeds(clock
     assert client.calls == 2
 
 
+@pytest.mark.asyncio
+async def test_sample_submit_retries_malformed_success_then_succeeds(clock):
+    client = _FakeAsyncClient(
+        [
+            _FakeResponse(200, {"detail": "translated upstream response"}),
+            _FakeResponse(200, {"request_id": "req-ok"}),
+        ]
+    )
+    request_id, _op = await _post_sample(
+        client,
+        "/fine_tuning/sessions/session_deadbeef/sample",
+        _aio_mod.SamplingParams(),
+    )
+    assert request_id == "req-ok"
+    assert client.calls == 2
+
+
+@pytest.mark.asyncio
+async def test_sample_malformed_success_shares_fault_retry_budget(clock):
+    client = _FakeAsyncClient(
+        [
+            _FakeResponse(500, {"reason": "boom"}),
+            _FakeResponse(200, {}),
+            _FakeResponse(200, {}),
+            _FakeResponse(200, {"request_id": "must-not-be-reached"}),
+        ]
+    )
+    with pytest.raises(MalformedResponseError):
+        await _post_sample(
+            client,
+            "/fine_tuning/sessions/session_deadbeef/sample",
+            _aio_mod.SamplingParams(),
+        )
+    assert client.calls == 3
+
+
 # ---------------------------------------------------------------------------
 # Lifecycle-scoped semaphore (async sample)
 # ---------------------------------------------------------------------------
@@ -396,6 +433,72 @@ def test_sync_sample_posts_to_sample_endpoint():
         checkpoint_id="ckpt-1",
     )
     assert seen["subpath"].endswith("/sample")
+
+
+def test_sync_sample_submit_retries_malformed_success(monkeypatch):
+    from azure.ai.finetuningsessions._patch import FineTuningSession
+
+    responses = iter(
+        [
+            _FakeResponse(200, {}),
+            _FakeResponse(200, {"request_id": "req-ok"}),
+        ]
+    )
+    client = SimpleNamespace(send_request=lambda _request: next(responses))
+    session = object.__new__(FineTuningSession)
+    session._client = client
+    monkeypatch.setattr(_patch_mod._time, "sleep", lambda _delay: None)
+
+    response, data = session._submit(object(), "/fine_tuning/sessions/session_deadbeef/sample")
+
+    assert response.status_code == 200
+    assert data == {"request_id": "req-ok"}
+
+
+def test_sync_sample_submit_raises_after_malformed_retry_budget(monkeypatch):
+    from azure.ai.finetuningsessions._patch import FineTuningSession
+
+    calls = 0
+
+    def _send_request(_request):
+        nonlocal calls
+        calls += 1
+        return _FakeResponse(200, {})
+
+    session = object.__new__(FineTuningSession)
+    session._client = SimpleNamespace(send_request=_send_request)
+    monkeypatch.setattr(_patch_mod._time, "sleep", lambda _delay: None)
+
+    with pytest.raises(MalformedResponseError):
+        session._submit(object(), "/fine_tuning/sessions/session_deadbeef/sample")
+    assert calls == 3
+
+
+def test_sync_sample_malformed_success_shares_fault_retry_budget(monkeypatch):
+    from azure.ai.finetuningsessions._patch import FineTuningSession
+
+    responses = iter(
+        [
+            _FakeResponse(500, {"reason": "boom"}),
+            _FakeResponse(200, {}),
+            _FakeResponse(200, {}),
+            _FakeResponse(200, {"request_id": "must-not-be-reached"}),
+        ]
+    )
+    calls = 0
+
+    def _send_request(_request):
+        nonlocal calls
+        calls += 1
+        return next(responses)
+
+    session = object.__new__(FineTuningSession)
+    session._client = SimpleNamespace(send_request=_send_request)
+    monkeypatch.setattr(_patch_mod._time, "sleep", lambda _delay: None)
+
+    with pytest.raises(MalformedResponseError):
+        session._submit(object(), "/fine_tuning/sessions/session_deadbeef/sample")
+    assert calls == 3
 
 
 def test_sync_sample_preserves_structured_prompt():

@@ -340,7 +340,6 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            body={},
         )
 
         # please add some check logic here by yourself

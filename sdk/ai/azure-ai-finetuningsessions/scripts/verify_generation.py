@@ -3,8 +3,8 @@
 """Emit twice in temporary directories and compare the checked-in generated SDK.
 
 Only supported maintained hooks are supplied to each fresh emission. All other
-runtime files must be emitter output. Full assembled runtime equality, including
-the hooks, is checked separately from the immutable Loom API/behavior comparison.
+runtime files must be emitter output. Full assembled runtime equality includes
+all maintained hooks as well as generated modules.
 
 This check never updates the package, installs dependencies, or changes Git state.
 Run with --spec-repo pointing to the public azure-rest-api-specs working tree.
@@ -30,7 +30,17 @@ PACKAGE = Path(__file__).resolve().parent.parent
 GENERATION = PACKAGE / "eng/generation"
 MODULE = Path("azure/ai/finetuningsessions")
 PROJECT = Path("specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions")
-HANDWRITTEN_MODULES = {"_client_options.py", "_exceptions.py", "_logging_setup.py", "_operation_compat.py"}
+HANDWRITTEN_MODULES = {
+    "_checkpoint_download.py",
+    "_checkpoint_files.py",
+    "_client_options.py",
+    "_exceptions.py",
+    "_logging_setup.py",
+    "_operation_compat.py",
+    "_scalar_serialization.py",
+    "_text_only.py",
+    "models/_text_only.py",
+}
 MAINTAINED_MODULES = HANDWRITTEN_MODULES | {
     "_patch.py",
     "aio/_patch.py",
