@@ -189,6 +189,8 @@ class TestAsyncParity:
         handler = AsyncBaseHandler.__new__(AsyncBaseHandler)
         handler._config = _FakeConfig(try_timeout=5)
         handler._container_id = "test-container"
+        handler._running = False
+        handler._handler = None
 
         seen = []
 
@@ -222,6 +224,8 @@ class TestRetryLoopAppliesAttemptTimeout:
         handler = BaseHandler.__new__(BaseHandler)
         handler._config = _FakeConfig(try_timeout=try_timeout)
         handler._container_id = "test-container"
+        handler._running = False
+        handler._handler = None
         return handler
 
     def test_opted_in_call_site_is_bounded(self):
@@ -309,7 +313,7 @@ class TestRetryLoopAppliesAttemptTimeout:
                 raise ValueError("transient")
             return "ok"
 
-        handler._handle_exception = lambda exc: exc
+        handler._handle_exception = lambda exc, ran_on=None: exc
         handler._backoff = lambda **kwargs: None
 
         with patch("azure.servicebus._base_handler.time.monotonic", lambda: clock["now"]):
@@ -339,7 +343,7 @@ class TestRetryLoopAppliesAttemptTimeout:
                 raise ValueError("transient")
             return "ok"
 
-        handler._handle_exception = lambda exc: exc
+        handler._handle_exception = lambda exc, ran_on=None: exc
         handler._backoff = lambda **kwargs: None
 
         with patch("azure.servicebus._base_handler.time.monotonic", lambda: clock["now"]):
@@ -851,7 +855,7 @@ class TestManagementLinkSettlementIsBounded:
             return None
 
         receiver._mgmt_request_response = fake_direct
-        receiver._handle_exception = lambda exception: exception
+        receiver._handle_exception = lambda exception, ran_on=None: exception
         message = MagicMock(spec=ServiceBusReceivedMessage)
         message._settled = False
         message._is_deferred_message = True
@@ -2032,7 +2036,7 @@ class TestAsyncManagementLinkSettlementIsBounded:
                 raise OperationTimeoutError(message="settlement timed out")
             return None
 
-        async def fake_handle_exception(exception):
+        async def fake_handle_exception(exception, ran_on=None):
             return exception
 
         receiver._mgmt_request_response = fake_direct

@@ -14,7 +14,7 @@ from typing import Any, List, Optional, AsyncIterator as AsyncIteratorType, Unio
 
 from ..exceptions import MessageLockLostError
 from ._servicebus_session_async import ServiceBusSession
-from ._base_handler_async import BaseHandler
+from ._base_handler_async import BaseHandler, _attempt_handler
 from .._common.message import ServiceBusReceivedMessage
 from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
@@ -357,7 +357,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         if self._prefetch_count == 0 and self._receive_mode == ServiceBusReceiveMode.PEEK_LOCK:
             self._amqp_transport.set_handler_message_received_async(self)
 
-    async def _open(self, timeout: Optional[float] = None) -> None:
+    async def _open_handler(self, timeout: Optional[float] = None) -> None:
         # pylint: disable=protected-access
         if self._running:
             return
@@ -414,7 +414,9 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             # Acquisition is capped by try_timeout when enabled, and never exceeds the budget.
             await self._open(get_attempt_timeout(wait_time, self._config.try_timeout))
 
-            amqp_receive_client = self._handler
+            # Pinned and recorded for this attempt, as in _mgmt_request_response.
+            amqp_receive_client = self._handler or _attempt_handler.get()
+            _attempt_handler.set(amqp_receive_client)
             received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
             # Poll with what is left of the one budget, not a fresh copy of it.
