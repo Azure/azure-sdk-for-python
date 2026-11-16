@@ -29,6 +29,9 @@
 
 ### Other Changes
 
+- Add automated multi-endpoint routing tests for logs, traces, and metrics,
+  covering shared feature selection and provider flush through a mocked ingestion transport.
+
 ## 1.0.0b59 (2026-11-05)
 
 ### Features Added
