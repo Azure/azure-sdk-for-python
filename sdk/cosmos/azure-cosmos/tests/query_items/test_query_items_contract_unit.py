@@ -42,10 +42,11 @@ from common.typed_requests import legacy_partition_key_from_request
 
 from azure.cosmos import _operation_deadline
 from azure.cosmos._backend import binding_adapter as sync_rust
+from azure.cosmos._backend.errors import UnsupportedQueryError
 from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
-from azure.cosmos._helpers import _read_all_items
+from azure.cosmos._helpers import _feed_paging
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
@@ -54,8 +55,92 @@ from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._routing.routing_range import Range
 
 
-@pytest.mark.parametrize("value,expected", [(None, None), ("1", 1), ("50000", 50000), ("0", 0)])
-def test_vector_buffer_allowance_is_snapshotted_per_query_not_page_size_rust(query, monkeypatch, value, expected):
+@pytest.mark.parametrize("source", ["driver", "Aggregate", "NonValueAggregate"])
+def test_unsupported_aggregate_wording_preserves_error_details_rust(query, monkeypatch, source):
+    summary = "This aggregate query is not supported by this SDK for the requested query scope."
+    method = (
+        query.binding.fetch_page_with_cursor_async
+        if query.async_mode else query.binding.fetch_page_with_cursor
+    )
+    hook = MagicMock()
+    if source == "driver":
+        class NativeUnsupportedQueryError(RuntimeError):
+            """Represent the binding's typed query-feature error."""
+
+        native_error = NativeUnsupportedQueryError(
+            "400/20113: unsupported query feature: aggregates in cross-partition queries"
+        )
+        monkeypatch.setattr(
+            async_rust if query.async_mode else sync_rust, "_UNSUPPORTED_QUERY_ERROR", NativeUnsupportedQueryError
+        )
+        query.failure = native_error
+        expected = UnsupportedQueryError
+    else:
+        body = json.dumps({
+            "code": "BadRequest",
+            "message": (
+                "Query contains 1 or more unsupported features. "
+                "Upgrade your SDK to a version that does support the requested features:\r\n"
+                f"Query contained {source}, which the calling client does not support."
+            ),
+        }).encode()
+        headers = {"x-ms-activity-id": "aggregate-activity", "x-ms-request-charge": "2"}
+        method.side_effect = lambda *_args, **_kwargs: (400, 1004, headers, body, None)
+        expected = CosmosHttpResponseError
+    with pytest.raises(expected) as caught:
+        query.collect(query.proxy.query_items("SELECT VALUE COUNT(1) FROM c", response_hook=hook))
+    error = caught.value
+    assert summary in str(error)
+    assert "Upgrade your SDK" not in str(error)
+    if source == "driver":
+        assert error.__cause__ is native_error
+        assert "400/20113" in str(error)
+        assert "aggregates in cross-partition queries" in str(error)
+    else:
+        assert error.status_code == 400 and error.sub_status == 1004
+        assert error.headers["x-ms-activity-id"] == "aggregate-activity"
+        assert error.headers["x-ms-request-charge"] == "2"
+        assert error.response.body() == body
+        assert error.http_error_message == body.decode()
+        assert "Upgrade your SDK" in error.response.text()
+        assert f"Query contained {source}" in str(error)
+    method.assert_called_once()
+    hook.assert_not_called()
+    assert not query.connection.mock_calls
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "400/20113: unsupported query feature: GROUP BY in cross-partition queries",
+        "400/20113: internal error: streaming ORDER BY path selected with no queryInfo present",
+    ],
+)
+def test_other_driver_query_errors_keep_their_wording_rust(query, monkeypatch, message):
+    class NativeUnsupportedQueryError(RuntimeError):
+        """Represent a non-aggregate driver error."""
+
+    error = NativeUnsupportedQueryError(message)
+    monkeypatch.setattr(
+        async_rust if query.async_mode else sync_rust, "_UNSUPPORTED_QUERY_ERROR", NativeUnsupportedQueryError
+    )
+    query.failure = error
+    with pytest.raises(UnsupportedQueryError) as caught:
+        query.collect(query.proxy.query_items("SELECT * FROM c"))
+    assert str(caught.value) == message
+    assert caught.value.__cause__ is error
+    assert len(query.calls) == 1
+
+
+@pytest.mark.parametrize("value,expected", [(None, None), (0, None), (1000, 1000)])
+def test_query_retains_cache_staleness_rust(query, value, expected):
+    query.collect(query.proxy.query_items("SELECT * FROM c", max_integrated_cache_staleness_in_ms=value))
+    assert query.calls
+    assert all(prepared.settings.item.max_staleness_ms == expected for prepared, _, _ in query.calls)
+
+
+@pytest.mark.parametrize("value", [None, "1", "50000", "0"])
+def test_vector_buffer_allowance_is_snapshotted_per_query_not_page_size_rust(query, monkeypatch, value):
     if value is None:
         monkeypatch.delenv(Constants.MAX_ITEM_BUFFER_VS_CONFIG, raising=False)
     else:
@@ -65,21 +150,26 @@ def test_vector_buffer_allowance_is_snapshotted_per_query_not_page_size_rust(que
     query.collect(pager)
     assert query.calls
     for prepared, _, _ in query.calls:
-        assert prepared.settings.query.max_buffered_query_window == expected
+        assert prepared.settings.query.vector_search_max_items == value
+        assert prepared.settings.query.max_buffered_query_window is None
         assert prepared.settings.query.max_item_count == 2
         assert not any("buffer" in key.lower() for key in wire_headers(prepared))
 
     query.calls.clear()
     query.collect(query.proxy.query_items("SELECT TOP 10 * FROM c"))
-    assert all(prepared.settings.query.max_buffered_query_window == 17 for prepared, _, _ in query.calls)
+    assert all(prepared.settings.query.vector_search_max_items == "17" for prepared, _, _ in query.calls)
 
 
 @pytest.mark.parametrize("value", ["", "abc", "1.5", "-1", str(2**64)])
-def test_invalid_vector_buffer_allowance_fails_without_binding_call_rust(query, monkeypatch, value):
+def test_invalid_vector_buffer_allowance_is_deferred_to_query_planning_rust(query, monkeypatch, value):
     monkeypatch.setenv(Constants.MAX_ITEM_BUFFER_VS_CONFIG, value)
-    with pytest.raises(ValueError):
-        query.proxy.query_items("SELECT TOP 10 * FROM c")
+    pager = query.proxy.query_items("SELECT TOP 10 * FROM c")
     assert not query.calls
+    monkeypatch.setenv(Constants.MAX_ITEM_BUFFER_VS_CONFIG, "17")
+    query.collect(pager)
+    assert query.calls
+    assert all(prepared.settings.query.vector_search_max_items == value for prepared, _, _ in query.calls)
+    assert not query.connection.mock_calls
 
 
 @pytest.mark.parametrize(
@@ -105,7 +195,8 @@ def test_hybrid_limit_is_snapshotted_separately_from_vector_limit_rust(
             str(Constants.HS_MAX_ITEMS_CONFIG_DEFAULT) if value is None else value
         )
         assert prepared.settings.query.hybrid_search_max_items == expected
-        assert prepared.settings.query.max_buffered_query_window == 17
+        assert prepared.settings.query.vector_search_max_items == "17"
+        assert prepared.settings.query.max_buffered_query_window is None
         assert prepared.settings.query.max_item_count == 2
         assert not any("hybrid" in key.lower() for key in wire_headers(prepared))
     query.calls.clear()
@@ -199,12 +290,15 @@ def test_query_accepts_sdk_point_range_without_mutating_it_rust(query, key, epk,
     {"min": "GG", "max": "GG", "isMaxInclusive": True},
     {"min": "AA  ", "max": "AA  ", "isMaxInclusive": True},
 ])
-def test_invalid_query_ranges_still_fail_without_dispatch_rust(query, interval):
+def test_invalid_feed_ranges_fail_consistently_without_dispatch_rust(query, interval):
     """Point support must not accept empty, overflowing, or unsupported ranges."""
     feed_range = {"Range": interval}
     original = deepcopy(feed_range)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as query_error:
         query.proxy.query_items("SELECT * FROM c", feed_range=feed_range)
+    with pytest.raises(ValueError) as change_feed_error:
+        query.proxy.query_items_change_feed(feed_range=feed_range)
+    assert str(change_feed_error.value) == str(query_error.value)
     assert feed_range == original
     assert not query.calls
     query.binding._ItemFeedCursor.assert_not_called()
@@ -246,7 +340,7 @@ def query(request, monkeypatch):
     async_mode = request.param
     clock = SimpleNamespace(now=100.0)
     clock.monotonic = lambda: clock.now
-    monkeypatch.setattr(_read_all_items, "time", clock)
+    monkeypatch.setattr(_feed_paging, "time", clock)
     monkeypatch.setattr(_operation_deadline, "time", clock)
     context = SimpleNamespace(
         calls=[],
@@ -664,7 +758,7 @@ def test_query_body_is_serialized_once_and_reused_without_freezing_page_settings
 
 
 @pytest.mark.parametrize("async_mode", [False, True], ids=["sync", "async"])
-def test_native_query_accepts_service_body_and_requires_separate_scope_rust(async_mode):
+def test_binding_query_preserves_service_body_scope_and_requires_typed_handle_rust(async_mode):
     """Exercise the installed binding without acquiring a driver or sending a request."""
     from dataclasses import replace
 
@@ -682,10 +776,10 @@ def test_native_query_accepts_service_body_and_requires_separate_scope_rust(asyn
     request = module.build_binding_request_from_page(prepared)
     dispatch = native.fetch_page_with_cursor_async if async_mode else native.fetch_page_with_cursor
     assert request.body_bytes is body
-    with pytest.raises(RuntimeError, match="no driver registered"):
+    assert request.query_scope is prepared.query_scope
+    with pytest.raises(TypeError, match="_DriverHandle"):
         dispatch("query-body-contract-unregistered", request, cursor)
-    with pytest.raises(TypeError, match="typed query_scope"):
-        dispatch("query-body-contract-unregistered", replace(request, query_scope=None), cursor)
+    # Missing scope is checked by the binding's query_inputs_preserve_body_bytes_and_read_scope_separately test.
     with pytest.raises(TypeError, match="typed QueryScope"):
         replace(request, query_scope={"feed_range": ["", "AA"]})
     with pytest.raises(TypeError, match="immutable bytes"):
@@ -770,7 +864,7 @@ def test_query_body_scope_options_and_client_defaults_are_preserved_rust(query):
         ({"initial_headers": {"X-MS-Start-EPK": "00"}}, NotImplementedError),
         ({"initial_headers": {"Authorization": "override"}}, NotImplementedError),
         ({"request_options": {"partitionKeyRangeId": "0"}}, NotImplementedError),
-        ({"unknown_option": 1}, NotImplementedError),
+        ({"unknown_option": 1}, TypeError),
         ({"continuation": 1}, ValueError),
         ({"continuation": "q1.invalid"}, ValueError),
         ({"continuation": "cf1.feed"}, ValueError),
@@ -787,13 +881,12 @@ def test_invalid_or_unsupported_arguments_fail_without_dispatch_rust(
     together (they are two ways to say the same thing), a sub-second timeout,
     and a page size of zero or a bool.
 
-    ``TypeError`` covers wrong types, such as a string where a bool is
-    expected.
+    ``TypeError`` covers unknown keywords and wrong types, such as a string
+    where a bool is expected.
 
     ``NotImplementedError`` covers things the Rust path does not support yet
-    -- full text score scope,
-    pinned partition key ranges, overriding the authorization or EPK headers,
-    and any unrecognised keyword. Accepting and ignoring these would let a
+    -- pinned partition key ranges and overriding the authorization or EPK headers.
+    Accepting and ignoring these would let a
     customer believe a setting took effect.
 
     Retired Python-wrapped and change-feed tokens are rejected.
@@ -804,6 +897,38 @@ def test_invalid_or_unsupported_arguments_fail_without_dispatch_rust(
         query.proxy.query_items(**values)
     assert not query.calls
     query.connection.QueryItems.assert_not_called()
+
+
+@pytest.mark.parametrize("kwargs,error,names", [
+    ({"max_itm_count": 10}, TypeError, ["max_itm_count"]),
+    ({"unknown_option": None, "max_itm_count": 10}, TypeError, ["unknown_option", "max_itm_count"]),
+    ({"connection_timeout": None}, NotImplementedError, ["connection_timeout"]),
+    ({"retry_total": 0}, NotImplementedError, ["retry_total"]),
+    (
+        {
+            "connection_timeout": 2,
+            "request_options": {"partitionKeyRangeId": "private-value"},
+            "initial_headers": {"Authorization": "private-value", "User-Agent": "private-value"},
+        },
+        NotImplementedError,
+        ["connection_timeout", "partitionKeyRangeId", "Authorization", "User-Agent"],
+    ),
+    (
+        {"max_itm_count": 10, "connection_timeout": 2},
+        TypeError,
+        ["max_itm_count"],
+    ),
+])
+def test_rejected_query_keywords_name_options_without_dispatch_rust(query, kwargs, error, names):
+    """Distinguish a typo from an unavailable feature without exposing option values."""
+    with pytest.raises(error) as caught:
+        query.proxy.query_items("SELECT * FROM c", **kwargs)
+    message = str(caught.value)
+    assert "query_items" in message
+    assert all(name in message for name in names)
+    assert "private-value" not in message
+    assert not query.calls
+    assert not query.connection.mock_calls
 
 
 @pytest.mark.parametrize(
@@ -1030,8 +1155,8 @@ def test_hook_failure_does_not_advance_public_bookmark_rust(query):
         query.next_page(pages)
 
 
-@pytest.fixture
-def legacy_query(query):
+@pytest.fixture(name="legacy_query")
+def _legacy_query(query):
     query.proxy._item_context = None
     query.connection._backend = SimpleNamespace(name="core-python")
     query.proxy._get_properties_with_options = MagicMock(
@@ -1045,6 +1170,44 @@ def legacy_query(query):
         AsyncMock(return_value=properties) if query.async_mode else MagicMock(return_value=properties)
     )
     return query
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+def test_core_python_query_rejects_negative_cache_staleness_rust(legacy_query, source):
+    kwargs = (
+        {"max_integrated_cache_staleness_in_ms": -1}
+        if source == "keyword" else {source: {"maxIntegratedCacheStaleness": -1}}
+    )
+    with pytest.raises(ValueError, match="max_integrated_cache_staleness_in_ms"):
+        legacy_query.proxy.query_items("SELECT * FROM c", **kwargs)
+    legacy_query.proxy._get_properties_with_options.assert_not_called()
+    legacy_query.connection.QueryItems.assert_not_called()
+    assert not legacy_query.calls
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [None, 0, 1000])
+def test_core_python_query_preserves_valid_cache_staleness_rust(legacy_query, source, value):
+    kwargs = (
+        {"max_integrated_cache_staleness_in_ms": value}
+        if source == "keyword" else {source: {"maxIntegratedCacheStaleness": value}}
+    )
+    result = legacy_query.proxy.query_items("SELECT * FROM c", **kwargs)
+    assert result is legacy_query.connection.QueryItems.return_value
+    options = legacy_query.connection.QueryItems.call_args.kwargs["options"]
+    assert options["maxIntegratedCacheStaleness"] == value
+    assert not legacy_query.calls
+
+
+@pytest.mark.parametrize("source", ["request_options", "feed_options"])
+def test_core_python_query_validates_effective_cache_staleness_rust(legacy_query, source):
+    legacy_query.proxy.query_items(
+        "SELECT * FROM c",
+        max_integrated_cache_staleness_in_ms=1000,
+        **{source: {"maxIntegratedCacheStaleness": -1}},
+    )
+    options = legacy_query.connection.QueryItems.call_args.kwargs["options"]
+    assert options["maxIntegratedCacheStaleness"] == 1000
 
 
 @pytest.mark.parametrize(
@@ -1195,7 +1358,9 @@ def test_driver_initialization_consumes_public_page_budget_rust(query, monkeypat
     page, and leaving it outside the budget would let that page overrun its
     timeout by however long the driver took to come up.
     """
-    def ensure():
+    def ensure(*, deadline=None):
+        if not query.async_mode:
+            assert deadline == query.clock.now + 1
         query.clock.now += 2
         return "handle"
 

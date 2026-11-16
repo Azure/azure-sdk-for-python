@@ -68,7 +68,8 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         except exceptions.CosmosHttpResponseError as inst:
             assert inst.status_code == status_code
 
-    @pytest.mark.cosmosEmulator
+    @pytest.mark.cosmosLong
+    @pytest.mark.cosmosAADLong
     async def test_database_level_offer_throughput_async_rust(self):
         # Source: tests/test_crud_response_payload_on_write_disabled_async.py::TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.test_database_level_offer_throughput_async
         offer_throughput = 1000

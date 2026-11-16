@@ -103,7 +103,7 @@ impl BatchRequest {
         let key = key.into_item_key()?.ok_or_else(|| {
             PyValueError::new_err("execute_item_batch requires an explicit partition key")
         })?;
-        modifiers.operation_timeout = parse_remaining_timeout(timeout_seconds)?;
+        modifiers.remaining_binding_timeout = parse_remaining_timeout(timeout_seconds)?;
         Ok(Self {
             database,
             container,
@@ -117,12 +117,13 @@ impl BatchRequest {
         self,
         driver: Arc<CosmosDriver>,
     ) -> impl std::future::Future<Output = PyResult<BatchResult>> + Send {
-        let timeout = self.modifiers.operation_timeout;
+        let timeout = self.modifiers.remaining_binding_timeout;
         let timed = with_operation_timeout(timeout, async move {
             let resolution = build_operation_options(
                 None,
                 self.modifiers.excluded_regions_value.clone(),
-                self.modifiers.driver_timeout_policy.clone(),
+                self.modifiers.configured_driver_timeout_policy.clone(),
+                None,
                 None,
                 Default::default(),
             );
@@ -161,8 +162,9 @@ impl BatchRequest {
             let options = build_operation_options(
                 Some(ContentResponseOnWrite::Enabled),
                 self.modifiers.excluded_regions_value,
-                self.modifiers.driver_timeout_policy,
+                self.modifiers.configured_driver_timeout_policy,
                 self.modifiers.availability_strategy,
+                self.modifiers.throughput_control,
                 self.modifiers.custom_headers,
             );
             BatchResult::Executed(driver.execute_singleton_operation(operation, options).await)

@@ -24,6 +24,7 @@ mod container_metadata;
 pub(crate) mod deadline;
 mod diagnostics;
 mod driver_runner;
+#[cfg(any(test, feature = "test-probes"))]
 pub(crate) mod lifecycle;
 mod errors;
 mod request;
@@ -132,6 +133,7 @@ mod containers;
 mod databases;
 mod feed_range;
 pub(crate) mod item_feed;
+mod legacy_change_feed;
 mod items;
 pub(crate) mod batch;
 mod offers;

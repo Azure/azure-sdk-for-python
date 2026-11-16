@@ -137,6 +137,58 @@ def test_input_keys_snapshot_before_metadata_rust(mode):
     assert backend.calls[0].read_many_items[0].partition_key.values == ("tenant", None)
 
 
+@pytest.mark.parametrize("partition_key", [None, NonePartitionKeyValue, NullPartitionKeyValue])
+@pytest.mark.parametrize("legacy", [False, True], ids=["rust", "legacy-rejected"])
+def test_null_or_absent_key_resolves_rust_metadata_before_paging_rust(mode, partition_key, legacy):
+    """Keep the former cold-metadata regression on the client-context path."""
+    document = {"id": "item"}
+    if partition_key is not NonePartitionKeyValue:
+        document["pk"] = None
+    order = []
+
+    def respond():
+        order.append("page")
+        return page([document])
+
+    proxy, backend = mode.make([respond])
+    metadata = backend.get_container_metadata.return_value
+
+    def resolve(link, *, deadline):
+        assert link == proxy.container_link
+        assert not backend.calls
+        backend.create_item_feed_cursor.assert_not_called()
+        assert deadline is not None
+        order.append("metadata")
+        return metadata
+
+    backend.get_container_metadata.side_effect = resolve
+    if legacy:
+        backend.name = "core-python"
+        with pytest.raises(NotImplementedError, match="requires the Rust backend"):
+            mode.run(proxy.read_items([("item", partition_key)], timeout=20))
+        backend.get_container_metadata.assert_not_called()
+        backend.create_item_feed_cursor.assert_not_called()
+        assert not backend.calls
+        return
+
+    assert mode.run(proxy.read_items([("item", partition_key)], timeout=20)) == [document]
+    assert order == ["metadata", "page"]
+    backend.get_container_metadata.assert_called_once()
+    backend.create_item_feed_cursor.assert_called_once()
+    assert len(backend.calls) == backend.closed == 1
+    prepared = backend.calls[0]
+    assert prepared.op == "read_items"
+    assert prepared.container_link == proxy.container_link
+    assert prepared.cursor is not None
+    assert len(prepared.read_many_items) == 1
+    selection = prepared.read_many_items[0]
+    assert selection.item_id == "item"
+    assert selection.partition_key.kind == "components"
+    assert selection.partition_key.values == ((Ellipsis,) if partition_key is NonePartitionKeyValue else (None,))
+    assert backend.deadlines == [backend.get_container_metadata.call_args.kwargs["deadline"]]
+    assert 0 < prepared.settings.timeout_seconds <= 20
+
+
 @pytest.mark.parametrize("path,row", [
     ("/tenant/id", {"tenant": {"id": "p"}}),
     ('/"tenant/id"', {"tenant/id": "p"}),

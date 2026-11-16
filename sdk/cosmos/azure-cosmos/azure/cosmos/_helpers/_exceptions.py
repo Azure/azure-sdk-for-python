@@ -27,6 +27,7 @@ from typing import Any, Mapping, Optional
 from azure.core.exceptions import ODataV4Format
 
 from .._backend.contracts import BackendResponse
+from .._backend.errors import UNSUPPORTED_AGGREGATE_QUERY_MESSAGE
 from .._response_decoding import decode_response_body_for_status
 from ..exceptions import (
     CosmosAccessConditionFailedError,
@@ -113,6 +114,26 @@ class _RequestEntityTooLargeFormat(ODataV4Format):
         super().__init__(json_object)
 
 
+class _UnsupportedAggregateQueryFormat(ODataV4Format):
+    """Clarify known aggregate rejections without modifying the service response."""
+
+    def __init__(self, json_object: Mapping[str, Any]) -> None:
+        super().__init__(json_object)
+        upgrade_message = (
+            "Query contains 1 or more unsupported features. "
+            "Upgrade your SDK to a version that does support the requested features:"
+        )
+        if (
+            isinstance(self.message, str)
+            and self.message.startswith(upgrade_message)
+            and any(
+                f"Query contained {feature}, which the calling client does not support." in self.message
+                for feature in ("Aggregate", "NonValueAggregate")
+            )
+        ):
+            self.message = self.message.replace(upgrade_message, UNSUPPORTED_AGGREGATE_QUERY_MESSAGE, 1)
+
+
 def map_backend_response_to_exception(
     response: BackendResponse,
     *,
@@ -144,6 +165,11 @@ def map_backend_response_to_exception(
         exception_kwargs["sub_status"] = response.sub_status
     if response.status_code == 413:
         exception_kwargs["error_format"] = _RequestEntityTooLargeFormat
+    elif (
+        response.status_code == 400
+        and response_adapter.headers.get("x-ms-substatus", response.sub_status) in (1004, "1004")
+    ):
+        exception_kwargs["error_format"] = _UnsupportedAggregateQueryFormat
 
     return exception_class(
         status_code=response.status_code,

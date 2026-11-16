@@ -31,6 +31,7 @@ import threading
 import time
 from dataclasses import FrozenInstanceError
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -68,16 +69,11 @@ from azure.cosmos._backend._binding_adapter_shared import (
 )
 from azure.cosmos._backend.constants import BACKEND_ENV_VAR, BACKEND_NAME_CORE_PYTHON, BACKEND_NAME_RUST
 from azure.cosmos._backend.client_config import build_client_config
+from azure.cosmos._backend import client_config as client_config_module
 from azure.cosmos._backend.credentials import resolve_credential
 from azure.cosmos._backend.factory import make_backend, resolve_backend_name
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
-from azure.cosmos._backend.transport_settings import (
-    resolve_client_connection_timeout,
-)
-from azure.cosmos._backend._async_credential_bridge import (
-    AsyncCredentialBridgeReentrantError,
-    AsyncTokenCredentialBridge,
-)
+from azure.cosmos._backend._async_credential_bridge import AsyncTokenCredentialBridge
 from azure.cosmos._backend.binding_adapter import BindingAdapter
 from azure.cosmos._helpers._item_arguments import get_selected_backend
 from azure.cosmos._helpers._item_operations import ItemHelper
@@ -1683,52 +1679,145 @@ def test_async_acquisition_does_not_starve_credentials_or_close_rust(monkeypatch
                 timeout=10,
             )
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as acquisition_executor:
-        monkeypatch.setattr(binding_adapter, "_DRIVER_ACQUISITION_EXECUTOR", acquisition_executor)
-        asyncio.run(run())
+    asyncio.run(run())
 
 
-def test_async_acquisition_submission_failure_can_be_retried_rust(monkeypatch):
+def test_blocked_async_acquisition_does_not_prevent_process_exit_rust():
+    code = textwrap.dedent("""
+        import asyncio
+        import threading
+        from types import SimpleNamespace
+        from azure.cosmos.aio._backend import binding_adapter
+
+        async def main():
+            loop = asyncio.get_running_loop()
+            started = asyncio.Event()
+            def acquire(*args):
+                loop.call_soon_threadsafe(started.set)
+                threading.Event().wait()
+            binding_adapter._rust_module = SimpleNamespace(
+                acquire_driver_handle=acquire, release_driver_handle=lambda handle: None,
+                _DriverResponseError=type("_DriverResponseError", (RuntimeError,), {}),
+                _DriverTransportError=type("_DriverTransportError", (RuntimeError,), {}),
+            )
+            adapter = binding_adapter.AsyncBindingAdapter("https://exit.invalid", master_key="key")
+            pending = asyncio.create_task(adapter.initialize())
+            await asyncio.wait_for(started.wait(), timeout=3)
+            await adapter.close()
+            pending.cancel()
+            await asyncio.gather(pending, return_exceptions=True)
+
+        asyncio.run(main())
+        print("main finished", flush=True)
+    """)
+    with subprocess.Popen(
+        [sys.executable, "-c", code], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+    ) as process:
+        try:
+            stdout, stderr = process.communicate(timeout=5)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            stdout, stderr = process.communicate(timeout=5)
+            assert "main finished" in stdout, stderr
+            pytest.fail("Driver acquisition prevented process exit after the application finished")
+    assert process.returncode == 0, stderr
+    assert "main finished" in stdout
+
+
+def test_matching_driver_waiters_do_not_queue_unrelated_async_client_rust(monkeypatch):
+    from types import SimpleNamespace
+    from azure.cosmos.aio._backend import binding_adapter
+
+    waiter_count = 32
+
+    async def run():
+        loop = asyncio.get_running_loop()
+        all_waiting = asyncio.Event()
+        finish = threading.Event()
+        arrivals_lock, creation_lock = threading.Lock(), threading.Lock()
+        arrivals = 0
+        cached = False
+
+        def acquire(endpoint, *_args):
+            nonlocal arrivals, cached
+            if endpoint == "https://unrelated.invalid":
+                return "unrelated-handle"
+            with arrivals_lock:
+                arrivals += 1
+                if arrivals == waiter_count:
+                    loop.call_soon_threadsafe(all_waiting.set)
+            with creation_lock:
+                if not cached:
+                    assert finish.wait(10), "test did not release driver creation"
+                    cached = True
+            return object()
+
+        native = SimpleNamespace(
+            acquire_driver_handle=acquire, release_driver_handle=MagicMock(),
+            _DriverResponseError=type("_DriverResponseError", (RuntimeError,), {}),
+            _DriverTransportError=type("_DriverTransportError", (RuntimeError,), {}),
+        )
+        monkeypatch.setattr(binding_adapter, "_rust_module", native)
+        matching = [
+            AsyncBindingAdapter("https://matching.invalid", master_key="key")
+            for _ in range(waiter_count)
+        ]
+        unrelated = AsyncBindingAdapter("https://unrelated.invalid", master_key="key")
+        pending = [asyncio.create_task(adapter.initialize()) for adapter in matching]
+        try:
+            await asyncio.wait_for(all_waiting.wait(), timeout=5)
+            independent = asyncio.create_task(unrelated.initialize())
+            pending.append(independent)
+            await asyncio.wait_for(asyncio.shield(independent), timeout=1)
+            assert unrelated._driver_handle == "unrelated-handle"
+            assert not finish.is_set()
+        finally:
+            finish.set()
+            await asyncio.wait_for(asyncio.gather(*pending, return_exceptions=True), timeout=5)
+            await asyncio.gather(*(adapter.close() for adapter in [*matching, unrelated]))
+
+    asyncio.run(run())
+
+
+def test_async_acquisition_worker_start_failure_can_be_retried_rust(monkeypatch):
+    from types import SimpleNamespace
+    from azure.cosmos._backend import _binding_adapter_shared as shared
     from azure.cosmos.aio._backend import binding_adapter
 
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
     monkeypatch.setattr(binding_adapter, "_rust_module", fake_module)
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as acquisition_executor:
-        monkeypatch.setattr(binding_adapter, "_DRIVER_ACQUISITION_EXECUTOR", acquisition_executor)
-        submit = acquisition_executor.submit
-        submissions = 0
+    starts = 0
 
-        def fail_first_submit(*args, **kwargs):
-            nonlocal submissions
-            submissions += 1
-            if submissions == 1:
-                raise RuntimeError("acquisition submission failed")
-            return submit(*args, **kwargs)
+    def fail_first_start(*args, **kwargs):
+        nonlocal starts
+        starts += 1
+        if starts == 1:
+            return SimpleNamespace(start=MagicMock(side_effect=RuntimeError("acquisition start failed")))
+        return threading.Thread(*args, **kwargs)
 
-        monkeypatch.setattr(acquisition_executor, "submit", fail_first_submit)
+    monkeypatch.setattr(shared, "threading", SimpleNamespace(Thread=fail_first_start, Lock=threading.Lock))
 
-        async def run():
-            adapter = AsyncBindingAdapter("https://alpha-bank.documents.azure.com", master_key="key")
-            try:
-                with pytest.raises(RuntimeError, match="acquisition submission failed"):
-                    await adapter.initialize()
-                assert adapter._init_future is None
-                assert adapter._init_future_loop is None
-                fake_module.acquire_driver_handle.assert_not_called()
+    async def run():
+        adapter = AsyncBindingAdapter("https://alpha-bank.documents.azure.com", master_key="key")
+        try:
+            with pytest.raises(RuntimeError, match="acquisition start failed"):
                 await adapter.initialize()
-                assert adapter._driver_handle == "handle-1"
-            finally:
-                await adapter.close()
+            assert adapter._init_future is None
+            fake_module.acquire_driver_handle.assert_not_called()
+            await adapter.initialize()
+            assert adapter._driver_handle == "handle-1"
+        finally:
+            await adapter.close()
 
-        asyncio.run(run())
-    assert submissions == 2
+    asyncio.run(run())
+    assert starts == 2
     fake_module.acquire_driver_handle.assert_called_once()
     fake_module.release_driver_handle.assert_called_once_with("handle-1")
 
 
-def test_async_acquisition_pool_survives_client_and_event_loop_close_rust(monkeypatch):
+def test_async_acquisition_survives_client_and_event_loop_close_rust(monkeypatch):
     from azure.cosmos.aio._backend import binding_adapter
 
     fake_module = MagicMock()
@@ -1744,12 +1833,86 @@ def test_async_acquisition_pool_survives_client_and_event_loop_close_rust(monkey
         finally:
             await adapter.close()
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as acquisition_executor:
-        monkeypatch.setattr(binding_adapter, "_DRIVER_ACQUISITION_EXECUTOR", acquisition_executor)
-        asyncio.run(run(False))
-        asyncio.run(run(True))
+    asyncio.run(run(False))
+    asyncio.run(run(True))
     assert fake_module.acquire_driver_handle.call_count == 2
     assert [call.args[0] for call in fake_module.release_driver_handle.call_args_list] == ["handle-1", "handle-2"]
+
+
+def test_async_acquisition_is_shared_after_cancelled_waiter_loop_closes_rust(monkeypatch):
+    from azure.cosmos.aio._backend import binding_adapter
+
+    started, finish = threading.Event(), threading.Event()
+    native = MagicMock()
+
+    def acquire(*_args):
+        started.set()
+        assert finish.wait(5), "test did not release acquisition"
+        return "shared-handle"
+
+    native.acquire_driver_handle.side_effect = acquire
+    monkeypatch.setattr(binding_adapter, "_rust_module", native)
+    adapter = AsyncBindingAdapter("https://shared-loops.invalid", master_key="key")
+
+    async def cancel_waiter():
+        pending = asyncio.create_task(adapter.initialize())
+        try:
+            assert await asyncio.to_thread(started.wait, 2)
+        finally:
+            pending.cancel()
+            await asyncio.gather(pending, return_exceptions=True)
+
+    async def finish_from_another_loop(original):
+        pending = asyncio.create_task(adapter.initialize())
+        try:
+            await asyncio.sleep(0)
+            assert adapter._init_future is original
+            assert not original.cancelled()
+        finally:
+            finish.set()
+            await asyncio.wait_for(pending, timeout=2)
+
+    try:
+        asyncio.run(cancel_waiter())
+        original = adapter._init_future
+        assert original is not None
+        asyncio.run(finish_from_another_loop(original))
+        assert adapter._driver_handle == "shared-handle"
+        native.acquire_driver_handle.assert_called_once()
+    finally:
+        finish.set()
+        asyncio.run(adapter.close())
+    native.release_driver_handle.assert_called_once_with("shared-handle")
+
+
+def test_async_acquisition_worker_preserves_context_rust(monkeypatch):
+    import contextvars
+    from azure.cosmos.aio._backend import binding_adapter
+
+    marker = contextvars.ContextVar("async-acquisition-test")
+    marker.set("customer-call")
+    caller = threading.get_ident()
+    observed = []
+    native = MagicMock()
+
+    def acquire(*_args):
+        observed.append((marker.get(), threading.get_ident()))
+        return "context-handle"
+
+    native.acquire_driver_handle.side_effect = acquire
+    monkeypatch.setattr(binding_adapter, "_rust_module", native)
+
+    async def run():
+        adapter = AsyncBindingAdapter("https://context.invalid", master_key="key")
+        try:
+            await adapter.initialize()
+        finally:
+            await adapter.close()
+
+    asyncio.run(run())
+    assert len(observed) == 1
+    assert observed[0][0] == "customer-call"
+    assert observed[0][1] != caller
 
 
 def test_async_backend_retries_init_after_failure_rust(monkeypatch):
@@ -1793,23 +1956,21 @@ def test_async_backend_retries_init_after_failure_rust(monkeypatch):
     assert len(attempts) == 2, f"init should be retried after failure, attempts={len(attempts)}"
 
 
-def test_async_backend_close_during_init_closes_built_driver_handle_rust(monkeypatch):
-    """If close() runs while the first acquire_driver_handle is still building, the handle the
-    build produces is closed (not left open), close() does not wait for the build to
-    finish, and the operation that triggered the build fails with a closed-client
-    error."""
-    init_in_flight = threading.Event()
-    allow_init_finish = threading.Event()
-    closed = []
+def test_async_backend_close_releases_late_acquisition_rust(monkeypatch):
+    """Close returns before acquisition finishes; its worker releases the late handle."""
+    started, finish = threading.Event(), threading.Event()
+    workers = []
+    release_threads = []
     fake_module = MagicMock()
 
-    def _slow_init(*args):
-        init_in_flight.set()
-        allow_init_finish.wait(5)  # hold the build open until the test lets it finish
+    def acquire(*_args):
+        workers.append(threading.current_thread())
+        started.set()
+        assert finish.wait(5), "test did not let acquisition finish"
         return "handle-1"
 
-    fake_module.acquire_driver_handle.side_effect = _slow_init
-    fake_module.release_driver_handle.side_effect = closed.append
+    fake_module.acquire_driver_handle.side_effect = acquire
+    fake_module.release_driver_handle.side_effect = lambda _handle: release_threads.append(threading.current_thread())
     fake_module.read_item_async = AsyncMock(return_value=(200, 0, {}, b"{}"))
     monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
 
@@ -1824,21 +1985,37 @@ def test_async_backend_close_during_init_closes_built_driver_handle_rust(monkeyp
 
     async def _run():
         backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
-        op = asyncio.ensure_future(backend.execute(prepared))
-        # Wait until acquire_driver_handle is running on the build thread.
-        await asyncio.get_running_loop().run_in_executor(None, init_in_flight.wait, 5)
-        # close() returns without waiting for the build to finish: the build does not
-        # hold _driver_handle_lock during acquire_driver_handle, so close() takes that lock right away.
-        await asyncio.wait_for(backend.close(), timeout=2)
-        # Let the build finish; it sees the client is closing and closes the handle it
-        # built instead of leaving it open.
-        allow_init_finish.set()
-        with pytest.raises(Exception):
-            await op
+        op = asyncio.create_task(backend.execute(prepared))
+        try:
+            assert await asyncio.to_thread(started.wait, 2), "acquisition did not start"
+            # Close must finish while the acquisition thread still waits.
+            await asyncio.wait_for(backend.close(), timeout=2)
+            assert backend._closing
+            assert backend._driver_handle is None
+            assert not finish.is_set()
+            assert not op.done()
+            fake_module.release_driver_handle.assert_not_called()
+            finish.set()
+            with pytest.raises(RuntimeError, match="closed during initialization"):
+                await asyncio.wait_for(op, 2)
+            assert backend._driver_handle is None
+            fake_module.read_item_async.assert_not_called()
+        finally:
+            finish.set()
+            await backend.close()
+            await asyncio.wait_for(asyncio.gather(op, return_exceptions=True), 5)
 
-    asyncio.run(_run())
-    assert closed == ["handle-1"], f"handle built during close should be closed, got {closed}"
+    try:
+        asyncio.run(_run())
+    finally:
+        # Let the worker finish before restoring the binding, even if an assertion fails.
+        finish.set()
+        for worker in workers:
+            worker.join(timeout=5)
+        assert all(not worker.is_alive() for worker in workers)
     fake_module.acquire_driver_handle.assert_called_once()
+    fake_module.release_driver_handle.assert_called_once_with("handle-1")
+    assert release_threads == workers
 
 
 def test_async_backend_propagates_cancellation_into_binding_rust(monkeypatch):
@@ -1887,31 +2064,41 @@ def test_async_backend_propagates_cancellation_into_binding_rust(monkeypatch):
     )
 
 
-def test_async_backend_finalizer_does_not_block_event_loop_rust(monkeypatch):
-    """If the finalizer fires while an event loop is running on this thread (GC
-    collecting the client mid-run), the blocking driver close must be offloaded to
-    a daemon thread, not run inline on the loop thread -- otherwise release_driver_handle
-    would stall the loop."""
-    close_started = threading.Event()
-    close_may_finish = threading.Event()
-    close_thread_names = []
+def test_async_backend_finalizer_offloads_release_when_worker_starts_rust(monkeypatch):
+    """Calling __del__ directly offloads driver release when a worker starts.
+
+    The event loop can run while the mocked release waits. The blocking
+    fallback when thread startup fails is covered separately.
+    """
+    from azure.cosmos._backend import _binding_adapter_shared as shared
+
+    release_started = threading.Event()
+    allow_release = threading.Event()
+    release_finished = threading.Event()
+    release_threads = []
+    workers = []
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-finalizer"
     fake_module.read_item_async = AsyncMock(return_value=(200, 0, {}, b"{}"))
 
-    def _blocking_close(driver_handle):
-        # Only this backend's close is measured. Other tests' async backends can be
-        # garbage-collected during this test (their finalizers call this same
-        # monkeypatched release_driver_handle); ignoring foreign handles keeps their thread
-        # from polluting the measurement -- and keeps them from blocking on
-        # close_may_finish, which could stall an inline GC finalizer.
+    def make_worker(*, target, name, daemon):
+        worker = threading.Thread(target=target, name=name, daemon=daemon)
+        workers.append(worker)
+        return worker
+
+    def blocking_release(driver_handle):
+        # Other adapters may be finalized while this binding is mocked.
+        # Only pause and record release of this test's handle.
         if driver_handle != "handle-finalizer":
             return
-        close_thread_names.append(threading.current_thread().name)
-        close_started.set()
-        close_may_finish.wait(5)  # hold the close open to expose any inline block
+        release_threads.append(threading.current_thread())
+        release_started.set()
+        try:
+            allow_release.wait(5)
+        finally:
+            release_finished.set()
 
-    fake_module.release_driver_handle.side_effect = _blocking_close
+    fake_module.release_driver_handle.side_effect = blocking_release
     monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
 
     prepared = PreparedRequest(
@@ -1925,24 +2112,28 @@ def test_async_backend_finalizer_does_not_block_event_loop_rust(monkeypatch):
 
     async def _run():
         backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
-        await backend.execute(prepared)  # build the handle so the finalizer has work
-        main_thread = threading.current_thread().name
-        # Fire the finalizer while this loop is running.
-        backend.__del__()
-        # The offloaded close should start on another thread; meanwhile the loop
-        # must keep turning even though release_driver_handle is still blocked.
-        assert close_started.wait(2), "offloaded close did not start"
-        for _ in range(5):
-            await asyncio.sleep(0)  # would hang here if the close blocked the loop
-        close_may_finish.set()
-        return main_thread
+        await backend.execute(prepared)
+        event_loop_thread = threading.current_thread()
+        monkeypatch.setattr(shared, "threading", SimpleNamespace(Thread=make_worker))
+        try:
+            backend.__del__()
+            assert release_started.wait(2), "release worker did not start"
+            for _ in range(5):
+                await asyncio.sleep(0)
+            assert not release_finished.is_set(), "release finished before the test allowed it"
+            return event_loop_thread
+        finally:
+            allow_release.set()
+            for worker in workers:
+                worker.join(timeout=2)
+            assert all(not worker.is_alive() for worker in workers), "finalizer worker did not finish"
 
-    main_thread = asyncio.run(_run())
-    assert close_thread_names, "release_driver_handle was never called"
-    assert close_thread_names[0] != main_thread, (
-        f"close ran on the loop thread {close_thread_names[0]!r}; must be offloaded"
-    )
-    assert close_thread_names[0] == "cosmos-rust-finalizer"
+    event_loop_thread = asyncio.run(_run())
+    assert release_finished.is_set()
+    assert len(release_threads) == 1
+    assert release_threads[0] is not event_loop_thread
+    assert release_threads[0].name == "cosmos-rust-finalizer"
+    assert release_threads[0].daemon
 
 
 def test_helper_parses_backend_response_into_cosmos_dict_rust(monkeypatch):
@@ -2322,7 +2513,7 @@ def test_rust_backend_client_proxy_override_is_rejected_rust(monkeypatch):
         BindingAdapter(
             endpoint="https://x.documents.azure.com",
             master_key="k",
-            client_config=PreparedClientConfig(proxy_allowed=True),
+            client_config=SimpleNamespace(proxy_allowed=True),
         )
     second = BindingAdapter(
         endpoint="https://x.documents.azure.com",
@@ -2463,12 +2654,17 @@ def test_public_constructor_preserves_hedging_choice_rust(module, extra_options,
     other. No driver is acquired, so this never reaches the network.
     """
     monkeypatch.setattr(module, "CosmosClientConnection", MagicMock())
+    strategy_validator = MagicMock(wraps=client_config_module.CrossRegionHedgingStrategy)
+    monkeypatch.setattr(client_config_module, "CrossRegionHedgingStrategy", strategy_validator)
     client = module.CosmosClient(
         "https://hedging.invalid", "ZmFrZQ==", _backend="rust", **extra_options, **options
     )
     try:
         config = client._adapter._client_config
         assert (config.hedging_threshold_ms if config is not None else None) == threshold
+        assert client._item_context.defaults.hedging_threshold_ms == threshold
+        if isinstance(options.get("availability_strategy"), dict):
+            strategy_validator.assert_called_once_with(options["availability_strategy"])
         assert client._adapter._driver_handle is None
         if extra_options:
             assert config.preferred_locations == ("West US",)
@@ -2495,7 +2691,7 @@ def test_build_client_config_combines_all_settings_rust():
         availability_strategy={"threshold_ms": 25},
         user_agent_suffix="checkout-westus2",
         consistency_level="Eventual",
-        connection_timeout_seconds=2.5,
+        operation_timeout_seconds=2.5,
     )
     assert config == PreparedClientConfig(
         preferred_locations=("West US",),
@@ -2505,63 +2701,15 @@ def test_build_client_config_combines_all_settings_rust():
         hedging_threshold_ms=25,
         user_agent_suffix="checkout-westus2",
         consistency_level="Eventual",
-        connection_timeout_seconds=2.5,
+        operation_timeout_seconds=2.5,
     )
 
 
-def test_resolve_client_connection_timeout_reports_only_explicit_values_rust():
-    """A customer who named no timeout gets None, not the legacy defaults.
-
-    The legacy resolver reports only the requested connection setting; it does
-    not configure a Rust runtime.
-    """
-    assert resolve_client_connection_timeout({}) is None
-    assert resolve_client_connection_timeout({"connection_timeout": 2}) == 2
-
-
-def test_resolve_client_connection_timeout_ignores_a_stock_connection_policy_rust():
-    """The public clients build a default ConnectionPolicy for every client, so a
-    policy that still holds the stock values is not a customer choice."""
-    assert resolve_client_connection_timeout(
-        {"connection_policy": ConnectionPolicy()}
-    ) is None
-
-
-def test_resolve_client_connection_timeout_honors_alias_and_custom_policy_rust():
-    """The legacy millisecond alias keeps precedence and policy defaults still apply."""
-    policy = ConnectionPolicy()
-    policy.RequestTimeout = 3
-    assert resolve_client_connection_timeout(
-        {
-            "connection_policy": policy,
-            "connection_timeout": 2,
-            "request_timeout": 750,
-        }
-    ) == 0.75
-
-
-def test_build_client_config_carries_transport_timeouts_rust():
-    """Prove Rust client configuration includes transport timeouts."""
-    config = build_client_config(
-        None,
-        connection_timeout_seconds=1.25,
-    )
-    assert config == PreparedClientConfig(connection_timeout_seconds=1.25)
-
-
-@pytest.mark.parametrize(
-    "kwargs, message",
-    [
-        ({"connection_timeout_seconds": 0.05}, "at least 0.1"),
-        ({"connection_timeout_seconds": 7}, "at most 6.0"),
-    ],
-)
-def test_build_client_config_rejects_driver_unsupported_transport_timeouts_rust(
-    kwargs, message
-):
-    """Prove unsupported timeout values fail instead of changing silently."""
-    with pytest.raises(ValueError, match=message):
-        build_client_config(None, **kwargs)
+@pytest.mark.parametrize("configure", [build_client_config, PreparedClientConfig])
+@pytest.mark.parametrize("name,value", [("connection_timeout_seconds", 2), ("proxy_allowed", False)])
+def test_client_configuration_rejects_retired_network_fields_rust(configure, name, value):
+    with pytest.raises(TypeError, match=name):
+        configure(**{name: value})
 
 
 def test_build_client_config_carries_user_agent_suffix_rust():
@@ -2604,34 +2752,18 @@ def test_build_client_config_no_consistency_carries_nothing_rust():
     assert build_client_config(None, consistency_level="") is None
 
 
-@pytest.mark.parametrize("proxy_allowed", [True, False])
-def test_build_client_config_only_proxy_allowed_still_builds_config_rust(proxy_allowed):
-    """Proxy allowance is a runtime-level Rust switch; an explicit value must
-    still produce a config even when no other startup setting is tuned."""
-    config = build_client_config(None, proxy_allowed=proxy_allowed)
-    assert isinstance(config, PreparedClientConfig)
-    assert config.proxy_allowed is proxy_allowed
-
-
-def test_build_client_config_rejects_non_bool_proxy_allowed_rust():
-    """proxy_allowed is a boolean contract; reject non-bool values at client
-    construction instead of failing later at first operation."""
-    with pytest.raises(ValueError, match="proxy_allowed must be a bool"):
-        build_client_config(None, proxy_allowed="true")
-
-
 @pytest.mark.parametrize(
     "first, second",
     [
-        (None, PreparedClientConfig(proxy_allowed=True)),
-        (PreparedClientConfig(proxy_allowed=True), PreparedClientConfig(proxy_allowed=False)),
-        (PreparedClientConfig(proxy_allowed=False), PreparedClientConfig(proxy_allowed=True)),
-        (PreparedClientConfig(proxy_allowed=True), PreparedClientConfig(proxy_allowed=True)),
-        (PreparedClientConfig(connection_timeout_seconds=2), PreparedClientConfig(connection_timeout_seconds=5)),
+        (None, SimpleNamespace(proxy_allowed=True)),
+        (SimpleNamespace(proxy_allowed=True), SimpleNamespace(proxy_allowed=False)),
+        (SimpleNamespace(proxy_allowed=False), SimpleNamespace(proxy_allowed=True)),
+        (SimpleNamespace(proxy_allowed=True), SimpleNamespace(proxy_allowed=True)),
+        (SimpleNamespace(connection_timeout_seconds=2), SimpleNamespace(connection_timeout_seconds=5)),
     ],
 )
 def test_retired_client_settings_are_rejected_even_before_first_use_rust(first, second):
-    """Direct adapters cannot select runtime settings through client configuration."""
+    """Direct adapters reject old payloads that still carry retired network fields."""
     endpoint = "https://unused-clients.documents.azure.com"
     for config in (first, second):
         if config is None:
@@ -2655,7 +2787,7 @@ def test_native_validation_failure_does_not_record_a_client_rust(monkeypatch):
     validator = MagicMock(side_effect=error)
     monkeypatch.setattr("azure.cosmos._rust._validate_runtime_configuration", validator)
     endpoint = "https://failed-preflight.documents.azure.com"
-    config = PreparedClientConfig(connection_timeout_seconds=2)
+    config = PreparedClientConfig(operation_timeout_seconds=2)
     with pytest.raises(RuntimeError) as caught:
         BindingAdapter(endpoint, master_key="key", client_config=config)
     assert caught.value is error
@@ -2775,7 +2907,7 @@ class _SyncTokenCredential:
 
 class _AsyncTokenCredential:
     """A stand-in for an async credential, which the Rust backend wraps in a
-    synchronous bridge."""
+    bridge using the application's event loop."""
 
     async def get_token(self, *scopes, **kwargs):  # noqa: D401
         """The same fixed token, but awaited.
@@ -2830,7 +2962,7 @@ def test_resolve_credential_master_key_dict_rust():
 
 
 def test_resolve_credential_sync_token_credential_rust():
-    """A sync token credential passes through as the token credential (no master key)."""
+    """The resolver returns the same synchronous credential object and no account key."""
     cred = _SyncTokenCredential()
     master_key, token_credential = resolve_credential(cred)
     assert master_key is None
@@ -2855,7 +2987,7 @@ def test_resolve_credential_async_get_token_info_only_wrapped_rust(credential_ow
     token_credential = AsyncTokenCredentialBridge.acquire(credential, loop=credential_owner_loop)
     assert isinstance(token_credential, AsyncTokenCredentialBridge)
     try:
-        assert token_credential.get_token("https://cosmos.azure.com/.default") == (
+        assert token_credential._start_token_request("https://cosmos.azure.com/.default").result(timeout=5) == (
             "token-value",
             9999999999,
         )
@@ -2881,105 +3013,9 @@ def test_async_credential_bridge_close_is_idempotent_rust(credential_owner_loop)
     # Closing before first use leaves the application's loop running.
     bridge._close_cosmos_async_bridge()
     bridge = AsyncTokenCredentialBridge(_AsyncTokenCredential(), loop=credential_owner_loop)
-    assert bridge.get_token("scope") == ("token-value", 9999999999)
+    assert bridge._start_token_request("scope").result(timeout=5) == ("token-value", 9999999999)
     bridge._close_cosmos_async_bridge()
     bridge._close_cosmos_async_bridge()  # second close is a no-op
-
-
-class _HangingAsyncCredential:
-    """An async credential whose get_token never returns until it is cancelled."""
-
-    def __init__(self):
-        """Set up the signal a test waits on to know the token request has really begun."""
-        self.started = threading.Event()
-
-    async def get_token(self, *scopes, **kwargs):  # noqa: D401
-        """Announce that the request started, then wait forever.
-
-        This stands for a credential that has stopped responding -- an identity service
-        that is unreachable, say. Waiting forever rather than failing is the awkward
-        case, because there is nothing to notice unless something else puts a limit on
-        the wait.
-
-        The signal matters: without it a test could close the bridge before the request
-        had begun and pass without exercising anything.
-        """
-        self.started.set()
-        # Wait until this request is cancelled, without stopping the owner loop.
-        await asyncio.Event().wait()
-        return ("never", 0)  # pragma: no cover - unreachable
-
-
-def test_async_credential_bridge_close_unblocks_in_flight_get_token_rust(credential_owner_loop):
-    """Closing the bridge while a get_token is waiting must release the caller,
-    not hang it forever."""
-    cred = _HangingAsyncCredential()
-    bridge = AsyncTokenCredentialBridge(cred, loop=credential_owner_loop)
-    result: list = []
-
-    def _call():
-        try:
-            bridge.get_token("scope")
-            result.append(("returned",))
-        except Exception as exc:  # noqa: BLE001
-            result.append(("error", type(exc).__name__, str(exc)))
-
-    caller = threading.Thread(target=_call, name="fake-driver-worker")
-    caller.start()
-    # Wait until the credential coroutine is running on the loop.
-    assert cred.started.wait(timeout=5), "credential coroutine never started"
-    bridge._close_cosmos_async_bridge()
-    caller.join(timeout=5)
-    assert not caller.is_alive(), "get_token did not return after close (permanent hang)"
-    assert result and result[0][0] == "error", f"expected an error, got {result}"
-    # The error is a clear RuntimeError, not a bare cancellation.
-    assert "closed" in result[0][2].lower()
-
-
-def test_async_credential_bridge_token_timeout_bounds_the_wait_rust(credential_owner_loop):
-    """A finite token_timeout caps the wait and raises TimeoutError instead of
-    blocking forever on a hung credential."""
-
-    cred = _HangingAsyncCredential()
-    bridge = AsyncTokenCredentialBridge(cred, token_timeout=0.5, loop=credential_owner_loop)
-    try:
-        start = time.monotonic()
-        with pytest.raises(concurrent.futures.TimeoutError):
-            bridge.get_token("scope")
-        assert time.monotonic() - start < 4, "token_timeout did not bound the wait"
-    finally:
-        bridge._close_cosmos_async_bridge()
-
-
-def test_async_credential_bridge_rejects_call_from_loop_thread_rust(credential_owner_loop):
-    """Calling get_token from the application's loop thread must raise instead of
-    deadlocking."""
-    cred = _AsyncTokenCredential()
-    bridge = AsyncTokenCredentialBridge(cred, loop=credential_owner_loop)
-    try:
-        # A worker-thread wait can obtain a token from the owner loop.
-        assert bridge.get_token("scope") == ("token-value", 9999999999)
-        outcome: list = []
-
-        def _reenter():
-            try:
-                bridge.get_token("scope")
-                outcome.append(("returned", None))
-            except Exception as exc:  # noqa: BLE001
-                outcome.append(("error", exc))
-
-        # Schedule the re-entrant call on the application's loop thread.
-        bridge._loop.call_soon_threadsafe(_reenter)
-        # Give the background thread a moment to run the callback.
-        for _ in range(50):
-            if outcome:
-                break
-            time.sleep(0.05)
-        assert outcome, "re-entrant call never ran"
-        assert outcome[0][0] == "error"
-        assert isinstance(outcome[0][1], AsyncCredentialBridgeReentrantError)
-    finally:
-        bridge._close_cosmos_async_bridge()
 
 
 class _SlowAsyncCredential:
@@ -2997,31 +3033,36 @@ class _SlowAsyncCredential:
 
 
 def test_async_credential_bridge_dedups_same_credential_with_refcount_rust(credential_owner_loop):
-    """The same async credential reused across clients yields one shared bridge,
-    refcounted so only the last close releases the bridge, not the loop."""
+    """Two uses share one bridge; only the last release closes it, not the customer event loop."""
     cred = _AsyncTokenCredential()
-    b1 = AsyncTokenCredentialBridge.acquire(cred, loop=credential_owner_loop)
-    b2 = AsyncTokenCredentialBridge.acquire(cred, loop=credential_owner_loop)
-    assert b1 is b2, "same credential should map to the same bridge"
-    assert b1._refcount == 2
+    acquired = []
     try:
-        assert b1.get_token("scope") == ("token-value", 9999999999)
-        # First close: one holder remains, so the loop stays up and usable.
+        b1 = AsyncTokenCredentialBridge.acquire(cred, loop=credential_owner_loop)
+        acquired.append(b1)
+        b2 = AsyncTokenCredentialBridge.acquire(cred, loop=credential_owner_loop)
+        acquired.append(b2)
+        assert b1 is b2, "same credential should map to the same bridge"
+        assert b1._refcount == 2
+        assert b1._start_token_request("scope").result(timeout=5) == ("token-value", 9999999999)
+        # One use remains, so the bridge can still handle token requests.
         b1._close_cosmos_async_bridge()
         assert b1._refcount == 1
-        assert b1._loop is not None
-        assert b1.get_token("scope") == ("token-value", 9999999999)
-        # Last close releases the bridge, not the application's loop.
+        assert not b1._closed
+        assert b1._start_token_request("scope").result(timeout=5) == ("token-value", 9999999999)
+        # The last release closes the bridge, not the customer event loop.
         b2._close_cosmos_async_bridge()
         assert b2._closed
         assert credential_owner_loop.is_running()
-        # A fresh acquire after teardown builds a new bridge, not the closed one.
+        # A later acquisition gets a new bridge, not the closed one.
         b3 = AsyncTokenCredentialBridge.acquire(cred, loop=credential_owner_loop)
+        acquired.append(b3)
         assert b3 is not b1
         b3._close_cosmos_async_bridge()
     finally:
-        # Defensive: ensure nothing is left registered if an assert fired early.
-        b1._close_cosmos_async_bridge()
+        # Release any remaining uses, even if an assertion fails.
+        for bridge in acquired:
+            if bridge._refcount:
+                bridge._close_cosmos_async_bridge()
 
 
 def test_async_credential_bridge_distinct_credentials_get_distinct_bridges_rust(credential_owner_loop):
@@ -3037,9 +3078,8 @@ def test_async_credential_bridge_distinct_credentials_get_distinct_bridges_rust(
         b2._close_cosmos_async_bridge()
 
 
-def test_async_credential_bridge_concurrent_get_token_and_close_race_rust(credential_owner_loop):
-    """Many threads calling get_token while another closes must all finish; calls
-    after the close fail cleanly instead of hanging."""
+def test_async_credential_bridge_concurrent_requests_and_close_rust(credential_owner_loop):
+    """Concurrent requests finish or are cancelled; scheduling after close fails."""
     cred = _SlowAsyncCredential()
     bridge = AsyncTokenCredentialBridge(cred, loop=credential_owner_loop)
     stop = threading.Event()
@@ -3049,7 +3089,7 @@ def test_async_credential_bridge_concurrent_get_token_and_close_race_rust(creden
     def worker():
         while not stop.is_set():
             try:
-                bridge.get_token("scope")
+                bridge._start_token_request("scope").result(timeout=5)
                 successes.append(1)
             except Exception as exc:  # noqa: BLE001
                 outcomes.append(type(exc).__name__)
@@ -3066,9 +3106,10 @@ def test_async_credential_bridge_concurrent_get_token_and_close_race_rust(creden
     for t in threads:
         t.join(timeout=5)
         assert not t.is_alive(), "a worker did not return after close (permanent hang)"
-    assert successes, "no get_token completed before close"
+    assert successes, "no token request completed before close"
     # Every worker recorded a clean outcome (a stop or a caught error), none hung.
     assert len(outcomes) == len(threads)
+    assert set(outcomes) <= {"stopped", "RuntimeError", "CancelledError"}
 
 
 def test_async_credential_bridge_close_does_not_own_the_loop_rust(credential_owner_loop):
@@ -3076,15 +3117,6 @@ def test_async_credential_bridge_close_does_not_own_the_loop_rust(credential_own
     bridge._close_cosmos_async_bridge()
     assert credential_owner_loop.is_running()
     assert not credential_owner_loop.is_closed()
-
-
-def test_resolve_credential_sync_credential_not_misclassified_rust():
-    """A plain synchronous credential must NOT be misread as async by the broader
-    detector -- it is accepted as a token credential."""
-    cred = _SyncTokenCredential()
-    master_key, token_credential = resolve_credential(cred)
-    assert master_key is None
-    assert token_credential is cred
 
 
 def test_resolve_credential_resource_token_map_rejected_with_specific_message_rust():
@@ -4018,16 +4050,13 @@ def test_build_client_config_accepts_single_region_in_a_list_rust():
 
 @pytest.mark.parametrize("bad_master_key", [None, 123, b"key", {"k": "v"}, ""])
 def test_resolve_credential_rejects_non_string_master_key_in_dict_rust(bad_master_key):
-    """A {'masterKey': <non-string or empty>} dict is rejected at construction with
-    a clear message, instead of being accepted and failing later in a murkier
-    place."""
+    """The resolver rejects a dictionary whose account key is empty or not a string."""
     with pytest.raises(ValueError, match="'masterKey' entry to be a non-empty string"):
         resolve_credential({"masterKey": bad_master_key})
 
 
 def test_resolve_credential_rejects_empty_master_key_string_rust():
-    """An empty master-key string is rejected up front rather than accepted and
-    failing later."""
+    """The resolver rejects an empty account-key string."""
     with pytest.raises(ValueError, match=r"^The account key must be a non-empty string\.$"):
         resolve_credential("")
 
@@ -4118,7 +4147,7 @@ def test_sync_backend_maps_transport_error_to_service_response_error_rust(monkey
     )
 
     transport_exc_type = rust_mod._DRIVER_TRANSPORT_ERROR
-    message = "driver execute_singleton_operation failed: status 503 (ServiceUnavailable): boom"
+    message = "Request failed: status 503 (ServiceUnavailable): boom"
 
     def boom(driver_handle, prepared):
         raise transport_exc_type(message)
@@ -4128,7 +4157,7 @@ def test_sync_backend_maps_transport_error_to_service_response_error_rust(monkey
     try:
         with pytest.raises(ServiceResponseError) as excinfo:
             backend.execute(_transport_test_request())
-        assert "ServiceUnavailable" in str(excinfo.value)
+        assert str(excinfo.value) == message
         assert isinstance(excinfo.value.__cause__, transport_exc_type)
     finally:
         backend.close()
@@ -4147,7 +4176,7 @@ def test_async_backend_maps_transport_error_to_service_response_error_rust(monke
     )
 
     transport_exc_type = async_rust_mod._DRIVER_TRANSPORT_ERROR
-    message = "driver execute_singleton_operation failed: status 503 (ServiceUnavailable): boom"
+    message = "Request failed: status 503 (ServiceUnavailable): boom"
 
     async def boom(driver_handle, prepared):
         raise transport_exc_type(message)
@@ -4158,7 +4187,7 @@ def test_async_backend_maps_transport_error_to_service_response_error_rust(monke
         try:
             with pytest.raises(ServiceResponseError) as excinfo:
                 await backend.execute(_transport_test_request())
-            assert "ServiceUnavailable" in str(excinfo.value)
+            assert str(excinfo.value) == message
             assert isinstance(excinfo.value.__cause__, transport_exc_type)
         finally:
             await backend.close()
@@ -4180,7 +4209,7 @@ def test_sync_list_databases_transport_error_does_not_replay_core_python_rust(mo
     transport_exc_type = rust_mod._DRIVER_TRANSPORT_ERROR
 
     def boom(_driver_handle, _prepared):
-        raise transport_exc_type("driver list_databases failed: transport closed")
+        raise transport_exc_type("Listing databases failed: transport closed")
 
     monkeypatch.setattr(rust_mod, "_binding_function_by_name", lambda _op: boom)
     legacy_calls = []
@@ -4214,7 +4243,7 @@ def test_async_list_databases_transport_error_does_not_replay_core_python_rust(m
     transport_exc_type = async_rust_mod._DRIVER_TRANSPORT_ERROR
 
     async def boom(_driver_handle, _prepared):
-        raise transport_exc_type("driver list_databases failed: transport closed")
+        raise transport_exc_type("Listing databases failed: transport closed")
 
     monkeypatch.setattr(async_rust_mod, "_binding_function_by_name", lambda _op: boom)
     legacy_calls = []
@@ -4321,7 +4350,7 @@ class _FakeAsyncCredential:
     "bad_kwargs",
     [
         {"consistency_level": "Unknown"},
-        {"connection_timeout_seconds": 99.0},
+        {"operation_timeout": 0.5},
         {"preferred_locations": "West US"},
     ],
 )

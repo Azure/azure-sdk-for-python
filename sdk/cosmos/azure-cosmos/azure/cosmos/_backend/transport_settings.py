@@ -7,8 +7,8 @@
 
 Rust clients select an explicit CosmosRuntime or the default singleton.
 Network overrides belong to its ConnectionPoolOptions, not client keywords.
-The connection timeout resolver below remains for explicitly selected legacy
-clients. Removed options are rejected at the common client boundary.
+These checks reject client overrides before backend construction. Legacy
+connection timeouts are handled separately by the legacy connection-policy builder.
 """
 from __future__ import annotations
 
@@ -55,26 +55,3 @@ def validate_client_runtime_settings(kwargs: Mapping[str, Any]) -> None:
 
         if not is_supported_operation_timeout(timeout):
             raise ValueError("timeout must be finite, non-boolean seconds >= 1 and < 2**64.")
-
-def resolve_client_connection_timeout(kwargs: Mapping[str, Any]) -> Any:
-    """Return requested connection seconds without changing kwargs.
-
-    request_timeout is the older connection-timeout name, measured in
-    milliseconds, and takes precedence over connection_timeout. A
-    connection_policy contributes only values differing from a fresh default
-    policy; otherwise return None for that setting.
-
-    Rust client validation rejects explicit overrides before this resolver.
-    Reading the remaining default policy does not configure a Rust runtime.
-    """
-    stock_policy = ConnectionPolicy()
-    policy = kwargs.get("connection_policy") or stock_policy
-    if "request_timeout" in kwargs:
-        connection_timeout = kwargs["request_timeout"] / 1000.0
-    elif "connection_timeout" in kwargs:
-        connection_timeout = kwargs["connection_timeout"]
-    elif policy.RequestTimeout != stock_policy.RequestTimeout:
-        connection_timeout = policy.RequestTimeout
-    else:
-        connection_timeout = None
-    return connection_timeout

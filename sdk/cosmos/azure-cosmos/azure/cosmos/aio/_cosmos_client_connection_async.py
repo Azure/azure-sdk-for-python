@@ -78,6 +78,7 @@ from .._backend.operations import (
 )
 from .._backend.contracts import PreparedPageRequest
 from .._backend.capabilities import OperationRouting, reject_removed_options
+from .._backend.constants import is_rust_backend
 
 from .._base import _build_properties_cache
 from .. import documents
@@ -180,7 +181,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             availability_strategy: Union[bool, dict[str, Any]] = False,
             availability_strategy_max_concurrency: Optional[int] = None,
             enable_compact_utf8_item_writes: bool = False,
-            _defer_pipeline: bool = False,
             **kwargs: Any
     ) -> None:
         """
@@ -218,7 +218,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.connection_policy = connection_policy or ConnectionPolicy()
         self.partition_resolvers: dict[str, RangePartitionResolver] = {}
         self.__container_properties_cache: dict[str, dict[str, Any]] = {}
-        self._backend: AsyncCosmosBackend = ASYNC_LEGACY_BACKEND
+        self._backend: AsyncCosmosBackend = kwargs.pop("_backend", ASYNC_LEGACY_BACKEND)
         self.default_headers: dict[str, Any] = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
             http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
@@ -296,7 +296,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         kwargs.pop("user_agent_overwrite", None)
 
         self._pipeline_policies = policies
-        if not _defer_pipeline:
+        if not is_rust_backend(self._backend):
             _ = self.pipeline_client
 
         self._setup_kwargs: dict[str, Any] = kwargs
@@ -2171,6 +2171,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     return prepared
                 build_request_page = _build_list_containers_page
             else:
+                if is_rust_backend(page_backend):
+                    raise NotImplementedError(
+                        f"Legacy read feeds for {resource_type!r} are not supported on Rust; "
+                        "the request will not be sent through legacy Python."
+                    )
                 return await _run_legacy_read_feed()
 
             def _parse_rust_page(page):

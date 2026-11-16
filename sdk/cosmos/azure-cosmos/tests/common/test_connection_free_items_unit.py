@@ -145,22 +145,12 @@ def test_read_hedging_true_retains_client_threshold_rust(
     monkeypatch, async_mode, client_options, expected_threshold,
 ):
     backend = AsyncBackend() if async_mode else Backend()
-    module = "azure.cosmos.aio._cosmos_client" if async_mode else "azure.cosmos.cosmos_client"
-    factory = ".make_async_backend" if async_mode else ".make_backend"
-    monkeypatch.setattr(module + factory, lambda *args, **kwargs: backend)
-    connection_type = __import__(
-        "azure.cosmos.aio._cosmos_client_connection_async" if async_mode else
-        "azure.cosmos._cosmos_client_connection", fromlist=["CosmosClientConnection"]
-    ).CosmosClientConnection
-
-    def initialize(connection, **kwargs):
-        connection._response_state = kwargs["_response_state"]
-
-    monkeypatch.setattr(connection_type, "__init__", initialize)
     client_options = deepcopy(client_options)
     client = (AsyncCosmosClient if async_mode else CosmosClient)(
-        "https://example.documents.azure.com", "key", **client_options,
+        "https://example.documents.azure.com", "key", _backend="rust", **client_options,
     )
+    monkeypatch.setattr(client._adapter, "execute", backend.execute)
+    monkeypatch.setattr(client._adapter, "get_container_metadata", backend.get_container_metadata)
     strategy = client_options.get("availability_strategy")
     if isinstance(strategy, dict):
         strategy["threshold_ms"] = 900
@@ -183,6 +173,9 @@ def test_read_hedging_true_retains_client_threshold_rust(
     if async_mode:
         asyncio.run(result)
     assert backend.events[-1].settings.hedging is None
+    result = client.close()
+    if async_mode:
+        asyncio.run(result)
 
 
 def invoke(helper, op, **kwargs):

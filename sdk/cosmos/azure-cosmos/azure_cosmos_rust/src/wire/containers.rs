@@ -17,12 +17,12 @@ use pyo3::types::PyTuple;
 
 use azure_data_cosmos_driver::{
     driver::CosmosDriver,
-    error::{status_codes::substatus, CosmosError, CosmosStatus},
+    error::CosmosError,
     models::{ActivityId, CosmosOperation, CosmosResponse, DatabaseReference, SessionToken},
     options::{ContentResponseOnWrite, OperationOptions},
 };
 
-use super::deadline::{parse_remaining_timeout, with_timeout};
+use super::deadline::{parse_remaining_timeout, with_operation_timeout, with_timeout};
 use super::driver_runner::{run_driver_operation_async, run_driver_operation_sync};
 use super::request::{build_operation_options, RequestHeadersAndOptions};
 use super::response::{
@@ -187,9 +187,9 @@ pub(crate) fn run_delete_container_operation<'py>(
         operation_name,
         move |driver| run_delete_container_future(driver, modifiers, database_id, container_id),
         if include_attempts {
-            tuple_from_resolved_result_with_attempts
+            |py, result| tuple_from_resolved_result_with_attempts(py, result?)
         } else {
-            tuple_from_result
+            |py, result| tuple_from_result(py, result?)
         },
     )
 }
@@ -210,9 +210,9 @@ pub(crate) fn run_delete_container_operation_async<'py>(
         operation_name,
         move |driver| run_delete_container_future(driver, modifiers, database_id, container_id),
         if include_attempts {
-            tuple_from_resolved_result_with_attempts
+            |py, result| tuple_from_resolved_result_with_attempts(py, result?)
         } else {
-            tuple_from_result
+            |py, result| tuple_from_result(py, result?)
         },
     )
 }
@@ -236,9 +236,9 @@ pub(crate) fn run_replace_container_operation<'py>(
             run_replace_container_future(driver, modifiers, database_id, container_id, body_bytes)
         },
         if include_attempts {
-            tuple_from_resolved_result_with_attempts
+            |py, result| tuple_from_resolved_result_with_attempts(py, result?)
         } else {
-            tuple_from_result
+            |py, result| tuple_from_result(py, result?)
         },
     )
 }
@@ -262,9 +262,9 @@ pub(crate) fn run_replace_container_operation_async<'py>(
             run_replace_container_future(driver, modifiers, database_id, container_id, body_bytes)
         },
         if include_attempts {
-            tuple_from_resolved_result_with_attempts
+            |py, result| tuple_from_resolved_result_with_attempts(py, result?)
         } else {
-            tuple_from_result
+            |py, result| tuple_from_result(py, result?)
         },
     )
 }
@@ -402,8 +402,9 @@ fn prepare_container_operation(
     let options = build_operation_options(
         content_response,
         modifiers.excluded_regions_value,
-        modifiers.driver_timeout_policy,
+        modifiers.configured_driver_timeout_policy,
         modifiers.availability_strategy,
+        modifiers.throughput_control,
         modifiers.custom_headers,
     );
     (op, options)
@@ -441,30 +442,11 @@ fn container_resolution_options(modifiers: &RequestHeadersAndOptions) -> Operati
     build_operation_options(
         None,
         modifiers.excluded_regions_value.clone(),
-        modifiers.driver_timeout_policy.clone(),
+        modifiers.configured_driver_timeout_policy.clone(),
         modifiers.availability_strategy.clone(),
+        None,
         Default::default(),
     )
-}
-
-fn with_container_timeout<T>(
-    timeout: Option<Duration>,
-    timeout_message: &'static str,
-    operation: impl Future<Output = Result<T, CosmosError>>,
-) -> impl Future<Output = Result<T, CosmosError>> {
-    let timed = super::deadline::with_timeout(timeout, operation);
-    async move {
-        timed.await.map_err(|error| {
-            CosmosError::builder()
-                .with_status(
-                    CosmosStatus::new(azure_core::http::StatusCode::RequestTimeout)
-                        .with_sub_status(substatus::CLIENT_OPERATION_TIMEOUT.value()),
-                )
-                .with_message(timeout_message)
-                .with_source(error)
-                .build()
-        })?
-    }
 }
 
 /// Ask the Rust driver to resolve metadata; one timeout covers lookup and deletion.
@@ -473,24 +455,20 @@ fn run_delete_container_future(
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
-) -> impl Future<Output = Result<CosmosResponse, CosmosError>> {
+) -> impl Future<Output = PyResult<Result<CosmosResponse, CosmosError>>> {
     let timeout = container_operation_timeout(&modifiers);
     let resolution_options = container_resolution_options(&modifiers);
-    with_container_timeout(
-        timeout,
-        "delete_container timeout exceeded during metadata resolution or deletion",
-        async move {
-            let container = driver
-                .resolve_container(&database_id, &container_id, resolution_options)
-                .await?;
-            let (op, options) = prepare_container_operation(
-                CosmosOperation::delete_container(container),
-                modifiers,
-                None,
-            );
-            driver.execute_singleton_operation(op, options).await
-        },
-    )
+    with_operation_timeout(timeout, async move {
+        let container = driver
+            .resolve_container(&database_id, &container_id, resolution_options)
+            .await?;
+        let (op, options) = prepare_container_operation(
+            CosmosOperation::delete_container(container),
+            modifiers,
+            None,
+        );
+        driver.execute_singleton_operation(op, options).await
+    })
 }
 
 /// One timeout covers metadata lookup and PUT; only PUT receives the replacement conditions.
@@ -500,32 +478,28 @@ fn run_replace_container_future(
     database_id: String,
     container_id: String,
     body_bytes: Vec<u8>,
-) -> impl Future<Output = Result<CosmosResponse, CosmosError>> {
+) -> impl Future<Output = PyResult<Result<CosmosResponse, CosmosError>>> {
     let timeout = container_operation_timeout(&modifiers);
     let resolution_options = container_resolution_options(&modifiers);
-    with_container_timeout(
-        timeout,
-        "replace_container timeout exceeded during metadata resolution or replacement",
-        async move {
-            let container = driver
-                .resolve_container(&database_id, &container_id, resolution_options)
-                .await?;
-            let (op, options) = prepare_container_operation(
-                CosmosOperation::replace_container(container).with_body(body_bytes),
-                modifiers,
-                Some(ContentResponseOnWrite::Enabled),
-            );
-            driver.execute_singleton_operation(op, options).await
-        },
-    )
+    with_operation_timeout(timeout, async move {
+        let container = driver
+            .resolve_container(&database_id, &container_id, resolution_options)
+            .await?;
+        let (op, options) = prepare_container_operation(
+            CosmosOperation::replace_container(container).with_body(body_bytes),
+            modifiers,
+            Some(ContentResponseOnWrite::Enabled),
+        );
+        driver.execute_singleton_operation(op, options).await
+    })
 }
 
 fn container_operation_timeout(modifiers: &RequestHeadersAndOptions) -> Option<Duration> {
     let configured = modifiers
-        .driver_timeout_policy
+        .configured_driver_timeout_policy
         .as_ref()
         .map(|policy| policy.timeout());
-    match (modifiers.operation_timeout, configured) {
+    match (modifiers.remaining_binding_timeout, configured) {
         (Some(remaining), Some(configured)) => Some(remaining.min(configured)),
         (remaining, configured) => remaining.or(configured),
     }
@@ -569,6 +543,7 @@ async fn run_query_containers_future(
 mod tests {
     use super::*;
     use azure_core::http::headers::{HeaderName, HeaderValue};
+    use azure_data_cosmos_driver::error::CosmosStatus;
     use azure_data_cosmos_driver::options::EndToEndOperationLatencyPolicy;
     use std::sync::atomic::{AtomicBool, Ordering};
 
@@ -579,13 +554,14 @@ mod tests {
             session_header: None,
             content_response_on_write: ContentResponseOnWrite::Enabled,
             excluded_regions_value: None,
-            driver_timeout_policy: Some(EndToEndOperationLatencyPolicy::new(Duration::from_secs(
-                2,
-            ))),
-            operation_timeout: None,
+            configured_driver_timeout_policy: Some(EndToEndOperationLatencyPolicy::new(
+                Duration::from_secs(2),
+            )),
+            remaining_binding_timeout: None,
             availability_strategy: None,
             read_consistency_strategy: None,
             patch_strategy: None,
+            throughput_control: None,
             custom_headers: [(
                 HeaderName::from_static("if-none-match"),
                 HeaderValue::from_static("*"),
@@ -609,31 +585,32 @@ mod tests {
             session_header: None,
             content_response_on_write: ContentResponseOnWrite::Enabled,
             excluded_regions_value: None,
-            driver_timeout_policy: None,
-            operation_timeout: None,
+            configured_driver_timeout_policy: None,
+            remaining_binding_timeout: None,
             availability_strategy: None,
             read_consistency_strategy: None,
             patch_strategy: None,
+            throughput_control: None,
             custom_headers: Default::default(),
         };
         assert_eq!(container_operation_timeout(&modifiers), None);
-        modifiers.driver_timeout_policy =
+        modifiers.configured_driver_timeout_policy =
             Some(EndToEndOperationLatencyPolicy::new(Duration::from_secs(2)));
         assert_eq!(
             container_operation_timeout(&modifiers),
             Some(Duration::from_secs(2))
         );
-        modifiers.operation_timeout = Some(Duration::from_millis(125));
+        modifiers.remaining_binding_timeout = Some(Duration::from_millis(125));
         assert_eq!(
             container_operation_timeout(&modifiers),
             Some(Duration::from_millis(125))
         );
-        modifiers.operation_timeout = Some(Duration::from_secs(3));
+        modifiers.remaining_binding_timeout = Some(Duration::from_secs(3));
         assert_eq!(
             container_operation_timeout(&modifiers),
             Some(Duration::from_secs(2))
         );
-        modifiers.driver_timeout_policy = None;
+        modifiers.configured_driver_timeout_policy = None;
         assert_eq!(
             container_operation_timeout(&modifiers),
             Some(Duration::from_secs(3))
@@ -642,42 +619,38 @@ mod tests {
 
     #[tokio::test(start_paused = true)]
     async fn container_scheduling_delay_does_not_restart_the_budget() {
+        crate::test_support::prepare_python();
         let polled = AtomicBool::new(false);
-        let timed = with_container_timeout(
-            Some(Duration::from_millis(5)),
-            "container mutation timed out",
-            async {
-                polled.store(true, Ordering::SeqCst);
-                Ok(())
-            },
-        );
+        let timed = with_operation_timeout(Some(Duration::from_millis(5)), async {
+            polled.store(true, Ordering::SeqCst);
+        });
         tokio::time::advance(Duration::from_millis(6)).await;
         let error = timed.await.unwrap_err();
         assert!(!polled.load(Ordering::SeqCst));
-        assert_eq!(
-            error.status().sub_status(),
-            Some(substatus::CLIENT_OPERATION_TIMEOUT)
-        );
+        Python::with_gil(|py| assert!(error.is_instance_of::<PyTimeoutError>(py)));
     }
 
     #[tokio::test]
     async fn container_timeout_preserves_success_and_driver_errors() {
         for timeout in [None, Some(Duration::from_secs(1))] {
             assert_eq!(
-                with_container_timeout(timeout, "container mutation timed out", async { Ok(42) })
+                with_operation_timeout(timeout, async { Ok::<_, CosmosError>(42) })
                     .await
+                    .unwrap()
                     .unwrap(),
                 42
             );
-            let error =
-                with_container_timeout::<()>(timeout, "container mutation timed out", async {
-                    Err(CosmosError::builder()
+            let error = with_operation_timeout(timeout, async {
+                Err::<(), _>(
+                    CosmosError::builder()
                         .with_status(CosmosStatus::new(azure_core::http::StatusCode::NotFound))
                         .with_message("missing container")
-                        .build())
-                })
-                .await
-                .unwrap_err();
+                        .build(),
+                )
+            })
+            .await
+            .unwrap()
+            .unwrap_err();
             assert_eq!(
                 error.status().status_code(),
                 azure_core::http::StatusCode::NotFound
@@ -687,6 +660,7 @@ mod tests {
 
     #[tokio::test]
     async fn container_timeout_drops_the_entire_lookup_and_write_future() {
+        crate::test_support::prepare_python();
         struct Dropped(Arc<AtomicBool>);
         impl Drop for Dropped {
             fn drop(&mut self) {
@@ -695,24 +669,130 @@ mod tests {
         }
         let dropped = Arc::new(AtomicBool::new(false));
         let marker = Dropped(dropped.clone());
-        let error = with_container_timeout(
-            Some(Duration::from_millis(1)),
-            "container mutation timed out",
-            async move {
-                let _marker = marker;
-                std::future::pending::<Result<(), CosmosError>>().await
-            },
-        )
+        let error = with_operation_timeout(Some(Duration::from_millis(1)), async move {
+            let _marker = marker;
+            std::future::pending::<Result<(), CosmosError>>().await
+        })
         .await
         .unwrap_err();
-        assert_eq!(
-            error.status().status_code(),
-            azure_core::http::StatusCode::RequestTimeout
-        );
-        assert_eq!(
-            error.status().sub_status(),
-            Some(substatus::CLIENT_OPERATION_TIMEOUT)
-        );
+        Python::with_gil(|py| assert!(error.is_instance_of::<PyTimeoutError>(py)));
         assert!(dropped.load(Ordering::SeqCst));
+    }
+
+    #[tokio::test(start_paused = true)]
+    async fn container_mutations_use_shared_timeout_without_rewriting_driver_results() {
+        use azure_data_cosmos_driver::{
+            fault_injection::{
+                FaultInjectionConditionBuilder, FaultInjectionResultBuilder,
+                FaultInjectionRuleBuilder, FaultOperationType,
+            },
+            in_memory_emulator::{InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion},
+            models::{AccountReference, PartitionKeyDefinition},
+            options::DriverOptions,
+        };
+        use url::Url;
+
+        crate::test_support::prepare_python();
+        for replace in [false, true] {
+            for (metadata_ms, missing) in [(1250, false), (5, false), (5, true)] {
+                let url = Url::parse("https://container-deadline.emulator.local").unwrap();
+                let emulator = Arc::new(InMemoryEmulatorHttpClient::new(
+                    VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())])
+                        .unwrap(),
+                ));
+                emulator.store().create_database("db");
+                if !missing {
+                    emulator.store().create_container(
+                        "db",
+                        "orders",
+                        PartitionKeyDefinition::from("/pk"),
+                    );
+                }
+                let metadata = Arc::new(
+                    FaultInjectionRuleBuilder::new(
+                        "container-metadata-delay",
+                        FaultInjectionResultBuilder::new()
+                            .with_delay(Duration::from_millis(metadata_ms))
+                            .with_probability(1.0)
+                            .build(),
+                    )
+                    .with_condition(
+                        FaultInjectionConditionBuilder::new()
+                            .with_operation_type(FaultOperationType::MetadataReadContainer)
+                            .build(),
+                    )
+                    .build(),
+                );
+                let runtime = emulator
+                    .runtime_builder_with_fault_rules(vec![metadata.clone()])
+                    .build()
+                    .await
+                    .unwrap();
+                let driver = runtime
+                    .create_driver(
+                        DriverOptions::builder(AccountReference::with_account_key(
+                            url,
+                            "ZW11bGF0b3Ita2V5",
+                        ))
+                        .build(),
+                    )
+                    .await
+                    .unwrap();
+                let modifiers = RequestHeadersAndOptions {
+                    activity_header: None,
+                    session_header: None,
+                    content_response_on_write: ContentResponseOnWrite::Enabled,
+                    excluded_regions_value: None,
+                    configured_driver_timeout_policy: None,
+                    remaining_binding_timeout: Some(Duration::from_secs(1)),
+                    availability_strategy: None,
+                    read_consistency_strategy: None,
+                    patch_strategy: None,
+                    throughput_control: None,
+                    custom_headers: Default::default(),
+                };
+                // Each future is about 28 KB; Box::pin keeps it on the heap, not the stack.
+                let result = if replace {
+                    Box::pin(run_replace_container_future(
+                        driver,
+                        modifiers,
+                        "db".into(),
+                        "orders".into(),
+                        serde_json::to_vec(&serde_json::json!({
+                            "id": "orders",
+                            "partitionKey": PartitionKeyDefinition::from("/pk"),
+                        }))
+                        .unwrap(),
+                    ))
+                    .await
+                } else {
+                    Box::pin(run_delete_container_future(
+                        driver,
+                        modifiers,
+                        "db".into(),
+                        "orders".into(),
+                    ))
+                    .await
+                };
+                if metadata_ms > 1000 {
+                    let error = result.unwrap_err();
+                    Python::with_gil(|py| assert!(error.is_instance_of::<PyTimeoutError>(py)));
+                    assert!(error
+                        .to_string()
+                        .contains("Operation timed out during metadata resolution or execution"));
+                } else if missing {
+                    assert_eq!(
+                        result.unwrap().unwrap_err().status().status_code(),
+                        azure_core::http::StatusCode::NotFound,
+                    );
+                } else {
+                    assert_eq!(
+                        u16::from(result.unwrap().unwrap().status().status_code()),
+                        if replace { 200 } else { 204 },
+                    );
+                }
+                assert_eq!(metadata.hit_count(), 1);
+            }
+        }
     }
 }

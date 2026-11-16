@@ -310,15 +310,24 @@ class RequiredCoverage:
 
 
 def run_native(results: Path) -> int:
-    """Run the actual test harness, not cargo build or cargo test --no-run.
+    """Run clippy, then the actual test harness, not cargo build or cargo test --no-run.
 
-    :param results: Directory for the Cargo transcript.
+    Clippy fails the run only on errors, such as the ``large_futures`` lint the
+    workspace denies. Clippy warnings are printed but do not fail the run.
+
+    :param results: Directory for the Cargo transcripts.
     :type results: pathlib.Path
     :return: Cargo's exit code, after checking successful runs for missing execution.
     :rtype: int
     """
-    command = ["cargo", "test", "--workspace", "--locked", "--", "--test-threads=1"]
     results.mkdir(parents=True, exist_ok=True)
+    clippy = ["cargo", "clippy", "--workspace", "--all-targets", "--all-features", "--locked"]
+    with (results / "cargo-clippy.log").open("w", encoding="utf-8") as log:
+        completed = subprocess.run(clippy, cwd=PACKAGE, stdout=log, stderr=subprocess.STDOUT, check=False)
+    print((results / "cargo-clippy.log").read_text(encoding="utf-8"))
+    if completed.returncode:
+        return completed.returncode
+    command = ["cargo", "test", "--workspace", "--locked", "--", "--test-threads=1"]
     with (results / "cargo-test.log").open("w", encoding="utf-8") as log:
         completed = subprocess.run(command, cwd=PACKAGE, stdout=log, stderr=subprocess.STDOUT, check=False)
     output = (results / "cargo-test.log").read_text(encoding="utf-8")

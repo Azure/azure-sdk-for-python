@@ -15,11 +15,10 @@ not awaited and not given headers from another operation on the same client.
 
 from __future__ import annotations
 
-from azure.cosmos._backend.capabilities import OperationRouting
-
 from dataclasses import replace
 from typing import Any, Callable, Mapping, Optional
 
+from ..._backend.capabilities import OperationRouting
 from ..._backend.contracts import PreparedRequest
 from ..._backend.operations import (
     OP_CREATE_CONTAINER,
@@ -37,6 +36,7 @@ from ..._helpers._request_container import (
     is_create_container_rust_eligible,
     is_delete_container_rust_eligible,
     is_read_container_rust_eligible,
+    is_replace_container_rust_eligible,
 )
 from ..._helpers._response_parse import (
     process_backend_response,
@@ -62,6 +62,7 @@ class AsyncContainerHelper:
         *,
         response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
+        deadline: Optional[float] = None,
     ) -> CosmosDict:
         """Create a container and return its properties."""
         operation_kwargs = dict(kwargs or {})
@@ -75,30 +76,37 @@ class AsyncContainerHelper:
                 kwargs=operation_kwargs,
             )
 
-        result = await self._backend.run_operation(
-            build_request=build_request,
-            routing=OperationRouting(
-                OP_CREATE_CONTAINER,
-                is_create_container_rust_eligible(
-                    request_options,
-                    operation_kwargs,
+        remaining_timeout(deadline)
+        result = await run_with_deadline(
+            lambda: self._backend.run_operation(
+                build_request=build_request,
+                routing=OperationRouting(
+                    OP_CREATE_CONTAINER,
+                    is_create_container_rust_eligible(
+                        request_options,
+                        operation_kwargs,
+                    ),
                 ),
+                legacy_call=lambda: self._client_connection.CreateContainer(
+                    database_link=database_link,
+                    collection=container_definition,
+                    options=legacy_deadline_options(request_options, deadline),
+                    **legacy_deadline_kwargs(operation_kwargs, deadline),
+                ),
+                process_response=lambda response: process_backend_response(
+                    response,
+                    client_connection=self._client_connection,
+                ),
+                deadline=deadline,
             ),
-            legacy_call=lambda: self._client_connection.CreateContainer(
-                database_link=database_link,
-                collection=container_definition,
-                options=request_options,
-                **operation_kwargs,
-            ),
-            process_response=lambda response: process_backend_response(
-                response,
-                client_connection=self._client_connection,
-            ),
+            deadline,
         )
+        remaining_timeout(deadline)
         # Another task can overwrite the connection's last_response_headers.
         # Read from this result so the hook gets matching headers and body.
-        if response_hook is not None:
-            response_hook(result.get_response_headers(), result)
+        on_response = with_response_header_snapshot(response_hook, copy_body=True)
+        if on_response is not None:
+            on_response(result.get_response_headers(), result)
         return result
 
     async def read_container(
@@ -128,11 +136,12 @@ class AsyncContainerHelper:
             if routing is None
             else replace(routing, supported=routing.supported and supported)
         )
+        # Reject an expired budget before starting the read.
         remaining_timeout(deadline)
         result = await run_with_deadline(
             lambda: self._backend.run_operation(
                 build_request=build_request,
-                routing=(routing),
+                routing=routing,
                 legacy_call=lambda: self._client_connection.ReadContainer(
                     container_link,
                     options=legacy_deadline_options(request_options, deadline),
@@ -146,6 +155,7 @@ class AsyncContainerHelper:
             ),
             deadline,
         )
+        # Reject late completion before invoking the response hook or returning success.
         remaining_timeout(deadline)
         on_response = with_response_header_snapshot(response_hook, copy_body=True)
         if on_response is not None:
@@ -221,7 +231,7 @@ class AsyncContainerHelper:
             build_request=build_request,
             routing=OperationRouting(
                 OP_REPLACE_CONTAINER,
-                is_create_container_rust_eligible(request_options, operation_kwargs),
+                is_replace_container_rust_eligible(request_options, operation_kwargs),
             ),
             legacy_call=lambda: self._client_connection.ReplaceContainer(
                 container_link,

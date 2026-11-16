@@ -26,6 +26,8 @@ from unittest.mock import patch
 
 import pytest
 
+from config.settings import TestSettings
+
 import azure.cosmos._retry_utility as retry_utility
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos import (
@@ -90,10 +92,10 @@ class TestQuery(_QueryTestCase):
         iter_list = list(query_iterable)
         self.assertEqual(iter_list[0]['id'], doc_id)
 
-        # Known gap 36: Query diagnostics and other request options are not sent over Gateway V2 (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36).
-        pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                    "metrics header is missing (known gap 36, "
-                    "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
+        if http_constants.HttpHeaders.QueryMetrics not in query_iterable.get_response_headers():
+            pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
+                        "metrics header is missing (known gap 36, "
+                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
         METRICS_HEADER_NAME = 'x-ms-documentdb-query-metrics'
         self.assertTrue(METRICS_HEADER_NAME in created_collection.client_connection.last_response_headers)
         metrics_header = created_collection.client_connection.last_response_headers[METRICS_HEADER_NAME]
@@ -121,10 +123,10 @@ class TestQuery(_QueryTestCase):
         iter_list = list(query_iterable)
         self.assertEqual(iter_list[0]['id'], doc_id)
 
-        # Known gap 36: Query diagnostics and other request options are not sent over Gateway V2 (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36).
-        pytest.skip("driver-gap: Rust does not send populate_index_metrics over Gateway V2, so the "
-                    "index-utilization header is missing (known gap 36, "
-                    "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
+        if http_constants.HttpHeaders.IndexUtilization not in query_iterable.get_response_headers():
+            pytest.skip("driver-gap: Rust does not send populate_index_metrics over Gateway V2, so the "
+                        "index-utilization header is missing (known gap 36, "
+                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
         INDEX_HEADER_NAME = http_constants.HttpHeaders.IndexUtilization
         self.assertTrue(INDEX_HEADER_NAME in created_collection.client_connection.last_response_headers)
         index_metrics = created_collection.client_connection.last_response_headers[INDEX_HEADER_NAME]
@@ -410,12 +412,6 @@ class TestQuery(_QueryTestCase):
 
         self.database.delete_container(created_collection.id)
 
-    @pytest.mark.skip(
-        reason="driver-gap: Gap 30 - For SELECT DISTINCT c[\"value\"] with ORDER BY and "
-        "OFFSET LIMIT, Rust returns rows with a '$1' field instead of the requested "
-        "'value' field, so the unchanged test raises KeyError. Re-enable when the "
-        "driver preserves the selected property name."
-    )
     def test_offset_limit_rust(self):
         # Source: tests/test_query.py::TestQuery.test_offset_limit
         created_collection = self.container
@@ -580,10 +576,10 @@ class TestQuery(_QueryTestCase):
             self.assertEqual([[25]], pages)
             self.assertIsNone(pager.continuation_token)
 
-            # Known gap 36: Query diagnostics and other request options are not sent over Gateway V2 (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36).
-            pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                        "metrics header is missing (known gap 36, "
-                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The COUNT query ran.")
+            if http_constants.HttpHeaders.QueryMetrics not in query_iterable.get_response_headers():
+                pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
+                            "metrics header is missing (known gap 36, "
+                            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The COUNT query ran.")
             response_headers = query_iterable.get_response_headers()
             metrics_header = response_headers[http_constants.HttpHeaders.QueryMetrics]
             metrics = dict(
@@ -750,12 +746,6 @@ class TestQuery(_QueryTestCase):
 
     def test_unsupported_queries_rust(self):
         # Source: tests/test_query.py::TestQuery.test_unsupported_queries
-        # Known gap 30 item 9: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30
-        pytest.skip(
-            "driver-gap: Rust returns raw per-partition rows for the cross-partition non-VALUE aggregate "
-            "'SELECT COUNT(1) FROM c' instead of the legacy 400 rejection (known gap 30 item 9, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-non-value-aggregate)."
-        )
         created_collection = self._create_multi_partition_container()
         queries = ['SELECT COUNT(1) FROM c', 'SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
         for query in queries:
@@ -773,6 +763,10 @@ class TestQuery(_QueryTestCase):
                                                         enable_cross_partition_query=True)
         self.assertListEqual(list(query_iterable), [])
 
+    @pytest.mark.skipif(
+        TestSettings.data_auth_mode == "aad",
+        reason="environment-gap: post-create RBAC activation window (403/5302)  -  migrate after service-side fix",
+    )
     def test_distinct_on_different_types_and_field_orders_rust(self):
         # Source: tests/test_query.py::TestQuery.test_distinct_on_different_types_and_field_orders
         created_collection = self._create_container_for_test(
@@ -1116,10 +1110,10 @@ class TestQuery(_QueryTestCase):
         results = list(query_iterable)
         self.assertEqual(len(results), 5)
 
-        # Known gap 36: Query diagnostics and other request options are not sent over Gateway V2 (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36).
-        pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                    "metrics header is missing (known gap 36, "
-                    "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). Paging and the query ran.")
+        if http_constants.HttpHeaders.QueryMetrics not in query_iterable.get_response_headers():
+            pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
+                        "metrics header is missing (known gap 36, "
+                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). Paging and the query ran.")
         # Verify query metrics were populated
         metrics_header_name = 'x-ms-documentdb-query-metrics'
         self.assertTrue(metrics_header_name in created_collection.client_connection.last_response_headers)

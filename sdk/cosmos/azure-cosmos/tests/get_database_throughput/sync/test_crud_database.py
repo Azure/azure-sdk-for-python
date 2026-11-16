@@ -94,7 +94,7 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as inst:
             self.assertEqual(inst.status_code, status_code)
 
-    @pytest.mark.cosmosEmulator
+    @pytest.mark.cosmosLong
     def test_database_level_offer_throughput_rust(self):
         """Read provisioned throughput and check the replacement result.
 

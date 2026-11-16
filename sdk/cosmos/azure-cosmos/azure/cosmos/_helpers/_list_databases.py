@@ -18,6 +18,7 @@ from azure.core.paging import ItemPaged
 from azure.core.utils import CaseInsensitiveDict
 
 from .. import http_constants
+from .._backend.constants import is_rust_backend
 from .._backend.contracts import PreparedPageRequest
 from .._constants import _Constants, TimeoutScope
 from .._operation_deadline import (
@@ -32,10 +33,11 @@ from .._query_rust_routing import (
     can_use_rust_backend_for_query_databases_page,
 )
 from ._request_settings import (
-    build_customer_headers,
     compose_item_options,
     is_supported_operation_timeout,
+    normalize_metadata_page_size,
     normalize_query_specification,
+    reject_unknown_feed_kwargs,
 )
 from ._metadata_feed import MetadataFeedPageIterator, RecordingOptions
 
@@ -73,34 +75,12 @@ class ListDatabasesConfig:
             else None
         )
         self.default_headers = dict(client.client_connection.default_headers)
-        initial = build_customer_headers(self.options.get("initialHeaders"))
-        page_size_header = http_constants.HttpHeaders.PageSize
-        raw_count = initial.get(
-            page_size_header,
-            build_customer_headers(self.default_headers).get(page_size_header),
-        )
-        # Raw option headers override initial headers; a typed count overrides both.
-        for key in tuple(self.options):
-            if isinstance(key, str) and key.lower() == page_size_header:
-                raw_count = str(self.options.pop(key))
-        count = self.options.get("maxItemCount")
-        if count is None and raw_count is not None:
-            try:
-                count = int(raw_count)
-            except ValueError as error:
-                raise ValueError(f"{self.operation} x-ms-max-item-count must be an integer.") from error
-        if count is not None and (type(count) is not int or count == 0 or count < -1 or count >= 2**63):
-            raise ValueError(f"{self.operation} max_item_count must be a positive i64 integer, -1, or None.")
-        if count is not None:
-            self.options["maxItemCount"] = count
-        if "initialHeaders" in self.options:
-            initial.pop(page_size_header, None)
-            self.options["initialHeaders"] = initial
+        normalize_metadata_page_size(self.options, self.default_headers, operation=self.operation)
         self.kwargs = kwargs
         self.recording_options = RecordingOptions.snapshot(kwargs)
         self.telemetry_owner = client
         self.backend = client._adapter
-        self.rust = self.backend.name != "core-python"
+        self.rust = is_rust_backend(self.backend)
         self.response_state = client._item_context.response_state
         self.connection = None if self.rust else client.client_connection
 
@@ -131,8 +111,11 @@ class ListDatabasesConfig:
             )
         )
         if not eligible:
+            remaining_kwargs = self.kwargs.keys() - self.recording_options.kwargs.keys() - {_Constants.OperationStartTime}
+            reject_unknown_feed_kwargs(self.operation, remaining_kwargs)
+            detail = f": {', '.join(repr(name) for name in sorted(remaining_kwargs))}" if remaining_kwargs else ""
             raise NotImplementedError(
-                f"{self.operation} cannot honor these options on Rust; "
+                f"{self.operation} cannot honor these options on Rust{detail}; "
                 "the request will not be sent through legacy Python."
             )
         options = dict(self.options)

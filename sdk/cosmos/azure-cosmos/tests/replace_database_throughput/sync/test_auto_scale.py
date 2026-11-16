@@ -43,7 +43,7 @@ KEY = os.environ.get(
 )
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestAutoScale(unittest.TestCase):
 
     def setUp(self) -> None:

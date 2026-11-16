@@ -156,8 +156,9 @@ def test_first_core_python_request_merges_setup_defaults_without_changing_caller
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("query", [False, True])
 @pytest.mark.parametrize("override", [None, "Eventual"])
+@pytest.mark.parametrize("legacy_selected", [False, True])
 def test_core_python_feed_setup_precedes_header_and_session_preparation_rust(
-    monkeypatch, async_mode, query, override,
+    monkeypatch, async_mode, query, override, legacy_selected,
 ):
     env = make_client(monkeypatch, async_mode)
     initial_headers = {"x-example": "retained"}
@@ -182,12 +183,27 @@ def test_core_python_feed_setup_precedes_header_and_session_preparation_rust(
 
     def feed():
         options = {"initialHeaders": initial_headers}
-        return env.connection.QueryOffers("SELECT * FROM c" if query else None, options=options)
+        kwargs = {}
+        if legacy_selected:
+            kwargs["_feed_backend"] = ASYNC_LEGACY_BACKEND if async_mode else LEGACY_BACKEND
+        return env.connection.QueryOffers("SELECT * FROM c" if query else None, options=options, **kwargs)
 
     async def run():
         async with env.client:
             for _ in range(2):
                 assert [item async for item in feed()] == []
+
+    if not legacy_selected:
+        with pytest.raises(NotImplementedError, match="legacy Python"):
+            if async_mode:
+                asyncio.run(run())
+            else:
+                with env.client:
+                    list(feed())
+        env.manager._GetDatabaseAccount.assert_not_called()
+        transport.assert_not_called()
+        assert not env.connection._setup_complete
+        return
 
     if async_mode:
         asyncio.run(run())
@@ -217,8 +233,8 @@ def test_throughput_rejection_does_not_initialize_core_python_rust(monkeypatch, 
     monkeypatch.setattr(env.connection, "_CosmosClientConnection__Get", transport)
     options = dict(
         routing=OperationRouting(OP_GET_THROUGHPUT, supported=False),
-        build_request=MagicMock(side_effect=AssertionError("must select the permitted fallback")),
-        process_response=MagicMock(side_effect=AssertionError("must keep legacy response processing")),
+        build_request=MagicMock(side_effect=AssertionError("unsupported requests must fail before building")),
+        process_response=MagicMock(side_effect=AssertionError("unsupported requests have no response to process")),
         legacy_call=lambda: env.connection.Read("offers/id", "offers", "id", None),
     )
 
@@ -235,6 +251,38 @@ def test_throughput_rejection_does_not_initialize_core_python_rust(monkeypatch, 
                 CosmosBackend.run_operation(env.client._adapter, **options)
     env.manager._GetDatabaseAccount.assert_not_called()
     transport.assert_not_called()
+
+
+@pytest.mark.parametrize("async_mode", [False, True])
+@pytest.mark.parametrize(
+    "operation,kwargs,legacy_method",
+    [
+        ("list_conflicts", {}, "ReadConflicts"),
+        ("query_conflicts", {"query": "SELECT * FROM c"}, "QueryConflicts"),
+        ("get_conflict", {"conflict": "conflict-1", "partition_key": "p"}, "ReadConflict"),
+        ("delete_conflict", {"conflict": "conflict-1", "partition_key": "p"}, "DeleteConflict"),
+    ],
+)
+def test_unsupported_conflicts_do_not_initialize_or_call_legacy_rust(
+    monkeypatch, async_mode, operation, kwargs, legacy_method,
+):
+    env = make_client(monkeypatch, async_mode)
+    container = env.client.get_database_client("sales").get_container_client("orders")
+    legacy = MagicMock(side_effect=AssertionError("must not dispatch a legacy conflict operation"))
+    metadata = MagicMock(side_effect=AssertionError("must reject before metadata lookup"))
+    monkeypatch.setattr(env.connection, legacy_method, legacy)
+    monkeypatch.setattr(container, "_get_properties_with_options", metadata)
+    hook = MagicMock()
+
+    with pytest.raises(NotImplementedError, match=f"{operation}.*no legacy fallback"):
+        result = getattr(container, operation)(**kwargs, response_hook=hook)
+        if async_mode and operation in ("get_conflict", "delete_conflict"):
+            asyncio.run(result)
+
+    env.manager._GetDatabaseAccount.assert_not_called()
+    legacy.assert_not_called()
+    metadata.assert_not_called()
+    hook.assert_not_called()
 
 
 @pytest.mark.parametrize("async_mode", [False, True])

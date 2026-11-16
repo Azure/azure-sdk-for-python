@@ -11,11 +11,11 @@ from .._backend.capabilities import OperationRouting
 from .._backend.constants import is_rust_backend
 from .._base import _deserialize_throughput
 from .._cosmos_responses import CosmosDict
-from .._throughput_rust_routing import offer_response_headers
 from ..offer import ThroughputProperties
 from .._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options
 from ._request_settings import COMMON_OPTIONS, is_supported_operation_timeout, prepare_service_request_settings
 from ._response_parse import with_response_header_snapshot
+from ._throughput_rust_routing import offer_response_headers
 
 
 def prepare_read_kwargs(
@@ -52,7 +52,7 @@ def read_routing(
         capability=capability,
     )
     if is_rust_backend(backend):
-        routing.uses_legacy()
+        routing.require_rust_support()
         prepare_service_request_settings(options, {}, resource_type="offers")
     return routing
 

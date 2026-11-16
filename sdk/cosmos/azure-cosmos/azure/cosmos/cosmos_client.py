@@ -42,18 +42,17 @@ from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.pipeline.policies import RetryMode
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.utils import CaseInsensitiveDict
 
 from ._backend.cosmos_backend import CosmosBackend
 from ._backend.constants import is_rust_backend
 from ._backend.credentials import validate_credential
-from ._backend.client_config import _resolve_hedging
+from ._backend.binding_adapter import BindingAdapter
 from ._helpers._item_context import ItemClientContext, ItemClientDefaults
 from ._utils import _validate_enable_compact_utf8_item_writes, get_user_agent
 from ._inference_client import InferenceClient, InferenceClientSettings
 from ._inference_service import _InferenceService
 from ._backend.factory import make_backend, resolve_backend_name
-from ._backend.transport_settings import resolve_client_connection_timeout, validate_client_runtime_settings
+from ._backend.transport_settings import validate_client_runtime_settings
 from .runtime import CosmosRuntime
 from ._base import build_options
 from ._helpers._request_database import prepare_create_database_options
@@ -211,9 +210,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Rust-backed clients currently reject this keyword with ``TypeError``, including ``None`` and zero.
     :keyword int retry_connect: Maximum number of connection error retry attempts on the legacy Python backend.
         Rust-backed clients currently reject this keyword with ``TypeError``, including ``None`` and zero.
-    :keyword int retry_status: Maximum number of retry attempts on error status codes.
-    :keyword list[int] retry_on_status_codes: A list of specific status codes to retry on.
-    :keyword float retry_backoff_factor: Factor to calculate wait time between retry attempts.
+    :keyword int retry_status: Accepted for compatibility; does not configure Cosmos HTTP-status retries.
+    :keyword list[int] retry_on_status_codes: Accepted for compatibility; does not select Cosmos retryable status codes.
+    :keyword str retry_mode: Legacy connection retry delay mode, fixed or exponential.
+        Rust-backed clients reject this keyword with ``TypeError``, including ``None``; omit it.
+    :keyword float retry_backoff_factor: Legacy connection retry delay factor.
+        Rust-backed clients reject this keyword with ``TypeError``, including ``None`` and zero; omit it.
     :keyword int retry_write: Indicates how many times the SDK should automatically retry write operations for items,
         even if the operation is not guaranteed to be idempotent. This should only be enabled if the application can
         tolerate such risks or has logic to safely detect and handle duplicate operations.
@@ -278,7 +280,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Default value is False (hedging disabled).
     :paramtype availability_strategy: Union[bool, dict[str, Any]]
     :keyword ~concurrent.futures.thread.ThreadPoolExecutor availability_strategy_executor:
-        Optional ThreadPoolExecutor for handling concurrent operations.
+        Executor for regional hedging requests on the legacy Python backend.
+        Rust-backed clients reject this keyword with ``TypeError``, including ``None``;
+        omit it to use driver-managed hedging without a customer-supplied Python executor.
     :keyword bool enable_compact_utf8_item_writes:
         Use compact UTF-8 when serializing item bodies for create, upsert, replace, patch, and transactional batch
         operations. The default is False.
@@ -323,8 +327,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             validate_client_runtime_settings(dict(kwargs, runtime=runtime))
             reject_rust_arguments(kwargs)
         fault_injection_rules = kwargs.pop("_fault_injection_rules", None)
-        proxy_allowed = kwargs.pop("proxy_allowed", None)
-        connection_timeout = resolve_client_connection_timeout(kwargs)
+        kwargs.pop("proxy_allowed", None)
         # These startup settings are read, not removed, so that they are still
         # in kwargs when the legacy connection is built further down. Both need
         # them.
@@ -347,11 +350,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             availability_strategy=kwargs.get("availability_strategy"),
             user_agent_suffix=kwargs.get("user_agent_suffix"),
             consistency_level=consistency_level,
-            proxy_allowed=proxy_allowed,
-            connection_timeout_seconds=connection_timeout,
             fault_injection_rules=fault_injection_rules,
             headers=kwargs.get("headers"),
         )
+        client_config = chosen._client_config if isinstance(chosen, BindingAdapter) else None
         self._adapter: CosmosBackend = chosen
         self._item_context: ItemClientContext[CosmosBackend] = ItemClientContext(
             chosen,
@@ -360,7 +362,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 priority=kwargs.get("priority"),
                 throughput_bucket=kwargs.get("throughput_bucket"),
                 hedging_threshold_ms=(
-                    _resolve_hedging(kwargs.get("availability_strategy")) if chosen.name != "core-python" else None
+                    client_config.hedging_threshold_ms if client_config is not None else None
                 ),
                 no_response_on_write=bool(kwargs.get("no_response_on_write", False)),
                 enable_compact_utf8_item_writes=_validate_enable_compact_utf8_item_writes(
@@ -1023,11 +1025,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         # A wildcard match condition does not need an etag, so one may be left
         # over in kwargs after the options are built. Drop it.
         kwargs.pop("etag", None)
+        if self._item_context.adapter.name != "core-python":
+            self._item_context.defaults.apply_to_options(request_options)
         database_link = _get_database_link(database)
         DatabaseHelper(self.client_connection, self._adapter).delete_database(
             database_link,
             request_options,
+            response_hook=response_hook,
             kwargs=kwargs,
         )
-        if response_hook is not None:
-            response_hook(CaseInsensitiveDict(self.client_connection.last_response_headers))

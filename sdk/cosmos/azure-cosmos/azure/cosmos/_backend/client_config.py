@@ -6,13 +6,13 @@
 """Prepare client configuration for the binding, without executing requests.
 
 A customer app wants its orders client to prefer West US and allow two seconds
-to establish a connection. Synchronous and asynchronous clients must interpret
+for an operation, including retries. Synchronous and asynchronous clients must interpret
 those choices consistently. This module gives both Python wrappers one place to
 check selected client-construction options and prepare settings they can retain.
 
 The configuration follows this path::
 
-    Customer app supplies preferred_locations=["West US"], connection_timeout=2
+    Customer app supplies preferred_locations=["West US"], timeout=2
         -> Python wrapper factory passes the relevant options to build_client_config
         -> builder returns checked PreparedClientConfig settings
         -> Python wrapper retains those settings
@@ -27,11 +27,14 @@ This module does not prepare the endpoint or credential, acquire a driver
 handle, initialize CosmosDriverRuntime, or send requests to the service backend.
 It prepares client-level settings, not the options for an individual order read.
 
-Validation continues beyond this builder. During Python wrapper construction,
-the binding checks agreement with any initialized CosmosDriverRuntime connection
-settings without creating that object or reserving its settings. Driver
-acquisition checks again because another client may have initialized it.
-Additional binding checks, including User-Agent label restrictions, still apply.
+Connection settings instead belong to ConnectionPoolOptions on a CosmosRuntime
+passed to the client with runtime=. Rust-backed clients reject connection_timeout
+as a client keyword.
+
+During Python wrapper construction, the binding rejects retired client-level
+network fields in the prepared configuration. It does not initialize a runtime,
+reserve settings, or compare them with an existing runtime. The same rejection
+also runs when driver acquisition converts the prepared configuration.
 """
 from __future__ import annotations
 
@@ -118,8 +121,6 @@ def build_client_config(
     availability_strategy: Any = None,
     user_agent_suffix: Optional[str] = None,
     consistency_level: Optional[str] = None,
-    proxy_allowed: Optional[bool] = None,
-    connection_timeout_seconds: Optional[float] = None,
     operation_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Optional[Sequence[Mapping[str, Any]]] = None,
     headers: Optional[Mapping[str, str]] = None,
@@ -127,14 +128,14 @@ def build_client_config(
     """Build the prepared client settings retained by either Python wrapper.
 
     Preserve the difference between an explicit value and None. For example,
-    proxy_allowed=False requires a direct connection; None requests no override.
+    throttling_max_retry_count=0 disables throttle retries; None uses the driver default.
     Region names become tuples, internal test rules become read-only records,
     and an empty User-Agent suffix becomes None.
 
     Preferred regions, retries, and the overall operation budget configure a
     CosmosDriver object. Network settings instead belong to the selected
-    CosmosRuntime. Retired fields remain recognizable so adapter/native
-    validation can reject old callers rather than silently discard settings.
+    CosmosRuntime and are not carried in this record. Native validation still
+    rejects retired fields supplied by old callers.
 
     Return None when all options leave nothing to carry in a configuration
     record. This does not mean every setting uses an unmodified driver default:
@@ -143,12 +144,6 @@ def build_client_config(
     environment overrides still apply. Other unspecified options retain their
     applicable driver, account, or shared connection settings.
     """
-    if proxy_allowed is not None and not isinstance(proxy_allowed, bool):
-        raise ValueError(
-            "proxy_allowed must be a bool when provided; got {!r}.".format(
-                type(proxy_allowed).__name__
-            )
-        )
     preferred = _normalize_locations(preferred_locations, "preferred_locations")
     if operation_timeout_seconds is not None:
         from .._helpers._request_settings import is_supported_operation_timeout  # pylint: disable=import-outside-toplevel
@@ -161,7 +156,9 @@ def build_client_config(
         or not isinstance(throttling_max_retry_count, int)
         or not 0 <= throttling_max_retry_count <= 2**32 - 1
     ):
-        raise ValueError("retry_throttle_total must be an integer between 0 and 2**32 - 1.")
+        raise ValueError(
+            "retry_throttle_total (or its retry_total alias) must be an integer between 0 and 2**32 - 1."
+        )
     if throttling_max_retry_wait_time_seconds is not None and (
         isinstance(throttling_max_retry_wait_time_seconds, bool)
         or not isinstance(throttling_max_retry_wait_time_seconds, Real)
@@ -169,16 +166,14 @@ def build_client_config(
         # Converting an integer to the binding's float can round it up to 2**64.
         or float(throttling_max_retry_wait_time_seconds) >= 2**64
     ):
-        raise ValueError("throttle_retry_wait_threshold_seconds must be finite nonnegative seconds below 2**64.")
+        raise ValueError(
+            "throttle_retry_wait_threshold_seconds (or its retry_backoff_max alias) "
+            "must be finite nonnegative seconds below 2**64."
+        )
     hedging_threshold_ms = _resolve_hedging(availability_strategy)
     # An empty label should not add anything to the User-Agent header.
     suffix = user_agent_suffix or None
     consistency = _resolve_consistency_level(consistency_level)
-    connection_timeout = _normalize_transport_timeout(
-        connection_timeout_seconds,
-        "connection_timeout",
-        maximum=6.0,
-    )
     prepared_fault_rules = _prepare_fault_injection_rules(fault_injection_rules)
     prepared_headers = freeze_headers(headers if headers is not None else {})
     for name in prepared_headers:
@@ -191,8 +186,6 @@ def build_client_config(
         and hedging_threshold_ms is None
         and suffix is None
         and consistency is None
-        and proxy_allowed is None
-        and connection_timeout is None
         and operation_timeout_seconds is None
         and not prepared_fault_rules
         and not prepared_headers
@@ -206,8 +199,6 @@ def build_client_config(
         hedging_threshold_ms=hedging_threshold_ms,
         user_agent_suffix=suffix,
         consistency_level=consistency,
-        proxy_allowed=proxy_allowed,
-        connection_timeout_seconds=connection_timeout,
         operation_timeout_seconds=operation_timeout_seconds,
         fault_injection_rules=prepared_fault_rules,
         headers=prepared_headers,
@@ -416,44 +407,6 @@ def _prepare_fault_injection_rules(
             )
         )
     return tuple(prepared)
-
-
-def _normalize_transport_timeout(
-    value: Optional[float],
-    name: str,
-    *,
-    maximum: Optional[float] = None,
-) -> Optional[float]:
-    """Prepare a timeout in seconds, without starting a timer.
-
-    None requests no override. Otherwise require a real number other than bool,
-    convert it to float, and require a finite value of at least 0.1 seconds.
-    A supplied maximum is inclusive; the client builder uses 6 seconds for
-    connection establishment.
-
-    Type and range checks report ValueError using the supplied option name.
-    Applying the timeout to requests belongs to the binding and Rust driver.
-    """
-    if value is None:
-        return None
-    if isinstance(value, bool) or not isinstance(value, Real):
-        raise ValueError("{} must be a number of seconds; got {!r}.".format(name, value))
-    timeout = float(value)
-    if not math.isfinite(timeout):
-        raise ValueError("{} must be finite; got {!r}.".format(name, value))
-    if timeout < 0.1:
-        raise ValueError(
-            "{} must be at least 0.1 seconds on the Rust backend; got {!r}.".format(
-                name, value
-            )
-        )
-    if maximum is not None and timeout > maximum:
-        raise ValueError(
-            "{} must be at most {} seconds on the Rust backend; got {!r}.".format(
-                name, maximum, value
-            )
-        )
-    return timeout
 
 
 def _resolve_consistency_level(consistency_level: Optional[str]) -> Optional[str]:

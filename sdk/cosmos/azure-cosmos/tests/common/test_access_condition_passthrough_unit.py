@@ -31,6 +31,7 @@ from azure.cosmos import PartitionKey
 from azure.cosmos._helpers._request_container import is_create_container_rust_eligible
 from azure.cosmos._helpers._request_database import is_delete_database_rust_eligible
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
+from azure.cosmos._helpers._item_context import ItemClientContext
 
 
 @pytest.mark.cosmosEmulator
@@ -43,7 +44,9 @@ class TestAccessConditionPassthroughUnit(unittest.TestCase):
         client = cosmos_client.CosmosClient.__new__(cosmos_client.CosmosClient)
         client.client_connection = mock.MagicMock()
         client.client_connection.last_response_headers = {}
-        client._adapter = "rust"
+        client._adapter = mock.MagicMock()
+        client._adapter.name = "rust"
+        client._item_context = ItemClientContext(client._adapter)
         return client
 
     def test_delete_database_forwards_access_condition_rust(self):
@@ -51,7 +54,7 @@ class TestAccessConditionPassthroughUnit(unittest.TestCase):
         client = self._client()
         captured = {}
 
-        def fake_delete(database_link, request_options, kwargs=None):
+        def fake_delete(database_link, request_options, *, response_hook=None, kwargs=None):
             """Record the arguments so the test can inspect what reached the helper."""
             captured["options"] = request_options
             captured["kwargs"] = kwargs

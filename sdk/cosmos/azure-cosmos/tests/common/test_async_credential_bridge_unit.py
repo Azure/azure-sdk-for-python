@@ -3,6 +3,7 @@
 """Credential requests borrow the application loop without owning its lifetime."""
 
 import asyncio
+import functools
 import json
 import threading
 from types import SimpleNamespace
@@ -10,23 +11,107 @@ from types import SimpleNamespace
 import pytest
 
 from azure.cosmos._backend._async_credential_bridge import AsyncTokenCredentialBridge
+from azure.cosmos._backend.credentials import resolve_credential
 
 
-@pytest.mark.parametrize("value", [float("inf"), float("nan"), -1, True, "1"])
-def test_bridge_rejects_invalid_timeouts_rust(value):
-    with pytest.raises(ValueError, match="token_timeout"):
-        AsyncTokenCredentialBridge(object(), token_timeout=value)
+@pytest.mark.parametrize("returns_awaitable", [False, True], ids=["plain-token", "opaque-coroutine"])
+def test_context_manager_token_result_matches_legacy_policy_rust(monkeypatch, returns_awaitable):
+    from azure.core.credentials import AccessToken
+    from azure.core.pipeline import PipelineContext, PipelineRequest
+    from azure.core.rest import HttpRequest
+    from azure.cosmos.aio import CosmosClient
+    from azure.cosmos.aio._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
+    from azure.cosmos.aio._backend import binding_adapter
 
+    scope = "https://account.example/.default"
+    token = AccessToken("example-token-not-for-use", 4102444800)
+    calls = []
 
-def test_credential_timeout_error_is_not_swallowed_by_sliced_wait_rust(credential_owner_loop):
     class Credential:
-        async def get_token(self, *scopes):
-            raise TimeoutError("credential's own timeout")
+        async def __aenter__(self):
+            raise AssertionError("The SDK must not enter the customer's credential")
 
-    bridge = AsyncTokenCredentialBridge(Credential(), token_timeout=1.0, loop=credential_owner_loop)
+        async def __aexit__(self, *exc):
+            raise AssertionError("The SDK must not close the customer's credential")
+
+        def get_token(self, *scopes, **kwargs):
+            calls.append((scopes, asyncio.get_running_loop()))
+            if returns_awaitable:
+                async def complete():
+                    return token
+                return complete()
+            return token
+
+    credential = Credential()
+    handle = object()
+    released = []
+    received = []
+
+    def acquire(_endpoint, _key, _config, bridge):
+        received.append(bridge._start_token_request(scope).result(timeout=5))
+        return handle
+
+    monkeypatch.setattr(
+        binding_adapter,
+        "_rust_module",
+        SimpleNamespace(
+            acquire_driver_handle=acquire,
+            release_driver_handle=released.append,
+            _DriverResponseError=type("_DriverResponseError", (RuntimeError,), {}),
+            _DriverTransportError=type("_DriverTransportError", (RuntimeError,), {}),
+        ),
+    )
+    client = CosmosClient("https://account.example", credential, _backend="rust")
+    assert not calls
+
+    async def run():
+        try:
+            request = PipelineRequest(HttpRequest("GET", "https://account.example"), PipelineContext(None))
+            await AsyncCosmosBearerTokenCredentialPolicy(credential, scope).on_request(request)
+            assert request.http_request.headers["Authorization"] == f"type=aad&ver=1.0&sig={token.token}"
+            await client._adapter.initialize()
+            assert received == [token]
+            assert calls == [((scope,), asyncio.get_running_loop())] * 2
+        finally:
+            await client.close()
+
+    asyncio.run(run())
+    assert released == [handle]
+
+
+@pytest.mark.parametrize("method_name", ["get_token", "get_token_info"])
+@pytest.mark.parametrize("decoration", ["wrapped", "asyncio_marked"])
+def test_credential_resolution_and_bridge_agree_on_async_methods_rust(
+    credential_owner_loop, method_name, decoration
+):
+    token = SimpleNamespace(token="test-token", expires_on=4102444800)
+
+    async def token_method(*scopes):
+        assert scopes == ("scope",)
+        return token
+
+    def decorated(*scopes):
+        return token_method(*scopes)
+
+    if decoration == "wrapped":
+        decorated = functools.wraps(token_method)(decorated)
+    else:
+        marker = getattr(asyncio.coroutines, "_is_coroutine", None)
+        if marker is None:
+            pytest.skip("This Python version has no legacy asyncio coroutine marker")
+        setattr(decorated, "_is_coroutine", marker)
+        if not asyncio.iscoroutinefunction(decorated):
+            pytest.skip("This Python version no longer recognizes asyncio coroutine markers")
+
+    credential = SimpleNamespace(**{method_name: decorated})
+    with pytest.raises(TypeError, match="Synchronous CosmosClient"):
+        resolve_credential(credential)
+    master_key, resolved = resolve_credential(credential, allow_async=True)
+    assert master_key is None
+    assert resolved is credential
+    bridge = AsyncTokenCredentialBridge.acquire(resolved, loop=credential_owner_loop)
     try:
-        with pytest.raises(TimeoutError, match="credential's own timeout"):
-            bridge.get_token("scope")
+        assert bridge._start_token_request("scope").result(timeout=2) is token
     finally:
         bridge._close_cosmos_async_bridge()
 

@@ -10,7 +10,15 @@ from common.typed_requests import legacy_partition_key_from_request
 from common.typed_requests import wire_headers, settings_options, legacy_settings
 
 from copy import deepcopy
+from contextlib import contextmanager
 import json
+import os
+import subprocess
+import sys
+import threading
+import time
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -20,7 +28,10 @@ from azure.cosmos import _base
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.operations import OP_REPLACE_THROUGHPUT, OP_TO_BINDING_FUNCTION_NAME
 from azure.cosmos._helpers._request_throughput import build_replace_throughput_request
-from azure.cosmos._throughput_rust_routing import can_use_rust_backend_for_replace_throughput, build_replace_throughput_from_connection
+from azure.cosmos._helpers._throughput_rust_routing import (
+    can_use_rust_backend_for_replace_throughput,
+    build_replace_throughput_from_connection,
+)
 
 _OFFER = {"id": "offer", "_self": "offers/AAAAAA==/", "content": {"offerThroughput": 500}}
 
@@ -127,8 +138,72 @@ def test_replace_builder_requires_offer_identity_rust():
         )
 
 
+@contextmanager
+def _native_driver():
+    """Acquire a real binding handle using only a loopback account response."""
+    from azure.cosmos import ConnectionPoolOptions, CosmosClient, CosmosRuntime
+
+    requests = []
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):  # pylint: disable=invalid-name
+            requests.append(self.path)
+            location = {"name": "East US", "databaseAccountEndpoint": endpoint}
+            body = json.dumps({
+                "id": "test", "_rid": "AQAAAA==", "_self": "",
+                "writableLocations": [location], "readableLocations": [location],
+            }).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def do_PUT(self):  # pylint: disable=invalid-name
+            requests.append(self.path)
+            self.send_error(500, "No throughput write should be dispatched")
+
+        def log_message(self, *_args):
+            pass
+
+    runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(proxy_allowed=False))
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    endpoint = f"http://127.0.0.1:{server.server_port}"
+    worker = threading.Thread(target=server.serve_forever, daemon=True)
+    worker.start()
+    try:
+        with CosmosClient(endpoint, "ZmFrZQ==", _backend="rust", runtime=runtime) as client:
+            handle = client._adapter._ensure_driver_handle(deadline=time.monotonic() + 5)
+            assert requests == ["/"]
+            yield SimpleNamespace(handle=handle, requests=requests)
+    finally:
+        server.shutdown()
+        server.server_close()
+        worker.join(3)
+
+
 @pytest.mark.parametrize("asynchronous", [False, True])
 def test_native_replacement_accepts_deadline_and_attempt_controls_rust(asynchronous):
+    # Native runtime setup must not inherit the suite's mocked clocks or adapters.
+    environment = dict(os.environ)
+    environment["PYTHONPATH"] = os.pathsep.join(
+        [str(Path(__file__).resolve().parents[1]), *sys.path]
+    )
+    result = subprocess.run(
+        [sys.executable, "-c",
+         "from replace_throughput.test_replace_throughput_rust_routing_unit "
+         "import _check_native_replacement_controls; "
+         f"_check_native_replacement_controls({asynchronous!r})"],
+        env=environment,
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def _check_native_replacement_controls(asynchronous):
     from azure.cosmos import _rust
 
     prepared = build_replace_throughput_request(
@@ -138,8 +213,10 @@ def test_native_replacement_accepts_deadline_and_attempt_controls_rust(asynchron
         default_headers={},
     )
     function = _rust.replace_throughput_async if asynchronous else _rust.replace_throughput
-    # An invalid budget must fail before even resolving the driver handle.
-    with pytest.raises(ValueError, match="timeout_seconds must be positive"):
-        function("unused-driver", prepared, timeout_seconds=0, include_attempts=True)
+    with _native_driver() as driver:
+        # A real handle gets past argument conversion to the native timeout check.
+        with pytest.raises(ValueError, match="timeout_seconds must be positive"):
+            function(driver.handle, prepared, timeout_seconds=0, include_attempts=True)
+        assert driver.requests == ["/"]
     assert not hasattr(_rust, "read_offer")
     assert not hasattr(_rust, "replace_offer")

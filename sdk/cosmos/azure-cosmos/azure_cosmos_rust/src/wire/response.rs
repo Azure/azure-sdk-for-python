@@ -16,7 +16,10 @@ use azure_data_cosmos_driver::{
 };
 
 use super::diagnostics::record_diagnostics;
-use super::errors::{_DriverResponseError, _DriverTransportError, _UnsupportedQueryFeatureError};
+use super::errors::{
+    ClientAuthenticationError, _DriverResponseError, _DriverTransportError,
+    _UnsupportedQueryFeatureError,
+};
 use super::feed_range::{FeedRangeFromPartitionKeyError, FeedRangeFromPartitionKeyPayload};
 
 /// Opt-in fault-test envelope. Ordinary responses and telemetry are unchanged.
@@ -157,6 +160,8 @@ pub(super) fn with_error_attempt_diagnostics(
     if (error.is_instance_of::<_DriverTransportError>(py)
         || error.is_instance_of::<_DriverResponseError>(py)
         || error.is_instance_of::<PyTimeoutError>(py)
+        || error.is_instance_of::<PyValueError>(py)
+        || error.is_instance_of::<ClientAuthenticationError>(py)
         || error.is_instance_of::<_UnsupportedQueryFeatureError>(py))
         && !payload.is_none(py)
     {
@@ -242,7 +247,7 @@ pub(super) fn tuple_from_result<'py>(
                 // Cosmos status) the Python wrapper maps to
                 // ServiceResponseError, rather than a bare RuntimeError.
                 Err(_DriverTransportError::new_err(format!(
-                    "driver execute_singleton_operation failed: {cosmos_error}"
+                    "Request failed: {cosmos_error}"
                 )))
             }
         }
@@ -253,8 +258,8 @@ pub(super) fn tuple_from_result<'py>(
 /// Unsupported-query status becomes `_UnsupportedQueryFeatureError` without
 /// replaying through legacy. Other errors return an attached response tuple or,
 /// without one, raise `TimeoutError` for the typed client-operation deadline
-/// or `_DriverTransportError` otherwise. Unlike the point-operation path,
-/// response-less 400/412 errors are not synthesized into tuples here.
+/// or `ValueError` for a response-less bad request. Other response-less errors
+/// retain `_DriverTransportError`; no service response is synthesized here.
 pub(super) fn tuple_from_feed_result<'py>(
     py: Python<'py>,
     response_result: Result<Option<CosmosResponse>, CosmosError>,
@@ -277,10 +282,12 @@ pub(super) fn tuple_from_feed_result<'py>(
                 Ok(raw_http_error)
             } else if let Some(timeout) = client_operation_timeout_error(&cosmos_error) {
                 Err(timeout)
+            } else if let Some(validation) = feed_validation_error(&cosmos_error) {
+                Err(validation)
             } else {
                 record_diagnostics_for_responseless(&cosmos_error);
                 Err(_DriverTransportError::new_err(format!(
-                    "driver execute_operation failed: {cosmos_error}"
+                    "Item feed request failed: {cosmos_error}"
                 )))
             }
         }
@@ -292,13 +299,14 @@ pub(super) fn tuple_from_feed_result<'py>(
 /// Wraps item-list bodies in `{"Databases":[...]}` and supplies an empty envelope
 /// for `None`; raw byte bodies pass through. Errors with attached responses use
 /// the feed-error converter. A response-less client-operation deadline becomes
-/// `TimeoutError`; other response-less errors become `_DriverTransportError`.
+/// `TimeoutError`; a response-less bad request becomes `ValueError`.
+/// Other response-less errors become `_DriverTransportError`.
 /// Matching the envelope does not establish full legacy response parity.
 pub(super) fn tuple_from_database_feed_result<'py>(
     py: Python<'py>,
     response_result: Result<Option<CosmosResponse>, CosmosError>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    tuple_from_database_feed_result_for(py, response_result, "list_databases")
+    tuple_from_database_feed_result_for(py, response_result, "Listing databases")
 }
 
 /// Preserve the database page or error while attaching its available diagnostics.
@@ -332,7 +340,7 @@ pub(super) fn tuple_from_query_databases_result<'py>(
             ));
         }
     }
-    tuple_from_database_feed_result_for(py, response_result, "query_databases")
+    tuple_from_database_feed_result_for(py, response_result, "Querying databases")
 }
 
 /// Preserve query response conversion, including unsupported-query errors.
@@ -361,7 +369,7 @@ pub(super) fn tuple_from_container_feed_result<'py>(
     tuple_from_named_feed_result_for(
         py,
         response_result,
-        "list_containers",
+        "Listing containers",
         b"DocumentCollections",
         br#"{"DocumentCollections":[]}"#,
     )
@@ -401,7 +409,7 @@ pub(super) fn tuple_from_query_containers_result<'py>(
     tuple_from_named_feed_result_for(
         py,
         response_result,
-        "query_containers",
+        "Querying containers",
         b"DocumentCollections",
         br#"{"DocumentCollections":[]}"#,
     )
@@ -425,16 +433,16 @@ pub(super) fn tuple_from_query_containers_result_with_attempts<'py>(
     )
 }
 
-/// Convert a database feed using the operation name in transport errors.
+/// Convert a database feed using a customer-facing description in transport errors.
 fn tuple_from_database_feed_result_for<'py>(
     py: Python<'py>,
     response_result: Result<Option<CosmosResponse>, CosmosError>,
-    operation_name: &str,
+    operation_description: &str,
 ) -> PyResult<Bound<'py, PyTuple>> {
     tuple_from_named_feed_result_for(
         py,
         response_result,
-        operation_name,
+        operation_description,
         b"Databases",
         br#"{"Databases":[]}"#,
     )
@@ -444,7 +452,7 @@ fn tuple_from_database_feed_result_for<'py>(
 fn tuple_from_named_feed_result_for<'py>(
     py: Python<'py>,
     response_result: Result<Option<CosmosResponse>, CosmosError>,
-    operation_name: &str,
+    operation_description: &str,
     envelope_key: &[u8],
     empty_body: &[u8],
 ) -> PyResult<Bound<'py, PyTuple>> {
@@ -463,10 +471,12 @@ fn tuple_from_named_feed_result_for<'py>(
                 Ok(raw_http_error)
             } else if let Some(timeout) = client_operation_timeout_error(&cosmos_error) {
                 Err(timeout)
+            } else if let Some(validation) = feed_validation_error(&cosmos_error) {
+                Err(validation)
             } else {
                 record_diagnostics_for_responseless(&cosmos_error);
                 Err(_DriverTransportError::new_err(format!(
-                    "driver {operation_name} failed: {cosmos_error}"
+                    "{operation_description} failed: {cosmos_error}"
                 )))
             }
         }
@@ -494,7 +504,7 @@ pub(super) fn tuple_from_partition_key_ranges_result<'py>(
             backend_response_tuple(py, 200, 0, response_headers, &body, None)
         }
         Ok(None) => Err(_DriverTransportError::new_err(
-            "driver resolve_all_partition_key_ranges returned no routing map",
+            "Reading feed ranges failed: no routing information is available for the container",
         )),
         Err(cosmos_error) => {
             if let Some(raw_http_error) =
@@ -504,7 +514,7 @@ pub(super) fn tuple_from_partition_key_ranges_result<'py>(
             } else {
                 record_diagnostics_for_responseless(&cosmos_error);
                 Err(_DriverTransportError::new_err(format!(
-                    "driver resolve_all_partition_key_ranges failed: {cosmos_error}"
+                    "Reading feed ranges failed: {cosmos_error}"
                 )))
             }
         }
@@ -572,7 +582,7 @@ pub(super) fn tuple_from_feed_range_from_partition_key_result<'py>(
             } else {
                 record_diagnostics_for_responseless(&cosmos_error);
                 Err(_DriverTransportError::new_err(format!(
-                    "driver feed_range_from_partition_key failed: {cosmos_error}"
+                    "Resolving the feed range for the partition key failed: {cosmos_error}"
                 )))
             }
         }
@@ -599,7 +609,7 @@ pub(super) fn tuple_from_offer_feed_result<'py>(
             } else {
                 record_diagnostics_for_responseless(&cosmos_error);
                 Err(_DriverTransportError::new_err(format!(
-                    "driver execute_operation failed: {cosmos_error}"
+                    "Throughput lookup failed: {cosmos_error}"
                 )))
             }
         }
@@ -918,14 +928,17 @@ fn feed_range_to_response_body(payload: &FeedRangeFromPartitionKeyPayload) -> Py
     })
 }
 
-/// Combine attempt counters for a response-less `CosmosError` that still carries
-/// `DiagnosticsContext` (for example, a client-side end-to-end timeout that
-/// tracked wire attempts before the deadline fired).
-///
-/// Call exactly once per response-less `CosmosError` path, **before** converting
-/// to `_DriverTransportError`.  Do not call for wire-response errors -- those are
-/// already counted by `backend_response_tuple_from_cosmos_error` /
-/// `backend_response_tuple_from_cosmos_error_feed`.
+fn feed_validation_error(error: &CosmosError) -> Option<PyErr> {
+    if error.response().is_none()
+        && error.status().status_code() == azure_core::http::StatusCode::BadRequest
+    {
+        record_diagnostics_for_responseless(error);
+        Some(PyValueError::new_err(error.to_string()))
+    } else {
+        None
+    }
+}
+
 fn client_operation_timeout_error(error: &CosmosError) -> Option<PyErr> {
     if error.response().is_none()
         && error.status().status_code() == azure_core::http::StatusCode::RequestTimeout
@@ -933,17 +946,49 @@ fn client_operation_timeout_error(error: &CosmosError) -> Option<PyErr> {
     {
         record_diagnostics_for_responseless(error);
         Some(PyTimeoutError::new_err(format!(
-            "driver operation timed out: {error}"
+            "Request timed out: {error}"
         )))
     } else {
         None
     }
 }
 
+/// Combine attempt counters for a response-less `CosmosError` that still carries
+/// `DiagnosticsContext` (for example, a client-side end-to-end timeout that
+/// tracked wire attempts before the deadline fired).
+///
+/// Call exactly once when mapping a response-less `CosmosError` to a Python
+/// exception. Do not call for wire-response errors -- those are already counted
+/// by `backend_response_tuple_from_cosmos_error` /
+/// `backend_response_tuple_from_cosmos_error_feed`.
 fn record_diagnostics_for_responseless(error: &CosmosError) {
     if let Some(diag) = error.diagnostics() {
         record_diagnostics(diag);
     }
+}
+
+fn restore_authentication_exception(py: Python<'_>, error: &CosmosError) -> PyResult<()> {
+    if error.response().is_some()
+        || error.status() != status_codes::AUTHENTICATION_TOKEN_ACQUISITION_FAILED
+    {
+        return Ok(());
+    }
+    let mut source: &(dyn std::error::Error + 'static) = error;
+    // Match the driver's bound on source-chain walks, including cyclic sources.
+    for _ in 0..64 {
+        if let Some(original) = source.downcast_ref::<PyErr>() {
+            if original.is_instance_of::<ClientAuthenticationError>(py) {
+                record_diagnostics_for_responseless(error);
+                return Err(original.clone_ref(py));
+            }
+            return Ok(());
+        }
+        let Some(next) = source.source() else {
+            break;
+        };
+        source = next;
+    }
+    Ok(())
 }
 
 /// Convert an attached driver response, or the wire response kept by a synthetic
@@ -953,6 +998,7 @@ fn backend_response_tuple_from_cosmos_error<'py>(
     py: Python<'py>,
     error: &CosmosError,
 ) -> PyResult<Option<Bound<'py, PyTuple>>> {
+    restore_authentication_exception(py, error)?;
     let response = match error.response() {
         Some(r) => r,
         None => return synthetic_terminal_error_tuple(py, error),
@@ -981,6 +1027,7 @@ fn backend_response_tuple_from_cosmos_error_feed<'py>(
     py: Python<'py>,
     error: &CosmosError,
 ) -> PyResult<Option<Bound<'py, PyTuple>>> {
+    restore_authentication_exception(py, error)?;
     let response = match error.response() {
         Some(r) => r,
         None => return synthetic_terminal_error_tuple(py, error),
@@ -1103,12 +1150,93 @@ pub(crate) mod tests {
         partition_key_range::PartitionKeyRange, CosmosResponse, CosmosResponseHeaders,
         EffectivePartitionKey, ResponseBody,
     };
-    use pyo3::exceptions::PyTimeoutError;
+    use pyo3::exceptions::{PyTimeoutError, PyValueError};
     use pyo3::prelude::*;
     use pyo3::types::PyDict;
 
     use super::super::diagnostics::{BINDING_ATTEMPT_COUNT, BINDING_RETRY_COUNT};
     use std::sync::atomic::Ordering;
+
+    #[tokio::test]
+    async fn credential_authentication_errors_preserve_python_identity_across_response_paths() {
+        crate::test_support::prepare_python();
+        let (_, _, conflict) = create_read_and_conflict().await;
+        let diagnostics = conflict.diagnostics().unwrap();
+        Python::with_gil(|py| {
+            let exceptions = py.import_bound("azure.core.exceptions").unwrap();
+            for path in 0..8 {
+                let original = exceptions
+                    .getattr("ClientAuthenticationError")
+                    .unwrap()
+                    .call1(("AADSTS7000215: offline authentication failure",))
+                    .unwrap();
+                let credential_error = azure_core::error::Error::new(
+                    azure_core::error::ErrorKind::Credential,
+                    PyErr::from_value_bound(original.clone()),
+                );
+                let error = CosmosError::builder()
+                    .with_status(status_codes::AUTHENTICATION_TOKEN_ACQUISITION_FAILED)
+                    .with_message("failed to acquire AAD token for Cosmos DB")
+                    .with_source(credential_error)
+                    .with_diagnostics(diagnostics.clone())
+                    .build();
+                let result = match path {
+                    0 => tuple_from_result_with_attempts(py, Err(error)),
+                    1 => tuple_from_feed_result(py, Err(error)),
+                    2 => tuple_from_database_feed_result(py, Err(error)),
+                    3 => tuple_from_container_feed_result(py, Err(error)),
+                    4 => tuple_from_partition_key_ranges_result(py, Err(error)),
+                    5 => super::tuple_from_offer_feed_result(py, Err(error)),
+                    6 => super::tuple_from_feed_range_from_partition_key_result(
+                        py,
+                        Err(super::FeedRangeFromPartitionKeyError::Cosmos(error)),
+                    ),
+                    _ => Err(crate::wire::metadata_error(py, error)),
+                };
+                let actual = result.expect_err("authentication must fail");
+                assert!(
+                    actual.value_bound(py).is(&original),
+                    "path {path} replaced the credential exception: {actual}"
+                );
+                if path == 0 {
+                    let payload = original.getattr("_cosmos_attempt_payload").unwrap();
+                    assert_eq!(
+                        payload
+                            .get_item("request_count")
+                            .unwrap()
+                            .extract::<usize>()
+                            .unwrap(),
+                        diagnostics.request_count()
+                    );
+                }
+            }
+            for original in [
+                pyo3::exceptions::PyValueError::new_err("credential configuration rejected"),
+                PyTimeoutError::new_err("credential timed out"),
+            ] {
+                let error = CosmosError::builder()
+                    .with_status(status_codes::AUTHENTICATION_TOKEN_ACQUISITION_FAILED)
+                    .with_source(azure_core::error::Error::new(
+                        azure_core::error::ErrorKind::Credential,
+                        original,
+                    ))
+                    .build();
+                let actual = tuple_from_result(py, Err(error)).unwrap_err();
+                assert!(actual.is_instance_of::<_DriverTransportError>(py));
+            }
+            let original = exceptions
+                .getattr("ClientAuthenticationError")
+                .unwrap()
+                .call1(("credential failure",))
+                .unwrap();
+            let error = CosmosError::builder()
+                .with_status(status_codes::AUTHENTICATION_TOKEN_ACQUISITION_FAILED)
+                .with_source(PyErr::from_value_bound(original))
+                .with_response(conflict.response().unwrap().clone())
+                .build();
+            assert!(tuple_from_result(py, Err(error)).is_ok());
+        });
+    }
 
     pub(crate) async fn create_read_and_conflict() -> (CosmosResponse, CosmosResponse, CosmosError) {
         use azure_data_cosmos_driver::{
@@ -2156,7 +2284,7 @@ def record_unraisable(args):
                 .expect_err("missing routing map must raise a transport error");
             assert!(
                 err.to_string()
-                    .contains("driver resolve_all_partition_key_ranges returned no routing map"),
+                    .contains("Reading feed ranges failed: no routing information is available for the container"),
                 "unexpected error: {err}"
             );
         });
@@ -2364,6 +2492,12 @@ def record_unraisable(args):
                             status != timeout
                         );
                         assert!(error.to_string().contains(message));
+                        if status == timeout {
+                            assert!(error
+                                .value_bound(py)
+                                .to_string()
+                                .starts_with("Request timed out: "));
+                        }
                     }
                 }
             }
@@ -2601,6 +2735,78 @@ def record_unraisable(args):
     }
 
     #[test]
+    fn responseless_feed_bad_requests_are_validation_errors() {
+        crate::test_support::prepare_python();
+        Python::with_gil(|py| {
+            for status in [
+                CosmosStatus::new(azure_core::http::StatusCode::BadRequest),
+                status_codes::CLIENT_OPAQUE_TOKEN_INVALID_FOR_CROSS_PARTITION_QUERY,
+                status_codes::CLIENT_BUFFERED_QUERY_REQUIRES_FINITE_WINDOW,
+                status_codes::TRANSPORT_CONNECTION_FAILED,
+            ] {
+                let error = CosmosError::builder()
+                    .with_status(status)
+                    .with_message("opaque detail, not used for classification")
+                    .build();
+                for convert in [
+                    tuple_from_feed_result,
+                    tuple_from_database_feed_result,
+                    tuple_from_query_databases_result,
+                    tuple_from_container_feed_result,
+                    tuple_from_query_containers_result,
+                ] {
+                    let converted = convert(py, Err(error.clone())).unwrap_err();
+                    let invalid = status.status_code() == azure_core::http::StatusCode::BadRequest;
+                    assert_eq!(converted.is_instance_of::<PyValueError>(py), invalid);
+                    assert_eq!(
+                        converted.is_instance_of::<_DriverTransportError>(py),
+                        !invalid
+                    );
+                    assert!(converted.to_string().contains("opaque detail"));
+                }
+            }
+        });
+    }
+
+    #[tokio::test]
+    async fn feed_validation_preserves_service_responses_and_attempt_diagnostics() {
+        crate::test_support::prepare_python();
+        let (_, _, conflict) = create_read_and_conflict().await;
+        Python::with_gil(|py| {
+            let attached = CosmosError::builder()
+                .with_status(status_codes::CLIENT_BUFFERED_QUERY_REQUIRES_FINITE_WINDOW)
+                .with_response(conflict.response().unwrap().clone())
+                .build();
+            let expected = tuple_from_feed_result(py, Err(conflict.clone())).unwrap();
+            assert!(tuple_from_feed_result(py, Err(attached))
+                .unwrap()
+                .eq(expected)
+                .unwrap());
+            let diagnostics = conflict.diagnostics().unwrap();
+            let invalid = CosmosError::builder()
+                .with_status(status_codes::CLIENT_BUFFERED_QUERY_REQUIRES_FINITE_WINDOW)
+                .with_diagnostics(diagnostics.clone())
+                .with_message("finite window required")
+                .build();
+            let error =
+                tuple_from_database_feed_result_with_attempts(py, Err(invalid)).unwrap_err();
+            assert!(error.is_instance_of::<PyValueError>(py));
+            let payload = error
+                .value_bound(py)
+                .getattr("_cosmos_attempt_payload")
+                .unwrap();
+            assert_eq!(
+                payload
+                    .get_item("request_count")
+                    .unwrap()
+                    .extract::<usize>()
+                    .unwrap(),
+                diagnostics.request_count()
+            );
+        });
+    }
+
+    #[test]
     fn responseless_feed_error_surfaces_transport_error_not_runtime_error() {
         crate::test_support::prepare_python();
         Python::with_gil(|py| {
@@ -2621,6 +2827,62 @@ def record_unraisable(args):
     }
 
     #[test]
+    fn responseless_errors_use_customer_descriptions_and_preserve_details() {
+        crate::test_support::prepare_python();
+        Python::with_gil(|py| {
+            let error = CosmosError::builder()
+                .with_status(status_codes::TRANSPORT_CONNECTION_FAILED)
+                .with_message("connection closed")
+                .build();
+            for (result, description) in [
+                (tuple_from_result(py, Err(error.clone())), "Request failed"),
+                (
+                    tuple_from_feed_result(py, Err(error.clone())),
+                    "Item feed request failed",
+                ),
+                (
+                    tuple_from_database_feed_result(py, Err(error.clone())),
+                    "Listing databases failed",
+                ),
+                (
+                    tuple_from_query_databases_result(py, Err(error.clone())),
+                    "Querying databases failed",
+                ),
+                (
+                    tuple_from_container_feed_result(py, Err(error.clone())),
+                    "Listing containers failed",
+                ),
+                (
+                    tuple_from_query_containers_result(py, Err(error.clone())),
+                    "Querying containers failed",
+                ),
+                (
+                    tuple_from_partition_key_ranges_result(py, Err(error.clone())),
+                    "Reading feed ranges failed",
+                ),
+                (
+                    super::tuple_from_feed_range_from_partition_key_result(
+                        py,
+                        Err(super::FeedRangeFromPartitionKeyError::Cosmos(error.clone())),
+                    ),
+                    "Resolving the feed range for the partition key failed",
+                ),
+                (
+                    super::tuple_from_offer_feed_result(py, Err(error.clone())),
+                    "Throughput lookup failed",
+                ),
+            ] {
+                let observed = result.unwrap_err();
+                assert!(observed.is_instance_of::<_DriverTransportError>(py));
+                assert_eq!(
+                    observed.value_bound(py).to_string(),
+                    format!("{description}: {error}")
+                );
+            }
+        });
+    }
+
+    #[test]
     fn responseless_database_feed_error_surfaces_transport_error() {
         crate::test_support::prepare_python();
         Python::with_gil(|py| {
@@ -2634,9 +2896,7 @@ def record_unraisable(args):
             let py_error = tuple_from_database_feed_result(py, Err(error)).unwrap_err();
 
             assert!(py_error.is_instance_of::<_DriverTransportError>(py));
-            assert!(py_error
-                .to_string()
-                .contains("driver list_databases failed"));
+            assert!(py_error.to_string().contains("Listing databases failed"));
         });
     }
 }

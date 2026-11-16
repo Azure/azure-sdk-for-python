@@ -19,8 +19,8 @@ use azure_data_cosmos_driver::{
     models::{PartitionKey, PartitionKeyValue},
     options::{
         AvailabilityStrategy, BinaryEncodingOptions, ContentResponseOnWrite,
-        EndToEndOperationLatencyPolicy, ExcludedRegions, OperationOptionsBuilder,
-        PatchStrategy, ReadConsistencyStrategy,
+        EndToEndOperationLatencyPolicy, ExcludedRegions, OperationOptionsBuilder, PatchStrategy,
+        ReadConsistencyStrategy, ThroughputControlOptions,
     },
 };
 
@@ -59,10 +59,10 @@ pub(crate) struct RequestHeadersAndOptions {
     // reads / deletes. This option controls write responses, not read payloads.
     pub(crate) content_response_on_write: ContentResponseOnWrite,
     pub(crate) excluded_regions_value: Option<ExcludedRegions>,
-    // Rust driver timeout policy, separate from the binding's remaining timeout.
-    pub(crate) driver_timeout_policy: Option<EndToEndOperationLatencyPolicy>,
-    // Remaining binding timeout, including metadata work and subsecond limits.
-    pub(crate) operation_timeout: Option<Duration>,
+    // Effective request timeout from typed settings; elapsed Python work is not subtracted.
+    pub(crate) configured_driver_timeout_policy: Option<EndToEndOperationLatencyPolicy>,
+    // Remaining budget from the binding keyword; covers metadata and execution together.
+    pub(crate) remaining_binding_timeout: Option<Duration>,
     // Per-request cross-region hedging control pulled out of the
     // typed ``settings.hedging`` field. ``Disabled`` turns hedging off for
     // this request (the ``availability_strategy=False`` case); ``Hedging(..)``
@@ -72,6 +72,7 @@ pub(crate) struct RequestHeadersAndOptions {
     // Read-item entry points validate once, before retaining the driver or async dispatch.
     pub(crate) read_consistency_strategy: Option<ReadConsistencyStrategy>,
     pub(crate) patch_strategy: Option<PatchStrategy>,
+    pub(crate) throughput_control: Option<ThroughputControlOptions>,
     pub(crate) custom_headers: HashMap<HeaderName, HeaderValue>,
 }
 
@@ -120,7 +121,7 @@ pub(crate) fn extract_database_prepared_inputs<'py>(
     Ok((database_id, modifiers))
 }
 
-/// Read request headers and settings for an account-level operation with no resource id.
+/// Read request headers and settings without container or partition-key inputs.
 pub(crate) fn extract_account_prepared_modifiers<'py>(
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<RequestHeadersAndOptions> {
@@ -182,8 +183,9 @@ pub(crate) fn extract_required_item_id<'py>(
 pub(super) fn build_operation_options(
     content_response: Option<ContentResponseOnWrite>,
     excluded_regions: Option<ExcludedRegions>,
-    driver_timeout_policy: Option<EndToEndOperationLatencyPolicy>,
+    configured_driver_timeout_policy: Option<EndToEndOperationLatencyPolicy>,
     availability_strategy: Option<AvailabilityStrategy>,
+    throughput_control: Option<ThroughputControlOptions>,
     custom_headers: HashMap<HeaderName, HeaderValue>,
 ) -> azure_data_cosmos_driver::options::OperationOptions {
     // Python consumes text JSON, so disable binary response negotiation.
@@ -195,11 +197,14 @@ pub(super) fn build_operation_options(
     if let Some(regions) = excluded_regions {
         builder = builder.with_excluded_regions(regions);
     }
-    if let Some(policy) = driver_timeout_policy {
+    if let Some(policy) = configured_driver_timeout_policy {
         builder = builder.with_end_to_end_latency_policy(policy);
     }
     if let Some(strategy) = availability_strategy {
         builder = builder.with_availability_strategy(strategy);
+    }
+    if let Some(control) = throughput_control {
+        builder = builder.with_throughput_control(control);
     }
     if !custom_headers.is_empty() {
         builder = builder.with_custom_headers(custom_headers);
@@ -593,7 +598,7 @@ mod tests {
 
     #[test]
     fn operation_options_preserve_the_python_text_json_contract() {
-        let options = super::build_operation_options(None, None, None, None, Default::default());
+        let options = super::build_operation_options(None, None, None, None, None, Default::default());
         assert!(!options.binary_encoding.unwrap().enabled);
     }
 

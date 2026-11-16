@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 //! Opt-in, per-call evidence that an async item future was dropped.
+//! Compiled only for Rust unit tests or the `test-probes` feature.
 //! This does not observe detached driver tasks, sockets, or service rollback.
 
 use std::future::Future;

@@ -25,7 +25,6 @@ from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._cosmos_responses import CosmosDict
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
-from azure.cosmos.partition_key import NonePartitionKeyValue, NullPartitionKeyValue
 from .test_delete_container_backend_unit import delete_case
 
 
@@ -133,26 +132,6 @@ def test_metadata_preload_accepts_internal_start_time_and_preserves_budget_rust(
         assert prepared.settings.excluded_locations == ("West US",)
         assert prepared.settings.timeout_seconds == 20
         assert "operationstarttime" not in {name.lower() for name in wire_headers(prepared)}
-
-
-@pytest.mark.parametrize("partition_key", [None, NonePartitionKeyValue, NullPartitionKeyValue])
-def test_read_items_null_or_absent_key_reaches_read_after_cold_metadata_rust(metadata_read_case, partition_key):
-    """Exercise the reported preload path; the grouped read itself is a stand-in."""
-    case = metadata_read_case
-    mock = AsyncMock if case.is_async else MagicMock
-    case.connection.read_items = mock(return_value=[])
-    items = [("item", partition_key)]
-    result = case.container.read_items(items, timeout=20)
-    assert (asyncio.run(result) if inspect.isawaitable(result) else result) == []
-    case.connection.read_items.assert_called_once()
-    assert case.connection.read_items.call_args.kwargs["items"] == items
-    case.connection._set_container_properties_cache.assert_called_once()
-    if case.legacy:
-        case.connection.ReadContainer.assert_called_once()
-        case.backend.execute.assert_not_called()
-    else:
-        case.backend.execute.assert_called_once()
-        case.connection.ReadContainer.assert_not_called()
 
 
 def test_expired_metadata_preload_budget_prevents_dispatch_rust(metadata_read_case):

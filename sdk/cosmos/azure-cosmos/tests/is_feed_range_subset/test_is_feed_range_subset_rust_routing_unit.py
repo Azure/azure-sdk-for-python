@@ -4,11 +4,11 @@
 # license information.
 # -------------------------------------------------------------------------
 """Backend-agnostic unit tests for the ``is_feed_range_subset`` Rust-routing helpers
-(gate / prepared-request builder / payload parser).
+(input validation / prepared-request builder / payload parser).
 
-These tests do not need the emulator or the Rust binding. They run in milliseconds
-with no network and lock in the shape of the request the binding receives and the
-answer the parser reads back, plus the error handling for a malformed payload.
+These tests do not need the emulator. The native boundary regression uses the
+compiled binding when available; other cases use fakes. They lock in the request
+shape, parsed answer, and malformed-input handling without network requests.
 Without them, a regression in the request shape or the payload parser would surface
 only in a slow emulator run.
 """
@@ -27,18 +27,15 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos._backend.operations import OP_IS_FEED_RANGE_SUBSET
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos._feed_ranges_rust_routing import (
     build_is_feed_range_subset_prepared_request,
-    can_use_rust_backend_for_is_feed_range_subset,
     parse_is_feed_range_subset_payload,
 )
-
-RUST_BACKEND = SimpleNamespace(name="rust")
-
 
 def _feed_range(range_min, range_max, is_min_inclusive=True, is_max_inclusive=False):
     """Build a public feed range from explicit boundaries."""
@@ -48,38 +45,40 @@ def _feed_range(range_min, range_max, is_min_inclusive=True, is_max_inclusive=Fa
 
 
 # ---------------------------------------------------------------------------
-# Gate
+# Input validation
 # ---------------------------------------------------------------------------
 
 
-def test_gate_requires_backend_rust():
-    """Python handles the check when Rust is unavailable."""
-    assert (
-        can_use_rust_backend_for_is_feed_range_subset(
-            backend=LEGACY_BACKEND,
-            parent_feed_range=_feed_range("", "FF"),
-            child_feed_range=_feed_range("00", "7F"),
-        )
-        is False
-    )
+@pytest.mark.parametrize("async_mode", [False, True])
+def test_legacy_comparison_keeps_its_original_validation(async_mode, monkeypatch):
+    from azure.cosmos._helpers import _feed_range_operations as operations
 
-
-def test_gate_allows_backend_rust():
-    """Rust handles a supported subset check."""
-    assert (
-        can_use_rust_backend_for_is_feed_range_subset(
-            backend=RUST_BACKEND,
-            parent_feed_range=_feed_range("", "FF"),
-            child_feed_range=_feed_range("00", "7F"),
-        )
-        is True
+    monkeypatch.setattr(
+        operations, "build_is_feed_range_subset_prepared_request",
+        Mock(side_effect=AssertionError("Legacy must not build a Rust request")),
     )
+    connection = SimpleNamespace(_backend=ASYNC_LEGACY_BACKEND if async_mode else LEGACY_BACKEND)
+    result = (operations.is_feed_range_subset_async if async_mode else operations.is_feed_range_subset)(
+        client_connection=connection,
+        parent_feed_range=_feed_range("7F", "3F"),
+        child_feed_range=_feed_range("3F", "7F"),
+    )
+    if async_mode:
+        result = asyncio.run(result)
+    assert result is False
 
 
 @pytest.mark.parametrize(
     "parent",
     [
+        {},
+        {"Range": {}},
+        {"Range": {"min": ""}},
+        {"Range": None},
+        None,
+        [],
         _feed_range("FF", "00"),
+        _feed_range("80", "7F", True, True),
         _feed_range("not-hex", "zz"),
         _feed_range("0", "F"),
         _feed_range("00", "FF", 1, 0),
@@ -89,14 +88,9 @@ def test_gate_allows_backend_rust():
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("invalid_side", ["parent", "child"])
 def test_unsupported_ranges_are_rejected_without_fallback_rust(parent, async_mode, invalid_side, monkeypatch):
-    """The approved strict contract rejects unsupported inputs before either execution path."""
-    import asyncio
-    from azure.cosmos._backend.cosmos_backend import CosmosBackend
-    from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
-    from azure.cosmos._helpers._feed_range_operations import (
-        is_feed_range_subset,
-        is_feed_range_subset_async,
-    )
+    """Invalid customer inputs are not missing Rust capabilities."""
+    from azure.cosmos.container import ContainerProxy
+    from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
     from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 
     class Sync(CosmosBackend):
@@ -119,10 +113,11 @@ def test_unsupported_ranges_are_rejected_without_fallback_rust(parent, async_mod
         lambda *_: pytest.fail("Unsupported inputs must not execute legacy comparison"),
     )
     connection = SimpleNamespace(_backend=Async() if async_mode else Sync())
+    container_type = AsyncContainerProxy if async_mode else ContainerProxy
+    container = container_type(connection, "dbs/db", "orders")
     before = rust_compatibility_fallback_count()
-    with pytest.raises(NotImplementedError, match="is_feed_range_subset requires supported"):
-        result = (is_feed_range_subset_async if async_mode else is_feed_range_subset)(
-            client_connection=connection,
+    with pytest.raises(ValueError, match=f"{invalid_side}_feed_range"):
+        result = container.is_feed_range_subset(
             parent_feed_range=parent,
             child_feed_range=child,
         )
@@ -136,10 +131,14 @@ def test_unsupported_ranges_are_rejected_without_fallback_rust(parent, async_mod
 # ---------------------------------------------------------------------------
 
 
-def test_builds_prepared_request_with_both_feed_ranges_in_body_rust():
+@pytest.mark.parametrize("parent,child", [
+    (_feed_range("", "FF"), _feed_range("3F", "7F")),
+    (_feed_range("80", "FF", True, True), _feed_range("80", "90")),
+    (_feed_range("00", "FF", False, True), _feed_range("80", "90")),
+    (_feed_range("8000", "80", True, True), _feed_range("80", "8000", True, True)),
+])
+def test_builds_prepared_request_with_both_feed_ranges_in_body_rust(parent, child):
     """The Rust request contains the correct parent and child feed ranges."""
-    parent = _feed_range("", "FF")
-    child = _feed_range("3F", "7F")
     prepared = build_is_feed_range_subset_prepared_request(
         parent_feed_range=parent, child_feed_range=child
     )
@@ -175,9 +174,32 @@ def test_parser_rejects_non_boolean_is_subset_rust():
         parse_is_feed_range_subset_payload({"IsSubset": "true"})
 
 
+@pytest.mark.parametrize("parent,child,expected", [
+    (_feed_range("80", "FF", True, True), _feed_range("80", "FF", True, True), True),
+    (_feed_range("80", "FF", True, True), _feed_range("80", "90"), True),
+    (_feed_range("00", "FF", False, True), _feed_range("80", "90"), True),
+    (_feed_range("80", "FF", False, True), _feed_range("80", "90"), False),
+    (_feed_range("80", "FF"), _feed_range("FF", "FF", True, True), False),
+    (_feed_range("8000", "80", True, True), _feed_range("80", "8000", True, True), True),
+    (_feed_range("40", "80", True, True), _feed_range("80", "8001"), False),
+])
+def test_native_subset_preserves_endpoint_meaning_rust(parent, child, expected):
+    binding = pytest.importorskip("azure.cosmos._rust")
+    prepared = build_is_feed_range_subset_prepared_request(
+        parent_feed_range=parent, child_feed_range=child,
+    )
+    status, _, _, body, _ = binding.is_feed_range_subset(None, prepared)
+    assert status == 200
+    assert json.loads(body) == {"IsSubset": expected}
+
+
 @pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("is_subset", [False, True])
-def test_subset_comparison_preserves_previous_response_headers_rust(async_mode, is_subset, monkeypatch):
+@pytest.mark.parametrize("parent", [
+    _feed_range("", "FF"),
+    _feed_range("80", "FF", True, True),
+])
+def test_subset_comparison_preserves_previous_response_headers_rust(async_mode, is_subset, parent, monkeypatch):
     from azure.cosmos.container import ContainerProxy
     from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 
@@ -208,7 +230,7 @@ def test_subset_comparison_preserves_previous_response_headers_rust(async_mode, 
     container_type = AsyncContainerProxy if async_mode else ContainerProxy
     container = container_type(connection, "dbs/db", "orders")
     arguments = {
-        "parent_feed_range": _feed_range("", "FF"),
+        "parent_feed_range": parent,
         "child_feed_range": _feed_range("3F", "7F"),
     }
 

@@ -16,11 +16,14 @@ from typing import TYPE_CHECKING, Any, Mapping, Optional
 from azure.core.exceptions import AzureError
 from azure.core.utils import CaseInsensitiveDict
 
+from .._backend.capabilities import reject_rust_arguments
+from .._backend.constants import is_rust_backend
 from .._backend.contracts import PreparedPageRequest, BackendPage
 from .._backend.partition_key_input import BindingPartitionKey
 from .._cosmos_responses import CosmosDict
 from ..exceptions import CosmosClientTimeoutError
 from .._operation_deadline import remaining_timeout
+from .._routing.routing_range import Range
 from .._telemetry import RecordingOptions
 from ._read_items import ResponseHeaderAccumulator
 from ._request_settings import (
@@ -28,6 +31,7 @@ from ._request_settings import (
     compose_options_from_kwargs,
     HEADERS_THE_DRIVER_REGENERATES,
     is_supported_operation_timeout,
+    reject_unknown_feed_kwargs,
 )
 from ._response_parse import page_to_backend_response, process_backend_response
 
@@ -36,13 +40,32 @@ if TYPE_CHECKING:
     from azure.cosmos._rust import _ItemFeedCursor
 
 
+def normalize_feed_range(feed: Any) -> list[str]:
+    """Validate a feed scope and normalize SDK-produced inclusive point ranges."""
+    interval = feed.get("Range") if isinstance(feed, dict) else None
+    if not isinstance(interval, dict) or (
+        not isinstance(interval.get("min"), str)
+        or not isinstance(interval.get("max"), str)
+        or interval.get("isMinInclusive", True) is not True
+    ):
+        raise ValueError("feed_range requires a nonempty min-inclusive, max-exclusive Range.")
+    if interval["min"] == interval["max"] and interval.get("isMaxInclusive", False) is True:
+        if any(char not in "0123456789abcdefABCDEF" for char in interval["min"]):
+            raise ValueError("feed_range point bounds must be hexadecimal.")
+        interval = Range(interval["min"], interval["max"], True, True).to_normalized_range().to_dict()
+    if interval["min"] >= interval["max"] or interval.get("isMaxInclusive", False) is not False:
+        raise ValueError("feed_range requires a nonempty min-inclusive, max-exclusive Range.")
+    return [interval["min"], interval["max"]]
+
+
 class FeedConfig:
     """Copy the options and keep the adapter used to fetch pages."""
 
     def __init__(
-        self, proxy: Any, kwargs: dict[str, Any], *, operation: str, backend: Any, retained: bool = True
+        self, proxy: Any, kwargs: dict[str, Any], *, operation: str, backend: Any
     ) -> None:
         self.operation = operation
+        self.rust = is_rust_backend(backend)
         if operation != "query_items" and "populate_query_metrics" in kwargs:
             raise TypeError(f"{operation}() does not accept 'populate_query_metrics'.")
         self.hook = kwargs.pop("response_hook", None)
@@ -58,6 +81,12 @@ class FeedConfig:
         count = self.options.get("maxItemCount")
         if count is not None and (isinstance(count, bool) or not isinstance(count, int) or count == 0 or count < -1):
             raise ValueError(f"{operation} max_item_count must be a positive integer, -1, or None.")
+        supports_cache_staleness = operation in ("query_items", "read_all_items")
+        if self.rust and not supports_cache_staleness and "maxIntegratedCacheStaleness" in self.options:
+            raise TypeError(
+                f"{operation}() does not accept max_integrated_cache_staleness_in_ms "
+                "(maxIntegratedCacheStaleness); omit this option."
+            )
         cache = self.options.get("maxIntegratedCacheStaleness")
         if cache is not None and (isinstance(cache, bool) or not isinstance(cache, int) or cache < 0):
             raise ValueError(f"{operation} cache staleness must be a nonnegative integer or None.")
@@ -68,9 +97,20 @@ class FeedConfig:
         self._item_context = context
         self.response_state = context.response_state if context is not None else None
         self.backend = backend
-        self.rust = retained
         self.recording_options = RecordingOptions.take(kwargs) if self.rust else RecordingOptions.snapshot({})
         if self.rust:
+            if operation == "query_items_change_feed" and (
+                "connection_timeout" in kwargs or "connection_timeout" in self.options
+            ):
+                raise TypeError(
+                    "query_items_change_feed() does not accept per-call connection_timeout; "
+                    "configure ConnectionPoolOptions.connection_timeout on the client's CosmosRuntime instead."
+                )
+            if operation in ("read_all_items", "query_items_change_feed") and "availabilityStrategy" in self.options:
+                raise TypeError(
+                    f"{operation}() does not accept availability_strategy (availabilityStrategy) "
+                    "on Rust-backed clients; omit this option."
+                )
             allowed = {
                 "maxItemCount",
                 "sessionToken",
@@ -78,11 +118,12 @@ class FeedConfig:
                 "priorityLevel",
                 "throughputBucket",
                 "excludedLocations",
-                "maxIntegratedCacheStaleness",
                 "timeout",
                 "continuation",
                 "consistencyLevel",
             }
+            if supports_cache_staleness:
+                allowed.add("maxIntegratedCacheStaleness")
             if operation == "query_items":
                 allowed |= {
                     "populateQueryMetrics",
@@ -106,9 +147,16 @@ class FeedConfig:
                 "x-ms-documentdb-isquery",
                 "x-ms-cosmos-is-query-plan-request",
             }
-            if kwargs or set(self.options) - allowed or any(name.lower() in reserved for name in (initial or {})):
+            reject_unknown_feed_kwargs(operation, kwargs)
+            unsupported = [repr(name) for name in kwargs]
+            unsupported.extend(f"request_options[{name!r}]" for name in self.options.keys() - allowed)
+            unsupported.extend(
+                f"initial_headers[{name!r}]" for name in (initial or {}) if name.lower() in reserved
+            )
+            if unsupported:
                 raise NotImplementedError(
-                    f"{operation} cannot honor these options on Rust; no legacy fallback will be used."
+                    f"{operation} cannot honor these options on Rust: {', '.join(sorted(unsupported))}; "
+                    "no legacy fallback will be used."
                 )
         if self.rust and context is not None:
             context.defaults.apply_to_options(self.options)
@@ -147,6 +195,18 @@ class FeedConfig:
             settings=settings,
             cursor=cursor,
         )
+
+
+class RustFeedConfig(FeedConfig):
+    """Prepare shared query and read-all settings using the client's Rust adapter."""
+
+    def __init__(self, proxy: Any, kwargs: dict[str, Any], *, operation: str) -> None:
+        context = proxy._item_context
+        if context is None or not is_rust_backend(context.adapter):
+            raise NotImplementedError(f"{operation} requires a client-owned Rust backend; no legacy fallback.")
+        context.defaults.apply_timeout(kwargs)
+        reject_rust_arguments(kwargs)
+        super().__init__(proxy, kwargs, operation=operation, backend=context.adapter)
 
 
 class FeedPageState:

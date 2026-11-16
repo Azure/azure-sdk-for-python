@@ -108,7 +108,7 @@ class AsyncChangeFeedPageIterator(AsyncPageIterator):
                     ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
                         remaining_timeout(options.get("_item_operation_deadline"))
                         before = state.responses
-                        rows = await config.connection.QueryFeed(
+                        rows, _ = await config.connection.QueryFeed(
                             config.path,
                             config.collection_id,
                             None,
@@ -118,7 +118,7 @@ class AsyncChangeFeedPageIterator(AsyncPageIterator):
                         )
                         if state.responses == before:
                             raise RuntimeError("Legacy change-feed response headers were not captured.")
-                        return rows, dict(state.captured)
+                        return rows, {name.lower(): value for name, value in state.captured.items()}
 
                     factory = (
                         ChangeFeedFetcherV1

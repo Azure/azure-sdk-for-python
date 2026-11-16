@@ -22,10 +22,7 @@ import abc
 from typing import TYPE_CHECKING, Awaitable, Any, AsyncIterator, Callable, Optional
 
 from azure.cosmos._backend.capabilities import OperationRouting
-from azure.cosmos._backend.errors import (
-    BindingProtocolError,
-    PagePreflightError,
-)
+from azure.cosmos._backend.errors import BindingProtocolError
 
 from azure.cosmos._backend.contracts import (
     BackendResponse,
@@ -34,7 +31,6 @@ from azure.cosmos._backend.contracts import (
     PreparedRequest,
     BackendPage,
 )
-from azure.cosmos._backend._fallback_metrics import record_rust_compatibility_fallback
 
 __all__ = ["AsyncCosmosBackend"]
 
@@ -50,10 +46,9 @@ class AsyncCosmosBackend(abc.ABC):
     AsyncLegacyBackend instead awaits supplied legacy-path functions through
     run_operation and run_page_operation; it does not consume prepared requests.
 
-    Those two migration methods choose any permitted fallback before execution.
-    They never repeat execution, response-processing, or callback failures
-    through the legacy path. Retiring that path also removes its selection
-    policy, not the requirement to validate unsupported request options.
+    Those two methods validate support before execution and never fall back to
+    legacy Python. Only the separately selected legacy backend awaits legacy
+    calls; unsupported requests and failures on Rust propagate to the caller.
     """
 
     #: Python backend identifier used in the startup INFO log. Subclasses set this from
@@ -103,19 +98,8 @@ class AsyncCosmosBackend(abc.ABC):
         legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
-        """Choose the permitted execution path, await its result, then process it.
-
-        A supplied legacy_call is used only when migration policy permits it
-        before execution. A response-processing error is raised, not used to
-        choose the legacy path.
-        """
-        if routing.uses_legacy():
-            if legacy_call is None:
-                raise BindingProtocolError(
-                    f"No legacy callable supplied for {routing.op!r}"
-                )
-            record_rust_compatibility_fallback()
-            return await legacy_call()
+        """Validate support, await Rust execution, and process its response."""
+        routing.require_rust_support()
         prepared = build_request()
         if prepared.op != routing.op:
             raise BindingProtocolError(
@@ -133,39 +117,14 @@ class AsyncCosmosBackend(abc.ABC):
         legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
-        """Fetch one backend page through Rust or choose permitted legacy fallback.
-
-        Page preflight precedes driver acquisition and fetching. Its specific
-        PagePreflightError can allow fallback only when the operation's policy
-        permits it and no continuation token was supplied. Execution errors do not.
-        """
-        if routing.uses_legacy():
-            if legacy_call is None:
-                raise BindingProtocolError(
-                    f"No legacy callable supplied for {routing.op!r}"
-                )
-            record_rust_compatibility_fallback()
-            return await legacy_call()
+        """Validate support and fetch one Rust page without legacy fallback."""
+        routing.require_rust_support()
         prepared = build_request()
         if prepared.op != routing.op:
             raise BindingProtocolError(
                 f"Prepared operation {prepared.op!r} does not match {routing.op!r}"
             )
-        try:
-            self.validate_page_request(prepared)
-        except PagePreflightError as error:
-            if (
-                type(error) is not PagePreflightError
-                or not routing.policy.fallback_allowed
-                or prepared.continuation is not None
-            ):
-                raise
-            if legacy_call is None:
-                raise BindingProtocolError(
-                    f"No legacy callable supplied for {routing.op!r}"
-                )
-            record_rust_compatibility_fallback()
-            return await legacy_call()
+        self.validate_page_request(prepared)
         pages = self.execute_pages(prepared, deadline=deadline)
         try:
             page = await pages.__anext__()

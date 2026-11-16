@@ -6,10 +6,9 @@
 """Define how the synchronous Python wrapper calls the Python/Rust binding.
 
 Helpers that build prepared requests call execute or execute_pages directly.
-Operations still supporting migration fallback use run_operation or
-run_page_operation. These permit specific legacy-path calls before execution
-while migration is unfinished. They do not offer another release execution
-path or repeat execution, parsing, or callback failures through the legacy path.
+Other operations use run_operation or run_page_operation to validate support
+before execution. Unsupported requests and all failures propagate without
+legacy fallback. Only the separately selected legacy backend runs legacy calls.
 
 A single operation returns BackendResponse. A page fetch returns BackendPage,
 including a continuation token when available.
@@ -21,7 +20,6 @@ import abc
 from typing import TYPE_CHECKING, Any, Callable, Iterator, Optional
 
 from .capabilities import OperationRouting
-from ._fallback_metrics import record_rust_compatibility_fallback
 from .contracts import (
     BackendResponse,
     ContainerMetadata,
@@ -29,7 +27,7 @@ from .contracts import (
     PreparedRequest,
     BackendPage,
 )
-from .errors import BindingProtocolError, PagePreflightError
+from .errors import BindingProtocolError
 
 if TYPE_CHECKING:
     from azure.cosmos._rust import _ItemFeedCursor
@@ -85,14 +83,8 @@ class CosmosBackend(abc.ABC):
         legacy_call: Optional[Callable[[], Any]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
-        """Execute through the Rust path or choose permitted legacy-path fallback."""
-        if routing.uses_legacy():
-            if legacy_call is None:
-                raise BindingProtocolError(
-                    f"No legacy callable supplied for {routing.op!r}"
-                )
-            record_rust_compatibility_fallback()
-            return legacy_call()
+        """Validate support and execute through Rust without legacy fallback."""
+        routing.require_rust_support()
         prepared = build_request()
         if prepared.op != routing.op:
             raise BindingProtocolError(
@@ -110,34 +102,14 @@ class CosmosBackend(abc.ABC):
         legacy_call: Optional[Callable[[], Any]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
-        """Fetch one backend page through Rust or use permitted legacy-path fallback."""
-        if routing.uses_legacy():
-            if legacy_call is None:
-                raise BindingProtocolError(
-                    f"No legacy callable supplied for {routing.op!r}"
-                )
-            record_rust_compatibility_fallback()
-            return legacy_call()
+        """Validate support and fetch one Rust page without legacy fallback."""
+        routing.require_rust_support()
         prepared = build_request()
         if prepared.op != routing.op:
             raise BindingProtocolError(
                 f"Prepared operation {prepared.op!r} does not match {routing.op!r}"
             )
-        try:
-            self.validate_page_request(prepared)
-        except PagePreflightError as error:
-            if (
-                type(error) is not PagePreflightError
-                or not routing.policy.fallback_allowed
-                or prepared.continuation is not None
-            ):
-                raise
-            if legacy_call is None:
-                raise BindingProtocolError(
-                    f"No legacy callable supplied for {routing.op!r}"
-                )
-            record_rust_compatibility_fallback()
-            return legacy_call()
+        self.validate_page_request(prepared)
         pages = self.execute_pages(prepared, deadline=deadline)
         try:
             page = next(pages)

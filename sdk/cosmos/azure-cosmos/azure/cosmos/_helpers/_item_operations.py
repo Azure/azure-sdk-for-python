@@ -40,7 +40,7 @@ from ..partition_key import (
 )
 from . import _request_item
 from ._item_context import ItemClientDefaults, ClientLastResponseHeaders
-from ._request_settings import compose_item_options, _timeout_is_representable, overrides_driver_owned_header
+from ._request_settings import compose_item_options, is_supported_operation_timeout, overrides_driver_owned_header
 from ._item_prep import (
     prepare_patch_item_kwargs,
     prepare_replace_item_kwargs,
@@ -131,8 +131,9 @@ def validate_rust_item_options(args: Dict[str, Any], options: Dict[str, Any]) ->
     for key in ("connection_timeout", "retry_write"):
         if args["kwargs"].get(key) is not None or options.get(key) is not None:
             raise NotImplementedError(f"The Rust item backend does not support per-call {key}")
-    if not _timeout_is_representable(args["kwargs"]):
-        raise NotImplementedError("The Rust item backend cannot honor this timeout value")
+    timeout = args["kwargs"].get("timeout", options.get("timeout"))
+    if not is_supported_operation_timeout(timeout):
+        raise ValueError("Item timeout must be None or a finite number of seconds >= 1 and < 2**64.")
     if overrides_driver_owned_header(options):
         raise NotImplementedError("The Rust item backend cannot override driver-owned initial headers")
 

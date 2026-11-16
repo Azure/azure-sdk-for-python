@@ -6,6 +6,19 @@ Source comments remain historical provenance. Only these explicit retirements
 may resolve to retained tests instead of a live original.
 """
 
+# Historical lanes from ed9fa78ef7b2e550e94da3448cda13a9f84bd58f,
+# not the replacement tests' current decorators.
+RETIRED_DATABASE_SOURCE_MARKERS = {
+    "tests/test_auto_scale.py::TestAutoScale.test_autoscale_replace_throughput": frozenset({"cosmosLong"}),
+    "tests/test_auto_scale_async.py::TestAutoScaleAsync.test_replace_throughput_async": frozenset({"cosmosLong"}),
+    "tests/test_auto_scale.py::TestAutoScale.test_autoscale_create_database": frozenset({"cosmosLong"}),
+    "tests/test_auto_scale_async.py::TestAutoScaleAsync.test_autoscale_create_database_async": frozenset({"cosmosLong"}),
+    "tests/test_crud_database.py::TestCRUDDatabaseOperations.test_database_level_offer_throughput": frozenset({"cosmosLong"}),
+    "tests/test_crud_database_async.py::TestCRUDDatabaseOperationsAsync.test_database_level_offer_throughput_async": frozenset({"cosmosLong"}),
+    "tests/test_crud_response_payload_on_write_disabled.py::TestCRUDOperationsResponsePayloadOnWriteDisabled.test_database_level_offer_throughput": frozenset({"cosmosLong", "cosmosAADLong"}),
+    "tests/test_crud_response_payload_on_write_disabled_async.py::TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.test_database_level_offer_throughput_async": frozenset({"cosmosLong", "cosmosAADLong"}),
+}
+
 RETIRED_THROUGHPUT_SOURCES = {
     "tests/test_auto_scale.py::TestAutoScale.test_autoscale_create_container": (
         "tests/get_container_throughput/sync/test_auto_scale.py"

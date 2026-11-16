@@ -23,9 +23,9 @@ cursor; stateless paging does not, although continuation tokens and shared
 driver resources can still be used.
 
 Some migration helpers still use the legacy connection. LegacyItemHelper is
-selected explicitly, not after a failed Rust operation. Other migration-path
-decisions follow their operation's permitted pre-execution fallback rules.
-Execution, parsing, and callback failures do not authorize legacy replay.
+selected explicitly for migration comparisons. Unsupported Rust requests fail
+before execution. Preflight, execution, parsing, and callback failures never
+authorize legacy replay.
 
 Use docs/V5/VOCABULARY.md for terminology rather than maintaining another
 glossary in this package.

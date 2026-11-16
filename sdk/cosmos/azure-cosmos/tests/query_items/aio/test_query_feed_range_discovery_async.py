@@ -4,6 +4,8 @@
 
 Both parity columns preserve the original data and container configurations.
 Owned key-auth fixtures replace shared provisioning, not the test body.
+Each parameterized case owns its client in a function-scoped loop, so the
+asyncio marker intentionally omits the original shared fixture's class scope.
 """
 
 import os

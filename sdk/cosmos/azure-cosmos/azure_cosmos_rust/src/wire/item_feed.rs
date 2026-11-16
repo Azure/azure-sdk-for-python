@@ -42,6 +42,8 @@ use super::legacy_partition_key::legacy_partition_key_header;
 use super::{
     deadline::{parse_remaining_timeout, with_timeout},
     diagnostics::BINDING_OP_COUNT,
+    driver_runner::block_on_with_signals,
+    errors::{catch_operation_panic, operation_join_error},
     request::{
         build_operation_options, extract_common_prepared_inputs, parse_container_link,
         RequestHeadersAndOptions,
@@ -80,6 +82,7 @@ struct QueryRequest {
     full_text_score_scope: FullTextScoreScope,
     max_item_count: Option<MaxItemCountHint>,
     hybrid_search_max_items: Option<String>,
+    vector_search_max_items: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -98,27 +101,14 @@ struct QueryPlanRange {
     max: serde_json::Value,
 }
 
-const CROSS_PARTITION_DISABLED_MESSAGE: &str = "Cross partition query is required but disabled. \
-     Please set x-ms-documentdb-query-enablecrosspartition to true, specify \
-     x-ms-documentdb-partitionkey, or revise your query to avoid this exception.";
-
 fn cross_partition_disabled_error() -> PyErr {
     Python::with_gil(|py| {
         match py
             .import_bound("azure.cosmos.exceptions")
-            .and_then(|module| module.getattr("CosmosHttpResponseError"))
+            .and_then(|module| module.getattr("_cross_partition_disabled_error"))
+            .and_then(|factory| factory.call0())
         {
-            Ok(error_type) => {
-                let kwargs = PyDict::new_bound(py);
-                let built = kwargs
-                    .set_item("status_code", 400)
-                    .and_then(|_| kwargs.set_item("message", CROSS_PARTITION_DISABLED_MESSAGE))
-                    .and_then(|_| error_type.call((), Some(&kwargs)));
-                match built {
-                    Ok(error) => PyErr::from_value_bound(error),
-                    Err(error) => error,
-                }
-            }
+            Ok(error) => PyErr::from_value_bound(error),
             Err(error) => error,
         }
     })
@@ -127,6 +117,8 @@ fn cross_partition_disabled_error() -> PyErr {
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct QueryAggregateInfo {
+    #[serde(default, deserialize_with = "query_plan_bool")]
+    has_non_streaming_order_by: bool,
     #[serde(default, deserialize_with = "query_plan_bool")]
     has_select_value: bool,
     #[serde(default)]
@@ -150,6 +142,27 @@ fn query_plan_bool<'de, D: serde::Deserializer<'de>>(deserializer: D) -> Result<
 }
 
 impl QueryAdmissionPlan {
+    fn vector_buffer_limit(&self, maximum: Option<&str>) -> PyResult<Option<u64>> {
+        let Some(maximum) = maximum.filter(|_| {
+            self.query_info
+                .as_ref()
+                .is_some_and(|info| info.has_non_streaming_order_by)
+        }) else {
+            return Ok(None);
+        };
+        Python::with_gil(|py| {
+            py.get_type_bound::<PyInt>()
+                .call1((maximum,))?
+                .extract::<u64>()
+                .map(Some)
+                .map_err(|_| {
+                    PyValueError::new_err(
+                        "AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH must be a nonnegative u64",
+                    )
+                })
+        })
+    }
+
     fn is_value_average(&self) -> bool {
         self.query_info.as_ref().is_some_and(|info| {
             info.has_select_value
@@ -308,9 +321,51 @@ struct ChangeFeedRequest {
     #[serde(skip)]
     partition_key: Option<PartitionKey>,
     feed_range: Option<(String, String)>,
+    range_id: Option<String>,
 }
 
 impl ChangeFeedRequest {
+    async fn resolve_range_id(
+        &mut self,
+        driver: &CosmosDriver,
+        container: &ContainerReference,
+    ) -> PyResult<Result<(), CosmosError>> {
+        let Some(id) = &self.range_id else {
+            return Ok(Ok(()));
+        };
+        if id.is_empty()
+            || self.mode != "LatestVersion"
+            || self.partition_key.is_some()
+            || self.feed_range.is_some()
+        {
+            return Err(PyValueError::new_err(
+                "partition_key_range_id requires LatestVersion and cannot be combined with another scope.",
+            ));
+        }
+        for refresh in [false, true] {
+            let ranges = match driver
+                .resolve_all_partition_key_ranges(container, refresh)
+                .await
+            {
+                Ok(Some(ranges)) => ranges,
+                Ok(None) => {
+                    return Err(PyRuntimeError::new_err(
+                        "Could not resolve the change-feed partition map",
+                    ))
+                }
+                Err(error) => return Ok(Err(error)),
+            };
+            if let Some(range) = ranges.iter().find(|range| &range.id == id) {
+                self.feed_range =
+                    Some((range.min_inclusive.to_hex(), range.max_exclusive.to_hex()));
+                return Ok(Ok(()));
+            }
+        }
+        Err(PyValueError::new_err(
+            "partition_key_range_id does not identify a current physical partition; no fallback was performed.",
+        ))
+    }
+
     async fn scope_width(
         &self,
         driver: &CosmosDriver,
@@ -493,7 +548,7 @@ async fn next_plan_page(
     identity: (String, String),
     continuation: Option<String>,
     mut modifiers: RequestHeadersAndOptions,
-    request: FeedRequest,
+    mut request: FeedRequest,
     plan_options: PlanOptions,
 ) -> PyResult<PageResult> {
     let mut state = state
@@ -520,29 +575,41 @@ async fn next_plan_page(
     let options = build_operation_options(
         None,
         modifiers.excluded_regions_value,
-        modifiers.driver_timeout_policy,
+        modifiers.configured_driver_timeout_policy,
         modifiers.availability_strategy,
+        modifiers.throughput_control,
         modifiers.custom_headers,
     );
-    let mut progress = if let Some(progress) = progress {
-        if progress.identity != identity
-            || progress.continuation != continuation
-            || progress.request != request
+    let container = if let Some(progress) = &progress {
+        if progress.identity != identity || progress.continuation != continuation {
+            return Err(PyValueError::new_err(
+                "Feed cursor does not match the client, container, query, scope, or continuation",
+            ));
+        }
+        progress.container.clone()
+    } else {
+        let (database, name) = parse_container_link(&identity.1)?;
+        match driver
+            .resolve_container(&database, &name, Default::default())
+            .await
         {
+            Ok(container) => container,
+            Err(error) => return Ok((Err(error), None, false)),
+        }
+    };
+    if let FeedRequest::ChangeFeed(request) = &mut request {
+        if let Err(error) = request.resolve_range_id(&driver, &container).await? {
+            return Ok((Err(error), None, false));
+        }
+    }
+    let mut progress = if let Some(progress) = progress {
+        if progress.request != request {
             return Err(PyValueError::new_err(
                 "Feed cursor does not match the client, container, query, scope, or continuation",
             ));
         }
         progress
     } else {
-        let (database, name) = parse_container_link(&identity.1)?;
-        let container = match driver
-            .resolve_container(&database, &name, Default::default())
-            .await
-        {
-            Ok(container) => container,
-            Err(error) => return Ok((Err(error), None, false)),
-        };
         if let FeedRequest::ChangeFeed(request) = &request {
             let width = match request.scope_width(&driver, &container).await? {
                 Ok(width) => width,
@@ -587,6 +654,7 @@ async fn next_plan_page(
         if let FeedRequest::Query(query) = &request {
             if !operation.is_trivial()
                 && (query.hybrid_search_max_items.is_some()
+                    || query.vector_search_max_items.is_some()
                     || query.feed_range.is_some()
                     || query.needs_cross_partition_admission())
             {
@@ -602,6 +670,9 @@ async fn next_plan_page(
                     return Err(cross_partition_disabled_error());
                 }
                 range_average = query.feed_range.is_some() && admission.is_value_average();
+                maximum = admission
+                    .vector_buffer_limit(query.vector_search_max_items.as_deref())?
+                    .or(maximum);
                 if let (Some(window), Some(limit)) = (
                     admission.hybrid_search_query_info,
                     query.hybrid_search_max_items.as_deref(),
@@ -628,7 +699,14 @@ async fn next_plan_page(
             }
             _ => plan_options,
         };
-        let token = continuation.map(ContinuationToken::from_string);
+        let token = continuation
+            .map(|token| match &request {
+                FeedRequest::ChangeFeed(request) => super::legacy_change_feed::continuation(
+                    token, &operation, request.partition_key.as_ref(),
+                ),
+                _ => Ok(ContinuationToken::from_string(token)),
+            })
+            .transpose()?;
         let plan = match driver
             .plan_operation(operation, &options, token.as_ref(), &plan_options)
             .await
@@ -834,6 +912,9 @@ fn feed_inputs(prepared: &Bound<'_, PyAny>, scope: BindingPartitionKey) -> PyRes
             hybrid_search_max_items: query_settings
                 .getattr("hybrid_search_max_items")?
                 .extract()?,
+            vector_search_max_items: query_settings
+                .getattr("vector_search_max_items")?
+                .extract()?,
         }));
     }
     match op.as_str() {
@@ -906,7 +987,7 @@ fn inputs(
             "{op} does not support continuation tokens; continue the live iterator",
         )));
     }
-    if op != "query_items"
+    if !matches!(op.as_str(), "query_items" | "query_items_change_feed")
         && continuation
             .as_ref()
             .is_some_and(|token| !token.starts_with("c1.") && !token.starts_with("c2."))
@@ -948,8 +1029,8 @@ pub(crate) fn fetch_page_with_cursor<'py>(
             PlanOptions::default(),
         ),
     );
-    let result = py.allow_threads(|| runtime.tokio_rt.block_on(future))??;
-    finish_page(py, result, include_attempts)
+    let result = catch_operation_panic(|| block_on_with_signals(py, runtime.tokio_rt, future))???;
+    catch_operation_panic(|| finish_page(py, result, include_attempts))
 }
 
 #[pyfunction]
@@ -988,9 +1069,12 @@ pub(crate) fn fetch_page_with_cursor_async<'py>(
         let _abort = abort;
         let result = join
             .await
-            .map_err(|error| PyRuntimeError::new_err(error.to_string()))???;
+            .map_err(|error| {
+                operation_join_error(error, |error| PyRuntimeError::new_err(error.to_string()))
+            })???;
         Python::with_gil(|py| {
-            finish_page(py, result, include_attempts).map(|value| value.into_any().unbind())
+            catch_operation_panic(|| finish_page(py, result, include_attempts))
+                .map(|value| value.into_any().unbind())
         })
     })
 }
@@ -1022,6 +1106,31 @@ mod tests {
         collections::{BTreeSet, HashMap},
         time::Duration,
     };
+
+    #[test]
+    fn cross_partition_disabled_error_preserves_python_contract() {
+        crate::test_support::prepare_python();
+        let error = cross_partition_disabled_error();
+        Python::with_gil(|py| {
+            let error_type = py
+                .import_bound("azure.cosmos.exceptions")
+                .unwrap()
+                .getattr("CosmosHttpResponseError")
+                .unwrap();
+            let value = error.value_bound(py);
+            assert!(value.is_instance(&error_type).unwrap());
+            assert_eq!(
+                value.getattr("status_code").unwrap().extract::<u16>().unwrap(),
+                400
+            );
+            assert!(value
+                .getattr("http_error_message")
+                .unwrap()
+                .extract::<String>()
+                .unwrap()
+                .starts_with("Cross partition query is required but disabled."));
+        });
+    }
 
     #[test]
     fn explicit_feed_bounds_preserve_valid_hex_and_reject_invalid_values() {
@@ -1137,13 +1246,14 @@ mod tests {
             session_header: None,
             content_response_on_write: ContentResponseOnWrite::Enabled,
             excluded_regions_value: None,
-            driver_timeout_policy: Some(EndToEndOperationLatencyPolicy::new(Duration::from_secs(
-                1,
-            ))),
-            operation_timeout: None,
+            configured_driver_timeout_policy: Some(EndToEndOperationLatencyPolicy::new(
+                Duration::from_secs(1),
+            )),
+            remaining_binding_timeout: None,
             availability_strategy: None,
             read_consistency_strategy: None,
             patch_strategy: None,
+            throughput_control: None,
             custom_headers: HashMap::from([(
                 HeaderName::from_static("x-ms-max-item-count"),
                 HeaderValue::from_static("2"),
@@ -1390,7 +1500,7 @@ mod tests {
             let (driver, rule) = setup_fault(operation, Duration::from_secs(60)).await;
             let cursor = ItemFeedCursor::default();
             let mut options = modifiers();
-            options.driver_timeout_policy = None;
+            options.configured_driver_timeout_policy = None;
             let fetch = tokio::spawn(next_page(
                 driver.clone(),
                 cursor.state.clone(),
@@ -1486,9 +1596,201 @@ mod tests {
             start: start.into(),
             partition_key: None,
             feed_range: None,
+            range_id: None,
         }
     }
 
+    fn legacy_checkpoint(operation: &CosmosOperation, etag: &str) -> serde_json::Value {
+        let rid = operation.container().unwrap().rid();
+        let point = operation.target().unwrap().min_inclusive().to_hex();
+        let start = match operation.change_feed_start().unwrap() {
+            ChangeFeedStartFrom::Beginning => serde_json::json!({"Type": "Beginning"}),
+            ChangeFeedStartFrom::Now => serde_json::json!({"Type": "Now"}),
+            ChangeFeedStartFrom::PointInTime(time) => serde_json::json!({
+                "Type": "PointInTime", "PointInTimeMs": time.unix_timestamp_nanos() / 1_000_000,
+            }),
+            _ => panic!("unsupported test start"),
+        };
+        serde_json::json!({
+            "v": "v2", "containerRid": rid, "startFrom": start,
+            "mode": if operation.request_headers().full_fidelity_feed {
+                "AllVersionsAndDeletes"
+            } else { "LatestVersion" },
+            "continuation": {
+                "v": "v2", "rid": rid, "PK": "key-0",
+                "continuation": [{
+                    "token": etag,
+                    "range": {
+                        "min": point, "max": format!("{point}FF"),
+                        "isMinInclusive": true, "isMaxInclusive": false,
+                    },
+                }],
+            },
+        })
+    }
+
+    fn encode_legacy_checkpoint(value: &serde_json::Value) -> String {
+        azure_core::base64::encode(serde_json::to_vec(value).unwrap())
+    }
+
+    #[tokio::test]
+    async fn legacy_change_feed_import_preserves_position_and_native_checkpoint() {
+        let (_emulator, driver) = setup_with_partition_count(
+            3,
+            PartitionKeyDefinition::new(vec![Cow::Borrowed("/pk")]),
+            Vec::new(),
+            1,
+        )
+        .await;
+        let container = driver
+            .resolve_container("db", "c", Default::default())
+            .await
+            .unwrap();
+        let options = PlanOptions::default().with_query_plan_mode(QueryPlanMode::GatewayOnly);
+        for (index, (mode, start)) in [
+            ("LatestVersion", "Beginning"),
+            ("LatestVersion", "Now"),
+            ("LatestVersion", "2020-01-01T00:00:00.123+00:00"),
+            ("AllVersionsAndDeletes", "Now"),
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            let mut request = change_request(mode, start);
+            request.partition_key = Some(PartitionKey::from("key-0"));
+            let operation = request.operation(container.clone()).unwrap();
+            let first = next_plan_page(
+                driver.clone(),
+                Arc::new(Mutex::new(CursorState::default())),
+                ("test".into(), "dbs/db/colls/c".into()),
+                None,
+                modifiers(),
+                FeedRequest::ChangeFeed(request.clone()),
+                options.clone(),
+            )
+            .await
+            .unwrap();
+            let etag = first
+                .0
+                .as_ref()
+                .unwrap()
+                .as_ref()
+                .unwrap()
+                .headers()
+                .etag
+                .as_ref()
+                .unwrap()
+                .to_string();
+            let legacy = encode_legacy_checkpoint(&legacy_checkpoint(&operation, &etag));
+            let id = format!("new-{index}");
+            driver
+                .execute_operation(
+                    CosmosOperation::create_item(ItemReference::from_name(
+                        &container,
+                        PartitionKey::from("key-0"),
+                        id.clone(),
+                    ))
+                    .with_body(
+                        serde_json::to_vec(&serde_json::json!({"id": id, "pk": "key-0"})).unwrap(),
+                    ),
+                    Default::default(),
+                )
+                .await
+                .unwrap();
+            let mut results = Vec::new();
+            for token in [first.1.unwrap(), legacy] {
+                let result = next_plan_page(
+                    driver.clone(),
+                    Arc::new(Mutex::new(CursorState::default())),
+                    ("test".into(), "dbs/db/colls/c".into()),
+                    Some(token),
+                    modifiers(),
+                    FeedRequest::ChangeFeed(request.clone()),
+                    options.clone(),
+                )
+                .await
+                .unwrap();
+                let response = result.0.unwrap().unwrap();
+                let ResponseBody::Bytes(body) = response.body() else {
+                    panic!("expected change-feed body")
+                };
+                let documents =
+                    serde_json::from_slice::<serde_json::Value>(body).unwrap()["Documents"].clone();
+                assert!(!documents.as_array().unwrap().is_empty());
+                assert!(result.1.as_ref().unwrap().starts_with("c2."));
+                results.push((documents, result.1));
+            }
+            assert_eq!(results[0], results[1], "{mode} {start}");
+        }
+    }
+
+    #[tokio::test]
+    async fn legacy_change_feed_import_rejects_mismatched_identity_scope_and_state() {
+        crate::test_support::prepare_python();
+        let (_emulator, driver) = setup(0).await;
+        let container = driver
+            .resolve_container("db", "c", Default::default())
+            .await
+            .unwrap();
+        let mut request = change_request("LatestVersion", "Beginning");
+        request.partition_key = Some(PartitionKey::from("key-0"));
+        let operation = request.operation(container.clone()).unwrap();
+        let checkpoint = legacy_checkpoint(&operation, "\"42\"");
+        let imported = super::super::legacy_change_feed::continuation(
+            encode_legacy_checkpoint(&checkpoint),
+            &operation,
+            request.partition_key.as_ref(),
+        )
+        .unwrap();
+        assert_eq!(imported.as_str(), "\"42\"");
+        for (pointer, value) in [
+            ("/containerRid", serde_json::json!("different")),
+            ("/continuation/rid", serde_json::json!("different")),
+            ("/continuation/PK", serde_json::json!("other-key")),
+            ("/mode", serde_json::json!("AllVersionsAndDeletes")),
+            ("/startFrom/Type", serde_json::json!("Now")),
+            ("/continuation/continuation", serde_json::json!([])),
+            ("/continuation/continuation", serde_json::json!({})),
+            (
+                "/continuation/continuation/0/token",
+                serde_json::json!("c2.not-a-server-etag"),
+            ),
+            (
+                "/continuation/continuation/0/range/min",
+                serde_json::json!("FF"),
+            ),
+        ] {
+            let mut invalid = checkpoint.clone();
+            *invalid.pointer_mut(pointer).unwrap() = value;
+            let error = super::super::legacy_change_feed::continuation(
+                encode_legacy_checkpoint(&invalid),
+                &operation,
+                request.partition_key.as_ref(),
+            )
+            .unwrap_err();
+            Python::with_gil(|py| {
+                assert!(error.is_instance_of::<PyValueError>(py), "{pointer}");
+            });
+        }
+        request.partition_key = None;
+        let broad = request.operation(container).unwrap();
+        assert!(
+            super::super::legacy_change_feed::continuation("\"42\"".into(), &broad, None,)
+                .unwrap_err()
+                .to_string()
+                .contains("public driver API")
+        );
+        assert_eq!(
+            super::super::legacy_change_feed::continuation(
+                "\"42\"".into(),
+                &operation,
+                Some(&PartitionKey::from("key-0")),
+            )
+            .unwrap()
+            .as_str(),
+            "\"42\""
+        );
+    }
     fn query_request(sql: &str) -> FeedRequest {
         FeedRequest::Query(QueryRequest {
             body: serde_json::to_vec(&serde_json::json!({"query": sql})).unwrap(),
@@ -1500,6 +1802,7 @@ mod tests {
             full_text_score_scope: FullTextScoreScope::Global,
             max_item_count: None,
             hybrid_search_max_items: None,
+            vector_search_max_items: None,
         })
     }
 
@@ -1741,6 +2044,63 @@ mod tests {
                     result.unwrap_err().status(),
                     status_codes::CLIENT_UNSUPPORTED_QUERY_FEATURE
                 );
+            }
+        }
+    }
+
+    #[test]
+    fn vector_buffer_limit_is_parsed_only_for_non_streaming_plans() {
+        crate::test_support::prepare_python();
+        for body in [
+            br#"{}"#.as_slice(),
+            br#"{"queryInfo":{"top":2}}"#,
+            br#"{"queryInfo":{"hasNonStreamingOrderBy":false}}"#,
+            br#"{"queryInfo":{"hasNonStreamingOrderBy":0}}"#,
+            br#"{"hybridSearchQueryInfo":{"skip":0,"take":2}}"#,
+        ] {
+            let plan = decode_query_admission_plan(body).unwrap();
+            for value in ["invalid", "-1", "18446744073709551616", "0", "1"] {
+                assert_eq!(plan.vector_buffer_limit(Some(value)).unwrap(), None);
+            }
+        }
+        for body in [
+            br#"{"queryInfo":{"hasNonStreamingOrderBy":true}}"#.as_slice(),
+            br#"{"queryInfo":{"hasNonStreamingOrderBy":1}}"#,
+        ] {
+            let plan = decode_query_admission_plan(body).unwrap();
+            assert_eq!(plan.vector_buffer_limit(None).unwrap(), None);
+            for (value, expected) in [
+                ("0", 0),
+                ("  +5 ", 5),
+                ("50_000", 50_000),
+                ("18446744073709551615", u64::MAX),
+            ] {
+                assert_eq!(
+                    plan.vector_buffer_limit(Some(value)).unwrap(),
+                    Some(expected)
+                );
+            }
+            for value in ["", "invalid", "1.5", "-1", "18446744073709551616"] {
+                let error = plan.vector_buffer_limit(Some(value)).unwrap_err();
+                Python::with_gil(|py| assert!(error.is_instance_of::<PyValueError>(py)));
+            }
+        }
+    }
+
+    #[tokio::test]
+    async fn vector_buffer_limit_does_not_restrict_other_query_plans() {
+        let (_emulator, driver) = setup(12).await;
+        for (sql, expected) in [
+            ("SELECT * FROM c", 12),
+            ("SELECT TOP 2 c.pk FROM c ORDER BY c.pk", 2),
+            ("SELECT DISTINCT TOP 2 c.pk FROM c", 2),
+        ] {
+            for value in ["invalid", "-1", "18446744073709551616", "0", "1"] {
+                let mut request = query_request(sql);
+                if let FeedRequest::Query(ref mut query) = request {
+                    query.vector_search_max_items = Some(value.into());
+                }
+                assert_eq!(query_drain(&driver, &request, None).await.len(), expected);
             }
         }
     }
@@ -2214,6 +2574,7 @@ mod tests {
             full_text_score_scope: FullTextScoreScope::Global,
             max_item_count: None,
             hybrid_search_max_items: None,
+            vector_search_max_items: None,
         });
         let mut options = modifiers();
         options.custom_headers.insert(
@@ -2317,6 +2678,7 @@ mod tests {
             full_text_score_scope: FullTextScoreScope::Global,
             max_item_count: Some(MaxItemCountHint::Limit(NonZeroU32::new(5).unwrap())),
             hybrid_search_max_items: None,
+            vector_search_max_items: None,
         };
         let rows = query_drain(&driver, &FeedRequest::Query(request.clone()), None).await;
         assert_eq!(
@@ -2423,6 +2785,7 @@ mod tests {
             full_text_score_scope: FullTextScoreScope::Global,
             max_item_count: None,
             hybrid_search_max_items: None,
+            vector_search_max_items: None,
         };
         let rows = query_drain(&driver, &FeedRequest::Query(request.clone()), None).await;
         assert_eq!(rows.len(), 9);
@@ -2443,6 +2806,88 @@ mod tests {
             .await
             .unwrap();
         assert!(request.operation(container).is_err());
+    }
+
+    #[tokio::test]
+    async fn change_feed_range_id_scopes_pages_and_native_resume() {
+        let (_emulator, driver) = setup(15).await;
+        let container = driver
+            .resolve_container("db", "c", Default::default())
+            .await
+            .unwrap();
+        let ranges = driver
+            .resolve_all_partition_key_ranges(&container, false)
+            .await
+            .unwrap()
+            .unwrap();
+        assert_eq!(ranges.len(), 3);
+        for range in ranges {
+            let bounds = FeedRange::new(range.min_inclusive, range.max_exclusive).unwrap();
+            let expected: BTreeSet<_> = (0..15)
+                .filter(|i| {
+                    FeedRange::for_partition(
+                        PartitionKey::from(format!("key-{i}")),
+                        container.partition_key_definition(),
+                    )
+                    .is_subset_of(&bounds)
+                })
+                .map(|i| i.to_string())
+                .collect();
+            let mut request = change_request("LatestVersion", "Beginning");
+            request.range_id = Some(range.id);
+            let request = FeedRequest::ChangeFeed(request);
+            let state = Arc::new(Mutex::new(CursorState::default()));
+            let (rows, mut token) = query_page(&driver, &state, &request, None).await;
+            let mut rows = rows.unwrap();
+            assert!(token.is_some());
+            // Resume on a new cursor, then retain it for the remaining pages.
+            let resumed = Arc::new(Mutex::new(CursorState::default()));
+            let mut caught_up = false;
+            for _ in 0..20 {
+                let (page, next) = query_page(&driver, &resumed, &request, token).await;
+                token = next;
+                assert!(token.is_some());
+                let page = page.unwrap();
+                if page.is_empty() {
+                    caught_up = true;
+                    break;
+                }
+                rows.extend(page);
+            }
+            assert!(caught_up);
+            let ids: BTreeSet<_> = rows
+                .iter()
+                .map(|row| row["current"]["id"].as_str().unwrap().to_owned())
+                .collect();
+            assert_eq!(rows.len(), ids.len());
+            assert_eq!(ids, expected);
+        }
+    }
+
+    #[tokio::test]
+    async fn change_feed_range_id_rejects_unknown_and_conflicting_scopes() {
+        let (_emulator, driver) = setup(0).await;
+        let container = driver
+            .resolve_container("db", "c", Default::default())
+            .await
+            .unwrap();
+        for case in ["missing", "empty", "key", "range", "mode"] {
+            let mut request = change_request("LatestVersion", "Now");
+            request.range_id = Some("0".into());
+            match case {
+                "missing" => request.range_id = Some("missing".into()),
+                "empty" => request.range_id = Some(String::new()),
+                "key" => request.partition_key = Some(PartitionKey::from("key-0")),
+                "range" => request.feed_range = Some(("".into(), "FF".into())),
+                "mode" => request.mode = "AllVersionsAndDeletes".into(),
+                _ => unreachable!(),
+            }
+            let error = request
+                .resolve_range_id(&driver, &container)
+                .await
+                .unwrap_err();
+            Python::with_gil(|py| assert!(error.is_instance_of::<PyValueError>(py)));
+        }
     }
 
     #[tokio::test]
@@ -2572,7 +3017,17 @@ mod tests {
             .unwrap();
         let parent = &ranges[0];
         let mut request = change_request("LatestVersion", "Beginning");
-        request.feed_range = Some((parent.min_inclusive.to_hex(), parent.max_exclusive.to_hex()));
+        request.range_id = Some(parent.id.clone());
+        let mut unresolved = request.clone();
+        request
+            .resolve_range_id(&driver, &container)
+            .await
+            .unwrap()
+            .unwrap();
+        assert_eq!(
+            request.feed_range,
+            Some((parent.min_inclusive.to_hex(), parent.max_exclusive.to_hex()))
+        );
         assert_eq!(
             request
                 .scope_width(&driver, &container)
@@ -2589,6 +3044,11 @@ mod tests {
             .resolve_all_partition_key_ranges(&container, true)
             .await
             .unwrap();
+        let error = unresolved
+            .resolve_range_id(&driver, &container)
+            .await
+            .unwrap_err();
+        assert!(error.to_string().contains("current physical partition"));
         let width = request
             .scope_width(&driver, &container)
             .await
@@ -2597,6 +3057,7 @@ mod tests {
         assert_eq!(width, Some(2));
         assert!(ChangeFeedRequest::validate_width(width).is_err());
         request.feed_range = None;
+        request.range_id = None;
         request.partition_key = Some(legacy_partition_key_header(r#"["key-5"]"#).unwrap());
         assert_eq!(
             request

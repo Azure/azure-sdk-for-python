@@ -99,7 +99,7 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as inst:
             assert inst.status_code == status_code
 
-    @pytest.mark.cosmosEmulator
+    @pytest.mark.cosmosLong
     async def test_database_level_offer_throughput_async_rust(self):
         """Read provisioned throughput and check the replacement result.
 

@@ -1,22 +1,10 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Unit coverage for deciding, before anything is sent, whether a call runs on the Rust
-path or the old Python one -- and for never changing that decision afterwards.
+"""Every Rust operation rejects unsupported requests without legacy fallback.
 
-Some calls use an option the Rust path cannot honor. Each operation says in advance what
-should happen then. A few may quietly run on the old path instead, because the result is
-the same either way. Most must fail with a message naming the option, because running the
-old path would silently behave differently.
-
-The decision is made once, up front, and is final. Nothing that happens later can reopen
-it -- not a failure while building, not one while sending, not one while reading the
-reply. That is the rule most of this file exists to enforce, and the reason is that
-retrying on the other path could repeat work the service has already done. A write that
-appears to fail and is retried elsewhere can happen twice.
-
-There is one exception, and it is deliberately narrow: a refusal that depends on nothing
-but which operation this is can still fall back, because it is the same answer the
-up-front decision would have given had it known.
+Preflight, execution, response processing, and callback failures must retain
+their original errors. A separately selected legacy backend remains available
+for comparisons, but a Rust call cannot switch to it at any stage.
 """
 
 import asyncio
@@ -142,29 +130,16 @@ def test_dispatch_inventory_has_explicit_policy_rust():
 
 
 @pytest.mark.parametrize("op", sorted(CAPABILITIES))
-def test_request_support_does_not_override_operation_policy_rust(dispatch, op):
-    """Every entry in the table behaves as its policy says, with no exceptions.
-
-    Each operation is offered a request it cannot honor. The ones allowed to fall back
-    run on the old path and are counted; the rest raise, and are not counted. The count
-    exists so the number of calls quietly taking the old path is visible rather than
-    guessed at.
-
-    In both cases nothing is built and nothing is sent. The decision happens before any
-    of that work, which is what makes it free to change course.
-    """
+@pytest.mark.parametrize("paged", [False, True])
+def test_unsupported_requests_never_fall_back_for_any_operation_rust(dispatch, op, paged):
+    """Reject every unsupported operation before request building or dispatch."""
     policy = CAPABILITIES[op]
     wire_op = sorted(policy.operations)[0]
     before = rust_compatibility_fallback_count()
-    if policy.fallback_allowed:
-        assert dispatch.run(wire_op, supported=False, capability=op) == "legacy"
-        dispatch.legacy.assert_called_once()
-        assert rust_compatibility_fallback_count() == before + 1
-    else:
-        with pytest.raises(NotImplementedError):
-            dispatch.run(wire_op, supported=False, capability=op)
-        dispatch.legacy.assert_not_called()
-        assert rust_compatibility_fallback_count() == before
+    with pytest.raises(NotImplementedError):
+        dispatch.run(wire_op, supported=False, capability=op, paged=paged)
+    dispatch.legacy.assert_not_called()
+    assert rust_compatibility_fallback_count() == before
     dispatch.build.assert_not_called()
     assert dispatch.executed == 0
 
@@ -221,10 +196,8 @@ def test_failures_never_replay_and_keep_the_original_error_rust(
     it, reading the reply -- for both single calls and paged ones, with five kinds of
     failure including the two that specifically mean "the Rust path cannot do this".
 
-    Those two are the trap. They are the same failures that would permit a fallback if
-    raised before the decision, so they are the most likely to be wrongly treated as one
-    once the call is already under way. Here they must not be: by then the request may
-    already have reached the service.
+    Capability-shaped errors must not switch execution paths either. The request
+    may already have reached the service backend.
 
     The caller must also get back the very object that was raised, not a copy or a
     wrapper, so existing error handling still recognizes it. Cancellation is included
@@ -250,30 +223,16 @@ def test_failures_never_replay_and_keep_the_original_error_rust(
 
 
 @pytest.mark.parametrize(
-    "op,allowed", [("query_items", True), ("list_databases", False)]
+    "op", sorted(STATELESS_PAGE_BINDING_FUNCTION_NAMES.keys() | RETAINED_PAGE_BINDING_FUNCTION_NAMES.keys())
 )
-def test_only_static_preflight_can_fall_back_rust(dispatch, op, allowed):
-    """The one permitted late fallback: a refusal that depends only on which operation this is.
-
-    Before a paged call starts, the backend checks whether it can serve this kind of page
-    at all. That answer depends on nothing but the operation, so acting on it is safe: it
-    is the same answer the up-front decision would have reached, and nothing has been
-    sent yet.
-
-    Even so, the operation's own policy still decides. The first operation is allowed to
-    fall back and does. The second is not, and raises instead, keeping the original
-    error. In both cases nothing was sent and no reply was read.
-    """
+def test_page_preflight_never_falls_back_rust(dispatch, op):
+    """A missing page capability propagates unchanged without any execution."""
     error = PagePreflightError("missing export")
     dispatch.preflight_error = error
-    if allowed:
-        assert dispatch.run(op, paged=True) == "legacy"
-        dispatch.legacy.assert_called_once()
-    else:
-        with pytest.raises(PagePreflightError) as failure:
-            dispatch.run(op, paged=True)
-        assert failure.value is error
-        dispatch.legacy.assert_not_called()
+    with pytest.raises(PagePreflightError) as failure:
+        dispatch.run(op, paged=True)
+    assert failure.value is error
+    dispatch.legacy.assert_not_called()
     assert dispatch.executed == 0
     dispatch.process.assert_not_called()
 
@@ -297,16 +256,7 @@ def test_mismatched_prepared_operation_is_a_protocol_error_rust(dispatch):
 
 
 def test_preflight_failure_cannot_switch_a_resumed_page_rust(dispatch):
-    """Once paging has started, even the permitted fallback is no longer available.
-
-    Everything here matches the fallback case above except one detail: the request
-    carries a bookmark, so this is the continuation of a sequence already in progress.
-    That makes falling back impossible rather than merely unwise -- a bookmark issued by
-    one path means nothing to the other, so the old path would either reject it or start
-    again from the beginning and hand the caller items they have already seen.
-
-    So the refusal is raised, and the sequence ends where it stopped.
-    """
+    """A resumed page also fails without sending its Rust bookmark to legacy."""
     dispatch.preflight_error = PagePreflightError("missing export")
     dispatch.build.side_effect = lambda: PreparedPageRequest(
         op="query_items", container_link="c", continuation="existing-bookmark"
@@ -335,24 +285,33 @@ def test_planning_failures_are_not_static_preflight_refusals_rust(dispatch):
 
 
 def test_throughput_workflow_policy_applies_to_both_legs_rust(monkeypatch):
-    """Changing throughput is one workflow, so both its steps follow the workflow's policy.
-
-    Changing throughput reads the current setting and then replaces it. The test replaces
-    the read operation's own policy with one that permits falling back, and both steps
-    still reject fallback, because the workflow's policy is what applies.
-
-    Otherwise the two steps could take different paths: the read on one, the replace on
-    the other, with the value read in one place being written back in another.
-    """
+    """Both replacement steps use the workflow's rejection message."""
     from azure.cosmos._backend.capabilities import OpCapability, REPLACE_THROUGHPUT
 
     monkeypatch.setitem(
-        CAPABILITIES, "get_throughput", OpCapability(frozenset({"get_throughput"}), fallback_allowed=True)
+        CAPABILITIES, "get_throughput",
+        OpCapability(frozenset({"get_throughput"}), unsupported_message="single-step policy"),
     )
     for op in ("get_throughput", "replace_throughput"):
-        with pytest.raises(NotImplementedError, match="legacy Python"):
-            OperationRouting(op, False, capability=REPLACE_THROUGHPUT).uses_legacy()
-        assert not OperationRouting(op, True, capability=REPLACE_THROUGHPUT).uses_legacy()
+        with pytest.raises(NotImplementedError, match="throughput replacement"):
+            OperationRouting(op, False, capability=REPLACE_THROUGHPUT).require_rust_support()
+        OperationRouting(op, True, capability=REPLACE_THROUGHPUT).require_rust_support()
+
+
+@pytest.mark.parametrize("paged", [False, True])
+def test_explicit_legacy_comparison_is_not_rust_fallback_rust(dispatch, paged):
+    from azure.cosmos._backend.legacy import LEGACY_BACKEND
+    from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
+
+    dispatch.backend = (
+        ASYNC_LEGACY_BACKEND if isinstance(dispatch.backend, AsyncCosmosBackend) else LEGACY_BACKEND
+    )
+    before = rust_compatibility_fallback_count()
+    assert dispatch.run(supported=False, paged=paged) == "legacy"
+    dispatch.legacy.assert_called_once()
+    dispatch.build.assert_not_called()
+    dispatch.process.assert_not_called()
+    assert rust_compatibility_fallback_count() == before
 
 
 def test_query_scope_is_typed_and_preserves_the_original_payload_rust():

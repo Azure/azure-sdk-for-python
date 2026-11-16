@@ -60,6 +60,9 @@ async def test_page_hooks_are_lazy_once_per_fetch_and_isolated_rust(query_client
     snapshots = []
 
     def hook(headers):
+        assert headers.get("X-MS-ACTIVITY-ID") == headers["x-ms-activity-id"]
+        assert headers["X-Ms-Request-Charge"] == headers["x-ms-request-charge"]
+        assert "X-MS-ACTIVITY-ID" in headers
         snapshots.append(dict(headers))
         headers["x-hook-only"] = "local"
 

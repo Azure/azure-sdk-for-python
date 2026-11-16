@@ -29,6 +29,26 @@ def distinct_query_diagnostics(query):
 
 class DistinctConfig:
     @classmethod
+    async def _validate_distinct_on_different_types_and_field_orders(cls, collection, query, expected_results):
+        # Source helper: tests/test_config.py::TestConfig._validate_distinct_on_different_types_and_field_orders
+        query_iterable = collection.query_items(query)
+        results = [item async for item in query_iterable]
+        for i in range(len(expected_results)):
+            assert results[i] in expected_results
+
+    @classmethod
+    async def _validate_distinct_offset_limit(cls, created_collection, query, results):
+        # Source helper: tests/test_config.py::TestConfig._validate_distinct_offset_limit
+        query_iterable = created_collection.query_items(query=query)
+        assert list(map(lambda doc: doc['value'], [item async for item in query_iterable])) == results
+
+    @classmethod
+    async def _validate_offset_limit(cls, created_collection, query, results):
+        # Source helper: tests/test_config.py::TestConfig._validate_offset_limit
+        query_iterable = created_collection.query_items(query=query)
+        assert list(map(lambda doc: doc['pk'], [item async for item in query_iterable])) == results
+
+    @classmethod
     def _get_query_result_string(cls, query_result, fields):
         if type(query_result) is not dict:
             return str(query_result)

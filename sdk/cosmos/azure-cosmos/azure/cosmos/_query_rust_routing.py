@@ -111,13 +111,13 @@ def can_use_rust_backend_for_query_page(
 
     This is not the public retained-query path. The checks below describe what
     this compatibility path forwards, not everything the Rust driver supports.
-    In particular, they keep read_items' internal queries on the legacy path
-    and reject options this path does not handle.
+    In particular, read_items' legacy internal query shapes and options this
+    path does not handle are not eligible for Rust dispatch here.
 
     Query text is not searched for SQL clauses. Passing these input checks
     does not prove that the Rust driver can execute the query. The caller's
-    run_page_operation decides any permitted fallback before execution;
-    an execution error is not permission to repeat the query through legacy.
+    run_page_operation rejects ineligible Rust requests before execution.
+    Preflight and execution errors never switch a Rust query to legacy Python.
     """
     if query_payload is None or is_query_plan:
         return False

@@ -15,13 +15,13 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from common.typed_requests import legacy_partition_key_from_request
+from common.change_feed_samples import load_change_feed_sample
 
 from azure.cosmos import _retry_utility
 from azure.cosmos.aio import _retry_utility_async
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos._helpers._change_feed import ChangeFeedPageState
-from azure.cosmos._helpers import _feed_paging
 from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 from azure.cosmos.partition_key import NonePartitionKeyValue
@@ -31,8 +31,7 @@ from azure.cosmos._routing.routing_range import Range
 
 
 @pytest.fixture
-def feed(base_feed, monkeypatch):
-    monkeypatch.setattr(_feed_paging, "time", base_feed.clock)
+def feed(base_feed):
     base_feed.pages = [
         (
             [
@@ -72,8 +71,9 @@ def feed(base_feed, monkeypatch):
 
 
 @pytest.mark.parametrize("mode", ["LatestVersion", "AllVersionsAndDeletes"])
-@pytest.mark.parametrize("epk", ["11622DAA78F835834610ABE56EFF5CB5", "00FF", "01" * 48])
-def test_change_feed_accepts_sdk_point_range_and_preserves_resume_scope_rust(feed, mode, epk):
+@pytest.mark.parametrize("epk", ["11622DAA78F835834610ABE56EFF5CB5", "00FF", "01" * 48, "00" * 16])
+@pytest.mark.parametrize("resume_with_range", [False, True])
+def test_change_feed_accepts_sdk_point_range_and_preserves_resume_scope_rust(feed, mode, epk, resume_with_range):
     expected_range = FeedRangeInternalEpk(Range(epk, epk, True, True)).get_normalized_range()
     payload = {"Range": {"min": epk, "max": epk, "isMinInclusive": True, "isMaxInclusive": True}}
     result = (200, 0, {}, json.dumps(payload).encode(), None)
@@ -87,7 +87,9 @@ def test_change_feed_accepts_sdk_point_range_and_preserves_resume_scope_rust(fee
     pages = feed.proxy.query_items_change_feed(feed_range=point, mode=mode).by_page()
     feed.next_page(pages)
     token = pages.continuation_token
-    resumed = feed.proxy.query_items_change_feed(continuation=token, feed_range=point).by_page()
+    resumed = feed.proxy.query_items_change_feed(
+        continuation=token, **({"feed_range": point} if resume_with_range else {})
+    ).by_page()
     feed.next_page(resumed)
     assert len(feed.calls) == 2
     for prepared, _, _ in feed.calls:
@@ -174,7 +176,12 @@ def test_existing_change_feed_bookmark_restores_a_typed_key(feed):
 
 @pytest.mark.parametrize("mode", ["LatestVersion", "AllVersionsAndDeletes"])
 def test_both_modes_and_authoritative_resume(feed, mode):
-    pages = feed.proxy.query_items_change_feed(mode=mode, partition_key=False).by_page()
+    pager = feed.proxy.query_items_change_feed(mode=mode, partition_key=False)
+    feed.backend._ensure_driver_handle.assert_not_called()
+    feed.binding._ItemFeedCursor.assert_not_called()
+    assert not feed.calls
+    assert not feed.connection.mock_calls
+    pages = pager.by_page()
     rows = feed.next_page(pages)
     assert rows == (
         [{"id": "a", "nested": [1]}] if mode == "LatestVersion" else feed.pages[0][0]
@@ -252,22 +259,73 @@ def test_start_and_feed_range_roundtrip(feed, start):
         ({"timeout": False}, ValueError),
         ({"start_time": 42}, ValueError),
         ({"mode": ""}, ValueError),
+        ({"is_start_from_beginning": "yes"}, TypeError),
+        ({"is_start_from_beginning": True, "start_time": "Now"}, ValueError),
         ({"mode": "AllVersionsAndDeletes", "start_time": "Beginning"}, ValueError),
         ({"partition_key": {}, "feed_range": {}}, ValueError),
         ({"partition_key": []}, ValueError),
         ({"partition_key": float("nan")}, ValueError),
         ({"feed_range": {"Range": {"min": "FF", "max": ""}}}, ValueError),
-        ({"availability_strategy": False}, NotImplementedError),
+        ({"availability_strategy": False}, TypeError),
+        ({"availability_strategy": None}, TypeError),
+        ({"request_options": {"availabilityStrategy": None}}, TypeError),
+        ({"feed_options": {"availabilityStrategy": None}}, TypeError),
         ({"initial_headers": {"if-none-match": "42"}}, NotImplementedError),
         ({"continuation": "c1.query"}, ValueError),
-        ({"continuation": "42"}, ValueError),
+        ({"continuation": "42"}, NotImplementedError),
         ({"continuation": "cf1.invalid"}, ValueError),
     ],
 )
 def test_invalid_inputs_never_dispatch(feed, kwargs, error):
     with pytest.raises(error):
-        feed.proxy.query_items_change_feed(**kwargs).by_page()
+        feed.proxy.query_items_change_feed(**kwargs)
+    feed.backend._ensure_driver_handle.assert_not_called()
+    feed.binding._ItemFeedCursor.assert_not_called()
     assert feed.calls == []
+    assert not feed.connection.mock_calls
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [None, 0, 1000, -1, True])
+def test_cache_staleness_is_rejected_at_pager_construction_rust(feed, source, value):
+    kwargs = (
+        {"max_integrated_cache_staleness_in_ms": value}
+        if source == "keyword"
+        else {source: {"maxIntegratedCacheStaleness": value}}
+    )
+    original = deepcopy(kwargs)
+    with pytest.raises(TypeError, match="does not accept max_integrated_cache_staleness_in_ms"):
+        feed.proxy.query_items_change_feed(**kwargs)
+    assert kwargs == original
+    feed.backend._ensure_driver_handle.assert_not_called()
+    feed.binding._ItemFeedCursor.assert_not_called()
+    assert feed.calls == []
+    assert not feed.connection.mock_calls
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [None, 2])
+def test_per_call_connection_timeout_is_rejected_before_io_rust(feed, source, value):
+    kwargs = (
+        {"connection_timeout": value}
+        if source == "keyword"
+        else {source: {"connection_timeout": value}}
+    )
+    original = deepcopy(kwargs)
+    with pytest.raises(TypeError, match=r"per-call connection_timeout.*ConnectionPoolOptions\.connection_timeout"):
+        feed.proxy.query_items_change_feed(**kwargs)
+    assert kwargs == original
+    feed.backend._ensure_driver_handle.assert_not_called()
+    feed.binding._ItemFeedCursor.assert_not_called()
+    assert feed.calls == []
+    assert not feed.connection.mock_calls
+
+
+@pytest.mark.parametrize("value", [None, 2])
+def test_legacy_per_call_connection_timeout_is_preserved(legacy, value):
+    pages = legacy.proxy.query_items_change_feed(connection_timeout=value).by_page()
+    assert legacy.next_page(pages) == [{"id": "a"}]
+    assert legacy.connection.QueryFeed.call_args.kwargs["connection_timeout"] == value
 
 
 def test_keyword_only_and_deprecated_keywords(feed):
@@ -279,8 +337,30 @@ def test_keyword_only_and_deprecated_keywords(feed):
         ).by_page()
     feed.next_page(pages)
     assert json.loads(feed.calls[-1][0].body_bytes)["start"] == "Beginning"
-    with pytest.warns(DeprecationWarning), pytest.raises(NotImplementedError):
-        feed.proxy.query_items_change_feed(partition_key_range_id="0").by_page()
+    with pytest.warns(DeprecationWarning):
+        pages = feed.proxy.query_items_change_feed(partition_key_range_id="0").by_page()
+    feed.next_page(pages)
+    assert json.loads(feed.calls[-1][0].body_bytes)["range_id"] == "0"
+    resumed = feed.proxy.query_items_change_feed(
+        continuation=pages.continuation_token, partition_key="ignored"
+    ).by_page()
+    feed.next_page(resumed)
+    assert json.loads(feed.calls[-1][0].body_bytes)["range_id"] == "0"
+    assert feed.calls[-1][0].partition_key.kind == "cross_partition"
+
+
+@pytest.mark.parametrize("kwargs", [
+    {"partition_key_range_id": ""},
+    {"partition_key_range_id": 0},
+    {"partition_key_range_id": "0", "partition_key": "customer"},
+    {"partition_key_range_id": "0", "feed_range": {"Range": {"min": "", "max": "FF"}}},
+    {"partition_key_range_id": "0", "mode": "AllVersionsAndDeletes"},
+])
+def test_invalid_partition_range_id_never_dispatches(feed, kwargs):
+    with pytest.warns(DeprecationWarning), pytest.raises(ValueError):
+        feed.proxy.query_items_change_feed(**kwargs)
+    assert not feed.calls
+    feed.backend._ensure_driver_handle.assert_not_called()
 
 
 def test_hook_and_options_are_isolated_and_false_hook_is_called(feed):
@@ -343,7 +423,7 @@ def test_deadline_is_page_local_and_failure_safe(feed):
 @pytest.fixture(params=[False, True], ids=["legacy-sync", "legacy-async"])
 def legacy(request, monkeypatch):
     async_mode = request.param
-    context = SimpleNamespace(calls=[], pages=[[{"id": "a"}], [], [{"id": "b"}], []])
+    context = SimpleNamespace(calls=[], pages=[[{"id": "a"}], [], [{"id": "b"}], []], etag_name="etag")
     connection = MagicMock()
     backend = SimpleNamespace(name="core-python")
     connection._backend = backend
@@ -365,12 +445,12 @@ def legacy(request, monkeypatch):
         context.calls.append(dict(options))
         rows = context.pages[len(context.calls) - 1]
         headers = {
-            "etag": '"' + str(len(context.calls)) + '"',
+            context.etag_name: '"' + str(len(context.calls)) + '"',
             "x-ms-request-charge": "1",
         }
         response_hook(headers, {"Documents": rows})
         connection.last_response_headers = {"etag": "unrelated"}
-        return rows if async_mode else (rows, headers)
+        return rows, headers
 
     connection.QueryFeed = (
         AsyncMock(side_effect=fetch) if async_mode else MagicMock(side_effect=fetch)
@@ -394,6 +474,38 @@ def legacy(request, monkeypatch):
     context.proxy, context.next_page, context.metadata = proxy, next_page, metadata
     context.connection, context.async_mode = connection, async_mode
     return context
+
+
+@pytest.mark.parametrize("kwargs,error", [
+    ({"mode": "invalid"}, ValueError),
+    ({"start_time": 42}, ValueError),
+    ({"is_start_from_beginning": "yes"}, TypeError),
+    ({"is_start_from_beginning": True, "start_time": "Now"}, ValueError),
+    ({"partition_key": "customer", "feed_range": {"Range": {"min": "", "max": "FF"}}}, ValueError),
+    ({"mode": "AllVersionsAndDeletes", "start_time": "Beginning"}, ValueError),
+    ({"continuation": "cf1.invalid"}, ValueError),
+])
+def test_legacy_invalid_inputs_fail_at_call_without_io(legacy, kwargs, error):
+    with pytest.raises(error):
+        legacy.proxy.query_items_change_feed(**kwargs)
+    legacy.metadata.assert_not_called()
+    assert not legacy.connection.mock_calls
+    assert not legacy.calls
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+def test_continuation_settings_are_validated_at_call_rust(feed, source):
+    token = "cf1." + base64.urlsafe_b64encode(json.dumps({
+        "backend": "rust",
+        "container": feed.proxy.container_link,
+        "settings": {"mode": "invalid", "start": "Now", "partition_key": None, "feed_range": None},
+        "token": "c1.a",
+    }).encode()).decode().rstrip("=")
+    kwargs = {"continuation": token} if source == "keyword" else {source: {"continuation": token}}
+    with pytest.raises(ValueError, match="Invalid change-feed continuation settings"):
+        feed.proxy.query_items_change_feed(**kwargs)
+    feed.backend._ensure_driver_handle.assert_not_called()
+    assert not feed.calls
 
 
 @pytest.mark.parametrize("mode", ["LatestVersion", "AllVersionsAndDeletes"])
@@ -422,7 +534,7 @@ def test_core_python_modes_empty_checkpoint_and_authoritative_resume(legacy, mod
     assert state._feed_range._pk_value == key
 
 
-def test_cross_backend_tokens_rejected(feed, legacy):
+def test_rust_tokens_cannot_resume_on_legacy_and_broad_legacy_import_is_explicit(feed, legacy):
     pages = feed.proxy.query_items_change_feed().by_page()
     feed.next_page(pages)
     with pytest.raises(ValueError, match="incompatible backend"):
@@ -431,10 +543,114 @@ def test_cross_backend_tokens_rejected(feed, legacy):
         ).by_page()
     core_pages = legacy.proxy.query_items_change_feed().by_page()
     legacy.next_page(core_pages)
-    with pytest.raises(ValueError, match="incompatible backend"):
+    with pytest.raises(NotImplementedError, match="complete partition key"):
         feed.proxy.query_items_change_feed(
             continuation=core_pages.continuation_token
         ).by_page()
+
+
+@pytest.mark.parametrize("channel", ["keyword", "by_page"])
+@pytest.mark.parametrize("mode", ["LatestVersion", "AllVersionsAndDeletes"])
+@pytest.mark.parametrize("key", [None, False, 0, ""])
+def test_legacy_key_checkpoint_restores_scope_and_reaches_rust(feed, legacy, channel, mode, key):
+    core_pages = legacy.proxy.query_items_change_feed(mode=mode, partition_key=key).by_page()
+    legacy.next_page(core_pages)
+    token = core_pages.continuation_token
+    feed.pages.insert(0, ([], token))
+    kwargs = (
+        {"mode": "invalid", "partition_key": "ignored", "start_time": "invalid"}
+        if channel == "keyword"
+        else {"mode": "LatestVersion", "partition_key": "ignored", "start_time": "Beginning"}
+    )
+    pages = (
+        feed.proxy.query_items_change_feed(continuation=token, **kwargs).by_page()
+        if channel == "keyword"
+        else feed.proxy.query_items_change_feed(**kwargs).by_page(continuation_token=token)
+    )
+    feed.next_page(pages)
+    request = feed.calls[-1][0]
+    assert request.partition_key.values == (key,)
+    assert json.loads(request.body_bytes) == {"mode": mode, "start": "Now", "feed_range": None}
+    assert json.loads(base64.b64decode(request.settings.query.continuation)) == json.loads(base64.b64decode(token))
+    assert pages.continuation_token.startswith("cf1.")
+    resumed = feed.proxy.query_items_change_feed(continuation=pages.continuation_token).by_page()
+    feed.next_page(resumed)
+    assert feed.calls[-1][0].settings.query.continuation == "c1.a"
+    assert len(legacy.calls) == 1
+
+
+@pytest.mark.parametrize("wrapped", [False, True])
+def test_legacy_v1_etag_requires_and_preserves_explicit_key(feed, wrapped):
+    token = '"42"'
+    kwargs = {"partition_key": None}
+    if wrapped:
+        token = "cf1." + base64.urlsafe_b64encode(json.dumps({
+            "backend": "core-python", "container": feed.proxy.container_link, "token": token,
+            "settings": {
+                "mode": "LatestVersion", "start": "Now",
+                "partition_key": "[null]", "feed_range": None,
+            },
+        }).encode()).decode().rstrip("=")
+        kwargs = {}
+    feed.pages.insert(0, ([], '"42"'))
+    pages = feed.proxy.query_items_change_feed(continuation=token, **kwargs).by_page()
+    feed.next_page(pages)
+    assert feed.calls[-1][0].partition_key.values == (None,)
+    assert feed.calls[-1][0].settings.query.continuation == '"42"'
+    with pytest.raises(NotImplementedError, match="complete partition_key"):
+        feed.proxy.query_items_change_feed(continuation='"42"').by_page()
+
+
+@pytest.mark.parametrize("start", ["Beginning", "Now", datetime(2025, 1, 2, 3, 4, 5, 123000, tzinfo=timezone.utc)])
+def test_legacy_v2_start_is_restored_without_changing_checkpoint(feed, legacy, start):
+    pages = legacy.proxy.query_items_change_feed(partition_key="customer", start_time=start).by_page()
+    legacy.next_page(pages)
+    token = pages.continuation_token
+    feed.pages.insert(0, ([], token))
+    feed.next_page(feed.proxy.query_items_change_feed(continuation=token).by_page())
+    expected = start.isoformat() if isinstance(start, datetime) else start
+    assert json.loads(feed.calls[-1][0].body_bytes)["start"] == expected
+
+
+@pytest.mark.parametrize("mutation", [
+    "rid", "empty_position", "no_positions", "missing_positions", "non_list_positions",
+    "missing_start", "bad_time", "bad_key",
+])
+def test_malformed_legacy_import_never_dispatches(feed, legacy, mutation):
+    pages = legacy.proxy.query_items_change_feed(partition_key="customer").by_page()
+    legacy.next_page(pages)
+    saved = json.loads(base64.b64decode(pages.continuation_token))
+    if mutation == "rid":
+        saved["continuation"]["rid"] = "different"
+    elif mutation == "empty_position":
+        saved["continuation"]["continuation"][0]["token"] = ""
+    elif mutation == "no_positions":
+        saved["continuation"]["continuation"] = []
+    elif mutation == "missing_positions":
+        del saved["continuation"]["continuation"]
+    elif mutation == "non_list_positions":
+        saved["continuation"]["continuation"] = {"token": "42"}
+    elif mutation == "missing_start":
+        del saved["startFrom"]
+    elif mutation == "bad_time":
+        saved["startFrom"] = {"Type": "PointInTime", "PointInTimeMs": True}
+    else:
+        saved["continuation"]["PK"] = {"unsupported": True}
+    token = base64.b64encode(json.dumps(saved).encode()).decode()
+    with pytest.raises(ValueError):
+        feed.proxy.query_items_change_feed(continuation=token).by_page()
+    assert feed.calls == []
+
+
+def test_multiple_legacy_positions_remain_unsupported_rust(feed, legacy):
+    pages = legacy.proxy.query_items_change_feed(partition_key="customer").by_page()
+    legacy.next_page(pages)
+    saved = json.loads(base64.b64decode(pages.continuation_token))
+    saved["continuation"]["continuation"] *= 2
+    token = base64.b64encode(json.dumps(saved).encode()).decode()
+    with pytest.raises(NotImplementedError, match="multiple range positions"):
+        feed.proxy.query_items_change_feed(continuation=token)
+    assert feed.calls == []
 
 
 def test_avad_delete_record_is_not_unwrapped(feed):
@@ -570,7 +786,9 @@ def test_core_python_split_retries_are_bounded(legacy, monkeypatch):
     assert pages.continuation_token is None
 
 
-def test_core_python_v1_keyword_checkpoint_resume(legacy):
+@pytest.mark.parametrize("etag_name", ["etag", "Etag", "ETag"])
+def test_core_python_v1_keyword_checkpoint_resume(legacy, etag_name):
+    legacy.etag_name = etag_name
     with pytest.warns(DeprecationWarning):
         pages = legacy.proxy.query_items_change_feed(
             partition_key_range_id="0"
@@ -584,6 +802,80 @@ def test_core_python_v1_keyword_checkpoint_resume(legacy):
     assert legacy.next_page(resumed) == []
     state = legacy.calls[-1]["changeFeedState"]
     assert state._partition_key_range_id == "0"
+
+
+@pytest.mark.parametrize("backend", ["core-python", "rust"])
+@pytest.mark.parametrize("scenario", [
+    "read_change_feed_with_continuation",
+    "read_change_feed_with_all_versions_and_delete_mode",
+    "read_change_feed_with_all_versions_and_delete_mode_with_partition_key",
+])
+def test_change_feed_samples_resume_from_pager(feed, legacy, backend, scenario, monkeypatch):
+    context = feed if backend == "rust" else legacy
+    sample = load_change_feed_sample(context.async_mode, monkeypatch)
+    full_fidelity = scenario != "read_change_feed_with_continuation"
+    created = {"current": {"id": "created"}, "metadata": {"operationType": "create"}}
+    deleted = {"current": {"id": "deleted"}, "metadata": {"operationType": "delete"}}
+    rows = [[], [created], [], [deleted], []] if full_fidelity else [
+        [{"current": {"id": "old"}}], [], [created], [],
+    ]
+    if backend == "rust":
+        context.pages = [(page, f"c1.{index}") for index, page in enumerate(rows)]
+    else:
+        context.pages = rows if full_fidelity else [
+            [row["current"] for row in page] for page in rows
+        ]
+    context.connection.last_response_headers = {"etag": '"stale-connection-token"'}
+    mock = AsyncMock if context.async_mode else MagicMock
+    monkeypatch.setattr(sample, "create_items", mock())
+    monkeypatch.setattr(sample, "clean_up", mock())
+    printed = []
+    monkeypatch.setattr(sample, "print", lambda value: printed.append(value), raising=False)
+    query = context.proxy.query_items_change_feed
+    requests, pagers = [], []
+
+    def observe(**kwargs):
+        requests.append(kwargs)
+        pager = query(**kwargs)
+        pagers.append(pager)
+        return pager
+
+    monkeypatch.setattr(context.proxy, "query_items_change_feed", observe)
+    result = getattr(sample, scenario)(context.proxy)
+    if context.async_mode:
+        asyncio.run(result)
+    for index in range(1, len(requests)):
+        assert requests[index]["continuation"] == pagers[index - 1].get_response_headers()["etag"]
+    documents = [value for value in printed if isinstance(value, dict)]
+    assert documents == ([created, deleted] if full_fidelity else [{"id": "old"}, {"id": "created"}])
+    assert len(context.calls) == len(rows)
+    if full_fidelity:
+        assert requests[1]["continuation"] != requests[2]["continuation"]
+        sample.clean_up.assert_called_once_with(context.proxy)
+
+
+def test_legacy_range_id_checkpoint_is_not_restarted_on_rust(feed, legacy):
+    with pytest.warns(DeprecationWarning):
+        pages = legacy.proxy.query_items_change_feed(partition_key_range_id="0").by_page()
+    legacy.next_page(pages)
+    with pytest.raises(NotImplementedError, match="complete partition_key"):
+        feed.proxy.query_items_change_feed(continuation=pages.continuation_token)
+    with pytest.warns(DeprecationWarning), pytest.raises(NotImplementedError, match="complete partition_key"):
+        feed.proxy.query_items_change_feed(partition_key_range_id="0", continuation='"42"')
+    assert not feed.calls
+
+
+def test_legacy_range_id_does_not_follow_partition_splits(legacy):
+    error = CosmosHttpResponseError(status_code=410, message="split")
+    error.sub_status = 1002
+    legacy.connection.QueryFeed.side_effect = error
+    with pytest.warns(DeprecationWarning):
+        pages = legacy.proxy.query_items_change_feed(partition_key_range_id="0").by_page()
+    with pytest.raises(CosmosHttpResponseError) as caught:
+        legacy.next_page(pages)
+    assert caught.value is error
+    assert legacy.connection.QueryFeed.call_count == 1
+    assert pages.continuation_token is None
 
 
 def test_split_intersection_preserves_scope_and_resets_empty_cycle():

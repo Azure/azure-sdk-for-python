@@ -2285,6 +2285,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     return prepared
                 build_request_page = _build_list_containers_page
             else:
+                if is_rust_backend(page_backend):
+                    raise NotImplementedError(
+                        f"Legacy read feeds for {resource_type!r} are not supported on Rust; "
+                        "the request will not be sent through legacy Python."
+                    )
                 return _run_legacy_read_feed()
 
             def _parse_rust_page(page):

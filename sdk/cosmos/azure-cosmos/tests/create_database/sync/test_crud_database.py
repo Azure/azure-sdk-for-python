@@ -20,7 +20,7 @@ KEY = os.environ.get(
 )
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestCRUDDatabaseOperations(unittest.TestCase):
 
     @classmethod

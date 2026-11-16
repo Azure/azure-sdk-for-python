@@ -27,9 +27,10 @@ An invocation's absolute deadline is passed separately from the prepared
 request. Typed request settings can still contain a relative timeout; the
 binding call receives the remaining time when a deadline is supplied.
 
-AsyncLegacyBackend and OperationRouting's choice of execution path remain only for
-migration. Permitted fallback is chosen before execution, never as a retry of
-execution, parsing, or callback failures. The Rust path is the release target.
+AsyncLegacyBackend remains separately selectable for migration comparisons.
+OperationRouting rejects unsupported Rust requests; it never chooses legacy
+execution. Preflight, execution, parsing, and callback errors propagate without
+legacy replay. The Rust path is the release target.
 
 Terminology follows docs/V5/VOCABULARY.md. See AsyncBindingAdapter for the separate
 rules governing acquisition, cancellation, and the shared close future.

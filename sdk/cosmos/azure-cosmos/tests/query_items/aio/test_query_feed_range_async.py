@@ -5,12 +5,14 @@
 ``TestQueryFeedRangeAsync`` holds the retained full-range SUM/MIN and scoped
 AVG copies with a per-test owned database. Three logical keys do not establish
 multiple physical partitions.
+Its unittest async lifecycle replaces the original asyncio/usefixtures markers.
 
 ``TestQueryFeedRangeAsyncRust`` holds the remaining copies. Its class-scoped
 ``setup_async`` fixture replaces the shared ``test_config`` provisioning with an
 owned database holding the original's single-partition (400 RU/s) and
 multi-partition (30,000 RU/s) containers, seeded with the original three
 documents, and always deletes it.
+The usefixtures marker names this owned replacement, not the shared original.
 
 SQL, feed-range construction, parameters, and assertions are preserved.
 Real-split copies only run when ``COSMOS_QUERY_FEED_RANGE_REAL_SPLIT=1``

@@ -22,8 +22,8 @@ the pager does not fetch its first page.
 
 AsyncItemHelper retains the Python backend, client defaults, and response-header
 state. Some other migration helpers also retain the legacy connection.
-AsyncLegacyItemHelper is selected explicitly, not after a failed Rust operation.
-Other permitted fallback decisions happen before execution.
+AsyncLegacyItemHelper is selected explicitly for migration comparisons.
+Unsupported Rust requests and all failures propagate without legacy fallback.
 
 Use docs/V5/VOCABULARY.md for terminology. The matching synchronous helper
 explains shared preparation; each async helper explains differences that matter

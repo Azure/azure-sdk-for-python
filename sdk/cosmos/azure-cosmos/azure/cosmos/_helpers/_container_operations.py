@@ -10,12 +10,10 @@ An execution failure never causes this helper to try the other path.
 
 from __future__ import annotations
 
-from azure.cosmos._backend.capabilities import OperationRouting
-
 from dataclasses import replace
 from typing import Any, Callable, Mapping, Optional
 
-
+from .._backend.capabilities import OperationRouting
 from .._backend.operations import (
     OP_CREATE_CONTAINER,
     OP_READ_CONTAINER,
@@ -33,6 +31,7 @@ from .._helpers._request_container import (
     is_create_container_rust_eligible,
     is_delete_container_rust_eligible,
     is_read_container_rust_eligible,
+    is_replace_container_rust_eligible,
 )
 from .._helpers._response_parse import (
     process_backend_response,
@@ -57,6 +56,7 @@ class ContainerHelper:
         *,
         response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
+        deadline: Optional[float] = None,
     ) -> CosmosDict:
         """Create a container and return its properties.
 
@@ -65,6 +65,7 @@ class ContainerHelper:
         """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
+        remaining_timeout(deadline)
         result = self._backend.run_operation(
             build_request=lambda: build_create_container_prepared(
                 database_link,
@@ -82,20 +83,23 @@ class ContainerHelper:
             legacy_call=lambda: self._client_connection.CreateContainer(
                 database_link=database_link,
                 collection=container_definition,
-                options=request_options,
-                **operation_kwargs,
+                options=legacy_deadline_options(request_options, deadline),
+                **legacy_deadline_kwargs(operation_kwargs, deadline),
             ),
             process_response=lambda response: process_backend_response(
                 response,
                 client_connection=self._client_connection,
             ),
+            deadline=deadline,
         )
+        remaining_timeout(deadline)
         # Headers come off the result, not off ``client_connection``. The
         # connection's ``last_response_headers`` is shared mutable state that any
         # concurrent call on the same client overwrites, so reading it here could
         # hand the hook another thread's headers alongside this call's body.
-        if response_hook is not None:
-            response_hook(result.get_response_headers(), result)
+        on_response = with_response_header_snapshot(response_hook, copy_body=True)
+        if on_response is not None:
+            on_response(result.get_response_headers(), result)
         return result
 
     def read_container(
@@ -117,6 +121,7 @@ class ContainerHelper:
             if routing is None
             else replace(routing, supported=routing.supported and supported)
         )
+        # Reject an expired budget before starting the read.
         remaining_timeout(deadline)
         result = self._backend.run_operation(
             build_request=lambda: build_read_container_prepared(
@@ -124,7 +129,7 @@ class ContainerHelper:
                 request_options,
                 kwargs=operation_kwargs,
             ),
-            routing=(routing),
+            routing=routing,
             legacy_call=lambda: self._client_connection.ReadContainer(
                 container_link,
                 options=legacy_deadline_options(request_options, deadline),
@@ -136,6 +141,7 @@ class ContainerHelper:
             ),
             deadline=deadline,
         )
+        # Reject late completion before invoking the response hook or returning success.
         remaining_timeout(deadline)
         on_response = with_response_header_snapshot(response_hook, copy_body=True)
         if on_response is not None:
@@ -199,7 +205,7 @@ class ContainerHelper:
             ),
             routing=OperationRouting(
                 OP_REPLACE_CONTAINER,
-                is_create_container_rust_eligible(request_options, operation_kwargs),
+                is_replace_container_rust_eligible(request_options, operation_kwargs),
             ),
             legacy_call=lambda: self._client_connection.ReplaceContainer(
                 container_link,

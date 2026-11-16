@@ -21,8 +21,8 @@ from azure.core.pipeline.transport import RequestsTransport
 
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos import _retry_utility
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes
+from azure.cosmos.http_constants import StatusCodes
+from common.priority_contract import assert_priority_contract
 from azure.cosmos.partition_key import PartitionKey
 from _client_transport import create_client_with_transport
 
@@ -443,53 +443,7 @@ class TestCRUDOperations(unittest.TestCase):
 
     def test_priority_level_rust(self):
         # Source: tests/test_crud.py::TestCRUDOperations.test_priority_level
-        # These test verify if headers for priority level are sent
-        # Feature must be enabled at the account level
-        # If feature is not enabled the test will still pass as we just verify the headers were sent
-        created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-
-        item1 = {"id": "item1", "pk": "pk1"}
-        item2 = {"id": "item2", "pk": "pk2"}
-        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
-        self.addCleanup(setattr, _retry_utility, "ExecuteFunction", self.OriginalExecuteFunction)
-        priority_headers = []
-
-        # mock execute function to check if priority level set in headers
-
-        def priority_mock_execute_function(function, *args, **kwargs):
-            if args:
-                priority_headers.append(args[4].headers[HttpHeaders.PriorityLevel]
-                                              if HttpHeaders.PriorityLevel in args[4].headers else '')
-            return self.OriginalExecuteFunction(function, *args, **kwargs)
-
-        _retry_utility.ExecuteFunction = priority_mock_execute_function
-        # upsert item with high priority
-        created_container.upsert_item(body=item1, priority="High")
-        # check if the priority level was passed
-        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. Rust never calls legacy
-        # _retry_utility.ExecuteFunction and its outgoing request headers are not observable.
-        pytest.skip("internals-only: the priority header was observed by patching legacy "
-                    "_retry_utility.ExecuteFunction; Rust outgoing request headers are not observable "
-                    "(known gap 6, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). The High-priority upsert ran.")
-        self.assertEqual(priority_headers[-1], "High")
-        # upsert item with low priority
-        created_container.upsert_item(body=item2, priority="Low")
-        # check that headers passed low priority
-        self.assertEqual(priority_headers[-1], "Low")
-        # Repeat for read operations
-        item1_read = created_container.read_item("item1", "pk1", priority="High")
-        self.assertEqual(priority_headers[-1], "High")
-        item2_read = created_container.read_item("item2", "pk2", priority="Low")
-        self.assertEqual(priority_headers[-1], "Low")
-        # repeat for query
-        query = list(created_container.query_items("Select * from c", partition_key="pk1", priority="High"))
-
-        self.assertEqual(priority_headers[-1], "High")
-
-        # Negative Test: Verify that if we send a value other than High or Low that it will not set the header value
-        # and result in bad request
-        try:
-            item2_read = created_container.read_item("item2", "pk2", priority="Medium")
-        except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
-        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+        container = self.databaseForTest.get_container_client(
+            self.configs.TEST_MULTI_PARTITION_CONTAINER_ID
+        )
+        assert_priority_contract(container)

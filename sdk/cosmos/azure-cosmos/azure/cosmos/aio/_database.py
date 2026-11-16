@@ -54,13 +54,15 @@ from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options as _build_options, _set_throughput_options, _build_properties_cache
 from ._container import ContainerProxy
 from ..offer import ThroughputProperties
-from ..exceptions import CosmosResourceNotFoundError
+from ..exceptions import CosmosResourceExistsError, CosmosResourceNotFoundError
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
 from .._cosmos_responses import CosmosDict
+from .._operation_deadline import remaining_timeout
 from .._helpers._item_arguments import get_selected_backend
 from ._helpers._list_containers import list_containers as _list_containers, query_containers as _query_containers
 from ._helpers._container_operations import AsyncContainerHelper
+from .._helpers._response_parse import with_response_header_snapshot
 from .._helpers._request_container import (
     parse_container_create_args,
     prepare_container_get_or_create_read,
@@ -414,7 +416,8 @@ class DatabaseProxy(object):
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: Called after success with a response-header copy and
-            the created container properties. The callback is synchronous.
+            a deep copy of the created container properties. Hook edits do not change
+            the returned properties or cached partition key. The callback is synchronous.
         :paramtype response_hook: Callable[[Mapping[str, Any], CosmosDict], None]
         :keyword float timeout: Operation timeout in seconds. Rust supports finite,
             non-boolean numeric durations of at least one second within its duration
@@ -465,6 +468,7 @@ class DatabaseProxy(object):
                 :caption: Create a container with specific settings; in this case, a custom partition key:
                 :name: create_container_with_settings
         """
+        deadline = kwargs.pop("_item_operation_deadline", None)
         prepare_operation_kwargs(self, kwargs)
 
         id, partition_key = parse_container_create_args(args, kwargs)
@@ -509,7 +513,7 @@ class DatabaseProxy(object):
         if full_text_policy is not None:
             definition["fullTextPolicy"] = full_text_policy
         if global_secondary_index is not None:
-            gsi_dict = await self._resolve_gsi_definition(global_secondary_index)
+            gsi_dict = await self._resolve_gsi_definition(global_secondary_index, deadline=deadline)
             definition["globalSecondaryIndexDefinition"] = gsi_dict
             definition["materializedViewDefinition"] = gsi_dict
         response_hook = kwargs.pop("response_hook", None)
@@ -528,6 +532,7 @@ class DatabaseProxy(object):
             request_options,
             response_hook=response_hook,
             kwargs=kwargs,
+            deadline=deadline,
         )
         _normalize_gsi_container_properties(data)
         if not return_properties:
@@ -565,14 +570,13 @@ class DatabaseProxy(object):
         ``session_token`` and ``populate_query_metrics`` are rejected even when
         ``None``.
         Unsupported Rust options fail before the first request rather than
-        falling back to legacy Python. A supported ``timeout`` applies separately
-        to the read and create steps, not to the combined workflow. Driver setup
-        consumes each step's budget before the remaining time reaches the binding.
-        The response hook receives copied headers and the returned properties from the successful
+        falling back to legacy Python. A supported ``timeout`` is shared across
+        reads, creation, and any GSI source-container read.
+        The response hook receives copied headers and a deep copy of the properties from the successful
         step; its exceptions propagate without triggering creation.
-        This is not atomic: a concurrent create can cause a 409 conflict, which
-        propagates without rereading. Conditional headers are forwarded, not
-        interpreted as a lock spanning the two steps.
+        If creation conflicts with another caller, read the container once more
+        using the remaining timeout. A failed reread propagates without another
+        create. Conditional headers are forwarded; the workflow is not atomic.
 
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
@@ -646,13 +650,17 @@ class DatabaseProxy(object):
         ``session_token`` and ``populate_query_metrics`` are rejected even when
         ``None``.
         Unsupported Rust options fail before the first request rather than
-        falling back to legacy Python. A supported ``timeout`` applies separately
-        to the read and create steps, not to the combined workflow.
+        falling back to legacy Python. A supported ``timeout`` is shared across
+        the read and create steps, including any GSI source-container read and
+        the follow-up read after a create conflict.
+        For example, spending 0.75 seconds reading with ``timeout=1`` leaves
+        0.25 seconds for creation. A timeout does not undo creation already
+        performed by the service backend.
         The response hook receives copied headers and properties from the successful
         step; its exceptions propagate without triggering creation.
-        This is not atomic: a concurrent create can cause a 409 conflict, which
-        propagates without rereading. Conditional headers are forwarded, not
-        interpreted as a lock spanning the two steps.
+        If creation conflicts with another caller, read the container once more
+        using the remaining timeout. A failed reread propagates without another
+        create. Conditional headers are forwarded; the workflow is not atomic.
 
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
@@ -711,13 +719,13 @@ class DatabaseProxy(object):
         ``session_token`` and ``populate_query_metrics`` are rejected even when
         ``None``.
         Unsupported Rust options fail before the first request rather than
-        falling back to legacy Python. A supported ``timeout`` applies separately
-        to the read and create steps, not to the combined workflow.
+        falling back to legacy Python. A supported ``timeout`` is shared across
+        reads, creation, and any GSI source-container read.
         The response hook receives copied headers and properties from the successful
         step; its exceptions propagate without triggering creation.
-        This is not atomic: a concurrent create can cause a 409 conflict, which
-        propagates without rereading. Conditional headers are forwarded, not
-        interpreted as a lock spanning the two steps.
+        If creation conflicts with another caller, read the container once more
+        using the remaining timeout. A failed reread propagates without another
+        create. Conditional headers are forwarded; the workflow is not atomic.
 
         :param Any args: args
         :param str id: ID (name) of container to create.
@@ -783,12 +791,13 @@ class DatabaseProxy(object):
         return_properties = kwargs.pop('return_properties', False)
 
         response_hook = kwargs.pop("response_hook", None)
-        read_options, read_kwargs, rust_eligible = prepare_container_get_or_create_read(
+        read_options, read_kwargs, rust_eligible, deadline = prepare_container_get_or_create_read(
             kwargs, initial_headers=initial_headers, offer_throughput=offer_throughput
         )
         container_proxy = self.get_container_client(id)
-        try:
-            properties = await AsyncContainerHelper(
+
+        async def read_container() -> CosmosDict:
+            return await AsyncContainerHelper(
                 self.client_connection, get_selected_backend(self.client_connection)
             ).read_container(
                 container_proxy.container_link,
@@ -799,31 +808,52 @@ class DatabaseProxy(object):
                     rust_eligible,
                     capability="create_container_if_not_exists",
                 ),
+                deadline=deadline,
             )
+
+        try:
+            properties = await read_container()
         except CosmosResourceNotFoundError:
-            with delegate_operation(self, "create_container"):
-                return await self.create_container(
-                    id=id,
-                    partition_key=partition_key,
-                    indexing_policy=indexing_policy,
-                    default_ttl=default_ttl,
-                    offer_throughput=offer_throughput,
-                    unique_key_policy=unique_key_policy,
-                    conflict_resolution_policy=conflict_resolution_policy,
-                    analytical_storage_ttl=analytical_storage_ttl,
-                    computed_properties=computed_properties,
-                    initial_headers=initial_headers,
-                    vector_embedding_policy=vector_embedding_policy,
-                    change_feed_policy=change_feed_policy,
-                    full_text_policy=full_text_policy,
-                    global_secondary_index=global_secondary_index,
-                    return_properties=return_properties,
-                    response_hook=response_hook,
-                    **kwargs
-                )
+            remaining_timeout(deadline)
+            create_succeeded = False
+
+            def on_created(headers: Mapping[str, Any], body: CosmosDict) -> None:
+                nonlocal create_succeeded
+                create_succeeded = True
+                if response_hook is not None:
+                    response_hook(headers, body)
+
+            try:
+                with delegate_operation(self, "create_container"):
+                    return await self.create_container(
+                        id=id,
+                        partition_key=partition_key,
+                        indexing_policy=indexing_policy,
+                        default_ttl=default_ttl,
+                        offer_throughput=offer_throughput,
+                        unique_key_policy=unique_key_policy,
+                        conflict_resolution_policy=conflict_resolution_policy,
+                        analytical_storage_ttl=analytical_storage_ttl,
+                        computed_properties=computed_properties,
+                        initial_headers=initial_headers,
+                        vector_embedding_policy=vector_embedding_policy,
+                        change_feed_policy=change_feed_policy,
+                        full_text_policy=full_text_policy,
+                        global_secondary_index=global_secondary_index,
+                        return_properties=return_properties,
+                        response_hook=on_created,
+                        _item_operation_deadline=deadline,
+                        **kwargs
+                    )
+            except CosmosResourceExistsError:
+                # A conflict raised by the customer's success hook is not a service race.
+                if create_succeeded:
+                    raise
+                properties = await read_container()
         _normalize_gsi_container_properties(properties)
-        if response_hook is not None:
-            response_hook(properties.get_response_headers(), properties)
+        on_response = with_response_header_snapshot(response_hook, copy_body=True)
+        if on_response is not None:
+            on_response(properties.get_response_headers(), properties)
         self.client_connection._set_container_properties_cache(
             container_proxy.container_link, _build_properties_cache(properties, container_proxy.container_link)
         )
@@ -867,6 +897,8 @@ class DatabaseProxy(object):
     async def _resolve_gsi_definition(
         self,
         global_secondary_index: Union["GlobalSecondaryIndexDefinition", dict[str, Any]],
+        *,
+        deadline: Optional[float] = None,
     ) -> dict[str, Any]:
         """Serialize a GSI definition and populate the source container's resource id (_rid).
 
@@ -877,6 +909,7 @@ class DatabaseProxy(object):
         :param global_secondary_index: The GSI definition object or raw dict.
         :type global_secondary_index:
             ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
+        :keyword float deadline: Shared operation deadline, if any.
         :returns: The serialized GSI definition including ``sourceCollectionRid``.
         :rtype: dict[str, Any]
         """
@@ -886,7 +919,11 @@ class DatabaseProxy(object):
         if not gsi_dict.get("sourceCollectionRid"):
             source_container_id = gsi_dict.get("sourceCollectionId")
             if source_container_id:
-                source_properties = await self.get_container_client(source_container_id).read()
+                source = self.get_container_client(source_container_id)
+                source_properties = (
+                    await source.read() if deadline is None
+                    else await source.read(_item_operation_deadline=deadline)
+                )
                 gsi_dict["sourceCollectionRid"] = source_properties["_rid"]
         return gsi_dict
 
@@ -917,6 +954,9 @@ class DatabaseProxy(object):
         Use ``async for`` to consume this iterator; do not await this method.
         All settings are keyword-only. ``session_token``, ``populate_query_metrics``,
         and ``availability_strategy`` are rejected, including explicit ``None`` or ``False``.
+        Invalid page sizes or timeouts raise ``ValueError`` and non-callable hooks raise
+        ``TypeError`` when constructing the pager. Page size must be ``None``, ``-1``,
+        or a positive integer below ``2**63``; booleans are not accepted.
         Unsupported Rust page options raise during iteration instead of using legacy Python.
 
         Each page iterator owns its continuation token; other operations cannot
@@ -984,7 +1024,11 @@ class DatabaseProxy(object):
         including explicit ``None`` or ``False``. Unsupported Rust options raise during iteration rather than
         switching to legacy Python.
 
-        Query inputs and settings are copied at construction. Each page iterator owns
+        Query inputs and settings are copied at construction. Empty query text, malformed
+        parameters, invalid page sizes, and invalid timeouts raise ``ValueError`` before
+        iteration; non-callable hooks raise ``TypeError``. Page size must be ``None``,
+        ``-1``, or a positive integer below ``2**63``; booleans are not accepted.
+        Requests still begin only when the results are consumed. Each page iterator owns
         its bookmark; other operations cannot overwrite it. A final empty page clears
         the bookmark. Cancellation waits for page work to stop. After a failed or
         cancelled fetch, or a failed hook, resume a new pager from the last fully
@@ -1388,5 +1432,6 @@ class DatabaseProxy(object):
             get_properties=get_properties,
             throughput=throughput,
             not_found_message="Could not find ThroughputProperties for database " + self.database_link,
+            response_hook=kwargs.pop("response_hook", None),
             kwargs=kwargs,
         )

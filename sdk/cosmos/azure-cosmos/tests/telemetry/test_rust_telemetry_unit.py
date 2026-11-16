@@ -33,7 +33,7 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 from opentelemetry.sdk.trace.sampling import ALWAYS_OFF
 from azure.core import instrumentation
-from azure.core.exceptions import ServiceResponseError
+from azure.core.exceptions import ClientAuthenticationError, ServiceResponseError
 from azure.core.settings import settings
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
@@ -582,10 +582,16 @@ def test_response_hook_error_remains_the_public_failure_rust(create, recording):
 
 
 @pytest.mark.parametrize("has_diagnostics", [True, False])
-@pytest.mark.parametrize("response_status", [409, 408])
-def test_failed_create_preserves_exception_and_diagnostics_rust(create, recording, has_diagnostics, response_status):
+@pytest.mark.parametrize(
+    "response_status, exception_type",
+    [(409, CosmosResourceExistsError), (408, ServiceResponseError), (408, ClientAuthenticationError)],
+)
+def test_failed_create_preserves_exception_and_diagnostics_rust(
+    create, recording, has_diagnostics, response_status, exception_type
+):
     create.response_status = response_status
-    exception_type = CosmosResourceExistsError if response_status == 409 else ServiceResponseError
+    if exception_type is ClientAuthenticationError:
+        create.driver_error_type = ClientAuthenticationError
     message = "conflict" if response_status == 409 else "driver failure"
     if not has_diagnostics:
         create.transform = lambda result: (result[0], None)
@@ -603,7 +609,10 @@ def test_failed_create_preserves_exception_and_diagnostics_rust(create, recordin
         assert error.headers["x-ms-request-charge"] == "5.0"
         assert error.headers["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
     else:
-        assert error.__cause__ is create.driver_error
+        if exception_type is ClientAuthenticationError:
+            assert error is create.driver_error
+        else:
+            assert error.__cause__ is create.driver_error
         assert create.driver_error.args == ("driver failure",)
         assert str(error) == str(create.driver_error)
     assert len(create.calls) == 1

@@ -31,7 +31,7 @@ This document covers customer-visible API decisions.
   - [`ContainerProxy.read_item` - Reading an item](#containerproxyread_item)
   - [`ContainerProxy.read_items` - Reading known items](#containerproxyread_items)
   - [`ContainerProxy.read_all_items` - Reading every item](#containerproxyread_all_items)
-  - [`ContainerProxy.query_items` - Query execution defaults and unordered DISTINCT compatibility](#containerproxyquery_items)
+  - [`ContainerProxy.query_items` - Query defaults and remaining migration decisions](#containerproxyquery_items)
   - [`ContainerProxy.query_items_change_feed` - Polling item changes](#containerproxyquery_items_change_feed)
   - [`ContainerProxy.replace_item` - Replacing an existing order](#containerproxyreplace_item)
   - [`ContainerProxy.patch_item` - Patch compatibility decisions](#containerproxypatch_item)
@@ -3041,6 +3041,11 @@ when the customer app iterates. The binding calls Rust `read_many` for the
 whole-container range, not a binding-generated select-all query or legacy
 Python fallback.
 
+Per-call `availability_strategy` overrides are not supported. For example,
+`read_all_items(availability_strategy=False)` raises `TypeError` before
+iteration. Omit the keyword or pass `None`. Supplying `availabilityStrategy`
+inside `request_options` or `feed_options` is also rejected, including `None`.
+
 #### Why is there no saved continuation token?
 
 **User decision confirmed November 12, 2026:** remove continuation-token
@@ -3123,9 +3128,16 @@ migration decision, not formal API-board approval.
 
 ### `ContainerProxy.query_items`
 
-This entry tracks two separate public-contract decisions: automatically enabling
-cross-partition execution and supporting an unbounded unordered DISTINCT query.
-Changing the default does not supply a missing query execution stage.
+Alpha Bank needs its existing queries, result handling and saved progress
+to keep working after migration. An unchanged method name does not establish
+that compatibility. This entry separates the execution default and input
+validation changes from unresolved behavior differences.
+
+The review uses the checked-out Rust driver
+`b485409baf6e24ce198b028fb6d1c5a54a0e6d4c`, with a rebuilt extension whose
+embedded revision was verified. The
+[query audit](V5/testing/v5-test-accounting.md#query-items-audit)
+records the original-test comparisons and their limits.
 
 #### Aligning the sync and async cross-partition default
 
@@ -3149,30 +3161,70 @@ no promised ordering.
 
 **Implemented behavior and compatibility change**
 
-The previous synchronous API did not automatically enable
+The older synchronous legacy Python API did not automatically enable
 cross-partition execution when the flag was omitted. Legacy async did.
-Legacy sync now matches async for a query with neither a partition key nor a
-feed range:
+The current Rust driver path uses the same default on both surfaces when
+neither a partition key nor a feed range is supplied:
 
-| `enable_cross_partition_query` input | Current sync and async behavior |
+| `enable_cross_partition_query` input | Current Rust driver path, sync and async |
 |---|---|
 | Omitted or `None` | Automatically enable cross-partition execution |
 | `True` | Explicitly enable cross-partition execution |
 | `False` | Keep cross-partition execution disabled |
 
-This is an intentional change to the legacy synchronous default: a request
+This is an intentional change from the older synchronous default: a request
 that previously needed explicit opt-in can now execute. Explicit `False`
 remains available to prevent automatic opt-in if the customer app accidentally
 omits its partition scope. Enabling execution does not broaden a supplied scope;
 `partition_key="customer-501"` still restricts this example to `order-1` and
 `order-2`. Existing feed-range behavior is unchanged.
 
-The Rust-backed sync and async wrappers already shared the automatic default.
-No Rust driver or binding change was needed. The current Rust binding still
-requires a complete partition key when `False` is supplied; it does not infer
-that key from a SQL predicate.
+Explicit `False` does **not** require the caller to supply `partition_key`
+as a separate argument in every case. The current binding also admits a
+SQL predicate whose query plan identifies one complete key, and it respects
+an explicitly supplied key or feed range. An unscoped query requiring
+fan-out is rejected with status 400. The original claim that the binding
+cannot infer a key from SQL is stale.
 
 **Review disposition:** The automatic default and explicit opt-out are implemented; approval is not recorded. The DISTINCT restriction below remains a separate open compatibility decision.
+
+#### Rejecting malformed query parameters before sending the query
+
+Alpha Bank looks up an order by its ID. Each SQL parameter is a dictionary
+containing its `@`-prefixed name and its value:
+
+```python
+orders.query_items(
+    "SELECT * FROM c WHERE c.id = @id",
+    parameters=[{"name": "@id", "value": "order-1"}],
+)
+```
+
+**Implemented behavior and compatibility change**
+
+The Rust-backed Python wrapper checks parameter shape and serializes the query
+before returning its result iterator. It rejects the following inputs locally,
+without sending the query to the service backend:
+
+| `parameters` input | Rust-backed sync/async | Legacy sync/async |
+|---|---|---|
+| `[{"name": "@id", "value": float("nan")}]` | `ValueError` during `query_items()` | Sends the query; iteration raises `CosmosHttpResponseError` with status 400 |
+| `[("@id", "order-1")]` | `ValueError` during `query_items()` | Sends the query; iteration raises `CosmosHttpResponseError` with status 400 |
+
+Use a finite number instead of `NaN`, and represent each parameter with a
+`{"name": ..., "value": ...}` dictionary rather than a tuple pair. This does
+**not** reject an outer tuple containing valid parameter dictionaries:
+`parameters=({"name": "@id", "value": "order-1"},)` remains accepted on both paths.
+
+The customer app must handle `ValueError` around the `query_items()` call
+itself if these inputs can occur. Catching only `CosmosHttpResponseError`
+while iterating no longer covers them. This is earlier validation, not a new
+service-side restriction or a reason to fall back to legacy execution.
+
+**Verification:** Both rejected inputs and the accepted tuple-of-dictionaries
+control were checked against the local emulator on sync/async clients with
+explicit Rust and legacy selection. The existing no-dispatch unit checks also
+passed. Azure live-account execution was not verified.
 
 #### Requiring a finite window for unordered DISTINCT
 
@@ -3193,9 +3245,9 @@ expects to keep reading until every matching category has been returned.
 
 **Difference introduced by the driver update**
 
-Legacy and the previous integrated driver could enumerate this unbounded
-unordered DISTINCT query. The newly integrated driver requires a finite TOP
-or LIMIT for cross-partition unordered DISTINCT. With the binding's current
+The legacy Python path can enumerate this unbounded unordered DISTINCT
+query. The checked-out Rust driver requires a finite TOP or LIMIT for
+cross-partition unordered DISTINCT. With the binding's current
 planning defaults, OFFSET plus the result limit cannot exceed 1,000; when
 both TOP and LIMIT apply, the smaller value is used.
 
@@ -3207,15 +3259,47 @@ page size and does not satisfy the global limit requirement.
 **Required ownership and decision**
 
 The driver team owns support for the required unbounded execution or an
-explicitly approved restriction. The driver permits a larger finite buffer
-window, but the Python API does not expose that planning setting; exposing
-it would be separate integration work and would still not restore an
-unbounded query. The Python wrapper must not silently insert a limit or
-switch to legacy execution.
+explicitly approved restriction. The Python wrapper already forwards an
+explicit `AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH` environment setting
+as the driver's finite buffer allowance, captured when a new query is
+created. There is no corresponding per-query keyword. Increasing that
+allowance does not restore an unbounded query. The Python wrapper must
+not silently insert a result limit or switch to legacy execution.
 
 **Review disposition:** Open compatibility gap, not an approved removal.
 Bounded DISTINCT enumeration and its lack of resumable bookmarks are
 separate from whether the original unbounded query is supported.
+
+#### Other migration decisions are still open
+
+| Customer requirement | Current difference |
+|---|---|
+| Obtain aggregates beyond one complete partition key | Rust still rejects legacy-supported broader-scope aggregates. Its full-range AVG rejection also has a different exception type. |
+| Remove duplicates while ranking by vector similarity | A finite TOP/LIMIT does not make the DISTINCT-plus-vector combination supported. |
+| Observe the individual responses used by buffered searches | The compared Rust vector and hybrid queries return results but call `response_hook` fewer times. |
+| Handle mixed numeric/string ORDER BY values | Legacy Python can raise `ValueError`; Rust returns ordered values instead. Approval of that compatibility change is not recorded. |
+| Resume saved progress | A valid legacy feed-range bookmark is rejected. Transferring an ordered Rust bookmark from a key-derived feed range to the equivalent complete hierarchical key also fails. Same-scope Rust resumption is a separate, passing case. |
+| Catch an unlimited vector query with `except ValueError` | The default Rust path raises `ServiceResponseError` instead. |
+
+These are not approved removals. [Gap 30](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30)
+records the customer outcomes and ownership. Query advice and transport-specific
+diagnostic options remain separate in [Gap 36](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36).
+
+**Aggregate error wording:** Recognized Rust aggregate rejections now explain:
+"This aggregate query is not supported by this SDK for the requested query
+scope." The formatted service error no longer tells the customer to upgrade
+without identifying a supported version. Exception types and status codes
+are unchanged; the original service response or driver cause remains available
+for diagnostics. This wording change does not close Gap 30.
+
+**Fixed for the compared original cases:** the requested `value`
+property is preserved for DISTINCT/OFFSET/LIMIT; unsupported non-`VALUE`
+COUNT forms raise status 400; ordinary TOP/ORDER BY respects the tested
+page size. Those obsolete skips have been removed.
+
+The local comparisons do not establish AAD, multi-region, real-split or
+cloud Gateway V2 parity. Copying a test or preserving its marker does not
+mean its assertions executed.
 
 <a id="20---polling-item-changes"></a>
 <a id="containerproxyquery_items_change_feed"></a>
@@ -3248,29 +3332,61 @@ across multiple storage partitions described below.
 
 **Why migration needs an explicit decision**
 
-The new bookmark format is not interchangeable with legacy bookmarks.
-Moreover, the current Rust-backed API rejects some scopes that legacy Python
-can poll. Correct handling of one empty page does not make those restrictions
+Legacy complete-key checkpoints can now resume on Rust, but this is not
+general interchangeability: Rust bookmarks cannot resume on legacy Python,
+and legacy range/prefix checkpoints still cannot be imported. The current
+Rust-backed API also rejects some scopes that legacy Python can poll.
+Correct handling of one empty page does not make those restrictions
 acceptable; customers need both a resumable workflow and support for the
 parts of `orders` they must process.
 
 **Argument changes and compatibility limits:** All arguments are keyword-only.
 The older `is_start_from_beginning` and `partition_key_range_id` keywords remain
-with deprecation warnings, but selecting a physical storage partition by ID
-still requires legacy Python; the Rust-backed path does not support it.
+with deprecation warnings. For `LatestVersion`, both backends accept a physical
+partition ID. The Rust binding resolves that ID to its range boundaries and
+uses the driver's range-based change feed; its own bookmarks restore the ID
+and reading position. Legacy per-range checkpoints still cannot migrate to Rust
+(Gap 39), and this does not add split/merge recovery. An unknown or retired ID
+raises `ValueError` on Rust rather than selecting the whole container.
 Page size accepts a positive integer, `-1`, or `None`, not a boolean.
 
+Rust-backed change-feed calls do not accept `max_integrated_cache_staleness_in_ms`.
+Supplying it, including `None` or zero, raises `TypeError` before iteration.
+The same rule applies to `maxIntegratedCacheStaleness` inside `request_options`
+or `feed_options`. Omit this option; it remains accepted by item queries and
+read-all calls.
+
+Rust-backed change-feed calls also reject `availability_strategy` with
+`TypeError` before iteration, including `None`, `False`, `True`, and strategy
+dictionaries. The same applies to `availabilityStrategy` inside
+`request_options` or `feed_options`. Omit the option; legacy acceptance is
+unchanged.
+
 The customer must select only one scope: a partition key, a feed range, or
-a legacy physical-partition ID. An explicit null partition key still selects
+a physical-partition ID. An explicit null partition key still selects
 orders with that key; it is not the same as omitting the setting.
 The SDK copies the customer's options and fetches container information only
 when iteration needs it.
 
-**Bookmark contract:** A valid continuation, supplied at creation or through
-`by_page()`, determines mode, start and scope before those settings are
-validated. Rust bookmarks begin with `cf1.` and must be saved and passed back
-unchanged. Legacy bookmarks cannot be converted automatically, and item-query
-tokens cannot be substituted. `read_all_items` provides no saved bookmark.
+Local argument checks run when the customer app calls `query_items_change_feed`,
+on both backends and both clients. For example, `mode="invalid"` raises
+`ValueError` at that call, not when the app later starts reading.
+
+**Bookmark contract:** A valid continuation supplied at creation determines
+the resumed mode, start and scope before those settings are validated.
+A continuation supplied later through `by_page()` still restores its saved
+settings, but the initial API call must first have valid arguments.
+Rust bookmarks begin with `cf1.` and must be saved and passed back
+unchanged. A legacy V2 bookmark for one complete partition key restores its
+saved key, mode and start; the binding validates its container RID and position
+before passing the service ETag to the driver's public continuation API.
+An older raw ETag requires an explicit complete `partition_key` and resumes
+in `LatestVersion` mode. Its lack of container identity is not repaired by
+supplying that key. Subsequent pages publish Rust-backed bookmarks.
+Legacy whole-container, feed-range, partial-key and multiple-position imports
+remain unsupported; [Gap 39](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-39)
+tracks the public per-range import requirement. Item-query tokens cannot be
+substituted. `read_all_items` provides no saved bookmark.
 Invalid tokens raise an error rather than silently restarting the feed.
 
 **Polling/response contract:** `by_page()` returns one empty caught-up page
@@ -3907,8 +4023,9 @@ Boundary-comparison changes are deferred.
 
 Alpha Bank asks whether a customer's range fits inside a worker's assigned
 range. A valid call returns `True` or `False`. If the customer app instead
-passes a hand-edited range with reversed bounds or an unsupported dictionary
-shape, the Rust-backed SDK now raises `NotImplementedError`.
+passes a hand-edited range with reversed bounds or an invalid dictionary
+shape, the SDK raises `ValueError` before calling the Rust binding. This is
+input validation, not a missing Rust capability.
 
 Previously, the wrapper sent those inputs to the local legacy Python
 comparison. It could therefore return an answer without executing the selected

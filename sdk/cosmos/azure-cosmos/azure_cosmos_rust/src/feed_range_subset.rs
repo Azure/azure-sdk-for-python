@@ -4,19 +4,14 @@
 //! Compare two feed ranges without a service-backend request.
 //!
 //! The customer app asks whether the child feed range is entirely inside the
-//! parent. This binding module reads their JSON body, converts both ranges to
-//! the form expected by FeedRange, and calls the Rust driver's local
-//! FeedRange::is_subset_of method. It does not access Python objects or acquire
-//! a CosmosDriver object.
-//!
-//! The bound conversion preserves the legacy Python Range.to_normalized_range
-//! arithmetic, including its exclusive-start adjustment. It is not a new
-//! interval rule. `wire/feed_range.rs` handles waiting and calls the response
-//! converter in `wire/response.rs`; the Python wrapper constructs BackendResponse.
+//! parent. Compare the original endpoints using the driver's partition-key
+//! ordering and retain their inclusion flags. Stepping an endpoint forward or
+//! backward can wrap at FF or 00 and cannot preserve variable-width boundaries.
+//! This computation does not acquire a driver or contact the service backend.
 
 use serde::Deserialize;
 
-use azure_data_cosmos_driver::models::{EffectivePartitionKey, FeedRange};
+use azure_data_cosmos_driver::models::EffectivePartitionKey;
 
 /// Read parent and child objects from the body supplied by the Python wrapper.
 /// Each contains Range with min, max, isMinInclusive, and isMaxInclusive fields.
@@ -42,183 +37,44 @@ struct RangeDict {
     is_max_inclusive: bool,
 }
 
-/// Turn one hex character into its 0-15 value, rejecting anything that is not a
-/// hex digit.
-fn hex_char_value(byte: u8) -> Result<u8, String> {
-    match byte {
-        b'0'..=b'9' => Ok(byte - b'0'),
-        b'a'..=b'f' => Ok(byte - b'a' + 10),
-        b'A'..=b'F' => Ok(byte - b'A' + 10),
-        other => Err(format!(
-            "effective partition key has a non-hex character: {:?}",
-            other as char
-        )),
+fn parse_feed_range_bounds(
+    range: &RangeDict,
+) -> Result<(EffectivePartitionKey, EffectivePartitionKey), String> {
+    let min = EffectivePartitionKey::try_from(range.min.as_str())
+        .map_err(|e| format!("invalid feed range minimum: {e}"))?;
+    let max = EffectivePartitionKey::try_from(range.max.as_str())
+        .map_err(|e| format!("invalid feed range maximum: {e}"))?;
+    if min > max {
+        return Err("invalid feed range bounds: minimum must not exceed maximum".to_string());
     }
+    Ok((min, max))
 }
 
-/// Decode a hex effective-partition-key string into its raw bytes. The string
-/// must have an even number of characters (two hex digits per byte); this
-/// matches the legacy Python helper's even-length requirement.
-fn effective_partition_key_to_bytes(hex: &str) -> Result<Vec<u8>, String> {
-    let chars = hex.as_bytes();
-    if chars.len() % 2 != 0 {
-        return Err(
-            "effective partition key hex must have an even number of characters".to_string(),
-        );
-    }
-    let mut out = Vec::with_capacity(chars.len() / 2);
-    for pair in chars.chunks_exact(2) {
-        out.push((hex_char_value(pair[0])? << 4) | hex_char_value(pair[1])?);
-    }
-    Ok(out)
-}
-
-/// Encode raw bytes back into an upper-case hex effective-partition-key string.
-fn bytes_to_effective_partition_key(bytes: &[u8]) -> String {
-    const HEX_DIGITS: &[u8; 16] = b"0123456789ABCDEF";
-    let mut out = String::with_capacity(bytes.len() * 2);
-    for &byte in bytes {
-        out.push(HEX_DIGITS[(byte >> 4) as usize] as char);
-        out.push(HEX_DIGITS[(byte & 0x0F) as usize] as char);
-    }
-    out
-}
-
-/// Add or subtract one from an effective partition key, treating the hex string
-/// as a big-endian number over its bytes. This is the exact arithmetic the
-/// legacy Python `add_to_effective_partition_key` performs: for `+1`, walk from the
-/// last byte and increment the first byte below 255 (setting trailing 255 bytes
-/// to 0 as carries); for `-1`, decrement the first non-zero byte (setting
-/// trailing 0 bytes to 255 as borrows).
-fn add_to_effective_partition_key(hex: &str, increment: bool) -> Result<String, String> {
-    let mut bytes = effective_partition_key_to_bytes(hex)?;
-    if increment {
-        for byte in bytes.iter_mut().rev() {
-            if *byte < 255 {
-                *byte += 1;
-                break;
-            }
-            *byte = 0;
-        }
-    } else {
-        for byte in bytes.iter_mut().rev() {
-            if *byte != 0 {
-                *byte -= 1;
-                break;
-            }
-            *byte = 255;
-        }
-    }
-    Ok(bytes_to_effective_partition_key(&bytes))
-}
-
-/// Normalize one feed range to `[min, max)` bounds, matching the legacy Python
-/// `Range.to_normalized_range`. The bounds are upper-cased first (the Python
-/// parser upper-cases min/max). A range that is already `[min, max)` (min
-/// inclusive, max exclusive) is returned as-is; otherwise an inclusive min is
-/// left alone but an exclusive min steps back by one, and an inclusive max steps
-/// forward by one while an exclusive max is left alone.
-fn normalize_feed_range_bounds(range: &RangeDict) -> Result<(String, String), String> {
-    let min = range.min.to_ascii_uppercase();
-    let max = range.max.to_ascii_uppercase();
-    if range.is_min_inclusive && !range.is_max_inclusive {
-        return Ok((min, max));
-    }
-    let normalized_min = if range.is_min_inclusive {
-        min
-    } else {
-        add_to_effective_partition_key(&min, false)?
-    };
-    let normalized_max = if range.is_max_inclusive {
-        add_to_effective_partition_key(&max, true)?
-    } else {
-        max
-    };
-    Ok((normalized_min, normalized_max))
-}
-
-/// Build a driver `FeedRange` from a normalized `[min, max)` bound pair.
-fn feed_range_from_normalized_bounds(min: String, max: String) -> Result<FeedRange, String> {
-    FeedRange::new(
-        EffectivePartitionKey::try_from(min)
-            .map_err(|e| format!("invalid feed range minimum: {e}"))?,
-        EffectivePartitionKey::try_from(max)
-            .map_err(|e| format!("invalid feed range maximum: {e}"))?,
-    )
-    .map_err(|e| format!("invalid feed range bounds: {e}"))
-}
-
-/// Parse both feed ranges and compare them using the Rust driver's local method.
-/// For example, the range [40, 60) is inside [20, 80): the lower bound is
-/// included and the upper bound is excluded. The response converter elsewhere
-/// puts this example's result into `{"IsSubset":true}` body bytes.
+/// Compare endpoints without converting inclusive bounds into exclusive ones.
 pub(crate) fn compute_is_feed_range_subset(body_bytes: &[u8]) -> Result<bool, String> {
     let parsed: IsFeedRangeSubsetBody = serde_json::from_slice(body_bytes).map_err(|e| {
         format!("is_feed_range_subset body must be JSON with 'parent' and 'child' feed ranges: {e}")
     })?;
-    let (parent_min, parent_max) = normalize_feed_range_bounds(&parsed.parent.range)?;
-    let (child_min, child_max) = normalize_feed_range_bounds(&parsed.child.range)?;
-    let parent = feed_range_from_normalized_bounds(parent_min, parent_max)?;
-    let child = feed_range_from_normalized_bounds(child_min, child_max)?;
-    Ok(child.is_subset_of(&parent))
+    let parent = parsed.parent.range;
+    let child = parsed.child.range;
+    let (parent_min, parent_max) = parse_feed_range_bounds(&parent)?;
+    let (child_min, child_max) = parse_feed_range_bounds(&child)?;
+    if child_min == child_max && !(child.is_min_inclusive && child.is_max_inclusive) {
+        return Ok(true);
+    }
+    if parent_min == parent_max && !(parent.is_min_inclusive && parent.is_max_inclusive) {
+        return Ok(false);
+    }
+    let starts_inside = child_min > parent_min
+        || (child_min == parent_min && (!child.is_min_inclusive || parent.is_min_inclusive));
+    let ends_inside = child_max < parent_max
+        || (child_max == parent_max && (!child.is_max_inclusive || parent.is_max_inclusive));
+    Ok(starts_inside && ends_inside)
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{add_to_effective_partition_key, compute_is_feed_range_subset};
-
-    // ---- EPK +/-1 arithmetic --------------------------------------------------
-    //
-    // These pin the byte carry/borrow rules against the legacy Python
-    // `add_to_effective_partition_key`, which the normalization step depends on.
-
-    #[test]
-    fn epk_plus_one_increments_last_byte() {
-        assert_eq!(add_to_effective_partition_key("3F", true).unwrap(), "40");
-        assert_eq!(add_to_effective_partition_key("3E", false).unwrap(), "3D");
-    }
-
-    #[test]
-    fn epk_plus_one_carries_over_trailing_ff() {
-        // 0x3FFF + 1 -> the last byte wraps 0xFF -> 0x00 and the carry lands on
-        // the next byte: 0x40, 0x00.
-        assert_eq!(
-            add_to_effective_partition_key("3FFF", true).unwrap(),
-            "4000"
-        );
-        // All-0xFF wraps to all-0x00 (the carry off the front is dropped, matching
-        // legacy `binascii.hexlify` of the truncated byte array).
-        assert_eq!(add_to_effective_partition_key("FF", true).unwrap(), "00");
-    }
-
-    #[test]
-    fn epk_minus_one_borrows_over_trailing_zero() {
-        // 0x4000 - 1 -> the last byte borrows 0x00 -> 0xFF and the borrow lands on
-        // the next byte: 0x3F, 0xFF.
-        assert_eq!(
-            add_to_effective_partition_key("4000", false).unwrap(),
-            "3FFF"
-        );
-        // All-zero borrows to all-0xFF.
-        assert_eq!(add_to_effective_partition_key("00", false).unwrap(), "FF");
-    }
-
-    #[test]
-    fn epk_arithmetic_on_empty_string_is_a_noop() {
-        // The full-range minimum is the empty string; +/-1 on an empty byte array
-        // is a no-op on both backends (the loop has nothing to touch).
-        assert_eq!(add_to_effective_partition_key("", true).unwrap(), "");
-        assert_eq!(add_to_effective_partition_key("", false).unwrap(), "");
-    }
-
-    #[test]
-    fn epk_arithmetic_rejects_odd_length_and_non_hex() {
-        // Matches legacy `bytearray.fromhex`, which requires even-length hex.
-        assert!(add_to_effective_partition_key("3", true).is_err());
-        assert!(add_to_effective_partition_key("GG", true).is_err());
-    }
-
-    // ---- end-to-end compute ---------------------------------------------------
+    use super::compute_is_feed_range_subset;
 
     fn subset_body(parent: &str, child: &str) -> String {
         format!(r#"{{"parent":{parent},"child":{child}}}"#)
@@ -249,15 +105,77 @@ mod tests {
     }
 
     #[test]
-    fn subset_normalizes_inclusive_exclusive_bounds() {
-        // parent (3F,7F] normalizes to [3E,80); child [3F,7F) stays. Child is
-        // fully inside, so this is a subset -- and it exercises both the -1 (min)
-        // and +1 (max) normalization steps.
+    fn subset_respects_excluded_lower_endpoint() {
         let body = subset_body(
             &range_dict("3F", "7F", false, true),
             &range_dict("3F", "7F", true, false),
         );
+        assert!(!compute_is_feed_range_subset(body.as_bytes()).unwrap());
+    }
+
+    #[test]
+    fn subset_preserves_inclusive_ff_without_wraparound() {
+        for max in ["FF", "FFFF"] {
+            let parent = range_dict("80", max, true, true);
+            for child in [
+                parent.clone(),
+                range_dict("80", "90", true, false),
+                range_dict(max, max, true, true),
+            ] {
+                let body = subset_body(&parent, &child);
+                assert!(compute_is_feed_range_subset(body.as_bytes()).unwrap());
+            }
+        }
+    }
+
+    #[test]
+    fn subset_checks_shared_endpoint_flags() {
+        for parent_min in [false, true] {
+            for parent_max in [false, true] {
+                for child_min in [false, true] {
+                    for child_max in [false, true] {
+                        let body = subset_body(
+                            &range_dict("00", "FF", parent_min, parent_max),
+                            &range_dict("00", "FF", child_min, child_max),
+                        );
+                        assert_eq!(
+                            compute_is_feed_range_subset(body.as_bytes()).unwrap(),
+                            (!child_min || parent_min) && (!child_max || parent_max),
+                            "{body}"
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn subset_does_not_expand_variable_width_boundaries() {
+        let body = subset_body(
+            &range_dict("40", "80", true, true),
+            &range_dict("80", "8001", true, false),
+        );
+        assert!(!compute_is_feed_range_subset(body.as_bytes()).unwrap());
+    }
+
+    #[test]
+    fn subset_uses_driver_ordering_for_zero_padded_endpoints() {
+        let body = subset_body(
+            &range_dict("8000", "9000", true, true),
+            &range_dict("80", "90", true, true),
+        );
         assert!(compute_is_feed_range_subset(body.as_bytes()).unwrap());
+    }
+
+    #[test]
+    fn subset_distinguishes_empty_ranges_from_points() {
+        let empty = range_dict("80", "8000", true, false);
+        let point = range_dict("80", "80", true, true);
+        let outside = range_dict("90", "A0", true, false);
+        assert!(compute_is_feed_range_subset(subset_body(&outside, &empty).as_bytes()).unwrap());
+        assert!(!compute_is_feed_range_subset(subset_body(&empty, &point).as_bytes()).unwrap());
+        assert!(!compute_is_feed_range_subset(subset_body(&outside, &point).as_bytes()).unwrap());
+        assert!(compute_is_feed_range_subset(subset_body(&point, &point).as_bytes()).unwrap());
     }
 
     #[test]

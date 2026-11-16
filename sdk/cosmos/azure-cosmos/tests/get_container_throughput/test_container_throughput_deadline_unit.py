@@ -146,8 +146,10 @@ def test_recovery_uses_remaining_budget_rust(case, clock, operation, expire):
 def test_driver_initialization_cannot_start_request_after_expiry_rust(case, clock, operation):
     container = case.client.get_database_client("sales").get_container_client("orders")
     case.client.client_connection._container_properties_cache[container.container_link] = deepcopy(PROPERTIES)
+    expected_deadline = clock[0] + 1
 
-    def setup():
+    def setup(*, deadline=None):
+        assert deadline == (None if case.asynchronous else expected_deadline)
         clock[0] += 1.25
         return "driver"
 
@@ -156,6 +158,7 @@ def test_driver_initialization_cannot_start_request_after_expiry_rust(case, cloc
     write = case.install("replace_throughput", result=response(OFFER))
     with pytest.raises(CosmosClientTimeoutError):
         complete(invoke(container, operation))
+    case.acquisition.assert_called_once()
     lookup.assert_not_called()
     write.assert_not_called()
 

@@ -109,7 +109,7 @@ pub(crate) fn execute_item_operation_sync<'py>(
             let (database_name, container_name) = parse_container_link(container_link)?;
             let partition_key = partition_key_input.into_item_key()?;
             let future = with_operation_timeout(
-                modifiers.operation_timeout,
+                modifiers.remaining_binding_timeout,
                 execute_item_on_driver(
                     driver,
                     database_name,
@@ -155,7 +155,7 @@ pub(crate) fn execute_item_operation_async<'py>(
     honor_content_response: bool,
     include_attempts: bool,
     include_fault_diagnostics: bool,
-    lifecycle_probe: Option<Arc<std::sync::atomic::AtomicU8>>,
+    #[cfg(feature = "test-probes")] lifecycle_probe: Option<Arc<std::sync::atomic::AtomicU8>>,
     build_op: impl FnOnce(ItemReference, Vec<u8>) -> CosmosOperation + Send + 'static,
 ) -> PyResult<Bound<'py, PyAny>> {
     if include_attempts && include_fault_diagnostics {
@@ -171,7 +171,7 @@ pub(crate) fn execute_item_operation_async<'py>(
             let (database_name, container_name) = parse_container_link(container_link)?;
             let partition_key = partition_key_input.into_item_key()?;
             let future = with_operation_timeout(
-                modifiers.operation_timeout,
+                modifiers.remaining_binding_timeout,
                 execute_item_on_driver(
                     driver,
                     database_name,
@@ -185,8 +185,9 @@ pub(crate) fn execute_item_operation_async<'py>(
                     build_op,
                 ),
             );
-            let future = super::lifecycle::LifecycleFuture::new(future, lifecycle_probe)?;
-            Ok(async move { future.run().await? })
+            #[cfg(feature = "test-probes")]
+            let future = super::lifecycle::LifecycleFuture::new(future, lifecycle_probe)?.run();
+            Ok(async move { future.await? })
         },
         if include_fault_diagnostics {
             |py, result| tuple_from_result_with_fault_diagnostics(py, result?)
@@ -216,14 +217,15 @@ fn execute_item_on_driver(
     build_op: impl FnOnce(ItemReference, Vec<u8>) -> CosmosOperation + Send,
 ) -> impl std::future::Future<Output = PyResult<Result<CosmosResponse, CosmosError>>> + Send {
     let deadline = modifiers
-        .operation_timeout
+        .remaining_binding_timeout
         .map(|timeout| tokio::time::Instant::now() + timeout);
     // Keep timeout and lifecycle wrappers from carrying the full operation state.
     Box::pin(async move {
         let resolution_options = build_operation_options(
             None,
             modifiers.excluded_regions_value.clone(),
-            modifiers.driver_timeout_policy.clone(),
+            modifiers.configured_driver_timeout_policy.clone(),
+            None,
             None,
             Default::default(),
         );
@@ -319,8 +321,9 @@ fn execute_item_on_driver(
         let mut options = build_operation_options(
             content_response,
             modifiers.excluded_regions_value,
-            modifiers.driver_timeout_policy,
+            modifiers.configured_driver_timeout_policy,
             modifiers.availability_strategy,
+            modifiers.throughput_control,
             modifiers.custom_headers,
         );
         options.read_consistency_strategy = read_consistency;
@@ -344,7 +347,7 @@ mod tests {
         },
         options::{
             BinaryEncodingOptions, ContentResponseOnWrite, DriverOptions, OperationOptionsBuilder,
-            Region,
+            PriorityLevel, Region, ThroughputControlOptionsBuilder,
         },
     };
     use pyo3::types::PyDict;
@@ -399,6 +402,122 @@ mod tests {
                 .unwrap();
             super::super::request::extract_account_prepared_modifiers(&prepared).unwrap()
         })
+    }
+
+    #[tokio::test]
+    async fn throughput_controls_override_driver_defaults_without_mutating_later_calls() {
+        #[derive(Debug, Default)]
+        struct ThroughputHeaders(Mutex<Vec<(String, String)>>);
+
+        impl RequestObserver for ThroughputHeaders {
+            fn on_request(&self, request: &Request) {
+                if request.method() == Method::Post
+                    && request.url().path().trim_end_matches('/') == "/dbs/db/colls/orders/docs"
+                {
+                    let header = |name| {
+                        request
+                            .headers()
+                            .get_optional_str(&HeaderName::from_static(name))
+                            .unwrap()
+                            .to_owned()
+                    };
+                    self.0.lock().unwrap().push((
+                        header("x-ms-cosmos-priority-level"),
+                        header("x-ms-cosmos-throughput-bucket"),
+                    ));
+                }
+            }
+        }
+
+        crate::test_support::prepare_python();
+        let url = Url::parse("https://throughput-options.emulator.local").unwrap();
+        let observed = Arc::new(ThroughputHeaders::default());
+        let emulator = Arc::new(
+            InMemoryEmulatorHttpClient::new(
+                VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())])
+                    .unwrap(),
+            )
+            .with_request_observer(observed.clone()),
+        );
+        emulator.store().create_database("db");
+        emulator.store().create_container(
+            "db",
+            "orders",
+            PartitionKeyDefinition::from("/customerId"),
+        );
+        let defaults = OperationOptionsBuilder::new()
+            .with_throughput_control(
+                ThroughputControlOptionsBuilder::new()
+                    .with_priority_level(PriorityLevel::High)
+                    .with_throughput_bucket(9)
+                    .build(),
+            )
+            .build();
+        let runtime = emulator.runtime_builder().build().await.unwrap();
+        let driver = runtime
+            .create_driver(
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
+                    .with_operation_options(defaults)
+                    .build(),
+            )
+            .await
+            .unwrap();
+        for (index, (priority, bucket)) in [
+            (Some("Low"), Some(3)),
+            (Some("Low"), None),
+            (None, Some(0)),
+            (None, None),
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            let request = Python::with_gil(|py| {
+                let kwargs = PyDict::new_bound(py);
+                let settings = super::super::settings::test_settings(py);
+                settings.setattr("priority", priority).unwrap();
+                settings.setattr("throughput_bucket", bucket).unwrap();
+                kwargs.set_item("protocol_version", 3).unwrap();
+                kwargs.set_item("headers", PyDict::new_bound(py)).unwrap();
+                kwargs.set_item("settings", settings).unwrap();
+                let prepared = py
+                    .import_bound("types")
+                    .unwrap()
+                    .getattr("SimpleNamespace")
+                    .unwrap()
+                    .call((), Some(&kwargs))
+                    .unwrap();
+                super::super::settings::extract_settings(&prepared).unwrap()
+            });
+            let id = format!("order-{index}");
+            let response = execute_item_on_driver(
+                driver.clone(),
+                "db".into(),
+                "orders".into(),
+                Some(PartitionKey::from("customer-17")),
+                id.clone().into(),
+                serde_json::to_vec(&serde_json::json!({
+                    "id": id, "customerId": "customer-17",
+                }))
+                .unwrap(),
+                request,
+                true,
+                false,
+                |item, body| CosmosOperation::create_item(item).with_body(body),
+            )
+            .await
+            .unwrap()
+            .unwrap();
+            assert!(response.status().is_success());
+        }
+        assert_eq!(
+            *observed.0.lock().unwrap(),
+            vec![
+                ("Low".to_owned(), "3".to_owned()),
+                ("Low".to_owned(), "9".to_owned()),
+                ("High".to_owned(), "0".to_owned()),
+                ("High".to_owned(), "9".to_owned()),
+            ],
+        );
     }
 
     #[tokio::test]
@@ -1312,7 +1431,7 @@ mod tests {
                 .unwrap();
             let budget = Duration::from_secs(1);
             let mut options = modifiers();
-            options.operation_timeout = Some(budget);
+            options.remaining_binding_timeout = Some(budget);
             let started = tokio::time::Instant::now();
             let outcome = with_operation_timeout(
                 Some(budget),
@@ -2630,7 +2749,7 @@ mod tests {
         assert!(mismatched_key.response().is_some());
 
         let mut timed = modifiers();
-        timed.operation_timeout = Some(std::time::Duration::from_millis(1));
+        timed.remaining_binding_timeout = Some(std::time::Duration::from_millis(1));
         let pending = execute_item_on_driver(
             driver.clone(),
             "db".into(),

@@ -1,13 +1,13 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Limit fallback to the legacy path while migration is unfinished.
+"""Require Rust support before dispatching an operation.
 
 For a call with several steps, such as reading and then replacing throughput,
 the Python wrapper checks whether Rust supports the complete call. These
-temporary rules permit some legacy-path calls only before execution, not as
-a customer-facing execution choice. The Rust path is the only release path.
-A failure during execution, response processing, or a customer callback is
-not retried through the legacy path.
+rules reject unsupported requests without switching to legacy Python. The
+separately selected legacy backend remains only for migration comparisons.
+Neither preflight nor execution, response processing, or callback failures
+may cause a Rust request to run through the legacy path.
 """
 
 from __future__ import annotations
@@ -107,14 +107,14 @@ def reject_rust_arguments(
                 reject_rust_threshold_steps(value)
             if name in ("initial_headers", "initialHeaders", "headers") and isinstance(value, Mapping):
                 for header in value:
-                    if isinstance(header, str):
-                        reject_trigger_header(header)
+                    if not isinstance(header, str):
+                        raise TypeError("Request header names must be strings.")
+                    reject_trigger_header(header)
 
 
 @dataclass(frozen=True)
 class OpCapability:
     operations: frozenset[str]
-    fallback_allowed: bool = False
     unsupported_message: Optional[str] = None
 
 
@@ -205,6 +205,12 @@ CAPABILITIES: dict[str, OpCapability] = {
     ops.OP_READ_ITEM: OpCapability(
         frozenset({ops.OP_READ_ITEM}),
     ),
+    ops.OP_READ_ITEMS: OpCapability(
+        frozenset({ops.OP_READ_ITEMS}),
+    ),
+    ops.OP_READ_ALL_ITEMS: OpCapability(
+        frozenset({ops.OP_READ_ALL_ITEMS}),
+    ),
     ops.OP_UPSERT_ITEM: OpCapability(
         frozenset({ops.OP_UPSERT_ITEM}),
     ),
@@ -271,19 +277,12 @@ CAPABILITIES: dict[str, OpCapability] = {
     ),
     ops.OP_FEED_RANGE_FROM_PARTITION_KEY: OpCapability(
         frozenset({ops.OP_FEED_RANGE_FROM_PARTITION_KEY}),
-        fallback_allowed=True,
     ),
     ops.OP_IS_FEED_RANGE_SUBSET: OpCapability(
         frozenset({ops.OP_IS_FEED_RANGE_SUBSET}),
-        unsupported_message=(
-            "is_feed_range_subset requires supported SDK-returned feed ranges "
-            "with hexadecimal bounds and Boolean inclusion flags. "
-            "The comparison will not run through legacy Python."
-        ),
     ),
     ops.OP_QUERY_ITEMS: OpCapability(
         frozenset({ops.OP_QUERY_ITEMS}),
-        fallback_allowed=True,
     ),
     GET_OR_CREATE_DATABASE: OpCapability(
         frozenset({ops.OP_CREATE_DATABASE, ops.OP_READ_DATABASE}),
@@ -309,7 +308,7 @@ CAPABILITIES: dict[str, OpCapability] = {
 
 @dataclass(frozen=True)
 class OperationRouting:
-    """Choose Rust or permitted legacy execution, not a service region or replica.
+    """Validate a Rust operation's support, not a service region or replica.
 
     ``capability`` can name a multi-step call whose rules differ from those of
     one step. For example, get-or-create must support both reading and creating.
@@ -330,12 +329,11 @@ class OperationRouting:
             )
         return policy
 
-    def uses_legacy(self) -> bool:
+    def require_rust_support(self) -> None:
+        """Raise unless the registered operation supports this request on Rust."""
         policy = self.policy
         if self.supported:
-            return False
-        if policy.fallback_allowed:
-            return True
+            return
         raise NotImplementedError(
             policy.unsupported_message
             or f"{self.capability or self.op} cannot honor this request on Rust; "

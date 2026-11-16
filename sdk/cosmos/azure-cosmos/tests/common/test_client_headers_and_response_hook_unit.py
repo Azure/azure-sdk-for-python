@@ -44,7 +44,7 @@ def test_client_headers_and_call_hooks_reach_binding_without_inheriting_construc
         AsyncMock(return_value="mock-handle") if asynchronous else Mock(return_value="mock-handle"),
     )
     defaults["X-Alpha-App"] = "changed-after-construction"
-    call_headers = {"X-ALPHA-RUN": "comparison", "x-call-only": "once"}
+    call_headers = {"X-ALPHA-RUN": "comparison", "x-call-only": "once", "x-call-number": 5}
     call_hook = Mock()
     container = client.get_database_client("sales").get_container_client("orders")
 
@@ -76,12 +76,46 @@ def test_client_headers_and_call_hooks_reach_binding_without_inheriting_construc
     assert sent[0]["x-alpha-app"] == sent[1]["x-alpha-app"] == "orders"
     assert sent[0]["x-alpha-run"] == "comparison"
     assert sent[0]["x-call-only"] == "once"
+    assert sent[0]["x-call-number"] == "5"
     assert sent[1]["x-alpha-run"] == "normal"
     assert "x-call-only" not in sent[1]
-    assert call_headers == {"X-ALPHA-RUN": "comparison", "x-call-only": "once"}
+    assert call_headers == {"X-ALPHA-RUN": "comparison", "x-call-only": "once", "x-call-number": 5}
     constructor_hook.assert_not_called()
     call_hook.assert_called_once()
     hook_headers, hook_body = call_hook.call_args.args
     assert hook_headers["x-ms-request-charge"] == first.get_response_headers()["x-ms-request-charge"]
     assert hook_headers["x-ms-activity-id"] == first.get_response_headers()["x-ms-activity-id"]
     assert hook_body == first
+
+
+@pytest.mark.parametrize("name", [5, None, b"x-customer"])
+@pytest.mark.parametrize("source", ["initial_headers", "request_options", "feed_options"])
+def test_non_string_header_names_fail_before_driver_acquisition(
+    client_module, monkeypatch, name, source,
+):
+    client = client_module.CosmosClient("https://headers.invalid", "ZmFrZQ==", _backend="rust")
+    assert client._adapter.name == "rust"
+    asynchronous = ".aio." in client_module.__name__
+    acquire = (AsyncMock if asynchronous else Mock)(side_effect=AssertionError("unexpected driver acquisition"))
+    monkeypatch.setattr(client._adapter, "_ensure_driver_handle", acquire)
+    container = client.get_database_client("sales").get_container_client("orders")
+    headers = {name: "value"}
+    kwargs = {source: headers if source == "initial_headers" else {"initialHeaders": headers}}
+
+    async def run_async():
+        try:
+            with pytest.raises(TypeError, match="Request header names must be strings"):
+                await container.read_item("order-42", partition_key="customer-17", **kwargs)
+        finally:
+            await client.close()
+
+    if asynchronous:
+        asyncio.run(run_async())
+    else:
+        try:
+            with pytest.raises(TypeError, match="Request header names must be strings"):
+                container.read_item("order-42", partition_key="customer-17", **kwargs)
+        finally:
+            client.close()
+    acquire.assert_not_called()
+    assert headers == {name: "value"}

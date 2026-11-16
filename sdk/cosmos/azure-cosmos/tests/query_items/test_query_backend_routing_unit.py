@@ -7,12 +7,12 @@
 
 These pin the query paging behavior: ``query_items`` fetches one page
 at a time through the backend's paged handoff (``execute_pages``), not the
-single-reply path; and the Python-side eligibility gates decide when a page may go
-to the Rust backend versus the legacy HTTP path. The old Python SQL-regex scan is
+single-reply path; and Python-side eligibility gates reject unsupported Rust
+requests without switching to the legacy HTTP path. The old Python SQL-regex scan is
 gone -- cross-partition shapes (COUNT, ORDER BY, ...) are no longer blocked here;
 the driver's own reply is authoritative. Options the Rust page path cannot
-represent still fall back to legacy except for database listing and querying,
-which reject unsupported calls without replay. All fakes, no network.
+represent are rejected. Only explicitly selected legacy backends execute legacy
+requests. All fakes, no network.
 """
 from __future__ import annotations
 from azure.cosmos._backend.capabilities import OperationRouting
@@ -33,6 +33,7 @@ from azure.cosmos import CosmosClient
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos import _base as base_helpers
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
+from azure.cosmos._backend.constants import BACKEND_NAME_RUST
 from azure.cosmos._availability_strategy_config import CrossRegionHedgingStrategy
 from azure.cosmos._backend.errors import (
     BindingProtocolError,
@@ -79,6 +80,8 @@ class _CapturingSyncBackend(CosmosBackend):
     single-reply path.
     """
 
+    name = BACKEND_NAME_RUST
+
     def __init__(self, response: BackendResponse) -> None:
         self._response = response
         self.prepared = None
@@ -104,6 +107,8 @@ class _CapturingSyncBackend(CosmosBackend):
 
 class _CapturingAsyncBackend(AsyncCosmosBackend):
     """Async twin of ``_CapturingSyncBackend``, so both surfaces get the same checks."""
+
+    name = BACKEND_NAME_RUST
 
     def __init__(self, response: BackendResponse) -> None:
         self._response = response
@@ -139,6 +144,8 @@ class _SequencedSyncBackend(CosmosBackend):
     trip rather than the second page being fetched from scratch.
     """
 
+    name = BACKEND_NAME_RUST
+
     def __init__(self) -> None:
         self.prepared = []
 
@@ -165,6 +172,8 @@ class _SequencedSyncBackend(CosmosBackend):
 
 class _SequencedAsyncBackend(AsyncCosmosBackend):
     """Async twin of ``_SequencedSyncBackend``."""
+
+    name = BACKEND_NAME_RUST
 
     def __init__(self) -> None:
         self.prepared = []
@@ -827,11 +836,11 @@ async def test_database_feed_unsupported_public_options_never_fall_back_rust(
     """Options the Rust database feed cannot honour fail loudly instead of falling back.
 
     Covers a sub-second timeout, a connection timeout, overriding the user
-    agent or API version header, the raw request and response hooks, and an
-    unrecognised keyword.
+    agent or API version header, and an unrecognised keyword.
 
     These database feeds reject unsupported transport options with a
-    ``NotImplementedError`` naming the legacy Python path. The hook is never
+    ``NotImplementedError`` naming the legacy Python path. Unknown keywords
+    instead raise ``TypeError`` naming the keyword. The hook is never
     called, neither transport is used, and the fallback counter does not move.
 
     Both listing and query reject an invalid timeout while constructing the
@@ -847,7 +856,10 @@ async def test_database_feed_unsupported_public_options_never_fall_back_rust(
         return
     iterable = database_feed(response_hook=hook, **kwargs)
     hook.assert_not_called()
-    with pytest.raises(NotImplementedError, match="legacy Python"):
+    error, message = (
+        (TypeError, "unknown_option") if "unknown_option" in kwargs else (NotImplementedError, "legacy Python")
+    )
+    with pytest.raises(error, match=message):
         await _next_listing_page(iterable.by_page(), is_async)
     hook.assert_not_called()
     backend.execute_pages.assert_not_called()
@@ -1340,29 +1352,15 @@ def test_rust_feed_header_and_paging_precedence_is_case_insensitive_rust(typed):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("is_async", [False, True])
-@pytest.mark.parametrize("route", ["legacy", "capability-fallback", "ineligible", "query-plan"])
+@pytest.mark.parametrize("route", ["legacy", "preflight-rejection", "ineligible", "query-plan"])
 async def test_query_core_python_preparation_is_lazy_but_preserved_rust(monkeypatch, is_async, route):
-    """Whenever a query does end up on the legacy path, it is prepared exactly as before.
-
-    Four ways to get there: a legacy backend, a backend that rejects the page
-    shape, an option the Rust path cannot represent, and a query plan call.
-
-    In every case the legacy request is built once -- not zero times, which
-    would send an unsigned request, and not twice, which would mean the work
-    was done eagerly and then repeated. The caller's own header survives and
-    an activity id is attached.
-
-    Session token handling runs for real queries but is skipped for query plan
-    calls, which do not carry one. Preparing legacy headers is only skipped
-    when the Rust path actually serves the request, so falling back must not
-    leave a request half-prepared.
-    """
+    """Only explicit legacy selection builds legacy headers or sends a legacy query."""
     conn = _new_async_connection() if is_async else _new_sync_connection()
     backend_type = _CapturingAsyncBackend if is_async else _CapturingSyncBackend
     backend = backend_type(BackendResponse(status_code=200, body=b'{"Documents":[]}'))
     if route != "legacy":
         conn._backend = backend
-    if route == "capability-fallback":
+    if route == "preflight-rejection":
         backend.validate_page_request = MagicMock(side_effect=PagePreflightError("unsupported test shape"))
     headers_spy = MagicMock(wraps=base_helpers.GetHeaders)
     monkeypatch.setattr(base_helpers, "GetHeaders", headers_spy)
@@ -1378,6 +1376,19 @@ async def test_query_core_python_preparation_is_lazy_but_preserved_rust(monkeypa
     if route == "ineligible":
         options["initialHeaders"]["User-Agent"] = "customer-agent"
     call = _run_async_query_feed if is_async else _run_sync_query_feed
+    if route != "legacy":
+        error = PagePreflightError if route == "preflight-rejection" else NotImplementedError
+        with pytest.raises(error):
+            result = call(
+                conn, query={"query": "SELECT * FROM c"}, options=options, is_query_plan=route == "query-plan",
+            )
+            if is_async:
+                await result
+        post.assert_not_called()
+        headers_spy.assert_not_called()
+        session_spy.assert_not_called()
+        assert backend.prepared is None
+        return
     result = call(
         conn, query={"query": "SELECT * FROM c"}, options=options, is_query_plan=route == "query-plan",
     )
@@ -1400,7 +1411,7 @@ def test_list_databases_gate_rejects_non_read_feed_shapes_rust(options, is_query
     """The gate refuses shapes the Rust database page does not serve yet.
 
     A query-plan request and a change-feed read both reach this code but are not
-    plain "list the databases" calls, so they stay on the old path.
+    plain "list the databases" calls, so Rust dispatch rejects them.
     """
     assert not can_use_rust_backend_for_list_databases_page(
         options=options,
@@ -1416,7 +1427,7 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
     the driver's reply decides whether it can run them. But options the Rust page
     path cannot represent (``enableCrossPartitionQuery=False``, a ``feed_range``, a
     MultiHash partition key, ``availability_strategy``, full-text
-    score scope, query advice) still block it and keep the query on the legacy path.
+    score scope, query advice) still block it without legacy fallback.
     """
     eligibility = can_use_rust_backend_for_query_page
 

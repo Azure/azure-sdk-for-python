@@ -501,11 +501,19 @@ def test_resource_token_header_selection_is_removed_rust():
 
 @pytest.mark.parametrize("backend", ["rust", "core-python"])
 @pytest.mark.parametrize("credential", ["ZmFrZQ==", {"masterKey": "ZmFrZQ=="}])
-def test_account_key_forms_remain_supported_rust(client_constructor, backend, credential):
+def test_account_key_forms_remain_supported_rust(client_constructor, backend, credential, monkeypatch):
+    """Both key forms keep the same key; Rust construction does not acquire a handle."""
+    acquire = MagicMock(side_effect=AssertionError("Construction must not acquire a driver handle"))
+    monkeypatch.setattr("azure.cosmos._rust.acquire_driver_handle", acquire)
     client = client_constructor.cls("https://example.invalid", credential, _backend=backend)
     try:
         assert client_constructor.connection.call_args.kwargs["auth"] == {"masterKey": "ZmFrZQ=="}
         assert client._adapter.name == backend
+        if backend == "rust":
+            assert client._adapter._master_key == "ZmFrZQ=="
+            assert client._adapter._token_credential is None
+            assert client._adapter._driver_handle is None
+        acquire.assert_not_called()
     finally:
         finish(client._adapter.close())
 
@@ -513,8 +521,12 @@ def test_account_key_forms_remain_supported_rust(client_constructor, backend, cr
 @pytest.mark.parametrize("backend", ["rust", "core-python"])
 @pytest.mark.parametrize("async_credential", [False, True])
 def test_entra_credentials_match_client_type_without_fetching_a_token_rust(
-    client_constructor, backend, async_credential,
+    client_constructor, backend, async_credential, monkeypatch,
 ):
+    """Construction keeps the credential object without fetching a token or acquiring a handle."""
+    acquire = MagicMock(side_effect=AssertionError("Construction must not acquire a driver handle"))
+    monkeypatch.setattr("azure.cosmos._rust.acquire_driver_handle", acquire)
+
     class Credential:
         def get_token(self, *scopes, **kwargs):
             raise AssertionError("Construction must not fetch a token")
@@ -528,10 +540,16 @@ def test_entra_credentials_match_client_type_without_fetching_a_token_rust(
         with pytest.raises(TypeError, match="requires a synchronous token credential"):
             client_constructor.cls("https://example.invalid", credential, _backend=backend)
         client_constructor.connection.assert_not_called()
+        acquire.assert_not_called()
         return
     client = client_constructor.cls("https://example.invalid", credential, _backend=backend)
     try:
         assert client_constructor.connection.call_args.kwargs["auth"]["clientSecretCredential"] is credential
+        if backend == "rust":
+            assert client._adapter._token_credential is credential
+            assert client._adapter._master_key is None
+            assert client._adapter._driver_handle is None
+        acquire.assert_not_called()
     finally:
         finish(client._adapter.close())
 

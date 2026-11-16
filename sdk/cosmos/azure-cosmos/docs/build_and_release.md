@@ -633,6 +633,7 @@ Our `rust-toolchain.toml` currently contains:
 [toolchain]
 channel = "ms-prod-1.97"
 profile = "minimal"
+components = ["clippy"]
 ```
 
 The `channel` selects the default toolchain for this prototype.
@@ -649,6 +650,9 @@ toolchain used.
 additional tools and documentation. **It does not mean "produce a smaller
 wheel" or "compile without optimization."** Installation profiles and
 compilation optimization settings are different things.
+
+`components = ["clippy"]` adds clippy, which the minimal profile leaves out.
+The section "Clippy: catching risky Rust code before it ships" explains it.
 
 ### Why rust-version and rust-toolchain.toml are different
 
@@ -693,6 +697,68 @@ These are SDK build concerns. Alpha Bank does not need the tools when
 installing a compatible prebuilt wheel. Customer source installation, if
 supported, needs its own accessible toolchain path; it cannot assume access
 to our internal Microsoft toolchain.
+
+### Clippy: catching risky Rust code before it ships
+
+The compiler rejects code that is invalid. It accepts code that is valid but
+risky. Tests catch only the risks that a test happens to exercise.
+
+**Clippy** is Rust's standard code checker. It reads our Rust code without
+running it and reports patterns that are known to cause bugs, waste memory, or
+confuse readers. Each kind of check is called a **lint**.
+
+For example, calling an `async` function in Rust does not run it immediately.
+It returns a **future**: a package holding the remaining work plus every local
+value that work needs while it waits for the network. A container-delete
+future in our binding is about 28 KB. Waiting on it directly with `.await`
+places all 28 KB on the thread's **stack**, the small fixed-size memory each
+thread receives. Enough of these nested together can overflow the stack and
+crash the customer app. Clippy's `large_futures` lint reports this, and
+`Box::pin(...)` fixes it by moving the future to general (heap) memory.
+
+**Our lint rules live in the package-level `Cargo.toml`:**
+
+```toml
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+large_futures = "deny"
+style = { level = "allow", priority = -1 }
+uninlined_format_args = "allow"
+```
+
+The binding uses these rules only because its own `Cargo.toml` contains
+`[lints] workspace = true`. Without that line, the rules are ignored.
+
+| Rule | Meaning |
+|---|---|
+| `unsafe_code = "forbid"` | The compiler rejects any `unsafe` block. `unsafe` turns off Rust's memory-safety checks; the binding has none and must not gain any. |
+| `large_futures = "deny"` | A large future awaited on the stack is an error. |
+| `style` and `uninlined_format_args` allowed | Formatting-preference lints are not reported. |
+
+The clippy rules match the driver repo (`azure-sdk-for-rust\Cargo.toml`), so
+both crates follow one policy.
+
+**Errors block CI; warnings do not.** The native CI step runs clippy before
+`cargo test`:
+
+```text
+cargo clippy
+    -> any error (for example, large_futures)  -> the step fails
+    -> warnings only                           -> printed; the step continues
+cargo test
+```
+
+Clippy also reports warnings, such as a conversion that does nothing or a
+function with too many arguments. They are shown in `cargo-clippy.log` for
+cleanup but do not fail the build.
+
+Run the same check locally from the package folder:
+
+```text
+cargo clippy --workspace --all-targets --all-features --locked
+```
 
 ## 6. How Cargo builds the Rust extension
 
@@ -1064,6 +1130,40 @@ the setting that tells the running SDK where to find the library.
 
 For packaging validation, move to the next workflow: build a wheel, then test
 what was installed from that wheel.
+
+### Building for native cancellation tests
+
+When a customer app cancels an order read, the SDK team needs evidence that
+the native operation future stops, not just that the Python waiter is cancelled.
+The cancellation test observes that future through a private, single-use probe.
+It does not prove that sockets close or that the service backend undoes work.
+
+The `test-probes` Cargo feature includes this instrumentation only when requested.
+Normal builds omit `_AsyncOperationProbe`, the `_debug_lifecycle` keyword on
+`read_item_async`, and the operation's probe wrapper. Do not enable this feature
+for customer wheels.
+
+In the activated development environment, from the package source directory:
+
+```powershell
+python -m maturin develop --locked --features test-probes
+$env:PYTHONPATH = "$PWD;$PWD\tests"
+python -m pytest --import-mode=importlib --confcutdir=tests\fault_injection tests\fault_injection\aio\test_async_cancellation_fault.py -q
+```
+
+Set `ACCOUNT_HOST` and `ACCOUNT_KEY` to an isolated test account before running
+the test. Its fixtures create and clean up uniquely named resources. It checks
+native-future destruction after cancellation, a no-injection control, and
+recovery using the same client. A normal build fails with rebuild instructions
+instead of silently skipping this evidence.
+
+After testing, restore the normal build and restart Python processes that loaded
+the instrumented extension:
+
+```powershell
+python -m maturin develop --locked
+python -c "from azure.cosmos import _rust; assert not hasattr(_rust, '_AsyncOperationProbe')"
+```
 
 ## 8. Building and checking a wheel locally
 
@@ -1772,10 +1872,12 @@ The file records our selected build tools:
 [toolchain]
 channel = "ms-prod-1.97"
 profile = "minimal"
+components = ["clippy"]
 ```
 
 `channel` names the Microsoft toolchain to select. `profile = "minimal"`
-requests its basic compilation components, not a smaller wheel. The file
+requests its basic compilation components, not a smaller wheel. `components`
+adds clippy, which the minimal profile leaves out. The file
 contains settings; it does not contain the compiler or install it by itself.
 
 **The same file applies to local development and pipeline builds.**
@@ -2408,8 +2510,10 @@ Two additional checks use the existing `AfterTestSteps` hook:
   tests except those selected by the dedicated telemetry suite. It runs without
   the emulator marker filter, checks that the installed native wheel is loaded,
   and fails missing execution or unexpected skips.
-- **Native Rust tests:** `run_rust_ci.py native` runs `cargo test` and checks
-  that test bodies actually ran. Building a wheel alone does not run them.
+- **Native Rust tests:** `run_rust_ci.py native` first runs `cargo clippy`. Clippy
+  errors, such as a denied `large_futures` lint, fail the step; warnings don't.
+  It then runs `cargo test` and checks that test bodies actually ran. Building a
+  wheel alone does not run them.
 
 These steps run only in the existing Windows Python 3.13 standard test job
 (`ChecksOverride=whl,sdist`). They reuse that job's checkout and downloaded

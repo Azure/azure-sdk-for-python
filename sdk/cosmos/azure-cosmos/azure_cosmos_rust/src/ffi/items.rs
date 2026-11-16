@@ -107,7 +107,8 @@ pub(crate) fn create_item<'py>(
     super::validate_prepared_operation(prepared, "create_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_create_body_inputs(prepared)?;
-    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.remaining_binding_timeout =
+        crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_sync(
         py,
@@ -142,7 +143,8 @@ pub(crate) fn upsert_item<'py>(
     super::validate_prepared_operation(prepared, "upsert_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_create_body_inputs(prepared)?;
-    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.remaining_binding_timeout =
+        crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_sync(
         py,
@@ -182,7 +184,8 @@ pub(crate) fn replace_item<'py>(
     // of a different item created later with the same item id.
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_item_body_inputs(prepared, REPLACE_ITEM_ID_REQUIRED)?;
-    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.remaining_binding_timeout =
+        crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     let target = item_target(prepared, || Ok(item_id))?;
 
     execute_item_operation_sync(
@@ -220,7 +223,8 @@ pub(crate) fn delete_item<'py>(
         DELETE_ITEM_ID_REQUIRED,
         DELETE_ITEM_PARTITION_KEY_REQUIRED,
     )?;
-    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.remaining_binding_timeout =
+        crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_sync(
         py,
@@ -263,7 +267,8 @@ pub(crate) fn read_item<'py>(
     let (container_link, partition_key, mut modifiers, target) =
         extract_read_item_inputs(prepared)?;
     modifiers.read_consistency_strategy = modifiers.parse_read_consistency()?;
-    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.remaining_binding_timeout =
+        crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_sync(
         py,
@@ -306,7 +311,8 @@ pub(crate) fn patch_item<'py>(
     let target = item_target(prepared, || {
         extract_required_item_id(prepared, PATCH_ITEM_ID_REQUIRED)
     })?;
-    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.remaining_binding_timeout =
+        crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     let precondition = patch_precondition(&mut modifiers, &body_bytes)?;
     if matches!(partition_key, BindingPartitionKey::Extract) {
         return Err(PyValueError::new_err(
@@ -345,7 +351,8 @@ pub(crate) fn create_item_async<'py>(
     super::validate_prepared_operation(prepared, "create_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_create_body_inputs(prepared)?;
-    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.remaining_binding_timeout =
+        crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_async(
         py,
@@ -359,6 +366,7 @@ pub(crate) fn create_item_async<'py>(
         true,
         include_attempts,
         include_fault_diagnostics,
+        #[cfg(feature = "test-probes")]
         None,
         |item_ref, body| CosmosOperation::create_item(item_ref).with_body(body),
     )
@@ -378,7 +386,8 @@ pub(crate) fn upsert_item_async<'py>(
     super::validate_prepared_operation(prepared, "upsert_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_create_body_inputs(prepared)?;
-    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.remaining_binding_timeout =
+        crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_async(
         py,
@@ -392,6 +401,7 @@ pub(crate) fn upsert_item_async<'py>(
         true,
         include_attempts,
         false,
+        #[cfg(feature = "test-probes")]
         None,
         |item_ref, body| CosmosOperation::upsert_item(item_ref).with_body(body),
     )
@@ -411,7 +421,8 @@ pub(crate) fn replace_item_async<'py>(
     super::validate_prepared_operation(prepared, "replace_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
         extract_item_body_inputs(prepared, REPLACE_ITEM_ID_REQUIRED)?;
-    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.remaining_binding_timeout =
+        crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     let target = item_target(prepared, || Ok(item_id))?;
 
     execute_item_operation_async(
@@ -426,6 +437,7 @@ pub(crate) fn replace_item_async<'py>(
         true,
         include_attempts,
         false,
+        #[cfg(feature = "test-probes")]
         None,
         |item_ref, body| CosmosOperation::replace_item(item_ref).with_body(body),
     )
@@ -448,7 +460,8 @@ pub(crate) fn delete_item_async<'py>(
         DELETE_ITEM_ID_REQUIRED,
         DELETE_ITEM_PARTITION_KEY_REQUIRED,
     )?;
-    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.remaining_binding_timeout =
+        crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_async(
         py,
@@ -462,14 +475,37 @@ pub(crate) fn delete_item_async<'py>(
         false,
         include_attempts,
         false,
+        #[cfg(feature = "test-probes")]
         None,
         |item_ref, _| CosmosOperation::delete_item(item_ref),
     )
 }
 
 /// Async twin of `read_item`: identical inputs and driver work, returns a
-/// Python awaitable instead of a ready tuple. The optional internal lifecycle
-/// probe observes this operation future's destruction, not socket or service work.
+/// Python awaitable instead of a ready tuple.
+#[cfg(not(feature = "test-probes"))]
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false))]
+pub(crate) fn read_item_async<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+    include_fault_diagnostics: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    read_item_async_impl(
+        py,
+        driver_handle,
+        prepared,
+        timeout_seconds,
+        include_attempts,
+        include_fault_diagnostics,
+    )
+}
+
+/// Test-build entry point observing the native future, not socket or service work.
+#[cfg(feature = "test-probes")]
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false, _debug_lifecycle=None))]
 pub(crate) fn read_item_async<'py>(
@@ -481,11 +517,34 @@ pub(crate) fn read_item_async<'py>(
     include_fault_diagnostics: bool,
     _debug_lifecycle: Option<PyRef<'py, crate::wire::lifecycle::AsyncOperationProbe>>,
 ) -> PyResult<Bound<'py, PyAny>> {
+    read_item_async_impl(
+        py,
+        driver_handle,
+        prepared,
+        timeout_seconds,
+        include_attempts,
+        include_fault_diagnostics,
+        _debug_lifecycle,
+    )
+}
+
+fn read_item_async_impl<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+    include_fault_diagnostics: bool,
+    #[cfg(feature = "test-probes")] lifecycle_probe: Option<
+        PyRef<'py, crate::wire::lifecycle::AsyncOperationProbe>,
+    >,
+) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "read_item")?;
     let (container_link, partition_key, mut modifiers, target) =
         extract_read_item_inputs(prepared)?;
     modifiers.read_consistency_strategy = modifiers.parse_read_consistency()?;
-    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.remaining_binding_timeout =
+        crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
     execute_item_operation_async(
         py,
@@ -499,7 +558,8 @@ pub(crate) fn read_item_async<'py>(
         false,
         include_attempts,
         include_fault_diagnostics,
-        _debug_lifecycle.map(|probe| probe.state.clone()),
+        #[cfg(feature = "test-probes")]
+        lifecycle_probe.map(|probe| probe.state.clone()),
         |item_ref, _| CosmosOperation::read_item(item_ref),
     )
 }
@@ -521,7 +581,8 @@ pub(crate) fn patch_item_async<'py>(
     let target = item_target(prepared, || {
         extract_required_item_id(prepared, PATCH_ITEM_ID_REQUIRED)
     })?;
-    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.remaining_binding_timeout =
+        crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     let precondition = patch_precondition(&mut modifiers, &body_bytes)?;
     if matches!(partition_key, BindingPartitionKey::Extract) {
         return Err(PyValueError::new_err(
@@ -541,6 +602,7 @@ pub(crate) fn patch_item_async<'py>(
         true,
         include_attempts,
         false,
+        #[cfg(feature = "test-probes")]
         None,
         move |item_ref, body| patch_operation(item_ref, body, precondition),
     )
@@ -632,7 +694,17 @@ mod tests {
                 ));
                 for asynchronous in [false, true] {
                     let error = if asynchronous {
-                        read_item_async(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false, None).map(|_| ())
+                        read_item_async(
+                            py,
+                            pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(),
+                            &prepared,
+                            None,
+                            false,
+                            false,
+                            #[cfg(feature = "test-probes")]
+                            None,
+                        )
+                        .map(|_| ())
                     } else {
                         read_item(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false).map(|_| ())
                     }
@@ -653,7 +725,17 @@ mod tests {
                 prepared.setattr("item_self_link", link).unwrap();
                 for asynchronous in [false, true] {
                     let error = if asynchronous {
-                        read_item_async(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false, None).map(|_| ())
+                        read_item_async(
+                            py,
+                            pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(),
+                            &prepared,
+                            None,
+                            false,
+                            false,
+                            #[cfg(feature = "test-probes")]
+                            None,
+                        )
+                        .map(|_| ())
                     } else {
                         read_item(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false).map(|_| ())
                     }
@@ -666,7 +748,17 @@ mod tests {
             prepared.setattr("item_id", py.None()).unwrap();
             for asynchronous in [false, true] {
                 let error = if asynchronous {
-                    read_item_async(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false, None).map(|_| ())
+                    read_item_async(
+                        py,
+                        pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(),
+                        &prepared,
+                        None,
+                        false,
+                        false,
+                        #[cfg(feature = "test-probes")]
+                        None,
+                    )
+                    .map(|_| ())
                 } else {
                     read_item(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false).map(|_| ())
                 }

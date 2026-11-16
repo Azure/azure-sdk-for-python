@@ -136,6 +136,18 @@ class TestVectorSimilarityQuery(unittest.TestCase):
         vector_string = vector_test_data.get_embedding_string("I am having a wonderful day.")
         query = "SELECT TOP 10 c.text, VectorDistance(c.embedding, [{}]) AS " \
                 "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}])".format(vector_string, vector_string)
+        name = "AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"
+        legacy = self.key_client.get_database_client(self.database_id).get_container_client(
+            self.created_large_container.id
+        )
+        for value in ["", "abc", "1.5", "-1", str(2**64)]:
+            with patch.dict(os.environ, {name: value}):
+                ordinary = "SELECT TOP 10 * FROM c"
+                assert list(self.created_large_container.query_items(
+                    ordinary, enable_cross_partition_query=True
+                )) == list(legacy.query_items(ordinary, enable_cross_partition_query=True))
+                with pytest.raises(ValueError):
+                    list(self.created_large_container.query_items(query, enable_cross_partition_query=True))
         os.environ["AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"] = "1"
         try:
             [item for item in self.created_large_container.query_items(query=query, enable_cross_partition_query=True)]

@@ -3,12 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Count permitted fallback to the legacy path before execution.
+"""Retain the historical fallback counter for migration test compatibility.
 
-Some unmigrated operations still use the legacy path for unsupported requests.
-Count those temporary cases, not retries of failed binding calls or runs using
-the private legacy test control. These are migration measurements, not
-evidence of a second supported execution path.
+Rust dispatch no longer permits legacy fallback and does not update this
+counter. Explicit legacy comparison runs do not update it either. Tests must
+also check legacy-call spies: an unchanged counter alone is not proof that
+no legacy execution occurred.
 
 All clients in this process, synchronous and asynchronous, share this counter.
 Both reading and updating it take the same lock.
@@ -23,13 +23,13 @@ _RUST_COMPATIBILITY_FALLBACK_COUNT_LOCK = Lock()
 
 
 def rust_compatibility_fallback_count() -> int:
-    """Return the count of fallback choices made before request execution."""
+    """Return the historical migration fallback count."""
     with _RUST_COMPATIBILITY_FALLBACK_COUNT_LOCK:
         return _RUST_COMPATIBILITY_FALLBACK_COUNT
 
 
 def record_rust_compatibility_fallback() -> None:
-    """Count one permitted fallback to the legacy path before execution."""
+    """Record a legacy transition observed by migration instrumentation."""
     global _RUST_COMPATIBILITY_FALLBACK_COUNT  # pylint: disable=global-statement
     with _RUST_COMPATIBILITY_FALLBACK_COUNT_LOCK:
         _RUST_COMPATIBILITY_FALLBACK_COUNT += 1

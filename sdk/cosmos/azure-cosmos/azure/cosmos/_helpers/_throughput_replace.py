@@ -9,16 +9,16 @@ from typing import Any, Callable, Mapping, Optional, Union
 
 from .._base import _deserialize_throughput
 from .._cosmos_responses import CosmosDict
-from .._throughput_rust_routing import offer_response_headers
 from ..offer import ThroughputProperties
 from ._response_parse import with_response_header_snapshot
+from ._throughput_rust_routing import offer_response_headers
 
 
 def validate_replacement_throughput(
     throughput: Union[int, ThroughputProperties],
 ) -> None:
     """Reject invalid types and mixed throughput modes before reading metadata."""
-    if not isinstance(throughput, (int, ThroughputProperties)):
+    if isinstance(throughput, bool) or not isinstance(throughput, (int, ThroughputProperties)):
         raise TypeError(
             "offer_throughput must be int or an instance of ThroughputProperties"
         )
@@ -27,7 +27,7 @@ def validate_replacement_throughput(
             throughput.auto_scale_max_throughput is not None
             or throughput.auto_scale_increment_percent is not None
         ):
-            raise KeyError(
+            raise ValueError(
                 "Manual and autoscale throughput settings cannot be combined"
             )
 

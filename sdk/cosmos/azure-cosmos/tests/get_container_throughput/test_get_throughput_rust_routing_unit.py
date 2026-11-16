@@ -25,7 +25,11 @@ from azure.cosmos._helpers._request_settings import (
     HEADERS_THE_DRIVER_WOULD_SILENTLY_OVERWRITE,
 )
 from azure.cosmos._helpers._request_throughput import build_get_throughput_request, build_replace_throughput_request
-from azure.cosmos._throughput_rust_routing import can_use_rust_backend_for_get_throughput, parse_get_throughput_payload, build_get_throughput_from_connection
+from azure.cosmos._helpers._throughput_rust_routing import (
+    can_use_rust_backend_for_get_throughput,
+    parse_get_throughput_payload,
+    build_get_throughput_from_connection,
+)
 
 RUST_BACKEND = SimpleNamespace(name="rust")
 _OFFER_QUERY = {
@@ -284,7 +288,7 @@ def test_offer_parser_preserves_records_rust(offers):
 def test_offer_headers_belong_to_response_not_later_client_diagnostics_rust():
     from types import SimpleNamespace
     from azure.cosmos._backend.contracts import BackendResponse
-    from azure.cosmos._throughput_rust_routing import process_get_throughput_response, offer_response_headers
+    from azure.cosmos._helpers._throughput_rust_routing import process_get_throughput_response, offer_response_headers
 
     connection = SimpleNamespace(last_response_headers={})
     result = process_get_throughput_response(

@@ -118,6 +118,8 @@ class TestFullTextPolicy(unittest.TestCase):
         finally:
             self.test_db.delete_container(container.id)
 
+    @pytest.mark.skip(reason="environment-gap: the original is skipped until the testing pipeline "
+                             "supports full-text multi-language.")
     def test_multi_path_multi_language_policy_rust(self):
         # Source: tests/test_full_text_policy.py::TestFullTextPolicy.test_multi_path_multi_language_policy
         # Create a container with a different language in each path

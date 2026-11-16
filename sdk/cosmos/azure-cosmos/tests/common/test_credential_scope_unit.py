@@ -5,7 +5,7 @@
 import asyncio
 
 import pytest
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ServiceResponseError
 
 from azure.cosmos import CosmosClient
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
@@ -76,7 +76,8 @@ def test_sync_scope_is_captured_before_native_acquisition_rust(monkeypatch, endp
     try:
         assert credential.scopes == []
         monkeypatch.setenv(_OVERRIDE_ENV, "https://later.example/.default")
-        with pytest.raises(RuntimeError, match="driver init failed"):
+        # The test credential fails before any service request is sent.
+        with pytest.raises(ServiceResponseError, match="failed to acquire AAD token for Cosmos DB"):
             client.get_database_client("alpha-bank-db").read()
         assert credential.scopes == _expected_scopes(endpoint, override, fallback)
     finally:
@@ -97,7 +98,8 @@ def test_async_scope_preserves_owner_loop_rust(monkeypatch, endpoint, override, 
 
     async def run():
         try:
-            with pytest.raises(RuntimeError, match="driver init failed"):
+            # The test credential fails before any service request is sent.
+            with pytest.raises(ServiceResponseError, match="failed to acquire AAD token for Cosmos DB"):
                 await client.get_database_client("alpha-bank-db").read()
             assert credential.scopes == _expected_scopes(endpoint, override, fallback)
             if async_credential:

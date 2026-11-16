@@ -3,6 +3,7 @@
 """Batch portions of original composite tests, with configured key/AAD clients."""
 
 import uuid
+from contextlib import AsyncExitStack
 from unittest.mock import Mock
 
 import pytest
@@ -23,6 +24,8 @@ pytestmark = [
 
 
 async def test_batch_none_options_rust(fault_client):
+    # Source: tests/test_none_options.py::TestNoneOptions.test_execute_item_batch_none_options
+    # Source: tests/test_none_options_async.py::TestNoneOptionsAsync.test_execute_item_batch_none_options_async
     run = await fault_client()
     pk_value = "batch-pk"
     id1, id2 = str(uuid.uuid4()), str(uuid.uuid4())
@@ -92,19 +95,40 @@ async def test_batch_ignored_top_level_conditions_rust(fault_client):
         assert result["statusCode"] in (200, 201)
 
 
-async def test_batch_request_throughput_bucket_rust(fault_client):
-    run = await fault_client(throughput_bucket=2)
-    result = await invoke(
-        run.container.execute_item_batch,
-        [("create", ({"id": "bucket", "pk": "p"},))],
-        partition_key="p",
-        throughput_bucket=3,
-    )
-    run.native.assert_called_once()
-    prepared = run.native.call_args.args[1]
+async def test_batch_request_throughput_bucket_rust(
+    asynchronous, batch_database, observer, monkeypatch
+):
+    # Source: tests/test_headers.py::TestHeaders.test_container_execute_item_batch_throughput_bucket
+    # Source: tests/test_headers_async.py::TestHeadersAsync.test_container_execute_item_batch_throughput_bucket_async
+    # The shared fixture uses /pk instead of /company; retain the original 100 creates.
+    batch = [("create", ({"id": "item" + str(i), "pk": "Microsoft"},)) for i in range(100)]
+    async with AsyncExitStack() as stack:
+        factory = clients.create_data_client_async if asynchronous else clients.create_data_client
+        # Keep normal throttle retries; the fault fixture disables them deliberately.
+        client = factory(_backend="rust", throughput_bucket=2)
+        if asynchronous:
+            await stack.enter_async_context(client)
+        else:
+            stack.enter_context(client)
+        container = client.get_database_client(batch_database.id).get_container_client(observer.id)
+        name = "execute_item_batch_async" if asynchronous else "execute_item_batch"
+        native = Mock(wraps=getattr(_rust, name))
+        monkeypatch.setattr(_rust, name, native)
+        result = await invoke(
+            container.execute_item_batch,
+            batch,
+            partition_key="Microsoft",
+            throughput_bucket=3,
+        )
+    native.assert_called_once()
+    prepared = native.call_args.args[1]
     assert prepared.settings.throughput_bucket == 3
     assert prepared.op == "execute_item_batch"
-    assert result[0]["statusCode"] == 201
+    assert len(result) == 100
+    assert all(item["statusCode"] == 201 for item in result)
+    assert {item["resourceBody"]["id"] for item in result} == {
+        "item" + str(i) for i in range(100)
+    }
 
 
 @pytest.mark.cosmosLong

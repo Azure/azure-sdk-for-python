@@ -12,8 +12,8 @@ Page fetches use separate tables. Requests passing a feed cursor use
 RETAINED_PAGE_BINDING_FUNCTION_NAMES. Requests without a feed cursor use
 STATELESS_PAGE_BINDING_FUNCTION_NAMES and may still carry a continuation token.
 
-These tables choose binding function names, not whether fallback to the legacy
-path is allowed. That decision belongs to capabilities.py.
+These tables choose binding function names. The capability checks in
+capabilities.py reject unsupported Rust requests without legacy fallback.
 """
 
 from __future__ import annotations

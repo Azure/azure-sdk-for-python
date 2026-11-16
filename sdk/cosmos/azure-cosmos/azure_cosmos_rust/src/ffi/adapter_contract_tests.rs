@@ -11,11 +11,16 @@ use azure_data_cosmos_driver::{
     },
     models::PartitionKeyDefinition,
 };
-use pyo3::{exceptions::PyTimeoutError, prelude::*, types::PyTuple};
+use pyo3::{
+    exceptions::{PyTimeoutError, PyTypeError},
+    prelude::*,
+    types::{PyDict, PyTuple},
+};
 use std::sync::Arc;
 use url::Url;
 
 const OPERATIONS: &[&str] = &[
+    "read_item",
     "upsert_item",
     "delete_item",
     "delete_container",
@@ -109,7 +114,7 @@ def invoke(function, handle, request, asynchronous, timeout, attempts):
                 crate::wire::partition_key_input::test_partition_key(py, Some("[\"A\"]")),
             ))
             .unwrap();
-        if operation == "delete_item" && !delayed {
+        if matches!(operation, "read_item" | "delete_item") && !delayed {
             request.setattr("op", "upsert_item").unwrap();
             exports
                 .getattr("upsert_item")
@@ -160,6 +165,49 @@ def invoke(function, handle, request, asynchronous, timeout, attempts):
                     true
                 );
             }
+        }
+    });
+}
+
+#[test]
+fn lifecycle_probe_exports_match_build_feature() {
+    crate::test_support::prepare_python();
+    Python::with_gil(|py| {
+        let exports = PyModule::new_bound(py, "probe_contract_exports").unwrap();
+        crate::_rust(py, &exports).unwrap();
+        let enabled = cfg!(feature = "test-probes");
+        assert_eq!(exports.hasattr("_AsyncOperationProbe").unwrap(), enabled);
+        let read = exports.getattr("read_item_async").unwrap();
+        let signature: String = read
+            .getattr("__text_signature__")
+            .unwrap()
+            .extract()
+            .unwrap();
+        assert_eq!(signature.contains("_debug_lifecycle"), enabled);
+        if enabled {
+            let probe = exports
+                .getattr("_AsyncOperationProbe")
+                .unwrap()
+                .call0()
+                .unwrap();
+            assert_eq!(
+                probe
+                    .getattr("status")
+                    .unwrap()
+                    .extract::<String>()
+                    .unwrap(),
+                "created"
+            );
+        } else {
+            let kwargs = PyDict::new_bound(py);
+            kwargs.set_item("_debug_lifecycle", py.None()).unwrap();
+            let error = read
+                .call((py.None(), py.None()), Some(&kwargs))
+                .unwrap_err();
+            assert!(error.is_instance_of::<PyTypeError>(py));
+            assert!(error
+                .to_string()
+                .contains("unexpected keyword argument '_debug_lifecycle'"));
         }
     });
 }

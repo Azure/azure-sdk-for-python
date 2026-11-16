@@ -5,6 +5,7 @@
 ``TestFeedRangeMultiPartitionAsync`` keeps the original async prefix-query
 body with owned resources and explicit cleanup. Its 400 RU/s container does
 not guarantee multiple physical partitions.
+Its unittest async lifecycle replaces the original asyncio/usefixtures markers.
 
 ``TestFeedRangeMultiPartitionAsyncRust`` holds the remaining copies. Its
 class-scoped ``repro_setup_async`` fixture replaces the shared ``test_config``
@@ -13,6 +14,8 @@ database with an owned one (``DATABASE_ID``), creates the original's
 always deletes the database. Queries, feed ranges and assertions are
 unchanged. The post-split copy only runs when
 ``COSMOS_QUERY_FEED_RANGE_REAL_SPLIT=1`` authorizes a 60,000 RU/s split.
+The replacement fixture and its tests share a class-scoped asyncio loop;
+the usefixtures marker names that owned fixture.
 """
 
 import asyncio

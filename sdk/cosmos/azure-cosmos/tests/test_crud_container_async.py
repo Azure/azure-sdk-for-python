@@ -170,8 +170,11 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert collection_definition.get('partitionKey').get('kind') == created_collection_properties['partitionKey'][
             'kind']
 
+        expected_offer = await created_collection.get_throughput()
 
+        assert expected_offer is not None
 
+        assert expected_offer.offer_throughput == offer_throughput
 
         await created_db.delete_container(created_collection.id)
 

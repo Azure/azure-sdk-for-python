@@ -14,7 +14,7 @@ are not customer configuration.
 This Python wrapper validates settings and prepares the credential before
 creating BindingAdapter or AsyncBindingAdapter. These are Python classes that call
 the binding. On first use, they acquire a driver handle through the binding.
-If construction fails, release any async credential bridge acquired here.
+Credential preparation acquires no bridge; the async adapter does that on first use.
 """
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ from .constants import (
     DEFAULT_BACKEND_NAME,
     VALID_BACKEND_NAMES,
 )
-from .credentials import resolved_credential
+from .credentials import resolve_credential
 from .legacy import LEGACY_BACKEND
 from .binding_adapter import BindingAdapter
 from ..runtime import CosmosRuntime
@@ -85,12 +85,10 @@ def _make_backend(
     availability_strategy: Any = None,
     user_agent_suffix: Optional[str] = None,
     consistency_level: Optional[str] = None,
-    proxy_allowed: Optional[bool] = None,
-    connection_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Any = None,
     headers: Optional[Mapping[str, str]] = None,
 ) -> Union[_BackendT, _LegacyBackendT]:
-    """Construct a Python backend and release its async credential bridge on failure.
+    """Construct a Python backend without acquiring a credential bridge.
 
     The retained legacy test branch skips Rust validation. The Rust branch
     requires a nonempty endpoint before
@@ -104,28 +102,26 @@ def _make_backend(
                 "The Rust binding requires the account endpoint URL."
             )
         # Async adapters bind caller-owned credentials to their loop on first use.
-        with resolved_credential(credential, allow_async=allow_async_credential) as (master_key, token_credential):
-            return rust_backend_type(
-                endpoint=url,
-                master_key=master_key,
-                token_credential=token_credential,
-                runtime=runtime,
-                client_config=build_client_config(
-                    preferred_locations,
-                    excluded_locations=excluded_locations,
-                    throttling_max_retry_count=throttling_max_retry_count,
-                    throttling_max_retry_wait_time_seconds=throttling_max_retry_wait_time_seconds,
-                    availability_strategy=availability_strategy,
-                    user_agent_suffix=user_agent_suffix,
-                    consistency_level=consistency_level,
-                    proxy_allowed=proxy_allowed,
-                    connection_timeout_seconds=connection_timeout_seconds,
+        master_key, token_credential = resolve_credential(credential, allow_async=allow_async_credential)
+        return rust_backend_type(
+            endpoint=url,
+            master_key=master_key,
+            token_credential=token_credential,
+            runtime=runtime,
+            client_config=build_client_config(
+                preferred_locations,
+                excluded_locations=excluded_locations,
+                throttling_max_retry_count=throttling_max_retry_count,
+                throttling_max_retry_wait_time_seconds=throttling_max_retry_wait_time_seconds,
+                availability_strategy=availability_strategy,
+                user_agent_suffix=user_agent_suffix,
+                consistency_level=consistency_level,
 
-                    fault_injection_rules=fault_injection_rules,
-                    headers=headers,
-                    operation_timeout_seconds=operation_timeout,
-                ),
-            )
+                fault_injection_rules=fault_injection_rules,
+                headers=headers,
+                operation_timeout_seconds=operation_timeout,
+            ),
+        )
     if runtime is not None:
         raise ValueError("runtime is supported only by the Rust backend.")
     return legacy_backend
@@ -145,8 +141,6 @@ def make_backend(
     availability_strategy: Any = None,
     user_agent_suffix: Optional[str] = None,
     consistency_level: Optional[str] = None,
-    proxy_allowed: Optional[bool] = None,
-    connection_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Any = None,
     headers: Optional[Mapping[str, str]] = None,
 ) -> CosmosBackend:
@@ -166,8 +160,6 @@ def make_backend(
         availability_strategy=availability_strategy,
         user_agent_suffix=user_agent_suffix,
         consistency_level=consistency_level,
-        proxy_allowed=proxy_allowed,
-        connection_timeout_seconds=connection_timeout_seconds,
 
         fault_injection_rules=fault_injection_rules,
         headers=headers,

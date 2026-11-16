@@ -5,6 +5,7 @@
 import asyncio
 import inspect
 import json
+from copy import deepcopy
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 
@@ -16,7 +17,7 @@ from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos._backend import binding_adapter as sync_rust
 from azure.cosmos.aio._backend import binding_adapter as async_rust
-from azure.cosmos._helpers import _read_all_items
+from azure.cosmos._helpers import _feed_paging
 from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 
@@ -27,7 +28,7 @@ def feed(request, monkeypatch):
     async_mode = request.param
     clock = SimpleNamespace(now=100.0)
     clock.monotonic = lambda: clock.now
-    monkeypatch.setattr(_read_all_items, "time", clock)
+    monkeypatch.setattr(_feed_paging, "time", clock)
     monkeypatch.setattr(_operation_deadline, "time", clock)
     context = SimpleNamespace(
         clock=clock, calls=[], delay=0, init_delay=0, async_mode=async_mode,
@@ -120,6 +121,13 @@ def test_read_all_inherits_client_defaults_rust(feed, kwargs, priority, bucket):
     assert all(timeout == 10 for _, _, timeout in feed.calls)
 
 
+@pytest.mark.parametrize("value,expected", [(None, None), (0, None), (1000, 1000)])
+def test_read_all_retains_cache_staleness_rust(feed, value, expected):
+    feed.collect(feed.proxy.read_all_items(max_integrated_cache_staleness_in_ms=value))
+    assert feed.calls
+    assert all(prepared.settings.item.max_staleness_ms == expected for prepared, _, _ in feed.calls)
+
+
 def test_complete_enumeration_is_lazy_and_connection_free_rust(feed):
     feed.proxy.client_connection = ForbiddenConnection()
     pager = feed.proxy.read_all_items(max_item_count=1)
@@ -133,7 +141,11 @@ def test_complete_enumeration_is_lazy_and_connection_free_rust(feed):
     feed.binding.read_all_items_async.assert_not_called()
 
 
-@pytest.mark.parametrize("context", [None, ItemClientContext(SimpleNamespace(name="core-python"))])
+@pytest.mark.parametrize("context", [
+    None,
+    ItemClientContext(SimpleNamespace(name="core-python")),
+    ItemClientContext(SimpleNamespace(name="unknown")),
+])
 def test_missing_rust_context_never_consults_connection_rust(feed, context):
     feed.proxy.client_connection = ForbiddenConnection()
     feed.proxy._item_context = context
@@ -246,8 +258,12 @@ def test_bookmark_property_is_explicitly_unsupported_rust(feed):
     ({"max_integrated_cache_staleness_in_ms": -1}, ValueError),
     ({"timeout": float("nan")}, ValueError), ({"timeout": 0}, ValueError),
     ({"timeout": True}, ValueError), ({"response_hook": 4}, TypeError),
-    ({"availability_strategy": False}, NotImplementedError),
+    ({"availability_strategy": False}, TypeError),
+    ({"request_options": {"availabilityStrategy": None}}, TypeError),
+    ({"feed_options": {"availabilityStrategy": None}}, TypeError),
     ({"feed_range": {}}, NotImplementedError),
+    ({"unknown_option": None}, TypeError),
+    ({"connection_timeout": 2}, NotImplementedError),
     ({"request_options": {"partitionKeyRangeId": "0"}}, NotImplementedError),
     ({"initial_headers": {"authorization": "override"}}, NotImplementedError),
     ({"read_timeout": 25}, TypeError),
@@ -259,6 +275,25 @@ def test_invalid_or_unsupported_options_do_not_dispatch_rust(feed, kwargs, error
     with pytest.raises(error):
         feed.proxy.read_all_items(**kwargs)
     assert not feed.calls
+
+
+@pytest.mark.parametrize("operation", ["read_all_items", "query_items_change_feed"])
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [False, True, {"threshold_ms": 100}])
+def test_availability_strategy_is_rejected_at_pager_construction_rust(feed, operation, source, value):
+    kwargs = (
+        {"availability_strategy": value}
+        if source == "keyword"
+        else {source: {"availabilityStrategy": value}}
+    )
+    original = deepcopy(kwargs)
+    with pytest.raises(TypeError, match=rf"{operation}\(\) does not accept availability_strategy"):
+        getattr(feed.proxy, operation)(**kwargs)
+    assert kwargs == original
+    feed.backend._ensure_driver_handle.assert_not_called()
+    feed.binding._ItemFeedCursor.assert_not_called()
+    assert not feed.calls
+    assert not feed.connection.mock_calls
 
 
 def test_positional_settings_rejected_rust(feed):

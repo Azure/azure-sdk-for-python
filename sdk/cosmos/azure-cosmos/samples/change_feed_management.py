@@ -104,10 +104,12 @@ def read_change_feed_with_continuation(container):
     print('\nReading Change Feed from the continuation\n')
     # Create items
     create_items(container, 10, 'WA')
-    response_iterator = container.query_items_change_feed(start_time="Beginning")
-    for doc in response_iterator:
-        print(doc)
-    continuation_token = container.client_connection.last_response_headers['etag']
+    pages = container.query_items_change_feed(start_time="Beginning").by_page()
+    for page in pages:
+        for doc in page:
+            print(doc)
+    # Save the pager's checkpoint only after processing its changes.
+    continuation_token = pages.continuation_token
 
     # Create additional items
     create_items(container, 5, 'CA')
@@ -124,17 +126,22 @@ def read_change_feed_with_all_versions_and_delete_mode(container):
     print('\nReading Change Feed with AllVersionsAndDeletes mode\n')
     # Read the initial change feed with 'AllVersionsAndDeletes' mode.
     # This initial call was made to store a point in time in a 'continuation' token
-    response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes")
-    for doc in response_iterator:
-        print(doc)
-    continuation_token = container.client_connection.last_response_headers['etag']
+    pages = container.query_items_change_feed(mode="AllVersionsAndDeletes").by_page()
+    for page in pages:
+        for doc in page:
+            print(doc)
+    continuation_token = pages.continuation_token
 
     # Read all change feed with 'AllVersionsAndDeletes' mode after create items from a continuation
     create_items(container, 10, 'CA')
     create_items(container, 10, 'OR')
-    response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", continuation=continuation_token)
-    for doc in response_iterator:
-        print(doc)
+    pages = container.query_items_change_feed(
+        mode="AllVersionsAndDeletes", continuation=continuation_token
+    ).by_page()
+    for page in pages:
+        for doc in page:
+            print(doc)
+    continuation_token = pages.continuation_token
 
     # Read all change feed with 'AllVersionsAndDeletes' mode after delete items from a continuation
     clean_up(container)
@@ -147,19 +154,23 @@ def read_change_feed_with_all_versions_and_delete_mode_with_partition_key(contai
 
     # Read the initial change feed with 'AllVersionsAndDeletes' mode with partition key('CA').
     # This initial call was made to store a point in time and 'partition_key' in a 'continuation' token
-    response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", partition_key="CA")
-    for doc in response_iterator:
-        print(doc)
-    continuation_token = container.client_connection.last_response_headers['etag']
+    pages = container.query_items_change_feed(mode="AllVersionsAndDeletes", partition_key="CA").by_page()
+    for page in pages:
+        for doc in page:
+            print(doc)
+    continuation_token = pages.continuation_token
 
     create_items(container, 10, 'CA')
     create_items(container, 10, 'OR')
     # Read change feed 'AllVersionsAndDeletes' mode with 'CA' partition key value from the previous continuation.
     # Should only print the created items with 'CA' partition key value
-    response_iterator = container.query_items_change_feed(mode='AllVersionsAndDeletes', continuation=continuation_token)
-    for doc in response_iterator:
-        print(doc)
-    continuation_token = container.client_connection.last_response_headers['etag']
+    pages = container.query_items_change_feed(
+        mode='AllVersionsAndDeletes', continuation=continuation_token
+    ).by_page()
+    for page in pages:
+        for doc in page:
+            print(doc)
+    continuation_token = pages.continuation_token
 
     clean_up(container)
     # Read change feed 'AllVersionsAndDeletes' mode with 'CA' partition key value from the previous continuation.

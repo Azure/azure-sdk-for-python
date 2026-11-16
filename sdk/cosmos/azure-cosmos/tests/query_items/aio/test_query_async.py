@@ -26,6 +26,8 @@ from unittest.mock import patch
 
 import pytest
 
+from config.settings import TestSettings
+
 import azure.cosmos.aio._asynchronous_request as _asynchronous_request
 import azure.cosmos.aio._retry_utility_async as retry_utility
 import azure.cosmos.exceptions as exceptions
@@ -50,18 +52,6 @@ class _QueryConfig(DistinctConfig):
         """Put the actual query error first so CI cannot hide it behind wrapper frames."""
         with distinct_query_diagnostics(query):
             await super()._validate_distinct(created_collection, query, results, is_select, fields)
-
-    @classmethod
-    async def _validate_distinct_offset_limit(cls, created_collection, query, results):
-        # Source helper: tests/test_config.py::TestConfig._validate_distinct_offset_limit
-        query_iterable = created_collection.query_items(query=query)
-        assert list(map(lambda doc: doc['value'], [item async for item in query_iterable])) == results
-
-    @classmethod
-    async def _validate_offset_limit(cls, created_collection, query, results):
-        # Source helper: tests/test_config.py::TestConfig._validate_offset_limit
-        query_iterable = created_collection.query_items(query=query)
-        assert list(map(lambda doc: doc['pk'], [item async for item in query_iterable])) == results
 
 
 class _QueryTestCase(unittest.IsolatedAsyncioTestCase):
@@ -115,10 +105,10 @@ class TestQueryAsync(_QueryTestCase):
         iter_list = [item async for item in query_iterable]
         assert iter_list[0]['id'] == doc_id
 
-        # Known gap 36: Query diagnostics and other request options are not sent over Gateway V2 (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36).
-        pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                    "metrics header is missing (known gap 36, "
-                    "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
+        if http_constants.HttpHeaders.QueryMetrics not in query_iterable.get_response_headers():
+            pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
+                        "metrics header is missing (known gap 36, "
+                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
         metrics_header_name = 'x-ms-documentdb-query-metrics'
         assert metrics_header_name in created_collection.client_connection.last_response_headers
         metrics_header = created_collection.client_connection.last_response_headers[metrics_header_name]
@@ -148,10 +138,10 @@ class TestQueryAsync(_QueryTestCase):
         iter_list = [item async for item in query_iterable]
         assert iter_list[0]['id'] == doc_id
 
-        # Known gap 36: Query diagnostics and other request options are not sent over Gateway V2 (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36).
-        pytest.skip("driver-gap: Rust does not send populate_index_metrics over Gateway V2, so the "
-                    "index-utilization header is missing (known gap 36, "
-                    "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
+        if http_constants.HttpHeaders.IndexUtilization not in query_iterable.get_response_headers():
+            pytest.skip("driver-gap: Rust does not send populate_index_metrics over Gateway V2, so the "
+                        "index-utilization header is missing (known gap 36, "
+                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
         index_header_name = http_constants.HttpHeaders.IndexUtilization
         assert index_header_name in created_collection.client_connection.last_response_headers
         index_metrics = created_collection.client_connection.last_response_headers[index_header_name]
@@ -288,12 +278,6 @@ class TestQueryAsync(_QueryTestCase):
         assert len(item_list) == 1
         assert item_list[0] == 3
 
-    @pytest.mark.skip(
-        reason="driver-gap: Gap 30 - For SELECT DISTINCT c[\"value\"] with ORDER BY and "
-        "OFFSET LIMIT, Rust returns rows with a '$1' field instead of the requested "
-        "'value' field, so the unchanged test raises KeyError. Re-enable when the "
-        "driver preserves the selected property name."
-    )
     async def test_offset_limit_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_offset_limit_async
         container_id = self._container_id
@@ -434,10 +418,10 @@ class TestQueryAsync(_QueryTestCase):
             assert pages == [[25]]
             assert pager.continuation_token is None
 
-            # Known gap 36: Query diagnostics and other request options are not sent over Gateway V2 (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36).
-            pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                        "metrics header is missing (known gap 36, "
-                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The COUNT query ran.")
+            if http_constants.HttpHeaders.QueryMetrics not in query_iterable.get_response_headers():
+                pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
+                            "metrics header is missing (known gap 36, "
+                            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The COUNT query ran.")
             response_headers = query_iterable.get_response_headers()
             metrics_header = response_headers[http_constants.HttpHeaders.QueryMetrics]
             metrics = dict(
@@ -618,12 +602,6 @@ class TestQueryAsync(_QueryTestCase):
 
     async def test_unsupported_queries_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_unsupported_queries_async
-        # Known gap 30 item 9: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30
-        pytest.skip(
-            "driver-gap: Rust returns raw per-partition rows for the cross-partition non-VALUE aggregate "
-            "'SELECT COUNT(1) FROM c' instead of the legacy 400 rejection (known gap 30 item 9, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-non-value-aggregate)."
-        )
         created_collection = await self._create_multi_partition_container()
         queries = ['SELECT COUNT(1) FROM c', 'SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
         for query in queries:
@@ -1028,10 +1006,10 @@ class TestQueryAsync(_QueryTestCase):
         results = [item async for item in query_iterable]
         assert len(results) == 5
 
-        # Known gap 36: Query diagnostics and other request options are not sent over Gateway V2 (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36).
-        pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                    "metrics header is missing (known gap 36, "
-                    "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). Paging and the query ran.")
+        if http_constants.HttpHeaders.QueryMetrics not in query_iterable.get_response_headers():
+            pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
+                        "metrics header is missing (known gap 36, "
+                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). Paging and the query ran.")
         # Verify query metrics were populated
         metrics_header_name = 'x-ms-documentdb-query-metrics'
         assert metrics_header_name in created_collection.client_connection.last_response_headers
@@ -1171,6 +1149,81 @@ class TestQueryAsync(_QueryTestCase):
             self.assertEqual(len(single_result), 1)
         finally:
             await self._delete_container_for_test(container_id)
+
+    @pytest.mark.skipif(
+        TestSettings.data_auth_mode == 'aad',
+        reason="environment-gap: post-create RBAC activation window (403/5302)  -  migrate after service-side fix",
+    )
+    async def test_distinct_on_different_types_and_field_orders_async_rust(self):
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_async.py::TestQueryAsync.test_distinct_on_different_types_and_field_orders_async
+        container_id = "test-distinct-container-" + str(uuid.uuid4())
+        created_collection = await self.database.create_container(
+            container_id,
+            partition_key=PartitionKey("/pk"),
+            offer_throughput=TestSettings.THROUGHPUT_FOR_5_PARTITIONS)
+        payloads = [
+            {'id': str(uuid.uuid4()), 'f1': 1, 'f2': 'value', 'f3': 100000000000000000, 'f4': [1, 2, '3'],
+             'f5': {'f6': {'f7': 2}}},
+            {'id': str(uuid.uuid4()), 'f2': '\'value', 'f4': [1.0, 2, '3'], 'f5': {'f6': {'f7': 2.0}}, 'f1': 1.0,
+             'f3': 100000000000000000.00},
+            {'id': str(uuid.uuid4()), 'f3': 100000000000000000.0, 'f5': {'f6': {'f7': 2}}, 'f2': '\'value', 'f1': 1,
+             'f4': [1, 2.0, '3']}
+        ]
+        for pay in payloads:
+            await created_collection.create_item(pay)
+
+        await self.config._validate_distinct_on_different_types_and_field_orders(
+            collection=created_collection,
+            query="Select distinct value c.f1 from c",
+            expected_results=[1]
+        )
+
+        await self.config._validate_distinct_on_different_types_and_field_orders(
+            collection=created_collection,
+            query="Select distinct value c.f2 from c",
+            expected_results=['value', '\'value']
+        )
+
+        await self.config._validate_distinct_on_different_types_and_field_orders(
+            collection=created_collection,
+            query="Select distinct value c.f2 from c order by c.f2",
+            expected_results=['value', '\'value']
+        )
+
+        await self.config._validate_distinct_on_different_types_and_field_orders(
+            collection=created_collection,
+            query="Select distinct value c.f3 from c",
+            expected_results=[100000000000000000]
+        )
+
+        await self.config._validate_distinct_on_different_types_and_field_orders(
+            collection=created_collection,
+            query="Select distinct value c.f4 from c",
+            expected_results=[[1, 2, '3']]
+        )
+
+        await self.config._validate_distinct_on_different_types_and_field_orders(
+            collection=created_collection,
+            query="Select distinct value c.f5.f6 from c",
+            expected_results=[{'f7': 2}]
+        )
+
+        await self.config._validate_distinct_on_different_types_and_field_orders(
+            collection=created_collection,
+            query="Select distinct c.f1, c.f2, c.f3 from c",
+            expected_results=[{'f1': 1, 'f2': 'value', 'f3': 100000000000000000},
+                              {'f1': 1.0, 'f2': '\'value', 'f3': 100000000000000000.00}]
+        )
+
+        await self.config._validate_distinct_on_different_types_and_field_orders(
+            collection=created_collection,
+            query="Select distinct c.f1, c.f2, c.f3 from c order by c.f1",
+            expected_results=[{'f1': 1, 'f2': 'value', 'f3': 100000000000000000},
+                              {'f1': 1.0, 'f2': '\'value', 'f3': 100000000000000000.00}]
+        )
+
+        await self.database.delete_container(container_id)
 
 
 @pytest.mark.cosmosEmulator

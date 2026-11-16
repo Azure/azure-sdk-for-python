@@ -13,6 +13,7 @@ from azure.core.paging import ItemPaged
 from azure.core.utils import CaseInsensitiveDict
 
 from .. import _base, http_constants
+from .._backend.constants import is_rust_backend
 from .._backend.contracts import PreparedPageRequest
 from .._constants import _Constants, TimeoutScope
 from .._operation_deadline import (
@@ -28,7 +29,13 @@ from .._query_rust_routing import (
 )
 from ._item_arguments import get_selected_backend
 from ._metadata_feed import MetadataFeedPageIterator, RecordingOptions
-from ._request_settings import compose_item_options, is_supported_operation_timeout
+from ._request_settings import (
+    compose_item_options,
+    is_supported_operation_timeout,
+    normalize_metadata_page_size,
+    normalize_query_specification,
+    reject_unknown_feed_kwargs,
+)
 
 
 class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
@@ -39,20 +46,25 @@ class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
     def __init__(self, proxy: Any, kwargs: dict[str, Any]) -> None:
         self.started = time.monotonic()
         self.hook = kwargs.pop("response_hook", None)
+        if self.hook is not None and not callable(self.hook):
+            raise TypeError(f"{self.operation} response_hook must be callable or None.")
         self.options = deepcopy(compose_item_options(kwargs))
         kwargs.pop("timeout", None)
         self.options.pop(_Constants.OperationStartTime, None)
         self.kwargs = kwargs
         self.recording_options = RecordingOptions.snapshot(kwargs)
         self.timeout = self.options.get("timeout")
+        if not is_supported_operation_timeout(self.timeout):
+            raise ValueError(f"{self.operation} timeout must be None or finite seconds >= 1 and < 2**64.")
         self.telemetry_owner = proxy
         connection = proxy.client_connection
         context = proxy._item_context
         self.backend = context.adapter if context is not None else get_selected_backend(connection)
         self.response_state = context.response_state if context is not None else connection._response_state
-        self.rust = self.backend.name != "core-python"
+        self.rust = is_rust_backend(self.backend)
         self.connection = None if self.rust else connection
         self.default_headers = dict(connection.default_headers)
+        normalize_metadata_page_size(self.options, self.default_headers, operation=self.operation)
         self.path = _base.GetPathFromLink(proxy.database_link, http_constants.ResourceType.Collection)
         self.resource_id = _base.GetResourceIdOrFullNameFromLink(proxy.database_link)
 
@@ -72,11 +84,6 @@ class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
     def deadline(self) -> Optional[float]:
         if self.timeout is None:
             return None
-        if self.rust and not is_supported_operation_timeout(self.timeout):
-            raise NotImplementedError(
-                f"{self.operation} cannot honor this timeout on Rust; "
-                "the request will not be sent through legacy Python."
-            )
         started = (
             self.started if self.options.get(_Constants.TimeoutScope) == TimeoutScope.OPERATION else time.monotonic()
         )
@@ -103,8 +110,11 @@ class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
             )
         )
         if not eligible:
+            remaining_kwargs = self.kwargs.keys() - self.recording_options.kwargs.keys() - {_Constants.OperationStartTime}
+            reject_unknown_feed_kwargs(self.operation, remaining_kwargs)
+            detail = f": {', '.join(repr(name) for name in sorted(remaining_kwargs))}" if remaining_kwargs else ""
             raise NotImplementedError(
-                f"{self.operation} cannot honor these options on Rust; "
+                f"{self.operation} cannot honor these options on Rust{detail}; "
                 "the request will not be sent through legacy Python."
             )
         options = dict(self.options)
@@ -156,23 +166,19 @@ class QueryContainersConfig(ListContainersConfig):
     operation = "query_containers"
 
     def __init__(self, proxy: Any, query: Any, parameters: Any, kwargs: dict[str, Any]) -> None:
-        self._query = deepcopy(query if parameters is None else {"query": query, "parameters": parameters})
+        self._query: Optional[dict[str, Any]] = None
         modes = proxy.client_connection._QueryCompatibilityMode
-        self.query_mode_supported = proxy.client_connection._query_compatibility_mode in (modes.Default, modes.Query)
+        if query is not None or parameters is not None:
+            if proxy.client_connection._query_compatibility_mode not in (modes.Default, modes.Query):
+                raise SystemError("Unexpected query compatibility mode.")
+            if query is not None and not isinstance(query, (str, dict)):
+                raise TypeError("query body must be a dict or string.")
+            text, values = normalize_query_specification(query, parameters, operation=self.operation)
+            self._query = {"query": text, "parameters": list(values)}
         super().__init__(proxy, kwargs)
 
     @property
     def query_payload(self) -> Optional[dict[str, Any]]:
-        if self._query is None:
-            return None
-        if not self.query_mode_supported:
-            raise SystemError("Unexpected query compatibility mode.")
-        if isinstance(self._query, str):
-            return {"query": self._query}
-        if not isinstance(self._query, dict):
-            raise TypeError("query body must be a dict or string.")
-        if not self._query.get("query"):
-            raise ValueError('query body must have valid query text with key "query".')
         return self._query
 
 

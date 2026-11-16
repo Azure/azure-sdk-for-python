@@ -18,6 +18,7 @@ import pytest
 
 from azure.cosmos import CosmosClient
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
+from azure.cosmos._backend import _binding_adapter_shared as shared
 from azure.cosmos._backend import binding_adapter as sync_binding
 from azure.cosmos.aio._backend import binding_adapter as async_binding
 from azure.cosmos._backend.operations import OP_TO_BINDING_FUNCTION_NAME, get_page_binding_function_name
@@ -40,6 +41,12 @@ def cold_async_client(monkeypatch):
     entered = threading.Event()
     finish = threading.Event()
     handle = object()
+    workers = []
+
+    def make_worker(*, target, args=(), name, daemon):
+        worker = threading.Thread(target=target, args=args, name=name, daemon=daemon)
+        workers.append(worker)
+        return worker
 
     def acquire(*_args):
         entered.set()
@@ -53,9 +60,16 @@ def cold_async_client(monkeypatch):
         _DriverTransportError=type("_DriverTransportError", (RuntimeError,), {}),
     )
     monkeypatch.setattr(async_binding, "_rust_module", native)
-    yield SimpleNamespace(client=client, entered=entered, finish=finish, handle=handle, native=native)
-    finish.set()
-    asyncio.run(client.close())
+    monkeypatch.setattr(shared, "threading", SimpleNamespace(Thread=make_worker, Lock=threading.Lock))
+    try:
+        yield SimpleNamespace(client=client, entered=entered, finish=finish, handle=handle, native=native)
+    finally:
+        # Let acquisition finish before restoring the binding used by this test.
+        finish.set()
+        for worker in workers:
+            worker.join(timeout=5)
+        asyncio.run(client.close())
+        assert all(not worker.is_alive() for worker in workers)
 
 
 @pytest.mark.parametrize(
@@ -100,7 +114,7 @@ def test_cold_async_item_timeout_returns_before_acquisition_finishes_rust(cold_a
             case.finish.set()
             pending = case.client._adapter._init_future
             if pending is not None:
-                await asyncio.gather(pending, return_exceptions=True)
+                await asyncio.gather(asyncio.wrap_future(pending), return_exceptions=True)
             await case.client.close()
         case.native.release_driver_handle.assert_called_once_with(case.handle)
 
@@ -143,7 +157,7 @@ def test_timed_out_async_acquisition_preserves_late_worker_ownership_rust(cold_a
             if outcome == "close":
                 await adapter.close()
             case.finish.set()
-            result = (await asyncio.gather(pending, return_exceptions=True))[0]
+            result = (await asyncio.gather(asyncio.wrap_future(pending), return_exceptions=True))[0]
             await asyncio.sleep(0)
             if outcome == "reuse":
                 assert result is case.handle
@@ -151,7 +165,7 @@ def test_timed_out_async_acquisition_preserves_late_worker_ownership_rust(cold_a
                 case.native.acquire_driver_handle.assert_called_once()
                 assert 0 < case.native.read_item_async.call_args.kwargs["timeout_seconds"] <= 2
             elif outcome == "close":
-                assert isinstance(result, RuntimeError)
+                assert isinstance(result, RuntimeError) and "closed during initialization" in str(result)
                 assert adapter._driver_handle is None
                 case.native.release_driver_handle.assert_called_once_with(case.handle)
             else:
@@ -165,7 +179,7 @@ def test_timed_out_async_acquisition_preserves_late_worker_ownership_rust(cold_a
         finally:
             case.finish.set()
             if pending is not None:
-                await asyncio.gather(pending, return_exceptions=True)
+                await asyncio.gather(asyncio.wrap_future(pending), return_exceptions=True)
             await adapter.close()
             loop.set_exception_handler(None)
         case.native.release_driver_handle.assert_called_once_with(case.handle)
@@ -173,7 +187,8 @@ def test_timed_out_async_acquisition_preserves_late_worker_ownership_rust(cold_a
     asyncio.run(run())
 
 
-def test_async_deadline_bounds_executor_queue_wait_rust(cold_async_client):
+def test_async_acquisition_starts_with_default_pool_busy_rust(cold_async_client):
+    """A busy default pool blocks neither acquisition nor release of its late handle."""
     case = cold_async_client
     case.native.read_item_async = AsyncMock(return_value=_response(200))
     occupied = threading.Event()
@@ -181,32 +196,41 @@ def test_async_deadline_bounds_executor_queue_wait_rust(cold_async_client):
 
     def occupy():
         occupied.set()
-        assert unblock.wait(10)
+        assert unblock.wait(10), "test did not free the default pool"
 
     async def run():
         loop = asyncio.get_running_loop()
         loop.set_default_executor(ThreadPoolExecutor(max_workers=1))
         blocker = loop.run_in_executor(None, occupy)
+        pending = None
         try:
-            while not occupied.is_set():
-                await asyncio.sleep(0)
+            assert occupied.wait(2), "the default pool worker did not start"
             container = case.client.get_database_client("sales").get_container_client("orders")
             with pytest.raises(CosmosClientTimeoutError):
                 await asyncio.wait_for(container.read_item("order-42", partition_key="A", timeout=1), 2)
             pending = case.client._adapter._init_future
-            assert pending is not None and not pending.cancelled()
-            assert not case.entered.is_set()
-            await case.client.close()
-            unblock.set()
-            await blocker
-            await asyncio.gather(pending, return_exceptions=True)
-            case.native.acquire_driver_handle.assert_not_called()
+            assert pending is not None and not pending.done()
+            assert case.entered.is_set()
+            assert not blocker.done()
+            case.native.acquire_driver_handle.assert_called_once()
             case.native.release_driver_handle.assert_not_called()
             case.native.read_item_async.assert_not_called()
+            # Keep the pool busy while close finishes and the acquisition thread releases the handle.
+            await asyncio.wait_for(case.client.close(), 2)
+            assert case.client._adapter._closing
+            assert case.client._adapter._driver_handle is None
+            case.finish.set()
+            with pytest.raises(RuntimeError, match="closed during initialization"):
+                await asyncio.wait_for(asyncio.wrap_future(pending), 2)
+            case.native.release_driver_handle.assert_called_once_with(case.handle)
+            case.native.read_item_async.assert_not_called()
+            assert not blocker.done()
         finally:
             unblock.set()
             case.finish.set()
             await blocker
+            if pending is not None:
+                await asyncio.gather(asyncio.wrap_future(pending), return_exceptions=True)
             await case.client.close()
 
     asyncio.run(run())
@@ -299,7 +323,7 @@ def test_async_auxiliary_paths_bound_acquisition_with_same_deadline_rust(cold_as
         finally:
             case.finish.set()
             if adapter._init_future is not None:
-                await asyncio.gather(adapter._init_future, return_exceptions=True)
+                await asyncio.gather(asyncio.wrap_future(adapter._init_future), return_exceptions=True)
             if pages is not None:
                 await pages.aclose()
             await adapter.close()
@@ -349,6 +373,64 @@ def case(request, monkeypatch):
         native=native,
     )
     _complete(client.close())
+
+
+@pytest.fixture(params=[
+    "create_item", "read_item", "upsert_item", "replace_item", "patch_item", "delete_item",
+])
+def item_timeout_case(case, request):
+    operation = request.param
+    container = case.client.get_database_client("sales").get_container_client("orders")
+    body = {"id": "order-42", "pk": "A"}
+    dispatch = case.install(
+        operation, result=_response(204 if operation == "delete_item" else 200, body=body),
+    )
+
+    def call(options):
+        kwargs = dict(options)
+        if operation in ("create_item", "upsert_item"):
+            return _complete(getattr(container, operation)(body, **kwargs))
+        kwargs["partition_key"] = "A"
+        if operation == "replace_item":
+            return _complete(container.replace_item("order-42", body, **kwargs))
+        if operation == "patch_item":
+            kwargs["patch_operations"] = [{"op": "set", "path": "/value", "value": 1}]
+        return _complete(getattr(container, operation)("order-42", **kwargs))
+
+    return SimpleNamespace(call=call, dispatch=dispatch, acquisition=case.acquisition)
+
+
+@pytest.mark.parametrize("nested", [False, True], ids=["keyword", "request-options"])
+@pytest.mark.parametrize(
+    "timeout",
+    [0, -1, 0.5, True, False, float("nan"), float("inf"), float("-inf"), "1", 2**64, 10**1000],
+    ids=["zero", "negative", "subsecond", "true", "false", "nan", "infinity",
+         "negative-infinity", "string", "upper-bound", "overflow"],
+)
+def test_invalid_item_timeout_is_value_error_before_driver_acquisition_rust(
+    item_timeout_case, timeout, nested,
+):
+    options = {"request_options": {"timeout": timeout}} if nested else {"timeout": timeout}
+    with pytest.raises(ValueError, match="timeout must be None or a finite number of seconds"):
+        item_timeout_case.call(options)
+    item_timeout_case.acquisition.assert_not_called()
+    item_timeout_case.dispatch.assert_not_called()
+
+
+@pytest.mark.parametrize("nested", [False, True], ids=["keyword", "request-options"])
+@pytest.mark.parametrize("timeout", [None, 1, 1.5])
+def test_valid_item_timeout_preserves_default_and_override_rust(item_timeout_case, timeout, nested):
+    options = {"request_options": {"timeout": timeout}} if nested else {"timeout": timeout}
+    item_timeout_case.call(options)
+    item_timeout_case.dispatch.assert_called_once()
+    prepared = item_timeout_case.dispatch.call_args.args[1]
+    assert prepared.settings.timeout_seconds == (1 if timeout is None else timeout)
+
+
+def test_explicit_item_timeout_overrides_invalid_nested_timeout_rust(item_timeout_case):
+    item_timeout_case.call({"timeout": 1.5, "request_options": {"timeout": float("nan")}})
+    item_timeout_case.dispatch.assert_called_once()
+    assert item_timeout_case.dispatch.call_args.args[1].settings.timeout_seconds == 1.5
 
 
 @pytest.fixture

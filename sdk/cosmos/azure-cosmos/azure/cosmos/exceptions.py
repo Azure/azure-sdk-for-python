@@ -62,6 +62,17 @@ class CosmosHttpResponseError(HttpResponseError):
         return " , ".join(parts)
 
 
+def _cross_partition_disabled_error() -> CosmosHttpResponseError:
+    return CosmosHttpResponseError(
+        status_code=400,
+        message=(
+            "Cross partition query is required but disabled. Please set "
+            "x-ms-documentdb-query-enablecrosspartition to true, specify "
+            "x-ms-documentdb-partitionkey, or revise your query to avoid this exception."
+        ),
+    )
+
+
 class CosmosResourceNotFoundError(ResourceNotFoundError, CosmosHttpResponseError):
     """An HTTP error response with status code 404."""
 

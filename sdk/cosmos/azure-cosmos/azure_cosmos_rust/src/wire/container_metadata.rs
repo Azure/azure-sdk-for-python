@@ -12,7 +12,8 @@ use pyo3::prelude::*;
 use pyo3::types::PyTuple;
 
 use super::deadline::{parse_remaining_timeout, with_operation_timeout};
-use super::errors::_DriverResponseError;
+use super::driver_runner::block_on_with_signals;
+use super::errors::{catch_operation_panic, operation_join_error, _DriverResponseError};
 use super::request::{build_operation_options, parse_container_link};
 use super::response::tuple_from_result;
 use super::AbortOnDrop;
@@ -82,18 +83,23 @@ pub(crate) fn get_container_metadata<'py>(
         None,
         timeout.map(EndToEndOperationLatencyPolicy::new),
         None,
+        None,
         Default::default(),
     );
     let driver = driver_handle.driver();
     let (database_name, container_name) = parse_container_link(container_link)?;
     let runtime_ctx = require_runtime_context("get_container_metadata")?;
-    let result = py.allow_threads(|| {
-        runtime_ctx.tokio_rt.block_on(with_operation_timeout(
-            timeout,
-            driver.resolve_container(&database_name, &container_name, options),
-        ))
-    })?;
-    metadata_result(py, result)
+    let result = catch_operation_panic(|| {
+        block_on_with_signals(
+            py,
+            runtime_ctx.tokio_rt,
+            with_operation_timeout(
+                timeout,
+                driver.resolve_container(&database_name, &container_name, options),
+            ),
+        )
+    })??;
+    catch_operation_panic(|| metadata_result(py, result))
 }
 
 /// Return an awaitable that resolves a container's metadata.
@@ -108,6 +114,7 @@ pub(crate) fn get_container_metadata_async<'py>(
         None,
         None,
         timeout.map(EndToEndOperationLatencyPolicy::new),
+        None,
         None,
         Default::default(),
     );
@@ -127,17 +134,22 @@ pub(crate) fn get_container_metadata_async<'py>(
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
         let _abort_guard = abort_guard;
         let result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err(
-                    "container metadata resolution was cancelled before it completed",
-                )
-            } else {
-                PyRuntimeError::new_err(format!(
-                    "container metadata resolution task failed: {join_error}"
-                ))
-            }
+            operation_join_error(join_error, |join_error| {
+                if join_error.is_cancelled() {
+                    PyRuntimeError::new_err(
+                        "container metadata resolution was cancelled before it completed",
+                    )
+                } else {
+                    PyRuntimeError::new_err(format!(
+                        "container metadata resolution task failed: {join_error}"
+                    ))
+                }
+            })
         })??;
-        Python::with_gil(|py| metadata_result(py, result).map(|tuple| tuple.into_any().unbind()))
+        Python::with_gil(|py| {
+            catch_operation_panic(|| metadata_result(py, result))
+                .map(|tuple| tuple.into_any().unbind())
+        })
     })
 }
 

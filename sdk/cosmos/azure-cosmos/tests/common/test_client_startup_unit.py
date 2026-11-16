@@ -174,8 +174,15 @@ def test_sync_core_python_pipeline_preserves_eager_startup_and_context_rust(monk
 def test_rust_client_never_constructs_unused_python_pipeline_rust(monkeypatch, enter):
     from azure.cosmos.aio import _cosmos_client_connection_async as connection_module
 
+    class Connection(connection_module.CosmosClientConnection):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            assert self._backend.name == "rust"
+            assert "_backend" not in self._setup_kwargs
+
     factory = MagicMock(side_effect=AssertionError("unused Python pipeline constructed"))
     monkeypatch.setattr(connection_module, "AsyncPipelineClient", factory)
+    monkeypatch.setattr(async_client, "CosmosClientConnection", Connection)
     client = async_client.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust")
     initialize = AsyncMock()
     monkeypatch.setattr(client._adapter, "initialize", initialize)
@@ -319,49 +326,49 @@ def test_factory_forwards_every_declared_option_to_shared_construction_rust(monk
 
 @pytest.mark.parametrize("async_mode", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("failure_stage", [None, "config", "constructor"])
-def test_factory_keeps_credential_guard_active_through_construction_rust(monkeypatch, async_mode, failure_stage):
-    from contextlib import contextmanager
+def test_factory_retains_customer_credential_without_acquiring_bridge_rust(monkeypatch, async_mode, failure_stage):
     from azure.cosmos._backend import factory as sync_factory
+    from azure.cosmos._backend._async_credential_bridge import AsyncTokenCredentialBridge
     from azure.cosmos.aio._backend import factory as async_factory
 
     module = async_factory if async_mode else sync_factory
     factory = module.make_async_backend if async_mode else module.make_backend
     events = []
-    credential, result = object(), object()
+    credential = SimpleNamespace(
+        get_token=AsyncMock() if async_mode else MagicMock(),
+        close=AsyncMock() if async_mode else MagicMock(),
+    )
+    result = object()
     error = RuntimeError("construction failed")
-
-    @contextmanager
-    def guard(value, *, allow_async):
-        assert value is credential
-        assert allow_async is async_mode
-        events.append("enter")
-        try:
-            yield "master-key", None
-        finally:
-            events.append("exit")
+    acquire_bridge = MagicMock(side_effect=AssertionError("factory acquired a credential bridge"))
+    monkeypatch.setattr(AsyncTokenCredentialBridge, "acquire", acquire_bridge)
 
     def stage(name, value):
         def run(*args, **kwargs):
-            assert events[0] == "enter" and "exit" not in events
             events.append(name)
+            if name == "constructor":
+                assert kwargs["master_key"] is None
+                assert kwargs["token_credential"] is credential
             if name == failure_stage:
                 raise error
             return value
 
         return run
 
-    monkeypatch.setattr(sync_factory, "resolved_credential", guard)
     monkeypatch.setattr(sync_factory, "build_client_config", stage("config", PreparedClientConfig()))
     monkeypatch.setattr(module, "AsyncBindingAdapter" if async_mode else "BindingAdapter", stage("constructor", result))
     if failure_stage is None:
         assert factory("rust", url="https://startup.invalid", credential=credential) is result
-        assert events == ["enter", "config", "constructor", "exit"]
+        assert events == ["config", "constructor"]
     else:
         with pytest.raises(RuntimeError) as caught:
             factory("rust", url="https://startup.invalid", credential=credential)
         assert caught.value is error
         stages = ["config", "constructor"]
-        assert events == ["enter", *stages[: stages.index(failure_stage) + 1], "exit"]
+        assert events == stages[: stages.index(failure_stage) + 1]
+    acquire_bridge.assert_not_called()
+    credential.get_token.assert_not_called()
+    credential.close.assert_not_called()
 
 
 @pytest.mark.parametrize("value", [-1, True, 1.5, "3", 2**32])
@@ -392,6 +399,15 @@ def test_invalid_retry_counts_fail_before_core_python_startup_rust(module, value
     module.CosmosClientConnection.assert_not_called()
 
 
+@pytest.mark.parametrize("keyword", ["retry_total", "retry_backoff_max"])
+def test_invalid_retry_alias_error_names_supplied_option_rust(module, keyword):
+    with pytest.raises(ValueError, match=keyword):
+        module.CosmosClient(
+            "https://startup.invalid", "ZmFrZQ==", _backend="rust", **{keyword: -1}
+        )
+    module.CosmosClientConnection.assert_not_called()
+
+
 @pytest.mark.parametrize("name", ["preferred_locations", "excluded_locations"])
 @pytest.mark.parametrize("value", [[123], [None], [True], [" "], {"West US": 1}, False])
 def test_invalid_region_values_rejected_at_construction_rust(module, name, value):
@@ -417,7 +433,9 @@ def test_invalid_retry_wait_rejected_rust(value):
 
 @pytest.mark.parametrize("stage", ["encoding", "auth", "policy", "legacy"])
 def test_failed_constructor_unwinds_backend_rust(module, monkeypatch, stage):
-    """Startup failures mark the stored adapter closed and preserve the error."""
+    """Startup failures close the stored adapter without acquiring or releasing a driver."""
+    binding = SimpleNamespace(acquire_driver_handle=MagicMock(), release_driver_handle=MagicMock())
+    monkeypatch.setattr(sync_backend if module is sync_client else async_backend, "_rust_module", binding)
     factory_name = "make_backend" if module is sync_client else "make_async_backend"
     factory = getattr(module, factory_name)
     retained = []
@@ -447,9 +465,42 @@ def test_failed_constructor_unwinds_backend_rust(module, monkeypatch, stage):
             assert raised.value is error
         assert len(retained) == 1
         assert retained[0]._closing
+        assert retained[0]._driver_handle is None
     finally:
         for adapter in retained:
             close_backend(adapter)
+    binding.acquire_driver_handle.assert_not_called()
+    binding.release_driver_handle.assert_not_called()
+
+
+@pytest.mark.parametrize("client_module", [sync_client, async_client], ids=["sync", "async"])
+def test_failed_constructor_preserves_original_error_when_cleanup_fails_rust(client_module, monkeypatch, caplog):
+    """A cleanup failure is logged without replacing the original construction error."""
+    binding = SimpleNamespace(acquire_driver_handle=MagicMock(), release_driver_handle=MagicMock())
+    monkeypatch.setattr(sync_backend if client_module is sync_client else async_backend, "_rust_module", binding)
+    monkeypatch.setattr(client_module, "CosmosClientConnection", MagicMock())
+    startup_error = RuntimeError("client construction failed")
+    cleanup_error = RuntimeError("construction cleanup failed")
+    abort = MagicMock(side_effect=cleanup_error)
+    adapter_type = sync_backend.BindingAdapter if client_module is sync_client else async_backend.AsyncBindingAdapter
+    monkeypatch.setattr(adapter_type, "abort_construction", abort)
+    monkeypatch.setattr(client_module, "_build_auth", MagicMock(side_effect=startup_error))
+
+    with caplog.at_level(logging.WARNING, logger="azure.cosmos._client_lifecycle"):
+        with pytest.raises(RuntimeError) as raised:
+            client_module.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust")
+
+    assert raised.value is startup_error
+    abort.assert_called_once_with()
+    cleanup_records = [
+        record for record in caplog.records
+        if record.name == "azure.cosmos._client_lifecycle" and record.levelno == logging.WARNING
+    ]
+    assert len(cleanup_records) == 1
+    assert cleanup_records[0].getMessage() == "Failed to release resources after client startup failure"
+    assert cleanup_records[0].exc_info[1] is cleanup_error
+    binding.acquire_driver_handle.assert_not_called()
+    binding.release_driver_handle.assert_not_called()
 
 
 def test_close_does_not_validate_or_replay_runtime_settings_rust(monkeypatch):
@@ -487,7 +538,7 @@ def test_close_during_initialization_releases_late_handle_rust(monkeypatch):
         client_config=PreparedClientConfig(operation_timeout_seconds=30),
     )
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-        future = executor.submit(backend._acquire_driver_handle)
+        future = executor.submit(lambda: asyncio.run(backend._ensure_driver_handle()))
         try:
             assert started.wait(10)
             close_backend(backend)
@@ -520,8 +571,8 @@ def test_failed_driver_build_leaves_runtime_validation_to_binding_rust(monkeypat
         backend._ensure_driver_handle()
     backend.close()
     for config in (
-        PreparedClientConfig(proxy_allowed=True),
-        PreparedClientConfig(connection_timeout_seconds=3),
+        SimpleNamespace(proxy_allowed=True),
+        SimpleNamespace(connection_timeout_seconds=3),
     ):
         with pytest.raises(ValueError, match="runtime settings already initialized"):
             sync_backend.BindingAdapter("https://other.invalid", master_key="key", client_config=config)
@@ -738,40 +789,61 @@ def test_async_driver_failure_prevents_entry_and_cleans_up_rust(async_rust_start
     env.binding.release_driver_handle.assert_not_called()
 
 
-def test_cancelled_async_entry_releases_late_driver_rust(async_rust_startup):
+def test_cancelled_async_entry_releases_late_handle_rust(async_rust_startup):
+    """Cancelled entry closes the client before its late handle is released."""
     env = async_rust_startup
     started, finish = threading.Event(), threading.Event()
+    workers = []
 
     def acquire(*args):
+        workers.append(threading.current_thread())
         started.set()
-        assert finish.wait(5)
+        assert finish.wait(5), "test did not let acquisition finish"
         return "late-startup-handle"
 
     env.binding.acquire_driver_handle.side_effect = acquire
 
     async def run():
         entry = asyncio.create_task(env.client.__aenter__())
+        acquisition = None
         try:
             assert await asyncio.to_thread(started.wait, 2)
             acquisition = env.client._adapter._init_future
+            assert acquisition is not None and not acquisition.done()
             entry.cancel()
             with pytest.raises(asyncio.CancelledError):
                 await asyncio.wait_for(entry, 2)
             assert env.client._adapter._closing
+            assert env.client._adapter._driver_handle is None
+            assert not acquisition.cancelled()
+            env.binding.release_driver_handle.assert_not_called()
             env.connection.pipeline_client.__aexit__.assert_awaited_once()
             env.connection._global_endpoint_manager.close.assert_awaited_once()
             env.connection._routing_map_provider.release.assert_called_once()
             finish.set()
             with pytest.raises(RuntimeError, match="closed during initialization"):
-                await asyncio.wait_for(acquisition, 5)
+                await asyncio.wait_for(asyncio.wrap_future(acquisition), 5)
             assert env.client._adapter._driver_handle is None
         finally:
             finish.set()
             await env.client.close()
             await asyncio.gather(entry, return_exceptions=True)
+            if acquisition is not None:
+                await asyncio.wait_for(
+                    asyncio.gather(asyncio.wrap_future(acquisition), return_exceptions=True), 5
+                )
 
-    asyncio.run(run())
+    try:
+        asyncio.run(run())
+    finally:
+        # Let the worker finish before restoring the binding, even if an assertion fails.
+        finish.set()
+        for worker in workers:
+            worker.join(timeout=5)
+        assert all(not worker.is_alive() for worker in workers)
+    env.binding.acquire_driver_handle.assert_called_once()
     env.binding.release_driver_handle.assert_called_once_with("late-startup-handle")
+    env.binding.read_item_async.assert_not_called()
     env.connection._setup.assert_not_awaited()
 
 

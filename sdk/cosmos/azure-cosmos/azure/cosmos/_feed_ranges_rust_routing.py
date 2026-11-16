@@ -177,36 +177,32 @@ def parse_feed_range_from_partition_key_payload(
     ).to_dict()
 
 
-def can_use_rust_backend_for_is_feed_range_subset(
+def validate_is_feed_range_subset(
     *,
-    backend: Any,
     parent_feed_range: dict[str, Any],
     child_feed_range: dict[str, Any],
-) -> bool:
-    """Check for the Range dictionary format accepted by the Rust path.
+) -> None:
+    """Reject malformed comparison inputs before calling the Rust binding.
 
     Both ranges must have exactly the expected keys, boolean inclusion flags,
-    and hexadecimal bounds of even length. A False result does not execute a
-    legacy request; the caller decides what its migration policy permits.
+    and hexadecimal bounds of even length.
     """
-    if not is_rust_backend(backend):
-        return False
-    for value in (parent_feed_range, child_feed_range):
+    for name, value in (("parent_feed_range", parent_feed_range), ("child_feed_range", child_feed_range)):
         if not isinstance(value, dict) or set(value) != {"Range"}:
-            return False
-        interval = value.get("Range") if isinstance(value, dict) else None
+            raise ValueError(f"{name} must be an SDK-returned feed-range dictionary with only a 'Range' field.")
+        interval = value["Range"]
         if not isinstance(interval, dict) or set(interval) != {
             "min",
             "max",
             "isMinInclusive",
             "isMaxInclusive",
         }:
-            return False
+            raise ValueError(f"{name} must contain range bounds and inclusion flags in the SDK-returned format.")
         if any(
             not isinstance(interval.get(key), bool)
             for key in ("isMinInclusive", "isMaxInclusive")
         ):
-            return False
+            raise ValueError(f"{name} must have Boolean inclusion flags.")
         for key in ("min", "max"):
             bound = interval.get(key)
             if (
@@ -214,11 +210,12 @@ def can_use_rust_backend_for_is_feed_range_subset(
                 or len(bound) % 2
                 or any(char not in "0123456789abcdefABCDEF" for char in bound)
             ):
-                return False
-        normalized = Range.ParseFromDict(interval).to_normalized_range()
-        if normalized.min > normalized.max:
-            return False
-    return True
+                raise ValueError(f"{name} must have hexadecimal string bounds of even length.")
+        # Match the driver's ordering, which ignores trailing zero padding.
+        minimum = bytes.fromhex(interval["min"]).rstrip(b"\0")
+        maximum = bytes.fromhex(interval["max"]).rstrip(b"\0")
+        if minimum > maximum:
+            raise ValueError(f"{name} must not have reversed bounds.")
 
 
 def build_is_feed_range_subset_prepared_request(
@@ -232,6 +229,10 @@ def build_is_feed_range_subset_prepared_request(
     The binding's range comparison is local and does not contact the service
     backend, so the container link is empty. This builder only prepares inputs.
     """
+    validate_is_feed_range_subset(
+        parent_feed_range=parent_feed_range,
+        child_feed_range=child_feed_range,
+    )
     body_bytes = serialize_body_to_bytes(
         {"parent": parent_feed_range, "child": child_feed_range}
     )

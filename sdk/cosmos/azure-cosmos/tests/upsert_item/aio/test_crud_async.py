@@ -20,8 +20,8 @@ import uuid
 from azure.core import MatchConditions
 
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos.aio import CosmosClient, _retry_utility_async
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes
+from azure.cosmos.aio import CosmosClient
+from common.priority_contract import assert_priority_contract_async
 from azure.cosmos.partition_key import PartitionKey
 
 
@@ -308,56 +308,10 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_priority_level_async_rust(self):
         # Source: tests/test_crud_async.py::TestCRUDOperationsAsync.test_priority_level_async
-        # These test verify if headers for priority level are sent
-        # Feature must be enabled at the account level
-        # If feature is not enabled the test will still pass as we just verify the headers were sent
-
-        created_container = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        item1 = {"id": "item1", "pk": "pk1"}
-        item2 = {"id": "item2", "pk": "pk2"}
-        self.OriginalExecuteFunction = _retry_utility_async.ExecuteFunctionAsync
-        self.addCleanup(setattr, _retry_utility_async, "ExecuteFunctionAsync", self.OriginalExecuteFunction)
-        priority_headers = []
-
-        # mock execute function to check if priority level set in headers
-
-        async def priority_mock_execute_function(function, *args, **kwargs):
-            if args:
-                priority_headers.append(args[4].headers[HttpHeaders.PriorityLevel]
-                                              if HttpHeaders.PriorityLevel in args[4].headers else '')
-            return await self.OriginalExecuteFunction(function, *args, **kwargs)
-
-        _retry_utility_async.ExecuteFunctionAsync = priority_mock_execute_function
-        # upsert item with high priority
-        await created_container.upsert_item(body=item1, priority="High")
-        # check if the priority level was passed
-        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). Rust never calls legacy _retry_utility_async.ExecuteFunctionAsync and its outgoing request headers are not observable, so priority_headers stays empty.
-        pytest.skip("internals-only: the priority header was observed by patching legacy "
-                    "_retry_utility_async.ExecuteFunctionAsync; Rust outgoing request headers are not "
-                    "observable (known gap 6). The High-priority upsert ran.")
-        assert priority_headers[-1] == "High"
-        # upsert item with low priority
-        await created_container.upsert_item(body=item2, priority="Low")
-        # check that headers passed low priority
-        assert priority_headers[-1] == "Low"
-        # Repeat for read operations
-        item1_read = await created_container.read_item("item1", "pk1", priority="High")
-        assert priority_headers[-1] == "High"
-        item2_read = await created_container.read_item("item2", "pk2", priority="Low")
-        assert priority_headers[-1] == "Low"
-        # repeat for query
-        query = [doc async for doc in created_container.query_items("Select * from c",
-                                                                    partition_key="pk1", priority="High")]
-
-        assert priority_headers[-1] == "High"
-
-        # Negative Test: Verify that if we send a value other than High or Low that it will not set the header value
-        # and result in bad request
-        try:
-            item2_read = await created_container.read_item("item2", "pk2", priority="Medium")
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == StatusCodes.BAD_REQUEST
-        _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
+        container = self.database_for_test.get_container_client(
+            self.configs.TEST_MULTI_PARTITION_CONTAINER_ID
+        )
+        await assert_priority_contract_async(container)
 
 
 if __name__ == "__main__":

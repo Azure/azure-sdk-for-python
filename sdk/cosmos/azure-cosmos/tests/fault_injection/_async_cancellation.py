@@ -35,14 +35,27 @@ def assert_cancelled(error, status, elapsed):
     assert math.isfinite(elapsed) and 0 <= elapsed < CANCELLATION_ALLOWANCE, "Cancellation was not prompt"
 
 
+def require_read_lifecycle_probe():
+    from azure.cosmos import _rust
+
+    if not hasattr(_rust, "_AsyncOperationProbe"):
+        raise RuntimeError(
+            "Native cancellation evidence requires a test-probes build. "
+            "From the package directory run: "
+            "maturin develop --locked --features test-probes, then restart Python."
+        )
+    return _rust._AsyncOperationProbe
+
+
 def capture_read_lifecycle(monkeypatch):
     from azure.cosmos import _rust
 
+    probe_type = require_read_lifecycle_probe()
     original = _rust.read_item_async
     probes = []
 
     def observed(*args, **kwargs):
-        probe = _rust._AsyncOperationProbe()
+        probe = probe_type()
         probes.append(probe)
         return original(*args, **kwargs, _debug_lifecycle=probe)
 

@@ -107,10 +107,10 @@ class TestCrossPartitionQuery(unittest.TestCase):
         iter_list = list(query_iterable)
         self.assertEqual(iter_list[0]['id'], doc_id)
 
-        # Known gap 36: Query diagnostics and other request options are not sent over Gateway V2 (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36).
-        pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                    "query metrics header is missing (known gap 36, "
-                    "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
+        if http_constants.HttpHeaders.QueryMetrics not in query_iterable.get_response_headers():
+            pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
+                        "query metrics header is missing (known gap 36, "
+                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
         metrics_header_name = 'x-ms-documentdb-query-metrics'
         self.assertTrue(metrics_header_name in self.created_container.client_connection.last_response_headers)
         metrics_header = self.created_container.client_connection.last_response_headers[metrics_header_name]
@@ -135,10 +135,10 @@ class TestCrossPartitionQuery(unittest.TestCase):
         iter_list = list(query_iterable)
         self.assertEqual(iter_list[0]['id'], doc_id)
 
-        # Known gap 36: Query diagnostics and other request options are not sent over Gateway V2 (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36).
-        pytest.skip("driver-gap: Rust does not send populate_index_metrics over Gateway V2, so the "
-                    "index utilization header is missing (known gap 36, "
-                    "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
+        if http_constants.HttpHeaders.IndexUtilization not in query_iterable.get_response_headers():
+            pytest.skip("driver-gap: Rust does not send populate_index_metrics over Gateway V2, so the "
+                        "index utilization header is missing (known gap 36, "
+                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
         INDEX_HEADER_NAME = http_constants.HttpHeaders.IndexUtilization
         self.assertTrue(INDEX_HEADER_NAME in self.created_container.client_connection.last_response_headers)
         index_metrics = self.created_container.client_connection.last_response_headers[INDEX_HEADER_NAME]
@@ -251,12 +251,6 @@ class TestCrossPartitionQuery(unittest.TestCase):
 
     def test_unsupported_queries_rust(self):
         # Source: tests/test_query_cross_partition.py::TestCrossPartitionQuery.test_unsupported_queries
-        # Known gap 30 item 9: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30
-        pytest.skip(
-            "driver-gap: Rust returns raw per-partition rows for the cross-partition non-VALUE aggregate "
-            "'SELECT COUNT(1) FROM c' instead of the legacy 400 rejection (known gap 30 item 9, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-non-value-aggregate)."
-        )
         queries = ['SELECT COUNT(1) FROM c', 'SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
         for query in queries:
             query_iterable = self.created_container.query_items(query=query, enable_cross_partition_query=True)
@@ -603,6 +597,61 @@ class TestCrossPartitionQuery(unittest.TestCase):
                 return result
         else:
             raise StopIteration
+
+    def test_offset_limit_rust(self):
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_cross_partition.py::TestCrossPartitionQuery.test_offset_limit
+        values = []
+        for i in range(10):
+            document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4()), 'value': i // 3}
+            values.append(self.created_container.create_item(body=document_definition)['pk'])
+
+        self._validate_distinct_offset_limit(
+            created_collection=self.created_container,
+            query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 0 LIMIT 2',
+            results=[0, 1])
+
+        self._validate_distinct_offset_limit(
+            created_collection=self.created_container,
+            query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 2 LIMIT 2',
+            results=[2, 3])
+
+        self._validate_distinct_offset_limit(
+            created_collection=self.created_container,
+            query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 4 LIMIT 3',
+            results=[])
+
+        self._validate_offset_limit(created_collection=self.created_container,
+                                           query='SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5',
+                                           results=values[:5])
+
+        self._validate_offset_limit(created_collection=self.created_container,
+                                           query='SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10',
+                                           results=values[5:])
+
+        self._validate_offset_limit(created_collection=self.created_container,
+                                           query='SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5',
+                                           results=[])
+
+        self._validate_offset_limit(created_collection=self.created_container,
+                                           query='SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1',
+                                           results=[])
+
+    def _validate_distinct_offset_limit(self, created_collection, query, results):
+        # Source helper: tests/test_query.py::TestQuery._validate_distinct_offset_limit
+        query_iterable = created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True
+        )
+        self.assertListEqual(list(map(lambda doc: doc["value"], list(query_iterable))), results)
+
+    def _validate_offset_limit(self, created_collection, query, results):
+        # Source helper: tests/test_query.py::TestQuery._validate_offset_limit
+        query_iterable = created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True
+        )
+        self.assertListEqual(list(map(lambda doc: doc['pk'], list(query_iterable))), results)
 
 
 if __name__ == "__main__":

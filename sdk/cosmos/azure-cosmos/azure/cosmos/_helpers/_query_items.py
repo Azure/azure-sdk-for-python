@@ -26,6 +26,7 @@ from azure.core.utils import CaseInsensitiveDict
 
 from .. import _utils, http_constants
 from .._availability_strategy_config import _validate_request_hedging_strategy
+from .._backend.constants import is_rust_backend
 from .._backend.contracts import QueryScope, PreparedPageRequest, BackendPage
 from .._backend._immutable import freeze_json
 from .._backend.operations import OP_QUERY_ITEMS
@@ -34,12 +35,10 @@ from .._cosmos_responses import CosmosItemPaged
 from .._operation_deadline import remaining_timeout
 from .._constants import _Constants as Constants
 from .._query_advisor import get_query_advice_info
-from .._routing.routing_range import Range
 from .._telemetry import trace_operation
-from ..exceptions import CosmosHttpResponseError
+from ..exceptions import _cross_partition_disabled_error
 from ._partition_key import query_partition_key_components
-from ._read_all_items import ReadAllConfig
-from ._feed_paging import FeedPageState
+from ._feed_paging import FeedPageState, RustFeedConfig, normalize_feed_range
 from ._read_items import partition_key_components
 from ._wire_encoding import serialize_body_to_bytes
 from ._request_settings import normalize_query_specification
@@ -55,7 +54,7 @@ _QUERY_OPTIONS = {
 def uses_rust(proxy: Any) -> bool:
     context = proxy._item_context
     backend = context.adapter if context is not None else proxy.client_connection._backend
-    return backend.name != "core-python"
+    return is_rust_backend(backend)
 
 
 def reject_rust_continuation_token(kwargs: dict[str, Any]) -> None:
@@ -75,7 +74,7 @@ if TYPE_CHECKING:
     from azure.cosmos._rust import _ItemFeedCursor
 
 
-class QueryConfig(ReadAllConfig):
+class QueryConfig(RustFeedConfig):
     """Keep prepared query inputs separate from each page iterator's progress."""
 
     def __init__(self, proxy: Any, kwargs: dict[str, Any]) -> None:
@@ -114,39 +113,7 @@ class QueryConfig(ReadAllConfig):
                     "Query partition keys support at most three components."
                 )
             partition = query_partition_key_components(components)
-        interval = None
-        if feed is not None:
-            interval = feed.get("Range") if isinstance(feed, dict) else None
-            if not isinstance(interval, dict) or (
-                not isinstance(interval.get("min"), str)
-                or not isinstance(interval.get("max"), str)
-                or interval.get("isMinInclusive", True) is not True
-            ):
-                raise ValueError(
-                    "feed_range requires a nonempty min-inclusive, max-exclusive Range."
-                )
-            if (
-                interval["min"] == interval["max"]
-                and interval.get("isMaxInclusive", False) is True
-            ):
-                if any(
-                    char not in "0123456789abcdefABCDEF" for char in interval["min"]
-                ):
-                    raise ValueError("feed_range point bounds must be hexadecimal.")
-                # The public range producer returns a closed point; reuse legacy normalization.
-                interval = (
-                    Range(interval["min"], interval["max"], True, True)
-                    .to_normalized_range()
-                    .to_dict()
-                )
-            if (
-                interval["min"] >= interval["max"]
-                or interval.get("isMaxInclusive", False) is not False
-            ):
-                raise ValueError(
-                    "feed_range requires a nonempty min-inclusive, max-exclusive Range."
-                )
-            interval = [interval["min"], interval["max"]]
+        interval = normalize_feed_range(feed) if feed is not None else None
         cross = kwargs.pop(
             "enable_cross_partition_query",
             options.pop("enableCrossPartitionQuery", None),
@@ -154,14 +121,7 @@ class QueryConfig(ReadAllConfig):
         if cross is not None and not isinstance(cross, bool):
             raise TypeError("enable_cross_partition_query must be a bool or None.")
         if empty_key and cross is not True:
-            raise CosmosHttpResponseError(
-                status_code=400,
-                message=(
-                    "Cross partition query is required but disabled. Please set "
-                    "x-ms-documentdb-query-enablecrosspartition to true, specify "
-                    "x-ms-documentdb-partitionkey, or revise your query to avoid this exception."
-                ),
-            )
+            raise _cross_partition_disabled_error()
         self.partition_key = partition or BindingPartitionKey("cross_partition")
         self.scope = QueryScope(
             feed_range=(interval[0], interval[1]) if interval is not None else None,
@@ -227,15 +187,11 @@ class QueryConfig(ReadAllConfig):
         self.query_body = serialize_body_to_bytes(payload, allow_nan=False)
         self.parameters = freeze_json(self.parameters)
         validate_query_continuation(self.options.get("continuation"))
-        # Parse only after the binding identifies a hybrid plan; other queries
-        # must not observe this setting, including invalid integer values.
+        # Parse each limit only after the binding identifies the applicable plan.
         self.hybrid_search_max_items = os.environ.get(
             Constants.HS_MAX_ITEMS_CONFIG, str(Constants.HS_MAX_ITEMS_CONFIG_DEFAULT)
         )
-        maximum = os.environ.get(Constants.MAX_ITEM_BUFFER_VS_CONFIG)
-        self.max_buffered_query_window = int(maximum) if maximum is not None else None
-        if self.max_buffered_query_window is not None and not 0 <= self.max_buffered_query_window < 2**64:
-            raise ValueError(f"{Constants.MAX_ITEM_BUFFER_VS_CONFIG} must be a nonnegative u64")
+        self.vector_search_max_items = os.environ.get(Constants.MAX_ITEM_BUFFER_VS_CONFIG)
 
     def prepared(
         self,
@@ -256,7 +212,7 @@ class QueryConfig(ReadAllConfig):
                 prepared.settings,
                 query=replace(
                     prepared.settings.query,
-                    max_buffered_query_window=self.max_buffered_query_window,
+                    vector_search_max_items=self.vector_search_max_items,
                     full_text_score_scope=self.full_text_score_scope,
                     hybrid_search_max_items=self.hybrid_search_max_items,
                 ),

@@ -58,15 +58,6 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
         self.client.delete_database(self.database_id)
         print(f"\nDeleted owned TOP database: {self.database_id}")
 
-    # Known gap 30: query_items remaining query, paging, and continuation-token gaps (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-top-page-size).
-    @pytest.mark.skip(
-        reason=(
-            "driver-gap: Rust-backed TOP/ORDER BY query pages can exceed max_item_count=2 "
-            "(known gap 30, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-top-page-size). "
-            "Re-enable when paging honors the requested maximum while preserving result ordering "
-            "and the total count."
-        )
-    )
     def test_orderby_top_query_rust(self):
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_orderby_top_query
         # test an order by query combined with top

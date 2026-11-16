@@ -25,8 +25,14 @@ repository   = "https://github.com/Azure/azure-sdk-for-python"
 rust-version = "1.75"
 
 [workspace.lints.rust]
-# Permit the cfgs the driver's integration tests use without the build warning.
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(test_category, values("emulator", "multi_write"))'] }
+# The binding has no `unsafe` code. Block it so memory-safety bugs can't be added later.
+unsafe_code = "forbid"
+
+# Same clippy policy as the driver repo (azure-sdk-for-rust\Cargo.toml).
+[workspace.lints.clippy]
+large_futures = "deny"
+style = { level = "allow", priority = -1 }
+uninlined_format_args = "allow"
 
 # -----------------------------------------------------------------------------
 # Workspace-level dependencies. Used by the binding crate (azure_cosmos_rust)

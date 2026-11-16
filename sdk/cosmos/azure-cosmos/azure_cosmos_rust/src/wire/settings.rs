@@ -11,7 +11,7 @@ use super::request::RequestHeadersAndOptions;
 use azure_core::http::headers::{HeaderName, HeaderValue};
 use azure_data_cosmos_driver::options::{
     AvailabilityStrategy, ContentResponseOnWrite, EndToEndOperationLatencyPolicy, HedgeThreshold,
-    HedgingStrategy,
+    HedgingStrategy, PriorityLevel, ThroughputControlOptionsBuilder,
 };
 #[cfg(test)]
 use pyo3::types::PyDict;
@@ -20,17 +20,18 @@ use pyo3::{
     prelude::*,
     types::PyBool,
 };
-use std::{collections::HashMap, time::Duration};
+use std::{any::TypeId, collections::HashMap, time::Duration};
 
-fn optional<'py, T: FromPyObject<'py>>(obj: &Bound<'py, PyAny>, name: &str) -> PyResult<Option<T>> {
+fn optional<'py, T: FromPyObject<'py> + 'static>(
+    obj: &Bound<'py, PyAny>,
+    name: &str,
+) -> PyResult<Option<T>> {
     let value = obj.getattr(name)?;
     if value.is_none() {
         return Ok(None);
     }
-    let expected_bool = std::any::type_name::<T>() == "bool";
-    if value.is_instance_of::<PyBool>() != expected_bool
-        && (expected_bool || value.is_instance_of::<PyBool>())
-    {
+    let expected_bool = TypeId::of::<T>() == TypeId::of::<bool>();
+    if value.is_instance_of::<PyBool>() != expected_bool {
         return Err(PyTypeError::new_err(format!(
             "invalid type for request setting {name}"
         )));
@@ -158,6 +159,7 @@ pub(crate) fn _request_settings_schema() -> HashMap<String, Vec<String>> {
             fields.push("max_buffered_query_window".to_owned());
             fields.push("full_text_score_scope".to_owned());
             fields.push("hybrid_search_max_items".to_owned());
+            fields.push("vector_search_max_items".to_owned());
         }
         (name.to_owned(), fields)
     })
@@ -221,7 +223,6 @@ pub(crate) fn extract_settings(prepared: &Bound<'_, PyAny>) -> PyResult<RequestH
     query_headers(&settings.getattr("query")?, &mut custom_headers)?;
     resource_headers(&settings.getattr("resource")?, &mut custom_headers)?;
     for (field, wire) in [
-        ("priority", "x-ms-cosmos-priority-level"),
         (
             "correlated_activity_id",
             "x-ms-cosmos-correlated-activityid",
@@ -229,27 +230,41 @@ pub(crate) fn extract_settings(prepared: &Bound<'_, PyAny>) -> PyResult<RequestH
         ("consistency_level", "x-ms-consistency-level"),
     ] {
         if let Some(value) = optional::<String>(&settings, field)? {
-            if field == "priority" && value != "High" && value != "Low" {
-                return Err(PyValueError::new_err("priority must be High or Low"));
-            }
             custom_headers.insert(HeaderName::from(wire), HeaderValue::from(value));
         }
     }
-    if let Some(bucket) = optional::<u32>(&settings, "throughput_bucket")? {
-        custom_headers.insert(
-            HeaderName::from_static("x-ms-cosmos-throughput-bucket"),
-            HeaderValue::from(bucket.to_string()),
-        );
-    }
+    let priority = optional::<String>(&settings, "priority")?
+        .map(|value| {
+            value
+                .parse::<PriorityLevel>()
+                .map_err(|_| PyValueError::new_err("priority must be High or Low"))
+        })
+        .transpose()?;
+    let bucket = optional::<u32>(&settings, "throughput_bucket")?;
+    let throughput_control = if priority.is_some() || bucket.is_some() {
+        let mut builder = ThroughputControlOptionsBuilder::new();
+        if let Some(priority) = priority {
+            builder = builder.with_priority_level(priority);
+            custom_headers.remove(&HeaderName::from_static("x-ms-cosmos-priority-level"));
+        }
+        if let Some(bucket) = bucket {
+            builder = builder.with_throughput_bucket(bucket);
+            custom_headers.remove(&HeaderName::from_static("x-ms-cosmos-throughput-bucket"));
+        }
+        Some(builder.build())
+    } else {
+        None
+    };
     let activity_header = optional::<String>(&settings, "activity_id")?.or(raw_activity);
     let session_header = optional::<String>(&settings, "session_token")?.or(raw_session);
     custom_headers.remove(&HeaderName::from_static("x-ms-activity-id"));
     custom_headers.remove(&HeaderName::from_static("x-ms-session-token"));
     let no_response = optional::<bool>(&settings, "no_response")?;
     let excluded = optional::<Vec<String>>(&settings, "excluded_locations")?;
-    let seconds = optional::<f64>(&settings, "timeout_seconds")?;
-    let timeout =
-        super::deadline::parse_remaining_timeout(seconds)?.map(EndToEndOperationLatencyPolicy::new);
+    let configured_timeout_seconds = optional::<f64>(&settings, "timeout_seconds")?;
+    let configured_driver_timeout_policy =
+        super::deadline::parse_remaining_timeout(configured_timeout_seconds)?
+            .map(EndToEndOperationLatencyPolicy::new);
     let hedging = settings.getattr("hedging")?;
     let availability_strategy = if hedging.is_none() {
         None
@@ -287,11 +302,12 @@ pub(crate) fn extract_settings(prepared: &Bound<'_, PyAny>) -> PyResult<RequestH
             ContentResponseOnWrite::Enabled
         },
         excluded_regions_value: excluded.map(|regions| regions.into_iter().collect()),
-        driver_timeout_policy: timeout,
-        operation_timeout: None,
+        configured_driver_timeout_policy,
+        remaining_binding_timeout: None,
         availability_strategy,
         read_consistency_strategy: None,
         patch_strategy: None,
+        throughput_control,
         custom_headers,
     })
 }
@@ -447,16 +463,81 @@ mod tests {
                 "2"
             );
             assert_eq!(
-                result.custom_headers[&HeaderName::from_static("x-ms-cosmos-throughput-bucket")]
-                    .as_str(),
-                "3"
+                result.throughput_control.unwrap().throughput_bucket,
+                Some(3)
             );
-            assert_eq!(result.custom_headers.len(), 3);
+            assert_eq!(result.custom_headers.len(), 2);
             headers.set_item("x-invalid", 3).unwrap();
             assert!(extract_settings(&request)
                 .err()
                 .unwrap()
                 .is_instance_of::<PyTypeError>(py));
+        });
+    }
+
+    #[test]
+    fn throughput_controls_preserve_typed_precedence_and_unset_fields() {
+        crate::test_support::prepare_python();
+        Python::with_gil(|py| {
+            for (priority, bucket) in [
+                (None, None),
+                (Some(PriorityLevel::Low), Some(3)),
+                (Some(PriorityLevel::High), None),
+                (None, Some(0)),
+                (None, Some(u32::MAX)),
+            ] {
+                let request = prepared(py);
+                let headers = request.getattr("headers").unwrap();
+                headers
+                    .set_item("X-MS-COSMOS-PRIORITY-LEVEL", "Low")
+                    .unwrap();
+                headers
+                    .set_item("X-MS-COSMOS-THROUGHPUT-BUCKET", "2")
+                    .unwrap();
+                headers.set_item("x-customer-tag", "orders").unwrap();
+                let settings = request.getattr("settings").unwrap();
+                if let Some(priority) = priority {
+                    settings.setattr("priority", priority.as_str()).unwrap();
+                }
+                settings.setattr("throughput_bucket", bucket).unwrap();
+                let result = extract_settings(&request).unwrap();
+                let options = super::super::request::build_operation_options(
+                    None,
+                    result.excluded_regions_value,
+                    result.configured_driver_timeout_policy,
+                    result.availability_strategy,
+                    result.throughput_control,
+                    result.custom_headers,
+                );
+                if priority.is_none() && bucket.is_none() {
+                    assert!(options.throughput_control.is_none());
+                } else {
+                    let control = options.throughput_control.unwrap();
+                    assert_eq!(control.priority_level, priority);
+                    assert_eq!(control.throughput_bucket, bucket);
+                }
+                let custom = options.custom_headers.unwrap();
+                assert_eq!(
+                    custom.contains_key(&HeaderName::from_static("x-ms-cosmos-priority-level")),
+                    priority.is_none(),
+                );
+                assert_eq!(
+                    custom.contains_key(&HeaderName::from_static("x-ms-cosmos-throughput-bucket")),
+                    bucket.is_none(),
+                );
+                assert_eq!(
+                    custom[&HeaderName::from_static("x-customer-tag")].as_str(),
+                    "orders",
+                );
+                assert_eq!(
+                    headers
+                        .get_item("X-MS-COSMOS-THROUGHPUT-BUCKET")
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                    "2",
+                );
+            }
         });
     }
 
@@ -555,12 +636,15 @@ mod tests {
             let result = extract_settings(&request).unwrap();
             assert_eq!(
                 result.custom_headers.len(),
-                ITEM_FIELDS.len() + QUERY_FIELDS.len() + RESOURCE_FIELDS.len() + 4
+                ITEM_FIELDS.len() + QUERY_FIELDS.len() + RESOURCE_FIELDS.len() + 2
             );
+            let throughput_control = result.throughput_control.as_ref().unwrap();
+            assert_eq!(throughput_control.priority_level, Some(PriorityLevel::High));
+            assert_eq!(throughput_control.throughput_bucket, Some(7));
             assert_eq!(result.activity_header.as_deref(), Some("activity"));
             assert_eq!(result.session_header.as_deref(), Some("token"));
             assert!(result.excluded_regions_value.is_some());
-            assert!(result.driver_timeout_policy.is_some());
+            assert!(result.configured_driver_timeout_policy.is_some());
             assert_eq!(
                 result.content_response_on_write,
                 ContentResponseOnWrite::Disabled

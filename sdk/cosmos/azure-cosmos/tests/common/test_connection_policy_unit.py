@@ -207,6 +207,8 @@ def test_untouched_routing_policy_can_be_reused_rust(construct_client, backend):
     policy = configured_policy()
     original = dict(vars(policy))
     _, prepared_policy = construct_client(_backend=backend, connection_policy=policy)
+    # A generated legacy retry policy cannot be reused as a Rust retry control.
+    prepared_policy.ConnectionRetryConfiguration = None
     client, _ = construct_client(connection_policy=prepared_policy)
     assert client._adapter._client_config.preferred_locations == ("West US", "East US")
     assert client._adapter._client_config.excluded_locations == ("Central US",)
@@ -319,7 +321,9 @@ def test_core_python_fixed_throttle_interval_still_selects_requested_delay_rust(
 
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize("selection", ["keyword", "environment"])
-@pytest.mark.parametrize("keyword", ["retry_connect", "retry_read", "connection_retry_policy"])
+@pytest.mark.parametrize("keyword", [
+    "retry_connect", "retry_read", "connection_retry_policy", "retry_mode", "retry_backoff_factor",
+])
 @pytest.mark.parametrize("value", [None, 0, 2, False, "2", MagicMock()])
 def test_rust_connection_retry_controls_fail_before_policy_or_backend_creation_rust(
     client_module, monkeypatch, from_connection_string, selection, keyword, value
@@ -391,16 +395,90 @@ def test_core_python_custom_retry_policy_is_preserved_rust(
     assert prepared.ConnectionRetryConfiguration is custom_policy
 
 
-@pytest.mark.parametrize("client_module", [async_client], ids=["async"])
-def test_rust_grouped_retry_policy_is_not_retired_by_keyword_guard_rust(construct_client):
+@pytest.mark.parametrize("from_connection_string", [False, True])
+@pytest.mark.parametrize("selection", ["keyword", "environment"])
+@pytest.mark.parametrize("value", [None, 0, 2])
+def test_rust_hedging_execution_control_fails_before_startup_rust(
+    client_module, monkeypatch, from_connection_string, selection, value,
+):
+    keyword = (
+        "availability_strategy_max_concurrency" if client_module is async_client
+        else "availability_strategy_executor"
+    )
+    kwargs = {keyword: value}
+    monkeypatch.setenv("COSMOS_BACKEND", "rust" if selection == "environment" else "core-python")
+    if selection == "keyword":
+        kwargs["_backend"] = "rust"
+    factory_name = "make_async_backend" if client_module is async_client else "make_backend"
+    factory = MagicMock()
+    connection = MagicMock()
+    build_policy = MagicMock()
+    monkeypatch.setattr(client_module, factory_name, factory)
+    monkeypatch.setattr(client_module, "CosmosClientConnection", connection)
+    monkeypatch.setattr(client_module, "_build_connection_policy", build_policy)
+    with pytest.raises(TypeError, match=keyword + " is not supported by Rust-backed clients"):
+        if from_connection_string:
+            client_module.CosmosClient.from_connection_string(
+                "AccountEndpoint=https://policy.invalid;AccountKey=ZmFrZQ==;", **kwargs,
+            )
+        else:
+            client_module.CosmosClient("https://policy.invalid", "ZmFrZQ==", **kwargs)
+    factory.assert_not_called()
+    connection.assert_not_called()
+    build_policy.assert_not_called()
+
+
+@pytest.mark.parametrize("from_connection_string", [False, True])
+@pytest.mark.parametrize("selection", ["keyword", "environment"])
+@pytest.mark.parametrize("custom_policy", [0, False, 4, MagicMock()])
+def test_async_rust_grouped_retry_policy_fails_before_startup_rust(
+    monkeypatch, from_connection_string, selection, custom_policy,
+):
     policy = ConnectionPolicy()
-    custom_policy = MagicMock()
     policy.ConnectionRetryConfiguration = custom_policy
-    client, prepared = construct_client(connection_policy=policy)
-    assert client._adapter.name == "rust"
-    assert prepared.ConnectionRetryConfiguration is custom_policy
+    kwargs = {"connection_policy": policy}
+    monkeypatch.setenv("COSMOS_BACKEND", "rust" if selection == "environment" else "core-python")
+    if selection == "keyword":
+        kwargs["_backend"] = "rust"
+    factory = MagicMock()
+    connection = MagicMock()
+    build_policy = MagicMock()
+    monkeypatch.setattr(async_client, "make_async_backend", factory)
+    monkeypatch.setattr(async_client, "CosmosClientConnection", connection)
+    monkeypatch.setattr(async_client, "_build_connection_policy", build_policy)
+    with pytest.raises(TypeError, match=r"connection_policy\.ConnectionRetryConfiguration"):
+        if from_connection_string:
+            async_client.CosmosClient.from_connection_string(
+                "AccountEndpoint=https://policy.invalid;AccountKey=ZmFrZQ==;", **kwargs,
+            )
+        else:
+            async_client.CosmosClient("https://policy.invalid", "ZmFrZQ==", **kwargs)
+    factory.assert_not_called()
+    connection.assert_not_called()
+    build_policy.assert_not_called()
     assert policy.ConnectionRetryConfiguration is custom_policy
-    custom_policy.send.assert_not_called()
+
+
+@pytest.mark.parametrize("from_connection_string", [False, True])
+def test_core_python_retry_delays_and_hedging_controls_remain_available_rust(
+    client_module, construct_client, monkeypatch, from_connection_string,
+):
+    monkeypatch.setenv("COSMOS_BACKEND", "rust")
+    keyword = (
+        "availability_strategy_max_concurrency" if client_module is async_client
+        else "availability_strategy_executor"
+    )
+    value = 2 if client_module is async_client else MagicMock()
+    client, prepared = construct_client(
+        _backend="core-python", from_connection_string=from_connection_string,
+        retry_mode="exponential", retry_backoff_factor=3, **{keyword: value},
+    )
+    assert client._adapter.name == "core-python"
+    retry = prepared.ConnectionRetryConfiguration
+    settings = retry.configure_retries({})
+    settings["history"] = [MagicMock(), MagicMock(), MagicMock()]
+    assert retry.get_backoff_time(settings) == 12
+    assert client_module.CosmosClientConnection.call_args.kwargs[keyword] is value
 
 
 def test_connection_string_factory_preserves_grouped_settings_rust(construct_client):

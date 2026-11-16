@@ -14,6 +14,22 @@
 //! explicit arguments, and feed-range subset comparison is local. Request
 //! signing, service routing, and retries remain the Rust driver's responsibility.
 //!
+//! A customer app's timeout must include time spent in Python before this call.
+//! For an order read with `timeout=5`, two seconds of preparation and driver
+//! acquisition leave three seconds for metadata resolution and execution:
+//!
+//! - `prepared.settings.timeout_seconds` stays at 5. It supplies
+//!   `configured_driver_timeout_policy`, the driver's configured request policy.
+//! - The binding keyword `timeout_seconds` is 3. It supplies
+//!   `remaining_binding_timeout`, used to establish the binding deadline.
+//!
+//! The driver policy clamps durations below one second. The binding deadline
+//! preserves subsecond remaining time and spans work that can require several
+//! driver calls; replacing it with the configured policy would restart budgets.
+//! Neither timeout can undo service work or forcibly interrupt synchronous work.
+//! The existing keyword and typed-settings field names are retained for binding
+//! compatibility; they are not two independent customer timeout options.
+//!
 //! Async binding functions can check and extract inputs on the calling thread
 //! before returning an awaitable. Rust operation work runs with the Tokio
 //! runtime, not one Python worker thread per service request. See the shared
@@ -140,7 +156,7 @@ fn extract_item_body_inputs(
     ))
 }
 
-/// Common fields and body, shared by item writes, queries and offer reads.
+/// Common fields and body, shared by item writes and queries.
 fn extract_body_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<BodyInputs> {
     let (container_link, partition_key, modifiers): CommonInputs =
         extract_common_prepared_inputs(prepared)?;
@@ -148,11 +164,18 @@ fn extract_body_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<BodyInputs> {
     Ok((container_link, partition_key, modifiers, body_bytes))
 }
 
+/// Extract account-scoped request settings and offer body bytes, without item routing.
+fn extract_offer_body_inputs(
+    prepared: &Bound<'_, PyAny>,
+) -> PyResult<(RequestHeadersAndOptions, Vec<u8>)> {
+    let modifiers = extract_account_prepared_modifiers(prepared)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    Ok((modifiers, body_bytes))
+}
+
 /// Extract settings, the offer resource id from `item_id`, and replacement body bytes.
-/// The common extractor still reads the container link and typed partition key,
-/// but offer execution does not use them to select a container or partition.
 fn extract_replace_throughput_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<OfferReplaceInputs> {
-    let (_container_link, _partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
+    let (modifiers, body_bytes) = extract_offer_body_inputs(prepared)?;
     let offer_id = extract_required_item_id(prepared, REPLACE_THROUGHPUT_ID_REQUIRED)?;
     Ok((modifiers, offer_id, body_bytes))
 }

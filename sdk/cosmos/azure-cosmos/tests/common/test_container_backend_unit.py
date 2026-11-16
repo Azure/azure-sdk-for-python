@@ -40,6 +40,8 @@ import asyncio
 import inspect
 import json
 import warnings
+from concurrent.futures import ThreadPoolExecutor
+from threading import Barrier, Lock
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 
@@ -71,6 +73,7 @@ from azure.cosmos._helpers._request_container import (
     is_read_container_rust_eligible,
 )
 from azure.cosmos._helpers._container_operations import ContainerHelper
+from azure.cosmos._helpers._response_parse import parse_backend_response
 from azure.cosmos._helpers._item_context import ClientLastResponseHeaders, ItemClientContext
 from common.typed_requests import flatten_options_to_headers
 from azure.cosmos._query_rust_routing import (
@@ -539,8 +542,8 @@ def test_container_create_keeps_isolated_hook_headers_and_falsey_callable_rust(c
     Being callable is what makes something a hook, not being true, so a hook
     object that says it is false is still invoked exactly once.
 
-    It is given the same properties the caller receives, so the two views agree.
-    But the headers are a separate copy: the hook changes the request charge and
+    It is given a copy of the properties the caller receives, so the two views agree.
+    The headers are a separate copy: the hook changes the request charge and
     neither the properties nor the client's own record of the last response
     headers moves. A hook meant for logging must not be able to rewrite what the
     customer sees.
@@ -565,10 +568,81 @@ def test_container_create_keeps_isolated_hook_headers_and_falsey_callable_rust(c
         case, "c1", PartitionKey(path="/pk"), return_properties=True, response_hook=Hook(),
     )
     assert len(calls) == 1
-    assert calls[0][1] is properties
+    assert calls[0][1] is not properties
+    assert calls[0][1] == properties
     assert proxy.id == properties["id"]
     assert properties.get_response_headers()["x-ms-request-charge"] == "5.25"
     assert calls[0][0] is not case.connection.last_response_headers
+
+
+@pytest.mark.parametrize("use_legacy", [False, True])
+@pytest.mark.parametrize("outcome", ["create", "existing", "missing"])
+@pytest.mark.parametrize("return_properties", [False, True])
+def test_container_creation_hook_cannot_mutate_result_or_cached_partition_key_rust(
+    container_create_case, use_legacy, outcome, return_properties,
+):
+    case = container_create_case
+    original = {
+        "id": "c1", "_rid": "rid1",
+        "partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2},
+    }
+    properties = CosmosDict(
+        json.loads(json.dumps(original)),
+        response_headers=CaseInsensitiveDict({"x-ms-request-charge": "5.25"}),
+    )
+    case.connection.CreateContainer.return_value = properties
+    mock_type = AsyncMock if isinstance(case.database, AsyncDatabaseProxy) else MagicMock
+    case.connection.ReadContainer = mock_type(return_value=properties)
+    response = BackendResponse(
+        status_code=201 if outcome != "existing" else 200,
+        headers=properties.get_response_headers(), body=json.dumps(original).encode(),
+    )
+    case.backend.execute.side_effect = [response]
+    if outcome == "missing":
+        case.connection.ReadContainer.side_effect = CosmosResourceNotFoundError(status_code=404)
+        case.backend.execute.side_effect = [
+            BackendResponse(status_code=404, headers={}, body=b'{"message":"missing"}'), response,
+        ]
+    if use_legacy:
+        case.connection._backend = case.legacy_backend
+    seen = []
+
+    def hook(headers, body):
+        assert isinstance(body, CosmosDict)
+        assert body == original
+        assert headers["X-MS-REQUEST-CHARGE"] == "5.25"
+        seen.append(body)
+        body["id"] = "hook-id"
+        body["partitionKey"]["paths"][0] = "/hook-key"
+        headers["X-MS-REQUEST-CHARGE"] = "changed"
+
+    result = _call_container_create(
+        case, "c1", PartitionKey(path="/pk"),
+        method="create_container" if outcome == "create" else "create_container_if_not_exists",
+        return_properties=return_properties, response_hook=hook,
+    )
+    proxy = result[0] if return_properties else result
+    assert proxy.id == "c1"
+    assert proxy.container_link == "dbs/db1/colls/c1"
+    case.connection._set_container_properties_cache.assert_called_once()
+    link, cached = case.connection._set_container_properties_cache.call_args.args
+    assert link == proxy.container_link
+    assert cached["partitionKey"] == original["partitionKey"]
+    assert len(seen) == 1
+    seen[0]["partitionKey"]["paths"].append("/later-edit")
+    assert cached["partitionKey"] == original["partitionKey"]
+    if return_properties:
+        assert result[1] == original
+        assert result[1] is not seen[0]
+        assert result[1].get_response_headers()["x-ms-request-charge"] == "5.25"
+    if use_legacy:
+        assert properties == original
+        case.backend.execute.assert_not_called()
+        assert case.connection.CreateContainer.call_count == int(outcome != "existing")
+    else:
+        case.connection.ReadContainer.assert_not_called()
+        case.connection.CreateContainer.assert_not_called()
+        assert case.backend.execute.call_count == (2 if outcome == "missing" else 1)
 
 
 @pytest.mark.parametrize("use_legacy", [False, True])
@@ -840,7 +914,8 @@ def test_container_get_or_create_preserves_shapes_and_existing_settings_rust(
     properties = hook.call_args.args[1]
     assert hook.call_args.args[0]["x-ms-request-charge"] == ("5.25" if case.missing else "2")
     if return_properties:
-        assert result[1] is properties
+        assert result[1] is not properties
+        assert result[1] == properties
         assert isinstance(properties, CosmosDict)
     if not case.missing:
         assert properties["partitionKey"]["paths"] == ["/original"]
@@ -851,12 +926,16 @@ def test_container_get_or_create_preserves_shapes_and_existing_settings_rust(
         read = case.connection.ReadContainer.call_args
         assert "offerThroughput" not in read.kwargs["options"]
         assert "response_hook" not in read.kwargs
-        assert read.kwargs["timeout"] == 10
+        assert 0 < read.kwargs["timeout"] <= 10
         assert case.connection.CreateContainer.call_count == int(case.missing)
         if case.missing:
             create = case.connection.CreateContainer.call_args
             assert create.kwargs["collection"]["defaultTtl"] == 99
             assert create.kwargs["options"]["offerThroughput"] == 400
+            assert 0 < create.kwargs["timeout"] <= read.kwargs["timeout"]
+            assert create.kwargs["options"]["_item_operation_deadline"] == (
+                read.kwargs["options"]["_item_operation_deadline"]
+            )
     else:
         case.connection.ReadContainer.assert_not_called()
         case.connection.CreateContainer.assert_not_called()
@@ -867,6 +946,9 @@ def test_container_get_or_create_preserves_shapes_and_existing_settings_rust(
         for op in operations:
             assert settings_options(op)["timeout_seconds"] == 10
             assert op.headers["x-company-trace"] == "setup"
+        deadlines = [call.kwargs["deadline"] for call in case.backend.execute.call_args_list]
+        assert deadlines[0] is not None
+        assert all(deadline == deadlines[0] for deadline in deadlines)
         assert "offerThroughput" not in operations[0].headers
         if case.missing:
             assert json.loads(operations[1].body_bytes)["defaultTtl"] == 99
@@ -981,6 +1063,7 @@ def test_container_get_or_create_forwards_conditions_without_ignored_warnings_ru
 @pytest.mark.parametrize("use_legacy", [False, True])
 @pytest.mark.parametrize("error", [
     CosmosResourceNotFoundError(status_code=404, message="callback failure"),
+    CosmosResourceExistsError(status_code=409, message="callback failure"),
     ValueError("callback failure"),
 ])
 def test_container_get_or_create_does_not_interpret_hook_errors_as_missing_rust(
@@ -1049,6 +1132,86 @@ def test_container_get_or_create_falsey_hook_has_isolated_headers_rust(container
     assert properties.get_response_headers()["x-ms-request-charge"] == ("5.25" if case.missing else "2")
 
 
+@pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
+@pytest.mark.parametrize("return_properties", [False, True])
+@pytest.mark.parametrize("read_status", [200, 403, 404, 409])
+def test_container_get_or_create_recovers_create_conflict_once_rust(
+    container_create_case, use_legacy, return_properties, read_status,
+):
+    case = container_create_case
+    mock_type = AsyncMock if isinstance(case.database, AsyncDatabaseProxy) else MagicMock
+    winner = CosmosDict(
+        {"id": "c1", "_rid": "winner", "partitionKey": {"paths": ["/original"]}, "defaultTtl": 10},
+        response_headers=CaseInsensitiveDict({"x-ms-activity-id": "winning-read"}),
+    )
+    missing = CosmosResourceNotFoundError(status_code=404, message="missing")
+    conflict = CosmosResourceExistsError(status_code=409, message="created concurrently")
+    error_type = {
+        403: CosmosHttpResponseError, 404: CosmosResourceNotFoundError, 409: CosmosResourceExistsError,
+    }.get(read_status)
+    if use_legacy:
+        case.connection._backend = case.legacy_backend
+        case.connection.ReadContainer = mock_type(side_effect=[
+            missing, winner if error_type is None else error_type(status_code=read_status, message="reread"),
+        ])
+        case.connection.CreateContainer.side_effect = conflict
+    else:
+        case.backend.execute.side_effect = [
+            BackendResponse(status_code=404, headers={}, body=b'{"message":"missing"}'),
+            BackendResponse(status_code=409, headers={}, body=b'{"message":"created concurrently"}'),
+            BackendResponse(
+                status_code=read_status, headers=winner.get_response_headers(),
+                body=json.dumps(winner if error_type is None else {"message": "reread"}).encode(),
+            ),
+        ]
+    seen = []
+
+    def hook(headers, properties):
+        assert headers["X-MS-ACTIVITY-ID"] == "winning-read"
+        assert properties == winner
+        properties["partitionKey"]["paths"].append("/hook-edit")
+        seen.append(headers)
+
+    options = dict(
+        return_properties=return_properties, response_hook=hook, timeout=10,
+        offer_throughput=400, default_ttl=99,
+        initial_headers={"x-company-trace": "setup"},
+        etag='"v1"', match_condition=MatchConditions.IfNotModified,
+    )
+    if error_type is not None:
+        with pytest.raises(error_type) as caught:
+            _call_get_or_create(case, **options)
+        assert caught.value.status_code == read_status
+        assert not seen
+        case.connection._set_container_properties_cache.assert_not_called()
+    else:
+        result = _call_get_or_create(case, **options)
+        proxy = result[0] if return_properties else result
+        assert proxy.id == "c1"
+        assert proxy._item_context is case.item_context
+        if return_properties:
+            assert result[1] == winner
+        assert len(seen) == 1
+        case.connection._set_container_properties_cache.assert_called_once()
+        cached = case.connection._set_container_properties_cache.call_args.args[1]
+        assert cached["partitionKey"]["paths"] == ["/original"]
+    if use_legacy:
+        case.backend.execute.assert_not_called()
+        case.connection.CreateContainer.assert_called_once()
+        assert case.connection.ReadContainer.call_count == 2
+        first, second = case.connection.ReadContainer.call_args_list
+        assert "offerThroughput" not in second.kwargs["options"]
+        assert second.kwargs["options"]["accessCondition"] == first.kwargs["options"]["accessCondition"]
+        assert 0 < second.kwargs["timeout"] <= first.kwargs["timeout"]
+    else:
+        operations = [call.args[0] for call in case.backend.execute.call_args_list]
+        assert [op.op for op in operations] == [OP_READ_CONTAINER, OP_CREATE_CONTAINER, OP_READ_CONTAINER]
+        assert operations[2] == operations[0]
+        deadlines = [call.kwargs["deadline"] for call in case.backend.execute.call_args_list]
+        assert deadlines[0] is not None and deadlines == [deadlines[0]] * 3
+        case.connection.CreateContainer.assert_not_called()
+
+
 @pytest.mark.parametrize("use_legacy", [False, True])
 @pytest.mark.parametrize("status", [401, 403, 404, 409, 429, 500])
 def test_container_get_or_create_propagates_failures_without_replay_rust(
@@ -1064,11 +1227,9 @@ def test_container_get_or_create_propagates_failures_without_replay_rust(
     A genuine initial not-found is skipped in the existing case, because that is
     not a failure at all -- it is the signal to create, covered by its own test.
 
-    Conflict is the one worth naming: if the create comes back saying the
-    container already exists, that means somebody else created it in the moment
-    between the read and the create. It is reported, not retried, and never
-    quietly reinterpreted as success. The hook does not run and nothing is
-    cached.
+    A create conflict permits one follow-up read. If that read also fails, its
+    error propagates without another create. The hook does not run and nothing
+    is cached.
     """
     case = container_get_or_create_case
     if not case.missing and status == 404:
@@ -1081,11 +1242,17 @@ def test_container_get_or_create_propagates_failures_without_replay_rust(
         case.connection._backend = case.legacy_backend
         target = case.connection.CreateContainer if case.missing else case.connection.ReadContainer
         target.side_effect = error
+        if case.missing and status == 409:
+            case.connection.ReadContainer.side_effect = [
+                CosmosResourceNotFoundError(status_code=404, message="missing"), error,
+            ]
     else:
         replies = []
         if case.missing:
             replies.append(BackendResponse(status_code=404, headers={}, body=b'{"message":"missing"}'))
         replies.append(BackendResponse(status_code=status, headers={}, body=b'{"message":"failure"}'))
+        if case.missing and status == 409:
+            replies.append(BackendResponse(status_code=409, headers={}, body=b'{"message":"reread"}'))
         case.backend.execute.side_effect = replies
     hook = MagicMock()
     with pytest.raises(error_type) as raised:
@@ -1094,11 +1261,120 @@ def test_container_get_or_create_propagates_failures_without_replay_rust(
     hook.assert_not_called()
     case.connection._set_container_properties_cache.assert_not_called()
     if use_legacy:
-        case.connection.ReadContainer.assert_called_once()
+        assert case.connection.ReadContainer.call_count == (2 if case.missing and status == 409 else 1)
         assert case.connection.CreateContainer.call_count == int(case.missing)
     else:
-        assert case.backend.execute.call_count == (2 if case.missing else 1)
+        assert case.backend.execute.call_count == (1 + int(case.missing) + int(case.missing and status == 409))
         case.connection.ReadContainer.assert_not_called()
+        case.connection.CreateContainer.assert_not_called()
+
+
+@pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
+def test_concurrent_container_get_or_create_returns_winner_rust(container_create_case, use_legacy):
+    case = container_create_case
+    asynchronous = isinstance(case.database, AsyncDatabaseProxy)
+    if use_legacy:
+        case.connection._backend = case.legacy_backend
+        case.item_context = ItemClientContext(case.legacy_backend)
+        case.database._item_context = case.item_context
+    thread_gate = Barrier(8)
+    async_gate = asyncio.Event()
+    lock = Lock()
+    reads = 0
+    created = False
+    winner = {"id": "c1", "_rid": "winner", "partitionKey": {"paths": ["/pk"]}}
+
+    def response(operation, initial_read):
+        nonlocal created
+        with lock:
+            if initial_read:
+                status = 404
+            elif operation == OP_CREATE_CONTAINER:
+                status = 409 if created else 201
+                created = True
+            else:
+                status = 200
+        return BackendResponse(
+            status_code=status, headers={"x-ms-activity-id": operation},
+            body=json.dumps(winner if status < 400 else {"message": "race"}).encode(),
+        )
+
+    def starts_read(operation):
+        nonlocal reads
+        with lock:
+            if operation == OP_READ_CONTAINER:
+                reads += 1
+                return reads <= 8
+        return False
+
+    def execute(operation):
+        initial = starts_read(operation)
+        if initial:
+            thread_gate.wait(timeout=10)
+        return response(operation, initial)
+
+    async def execute_async(operation):
+        initial = starts_read(operation)
+        if initial:
+            if reads == 8:
+                async_gate.set()
+            await asyncio.wait_for(async_gate.wait(), 10)
+        return response(operation, initial)
+
+    def dispatch(operation):
+        if not asynchronous:
+            reply = execute(operation)
+            return parse_backend_response(reply) if use_legacy else reply
+
+        async def run():
+            reply = await execute_async(operation)
+            return parse_backend_response(reply) if use_legacy else reply
+        return run()
+
+    if use_legacy:
+        mock_type = AsyncMock if asynchronous else MagicMock
+
+        async def legacy_read(*_args, **_kwargs):
+            return await dispatch(OP_READ_CONTAINER)
+
+        async def legacy_create(*_args, **_kwargs):
+            return await dispatch(OP_CREATE_CONTAINER)
+
+        case.connection.ReadContainer = mock_type(
+            side_effect=legacy_read if asynchronous else lambda *_a, **_k: dispatch(OP_READ_CONTAINER)
+        )
+        case.connection.CreateContainer.side_effect = (
+            legacy_create if asynchronous else lambda *_a, **_k: dispatch(OP_CREATE_CONTAINER)
+        )
+    else:
+        async def binding_execute(prepared, **_kwargs):
+            return await dispatch(prepared.op)
+
+        case.backend.execute.side_effect = (
+            binding_execute if asynchronous else lambda prepared, **_k: dispatch(prepared.op)
+        )
+    hook = MagicMock()
+
+    async def run_all():
+        return await asyncio.gather(*[
+            case.database.create_container_if_not_exists("c1", PartitionKey(path="/pk"), response_hook=hook)
+            for _ in range(8)
+        ])
+
+    if asynchronous:
+        results = asyncio.run(run_all())
+    else:
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            results = list(pool.map(lambda _: _call_get_or_create(case, response_hook=hook), range(8)))
+    assert [result.id for result in results] == ["c1"] * 8
+    assert hook.call_count == 8
+    assert case.connection._set_container_properties_cache.call_count == 8
+    assert reads == 15
+    if use_legacy:
+        assert case.connection.CreateContainer.call_count == 8
+        case.backend.execute.assert_not_called()
+    else:
+        assert case.backend.execute.call_count == 23
         case.connection.CreateContainer.assert_not_called()
 
 
@@ -1214,7 +1490,7 @@ def test_container_get_or_create_preflight_does_not_mutate_caller_options_rust()
     kwargs = {"request_options": {"initialHeaders": {"x-company-trace": "setup"}},
               "match_condition": MatchConditions.IfMissing, "etag": "unused", "timeout": 10}
     original = deepcopy(kwargs)
-    options, remaining, eligible = prepare_container_get_or_create_read(
+    options, remaining, eligible, _deadline = prepare_container_get_or_create_read(
         kwargs, initial_headers=None, offer_throughput=400
     )
     assert eligible
@@ -1586,8 +1862,11 @@ def test_create_container_preserves_conditional_headers_without_ignored_warnings
 
     captured = {}
 
-    def fake_create_container(self, database_link, definition, request_options, *, response_hook=None, kwargs=None):
+    def fake_create_container(
+        self, database_link, definition, request_options, *, response_hook=None, kwargs=None, deadline=None
+    ):
         """Capture the arguments so the test can inspect what the public method forwarded."""
+        assert deadline is None
         captured["kwargs"] = dict(kwargs or {})
         captured["request_options"] = dict(request_options or {})
         captured["definition"] = definition
@@ -2009,7 +2288,8 @@ def test_async_create_container_fires_the_hook_once_on_the_rust_path_rust():
     )
 
     assert len(hooks) == 1
-    assert hooks[0][1] is result
+    assert hooks[0][1] is not result
+    assert hooks[0][1] == result
     assert hooks[0][0] == result.get_response_headers()
     connection.CreateContainer.assert_not_called()
 

@@ -91,6 +91,7 @@ class QuerySettings(_ValidatedSettings):
     max_buffered_query_window: Optional[int] = None
     full_text_score_scope: Optional[Literal["Local", "Global"]] = None
     hybrid_search_max_items: Optional[str] = None
+    vector_search_max_items: Optional[str] = None
 
     def __post_init__(self) -> None:
         self._check_type("max_item_count", self.max_item_count, int)
@@ -108,6 +109,7 @@ class QuerySettings(_ValidatedSettings):
         self._check_type("max_buffered_query_window", self.max_buffered_query_window, int)
         self._check_type("full_text_score_scope", self.full_text_score_scope, str)
         self._check_type("hybrid_search_max_items", self.hybrid_search_max_items, str)
+        self._check_type("vector_search_max_items", self.vector_search_max_items, str)
         if self.full_text_score_scope is not None and self.full_text_score_scope not in ("Local", "Global"):
             self._invalid_type("full_text_score_scope")
         if self.max_buffered_query_window is not None and not 0 <= self.max_buffered_query_window < 2**64:
@@ -142,6 +144,12 @@ class ResourceSettings(_ValidatedSettings):
 
 @dataclass(frozen=True)
 class RequestSettings(_ValidatedSettings):
+    """Typed request options, including the configured driver timeout.
+
+    ``timeout_seconds`` is the effective requested timeout, not the remaining
+    budget. The adapter passes the remaining time separately to the binding.
+    """
+
     protocol_version: ClassVar[int] = 3
     priority: Optional[Literal["High", "Low"]] = None
     throughput_bucket: Optional[int] = None
@@ -158,10 +166,11 @@ class RequestSettings(_ValidatedSettings):
     resource: ResourceSettings = field(default_factory=ResourceSettings)
 
     def __post_init__(self) -> None:
-        if self.priority is not None and (
-            type(self.priority) is not str or self.priority not in ("High", "Low")
-        ):
-            self._invalid_type("priority")
+        if self.priority is not None:
+            if type(self.priority) is not str:
+                raise TypeError("priority must be a string or None.")
+            if self.priority not in ("High", "Low"):
+                raise ValueError("priority must be 'High' or 'Low'.")
         self._check_type("throughput_bucket", self.throughput_bucket, int)
         self._check_type("activity_id", self.activity_id, str)
         self._check_type("correlated_activity_id", self.correlated_activity_id, str)

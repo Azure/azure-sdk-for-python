@@ -3,19 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Dispatch async credential calls to the customer app's running event loop.
+"""Run async credential calls on the customer event loop.
 
 The asynchronous adapter acquires a bridge on its first use, before native
 driver acquisition moves to a worker. The binding schedules token requests
 through _start_token_request and waits asynchronously for their results.
-The bridge never creates a thread, stops the application loop, or closes the
+The bridge never creates a thread, stops the customer event loop, or closes the
 customer's credential.
 
-Clients sharing a credential on the same loop share a bridge. Each acquisition
+Clients sharing a credential on the same customer event loop share a bridge. Each acquisition
 needs one release. The last release requests cancellation of this bridge's
 pending token calls only; cancellation cannot forcibly stop credential code.
-The customer app must use the credential on its owning loop and keep that loop
-running until its async clients and credential have been closed.
+The customer app must use the credential on its original customer event loop
+and keep that loop running until its async clients and credential have been closed.
 """
 
 from __future__ import annotations
@@ -23,51 +23,27 @@ from __future__ import annotations
 import asyncio
 import concurrent.futures
 import inspect
-import math
 import threading
-import time
 from typing import Any, Optional
 
-
-class AsyncCredentialBridgeReentrantError(RuntimeError):
-    """A synchronous token wait would block the credential's application loop."""
+from azure.cosmos._backend.credentials import _is_coroutine_method
 
 
 _REGISTRY: dict[tuple[int, asyncio.AbstractEventLoop], "AsyncTokenCredentialBridge"] = {}
 _REGISTRY_LOCK = threading.Lock()
 
 
-def _validate_timeout(value: Optional[float]) -> Optional[float]:
-    if value is None:
-        return None
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise ValueError("token_timeout must be a finite, nonnegative timeout")
-    if not math.isfinite(value) or not 0 <= value <= threading.TIMEOUT_MAX:
-        raise ValueError("token_timeout must be finite and between 0 and threading.TIMEOUT_MAX")
-    return float(value)
-
-
-def _is_coroutine_method(obj: Any, name: str) -> bool:
-    method = getattr(obj, name, None)
-    if method is None:
-        return False
-    unwrapped = inspect.unwrap(method) if callable(method) else method
-    return inspect.iscoroutinefunction(method) or inspect.iscoroutinefunction(unwrapped)
-
-
 class AsyncTokenCredentialBridge:
-    """Borrow an application loop to obtain tokens without blocking native work."""
+    """Schedule token requests on the customer event loop for the binding."""
 
     @classmethod
     def acquire(
         cls,
         async_credential: Any,
-        token_timeout: Optional[float] = None,
         *,
         loop: Optional[asyncio.AbstractEventLoop] = None,
     ) -> "AsyncTokenCredentialBridge":
-        """Share one bridge per credential and owner loop, with matching timeouts."""
-        token_timeout = _validate_timeout(token_timeout)
+        """Share one bridge per credential and customer event loop."""
         loop = asyncio.get_running_loop() if loop is None else loop
         cls._require_running_loop(loop)
         key = (id(async_credential), loop)
@@ -78,22 +54,18 @@ class AsyncTokenCredentialBridge:
                         raise RuntimeError("The async credential is already in use on a different application loop")
             bridge = _REGISTRY.get(key)
             if bridge is None:
-                bridge = cls(async_credential, token_timeout=token_timeout, loop=loop)
+                bridge = cls(async_credential, loop=loop)
                 bridge._registry_key = key
                 _REGISTRY[key] = bridge
-            elif token_timeout != bridge._token_timeout:
-                raise ValueError("Clients sharing an async credential must use the same bridge timeouts")
             bridge._refcount += 1
             return bridge
 
     def __init__(
         self,
         async_credential: Any,
-        token_timeout: Optional[float] = None,
         *,
         loop: Optional[asyncio.AbstractEventLoop] = None,
     ) -> None:
-        self._token_timeout = _validate_timeout(token_timeout)
         self._loop = asyncio.get_running_loop() if loop is None else loop
         self._require_running_loop(self._loop)
         self._credential = async_credential
@@ -122,21 +94,19 @@ class AsyncTokenCredentialBridge:
         self._require_running_loop(loop)
 
     def _start_token_request(self, *scopes: Any, **kwargs: Any) -> concurrent.futures.Future:
-        """Return a cancellable result without moving credential work to another loop."""
+        """Schedule credential work on its customer event loop and return a cancellable result."""
 
         async def invoke() -> Any:
-            return await getattr(self._credential, self._token_method_name)(*scopes, **kwargs)
-
-        async def fetch() -> Any:
-            if self._token_timeout is None:
-                return await invoke()
-            return await asyncio.wait_for(invoke(), self._token_timeout)
+            result = getattr(self._credential, self._token_method_name)(*scopes, **kwargs)
+            if inspect.isawaitable(result):
+                return await result
+            return result
 
         with self._lock:
             if self._closed:
                 raise RuntimeError("AsyncTokenCredentialBridge is closed")
             self._require_running_loop(self._loop)
-            coroutine = fetch()
+            coroutine = invoke()
             try:
                 future = asyncio.run_coroutine_threadsafe(coroutine, self._loop)
             except BaseException:
@@ -149,48 +119,6 @@ class AsyncTokenCredentialBridge:
     def _discard_pending(self, future: concurrent.futures.Future) -> None:
         with self._lock:
             self._pending.discard(future)
-
-    def get_token(self, *scopes: Any, **kwargs: Any) -> Any:
-        """Support a blocking worker-thread wait, never a wait on the owner loop."""
-        try:
-            running_loop = asyncio.get_running_loop()
-        except RuntimeError:
-            running_loop = None
-        if running_loop is self._loop:
-            raise AsyncCredentialBridgeReentrantError(
-                "AsyncTokenCredentialBridge.get_token must not block its application event loop"
-            )
-        deadline = None if self._token_timeout is None else time.monotonic() + self._token_timeout
-        future = self._start_token_request(*scopes, **kwargs)
-        try:
-            return self._wait_for_token(future, deadline)
-        except concurrent.futures.CancelledError as exc:
-            raise RuntimeError(
-                "Async credential token acquisition was cancelled or the " "Cosmos async-credential bridge was closed."
-            ) from exc
-        except BaseException:
-            future.cancel()
-            raise
-
-    _WAIT_SLICE_SECONDS = 0.2
-
-    def _wait_for_token(self, future: concurrent.futures.Future, deadline: Optional[float]) -> Any:
-        while True:
-            if self._closed:
-                future.cancel()
-                raise concurrent.futures.CancelledError()
-            self._require_running_loop(self._loop)
-            slice_timeout = self._WAIT_SLICE_SECONDS
-            if deadline is not None:
-                remaining = deadline - time.monotonic()
-                if remaining <= 0:
-                    raise concurrent.futures.TimeoutError()
-                slice_timeout = min(slice_timeout, remaining)
-            try:
-                return future.result(slice_timeout)
-            except concurrent.futures.TimeoutError:
-                if future.done():
-                    raise
 
     def _close_cosmos_async_bridge(self) -> None:
         """Release one use; cancel only this bridge's work after the last release."""

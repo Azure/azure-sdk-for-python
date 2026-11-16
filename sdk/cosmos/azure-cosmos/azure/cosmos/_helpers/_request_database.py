@@ -18,28 +18,24 @@ from __future__ import annotations
 import json
 import time
 from copy import deepcopy
-
-from .._backend.partition_key_input import BindingPartitionKey
-
 from typing import Any, Dict, Mapping, Optional
 
 from .._backend.contracts import PreparedRequest
 from .._backend.operations import OP_CREATE_DATABASE, OP_DELETE_DATABASE, OP_READ_DATABASE
+from .._backend.partition_key_input import BindingPartitionKey
 from .._backend.request_settings import ResourceSettings
 from .._constants import _Constants as Constants
 from ..offer import ThroughputProperties
 from ._item_context import ItemClientDefaults
-from ._resource_validation import validate_resource
-
 from ._request_settings import (
     account_request_settings,
     build_customer_headers,
     compose_options_from_kwargs,
     OPTION_HEADER_NAMES,
-    _timeout_is_representable,
     is_supported_operation_timeout,
     overrides_driver_owned_header,
 )
+from ._resource_validation import validate_resource
 from ._wire_encoding import serialize_body_to_bytes
 
 
@@ -298,25 +294,23 @@ def is_read_database_rust_eligible(
     :returns: ``True`` when the known timeout, kwarg, and header checks pass.
     :rtype: bool
     """
-    timeout = operation_kwargs.get(Constants.Kwargs.TIMEOUT)
-    option_timeout = request_options.get(Constants.Kwargs.TIMEOUT)
-    # The prepared request forwards kwargs, not a timeout supplied only in options.
-    if option_timeout is not None and option_timeout != timeout:
-        return False
-    return _database_request_options_are_supported(request_options, operation_kwargs) and (
-        is_supported_operation_timeout(timeout)
-    )
+    return _database_request_options_are_supported(request_options, operation_kwargs)
 
 
 def _database_request_options_are_supported(
     request_options: Mapping[str, Any],
     operation_kwargs: Mapping[str, Any],
 ) -> bool:
+    timeout = operation_kwargs.get(Constants.Kwargs.TIMEOUT)
+    option_timeout = request_options.get(Constants.Kwargs.TIMEOUT)
+    # The prepared request forwards kwargs, not a timeout supplied only in options.
+    if option_timeout is not None and option_timeout != timeout:
+        return False
     if set(operation_kwargs).difference(_RUST_READ_DATABASE_SUPPORTED_KWARGS):
         return False
     if overrides_driver_owned_header(request_options):
         return False
-    return True
+    return is_supported_operation_timeout(timeout)
 
 
 def build_delete_database_prepared(
@@ -363,7 +357,5 @@ def is_delete_database_rust_eligible(
     request_options: Mapping[str, Any],
     operation_kwargs: Mapping[str, Any],
 ) -> bool:
-    """Keep deletion's existing deadline policy while sharing option checks."""
-    return _database_request_options_are_supported(request_options, operation_kwargs) and (
-        _timeout_is_representable(operation_kwargs)
-    )
+    """Check database-delete options and timeout eligibility."""
+    return _database_request_options_are_supported(request_options, operation_kwargs)

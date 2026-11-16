@@ -152,9 +152,10 @@ def build_container_metadata(raw: Any) -> ContainerMetadata:
     return ContainerMetadata(rid, paths, kind, system_key)
 
 
-def metadata_exception_from_binding(error: BaseException) -> CosmosHttpResponseError:
-    """Convert a failed account or container metadata lookup to a public exception.
+def response_exception_from_binding(error: BaseException) -> CosmosHttpResponseError:
+    """Convert a binding response error to a public Cosmos exception.
 
+    Used for driver initialization, metadata lookups, and item operations.
     Keep its headers on the exception without replacing the client's saved
     response headers.
     """
@@ -162,10 +163,10 @@ def metadata_exception_from_binding(error: BaseException) -> CosmosHttpResponseE
     from .._helpers._response_parse import apply_response_diagnostics, apply_request_charge_format
 
     if len(error.args) != 1 or not isinstance(error.args[0], tuple) or len(error.args[0]) != 5:
-        raise BindingProtocolError("The binding returned an invalid metadata error")
+        raise BindingProtocolError("The binding returned an invalid response error")
     response = build_backend_response(*error.args[0])
     if response.status_code < 400:
-        raise BindingProtocolError("The binding returned a non-error metadata failure")
+        raise BindingProtocolError("The binding returned a failure with a non-error status")
     headers = CaseInsensitiveDict(response.headers or {})
     apply_request_charge_format(headers)
     apply_response_diagnostics(headers, response.diagnostics)

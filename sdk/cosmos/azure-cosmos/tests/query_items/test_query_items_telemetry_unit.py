@@ -235,7 +235,7 @@ def test_replay_and_copied_query_inputs_keep_independent_diagnostics(querying, r
 
 @pytest.mark.parametrize(
     "failure",
-    ["service", "transport", "unsupported", "timeout", "parse", "hook", "hook-stop"],
+    ["service", "transport", "validation", "unsupported", "timeout", "parse", "hook", "hook-stop"],
 )
 @pytest.mark.parametrize("timeout", [None, 10])
 def test_query_failures_preserve_error_and_last_delivered_bookmark(querying, recording, failure, timeout):
@@ -248,6 +248,8 @@ def test_query_failures_preserve_error_and_last_delivered_bookmark(querying, rec
         f.status, expected = 503, CosmosHttpResponseError
     elif failure == "transport":
         h.error, expected = DriverTransportError("failed"), ServiceResponseError
+    elif failure == "validation":
+        h.error, expected = ValueError("400/20125 ClientBufferedQueryRequiresFiniteWindow"), ValueError
     elif failure == "unsupported":
         h.error, expected = (
             DriverUnsupportedQueryError("unsupported"),
@@ -264,6 +266,8 @@ def test_query_failures_preserve_error_and_last_delivered_bookmark(querying, rec
         expected = RuntimeError if failure == "hook-stop" else ValueError
     with pytest.raises(expected) as caught:
         f.next_page(pages)
+    if failure == "validation":
+        assert caught.value is h.error
     if failure == "hook":
         assert caught.value is error
     if failure == "hook-stop":

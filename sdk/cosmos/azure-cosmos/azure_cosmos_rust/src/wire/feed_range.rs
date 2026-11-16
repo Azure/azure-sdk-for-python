@@ -19,6 +19,7 @@ use azure_data_cosmos_driver::{
 use super::deadline::{with_local_deadline, with_operation_timeout};
 use super::diagnostics::BINDING_OP_COUNT;
 use super::driver_runner::{run_driver_operation_async, run_driver_operation_sync};
+use super::errors::{catch_operation_panic, operation_join_error};
 use super::request::parse_container_link;
 use super::response::{
     tuple_from_feed_range_from_partition_key_result,
@@ -299,8 +300,10 @@ pub(crate) fn run_is_feed_range_subset_operation<'py>(
 ) -> PyResult<Bound<'py, PyTuple>> {
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     let deadline = timeout.map(|duration| Instant::now() + duration);
-    let result = with_local_deadline(deadline, || compute_is_feed_range_subset(&body_bytes))?;
-    subset_response(py, result, include_attempts)
+    let result = catch_operation_panic(|| {
+        with_local_deadline(deadline, || compute_is_feed_range_subset(&body_bytes))
+    })?;
+    catch_operation_panic(|| subset_response(py, result, include_attempts))
 }
 
 fn subset_response<'py>(
@@ -343,14 +346,17 @@ pub(crate) fn run_is_feed_range_subset_operation_async<'py>(
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
         let _abort_guard = abort_guard;
         let result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
-            } else {
-                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
-            }
+            operation_join_error(join_error, |join_error| {
+                if join_error.is_cancelled() {
+                    PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
+                } else {
+                    PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
+                }
+            })
         })??;
         Python::with_gil(|py| {
-            subset_response(py, result, include_attempts).map(|tuple| tuple.into_any().unbind())
+            catch_operation_panic(|| subset_response(py, result, include_attempts))
+                .map(|tuple| tuple.into_any().unbind())
         })
     })
 }

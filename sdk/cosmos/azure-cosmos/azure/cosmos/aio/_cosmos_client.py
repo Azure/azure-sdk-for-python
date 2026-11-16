@@ -43,13 +43,12 @@ from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import RetryMode
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos.offer import ThroughputProperties
 
 from .._backend.credentials import validate_credential
 from .._backend.constants import is_rust_backend
-from .._backend.client_config import _resolve_hedging
-from .._backend.transport_settings import resolve_client_connection_timeout, validate_client_runtime_settings
+from ._backend.binding_adapter import AsyncBindingAdapter
+from .._backend.transport_settings import validate_client_runtime_settings
 from ..runtime import CosmosRuntime
 from .._base import build_options as _build_options
 from .._helpers._request_database import prepare_create_database_options
@@ -168,8 +167,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     It's recommended to maintain a single instance of CosmosClient per lifetime of the application which enables
         efficient connection management and performance.
 
-    CosmosClient initialization is a heavy operation - don't use initialization CosmosClient instances as
-        credentials or network connectivity validations.
+    Rust-backed construction records configuration without acquiring a driver or
+    fetching account information. Entering ``async with`` awaits driver acquisition,
+    including account setup when a new driver is needed. Without ``async with``,
+    the first operation needing the driver performs that work. Construction alone
+    does not validate credentials or network connectivity.
 
     :param str url: The URL of the Cosmos DB account.
     :param credential: An account key, a dictionary containing ``masterKey``,
@@ -199,9 +201,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Rust-backed clients currently reject this keyword with ``TypeError``, including ``None`` and zero.
     :keyword int retry_connect: Maximum number of connection error retry attempts on the legacy Python backend.
         Rust-backed clients currently reject this keyword with ``TypeError``, including ``None`` and zero.
-    :keyword int retry_status: Maximum number of retry attempts on error status codes.
-    :keyword list[int] retry_on_status_codes: A list of specific status codes to retry on.
-    :keyword float retry_backoff_factor: Factor to calculate wait time between retry attempts.
+    :keyword int retry_status: Accepted for compatibility; does not configure Cosmos HTTP-status retries.
+    :keyword list[int] retry_on_status_codes: Accepted for compatibility; does not select Cosmos retryable status codes.
+    :keyword str retry_mode: Legacy connection retry delay mode, fixed or exponential.
+        Rust-backed clients reject this keyword with ``TypeError``, including ``None``; omit it.
+    :keyword float retry_backoff_factor: Legacy connection retry delay factor.
+        Rust-backed clients reject this keyword with ``TypeError``, including ``None`` and zero; omit it.
     :keyword bool retry_write: Indicates whether the SDK should automatically retry write operations for items, even if
         the operation is not guaranteed to be idempotent. This should only be enabled if the application can
         tolerate such risks or has logic to safely detect and handle duplicate operations.
@@ -218,6 +223,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Individual keyword settings override grouped values; zero retry limits
         are honored. The supplied policy is not modified. Removed proxy/TLS
         settings are rejected even when supplied inside this object.
+        Rust-backed async clients also reject any non-``None``
+        ``ConnectionRetryConfiguration``; leave it at ``None`` for driver-managed retries.
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
     :keyword list[str] excluded_locations: The excluded locations to be skipped from preferred locations. The locations
         in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -265,7 +272,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         False (disable hedging), or a dict with key ``threshold_ms``.
         Default value is False (hedging disabled).
     :paramtype availability_strategy: Union[bool, dict[str, Any]]
-    :keyword int availability_strategy_max_concurrency: The max concurrency for parallel requests.
+    :keyword int availability_strategy_max_concurrency: Legacy regional hedging task limit per customer call.
+        Rust-backed clients reject this keyword with ``TypeError``, including ``None`` and zero;
+        omit it to use driver-managed hedging without this Python concurrency limit.
     :keyword bool enable_compact_utf8_item_writes:
         Use compact UTF-8 when serializing item bodies for create, upsert, replace, patch, and transactional batch
         operations. The default is False.
@@ -289,7 +298,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             *,
             consistency_level: Optional[str] = None,
             availability_strategy: Union[bool, dict[str, Any]] = False,
-            availability_strategy_max_concurrency: Optional[int] = None,
             runtime: Optional[CosmosRuntime] = None,
             **kwargs: Any
     ) -> None:
@@ -310,12 +318,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         # otherwise it falls back to core-python.
         backend_choice = resolve_backend_name(kwargs.pop("_backend", None))
         if backend_choice != "core-python":
-            reject_rust_connection_policy_options(kwargs)
+            reject_rust_connection_policy_options(kwargs, is_async=True)
             validate_client_runtime_settings(dict(kwargs, runtime=runtime))
             reject_rust_arguments(kwargs, strategy=availability_strategy)
         fault_injection_rules = kwargs.pop("_fault_injection_rules", None)
-        proxy_allowed = kwargs.pop("proxy_allowed", None)
-        connection_timeout = resolve_client_connection_timeout(kwargs)
+        availability_strategy_max_concurrency: Optional[int] = kwargs.pop("availability_strategy_max_concurrency", None)
+        kwargs.pop("proxy_allowed", None)
         # These startup settings are read, not removed, so that they are still
         # in kwargs when the legacy connection is built further down. Both need
         # them. See azure/cosmos/cosmos_client.py for the same handling.
@@ -340,11 +348,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             availability_strategy=availability_strategy,
             user_agent_suffix=kwargs.get("user_agent_suffix"),
             consistency_level=consistency_level,
-            proxy_allowed=proxy_allowed,
-            connection_timeout_seconds=connection_timeout,
             fault_injection_rules=fault_injection_rules,
             headers=kwargs.get("headers"),
         )
+        client_config = chosen._client_config if isinstance(chosen, AsyncBindingAdapter) else None
         self._adapter: AsyncCosmosBackend = chosen
         self._item_context: ItemClientContext[AsyncCosmosBackend] = ItemClientContext(
             chosen,
@@ -353,7 +360,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 priority=kwargs.get("priority"),
                 throughput_bucket=kwargs.get("throughput_bucket"),
                 hedging_threshold_ms=(
-                    _resolve_hedging(availability_strategy) if chosen.name != "core-python" else None
+                    client_config.hedging_threshold_ms if client_config is not None else None
                 ),
                 no_response_on_write=bool(kwargs.get("no_response_on_write", False)),
                 enable_compact_utf8_item_writes=_validate_enable_compact_utf8_item_writes(
@@ -388,8 +395,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             _InferenceService,
         )
         self.client_connection = CosmosClientConnection(
+            _backend=chosen,
             _response_state=self._item_context.response_state,
-            _defer_pipeline=is_rust_backend(self._adapter),
             url_connection=url,
             auth=auth,
             consistency_level=consistency_level,
@@ -1037,11 +1044,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         # A wildcard match condition does not need an etag, so one may be left
         # over in kwargs after the options are built. Drop it.
         kwargs.pop("etag", None)
+        if self._item_context.adapter.name != "core-python":
+            self._item_context.defaults.apply_to_options(request_options)
         database_link = _get_database_link(database)
         await AsyncDatabaseHelper(self.client_connection, self._adapter).delete_database(
             database_link,
             request_options,
+            response_hook=response_hook,
             kwargs=kwargs,
         )
-        if response_hook is not None:
-            response_hook(CaseInsensitiveDict(self.client_connection.last_response_headers))

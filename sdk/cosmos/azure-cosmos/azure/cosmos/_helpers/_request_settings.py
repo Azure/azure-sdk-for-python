@@ -9,9 +9,8 @@ The binding consumes those typed settings; the helper does not send a request.
 
 from __future__ import annotations
 
-import math
 from copy import deepcopy
-from typing import Any, Dict, Mapping, Optional, Tuple
+from typing import Any, Collection, Dict, Mapping, Optional, Tuple
 
 from azure.core import MatchConditions
 
@@ -28,6 +27,52 @@ from .._backend.request_settings import (
 )
 from .._backend.capabilities import reject_removed_options
 from .._constants import _Constants as Constants
+from ..http_constants import HttpHeaders
+
+
+# Recognized legacy transport/policy controls and a scope unavailable to some feeds.
+_LEGACY_FEED_KWARGS = frozenset({
+    "connection_timeout", "stream", "proxy", "feed_range",
+    "retry_total", "retry_connect", "retry_read", "retry_status",
+    "retry_backoff_factor", "retry_backoff_max", "retry_on_methods",
+})
+
+
+def reject_unknown_feed_kwargs(operation: str, names: Collection[str]) -> None:
+    """Distinguish unknown keywords from recognized settings unavailable on Rust."""
+    unknown = set(names) - _LEGACY_FEED_KWARGS
+    if unknown:
+        rejected = ", ".join(repr(name) for name in sorted(unknown))
+        raise TypeError(f"{operation}() got unexpected keyword argument(s): {rejected}.")
+
+
+def normalize_metadata_page_size(
+    options: Dict[str, Any], default_headers: Mapping[str, Any], *, operation: str,
+) -> None:
+    """Validate the effective page size and store it as a typed option."""
+    initial = build_customer_headers(options.get("initialHeaders"))
+    page_size_header = HttpHeaders.PageSize
+    raw_count = initial.get(
+        page_size_header,
+        build_customer_headers(default_headers).get(page_size_header),
+    )
+    # Raw option headers override initial headers; a typed count overrides both.
+    for key in tuple(options):
+        if isinstance(key, str) and key.lower() == page_size_header:
+            raw_count = str(options.pop(key))
+    count = options.get("maxItemCount")
+    if count is None and raw_count is not None:
+        try:
+            count = int(raw_count)
+        except ValueError as error:
+            raise ValueError(f"{operation} x-ms-max-item-count must be an integer.") from error
+    if count is not None and (type(count) is not int or count == 0 or count < -1 or count >= 2**63):
+        raise ValueError(f"{operation} max_item_count must be a positive i64 integer, -1, or None.")
+    if count is not None:
+        options["maxItemCount"] = count
+    if "initialHeaders" in options:
+        initial.pop(page_size_header, None)
+        options["initialHeaders"] = initial
 
 
 def normalize_query_specification(
@@ -294,11 +339,12 @@ HEADERS_THE_DRIVER_REGENERATES = frozenset(
 
 
 def overrides_driver_owned_header(request_options: Mapping[str, Any]) -> bool:
-    """Return whether ``initial_headers`` sets a header the driver would replace.
+    """Return whether prepared ``initialHeaders`` overrides a driver-owned header.
 
-    The legacy pipeline lets the caller's value win for these names, so a read
-    that sets one has to stay on the legacy path or the caller's header is
-    dropped without a word.
+    Callers use this result to avoid silently replacing customer header values.
+    The Rust item path raises ``NotImplementedError`` for these overrides.
+    This check only returns a boolean; it does not select a backend or execute
+    a legacy fallback.
     """
     initial_headers = request_options.get("initialHeaders")
     if not isinstance(initial_headers, Mapping):
@@ -322,25 +368,6 @@ def is_supported_operation_timeout(timeout: Any) -> bool:
         return False
     # These comparisons also reject NaN and infinity.
     return 1.0 <= seconds < 2**64
-
-
-def _timeout_is_representable(operation_kwargs: Mapping[str, Any]) -> bool:
-    """Apply the retained migration timeout predicate, not full request validation.
-
-    This older predicate accepts None, NaN, and numeric values converting to
-    at least one second. Unlike is_supported_operation_timeout, it does not
-    reject every invalid duration; typed request-settings validation is separate.
-    """
-    timeout = operation_kwargs.get(Constants.Kwargs.TIMEOUT)
-    if timeout is None:
-        return True
-    if not isinstance(timeout, (int, float)):
-        return False
-    seconds = float(timeout)
-    # Preserve this migration predicate's existing NaN result.
-    if math.isnan(seconds):
-        return True
-    return seconds >= 1.0
 
 
 def apply_no_response_on_write_default(

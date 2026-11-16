@@ -16,7 +16,6 @@ against a different version, the mismatch is reported when the Rust path is firs
 and not a moment earlier -- a customer who never touches it should not be stopped from
 importing the package.
 """
-from common.typed_requests import key_from_legacy_header
 from collections.abc import Mapping
 from dataclasses import FrozenInstanceError, MISSING, fields, replace
 from functools import lru_cache
@@ -24,9 +23,11 @@ from itertools import combinations
 import math
 from types import SimpleNamespace
 from typing import Literal, Union, get_args, get_origin, get_type_hints
+from unittest.mock import MagicMock
 
 import pytest
 
+from common.typed_requests import key_from_legacy_header
 from azure.cosmos._backend.contracts import (
     PreparedRequest, PreparedPageRequest, PreparedClientConfig, PreparedFaultInjectionRule,
 )
@@ -152,12 +153,20 @@ def test_explicit_validation_matches_former_reflection_rust(cls, field_name, val
     try:
         expected = _reflective_settings_values(cls, kwargs)
     except (TypeError, ValueError) as error:
-        with pytest.raises(type(error)) as caught:
-            cls(**kwargs)
+        expected_error = type(error)
         expected_message = str(error)
+        if cls is RequestSettings and field_name == "priority":
+            # Priority now names the public option and separates bad values from wrong types.
+            expected_error = ValueError if _reflective_matches(value, str) else TypeError
+            expected_message = (
+                "priority must be 'High' or 'Low'."
+                if _reflective_matches(value, str) else "priority must be a string or None."
+            )
         if cls is PreparedFaultInjectionRule and field_name == "response_headers":
             # Header snapshot validation has its own message, but the same type contract.
             expected_message = "Prepared headers must be a mapping of strings to strings"
+        with pytest.raises(expected_error) as caught:
+            cls(**kwargs)
         assert str(caught.value) == expected_message
     else:
         actual = cls(**kwargs)
@@ -181,13 +190,18 @@ def test_settings_construction_does_not_inspect_annotations_or_fields_rust(monke
 
 
 @pytest.mark.parametrize("kwargs,field_name", [
-    ({"priority": "Urgent", "throughput_bucket": True}, "priority"),
+    ({"priority": 123, "throughput_bucket": True}, "priority"),
     ({"throughput_bucket": -1, "session_token": 3}, "session_token"),
     ({"timeout_seconds": 0, "item": None}, "item"),
 ])
 def test_field_type_errors_still_precede_range_errors_rust(kwargs, field_name):
-    with pytest.raises(TypeError, match=rf"RequestSettings\.{field_name} has an invalid value type"):
+    with pytest.raises(TypeError) as caught:
         RequestSettings(**kwargs)
+    expected_message = (
+        "priority must be a string or None."
+        if field_name == "priority" else f"RequestSettings.{field_name} has an invalid value type"
+    )
+    assert str(caught.value) == expected_message
 
 
 @pytest.mark.parametrize("cls,first,second", [
@@ -200,7 +214,57 @@ def test_multiple_invalid_fields_preserve_error_order_rust(cls, first, second):
         _reflective_settings_values(cls, kwargs)
     with pytest.raises(TypeError) as actual:
         cls(**kwargs)
-    assert str(actual.value) == str(expected.value)
+    expected_message = (
+        "priority must be a string or None."
+        if cls is RequestSettings and first == "priority" else str(expected.value)
+    )
+    assert str(actual.value) == expected_message
+
+
+@pytest.mark.parametrize("async_mode", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("client_default", [False, True], ids=["per-call", "client-default"])
+@pytest.mark.parametrize("priority,error_type,message", [
+    ("Bad", ValueError, "priority must be 'High' or 'Low'."),
+    ("Medium", ValueError, "priority must be 'High' or 'Low'."),
+    (123, TypeError, "priority must be a string or None."),
+])
+def test_invalid_priority_names_public_option_before_acquisition_rust(
+    monkeypatch, async_mode, client_default, priority, error_type, message,
+):
+    """Reject an invalid priority before acquiring a driver or sending the item request."""
+    import asyncio
+    from azure.cosmos import CosmosClient, _rust
+    from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
+
+    acquire = MagicMock(side_effect=AssertionError("Invalid priority must not acquire a driver"))
+    dispatch = MagicMock(side_effect=AssertionError("Invalid priority must not send a request"))
+    monkeypatch.setattr(_rust, "acquire_driver_handle", acquire)
+    monkeypatch.setattr(_rust, "read_item_async" if async_mode else "read_item", dispatch)
+    options = {"priority": priority}
+    client_type = AsyncCosmosClient if async_mode else CosmosClient
+    client = client_type(
+        "https://priority.invalid", "ZmFrZQ==", _backend="rust",
+        **(options if client_default else {}),
+    )
+    container = client.get_database_client("sales").get_container_client("orders")
+
+    async def read_async():
+        try:
+            await container.read_item("order-42", partition_key="A", **({} if client_default else options))
+        finally:
+            await client.close()
+
+    with pytest.raises(error_type) as caught:
+        if async_mode:
+            asyncio.run(read_async())
+        else:
+            try:
+                container.read_item("order-42", partition_key="A", **({} if client_default else options))
+            finally:
+                client.close()
+    assert str(caught.value) == message
+    acquire.assert_not_called()
+    dispatch.assert_not_called()
 
 
 @pytest.mark.parametrize("enabled", [False, True])

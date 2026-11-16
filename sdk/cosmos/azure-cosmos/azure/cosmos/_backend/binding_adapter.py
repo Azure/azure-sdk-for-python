@@ -26,13 +26,11 @@ Construction still requires the binding to reject retired client settings;
 a missing binding is not a supported release mode.
 """
 from __future__ import annotations
-import contextvars
 import logging
-import threading
-from concurrent.futures import Future, wait
+from concurrent.futures import wait
 from typing import TYPE_CHECKING, Any, Iterator, Optional
 
-from azure.core.exceptions import ServiceResponseError
+from azure.core.exceptions import ClientAuthenticationError, ServiceResponseError
 from .._operation_deadline import remaining_timeout
 from ..exceptions import CosmosClientTimeoutError
 from .._telemetry import get_operation, log_response_diagnostics
@@ -47,7 +45,7 @@ from .errors import BindingProtocolError, PagePreflightError
 from .contracts import BackendResponse, ContainerMetadata, PreparedClientConfig, PreparedPageRequest, PreparedRequest, BackendPage
 from ._binding_conversions import (
     build_backend_response, build_binding_request_from_page,
-    build_container_metadata, metadata_exception_from_binding,
+    build_container_metadata, response_exception_from_binding,
     build_backend_page, page_binding_call_arguments,
 )
 from ._binding_adapter_shared import (
@@ -178,15 +176,14 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         Construction retains a custom runtime or selects the default for later
         acquisition; it does not initialize the default runtime.
         """
-        self._init_future: Optional[Future[_DriverHandle]] = None
         self._init_shared(endpoint, master_key, client_config, token_credential, runtime)
 
     def _ensure_driver_handle(self, *, deadline: Optional[float] = None) -> _DriverHandle:
         """Reuse a handle or wait within this caller's budget for shared acquisition.
 
-        One dedicated Python thread runs this adapter's pending acquisition
-        attempt for concurrent callers. Each caller has its own deadline;
-        timing out stops only that wait, not the acquisition thread.
+        One dedicated Python daemon thread runs this adapter's pending acquisition
+        attempt for concurrent callers. Each caller has its own deadline.
+        Timing out or Ctrl+C stops only that wait, not the acquisition thread.
         A late handle remains available to an open client. If close wins, the
         worker releases the acquisition instead of publishing it.
         """
@@ -204,58 +201,15 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
                 raise RuntimeError("BindingAdapter: the client is closed.")
             if self._driver_handle is not None:
                 return self._driver_handle
-            future = self._init_future
-            if future is None:
-                args = self._acquire_driver_handle_args()
-                context = contextvars.copy_context()
-                future = Future()
-                self._init_future = future
-                try:
-                    threading.Thread(
-                        target=context.run,
-                        args=(self._acquire_driver_handle, future, _rust_module, self._runtime, args),
-                        name="cosmos-driver-acquisition",
-                        daemon=True,
-                    ).start()
-                except BaseException as error:
-                    self._init_future = None
-                    future.set_exception(error)
-                    raise
+            future = self._start_driver_acquisition(_rust_module, _LOGGER)
         while not future.done():
             remaining = remaining_timeout(deadline)
-            wait((future,), timeout=None if remaining is None else min(remaining, threading.TIMEOUT_MAX))
+            # Short waits let Python process Ctrl+C on Windows as well as POSIX.
+            wait((future,), timeout=0.1 if remaining is None else min(remaining, 0.1))
             remaining_timeout(deadline)
         driver_handle = future.result()
         remaining_timeout(deadline)
         return driver_handle
-
-    def _acquire_driver_handle(
-        self,
-        future: Future[_DriverHandle],
-        binding: Any,
-        runtime: Optional[CosmosRuntime],
-        args: tuple[Any, ...],
-    ) -> None:
-        """Complete one shared acquisition without holding the state lock during setup."""
-        try:
-            handle = self._initialize_driver(binding, runtime, acquisition_args=args)
-            with self._driver_handle_lock:
-                closed = self._closing
-                if not closed:
-                    self._driver_handle = handle
-            if closed:
-                release_driver_handle_quietly(handle, binding)
-                raise RuntimeError("BindingAdapter: the client was closed during initialization.")
-        except BaseException as error:
-            with self._driver_handle_lock:
-                self._init_future = None
-            future.set_exception(error)
-            # Observe late failures even if every caller stopped waiting.
-            _LOGGER.debug("Rust driver initialization failed")
-        else:
-            with self._driver_handle_lock:
-                self._init_future = None
-            future.set_result(handle)
 
     def close(self) -> None:
         """Release this client's resources without closing another client's driver.
@@ -358,6 +312,10 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
             if deadline is None:
                 raise
             raise CosmosClientTimeoutError(error=exc) from exc
+        except ClientAuthenticationError as exc:
+            if contribution is not None:
+                contribution.error(exc)
+            raise
         except _DRIVER_TRANSPORT_ERROR as exc:
             if contribution is not None:
                 contribution.error(exc)
@@ -365,7 +323,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         except _DRIVER_RESPONSE_ERROR as exc:
             if contribution is not None:
                 contribution.error(exc)
-            raise metadata_exception_from_binding(exc) from exc
+            raise response_exception_from_binding(exc) from exc
         if raw_response is None:
             raise BindingProtocolError(f"The binding returned no response for {prepared.op!r}")
         if contribution is not None:
@@ -426,7 +384,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         except _DRIVER_TRANSPORT_ERROR as exc:
             raise ServiceResponseError(message=str(exc)) from exc
         except _DRIVER_RESPONSE_ERROR as exc:
-            raise metadata_exception_from_binding(exc) from exc
+            raise response_exception_from_binding(exc) from exc
         return build_container_metadata(raw_response)
 
     def execute_pages(
@@ -481,11 +439,19 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
                 if contribution is not None:
                     contribution.error(exc)
                 raise
+            except ClientAuthenticationError as exc:
+                if contribution is not None:
+                    contribution.error(exc)
+                raise
             except _DRIVER_TRANSPORT_ERROR as exc:
                 if contribution is not None:
                     contribution.error(exc)
                 raise
             except _UNSUPPORTED_QUERY_ERROR as exc:
+                if contribution is not None:
+                    contribution.error(exc)
+                raise
+            except ValueError as exc:
                 if contribution is not None:
                     contribution.error(exc)
                 raise

@@ -5,6 +5,12 @@
 The compiled extension supplies the implementation; these declarations do not
 run the operations. _ItemFeedCursor is the binding's feed cursor, not a Python
 page iterator. Other binding exports remain typed as Any through __getattr__.
+
+An operation's ``timeout_seconds`` keyword carries its remaining budget after
+Python preparation and driver acquisition. In contrast,
+``prepared.settings.timeout_seconds`` carries the configured request timeout
+for the driver's policy. These names are retained for binding compatibility;
+the keyword must not restart the configured timeout.
 """
 
 from typing import Any, Awaitable
@@ -15,6 +21,14 @@ def _validate_runtime_configuration(config: Any = None) -> None:
     """Reject retired client-level network settings without initializing a runtime."""
     ...
 
+def _runtime_configuration() -> tuple[float, float, float] | None:
+    """Inspect the default runtime for tests without initializing it.
+
+    Return connection, data-request and metadata-request timeouts in seconds,
+    or None if the default runtime has not been initialized.
+    """
+    ...
+
 class _CosmosRuntime:
     @property
     def id(self) -> int: ...
@@ -23,6 +37,17 @@ class _CosmosRuntime:
 
 class _DriverHandle:
     """Own a specific Rust driver independently of its cache membership."""
+
+class _AsyncOperationProbe:
+    """Test-build-only export; absent unless built with ``test-probes``.
+
+    Only that build accepts ``read_item_async(..., _debug_lifecycle=probe)``.
+    A probe observes one native future, not sockets or service rollback.
+    """
+
+    def __init__(self) -> None: ...
+    @property
+    def status(self) -> str: ...
 
 def acquire_driver_handle(
     endpoint: str, master_key: str | None = None, config: Any = None,

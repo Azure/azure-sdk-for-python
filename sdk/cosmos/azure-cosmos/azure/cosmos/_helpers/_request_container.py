@@ -15,30 +15,18 @@ prepared together; the binding and Rust driver perform metadata resolution.
 """
 from __future__ import annotations
 
-from .._backend.partition_key_input import BindingPartitionKey
-
+import time
 from typing import Any, Mapping, Optional, Union
 
 from .._backend.contracts import PreparedRequest
 from .._backend.operations import OP_CREATE_CONTAINER, OP_READ_CONTAINER, OP_DELETE_CONTAINER, OP_REPLACE_CONTAINER
+from .._backend.partition_key_input import BindingPartitionKey
 from .._base import _validate_resource, build_options, _set_throughput_options
 from .._constants import _Constants as Constants
 from ..offer import ThroughputProperties
-
+from ._request_database import _database_id_from_link, is_read_database_rust_eligible
 from ._request_settings import account_request_settings
 from ._wire_encoding import serialize_body_to_bytes
-from ._request_database import _database_id_from_link, is_read_database_rust_eligible
-
-
-
-
-
-
-
-
-
-
-
 
 
 def parse_container_create_args(
@@ -83,8 +71,9 @@ def prepare_container_get_or_create_read(
     *,
     initial_headers: Optional[dict[str, str]],
     offer_throughput: Optional[Union[int, ThroughputProperties]],
-) -> tuple[dict[str, Any], dict[str, Any], bool]:
-    """Prepare the existence read and check both legs without consuming create kwargs."""
+) -> tuple[dict[str, Any], dict[str, Any], bool, Optional[float]]:
+    """Preflight both legs and give supported calls one read-and-create deadline."""
+    started = time.monotonic()
     read_kwargs = dict(kwargs)
     create_kwargs = dict(kwargs)
     # build_options stamps/mutates supplied options; keep each leg and the caller isolated.
@@ -113,7 +102,10 @@ def prepare_container_get_or_create_read(
         is_read_container_rust_eligible(read_options, read_kwargs)
         and is_create_container_rust_eligible(create_options, create_kwargs)
     )
-    return read_options, read_kwargs, rust_eligible
+    timeout = read_kwargs.get("timeout")
+    # Unsupported inputs keep the existing preflight error, not a conversion error.
+    deadline = started + float(timeout) if rust_eligible and timeout is not None else None
+    return read_options, read_kwargs, rust_eligible, deadline
 
 
 def build_create_container_prepared(
@@ -139,7 +131,7 @@ def build_create_container_prepared(
     )
 
 
-def is_create_container_rust_eligible(
+def _is_container_mutation_rust_eligible(
     request_options: Mapping[str, Any],
     operation_kwargs: Mapping[str, Any],
 ) -> bool:
@@ -147,6 +139,14 @@ def is_create_container_rust_eligible(
     if request_options.get(Constants.ContainerRID) is not None:
         return False
     return is_read_database_rust_eligible(request_options, operation_kwargs)
+
+
+def is_create_container_rust_eligible(
+    request_options: Mapping[str, Any],
+    operation_kwargs: Mapping[str, Any],
+) -> bool:
+    """Apply the shared container-mutation option checks to creation."""
+    return _is_container_mutation_rust_eligible(request_options, operation_kwargs)
 
 
 def build_read_container_prepared(
@@ -212,8 +212,8 @@ def is_delete_container_rust_eligible(
     request_options: Mapping[str, Any],
     operation_kwargs: Mapping[str, Any],
 ) -> bool:
-    """Use the same strict operation-option contract as container creation."""
-    return is_create_container_rust_eligible(request_options, operation_kwargs)
+    """Apply the shared container-mutation option checks to deletion."""
+    return _is_container_mutation_rust_eligible(request_options, operation_kwargs)
 
 
 def build_replace_container_prepared(
@@ -236,3 +236,11 @@ def build_replace_container_prepared(
         headers=headers,
         settings=settings,
     )
+
+
+def is_replace_container_rust_eligible(
+    request_options: Mapping[str, Any],
+    operation_kwargs: Mapping[str, Any],
+) -> bool:
+    """Apply the shared container-mutation option checks to replacement."""
+    return _is_container_mutation_rust_eligible(request_options, operation_kwargs)

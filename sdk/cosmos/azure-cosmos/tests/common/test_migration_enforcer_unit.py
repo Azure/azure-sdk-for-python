@@ -54,7 +54,9 @@ import sys
 import unittest
 from unittest.mock import patch
 
-from common._retired_test_sources import RETIRED_QUERY_SOURCE_MARKERS, RETIRED_TEST_SOURCES
+from common._retired_test_sources import (
+    RETIRED_DATABASE_SOURCE_MARKERS, RETIRED_QUERY_SOURCE_MARKERS, RETIRED_TEST_SOURCES,
+)
 
 
 # tests/common/<this file> -> parents[1] is .../azure-cosmos/tests
@@ -247,6 +249,26 @@ def _class_method_exists(src_tree, class_name, method_name):
 class LegacyMigrationEnforcerTests(unittest.TestCase):
     """Check the copies' source structure and marker-based collection."""
 
+    def test_query_environment_skip_markers_are_preserved_rust(self):
+        cases = (
+            ("sync/test_query.py", "test_distinct_on_different_types_and_field_orders_rust", "skipif"),
+            ("aio/test_query_async.py", "test_distinct_on_different_types_and_field_orders_async_rust", "skipif"),
+            ("sync/test_full_text_policy.py", "test_multi_path_multi_language_policy_rust", "skip"),
+            ("aio/test_full_text_policy_async.py", "test_multi_path_multi_language_policy_async_rust", "skip"),
+        )
+        for relative, name, marker in cases:
+            with self.subTest(test=name):
+                path = _TESTS_DIR / "query_items" / relative
+                tree = ast.parse(path.read_text(encoding="utf-8"))
+                func = next(func for _, func in _iter_test_functions(tree) if func.name == name)
+                decorators = [dec for dec in func.decorator_list if _decorator_name(dec) == marker]
+                self.assertEqual(len(decorators), 1, "Original environment skip marker is missing")
+                if marker == "skipif":
+                    self.assertEqual(
+                        ast.unparse(decorators[0].args[0]), "TestSettings.data_auth_mode == 'aad'"
+                    )
+                self.assertTrue(_skip_reason(decorators[0])[1].startswith("environment-gap:"))
+
     def test_migrated_folders_discovered_rust(self):
         """Sanity: the walk finds migrated copies, so the checks below
         can't pass vacuously on a misconfigured path."""
@@ -376,6 +398,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
         """Invariant 6: retain original lanes or the exact approved replacement."""
         violations = []
         src_cache = {}
+        historical_markers = {**RETIRED_QUERY_SOURCE_MARKERS, **RETIRED_DATABASE_SOURCE_MARKERS}
         for path in _legacy_test_files():
             text = path.read_text(encoding="utf-8")
             lines = text.splitlines()
@@ -384,8 +407,8 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
                 ref = _source_ref(func, lines)
                 if ref is None or ref.startswith("(new)") or "::" not in ref:
                     continue
-                if ref in RETIRED_QUERY_SOURCE_MARKERS:
-                    original = RETIRED_QUERY_SOURCE_MARKERS[ref]
+                if ref in historical_markers:
+                    original = historical_markers[ref]
                 else:
                     path_part, qualified = RETIRED_TEST_SOURCES.get(ref, ref).split("::", 1)
                     src_path = _PKG_ROOT / path_part

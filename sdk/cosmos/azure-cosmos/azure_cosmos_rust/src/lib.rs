@@ -92,6 +92,7 @@ macro_rules! add_pyfn {
 #[pymodule]
 fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, wire::settings::_request_settings_schema);
+    #[cfg(feature = "test-probes")]
     m.add_class::<wire::lifecycle::AsyncOperationProbe>()?;
     m.add_class::<wire::item_feed::ItemFeedCursor>()?;
     m.add_class::<driver_runtime::RuntimeHandle>()?;

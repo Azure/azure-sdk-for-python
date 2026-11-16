@@ -85,7 +85,7 @@ class MetadataFeedPageState:
         self.done = self.token is None
         if self.config.hook is not None:
             try:
-                self.config.hook(dict(headers))
+                self.config.hook(CaseInsensitiveDict(headers))
             except (StopIteration, StopAsyncIteration) as error:
                 raise RuntimeError(
                     f"{self.config.operation} response_hook raised an iteration-stop exception."

@@ -17,6 +17,9 @@ import asyncio
 import concurrent.futures
 import inspect
 import logging
+import subprocess
+import sys
+import textwrap
 import threading
 from contextlib import closing
 from unittest.mock import AsyncMock, MagicMock
@@ -160,25 +163,36 @@ def test_dispatch_keeps_owning_handle_across_close_rust(monkeypatch, async_mode,
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_finalizer_offloads_credential_shutdown_even_without_event_loop_rust(async_mode):
+def test_finalizer_offloads_credential_bridge_release_without_event_loop_rust(async_mode, monkeypatch):
+    """Calling __del__ directly releases the credential bridge on a worker.
+
+    No event loop is running. Calling __del__ again must not repeat the release.
+    """
     from types import SimpleNamespace
-    from azure.cosmos._backend.binding_adapter import BindingAdapter
+    from azure.cosmos._backend import _binding_adapter_shared as shared
 
     started, finish, finished = threading.Event(), threading.Event(), threading.Event()
     calls = []
+    workers = []
 
-    def blocking_close():
+    def make_worker(*, target, name, daemon):
+        worker = threading.Thread(target=target, name=name, daemon=daemon)
+        workers.append(worker)
+        return worker
+
+    def release_bridge():
         calls.append(threading.get_ident())
         started.set()
         try:
-            assert finish.wait(3)
+            finish.wait(3)
         finally:
             finished.set()
 
-    backend_type = async_rust_module.AsyncBindingAdapter if async_mode else BindingAdapter
+    backend_type = async_rust_module.AsyncBindingAdapter if async_mode else sync_rust_module.BindingAdapter
     backend = backend_type(
-        SYNC_URL, token_credential=SimpleNamespace(_close_cosmos_async_bridge=blocking_close)
+        SYNC_URL, token_credential=SimpleNamespace(_close_cosmos_async_bridge=release_bridge)
     )
+    monkeypatch.setattr(shared, "threading", SimpleNamespace(Thread=make_worker))
     try:
         backend.__del__()
         assert started.wait(2)
@@ -187,11 +201,17 @@ def test_finalizer_offloads_credential_shutdown_even_without_event_loop_rust(asy
         assert calls == [calls[0]] and calls[0] != threading.get_ident()
     finally:
         finish.set()
-        assert finished.wait(2)
+        for worker in workers:
+            worker.join(timeout=2)
+        assert all(not worker.is_alive() for worker in workers), "finalizer worker did not finish"
+    assert finished.is_set()
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_finalizer_cleans_up_on_calling_thread_if_worker_start_fails_rust(async_mode, monkeypatch, caplog):
+@pytest.mark.parametrize("finalizing", [False, True])
+def test_finalizer_cleans_up_on_calling_thread_if_worker_start_fails_rust(
+    async_mode, finalizing, monkeypatch, caplog,
+):
     from types import SimpleNamespace
     from azure.cosmos._backend import _binding_adapter_shared as shared
 
@@ -215,6 +235,7 @@ def test_finalizer_cleans_up_on_calling_thread_if_worker_start_fails_rust(async_
     worker = SimpleNamespace(start=MagicMock(side_effect=RuntimeError("cannot start thread")))
     thread_factory = MagicMock(return_value=worker)
     monkeypatch.setattr(shared, "threading", SimpleNamespace(Thread=thread_factory))
+    monkeypatch.setattr(sys, "is_finalizing", lambda: finalizing)
     finalizing_thread = threading.get_ident()
 
     with caplog.at_level(logging.WARNING, logger=shared.__name__):
@@ -229,26 +250,77 @@ def test_finalizer_cleans_up_on_calling_thread_if_worker_start_fails_rust(async_
     ]
     credential._close_cosmos_async_bridge.assert_called_once_with()
     native.release_driver_handle.assert_called_once_with("handle-finalizer-fallback")
-    thread_factory.assert_called_once()
-    worker.start.assert_called_once_with()
-    assert thread_factory.call_args.kwargs["daemon"] is True
+    if finalizing:
+        thread_factory.assert_not_called()
+        worker.start.assert_not_called()
+    else:
+        thread_factory.assert_called_once()
+        worker.start.assert_called_once_with()
+        assert thread_factory.call_args.kwargs["daemon"] is True
     assert [
         record.getMessage() for record in caplog.records
         if record.name == shared.__name__ and record.levelno == logging.WARNING
-    ] == ["Could not start finalizer worker; cleaning up on the finalizing thread"]
+    ] == ([] if finalizing else ["Could not start finalizer worker; cleaning up on the finalizing thread"])
 
 
-def test_async_initialization_pair_is_locked_across_event_loops_rust(monkeypatch):
+def test_finalizer_cleans_up_at_interpreter_exit_without_warning_rust():
+    script = textwrap.dedent("""
+        import os
+        import sys
+        from types import SimpleNamespace
+        from azure.cosmos._backend._binding_adapter_shared import finalize_adapter_resources
+
+        def release(handle, write=os.write, finalizing=sys.is_finalizing):
+            write(1, f"released:{finalizing()}\\n".encode())
+
+        def close_bridge(write=os.write):
+            write(1, b"bridge\\n")
+
+        class AbandonedResources:
+            def __del__(
+                self, finalize=finalize_adapter_resources, handle=object(),
+                credential=SimpleNamespace(_close_cosmos_async_bridge=close_bridge),
+                binding=SimpleNamespace(release_driver_handle=release),
+            ):
+                finalize(credential, handle, binding)
+
+        resources = AbandonedResources()
+    """)
+    result = subprocess.run(
+        [sys.executable, "-c", script], capture_output=True, text=True, timeout=15, check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.splitlines() == ["bridge", "released:True"]
+    assert "Could not start finalizer worker" not in result.stderr
+    assert "Exception ignored" not in result.stderr
+
+
+def test_finalizer_handles_shutdown_starting_during_worker_start_rust(monkeypatch, caplog):
+    from types import SimpleNamespace
+    from azure.cosmos._backend import _binding_adapter_shared as shared
+
+    native = SimpleNamespace(release_driver_handle=MagicMock())
+    worker = SimpleNamespace(start=MagicMock(side_effect=RuntimeError("cannot start thread")))
+    monkeypatch.setattr(shared, "threading", SimpleNamespace(Thread=MagicMock(return_value=worker)))
+    monkeypatch.setattr(sys, "is_finalizing", MagicMock(side_effect=[False, True]))
+    with caplog.at_level(logging.WARNING, logger=shared.__name__):
+        shared.finalize_adapter_resources(None, "handle", native)
+    worker.start.assert_called_once_with()
+    native.release_driver_handle.assert_called_once_with("handle")
+    assert not [record for record in caplog.records if record.name == shared.__name__]
+
+
+def test_async_initialization_future_is_locked_across_event_loops_rust(monkeypatch):
     from types import SimpleNamespace
 
     class CheckedBackend(async_rust_module.AsyncBindingAdapter):
         def __getattribute__(self, name):
-            if name in ("_init_future", "_init_future_loop"):
+            if name == "_init_future":
                 assert object.__getattribute__(self, "_driver_handle_lock").locked()
             return super().__getattribute__(name)
 
         def __setattr__(self, name, value):
-            if name in ("_init_future", "_init_future_loop"):
+            if name == "_init_future":
                 lock = self.__dict__.get("_driver_handle_lock")
                 assert lock is None or lock.locked()
             super().__setattr__(name, value)
@@ -565,36 +637,40 @@ def _install_async_close_resources(monkeypatch, client):
     return binding, credential
 
 
-@pytest.mark.parametrize("resources", ["driver-and-bridge", "bridge-only", "unused"])
+@pytest.mark.parametrize("resources", ["driver-and-bridge", "driver-only", "bridge-only", "unused"])
 def test_async_close_after_executor_shutdown_releases_resources_rust(
     monkeypatch, caplog, resources
 ):
     """Close still attempts cleanup after the default executor has shut down.
 
-    Check mocked driver and bridge release calls for both resources, bridge
-    only, and neither. Closing twice calls each required hook once and never
-    acquires a driver. The calling-thread fallback is logged only when there
-    is cleanup to perform.
+    Cover both resources, either resource alone, and neither. Closing twice
+    calls each required release hook once on the event-loop thread and never
+    acquires a driver. The fallback is logged only when cleanup is needed.
     """
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
-    if resources != "driver-and-bridge":
+    has_driver = resources in ("driver-and-bridge", "driver-only")
+    has_bridge = resources in ("driver-and-bridge", "bridge-only")
+    cleanup_threads = []
+    binding.release_driver_handle.side_effect = lambda _handle: cleanup_threads.append(threading.get_ident())
+    credential._close_cosmos_async_bridge.side_effect = lambda: cleanup_threads.append(threading.get_ident())
+    if not has_driver:
         client._adapter._driver_handle = None
-    if resources == "unused":
+    if not has_bridge:
         client._adapter._token_credential = None
     caplog.clear()
 
     async def run():
+        event_loop_thread = threading.get_ident()
         await asyncio.get_running_loop().shutdown_default_executor()
         assert await client.close() is None
         assert await client.close() is None
+        assert cleanup_threads == [event_loop_thread] * sum((has_driver, has_bridge))
 
     asyncio.run(run())
 
-    assert binding.release_driver_handle.call_count == (
-        resources == "driver-and-bridge"
-    )
-    assert credential._close_cosmos_async_bridge.call_count == (resources != "unused")
+    assert binding.release_driver_handle.call_count == has_driver
+    assert credential._close_cosmos_async_bridge.call_count == has_bridge
     binding.acquire_driver_handle.assert_not_called()
     assert client._adapter._driver_handle is None
     assert client._adapter._token_credential is None
@@ -797,14 +873,26 @@ def test_async_backend_close_completion_is_shared_across_event_loops_rust(monkey
     """Close callers on two event loops wait for the same cleanup.
 
     Run each loop on a different thread and pause the mocked driver release.
-    The second close must wait until cleanup finishes. Both callers then
-    return, with each release hook called once.
+    Confirm each caller reaches the shared cleanup wait before checking that
+    the second close stays pending. Both callers return after cleanup, with
+    each release hook called once.
     """
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
     started = threading.Event()
     allow_finish = threading.Event()
     finished = threading.Event()
+    close_wait_started = threading.Event()
+    wrap_future = asyncio.wrap_future
+
+    def observe_wrapping(future, *, loop=None):
+        wrapped = wrap_future(future, loop=loop)
+        if future is client._adapter._close_future:
+            # Signal on the next loop turn, after close has reached its wait.
+            asyncio.get_running_loop().call_soon(close_wait_started.set)
+        return wrapped
+
+    monkeypatch.setattr(asyncio, "wrap_future", observe_wrapping)
 
     def release(_handle):
         started.set()
@@ -823,7 +911,10 @@ def test_async_backend_close_completion_is_shared_across_event_loops_rust(monkey
         second = None
         try:
             assert started.wait(2), "cleanup did not start"
+            assert close_wait_started.wait(2), "first caller did not reach the cleanup wait"
+            close_wait_started.clear()
             second = executor.submit(close_on_new_loop)
+            assert close_wait_started.wait(2), "second caller did not reach the cleanup wait"
             with pytest.raises(concurrent.futures.TimeoutError):
                 second.result(timeout=0.05)
             assert not finished.is_set()
@@ -1040,17 +1131,10 @@ def test_sync_cleanup_still_releases_driver_if_credential_lookup_raises_rust(
 async def test_async_cleanup_still_releases_driver_if_bridge_helper_raises_rust(
     monkeypatch, caplog
 ):
-    """If the helper that is supposed to swallow credential cleanup errors raises anyway,
-    the driver is still released.
+    """A bridge-helper failure must not skip explicit driver release.
 
-    That helper exists precisely so bridge failures cannot disturb anything
-    else, so it raising is a bug in the safety net itself. Cleanup has to
-    survive it regardless.
-
-    The driver handle is the resource that matters most here -- it is held by
-    the Rust side and nothing else will ever give it back. Close still succeeds,
-    and the unexpected failure is logged so the broken helper can be found
-    rather than passing unnoticed.
+    Public client close logs the failure and returns None. This test checks
+    the explicit release call, not cleanup by the native handle's destructor.
     """
     client = _make_async_client(monkeypatch)
     binding, _ = _install_async_close_resources(monkeypatch, client)
@@ -1185,22 +1269,18 @@ async def test_cleanup_waits_for_worker_if_submission_raises_after_work_starts_r
 async def test_cleanup_survives_worker_failure_before_job_starts_rust(
     monkeypatch, caplog, cancelled
 ):
-    """If the worker never runs the cleanup, the client does it instead rather than
-    waiting forever.
+    """A failed or cancelled submitted job triggers calling-thread cleanup.
 
-    Two ways of never running are covered: the worker fails to start, and the
-    work is cancelled before it begins. In both, close finishes well within its
-    time limit and the resources are released exactly once.
-
-    Waiting on something that will never happen is the failure to avoid here.
-    Close would simply hang, usually during shutdown, and the program would not
-    exit -- a symptom with nothing in it to point at the client.
-
-    The log records that background cleanup did not complete, so the cause is
-    visible even though the customer sees an ordinary close.
+    Simulate the job's outcome without running a worker. Close must finish,
+    call each mocked release hook once on the event-loop thread, and log
+    that background cleanup did not complete.
     """
     client = _make_async_client(monkeypatch)
     binding, credential = _install_async_close_resources(monkeypatch, client)
+    event_loop_thread = threading.get_ident()
+    cleanup_threads = []
+    binding.release_driver_handle.side_effect = lambda _handle: cleanup_threads.append(threading.get_ident())
+    credential._close_cosmos_async_bridge.side_effect = lambda: cleanup_threads.append(threading.get_ident())
     loop = asyncio.get_running_loop()
     work = loop.create_future()
     if cancelled:
@@ -1213,6 +1293,7 @@ async def test_cleanup_survives_worker_failure_before_job_starts_rust(
 
     binding.release_driver_handle.assert_called_once_with("close-test-driver")
     credential._close_cosmos_async_bridge.assert_called_once_with()
+    assert cleanup_threads == [event_loop_thread, event_loop_thread]
     assert "Background client cleanup did not complete" in caplog.text
 
 

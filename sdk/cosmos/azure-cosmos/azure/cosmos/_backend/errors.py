@@ -5,20 +5,22 @@
 # -------------------------------------------------------------------------
 """Report Python wrapper and Python/Rust binding failures without replaying work.
 
-Some migration checks still permit fallback to the legacy path before execution.
-This is not a second supported release execution path. A failure after execution
-starts must reach the caller without repeating the operation through the legacy
-path. Separate exception types keep those cases distinct.
+Unsupported requests and missing binding functions fail before execution.
+Failures during execution or response processing also reach the caller.
+Neither case permits fallback to legacy Python.
 """
 from __future__ import annotations
+
+UNSUPPORTED_AGGREGATE_QUERY_MESSAGE = (
+    "This aggregate query is not supported by this SDK for the requested query scope."
+)
 
 
 class PagePreflightError(RuntimeError):
     """Report that page preflight cannot find the required binding function.
 
-    The Python wrapper may choose the legacy path only when this error comes from its
-    check before execution and the operation allows fallback. The same error
-    raised during execution or response processing does not allow a retry.
+    The Python wrapper propagates this error without choosing the legacy path,
+    whether it occurs before execution, during execution, or during processing.
     """
 
 

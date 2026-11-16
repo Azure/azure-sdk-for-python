@@ -4,16 +4,14 @@
 
 from __future__ import annotations
 
-import time
 from typing import Any, Iterator, Optional
 
 from azure.core.utils import CaseInsensitiveDict
 
 from .._backend.contracts import BackendPage
-from .._backend.capabilities import reject_rust_arguments
 from .._cosmos_responses import CosmosItemPaged
 from .._telemetry import trace_operation
-from ._feed_paging import FeedConfig, FeedPageState
+from ._feed_paging import FeedPageState, RustFeedConfig
 
 
 def validate_read_all_continuation_token(token: Optional[str]) -> None:
@@ -21,21 +19,12 @@ def validate_read_all_continuation_token(token: Optional[str]) -> None:
         raise ValueError("read_all_items does not support continuation tokens; continue using the same iterator.")
 
 
-class ReadAllConfig(FeedConfig):
-    """Use the client's Rust adapter without accessing a legacy connection."""
+class ReadAllConfig(RustFeedConfig):
+    """Prepare Rust read-all settings and reject saved continuation tokens."""
 
-    def __init__(self, proxy: Any, kwargs: dict[str, Any], *, operation: str = "read_all_items") -> None:
-        context = proxy._item_context
-        if context is None or context.adapter.name == "core-python":
-            raise NotImplementedError(f"{operation} requires a client-owned Rust backend; no legacy fallback.")
-        context.defaults.apply_timeout(kwargs)
-        reject_rust_arguments(kwargs)
-        super().__init__(proxy, kwargs, operation=operation, backend=context.adapter)
-        if operation == "read_all_items":
-            validate_read_all_continuation_token(self.options.get("continuation"))
-
-    def deadline(self) -> Optional[float]:
-        return None if self.timeout is None else time.monotonic() + self.timeout
+    def __init__(self, proxy: Any, kwargs: dict[str, Any]) -> None:
+        super().__init__(proxy, kwargs, operation="read_all_items")
+        validate_read_all_continuation_token(self.options.get("continuation"))
 
 
 class ReadAllPageState(FeedPageState):

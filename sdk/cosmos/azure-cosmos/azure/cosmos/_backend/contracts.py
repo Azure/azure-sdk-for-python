@@ -184,9 +184,8 @@ class PreparedClientConfig(_ValidatedSettings):
     original list afterward does not change this record's saved preference.
 
     The binding uses these settings with the endpoint and credential to choose
-    a shared CosmosDriver or create one. Proxy and connection timeout
-    settings apply to CosmosDriverRuntime, even when clients use different
-    CosmosDriver objects.
+    a shared CosmosDriver or create one. Proxy and connection timeout settings
+    belong to ConnectionPoolOptions on the selected CosmosRuntime, not this record.
     """
 
     #: Regions in the customer's preferred order, such as ("West US", "East US").
@@ -222,13 +221,6 @@ class PreparedClientConfig(_ValidatedSettings):
     #: This does not change account settings or write consistency.
     consistency_level: Optional[str] = None
 
-    #: Retired client setting; native validation rejects non-None values.
-    #: Configure proxy permission on ConnectionPoolOptions instead.
-    proxy_allowed: Optional[bool] = None
-
-    #: Retired client setting; configure ConnectionPoolOptions.connection_timeout.
-    connection_timeout_seconds: Optional[float] = None
-
     #: Default overall operation budget; per-call settings override it.
     operation_timeout_seconds: Optional[float] = None
 
@@ -256,9 +248,6 @@ class PreparedClientConfig(_ValidatedSettings):
         self._check_type("hedging_threshold_ms", self.hedging_threshold_ms, int)
         self._check_type("user_agent_suffix", self.user_agent_suffix, str)
         self._check_type("consistency_level", self.consistency_level, str)
-        self._check_type("proxy_allowed", self.proxy_allowed, bool)
-        if self.connection_timeout_seconds is not None:
-            self._check_number("connection_timeout_seconds", self.connection_timeout_seconds)
         if self.operation_timeout_seconds is not None:
             self._check_number("operation_timeout_seconds", self.operation_timeout_seconds)
         if any(not isinstance(rule, PreparedFaultInjectionRule) for rule in self.fault_injection_rules):

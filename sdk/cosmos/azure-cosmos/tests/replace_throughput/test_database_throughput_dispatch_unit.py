@@ -376,17 +376,22 @@ def test_replacement_rejects_invalid_hook_before_metadata_rust(throughput_replac
     assert not recording.requests
 
 
-def test_replacement_rejects_mixed_settings_before_metadata_rust(throughput_replace):
+@pytest.mark.parametrize("autoscale", [
+    {"auto_scale_max_throughput": 10000},
+    {"auto_scale_increment_percent": 0},
+    {"auto_scale_max_throughput": 10000, "auto_scale_increment_percent": 10},
+])
+def test_replacement_rejects_mixed_settings_before_metadata_rust(throughput_replace, autoscale):
     from azure.cosmos import ThroughputProperties
 
     invoke, _, recording, metadata = throughput_replace
-    with pytest.raises(KeyError, match="Manual and autoscale"):
-        invoke(ThroughputProperties(offer_throughput=500, auto_scale_max_throughput=10000))
+    with pytest.raises(ValueError, match="Manual and autoscale"):
+        invoke(ThroughputProperties(offer_throughput=500, **autoscale))
     assert not metadata
     assert not recording.requests
 
 
-@pytest.mark.parametrize("value", [None, "500", {}, 500.5])
+@pytest.mark.parametrize("value", [None, "500", {}, 500.5, True, False])
 def test_replacement_rejects_invalid_type_before_metadata_rust(throughput_replace, value):
     invoke, _, recording, metadata = throughput_replace
     with pytest.raises(TypeError, match="offer_throughput must be"):
@@ -547,11 +552,10 @@ class _Backend:
         self.offers = [_offer()] if offers is None else offers
 
     def run_operation(self, *, routing: Any, legacy_call: Any, **_kwargs: Any) -> Any:
-        """Record the operation and route to the legacy path or canned offer list."""
+        """Validate support and return a canned offer result."""
         self.calls.append(routing.op)
         self.eligibility.append(routing.supported)
-        if routing.uses_legacy():
-            return legacy_call()
+        routing.require_rust_support()
         return self.offers if routing.op == "get_throughput" else _offer(500)
 
 
@@ -559,11 +563,10 @@ class _AsyncBackend(_Backend):
     """Async variant of ``_Backend`` for exercising the ``await``-able code paths."""
 
     async def run_operation(self, *, routing: Any, legacy_call: Any, **_kwargs: Any) -> Any:
-        """Record the operation and route to the legacy path or canned offer list."""
+        """Validate support and return a canned offer result."""
         self.calls.append(routing.op)
         self.eligibility.append(routing.supported)
-        if routing.uses_legacy():
-            return await legacy_call()
+        routing.require_rust_support()
         return self.offers if routing.op == "get_throughput" else _offer(500)
 
 

@@ -164,7 +164,8 @@ pub(crate) fn delete_container<'py>(
     super::validate_prepared_operation(prepared, "delete_container")?;
     let (database_id, container_id, mut modifiers) =
         extract_container_point_prepared_inputs(prepared)?;
-    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.remaining_binding_timeout =
+        crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     run_delete_container_operation(
         py,
         &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
@@ -189,7 +190,8 @@ pub(crate) fn delete_container_async<'py>(
     super::validate_prepared_operation(prepared, "delete_container")?;
     let (database_id, container_id, mut modifiers) =
         extract_container_point_prepared_inputs(prepared)?;
-    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.remaining_binding_timeout =
+        crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     run_delete_container_operation_async(
         py,
         &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?,
@@ -213,7 +215,8 @@ pub(crate) fn replace_container<'py>(
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "replace_container")?;
     let (database_id, container_id, mut modifiers) = extract_container_point_prepared_inputs(prepared)?;
-    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.remaining_binding_timeout =
+        crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     let body_bytes = extract_body_bytes(prepared)?;
     run_replace_container_operation(
         py,
@@ -239,7 +242,8 @@ pub(crate) fn replace_container_async<'py>(
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "replace_container")?;
     let (database_id, container_id, mut modifiers) = extract_container_point_prepared_inputs(prepared)?;
-    modifiers.operation_timeout = crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
+    modifiers.remaining_binding_timeout =
+        crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
     let body_bytes = extract_body_bytes(prepared)?;
     run_replace_container_operation_async(
         py,

@@ -89,6 +89,30 @@ def requests(listing):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("operation", ["list_databases", "query_databases"])
+@pytest.mark.parametrize("name,value,error", [
+    ("max_itm_count", 10, TypeError),
+    ("unknown_option", None, TypeError),
+    ("connection_timeout", None, NotImplementedError),
+    ("retry_total", 0, NotImplementedError),
+])
+async def test_rejected_database_feed_keywords_are_named_before_dispatch_rust(
+    listing_client, operation, name, value, error,
+):
+    """A typo is not a missing feature; both errors name the input without sending a page."""
+    client, connection, backend, is_async = listing_client
+    kwargs = {name: value, "logging_enable": True}
+    if operation == "query_databases":
+        kwargs["query"] = "SELECT * FROM c"
+    pager = getattr(client, operation)(**kwargs).by_page()
+    with pytest.raises(error, match=name):
+        await _next_listing_page(pager, is_async)
+    backend.execute_pages.assert_not_called()
+    connection._CosmosClientConnection__Get.assert_not_called()
+    connection._CosmosClientConnection__Post.assert_not_called()
+
+
+@pytest.mark.asyncio
 async def test_bookmark_is_owned_by_pager_even_when_hook_runs_other_work_rust(listing):
     """The pager's continuation token comes from its own page, not from whatever the
     client did most recently.

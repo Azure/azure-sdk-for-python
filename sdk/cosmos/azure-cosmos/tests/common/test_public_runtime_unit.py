@@ -300,12 +300,7 @@ def test_async_close_cannot_switch_an_acquisition_to_default_runtime_rust(monkey
         release_lock_states = []
 
         def record_release(_handle):
-            release_lock_states.append(
-                (
-                    adapter._driver_handle_lock.locked(),
-                    adapter._driver_acquisition_lock.locked(),
-                )
-            )
+            release_lock_states.append(adapter._driver_handle_lock.locked())
 
         binding.release_driver_handle.side_effect = record_release
         monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", binding)
@@ -332,7 +327,7 @@ def test_async_close_cannot_switch_an_acquisition_to_default_runtime_rust(monkey
         assert binding.acquire_driver_handle.call_args.args == expected_args
         assert binding.acquire_driver_handle.call_args.kwargs["runtime"] is runtime._handle
         binding.release_driver_handle.assert_called_once_with("late-driver")
-        assert release_lock_states == [(False, False)]
+        assert release_lock_states == [False]
         assert adapter._driver_handle is None
         if credential is not None:
             credential.get_token.assert_not_called()

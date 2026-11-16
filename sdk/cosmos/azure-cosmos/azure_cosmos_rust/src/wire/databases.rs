@@ -365,8 +365,9 @@ fn prepare_database_operation(
     let options = build_operation_options(
         content_response,
         modifiers.excluded_regions_value,
-        modifiers.driver_timeout_policy,
+        modifiers.configured_driver_timeout_policy,
         modifiers.availability_strategy,
+        modifiers.throughput_control,
         modifiers.custom_headers,
     );
     (op, options)

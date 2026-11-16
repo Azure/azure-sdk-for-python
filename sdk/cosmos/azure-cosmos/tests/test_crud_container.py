@@ -164,8 +164,11 @@ class TestCRUDContainerOperations(unittest.TestCase):
         self.assertIsNotNone(created_collection_properties.get("statistics"))
         self.assertIsNotNone(created_db.client_connection.last_response_headers.get("x-ms-resource-usage"))
 
+        expected_offer = created_collection.get_throughput()
 
+        self.assertIsNotNone(expected_offer)
 
+        self.assertEqual(expected_offer.offer_throughput, offer_throughput)
 
         created_db.delete_container(created_collection.id)
 

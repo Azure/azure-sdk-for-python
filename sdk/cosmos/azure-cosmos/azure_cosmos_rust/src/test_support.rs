@@ -14,6 +14,13 @@ pub(crate) fn prepare_python() {
         py.allow_threads(|| {
             IMPORTS.call_once(|| {
                 Python::with_gil(|py| {
+                    // Load this checkout's Python package, not an older azure-cosmos
+                    // that happens to be installed in the Python environment.
+                    let package_dir = concat!(env!("CARGO_MANIFEST_DIR"), "/..");
+                    py.import_bound("sys")
+                        .and_then(|sys| sys.getattr("path"))
+                        .and_then(|path| path.call_method1("insert", (0, package_dir)))
+                        .expect("put the checkout's Python package first on sys.path");
                     py.import_bound("azure.cosmos")
                         .expect("initialize the synchronous Python SDK for binding tests");
                     py.import_bound("azure.cosmos.aio")

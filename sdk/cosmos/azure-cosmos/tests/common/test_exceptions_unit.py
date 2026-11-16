@@ -108,6 +108,45 @@ class TestStatusToExceptionMapping(unittest.TestCase):
         self.assertIsInstance(exc, CosmosHttpResponseError)
 
 
+class TestUnsupportedAggregateFormatting(unittest.TestCase):
+    """Only the identified aggregate-feature rejection gets new display wording."""
+
+    def test_unrelated_service_errors_keep_their_wording_rust(self):
+        cases = ((400, 1004, "Distinct"), (400, 0, "Aggregate"), (500, 1004, "Aggregate"))
+        for status, sub_status, feature in cases:
+            with self.subTest(status=status, sub_status=sub_status, feature=feature):
+                message = (
+                    "Query contains 1 or more unsupported features. "
+                    "Upgrade your SDK to a version that does support the requested features:\r\n"
+                    f"Query contained {feature}, which the calling client does not support."
+                )
+                body = json.dumps({"code": "BadRequest", "message": message}).encode()
+                error = map_backend_response_to_exception(
+                    _make_response(status_code=status, sub_status=sub_status, body=body)
+                )
+                self.assertEqual(error.error.message, message)
+                self.assertEqual(error.response.body(), body)
+
+    def test_header_substatus_and_additional_feature_details_are_preserved_rust(self):
+        message = (
+            "Query contains 1 or more unsupported features. "
+            "Upgrade your SDK to a version that does support the requested features:\r\n"
+            "Query contained Aggregate, which the calling client does not support.\r\n"
+            "Query contained GroupBy, which the calling client does not support."
+        )
+        body = json.dumps({"error": {"code": "BadRequest", "message": message}}).encode()
+        error = map_backend_response_to_exception(
+            _make_response(status_code=400, headers={"x-ms-substatus": "1004"}, body=body)
+        )
+        self.assertIn(
+            "This aggregate query is not supported by this SDK for the requested query scope.", str(error)
+        )
+        self.assertNotIn("Upgrade your SDK", str(error))
+        self.assertIn("Query contained GroupBy", str(error))
+        self.assertEqual(error.sub_status, 1004)
+        self.assertEqual(error.response.body(), body)
+
+
 class TestExceptionMetadataIsCopiedAcross(unittest.TestCase):
     """The exception carries the response's status, sub-status, headers, body and message.
 

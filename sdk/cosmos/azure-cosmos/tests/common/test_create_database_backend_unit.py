@@ -87,6 +87,7 @@ from azure.cosmos._helpers._request_database import (
     is_read_database_rust_eligible,
 )
 from azure.cosmos._helpers._database_operations import DatabaseHelper
+from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.aio._cosmos_client_connection_async import (
@@ -3629,6 +3630,7 @@ def delete_database_client(request):
     )
     client._adapter = _AsyncBindingAdapter(response) if is_async else _BindingAdapter(response)
     client._adapter.execute = delete_mock(wraps=client._adapter.execute)
+    client._item_context = ItemClientContext(client._adapter)
     return client
 
 
@@ -3638,21 +3640,45 @@ def _call_delete_database(client, *args, **kwargs):
     return asyncio.run(result) if inspect.isawaitable(result) else result
 
 
+@pytest.mark.parametrize("options,expected", [
+    ({}, ("Low", "7")),
+    ({"priority": None, "throughput_bucket": 0}, ("Low", "7")),
+    ({"priority": "High", "throughput_bucket": 3}, ("High", "3")),
+    ({"initial_headers": {
+        "X-MS-COSMOS-PRIORITY-LEVEL": "High", "x-ms-cosmos-throughput-bucket": "2",
+    }}, ("High", "2")),
+    ({"request_options": {"priorityLevel": "High", "throughputBucket": 4}}, ("High", "4")),
+])
+def test_delete_database_preserves_client_defaults_and_overrides_rust(
+    delete_database_client, options, expected,
+):
+    client = delete_database_client
+    client._item_context = ItemClientContext(
+        client._adapter, ItemClientDefaults(priority="Low", throughput_bucket=7),
+    )
+    assert _call_delete_database(client, "db1", **options) is None
+    headers = wire_headers(client._adapter.prepared)
+    assert (headers["x-ms-cosmos-priority-level"], headers["x-ms-cosmos-throughput-bucket"]) == expected
+
+
 def _use_legacy_delete(client):
     """Switch the client to the legacy path and make its delete succeed.
 
-    The legacy call records the response headers on the connection instead of
-    returning them, which is how that path reports a delete. Tests read them
-    from there.
+    The legacy call records shared headers and invokes its internal two-argument
+    hook with request-local headers, as DeleteResource does.
     """
     is_async = isinstance(client, AsyncCosmosClient)
     client._adapter = ASYNC_LEGACY_BACKEND if is_async else LEGACY_BACKEND
 
-    def delete(*_args, **_kwargs):
-        client.client_connection.last_response_headers = CaseInsensitiveDict({
+    def delete(*_args, **kwargs):
+        headers = CaseInsensitiveDict({
             "x-ms-request-charge": "4.24",
             "x-ms-activity-id": "delete-one",
         })
+        client.client_connection.last_response_headers = headers
+        hook = kwargs.get("response_hook")
+        if hook is not None:
+            hook(headers, None)
 
     client.client_connection.DeleteDatabase.side_effect = delete
 
@@ -3747,7 +3773,48 @@ def test_delete_database_hook_receives_an_isolated_case_insensitive_snapshot_rus
     assert client.client_connection.last_response_headers["x-ms-request-charge"] == "4.24"
 
 
-def test_delete_database_invokes_falsey_callable_hook_rust(delete_database_client):
+@pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
+def test_delete_database_hook_uses_request_headers_when_shared_state_changes_rust(
+    delete_database_client, use_legacy,
+):
+    client = delete_database_client
+
+    class InterleavedConnection(SimpleNamespace):
+        @property
+        def last_response_headers(self):
+            return CaseInsensitiveDict({"x-ms-activity-id": "other-call", "x-ms-request-charge": "99"})
+
+        @last_response_headers.setter
+        def last_response_headers(self, headers):
+            self.published_headers = headers
+
+    # Model another completed operation replacing shared state before it is read.
+    client.client_connection = InterleavedConnection(**vars(client.client_connection))
+    backend = client._adapter
+    if use_legacy:
+        _use_legacy_delete(client)
+    calls = []
+
+    def hook(headers):
+        assert client.client_connection.last_response_headers["x-ms-activity-id"] == "other-call"
+        assert headers["X-MS-ACTIVITY-ID"] == "delete-one"
+        assert headers["X-MS-REQUEST-CHARGE"] == "4.24"
+        calls.append(headers)
+        headers["x-ms-activity-id"] = "hook-edit"
+
+    assert _call_delete_database(client, "db1", response_hook=hook) is None
+    assert len(calls) == 1
+    assert client.client_connection.published_headers["x-ms-activity-id"] == "delete-one"
+    if use_legacy:
+        backend.execute.assert_not_called()
+        client.client_connection.DeleteDatabase.assert_called_once()
+    else:
+        backend.execute.assert_called_once()
+        client.client_connection.DeleteDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
+def test_delete_database_invokes_falsey_callable_hook_rust(delete_database_client, use_legacy):
     """A hook that reports itself as false when tested as a boolean is still
     callable, so it still runs exactly once. Deciding whether to call a hook by
     truth-testing it would silently skip a valid one and lose the customer's
@@ -3764,12 +3831,15 @@ def test_delete_database_invokes_falsey_callable_hook_rust(delete_database_clien
             self.calls += 1
 
     hook = Hook()
+    if use_legacy:
+        _use_legacy_delete(delete_database_client)
     _call_delete_database(delete_database_client, "db1", response_hook=hook)
     assert hook.calls == 1
 
 
 @pytest.mark.parametrize("error_type", [ValueError, NotImplementedError, asyncio.CancelledError])
-def test_delete_database_hook_failure_never_replays_rust(delete_database_client, error_type):
+@pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
+def test_delete_database_hook_failure_never_replays_rust(delete_database_client, error_type, use_legacy):
     """If the customer's hook raises after a successful delete, the delete is not
     repeated.
 
@@ -3782,6 +3852,9 @@ def test_delete_database_hook_failure_never_replays_rust(delete_database_client,
     recorded as a fallback.
     """
     client = delete_database_client
+    backend = client._adapter
+    if use_legacy:
+        _use_legacy_delete(client)
     error = error_type("callback failed")
     hook = MagicMock(side_effect=error)
     before = rust_compatibility_fallback_count()
@@ -3789,8 +3862,12 @@ def test_delete_database_hook_failure_never_replays_rust(delete_database_client,
         _call_delete_database(client, "db1", response_hook=hook)
     assert raised.value is error
     hook.assert_called_once()
-    client._adapter.execute.assert_called_once()
-    client.client_connection.DeleteDatabase.assert_not_called()
+    if use_legacy:
+        backend.execute.assert_not_called()
+        client.client_connection.DeleteDatabase.assert_called_once()
+    else:
+        backend.execute.assert_called_once()
+        client.client_connection.DeleteDatabase.assert_not_called()
     assert rust_compatibility_fallback_count() == before
 
 
@@ -3862,6 +3939,7 @@ def test_delete_database_service_error_never_fires_success_hook_or_replays_rust(
         {"timeout": 0.5},
         {"timeout": 0},
         {"timeout": "invalid"},
+        {"request_options": {"timeout": 10}},
         {"connection_timeout": 1},
         {"initial_headers": {"user-agent": "custom"}},
         {"initial_headers": {"X-MS-VERSION": "2020-07-15"}},
@@ -3892,7 +3970,25 @@ def test_delete_database_unsupported_options_never_fall_back_rust(delete_databas
     assert rust_compatibility_fallback_count() == before
 
 
-@pytest.mark.parametrize("timeout", [None, 1, 3.5])
+@pytest.mark.parametrize(
+    "timeout",
+    [False, True, 0, -1, 0.5, "10", float("nan"), float("inf"), -float("inf"),
+     2**64 - 1, 2**64, 10**400],
+    ids=["false", "true", "zero", "negative", "subsecond", "string", "nan", "inf",
+         "negative-inf", "rounds-out-of-range", "out-of-range", "overflow"],
+)
+def test_delete_database_invalid_timeout_never_reaches_a_transport_rust(delete_database_client, timeout):
+    """Reject the same unsupported deadlines as reads, before either transport."""
+    client = delete_database_client
+    hook = MagicMock()
+    with pytest.raises(NotImplementedError, match="delete_database.*legacy Python"):
+        _call_delete_database(client, "db1", timeout=timeout, response_hook=hook)
+    hook.assert_not_called()
+    client._adapter.execute.assert_not_called()
+    client.client_connection.DeleteDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize("timeout", [None, 1, 3.5, float(2**64 - 2048)])
 def test_delete_database_preserves_supported_deadlines_and_options_rust(delete_database_client, timeout):
     """Supported options reach the delete request unchanged, and the call returns
     nothing on success.
@@ -4225,6 +4321,7 @@ def test_public_sync_delete_database_accepts_every_argument_form_rust(database_a
     )
     backend = _BindingAdapter(_deleted_response())
     client._adapter = backend
+    client._item_context = ItemClientContext(backend)
 
     assert client.delete_database(database_argument) is None
     assert backend.prepared.op == OP_DELETE_DATABASE
@@ -4240,6 +4337,7 @@ def test_public_sync_delete_database_accepts_a_proxy_rust():
     )
     backend = _BindingAdapter(_deleted_response())
     client._adapter = backend
+    client._item_context = ItemClientContext(backend)
 
     client.delete_database(DatabaseProxy(client.client_connection, "db1"))
 
@@ -4255,6 +4353,7 @@ def test_public_sync_delete_database_fires_response_hook_with_headers_only_rust(
         last_response_headers={},
     )
     client._adapter = _BindingAdapter(_deleted_response())
+    client._item_context = ItemClientContext(client._adapter)
     hook_calls = []
 
     client.delete_database("db1", response_hook=lambda headers: hook_calls.append(headers))
@@ -4272,6 +4371,7 @@ def test_sync_delete_database_preserves_access_conditions_without_warnings_rust(
     )
     backend = _BindingAdapter(_deleted_response())
     client._adapter = backend
+    client._item_context = ItemClientContext(backend)
 
     with warnings.catch_warnings(record=True) as warnings_seen:
         warnings.simplefilter("always")
@@ -4299,6 +4399,7 @@ def test_sync_delete_database_preserves_wildcard_guard_without_fallback_rust():
     )
     backend = _BindingAdapter(_deleted_response())
     client._adapter = backend
+    client._item_context = ItemClientContext(backend)
 
     with warnings.catch_warnings(record=True) as warnings_seen:
         warnings.simplefilter("always")
@@ -4324,6 +4425,7 @@ def test_async_delete_database_preserves_access_conditions_without_warnings_rust
         )
         backend = _AsyncBindingAdapter(_deleted_response())
         client._adapter = backend
+        client._item_context = ItemClientContext(backend)
 
         with warnings.catch_warnings(record=True) as warnings_seen:
             warnings.simplefilter("always")

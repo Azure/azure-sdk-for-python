@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Share setup, binding checks, and cleanup between the two Python wrappers.
+"""Share setup, driver acquisition, binding checks, and cleanup between the wrappers.
 
 BindingAdapter and AsyncBindingAdapter reuse this Python code, but retain separate
 per-client fields. Each client selects an explicit CosmosRuntime or the default
@@ -12,11 +12,14 @@ not acquire a driver or initialize the default runtime.
 """
 from __future__ import annotations
 
+import contextvars
 import logging
 import os
+import sys
 import threading
 import time
 from contextlib import contextmanager
+from concurrent.futures import Future
 from dataclasses import replace
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Iterator, Optional, Tuple, Type, Union
@@ -24,9 +27,9 @@ from typing import TYPE_CHECKING, Any, Callable, Iterator, Optional, Tuple, Type
 from azure.core.exceptions import ServiceResponseError
 from azure.core.utils import CaseInsensitiveDict
 
-from ._binding_conversions import acquire_driver_handle_args, metadata_exception_from_binding
+from ._binding_conversions import acquire_driver_handle_args, response_exception_from_binding
 from .contracts import PreparedClientConfig, PreparedPageRequest, PreparedRequest
-from .errors import PagePreflightError, UnsupportedQueryError
+from .errors import PagePreflightError, UnsupportedQueryError, UNSUPPORTED_AGGREGATE_QUERY_MESSAGE
 from .operations import get_page_binding_function_name
 from ..exceptions import CosmosClientTimeoutError
 from .._constants import _Constants
@@ -152,7 +155,11 @@ def page_binding_call_errors(
             raise
         raise CosmosClientTimeoutError(error=exc) from exc
     except unsupported_query_error as exc:
-        raise UnsupportedQueryError(str(exc)) from exc
+        message = str(exc)
+        prefix, marker, feature = message.partition("unsupported query feature: ")
+        if marker and (feature == "aggregates" or feature.startswith("aggregates ")):
+            message = f"{prefix}{UNSUPPORTED_AGGREGATE_QUERY_MESSAGE}\nDetails: {feature}"
+        raise UnsupportedQueryError(message) from exc
     except transport_error as exc:
         raise ServiceResponseError(message=str(exc)) from exc
 
@@ -244,8 +251,10 @@ def finalize_adapter_resources(credential: Optional[Any], driver_handle: Optiona
 
     A background thread releases this client's async credential bridge and
     then attempts to release its driver handle. The customer's credential is
-    not closed. If thread startup raises RuntimeError, attempt the same
-    cleanup on the calling thread; finalization is not always nonblocking.
+    not closed. During interpreter finalization, run cleanup on the calling
+    thread without starting a worker. If worker startup otherwise raises
+    RuntimeError, use the same synchronous cleanup and log the failure.
+    Finalization is not always nonblocking.
     """
     if credential is None and driver_handle is None:
         return
@@ -261,11 +270,15 @@ def finalize_adapter_resources(credential: Optional[Any], driver_handle: Optiona
                 except Exception:  # pylint: disable=broad-except
                     _LOGGER.debug("Failed releasing native resources during finalization")
 
+    if sys.is_finalizing():
+        teardown()
+        return
+
     try:
         threading.Thread(target=teardown, name="cosmos-rust-finalizer", daemon=True).start()
     except RuntimeError:
-        # Python may refuse new threads during shutdown; still attempt cleanup.
-        _LOGGER.warning("Could not start finalizer worker; cleaning up on the finalizing thread")
+        if not sys.is_finalizing():
+            _LOGGER.warning("Could not start finalizer worker; cleaning up on the finalizing thread")
         teardown()
 
 
@@ -335,6 +348,7 @@ class BindingAdapterShared:
         self._runtime = runtime
         # Acquire during async __aenter__() or the first operation needing the driver.
         # Reuse the handle until close; subclasses coordinate changes with this lock.
+        self._init_future: Optional[Future[_DriverHandle]] = None
         self._driver_handle: Optional[_DriverHandle] = None
         self._driver_handle_lock = threading.Lock()
         # Once close sets this flag, do not acquire another driver for the client.
@@ -357,12 +371,12 @@ class BindingAdapterShared:
                 )
             validate_runtime(client_config)
         except BaseException:
-            # Construction failed; the factory will release the async credential bridge.
+            # Construction acquired no bridge; discard the borrowed credential reference.
             self._token_credential = None
             raise
 
     def abort_construction(self) -> None:
-        """Mark failed client construction closed and release its async credential bridge."""
+        """Mark failed construction closed and clear runtime and credential references."""
         with self._driver_handle_lock:
             self._closing = True
             self._runtime = None
@@ -385,6 +399,59 @@ class BindingAdapterShared:
         if timeout is None and self._client_config is not None:
             timeout = self._client_config.operation_timeout_seconds
         return None if timeout is None else time.monotonic() + timeout
+
+    def _start_driver_acquisition(self, binding: Any, logger: logging.Logger) -> Future[_DriverHandle]:
+        """Share one pending attempt; the caller must hold _driver_handle_lock.
+
+        A daemon worker avoids an interpreter-exit join or a shared pool queue.
+        Capture inputs and context before close can clear the client's references.
+        """
+        future = self._init_future
+        if future is None:
+            args = self._acquire_driver_handle_args()
+            context = contextvars.copy_context()
+            future = Future()
+            self._init_future = future
+            try:
+                threading.Thread(
+                    target=context.run,
+                    args=(self._acquire_driver_handle, future, binding, self._runtime, args, logger),
+                    name="cosmos-driver-acquisition",
+                    daemon=True,
+                ).start()
+            except BaseException as error:
+                self._init_future = None
+                future.set_exception(error)
+                raise
+        return future
+
+    def _acquire_driver_handle(
+        self,
+        future: Future[_DriverHandle],
+        binding: Any,
+        runtime: Optional[CosmosRuntime],
+        args: tuple[Any, ...],
+        logger: logging.Logger,
+    ) -> None:
+        """Publish one acquisition, or release a late handle if close won."""
+        try:
+            handle = self._initialize_driver(binding, runtime, acquisition_args=args)
+            with self._driver_handle_lock:
+                closed = self._closing
+                if not closed:
+                    self._driver_handle = handle
+            if closed:
+                release_driver_handle_quietly(handle, binding)
+                raise RuntimeError(f"{type(self).__name__}: the client was closed during initialization.")
+        except BaseException as error:
+            with self._driver_handle_lock:
+                self._init_future = None
+            future.set_exception(error)
+            logger.debug("Rust driver initialization failed")
+        else:
+            with self._driver_handle_lock:
+                self._init_future = None
+            future.set_result(handle)
 
     def _initialize_driver(
         self,
@@ -411,7 +478,7 @@ class BindingAdapterShared:
                 return binding.acquire_driver_handle(*args, runtime=runtime._handle)
             return binding.acquire_driver_handle(*args)
         except _binding_error_type(binding, "_DriverResponseError") as exc:
-            raise metadata_exception_from_binding(exc) from exc
+            raise response_exception_from_binding(exc) from exc
         except driver_transport_error_type(binding) as exc:
             raise ServiceResponseError(message=str(exc)) from exc
 

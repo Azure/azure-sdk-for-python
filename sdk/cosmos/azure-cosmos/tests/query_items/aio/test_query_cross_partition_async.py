@@ -19,6 +19,8 @@ import uuid
 
 import pytest
 
+from query_items._distinct_helpers import DistinctConfig
+
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos import http_constants
 from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
@@ -101,10 +103,10 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         iter_list = [item async for item in query_iterable]
         assert iter_list[0]['id'] == doc_id
 
-        # Known gap 36: Query diagnostics and other request options are not sent over Gateway V2 (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36).
-        pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                    "query metrics header is missing (known gap 36, "
-                    "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
+        if http_constants.HttpHeaders.QueryMetrics not in query_iterable.get_response_headers():
+            pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
+                        "query metrics header is missing (known gap 36, "
+                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
         metrics_header_name = 'x-ms-documentdb-query-metrics'
         assert metrics_header_name in self.created_container.client_connection.last_response_headers
         metrics_header = self.created_container.client_connection.last_response_headers[metrics_header_name]
@@ -206,12 +208,6 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_unsupported_queries_async_rust(self):
         # Source: tests/test_query_cross_partition_async.py::TestQueryCrossPartitionAsync.test_unsupported_queries_async
-        # Known gap 30 item 9: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30
-        pytest.skip(
-            "driver-gap: Rust returns raw per-partition rows for the cross-partition non-VALUE aggregate "
-            "'SELECT COUNT(1) FROM c' instead of the legacy 400 rejection (known gap 30 item 9, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-non-value-aggregate)."
-        )
         queries = ['SELECT COUNT(1) FROM c', 'SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
         for query in queries:
             query_iterable = self.created_container.query_items(query=query)
@@ -461,6 +457,175 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         assert page_count > 1
 
         await self.key_db.delete_container(created_collection_ref.id)
+
+    async def test_offset_limit_async_rust(self):
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_cross_partition_async.py::TestQueryCrossPartitionAsync.test_offset_limit_async
+        values = []
+        for i in range(10):
+            document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4()), 'value': i // 3}
+            current_document = await self.created_container.create_item(body=document_definition)
+            values.append(current_document['pk'])
+
+        await DistinctConfig._validate_distinct_offset_limit(
+            created_collection=self.created_container,
+            query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 0 LIMIT 2',
+            results=[0, 1])
+
+        await DistinctConfig._validate_distinct_offset_limit(
+            created_collection=self.created_container,
+            query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 2 LIMIT 2',
+            results=[2, 3])
+
+        await DistinctConfig._validate_distinct_offset_limit(
+            created_collection=self.created_container,
+            query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 4 LIMIT 3',
+            results=[])
+
+        await DistinctConfig._validate_offset_limit(created_collection=self.created_container,
+                                                 query='SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5',
+                                                 results=values[:5])
+
+        await DistinctConfig._validate_offset_limit(created_collection=self.created_container,
+                                                 query='SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10',
+                                                 results=values[5:])
+
+        await DistinctConfig._validate_offset_limit(created_collection=self.created_container,
+                                                 query='SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5',
+                                                 results=[])
+
+        await DistinctConfig._validate_offset_limit(created_collection=self.created_container,
+                                                 query='SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1',
+                                                 results=[])
+
+    async def test_distinct_async_rust(self):
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_cross_partition_async.py::TestQueryCrossPartitionAsync.test_distinct_async
+        created_database = self.created_db
+        distinct_field = 'distinct_field'
+        pk_field = "pk"
+        different_field = "different_field"
+
+        created_collection_ref = await self.key_db.create_container(
+            id='collection with composite index ' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk", kind="Hash"),
+            indexing_policy={
+                "compositeIndexes": [
+                    [{"path": "/" + pk_field, "order": "ascending"},
+                     {"path": "/" + distinct_field, "order": "ascending"}],
+                    [{"path": "/" + distinct_field, "order": "ascending"},
+                     {"path": "/" + pk_field, "order": "ascending"}]
+                ]
+            }
+        )
+        created_collection = created_database.get_container_client(created_collection_ref.id)
+        documents = []
+        for i in range(5):
+            j = i
+            while j > i - 5:
+                document_definition = {pk_field: i, 'id': str(uuid.uuid4()), distinct_field: j}
+                documents.append(await created_collection.create_item(body=document_definition))
+                document_definition = {pk_field: i, 'id': str(uuid.uuid4()), distinct_field: j}
+                documents.append(await created_collection.create_item(body=document_definition))
+                document_definition = {pk_field: i, 'id': str(uuid.uuid4())}
+                documents.append(await created_collection.create_item(body=document_definition))
+                j -= 1
+
+        padded_docs = DistinctConfig._pad_with_none(documents, distinct_field)
+
+        await DistinctConfig._validate_distinct(created_collection=created_collection,  # returns {} and is right number
+                                             query='SELECT distinct c.%s from c' % distinct_field,  # nosec
+                                             results=DistinctConfig._get_distinct_docs(
+                                                 padded_docs, distinct_field, None, False),
+                                             is_select=True,
+                                             fields=[distinct_field])
+
+        await DistinctConfig._validate_distinct(created_collection=created_collection,
+                                             query='SELECT distinct c.%s, c.%s from c' % (distinct_field, pk_field),
+                                             # nosec
+                                             results=DistinctConfig._get_distinct_docs(padded_docs, distinct_field,
+                                                                                    pk_field, False),
+                                             is_select=True,
+                                             fields=[distinct_field, pk_field])
+
+        await DistinctConfig._validate_distinct(created_collection=created_collection,
+                                             query='SELECT distinct value c.%s from c' % distinct_field,  # nosec
+                                             results=DistinctConfig._get_distinct_docs(
+                                                 padded_docs, distinct_field, None, True),
+                                             is_select=True,
+                                             fields=[distinct_field])
+
+        await DistinctConfig._validate_distinct(created_collection=created_collection,
+                                             query='SELECT distinct c.%s from c' % different_field,  # nosec
+                                             results=['None'],
+                                             is_select=True,
+                                             fields=[different_field])
+
+        await self.key_db.delete_container(created_collection_ref.id)
+
+    async def test_distinct_on_different_types_and_field_orders_async_rust(self):
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_cross_partition_async.py::TestQueryCrossPartitionAsync.test_distinct_on_different_types_and_field_orders_async
+        payloads = [
+            {'id': str(uuid.uuid4()), 'f1': 1, 'f2': 'value', 'f3': 100000000000000000, 'f4': [1, 2, '3'],
+             'f5': {'f6': {'f7': 2}}},
+            {'id': str(uuid.uuid4()), 'f2': '\'value', 'f4': [1.0, 2, '3'], 'f5': {'f6': {'f7': 2.0}}, 'f1': 1.0,
+             'f3': 100000000000000000.00},
+            {'id': str(uuid.uuid4()), 'f3': 100000000000000000.0, 'f5': {'f6': {'f7': 2}}, 'f2': '\'value', 'f1': 1,
+             'f4': [1, 2.0, '3']}
+        ]
+        for pay in payloads:
+            await self.created_container.create_item(pay)
+
+        await DistinctConfig._validate_distinct_on_different_types_and_field_orders(
+            collection=self.created_container,
+            query="Select distinct value c.f1 from c",
+            expected_results=[1]
+        )
+
+        await DistinctConfig._validate_distinct_on_different_types_and_field_orders(
+            collection=self.created_container,
+            query="Select distinct value c.f2 from c",
+            expected_results=['value', '\'value']
+        )
+
+        await DistinctConfig._validate_distinct_on_different_types_and_field_orders(
+            collection=self.created_container,
+            query="Select distinct value c.f2 from c order by c.f2",
+            expected_results=['value', '\'value']
+        )
+
+        await DistinctConfig._validate_distinct_on_different_types_and_field_orders(
+            collection=self.created_container,
+            query="Select distinct value c.f3 from c",
+            expected_results=[100000000000000000]
+        )
+
+        await DistinctConfig._validate_distinct_on_different_types_and_field_orders(
+            collection=self.created_container,
+            query="Select distinct value c.f4 from c",
+            expected_results=[[1, 2, '3']]
+        )
+
+        await DistinctConfig._validate_distinct_on_different_types_and_field_orders(
+            collection=self.created_container,
+            query="Select distinct value c.f5.f6 from c",
+            expected_results=[{'f7': 2}]
+        )
+
+        await DistinctConfig._validate_distinct_on_different_types_and_field_orders(
+            collection=self.created_container,
+            query="Select distinct c.f1, c.f2, c.f3 from c",
+            expected_results=[{'f1': 1, 'f2': 'value', 'f3': 100000000000000000},
+                              {'f1': 1.0, 'f2': '\'value', 'f3': 100000000000000000.00}]
+        )
+
+        await DistinctConfig._validate_distinct_on_different_types_and_field_orders(
+            collection=self.created_container,
+            query="Select distinct c.f1, c.f2, c.f3 from c order by c.f1",
+            expected_results=[{'f1': 1, 'f2': 'value', 'f3': 100000000000000000},
+                              {'f1': 1.0, 'f2': '\'value', 'f3': 100000000000000000.00}]
+        )
 
 
 if __name__ == '__main__':

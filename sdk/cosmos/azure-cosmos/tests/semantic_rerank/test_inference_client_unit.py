@@ -52,12 +52,12 @@ def setup(request, monkeypatch):
     credential = SimpleNamespace(get_token=AsyncMock() if asynchronous else MagicMock())
     policy = ConnectionPolicy()
     policy.InferenceRequestTimeout = 17
-    policy.ConnectionRetryConfiguration = 7
     client = module.CosmosClient(
         "https://account.invalid",
         credential,
         _backend="rust",
         connection_policy=policy,
+        retry_total=7,
         user_agent_suffix="contoso-bank",
         enable_diagnostics_logging=True,
     )

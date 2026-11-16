@@ -12,11 +12,16 @@ from azure.cosmos.aio import CosmosClient
 from config.diagnostics import _binding_operation_count, _rust_fallback_count
 from fault_injection._async_cancellation import (
     CANCELLATION_ALLOWANCE, OPERATION_TIMEOUT, assert_cancelled, cancellation_rule,
-    capture_read_lifecycle, wait_for_evidence,
+    capture_read_lifecycle, require_read_lifecycle_probe, wait_for_evidence,
 )
 from fault_injection._delayed_create import assert_route, emit
 
 pytestmark = pytest.mark.cosmosEmulator
+
+
+@pytest.fixture(autouse=True)
+def require_test_probe_build():
+    require_read_lifecycle_probe()
 
 
 @pytest.mark.asyncio

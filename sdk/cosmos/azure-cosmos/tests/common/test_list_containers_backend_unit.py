@@ -230,6 +230,9 @@ def test_falsey_hook_receives_each_page_as_an_isolated_snapshot_rust(listing_cas
             assert results_iterator is pager
             assert len(case.requests) == len(snapshots) + 1
             assert headers is not case.connection.last_response_headers
+            assert headers.get("X-MS-ACTIVITY-ID") == headers["x-ms-activity-id"]
+            assert headers["X-Ms-Request-Charge"] == headers["x-ms-request-charge"]
+            assert "X-MS-ACTIVITY-ID" in headers
             snapshots.append(headers)
             headers["x-hook-mutation"] = "local"
 
@@ -341,9 +344,6 @@ def test_supported_timeout_and_application_headers_rust(listing_case, timeout):
 
 
 @pytest.mark.parametrize("kwargs", [
-    {"timeout": 0}, {"timeout": 0.5}, {"timeout": False}, {"timeout": True},
-    {"timeout": -1}, {"timeout": float("nan")}, {"timeout": float("inf")},
-    {"timeout": "10"}, {"timeout": 2**64 - 1}, {"timeout": 10**400},
     {"initial_headers": {"User-Agent": "override"}},
     {"initial_headers": {"x-ms-version": "override"}},
     {"connection_timeout": 10}, {"unknown_option": None},
@@ -353,16 +353,12 @@ def test_unsupported_rust_options_do_not_dispatch_rust(listing_case, kwargs):
     """Options the Rust path cannot honor never produce a request, and never move the
     feed to the legacy transport.
 
-    Eighteen calls are covered: ten unusable deadlines, two driver-owned headers,
-    both raw hooks, a connect timeout, an unknown keyword, and two raw
-    request-options dictionaries.
-
     Building the pager still sends nothing. The failure comes when the customer
     starts iterating, and no request is made then either -- so the refusal costs
     nothing and the hook never runs. The fixture's own check confirms the legacy
     transport was not used as a silent substitute.
 
-    Skipped on the legacy setups, where these options are genuinely supported.
+    Skipped on the legacy setups; the fake transport does not validate keywords.
     """
     case = listing_case
     if not case.rust:
@@ -374,6 +370,30 @@ def test_unsupported_rust_options_do_not_dispatch_rust(listing_case, kwargs):
         _drain(case, pager)
     assert case.requests == []
     hook.assert_not_called()
+
+
+@pytest.mark.parametrize("operation", ["list_containers", "query_containers"])
+@pytest.mark.parametrize("name,value,error", [
+    ("max_itm_count", 10, TypeError),
+    ("unknown_option", None, TypeError),
+    ("connection_timeout", None, NotImplementedError),
+    ("retry_total", 0, NotImplementedError),
+])
+def test_rejected_container_feed_keywords_are_named_before_dispatch_rust(
+    listing_case, operation, name, value, error,
+):
+    """Keep unknown-keyword errors distinct from recognized settings unavailable on Rust."""
+    case = listing_case
+    if not case.rust:
+        pytest.skip("Rust-specific option rejection")
+    kwargs = {name: value, "logging_enable": True}
+    if operation == "query_containers":
+        kwargs["query"] = "SELECT * FROM c"
+    pager = getattr(case.database, operation)(**kwargs)
+    with pytest.raises(error, match=name):
+        _drain(case, pager)
+    assert case.requests == []
+    case.legacy_get.assert_not_called()
 
 
 @pytest.mark.parametrize("error", [

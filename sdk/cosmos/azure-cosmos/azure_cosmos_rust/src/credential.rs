@@ -91,12 +91,18 @@ impl TokenResultSender {
     }
 }
 
-struct CancelTokenRequest(Py<PyAny>);
+struct CancelTokenRequest {
+    future: Py<PyAny>,
+    cancel_on_drop: bool,
+}
 
 impl Drop for CancelTokenRequest {
     fn drop(&mut self) {
+        if !self.cancel_on_drop {
+            return;
+        }
         Python::with_gil(|py| {
-            if let Err(error) = self.0.bind(py).call_method0("cancel") {
+            if let Err(error) = self.future.bind(py).call_method0("cancel") {
                 error.print(py);
             }
         });
@@ -171,9 +177,7 @@ impl PyTokenCredential {
                         credential_error(format!("token scope fallback check failed: {e}"))
                     })?;
                     if !fallback {
-                        return Err(credential_error(format!(
-                            "token credential get_token() failed: {error}"
-                        )));
+                        return Err(AzureError::new(AzureErrorKind::Credential, error));
                     }
                     *scopes = vec![COSMOS_DEFAULT_SCOPE.to_owned()];
                 }
@@ -270,7 +274,10 @@ impl PyTokenCredential {
                 }
                 let future = credential
                     .call_method1("_start_token_request", PyTuple::new_bound(py, &scopes))?;
-                let guard = CancelTokenRequest(future.unbind());
+                let guard = CancelTokenRequest {
+                    future: future.unbind(),
+                    cancel_on_drop: true,
+                };
                 let (sender, receiver) = oneshot::channel();
                 let callback = Py::new(
                     py,
@@ -279,7 +286,7 @@ impl PyTokenCredential {
                     },
                 )?;
                 guard
-                    .0
+                    .future
                     .bind(py)
                     .call_method1("add_done_callback", (callback,))?;
                 Ok(Some((guard, receiver)))
@@ -289,10 +296,11 @@ impl PyTokenCredential {
             })?;
 
             match pending {
-                Some((_guard, receiver)) => {
+                Some((mut guard, receiver)) => {
                     let result = receiver.await.map_err(|_| {
                         credential_error("token result sender was dropped".to_string())
                     })?;
+                    guard.cancel_on_drop = false;
                     match result {
                         Ok(token) => {
                             break Python::with_gil(|py| Self::parse_token(token.bind(py)))?
@@ -306,9 +314,7 @@ impl PyTokenCredential {
                                 credential_error(format!("token scope fallback check failed: {e}"))
                             })?;
                             if !fallback {
-                                return Err(credential_error(format!(
-                                    "token credential get_token() failed: {error}"
-                                )));
+                                return Err(AzureError::new(AzureErrorKind::Credential, error));
                             }
                             scopes = vec![COSMOS_DEFAULT_SCOPE.to_owned()];
                         }
@@ -888,54 +894,90 @@ class Credential:
     #[tokio::test]
     async fn async_token_completion_converts_and_caches_result() {
         crate::test_support::prepare_python();
-        let object = Python::with_gil(|py| {
-            make_python_credential(
-                py,
-                r#"
+        for outcome in ["success", "credential_error", "invalid_token"] {
+            let object = Python::with_gil(|py| {
+                let object = make_python_credential(
+                    py,
+                    r#"
 from concurrent.futures import Future
 from types import SimpleNamespace
+class TrackingFuture(Future):
+    def __init__(self):
+        super().__init__()
+        self.cancel_calls = 0
+    def cancel(self):
+        self.cancel_calls += 1
+        return super().cancel()
 class Credential:
     def __init__(self):
         self.calls = 0
+        self.future = TrackingFuture()
     def _start_token_request(self, *scopes):
         self.calls += 1
-        future = Future()
-        future.set_result(SimpleNamespace(token="async-token", expires_on=4102444800))
-        return future
+        if self.outcome == "credential_error":
+            self.future.set_exception(ValueError("token request failed"))
+        else:
+            token = "async-token" if self.outcome == "success" else ""
+            self.future.set_result(SimpleNamespace(token=token, expires_on=4102444800))
+        return self.future
 "#,
-            )
-            .unwrap()
-        });
-        let credential = Python::with_gil(|py| PyTokenCredential::new(object.clone_ref(py)));
-        assert_eq!(
-            credential
-                .get_token_async(&["scope"])
-                .await
-                .unwrap()
-                .token
-                .secret(),
-            "async-token"
-        );
-        assert_eq!(
-            credential
-                .get_token_async(&["scope"])
-                .await
-                .unwrap()
-                .token
-                .secret(),
-            "async-token"
-        );
-        Python::with_gil(|py| {
-            assert_eq!(
+                )
+                .unwrap();
+                object.bind(py).setattr("outcome", outcome).unwrap();
                 object
-                    .bind(py)
-                    .getattr("calls")
-                    .unwrap()
-                    .extract::<u32>()
-                    .unwrap(),
-                1
-            );
-        });
+            });
+            let credential = Python::with_gil(|py| PyTokenCredential::new(object.clone_ref(py)));
+            let result = credential.get_token_async(&["scope"]).await;
+            if outcome == "success" {
+                assert_eq!(result.unwrap().token.secret(), "async-token");
+                assert_eq!(
+                    credential
+                        .get_token_async(&["scope"])
+                        .await
+                        .unwrap()
+                        .token
+                        .secret(),
+                    "async-token"
+                );
+            } else {
+                let error = result.expect_err(outcome);
+                if outcome == "credential_error" {
+                    let message = error.to_string();
+                    assert!(
+                        message.contains("ValueError: token request failed"),
+                        "missing credential error: {message}"
+                    );
+                    assert!(
+                        !message.contains("get_token()"),
+                        "error must not assume which token method was called: {message}"
+                    );
+                }
+                assert!(credential.cached_fresh_token(&["scope"]).is_none());
+            }
+            Python::with_gil(|py| {
+                assert_eq!(
+                    object
+                        .bind(py)
+                        .getattr("calls")
+                        .unwrap()
+                        .extract::<u32>()
+                        .unwrap(),
+                    1
+                );
+                assert_eq!(
+                    object
+                        .bind(py)
+                        .getattr("future")
+                        .unwrap()
+                        .getattr("cancel_calls")
+                        .unwrap()
+                        .extract::<u32>()
+                        .unwrap(),
+                    0,
+                    "{outcome}"
+                );
+            });
+        }
     }
 
     #[tokio::test]

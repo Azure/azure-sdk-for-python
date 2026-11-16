@@ -191,6 +191,9 @@ def test_page_hooks_are_lazy_independent_and_honor_false_callables_rust(query_ca
             assert results_iterator is pager
             assert len(case.requests) == len(snapshots) + 1
             assert headers is not case.connection.last_response_headers
+            assert headers.get("X-MS-ACTIVITY-ID") == headers["x-ms-activity-id"]
+            assert headers["X-Ms-Request-Charge"] == headers["x-ms-request-charge"]
+            assert "X-MS-ACTIVITY-ID" in headers
             snapshots.append(headers)
             headers["x-local"] = "mutation"
 
@@ -316,9 +319,6 @@ def test_supported_timeout_headers_and_explicit_none_query_rust(query_case, quer
 
 
 @pytest.mark.parametrize("kwargs", [
-    {"timeout": 0}, {"timeout": 0.5}, {"timeout": False}, {"timeout": True},
-    {"timeout": -1}, {"timeout": float("nan")}, {"timeout": float("inf")},
-    {"timeout": "10"}, {"timeout": 2**64 - 1}, {"timeout": 10**400},
     {"initial_headers": {"User-Agent": "override"}},
     {"initial_headers": {"x-ms-version": "override"}},
     {"connection_timeout": 10}, {"unknown_option": None},
@@ -327,10 +327,6 @@ def test_supported_timeout_headers_and_explicit_none_query_rust(query_case, quer
 def test_unsupported_rust_options_never_fall_back_rust(query_case, kwargs):
     """Options the Rust path cannot honor never produce a request, and never move the
     query to the legacy transport.
-
-    Eighteen calls are covered: ten unusable deadlines, two driver-owned headers,
-    both raw hooks, a connect timeout, an unknown keyword, and two raw
-    request-options dictionaries.
 
     The failure arrives when the customer starts iterating, and no request is
     made then either, so the refusal costs nothing and the hook never runs. The
@@ -353,10 +349,15 @@ def test_unsupported_rust_options_never_fall_back_rust(query_case, kwargs):
 @pytest.mark.parametrize("query,kwargs,error", [
     ([], {}, TypeError), (False, {}, TypeError), ({}, {}, ValueError),
     ({"query": ""}, {}, ValueError), (None, {"parameters": []}, ValueError),
+    ("", {}, ValueError), ("  ", {}, ValueError), ({"query": 123}, {}, ValueError),
+    (SQL, {"parameters": {}}, ValueError),
+    (SQL, {"parameters": [{"name": "missing-at", "value": 1}]}, ValueError),
+    (SQL, {"parameters": [{"name": "@id"}]}, ValueError),
+    ({"query": SQL, "parameters": PARAMETERS}, {"parameters": PARAMETERS}, ValueError),
+    ({"query": SQL, "unexpected": True}, {}, ValueError),
 ])
-def test_invalid_queries_preserve_errors_without_requests_rust(query_case, query, kwargs, error):
-    """A query that cannot be used is rejected without a request, with the error type
-    that fits the mistake.
+def test_invalid_queries_preserve_errors_at_construction_rust(query_case, query, kwargs, error):
+    """Reject malformed queries when constructing the pager, without sending a request.
 
     A list and a boolean are the wrong kind of thing entirely, so they are
     ``TypeError``. A dictionary with no query text, a query that is an empty
@@ -369,8 +370,90 @@ def test_invalid_queries_preserve_errors_without_requests_rust(query_case, query
     apply to.
     """
     with pytest.raises(error):
-        _drain(query_case, query_case.database.query_containers(query, **kwargs))
+        query_case.database.query_containers(query, **kwargs)
     assert query_case.requests == []
+
+
+@pytest.mark.parametrize("operation", ["list_containers", "query_containers"])
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("name,value", [
+    ("max_item_count", 0), ("max_item_count", False), ("max_item_count", True),
+    ("max_item_count", -2), ("max_item_count", 1.5), ("max_item_count", "2"),
+    ("max_item_count", 2**63),
+    ("timeout", 0), ("timeout", 0.5), ("timeout", False), ("timeout", True),
+    ("timeout", -1), ("timeout", float("nan")), ("timeout", float("inf")),
+    ("timeout", "10"), ("timeout", 2**64 - 1), ("timeout", 10**400),
+])
+def test_container_feed_invalid_settings_fail_at_construction_rust(query_case, operation, source, name, value):
+    option = "maxItemCount" if name == "max_item_count" else name
+    kwargs = {name: value} if source == "keyword" else {source: {option: value}}
+    hook = MagicMock()
+    with pytest.raises(ValueError, match=name):
+        getattr(query_case.database, operation)(
+            *([SQL] if operation == "query_containers" else []), response_hook=hook, **kwargs,
+        )
+    assert query_case.requests == []
+    hook.assert_not_called()
+
+
+@pytest.mark.parametrize("operation", ["list_containers", "query_containers"])
+@pytest.mark.parametrize("hook", [False, 0, "not callable", {}])
+def test_container_feed_invalid_hook_fails_at_construction_rust(query_case, operation, hook):
+    with pytest.raises(TypeError, match="response_hook must be callable"):
+        getattr(query_case.database, operation)(
+            *([SQL] if operation == "query_containers" else []), response_hook=hook,
+        )
+    assert query_case.requests == []
+
+
+@pytest.mark.parametrize("operation", ["list_containers", "query_containers"])
+@pytest.mark.parametrize("source", ["initial_headers", "request_options", "feed_options", "raw_option", "default"])
+def test_container_feed_invalid_header_page_size_fails_at_construction_rust(query_case, operation, source):
+    headers = {"X-MS-MAX-ITEM-COUNT": "0"}
+    if source == "default":
+        query_case.connection.default_headers.update(headers)
+        kwargs = {}
+    elif source == "initial_headers":
+        kwargs = {source: headers}
+    elif source == "raw_option":
+        kwargs = {"request_options": headers}
+    else:
+        kwargs = {source: {"initialHeaders": headers}}
+    original = copy.deepcopy(kwargs)
+    with pytest.raises(ValueError, match="max.item.count"):
+        getattr(query_case.database, operation)(
+            *([SQL] if operation == "query_containers" else []), **kwargs,
+        )
+    assert kwargs == original
+    assert query_case.requests == []
+
+
+@pytest.mark.parametrize("operation", ["list_containers", "query_containers"])
+@pytest.mark.parametrize("count", [-1, 1, 2**63 - 1])
+@pytest.mark.parametrize("typed", [False, True])
+def test_container_feed_page_size_precedence_and_snapshot_rust(query_case, operation, count, typed):
+    case = query_case
+    case.connection.default_headers["x-ms-max-item-count"] = "0"
+    options = {
+        "initialHeaders": {"X-MS-MAX-ITEM-COUNT": "-2"},
+        "X-MS-MAX-ITEM-COUNT": "invalid" if typed else str(count),
+    }
+    kwargs = {"request_options": options}
+    if typed:
+        kwargs["max_item_count"] = count
+    original = copy.deepcopy(kwargs)
+    pager = getattr(case.database, operation)(
+        *([SQL] if operation == "query_containers" else []), **kwargs,
+    )
+    assert case.requests == []
+    assert kwargs == original
+    options["X-MS-MAX-ITEM-COUNT"] = "0"
+    assert len(_drain(case, pager)) == 2
+    for prepared in case.requests:
+        if case.rust:
+            assert prepared.max_item_count == count
+        else:
+            assert str(prepared["x-ms-max-item-count"]) == str(count)
 
 
 @pytest.mark.parametrize("error", [

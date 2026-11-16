@@ -88,7 +88,10 @@ def test_expired_replacement_skips_later_phases_and_callback_rust(case, clock, p
 
 
 def test_driver_setup_uses_remaining_budget_before_lookup_rust(case, clock):
-    def setup():
+    expected_deadline = clock[0] + 1
+
+    def setup(*, deadline=None):
+        assert deadline == (None if case.asynchronous else expected_deadline)
         clock[0] += 1.25
         return "test-driver"
 
@@ -99,6 +102,7 @@ def test_driver_setup_uses_remaining_budget_before_lookup_rust(case, clock):
     write = case.install("replace_throughput", result=_response(_offer(2000)))
     with pytest.raises(CosmosClientTimeoutError):
         _complete(database.replace_throughput(2000))
+    case.acquisition.assert_called_once()
     lookup.assert_not_called()
     write.assert_not_called()
 

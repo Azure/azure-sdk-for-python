@@ -479,7 +479,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Per-call availability
-            overrides are not supported by this API. Leave this unset to use the client's configuration.
+            overrides are not supported by this API. Non-None values, including False,
+            raise TypeError before iteration. Omit this option or pass None.
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -702,9 +703,18 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         Save a bookmark only after processing its complete page. A failed pager
         must be replaced using the last delivered bookmark.
 
+        Local argument validation runs at this call; metadata and pages are
+        fetched only during iteration. A continuation supplied here determines
+        the resumed settings. If supplied later through ``by_page()``, the
+        initial call must still have valid arguments.
+
         Rust currently rejects scopes spanning multiple physical partitions
         without falling back to Python. Explicit legacy execution retains both
-        modes and cross-partition polling. Bookmarks cannot cross backends.
+        modes and cross-partition polling. Legacy V2 bookmarks for one complete
+        partition key can resume through Rust. Older raw ETag checkpoints require
+        an explicit complete ``partition_key`` and use LatestVersion mode.
+        Legacy range/prefix bookmarks remain unsupported; Rust bookmarks cannot
+        resume on legacy Python.
 
         :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
         :keyword dict[str, Any] feed_range: The feed range that is used to define the scope.
@@ -733,7 +743,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
+        :keyword Union[bool, dict[str, Any]] availability_strategy: Legacy-only cross-region request hedging.
+            Rust-backed clients reject this option with TypeError, including None and False.
             Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
             or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
@@ -742,6 +753,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword float timeout: Budget for one page fetch, including metadata, routing and internal polls.
+        :raises TypeError: ``availability_strategy`` or ``max_integrated_cache_staleness_in_ms``
+            is supplied on a Rust-backed client, including ``None`` or falsey values.
+            Change-feed calls do not accept these options.
         :returns: An Iterable of items (dicts), or change records for AllVersionsAndDeletes.
         :rtype: Iterable[dict[str, Any]]
         """
@@ -1059,6 +1073,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             return _query_items(self, kwargs)
         reject_rust_continuation_token(kwargs)
         feed_options = build_options(kwargs)
+        max_integrated_cache_staleness_in_ms = feed_options.get("maxIntegratedCacheStaleness")
+        if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
 
         # Get container property and init client container caches
         container_properties = self._get_properties_with_options(feed_options)
@@ -1078,10 +1095,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["populateQueryAdvice"] = kwargs.pop("populate_query_advice")
         if utils.valid_key_value_exist(kwargs, "enable_scan_in_query"):
             feed_options["enableScanInQuery"] = kwargs.pop("enable_scan_in_query")
-        if utils.valid_key_value_exist(kwargs, "max_integrated_cache_staleness_in_ms"):
-            max_integrated_cache_staleness_in_ms = kwargs.pop("max_integrated_cache_staleness_in_ms")
-            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
         if utils.valid_key_value_exist(kwargs, "full_text_score_scope"):
@@ -1847,6 +1860,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: An Iterable of conflicts (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
+        if uses_rust(self):
+            raise NotImplementedError("list_conflicts is not supported on Rust; no legacy fallback is available.")
         prepare_operation_kwargs(self, kwargs)
         feed_options = build_options(kwargs)
         if max_item_count is not None:
@@ -1891,6 +1906,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: An Iterable of conflicts (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
+        if uses_rust(self):
+            raise NotImplementedError("query_conflicts is not supported on Rust; no legacy fallback is available.")
         prepare_operation_kwargs(self, kwargs)
         feed_options = build_options(kwargs)
         if max_item_count is not None:
@@ -1933,6 +1950,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: A CosmosDict representing the retrieved conflict.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
+        if uses_rust(self):
+            raise NotImplementedError("get_conflict is not supported on Rust; no legacy fallback is available.")
         prepare_operation_kwargs(self, kwargs)
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
@@ -1966,6 +1985,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
         :rtype: None
         """
+        if uses_rust(self):
+            raise NotImplementedError("delete_conflict is not supported on Rust; no legacy fallback is available.")
         prepare_operation_kwargs(self, kwargs)
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
@@ -2161,7 +2182,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :type child_feed_range: dict[str, Any]
         :returns: a boolean indicating if child feed range is a subset of parent feed range
         :rtype: bool
-        :raises NotImplementedError: A supplied range has an unsupported shape or invalid bounds on the Rust path.
+        :raises ValueError: A supplied range has an invalid shape, inclusion flags, or bounds on the Rust path.
 
         .. warning::
           The structure of the dict representation of a feed range may vary, including which keys

@@ -14,9 +14,9 @@ resolve the container and obtain its ranges. Each returned pager keeps its
 own result state and available response headers. Unsupported Rust-path options
 and discovery failures do not cause fallback to the legacy path.
 
-The legacy branches remain for migration tests and unmigrated family members,
-not as another execution path for release. Partition-key conversion and
-range-subset checks share this module but have their own operation rules.
+The legacy branches require an explicitly selected legacy backend for migration
+comparisons, not fallback from Rust. Partition-key conversion and range-subset
+checks share this module but have their own operation rules.
 """
 
 from __future__ import annotations
@@ -26,9 +26,6 @@ from copy import deepcopy
 from dataclasses import replace
 import threading
 import time
-
-from azure.cosmos._backend.capabilities import OperationRouting
-
 from typing import (
     Any,
     Awaitable,
@@ -42,6 +39,7 @@ from typing import (
 from azure.core.async_paging import AsyncList
 from azure.core.utils import CaseInsensitiveDict
 
+from .._backend.capabilities import OperationRouting
 from .._backend.contracts import BackendResponse, PreparedRequest
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosAsyncItemPaged, CosmosItemPaged
@@ -50,7 +48,6 @@ from .._feed_ranges_rust_routing import (
     build_is_feed_range_subset_prepared_request,
     build_read_feed_ranges_prepared_request,
     can_use_rust_backend_for_feed_range_from_partition_key,
-    can_use_rust_backend_for_is_feed_range_subset,
     can_use_rust_backend_for_read_feed_ranges,
     parse_feed_range_from_partition_key_payload,
     parse_is_feed_range_subset_payload,
@@ -122,10 +119,9 @@ def read_feed_ranges(
     """Fetch one complete range set lazily; return copies on subsequent iteration."""
     validate_read_feed_ranges_force_refresh(force_refresh)
     kwargs = dict(kwargs)
-    selected_backend = client_connection._backend
-    backend = selected_backend
+    backend = client_connection._backend
     rust_eligible = can_use_rust_backend_for_read_feed_ranges(
-        backend=selected_backend, kwargs=kwargs
+        backend=backend, kwargs=kwargs
     )
     result = _FeedRangesResult(client_connection)
 
@@ -202,8 +198,7 @@ def feed_range_from_partition_key(
     get_legacy_epk_range: Callable[[Any], Range],
 ) -> dict[str, Any]:
     """Calculate one partition key's feed range through the selected Python backend."""
-    selected_backend = client_connection._backend
-    backend = selected_backend
+    backend = client_connection._backend
     return backend.run_operation(
         build_request=lambda: build_feed_range_from_partition_key_prepared_request(
             container_link=container_link,
@@ -212,7 +207,7 @@ def feed_range_from_partition_key(
         routing=OperationRouting(
             "feed_range_from_partition_key",
             can_use_rust_backend_for_feed_range_from_partition_key(
-                backend=selected_backend
+                backend=backend
             ),
         ),
         legacy_call=lambda: FeedRangeInternalEpk(
@@ -235,8 +230,7 @@ def is_feed_range_subset(
     child_feed_range: dict[str, Any],
 ) -> bool:
     """Compare feed ranges through the selected Python backend."""
-    selected_backend = client_connection._backend
-    backend = selected_backend
+    backend = client_connection._backend
 
     def run_legacy() -> bool:
         parent = FeedRangeInternalEpk.from_json(parent_feed_range)
@@ -248,14 +242,7 @@ def is_feed_range_subset(
             parent_feed_range=parent_feed_range,
             child_feed_range=child_feed_range,
         ),
-        routing=OperationRouting(
-            "is_feed_range_subset",
-            can_use_rust_backend_for_is_feed_range_subset(
-                backend=selected_backend,
-                parent_feed_range=parent_feed_range,
-                child_feed_range=child_feed_range,
-            ),
-        ),
+        routing=OperationRouting("is_feed_range_subset"),
         legacy_call=run_legacy,
         process_response=lambda response: parse_is_feed_range_subset_payload(
             process_backend_response(
@@ -279,10 +266,9 @@ def read_feed_ranges_async(
     """Async twin of :func:`read_feed_ranges`."""
     validate_read_feed_ranges_force_refresh(force_refresh)
     kwargs = dict(kwargs)
-    selected_backend = client_connection._backend
-    backend = selected_backend
+    backend = client_connection._backend
     rust_eligible = can_use_rust_backend_for_read_feed_ranges(
-        backend=selected_backend, kwargs=kwargs
+        backend=backend, kwargs=kwargs
     )
     result = _FeedRangesResult(client_connection)
 
@@ -365,8 +351,7 @@ async def feed_range_from_partition_key_async(
     get_legacy_epk_range: Callable[[Any], Awaitable[Range]],
 ) -> dict[str, Any]:
     """Async twin of :func:`feed_range_from_partition_key`."""
-    selected_backend = client_connection._backend
-    backend = selected_backend
+    backend = client_connection._backend
 
     def build_request() -> PreparedRequest:
         return build_feed_range_from_partition_key_prepared_request(
@@ -384,7 +369,7 @@ async def feed_range_from_partition_key_async(
         routing=OperationRouting(
             "feed_range_from_partition_key",
             can_use_rust_backend_for_feed_range_from_partition_key(
-                backend=selected_backend
+                backend=backend
             ),
         ),
         legacy_call=run_legacy,
@@ -405,8 +390,7 @@ async def is_feed_range_subset_async(
     child_feed_range: dict[str, Any],
 ) -> bool:
     """Async twin of :func:`is_feed_range_subset`."""
-    selected_backend = client_connection._backend
-    backend = selected_backend
+    backend = client_connection._backend
 
     def build_request() -> PreparedRequest:
         return build_is_feed_range_subset_prepared_request(
@@ -421,14 +405,7 @@ async def is_feed_range_subset_async(
 
     return await backend.run_operation(
         build_request=build_request,
-        routing=OperationRouting(
-            "is_feed_range_subset",
-            can_use_rust_backend_for_is_feed_range_subset(
-                backend=selected_backend,
-                parent_feed_range=parent_feed_range,
-                child_feed_range=child_feed_range,
-            ),
-        ),
+        routing=OperationRouting("is_feed_range_subset"),
         legacy_call=run_legacy,
         process_response=lambda response: parse_is_feed_range_subset_payload(
             process_backend_response(

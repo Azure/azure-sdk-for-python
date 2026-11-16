@@ -20,7 +20,7 @@ KEY = os.environ.get(
 )
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):

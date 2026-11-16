@@ -53,6 +53,7 @@ from .._helpers._request_database import (
 from .._helpers._response_parse import (
     process_backend_response,
     process_database_read_response,
+    process_delete_response,
     with_response_header_snapshot,
 )
 
@@ -175,6 +176,7 @@ class DatabaseHelper:
         database_link: Any,
         request_options: Mapping[str, Any],
         *,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
     ) -> None:
         """Delete a database.
@@ -184,6 +186,11 @@ class DatabaseHelper:
         """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
+        on_response = with_response_header_snapshot(
+            (lambda headers, _body: response_hook(headers)) if response_hook is not None else None
+        )
+        if on_response is not None:
+            operation_kwargs["response_hook"] = on_response
         self._backend.run_operation(
             build_request=lambda: build_delete_database_prepared(
                 database_link,
@@ -202,9 +209,10 @@ class DatabaseHelper:
                 options=request_options,
                 **operation_kwargs,
             ),
-            process_response=lambda response: process_backend_response(
+            process_response=lambda response: process_delete_response(
                 response,
                 client_connection=self._client_connection,
+                response_hook=on_response,
             ),
         )
 

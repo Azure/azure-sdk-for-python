@@ -114,17 +114,13 @@ pub(crate) struct DriverHandle {
 }
 
 impl DriverHandle {
-    fn from_acquired_key(key: String) -> PyResult<Self> {
-        let cache = drivers().read();
-        let entry = cache.get(&key).ok_or_else(|| {
-            PyRuntimeError::new_err("driver acquisition lost its cache entry")
-        })?;
-        Ok(Self {
+    fn from_acquired_entry(key: String, entry: &DriverEntry) -> Self {
+        Self {
             key,
             driver: Arc::clone(&entry.driver),
             fault_rules: entry.fault_rules.clone(),
             released: AtomicBool::new(false),
-        })
+        }
     }
 
     pub(crate) fn driver(&self) -> Arc<CosmosDriver> {
@@ -212,64 +208,133 @@ fn config_fingerprint_from_value(value: &serde_json::Value) -> String {
     format!("cfg:{}", fingerprint(&[value.to_string().as_bytes()]))
 }
 
-/// Explicit fields keep identity independent of object representation and field order.
-fn config_fingerprint(config: Option<&Bound<'_, PyAny>>) -> PyResult<String> {
-    macro_rules! field {
-        ($name:literal, $kind:ty) => {
-            match config {
-                Some(config) => get_config_opt::<$kind>(config, $name)?,
-                None => None,
-            }
+/// Own every setting used for driver identity and construction before releasing the GIL.
+/// Serializing this same snapshot keeps new settings in the identity automatically.
+#[derive(Default, serde::Serialize)]
+struct ClientSettings {
+    preferred_locations: Vec<String>,
+    excluded_locations: Vec<String>,
+    throttling_max_retry_count: Option<u32>,
+    throttling_max_retry_wait_time_seconds: Option<f64>,
+    hedging_threshold_ms: Option<u64>,
+    user_agent_suffix: Option<String>,
+    consistency_level: Option<String>,
+    aad_scope_override: Option<String>,
+    operation_timeout_seconds: Option<f64>,
+    fault_injection_rules: Vec<FaultRuleSettings>,
+    headers: BTreeMap<String, String>,
+}
+
+#[derive(serde::Serialize)]
+struct FaultRuleSettings {
+    id: String,
+    operation_type: String,
+    status_code: Option<u16>,
+    error_type: Option<String>,
+    response_body: Vec<u8>,
+    response_headers: BTreeMap<String, String>,
+    sub_status: u16,
+    container_id: Option<String>,
+    region: Option<String>,
+    delay_ms: u64,
+    probability: f32,
+    hit_limit: Option<u32>,
+    enabled: bool,
+}
+
+impl ClientSettings {
+    fn from_python(config: Option<&Bound<'_, PyAny>>) -> PyResult<Self> {
+        validate_runtime_configuration(config)?;
+        let Some(config) = config else {
+            return Ok(Self::default());
         };
-    }
-    let finite = |value: Option<f64>, name: &str| -> PyResult<Option<f64>> {
-        if value.is_some_and(|value| !value.is_finite()) {
-            return Err(PyValueError::new_err(format!("{name} must be finite")));
-        }
-        Ok(value.map(|value| if value == 0.0 { 0.0 } else { value }))
-    };
-    let mut rules = Vec::new();
-    if let Some((config, items)) = config.zip(field!("fault_injection_rules", Vec<PyObject>)) {
-        let py = config.py();
-        for item in items {
-            let item = item.bind(py);
-            let probability: f32 = item.getattr("probability")?.extract()?;
-            if !probability.is_finite() {
-                return Err(PyValueError::new_err("fault probability must be finite"));
+        let finite = |value: Option<f64>, name: &str| -> PyResult<Option<f64>> {
+            if value.is_some_and(|value| !value.is_finite()) {
+                return Err(PyValueError::new_err(format!("{name} must be finite")));
             }
-            rules.push(serde_json::json!({
-                "id": item.getattr("id")?.extract::<String>()?,
-                "operation_type": item.getattr("operation_type")?.extract::<String>()?,
-                "status_code": item.getattr("status_code")?.extract::<Option<u16>>()?,
-                "error_type": get_config_opt::<String>(item, "error_type")?,
-                "response_body": get_config_opt::<Vec<u8>>(item, "response_body")?.unwrap_or_default(),
-                "response_headers": fault_response_headers_from_config(item)?,
-                "sub_status": item.getattr("sub_status")?.extract::<u16>()?,
-                "container_id": item.getattr("container_id")?.extract::<Option<String>>()?,
-                "region": item.getattr("region")?.extract::<Option<String>>()?,
-                "delay_ms": item.getattr("delay_ms")?.extract::<u64>()?,
-                "probability": probability,
-                "hit_limit": item.getattr("hit_limit")?.extract::<Option<u32>>()?,
-                "enabled": item.getattr("enabled")?.extract::<bool>()?,
-            }));
+            Ok(value.map(|value| if value == 0.0 { 0.0 } else { value }))
+        };
+        let mut rules = Vec::new();
+        if let Some(items) = get_config_opt::<Vec<PyObject>>(config, "fault_injection_rules")? {
+            for item in items {
+                let item = item.bind(config.py());
+                let probability: f32 = item.getattr("probability")?.extract()?;
+                if !probability.is_finite() {
+                    return Err(PyValueError::new_err("fault probability must be finite"));
+                }
+                rules.push(FaultRuleSettings {
+                    id: item.getattr("id")?.extract()?,
+                    operation_type: item.getattr("operation_type")?.extract()?,
+                    status_code: item.getattr("status_code")?.extract()?,
+                    error_type: get_config_opt(item, "error_type")?,
+                    response_body: get_config_opt(item, "response_body")?.unwrap_or_default(),
+                    response_headers: fault_response_headers_from_config(item)?,
+                    sub_status: item.getattr("sub_status")?.extract()?,
+                    container_id: item.getattr("container_id")?.extract()?,
+                    region: item.getattr("region")?.extract()?,
+                    delay_ms: item.getattr("delay_ms")?.extract()?,
+                    probability,
+                    hit_limit: item.getattr("hit_limit")?.extract()?,
+                    enabled: item.getattr("enabled")?.extract()?,
+                });
+            }
         }
+        Ok(Self {
+            preferred_locations: get_config_opt(config, "preferred_locations")?.unwrap_or_default(),
+            excluded_locations: get_config_opt(config, "excluded_locations")?.unwrap_or_default(),
+            throttling_max_retry_count: get_numeric_config_opt(
+                config,
+                "throttling_max_retry_count",
+            )?,
+            throttling_max_retry_wait_time_seconds: finite(
+                get_numeric_config_opt(config, "throttling_max_retry_wait_time_seconds")?,
+                "throttling_max_retry_wait_time_seconds",
+            )?,
+            hedging_threshold_ms: get_config_opt(config, "hedging_threshold_ms")?,
+            user_agent_suffix: get_config_opt::<String>(config, "user_agent_suffix")?
+                .filter(|value| !value.is_empty()),
+            consistency_level: get_config_opt(config, "consistency_level")?,
+            aad_scope_override: get_config_opt::<String>(config, "aad_scope_override")?
+                .filter(|value| !value.is_empty()),
+            operation_timeout_seconds: finite(
+                get_numeric_config_opt(config, "operation_timeout_seconds")?,
+                "operation_timeout_seconds",
+            )?,
+            fault_injection_rules: rules,
+            headers: client_headers_from_config(Some(config))?,
+        })
     }
-    let value = serde_json::json!({
-        "preferred_locations": field!("preferred_locations", Vec<String>).unwrap_or_default(),
-        "excluded_locations": field!("excluded_locations", Vec<String>).unwrap_or_default(),
-        "throttling_max_retry_count": field!("throttling_max_retry_count", u32),
-        "throttling_max_retry_wait_time_seconds": finite(field!("throttling_max_retry_wait_time_seconds", f64), "throttling_max_retry_wait_time_seconds")?,
-        "hedging_threshold_ms": field!("hedging_threshold_ms", u64),
-        "user_agent_suffix": field!("user_agent_suffix", String).filter(|value| !value.is_empty()),
-        "consistency_level": field!("consistency_level", String),
-        "aad_scope_override": field!("aad_scope_override", String).filter(|value| !value.is_empty()),
-        "proxy_allowed": field!("proxy_allowed", bool),
-        "connection_timeout_seconds": finite(field!("connection_timeout_seconds", f64), "connection_timeout_seconds")?,
-        "operation_timeout_seconds": finite(field!("operation_timeout_seconds", f64), "operation_timeout_seconds")?,
-        "fault_injection_rules": rules,
-        "headers": client_headers_from_config(config)?,
-    });
-    Ok(config_fingerprint_from_value(&value))
+
+    fn fingerprint(&self) -> PyResult<String> {
+        let value = serde_json::to_value(self).map_err(|error| {
+            PyRuntimeError::new_err(format!("invalid client settings identity: {error}"))
+        })?;
+        Ok(config_fingerprint_from_value(&value))
+    }
+}
+
+fn get_numeric_config_opt<'py, T>(config: &Bound<'py, PyAny>, name: &str) -> PyResult<Option<T>>
+where
+    T: FromPyObject<'py>,
+{
+    let Some(value) = get_config_opt::<PyObject>(config, name)? else {
+        return Ok(None);
+    };
+    let value = value.bind(config.py());
+    if value.is_instance_of::<pyo3::types::PyBool>() {
+        let name = if name == "operation_timeout_seconds" {
+            "timeout"
+        } else {
+            name
+        };
+        return Err(PyValueError::new_err(format!(
+            "{name} must be numeric, not bool"
+        )));
+    }
+    value
+        .extract()
+        .map(Some)
+        .map_err(|error| PyValueError::new_err(format!("client config field {name:?}: {error}")))
 }
 
 /// Length-prefix each part and expose only the final opaque digest.
@@ -293,10 +358,10 @@ fn account_scope(py: Python<'_>, endpoint: &str) -> PyResult<String> {
 
 /// Compute the driver identity without initializing RuntimeContext,
 /// acquiring a CosmosDriver reference, or asking the credential for a token.
-fn driver_identity(
+fn driver_identity_from_settings(
     endpoint: &str,
     master_key: Option<&str>,
-    config: Option<&Bound<'_, PyAny>>,
+    settings: &ClientSettings,
     credential: Option<&Bound<'_, PyAny>>,
 ) -> PyResult<String> {
     validate_auth_inputs(master_key, credential)?;
@@ -315,7 +380,7 @@ fn driver_identity(
     Ok(compose_cache_key(
         endpoint_url.as_str(),
         &credential_fp,
-        &config_fingerprint(config)?,
+        &settings.fingerprint()?,
     ))
 }
 
@@ -385,37 +450,36 @@ impl Drop for DriverCreation {
     }
 }
 
-fn acquire_cached_driver(key: &str) -> bool {
+fn acquire_cached_driver(key: &str) -> Option<DriverHandle> {
     let mut cache = drivers().write();
-    if let Some(entry) = cache.get_mut(key) {
-        entry.acquisition_count += 1;
-        return true;
-    }
-    false
+    let entry = cache.get_mut(key)?;
+    entry.acquisition_count += 1;
+    Some(DriverHandle::from_acquired_entry(key.to_owned(), entry))
 }
 
-fn acquire_driver_key_with(
+fn acquire_driver_handle_with(
     py: Python<'_>,
     key: String,
     create: impl FnOnce() -> PyResult<DriverEntry>,
-) -> PyResult<String> {
-    if acquire_cached_driver(&key) {
-        return Ok(key);
+) -> PyResult<DriverHandle> {
+    if let Some(handle) = acquire_cached_driver(&key) {
+        return Ok(handle);
     }
 
     let creation = driver_creation(&key);
     // Release the GIL while waiting: the current creator may need Python callbacks.
     // The borrowed guard drops before `creation`, keeping its registry entry alive.
     let _guard = py.allow_threads(|| runtime_context().tokio_rt.block_on(creation.lock.lock()));
-    if acquire_cached_driver(&key) {
-        return Ok(key);
+    if let Some(handle) = acquire_cached_driver(&key) {
+        return Ok(handle);
     }
 
     // Failure leaves no cache entry or acquisition count. Unlocking lets a waiter retry.
     // Only this key is locked during creation; unrelated keys and releases can proceed.
     let entry = create()?;
-    drivers().write().insert(key.clone(), entry);
-    Ok(key)
+    let handle = DriverHandle::from_acquired_entry(key.clone(), &entry);
+    drivers().write().insert(key, entry);
+    Ok(handle)
 }
 
 pub(crate) fn runtime_context() -> &'static RuntimeContext {
@@ -495,7 +559,7 @@ pub(crate) fn acquire_driver_handle(
     let endpoint_url = Url::parse(endpoint)
         .map_err(|e| PyValueError::new_err(format!("invalid endpoint URL: {e}")))?;
 
-    validate_runtime_configuration(config)?;
+    let settings = ClientSettings::from_python(config)?;
     let runtime_ctx = runtime_context();
     let selected_runtime = match runtime {
         Some(runtime) => runtime.clone(),
@@ -504,21 +568,16 @@ pub(crate) fn acquire_driver_handle(
 
     let key = format!(
         "{}:runtime-{}",
-        driver_identity(endpoint, master_key, config, credential)?,
+        driver_identity_from_settings(endpoint, master_key, &settings, credential)?,
         selected_runtime.id
     );
 
-    let key = acquire_driver_key_with(py, key, || {
+    acquire_driver_handle_with(py, key, || {
         // Python clients default to no hedging, even when no config was prepared.
-        let operation_options = operation_options_from_config(config)?;
-        let (preferred_regions, user_agent_suffix, fault_rules) = match config {
-            Some(client_config) => (
-                preferred_regions_from_config(client_config)?,
-                user_agent_suffix_from_config(client_config)?,
-                fault_rules_from_config(client_config)?,
-            ),
-            None => (Vec::new(), None, Vec::new()),
-        };
+        let operation_options = operation_options_from_settings(&settings)?;
+        let preferred_regions = preferred_regions_from_settings(&settings)?;
+        let user_agent_suffix = user_agent_suffix_from_settings(&settings)?;
+        let fault_rules = fault_rules_from_settings(&settings)?;
 
         // No matching CosmosDriver was cached. Prepare the account without holding the
         // cache lock; token authentication uses PyTokenCredential to call Python.
@@ -526,23 +585,19 @@ pub(crate) fn acquire_driver_handle(
             Some(token_credential) => {
                 let py_credential: Py<PyAny> = token_credential.clone().unbind();
                 let account_scope = account_scope(py, endpoint)?;
-                let override_scope = config
-                    .map(|config| get_config_opt::<String>(config, "aad_scope_override"))
-                    .transpose()?
-                    .flatten()
-                    .filter(|value| !value.is_empty());
                 AccountReference::with_credential(
                     endpoint_url,
                     Arc::new(PyTokenCredential::for_account(
                         py_credential,
                         account_scope,
-                        override_scope,
+                        settings.aad_scope_override.clone(),
                     )),
                 )
             }
             None => {
-                let key = master_key.ok_or_else(|| PyValueError::new_err(AUTH_REQUIRED_ERROR))?;
-                AccountReference::with_account_key(endpoint_url, key.to_string())
+                let account_key =
+                    master_key.ok_or_else(|| PyValueError::new_err(AUTH_REQUIRED_ERROR))?;
+                AccountReference::with_account_key(endpoint_url, account_key.to_string())
             }
         };
 
@@ -585,8 +640,7 @@ pub(crate) fn acquire_driver_handle(
                 .collect(),
             acquisition_count: 1,
         })
-    })?;
-    DriverHandle::from_acquired_key(key)
+    })
 }
 
 pub(crate) fn partition_failover_options() -> PyResult<PartitionFailoverOptions> {
@@ -601,22 +655,14 @@ pub(crate) fn partition_failover_options() -> PyResult<PartitionFailoverOptions>
 /// Convert PreparedClientConfig.preferred_locations into Rust driver Region values.
 /// For example, the tuple ("West US",) supplies one Region::from("West US").
 /// Reject blank names; a missing attribute or None yields an empty list.
-fn preferred_regions_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Region>> {
-    let value = match config.getattr("preferred_locations") {
-        Ok(value) => value,
-        Err(err) if err.is_instance_of::<PyAttributeError>(config.py()) => return Ok(Vec::new()),
-        Err(err) => return Err(err),
-    };
-    if value.is_none() {
-        return Ok(Vec::new());
-    }
-    let region_names: Vec<String> = value.extract().map_err(|e| {
-        PyValueError::new_err(format!(
-            "preferred_locations must be a sequence of region-name strings: {e}"
-        ))
-    })?;
-    validate_region_names(&region_names)?;
-    Ok(region_names.into_iter().map(Region::from).collect())
+fn preferred_regions_from_settings(settings: &ClientSettings) -> PyResult<Vec<Region>> {
+    validate_region_names(&settings.preferred_locations)?;
+    Ok(settings
+        .preferred_locations
+        .iter()
+        .cloned()
+        .map(Region::from)
+        .collect())
 }
 
 fn validate_region_names(names: &[String]) -> PyResult<()> {
@@ -632,14 +678,11 @@ fn validate_region_names(names: &[String]) -> PyResult<()> {
 /// Missing, None, or empty means no suffix. Use try_new so a value rejected by
 /// the Rust driver's length or character rules raises ValueError rather than
 /// panicking across the binding call.
-fn user_agent_suffix_from_config(config: &Bound<'_, PyAny>) -> PyResult<Option<UserAgentSuffix>> {
-    let suffix = match get_config_opt::<String>(config, "user_agent_suffix")? {
+fn user_agent_suffix_from_settings(settings: &ClientSettings) -> PyResult<Option<UserAgentSuffix>> {
+    let suffix = match &settings.user_agent_suffix {
         Some(suffix) => suffix,
         None => return Ok(None),
     };
-    if suffix.is_empty() {
-        return Ok(None);
-    }
     match UserAgentSuffix::try_new(suffix.as_str()) {
         Some(value) => Ok(Some(value)),
         None => Err(PyValueError::new_err(format!(
@@ -674,25 +717,11 @@ fn fault_response_headers_from_config(rule: &Bound<'_, PyAny>) -> PyResult<BTree
     Ok(headers)
 }
 
-fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultInjectionRule>>> {
-    let value = match config.getattr("fault_injection_rules") {
-        Ok(value) => value,
-        Err(err) => {
-            if err.is_instance_of::<PyAttributeError>(config.py()) {
-                return Ok(Vec::new());
-            }
-            return Err(err);
-        }
-    };
-    if value.is_none() {
-        return Ok(Vec::new());
-    }
-
+fn fault_rules_from_settings(settings: &ClientSettings) -> PyResult<Vec<Arc<FaultInjectionRule>>> {
     let mut rules = Vec::new();
-    for item in value.iter()? {
-        let item = item?;
-        let id: String = item.getattr("id")?.extract()?;
-        let operation_name: String = item.getattr("operation_type")?.extract()?;
+    for item in &settings.fault_injection_rules {
+        let id = &item.id;
+        let operation_name = &item.operation_type;
         let mut condition = FaultInjectionConditionBuilder::new();
         if operation_name != "All" {
             let operation_type = operation_name.parse::<FaultOperationType>().map_err(|e| {
@@ -702,18 +731,18 @@ fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultI
             })?;
             condition = condition.with_operation_type(operation_type);
         }
-        if let Some(container_id) = item.getattr("container_id")?.extract::<Option<String>>()? {
-            condition = condition.with_container_id(container_id);
+        if let Some(container_id) = &item.container_id {
+            condition = condition.with_container_id(container_id.clone());
         }
-        if let Some(region) = item.getattr("region")?.extract::<Option<String>>()? {
-            condition = condition.with_region(Region::from(region));
+        if let Some(region) = &item.region {
+            condition = condition.with_region(Region::from(region.clone()));
         }
 
-        let status_code: Option<u16> = item.getattr("status_code")?.extract()?;
-        let sub_status: u16 = item.getattr("sub_status")?.extract()?;
-        let error_type = get_config_opt::<String>(&item, "error_type")?;
-        let response_body = get_config_opt::<Vec<u8>>(&item, "response_body")?.unwrap_or_default();
-        let response_headers = fault_response_headers_from_config(&item)?;
+        let status_code = item.status_code;
+        let sub_status = item.sub_status;
+        let error_type = &item.error_type;
+        let response_body = &item.response_body;
+        let response_headers = &item.response_headers;
         if error_type.is_some() && !response_body.is_empty() {
             return Err(PyValueError::new_err(
                 "fault rule response_body requires status_code, not error_type",
@@ -724,8 +753,8 @@ fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultI
                 "fault rule response_headers requires status_code, not error_type",
             ));
         }
-        let delay_ms: u64 = item.getattr("delay_ms")?.extract()?;
-        let probability: f32 = item.getattr("probability")?.extract()?;
+        let delay_ms = item.delay_ms;
+        let probability = item.probability;
         let mut result = FaultInjectionResultBuilder::new().with_probability(probability);
         result = match (status_code, error_type.as_deref()) {
             (Some(status), None) if (100..=599).contains(&status) => {
@@ -735,9 +764,9 @@ fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultI
                     response = response.with_sub_status(sub_status);
                 }
                 for (name, value) in response_headers {
-                    response = response.with_header(name, value);
+                    response = response.with_header(name.clone(), value.clone());
                 }
-                result.with_custom_response(response.with_body(response_body).build())
+                result.with_custom_response(response.with_body(response_body.clone()).build())
             }
             (None, Some("ConnectionError")) if sub_status == 0 => {
                 result.with_error(FaultInjectionErrorType::ConnectionError)
@@ -756,13 +785,13 @@ fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultI
             result = result.with_delay(Duration::from_millis(delay_ms));
         }
 
-        let mut rule_builder =
-            FaultInjectionRuleBuilder::new(id, result.build()).with_condition(condition.build());
-        if let Some(hit_limit) = item.getattr("hit_limit")?.extract::<Option<u32>>()? {
+        let mut rule_builder = FaultInjectionRuleBuilder::new(id.clone(), result.build())
+            .with_condition(condition.build());
+        if let Some(hit_limit) = item.hit_limit {
             rule_builder = rule_builder.with_hit_limit(hit_limit);
         }
         let rule = Arc::new(rule_builder.build());
-        if !item.getattr("enabled")?.extract::<bool>()? {
+        if !item.enabled {
             rule.disable();
         }
         rules.push(rule);
@@ -778,65 +807,47 @@ fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultI
 /// Missing config or threshold means Python's default: hedging disabled.
 /// Other absent fields keep the driver's defaults. An enabled per-operation
 /// strategy can still override this client-level strategy.
-fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<OperationOptions> {
+fn operation_options_from_settings(settings: &ClientSettings) -> PyResult<OperationOptions> {
     let mut builder =
         OperationOptionsBuilder::new().with_availability_strategy(AvailabilityStrategy::Disabled);
-    let Some(config) = config else {
-        return Ok(builder.build());
-    };
-    if let Some(value) = get_config_opt::<PyObject>(config, "operation_timeout_seconds")? {
-        if value.bind(config.py()).is_instance_of::<pyo3::types::PyBool>() {
-            return Err(PyValueError::new_err("timeout must be numeric, not bool"));
-        }
-        let seconds: f64 = value.bind(config.py()).extract()?;
+    if let Some(seconds) = settings.operation_timeout_seconds {
         let timeout = Duration::try_from_secs_f64(seconds)
             .map_err(|_| PyValueError::new_err("timeout must be finite seconds within range"))?;
         if timeout < Duration::from_secs(1) {
             return Err(PyValueError::new_err("timeout must be at least one second"));
         }
-        builder = builder.with_end_to_end_latency_policy(EndToEndOperationLatencyPolicy::new(timeout));
+        builder =
+            builder.with_end_to_end_latency_policy(EndToEndOperationLatencyPolicy::new(timeout));
     }
-    let headers = client_headers_from_config(Some(config))?;
+    let headers = &settings.headers;
     if !headers.is_empty() {
         builder = builder.with_custom_headers(
             headers
-                .into_iter()
-                .map(|(name, value)| (HeaderName::from(name), HeaderValue::from(value)))
+                .iter()
+                .map(|(name, value)| {
+                    (
+                        HeaderName::from(name.clone()),
+                        HeaderValue::from(value.clone()),
+                    )
+                })
                 .collect(),
         );
     }
 
     // Convert excluded_locations to the same ExcludedRegions type used by
     // per-operation settings.
-    if let Some(region_names) = get_config_opt::<Vec<String>>(config, "excluded_locations")? {
-        validate_region_names(&region_names)?;
-        if !region_names.is_empty() {
-            builder = builder
-                .with_excluded_regions(region_names.into_iter().collect::<ExcludedRegions>());
-        }
+    let region_names = &settings.excluded_locations;
+    validate_region_names(region_names)?;
+    if !region_names.is_empty() {
+        builder = builder
+            .with_excluded_regions(region_names.iter().cloned().collect::<ExcludedRegions>());
     }
 
     // throttling_max_retry_count / _wait_time_seconds -> ThrottlingRetryOptions.
     // Set only when at least one field was supplied; otherwise leave this option
     // to the driver defaults.
-    for name in [
-        "throttling_max_retry_count",
-        "throttling_max_retry_wait_time_seconds",
-    ] {
-        if let Some(value) = get_config_opt::<PyObject>(config, name)? {
-            if value
-                .bind(config.py())
-                .is_instance_of::<pyo3::types::PyBool>()
-            {
-                return Err(PyValueError::new_err(format!(
-                    "{name} must be numeric, not bool"
-                )));
-            }
-        }
-    }
-    let max_retry_count = get_config_opt::<u32>(config, "throttling_max_retry_count")?;
-    let max_retry_wait_seconds =
-        get_config_opt::<f64>(config, "throttling_max_retry_wait_time_seconds")?;
+    let max_retry_count = settings.throttling_max_retry_count;
+    let max_retry_wait_seconds = settings.throttling_max_retry_wait_time_seconds;
     if max_retry_count.is_some() || max_retry_wait_seconds.is_some() {
         let mut throttle = ThrottlingRetryOptionsBuilder::new();
         if let Some(count) = max_retry_count {
@@ -856,7 +867,7 @@ fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<
     // hedging threshold -> AvailabilityStrategy::Hedging. Present only when the
     // customer app enabled hedging (availability_strategy True / dict). The
     // Python wrapper validates threshold_ms > 0; reject an invalid hand-built config too.
-    if let Some(threshold_ms) = get_config_opt::<u64>(config, "hedging_threshold_ms")? {
+    if let Some(threshold_ms) = settings.hedging_threshold_ms {
         let threshold = HedgeThreshold::new(Duration::from_millis(threshold_ms))
             .ok_or_else(|| PyValueError::new_err("hedging_threshold_ms must be positive"))?;
         builder = builder.with_availability_strategy(AvailabilityStrategy::Hedging(
@@ -867,9 +878,9 @@ fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<
     // consistency_level -> ReadConsistencyStrategy. Set only when the customer app
     // supplied a non-empty value. Reject unknown names even if Python
     // preparation was bypassed.
-    if let Some(level) = get_config_opt::<String>(config, "consistency_level")? {
+    if let Some(level) = &settings.consistency_level {
         if !level.is_empty() {
-            match read_consistency_from_str(&level) {
+            match read_consistency_from_str(level) {
                 Some(strategy) => {
                     builder = builder.with_read_consistency_strategy(strategy);
                 }
@@ -1018,6 +1029,41 @@ pub(crate) fn _debug_cached_account_regions(
 }
 
 #[cfg(test)]
+fn config_fingerprint(config: Option<&Bound<'_, PyAny>>) -> PyResult<String> {
+    ClientSettings::from_python(config)?.fingerprint()
+}
+
+#[cfg(test)]
+fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<OperationOptions> {
+    operation_options_from_settings(&ClientSettings::from_python(config)?)
+}
+
+#[cfg(test)]
+fn preferred_regions_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Region>> {
+    preferred_regions_from_settings(&ClientSettings::from_python(Some(config))?)
+}
+
+#[cfg(test)]
+fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultInjectionRule>>> {
+    fault_rules_from_settings(&ClientSettings::from_python(Some(config))?)
+}
+
+#[cfg(test)]
+fn driver_identity(
+    endpoint: &str,
+    master_key: Option<&str>,
+    config: Option<&Bound<'_, PyAny>>,
+    credential: Option<&Bound<'_, PyAny>>,
+) -> PyResult<String> {
+    driver_identity_from_settings(
+        endpoint,
+        master_key,
+        &ClientSettings::from_python(config)?,
+        credential,
+    )
+}
+
+#[cfg(test)]
 mod tests {
     use super::{
         apply_close, compose_cache_key, config_fingerprint_from_value,
@@ -1027,6 +1073,154 @@ mod tests {
         AUTH_EXCLUSIVE_ERROR,
         AUTH_REQUIRED_ERROR,
     };
+
+    #[test]
+    fn driver_acquisition_reads_settings_once_on_cache_miss_and_hit() {
+        use crate::driver_runtime::RuntimeHandle;
+        use azure_data_cosmos_driver::in_memory_emulator::{
+            InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion,
+        };
+        use std::sync::Arc;
+        use url::Url;
+
+        crate::test_support::prepare_python();
+        let endpoint = Url::parse("https://settings-snapshot.emulator.local").unwrap();
+        let account =
+            VirtualAccountConfig::new(vec![VirtualRegion::new("East US", endpoint.clone())])
+                .unwrap();
+        let emulator = Arc::new(InMemoryEmulatorHttpClient::new(account));
+        let runtime = super::runtime_context()
+            .tokio_rt
+            .block_on(emulator.runtime_builder().build())
+            .unwrap();
+        Python::with_gil(|py| {
+            let runtime = Py::new(py, RuntimeHandle::new(runtime)).unwrap();
+            let module = PyModule::from_code_bound(
+                py,
+                r#"
+from types import SimpleNamespace
+class ReadOnce(SimpleNamespace):
+    def __getattribute__(self, name):
+        if not name.startswith("_"):
+            reads = super().__getattribute__("_reads")
+            assert name not in reads, f"{name} read twice"
+            reads.add(name)
+        return super().__getattribute__(name)
+rule = ReadOnce(
+    _reads=set(), id="snapshot", operation_type="ReadItem", status_code=429,
+    sub_status=0, container_id=None, region=None, delay_ms=0, probability=1.0,
+    hit_limit=None, enabled=False, response_headers={"x-test": "snapshot"},
+    response_body=b"snapshot")
+config = ReadOnce(
+    _reads=set(), preferred_locations=("East US",), excluded_locations=(),
+    throttling_max_retry_count=3, throttling_max_retry_wait_time_seconds=2.5,
+    hedging_threshold_ms=500, user_agent_suffix="snapshot", consistency_level="Session",
+    aad_scope_override="https://snapshot.invalid/.default", operation_timeout_seconds=30,
+    headers={"x-test": "snapshot"}, fault_injection_rules=(rule,))
+"#,
+                "settings_snapshot.py",
+                "settings_snapshot",
+            )
+            .unwrap();
+            let config = module.getattr("config").unwrap();
+            let rule = module.getattr("rule").unwrap();
+            let acquire = || {
+                super::acquire_driver_handle(
+                    py,
+                    endpoint.as_str(),
+                    Some("ZW11bGF0b3Ita2V5"),
+                    Some(&config),
+                    None,
+                    Some(runtime.borrow(py)),
+                )
+                .unwrap()
+            };
+            let first = acquire();
+            config
+                .getattr("_reads")
+                .unwrap()
+                .call_method0("clear")
+                .unwrap();
+            rule.getattr("_reads")
+                .unwrap()
+                .call_method0("clear")
+                .unwrap();
+            let second = acquire();
+            assert!(Arc::ptr_eq(&first.driver, &second.driver));
+            super::release_driver_handle(&first).unwrap();
+            super::release_driver_handle(&second).unwrap();
+        });
+    }
+
+    #[test]
+    fn settings_snapshot_keeps_identity_and_driver_options_together_after_python_mutation() {
+        crate::test_support::prepare_python();
+        Python::with_gil(|py| {
+            let module = PyModule::from_code_bound(
+                py,
+                r#"
+from types import SimpleNamespace
+rule = SimpleNamespace(
+    id="snapshot", operation_type="ReadItem", status_code=429, sub_status=0,
+    container_id=None, region=None, delay_ms=0, probability=1.0,
+    hit_limit=None, enabled=False, response_headers={"x-test": "original"})
+config = SimpleNamespace(
+    preferred_locations=["East US"], headers={"x-test": "original"},
+    throttling_max_retry_count=3, aad_scope_override="https://original.invalid/.default",
+    fault_injection_rules=[rule])
+def mutate():
+    config.preferred_locations[:] = ["West US"]
+    config.headers["x-test"] = "changed"
+    config.throttling_max_retry_count = 9
+    config.aad_scope_override = "https://changed.invalid/.default"
+    rule.response_headers["x-test"] = "changed"
+    rule.enabled = True
+    config.fault_injection_rules.clear()
+"#,
+                "settings_mutation.py",
+                "settings_mutation",
+            )
+            .unwrap();
+            let config = module.getattr("config").unwrap();
+            let settings = super::ClientSettings::from_python(Some(&config)).unwrap();
+            let fingerprint = settings.fingerprint().unwrap();
+            module.getattr("mutate").unwrap().call0().unwrap();
+            assert_eq!(fingerprint, settings.fingerprint().unwrap());
+            assert_ne!(
+                fingerprint,
+                super::config_fingerprint(Some(&config)).unwrap()
+            );
+            assert_eq!(
+                super::preferred_regions_from_settings(&settings).unwrap(),
+                vec![super::Region::from("East US")],
+            );
+            assert_eq!(
+                settings.aad_scope_override.as_deref(),
+                Some("https://original.invalid/.default")
+            );
+            let options = super::operation_options_from_settings(&settings).unwrap();
+            let header = azure_core::http::headers::HeaderName::from_static("x-test");
+            assert_eq!(
+                options.custom_headers.unwrap()[&header].as_str(),
+                "original"
+            );
+            assert_eq!(
+                options.throttling_retry_options.unwrap().max_retry_count,
+                Some(3)
+            );
+            let rules = super::fault_rules_from_settings(&settings).unwrap();
+            assert!(!rules[0].is_enabled());
+            assert_eq!(
+                rules[0]
+                    .result()
+                    .custom_response()
+                    .unwrap()
+                    .headers()
+                    .get_optional_str(&header),
+                Some("original"),
+            );
+        });
+    }
 
     #[test]
     fn fault_wait_budget_config_preserves_fractional_seconds() {
@@ -1424,18 +1618,16 @@ class ExplicitNone:
             })
             .collect();
         let key = "fault-rule-toggle-scoping-test";
-        super::drivers().write().insert(
-            key.into(),
-            super::DriverEntry {
-                driver,
-                fault_rules: rules
-                    .iter()
-                    .map(|rule| (rule.id().to_owned(), Arc::clone(rule)))
-                    .collect::<HashMap<_, _>>(),
-                acquisition_count: 1,
-            },
-        );
-        let handle = super::DriverHandle::from_acquired_key(key.to_owned()).unwrap();
+        let entry = super::DriverEntry {
+            driver,
+            fault_rules: rules
+                .iter()
+                .map(|rule| (rule.id().to_owned(), Arc::clone(rule)))
+                .collect::<HashMap<_, _>>(),
+            acquisition_count: 1,
+        };
+        let handle = super::DriverHandle::from_acquired_entry(key.to_owned(), &entry);
+        super::drivers().write().insert(key.into(), entry);
         for enabled in [true, true, false, false] {
             super::_debug_set_fault_injection_rule_enabled(&handle, "selected", enabled).unwrap();
             assert_eq!(rules[0].is_enabled(), enabled);
@@ -1720,8 +1912,6 @@ variants = [
     Config(hedging_threshold_ms=250),
     Config(user_agent_suffix="checkout-west"),
     Config(consistency_level="Eventual"),
-    Config(proxy_allowed=True),
-    Config(connection_timeout_seconds=1.5),
     Config(fault_injection_rules=(SimpleNamespace(
         id="rule", operation_type="CreateItem", status_code=502, sub_status=0,
         container_id=None, region=None, delay_ms=0, probability=1.0,
@@ -2031,8 +2221,8 @@ class Config:
 
     mod driver_creation_tests {
         use super::super::{
-            acquire_driver_key_with, driver_creation, driver_creations, drivers,
-            release_driver_key, runtime_context, DriverCreation, DriverEntry,
+            acquire_driver_handle_with, driver_creation, driver_creations, drivers,
+            runtime_context, DriverCreation, DriverEntry, DriverHandle,
         };
         use azure_data_cosmos_driver::{
             in_memory_emulator::{InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion},
@@ -2083,8 +2273,8 @@ class Config:
         }
 
         fn spawn_acquisition(
-            task: impl FnOnce(Python<'_>) -> PyResult<String> + Send + 'static,
-        ) -> (JoinHandle<PyResult<String>>, Receiver<()>) {
+            task: impl FnOnce(Python<'_>) -> PyResult<DriverHandle> + Send + 'static,
+        ) -> (JoinHandle<PyResult<DriverHandle>>, Receiver<()>) {
             let (done, finished) = mpsc::channel();
             let worker = thread::spawn(move || {
                 let result = Python::with_gil(task);
@@ -2094,7 +2284,9 @@ class Config:
             (worker, finished)
         }
 
-        fn finish(worker: (JoinHandle<PyResult<String>>, Receiver<()>)) -> PyResult<String> {
+        fn finish(
+            worker: (JoinHandle<PyResult<DriverHandle>>, Receiver<()>),
+        ) -> PyResult<DriverHandle> {
             worker
                 .1
                 .recv_timeout(WAIT)
@@ -2149,7 +2341,7 @@ class Config:
             let (started, first_started) = mpsc::channel();
             let (resume, first_resume) = mpsc::channel();
             let first = spawn_acquisition(move |py| {
-                let result = acquire_driver_key_with(py, key.to_owned(), || {
+                let result = acquire_driver_handle_with(py, key.to_owned(), || {
                     first_calls.fetch_add(1, Ordering::SeqCst);
                     started.send(()).unwrap();
                     py.allow_threads(move || first_resume.recv_timeout(WAIT))
@@ -2162,14 +2354,14 @@ class Config:
                 if matches!(first_action, FirstAcquisition::Release) {
                     // Keep the GIL until release, so B cannot claim the cached entry.
                     // This models an async worker releasing a late handle after close.
-                    release_driver_key(result.as_ref().unwrap()).unwrap();
+                    result.as_ref().unwrap().release();
                 }
                 result
             });
             first_started.recv_timeout(WAIT).unwrap();
             let second_calls = Arc::clone(&calls);
             let second = spawn_acquisition(move |py| {
-                acquire_driver_key_with(py, key.to_owned(), || {
+                acquire_driver_handle_with(py, key.to_owned(), || {
                     second_calls.fetch_add(1, Ordering::SeqCst);
                     Ok(second_entry)
                 })
@@ -2180,27 +2372,35 @@ class Config:
             if matches!(first_action, FirstAcquisition::Retain) {
                 let other_entry = entry();
                 let other = spawn_acquisition(move |py| {
-                    acquire_driver_key_with(py, "independent-driver-key".to_owned(), || {
+                    acquire_driver_handle_with(py, "independent-driver-key".to_owned(), || {
                         Ok(other_entry)
                     })
                 });
-                let other_key = finish(other).unwrap();
-                release_driver_key(&other_key).unwrap();
-                assert!(!driver_creations().read().contains_key(&other_key));
+                let other_handle = finish(other).unwrap();
+                other_handle.release();
+                assert!(!driver_creations()
+                    .read()
+                    .contains_key(other_handle.cache_key()));
             }
 
             resume.send(()).unwrap();
             let first_result = finish(first);
-            let second_key = finish(second).unwrap();
-            assert_eq!(second_key, key);
-            if matches!(first_action, FirstAcquisition::Fail) {
+            let second_handle = finish(second).unwrap();
+            assert_eq!(second_handle.cache_key(), key);
+            let first_handle = if matches!(first_action, FirstAcquisition::Fail) {
                 assert_eq!(
-                    first_result.unwrap_err().to_string(),
+                    first_result
+                        .err()
+                        .expect("first acquisition must fail")
+                        .to_string(),
                     "RuntimeError: injected driver init failure"
                 );
+                None
             } else {
-                assert_eq!(first_result.unwrap(), key);
-            }
+                let handle = first_result.unwrap();
+                assert_eq!(handle.cache_key(), key);
+                Some(handle)
+            };
             let retained_first = matches!(first_action, FirstAcquisition::Retain);
             assert_eq!(
                 calls.load(Ordering::SeqCst),
@@ -2213,20 +2413,25 @@ class Config:
             assert!(!driver_creations().read().contains_key(key));
 
             Python::with_gil(|py| {
-                let reused_key = acquire_driver_key_with(py, key.to_owned(), || {
+                let reused_handle = acquire_driver_handle_with(py, key.to_owned(), || {
                     panic!("a cache hit must not invoke the factory")
                 })
                 .unwrap();
-                assert_eq!(reused_key, key);
-                release_driver_key(&reused_key).unwrap();
+                assert_eq!(reused_handle.cache_key(), key);
+                assert!(Arc::ptr_eq(&reused_handle.driver, &second_handle.driver));
+                reused_handle.release();
             });
-            if retained_first {
-                release_driver_key(key).unwrap();
+            if let Some(handle) = first_handle {
+                if retained_first {
+                    assert!(Arc::ptr_eq(&handle.driver, &second_handle.driver));
+                }
+                handle.release();
             }
-            let operation_driver = Arc::clone(&drivers().read().get(key).unwrap().driver);
+            let operation_driver = second_handle.driver();
             assert_eq!(drivers().read().get(key).unwrap().acquisition_count, 1);
-            release_driver_key(&second_key).unwrap();
+            second_handle.release();
             assert!(!drivers().read().contains_key(key));
+            drop(second_handle);
             assert!(weak_driver.upgrade().is_some());
             drop(operation_driver);
             assert!(weak_driver.upgrade().is_none());
@@ -2252,27 +2457,28 @@ class Config:
             let next_entry = entry();
             let key = "driver-creation-failure-cleanup";
             Python::with_gil(|py| {
-                let error = acquire_driver_key_with(py, key.to_owned(), || {
+                let error = acquire_driver_handle_with(py, key.to_owned(), || {
                     Err(PyRuntimeError::new_err("injected failure"))
                 })
-                .unwrap_err();
+                .err()
+                .expect("acquisition must fail");
                 assert!(error.is_instance_of::<PyRuntimeError>(py));
             });
             assert!(!drivers().read().contains_key(key));
             assert!(!driver_creations().read().contains_key(key));
             let panicked = std::panic::catch_unwind(|| {
                 Python::with_gil(|py| {
-                    acquire_driver_key_with(py, key.to_owned(), || panic!("injected panic"))
+                    acquire_driver_handle_with(py, key.to_owned(), || panic!("injected panic"))
                 })
             });
             assert!(panicked.is_err());
             assert!(!drivers().read().contains_key(key));
             assert!(!driver_creations().read().contains_key(key));
             Python::with_gil(|py| {
-                let acquired_key =
-                    acquire_driver_key_with(py, key.to_owned(), || Ok(next_entry)).unwrap();
+                let acquired_handle =
+                    acquire_driver_handle_with(py, key.to_owned(), || Ok(next_entry)).unwrap();
                 assert_eq!(drivers().read().get(key).unwrap().acquisition_count, 1);
-                release_driver_key(&acquired_key).unwrap();
+                acquired_handle.release();
             });
             assert!(!drivers().read().contains_key(key));
             assert!(!driver_creations().read().contains_key(key));

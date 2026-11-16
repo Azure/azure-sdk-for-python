@@ -7,10 +7,9 @@
 //! Replacing throughput targets an offer resource id and returns one offer
 //! record. Neither helper resolves an item container or partition key.
 
-use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
-use pyo3::exceptions::{PyRuntimeError, PyTimeoutError};
+use pyo3::exceptions::PyTimeoutError;
 use pyo3::prelude::*;
 use pyo3::types::PyTuple;
 
@@ -24,14 +23,12 @@ use azure_data_cosmos_driver::{
 };
 
 use super::deadline::{parse_remaining_timeout, with_timeout};
-use super::diagnostics::BINDING_OP_COUNT;
+use super::driver_runner::{run_driver_operation_async, run_driver_operation_sync};
 use super::request::{build_operation_options, RequestHeadersAndOptions};
 use super::response::{
     tuple_from_offer_feed_result, tuple_from_result, tuple_from_result_with_attempts,
     with_attempt_diagnostics,
 };
-use super::AbortOnDrop;
-use crate::runtime::require_runtime_context;
 
 /// Complete the offer query and return its binding response tuple.
 /// Wait on the calling thread with Python's global interpreter lock (GIL) released.
@@ -45,18 +42,27 @@ pub(crate) fn run_get_throughput_operation<'py>(
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let timeout = parse_remaining_timeout(timeout_seconds)?;
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = driver_handle.driver();
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let timed = with_timeout(
-        timeout,
-        run_get_throughput_future(driver, modifiers, body_bytes),
-    );
-    let response_result = py
-        .allow_threads(|| runtime_ctx.tokio_rt.block_on(timed))
-        .map_err(|error| PyTimeoutError::new_err(format!("Offer read timed out: {error}")))?;
-    offer_read_tuple(py, response_result, include_attempts)
+    run_driver_operation_sync(
+        py,
+        driver_handle,
+        op_name,
+        move |driver| {
+            let timed = with_timeout(
+                timeout,
+                run_get_throughput_future(driver, modifiers, body_bytes),
+            );
+            async move {
+                timed.await.map_err(|error| {
+                    PyTimeoutError::new_err(format!("Offer read timed out: {error}"))
+                })
+            }
+        },
+        if include_attempts {
+            |py, result| offer_read_tuple(py, result?, true)
+        } else {
+            |py, result| offer_read_tuple(py, result?, false)
+        },
+    )
 }
 
 /// Async sibling of `run_get_throughput_operation`.
@@ -70,38 +76,27 @@ pub(crate) fn run_get_throughput_operation_async<'py>(
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     let timeout = parse_remaining_timeout(timeout_seconds)?;
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = driver_handle.driver();
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let timed = with_timeout(
-        timeout,
-        run_get_throughput_future(driver, modifiers, body_bytes),
-    );
-    let join = runtime_ctx.tokio_rt.spawn(timed);
-    let abort_guard = AbortOnDrop(join.abort_handle());
-
-    pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        let _abort_guard = abort_guard;
-        let response_result = join
-            .await
-            .map_err(|join_error| {
-                if join_error.is_cancelled() {
-                    PyRuntimeError::new_err(
-                        "cosmos async operation was cancelled before it completed",
-                    )
-                } else {
-                    PyRuntimeError::new_err(format!(
-                        "cosmos async operation task failed: {join_error}"
-                    ))
-                }
-            })?
-            .map_err(|error| PyTimeoutError::new_err(format!("Offer read timed out: {error}")))?;
-        Python::with_gil(|py| {
-            offer_read_tuple(py, response_result, include_attempts)
-                .map(|tuple| tuple.into_any().unbind())
-        })
-    })
+    run_driver_operation_async(
+        py,
+        driver_handle,
+        op_name,
+        move |driver| {
+            let timed = with_timeout(
+                timeout,
+                run_get_throughput_future(driver, modifiers, body_bytes),
+            );
+            async move {
+                timed.await.map_err(|error| {
+                    PyTimeoutError::new_err(format!("Offer read timed out: {error}"))
+                })
+            }
+        },
+        if include_attempts {
+            |py, result| offer_read_tuple(py, result?, true)
+        } else {
+            |py, result| offer_read_tuple(py, result?, false)
+        },
+    )
 }
 
 /// Replace the named offer and return its binding response tuple.
@@ -117,24 +112,27 @@ pub(crate) fn run_replace_throughput_operation<'py>(
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let timeout = parse_remaining_timeout(timeout_seconds)?;
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = driver_handle.driver();
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let timed = with_timeout(
-        timeout,
-        run_replace_throughput_future(driver, modifiers, offer_id, body_bytes),
-    );
-    let response_result = py
-        .allow_threads(|| runtime_ctx.tokio_rt.block_on(timed))
-        .map_err(|error| {
-            PyTimeoutError::new_err(format!("Throughput replacement timed out: {error}"))
-        })?;
-    if include_attempts {
-        tuple_from_result_with_attempts(py, response_result)
-    } else {
-        tuple_from_result(py, response_result)
-    }
+    run_driver_operation_sync(
+        py,
+        driver_handle,
+        op_name,
+        move |driver| {
+            let timed = with_timeout(
+                timeout,
+                run_replace_throughput_future(driver, modifiers, offer_id, body_bytes),
+            );
+            async move {
+                timed.await.map_err(|error| {
+                    PyTimeoutError::new_err(format!("Throughput replacement timed out: {error}"))
+                })
+            }
+        },
+        if include_attempts {
+            |py, result| tuple_from_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_result(py, result?)
+        },
+    )
 }
 
 /// Async sibling of `run_replace_throughput_operation`.
@@ -149,45 +147,29 @@ pub(crate) fn run_replace_throughput_operation_async<'py>(
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     let timeout = parse_remaining_timeout(timeout_seconds)?;
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = driver_handle.driver();
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let timed = with_timeout(
-        timeout,
-        run_replace_throughput_future(driver, modifiers, offer_id, body_bytes),
-    );
-    let join = runtime_ctx.tokio_rt.spawn(timed);
-    let abort_guard = AbortOnDrop(join.abort_handle());
-
-    pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        let _abort_guard = abort_guard;
-        let response_result = join
-            .await
-            .map_err(|join_error| {
-                if join_error.is_cancelled() {
-                    PyRuntimeError::new_err(
-                        "cosmos async operation was cancelled before it completed",
-                    )
-                } else {
-                    PyRuntimeError::new_err(format!(
-                        "cosmos async operation task failed: {join_error}"
-                    ))
-                }
-            })?
-            .map_err(|error| {
-                PyTimeoutError::new_err(format!("Throughput replacement timed out: {error}"))
-            })?;
-        Python::with_gil(|py| {
-            let result = if include_attempts {
-                tuple_from_result_with_attempts(py, response_result)
-            } else {
-                tuple_from_result(py, response_result)
-            };
-            result.map(|tuple| tuple.into_any().unbind())
-        })
-    })
+    run_driver_operation_async(
+        py,
+        driver_handle,
+        op_name,
+        move |driver| {
+            let timed = with_timeout(
+                timeout,
+                run_replace_throughput_future(driver, modifiers, offer_id, body_bytes),
+            );
+            async move {
+                timed.await.map_err(|error| {
+                    PyTimeoutError::new_err(format!("Throughput replacement timed out: {error}"))
+                })
+            }
+        },
+        if include_attempts {
+            |py, result| tuple_from_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_result(py, result?)
+        },
+    )
 }
+
 struct OfferReadResult {
     responses: Vec<CosmosResponse>,
     error: Option<CosmosError>,
@@ -265,8 +247,9 @@ async fn run_get_throughput_future(
     let options = build_operation_options(
         None,
         modifiers.excluded_regions_value,
-        modifiers.driver_timeout_policy,
+        modifiers.configured_driver_timeout_policy,
         modifiers.availability_strategy,
+        modifiers.throughput_control,
         custom_headers,
     );
     let mut responses = Vec::new();
@@ -315,8 +298,9 @@ async fn run_replace_throughput_future(
     let options = build_operation_options(
         content_response,
         modifiers.excluded_regions_value,
-        modifiers.driver_timeout_policy,
+        modifiers.configured_driver_timeout_policy,
         modifiers.availability_strategy,
+        modifiers.throughput_control,
         modifiers.custom_headers,
     );
     driver.execute_singleton_operation(op, options).await
@@ -405,11 +389,12 @@ mod tests {
             session_header: None,
             content_response_on_write: ContentResponseOnWrite::Enabled,
             excluded_regions_value: None,
-            driver_timeout_policy: None,
-            operation_timeout: None,
+            configured_driver_timeout_policy: None,
+            remaining_binding_timeout: None,
             availability_strategy: None,
             read_consistency_strategy: None,
             patch_strategy: None,
+            throughput_control: None,
             custom_headers: HashMap::new(),
         }
     }

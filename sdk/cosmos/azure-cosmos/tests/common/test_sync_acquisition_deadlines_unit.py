@@ -21,6 +21,7 @@ import pytest
 
 from azure.cosmos import CosmosClient
 from azure.cosmos._backend import binding_adapter
+from azure.cosmos._backend import _binding_adapter_shared as shared
 from azure.cosmos._backend.contracts import PreparedPageRequest, PreparedRequest
 from azure.cosmos._backend.partition_key_input import BindingPartitionKey
 from azure.cosmos.exceptions import CosmosClientTimeoutError
@@ -307,14 +308,14 @@ def test_sync_late_acquisition_failure_allows_retry_rust(cold_client, caplog):
 
 
 def test_sync_acquisition_worker_start_failure_is_not_cached_rust(cold_client, monkeypatch):
-    original = binding_adapter.threading
+    original = shared.threading
     error = RuntimeError("cannot start worker")
     thread = SimpleNamespace(start=MagicMock(side_effect=error))
-    monkeypatch.setattr(binding_adapter, "threading", SimpleNamespace(Thread=MagicMock(return_value=thread)))
+    monkeypatch.setattr(shared, "threading", SimpleNamespace(Thread=MagicMock(return_value=thread)))
     with pytest.raises(RuntimeError) as caught:
         cold_client.client._adapter._ensure_driver_handle()
     assert caught.value is error
     cold_client.native.acquire_driver_handle.assert_not_called()
-    monkeypatch.setattr(binding_adapter, "threading", original)
+    monkeypatch.setattr(shared, "threading", original)
     cold_client.finish.set()
     assert cold_client.client._adapter._ensure_driver_handle() is cold_client.handle

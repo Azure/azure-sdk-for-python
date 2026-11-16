@@ -17,7 +17,7 @@ produce the database properties returned to the customer app.
 
 The binding runs Rust work with the Tokio runtime; service I/O does not use
 a Python executor worker per request. Driver acquisition is different: it can
-block, so _ensure_driver_handle submits it to an SDK-owned acquisition pool.
+block, so both adapters use a daemon worker for each client's pending acquisition.
 Python preparation, locks, token acquisition, and calling-thread cleanup can
 still block.
 """
@@ -27,7 +27,7 @@ from ..._backend.request_settings import binding_settings_contract_error
 import asyncio
 import logging
 import threading
-from concurrent.futures import Future, ThreadPoolExecutor
+from concurrent.futures import Future
 from typing import TYPE_CHECKING, Any, AsyncIterator, Optional
 
 from azure.cosmos._backend.operations import (
@@ -45,7 +45,7 @@ from azure.cosmos._backend.contracts import (
 )
 from azure.cosmos._backend._binding_conversions import (
     build_backend_response, build_binding_request_from_page,
-    build_container_metadata, metadata_exception_from_binding,
+    build_container_metadata, response_exception_from_binding,
     build_backend_page, page_binding_call_arguments,
 )
 from azure.cosmos._backend._binding_adapter_shared import (
@@ -63,7 +63,7 @@ from azure.cosmos._backend.constants import BACKEND_NAME_RUST
 from azure.cosmos._backend._async_credential_bridge import AsyncTokenCredentialBridge
 from azure.cosmos._backend.credentials import _is_async_credential
 
-from azure.core.exceptions import ServiceResponseError
+from azure.core.exceptions import ClientAuthenticationError, ServiceResponseError
 from ..._operation_deadline import remaining_timeout, run_with_deadline
 from ...exceptions import CosmosClientTimeoutError
 
@@ -75,10 +75,6 @@ if TYPE_CHECKING:
     from azure.cosmos._rust import _DriverHandle, _ItemFeedCursor
 
 _LOGGER = logging.getLogger(__name__)
-
-# Shared across async clients; workers start on demand and are joined at interpreter exit.
-# Acquisition must not occupy the default-executor workers needed by credentials and close.
-_DRIVER_ACQUISITION_EXECUTOR = ThreadPoolExecutor(thread_name_prefix="cosmos-driver-acquisition")
 
 # Load once during normal use. Tests can replace this reference with a fake binding.
 _rust_module: Optional[Any] = None
@@ -143,8 +139,8 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
     Closing releases this client's acquisition, not another client's or an
     in-flight operation's reference.
 
-    Same-loop callers can share an acquisition attempt. Worker jobs from
-    different loops take turns acquiring or reusing the stored handle.
+    Callers share one acquisition attempt, including callers on different loops
+    when the credential permits it.
     Close callers share _close_future; each loop uses its own awaitable for
     that shared result.
     """
@@ -167,17 +163,8 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         their futures later; construction does not initialize the default runtime.
         """
         # Fields must exist even if shared validation fails and the finalizer runs.
-        # _driver_acquisition_lock allows one acquisition attempt at a time.
-        # A successfully acquired handle is reused; failed attempts can run again.
-        # Acquisition does not hold _driver_handle_lock, so close can mark the
-        # Python adapter closed without waiting for that call to finish.
-        self._driver_acquisition_lock = threading.Lock()
         self._close_lock = threading.Lock()
         self._close_future: Optional[Future[None]] = None
-        # Same-loop callers share _init_future while an acquisition attempt runs.
-        # Different loops may submit separate acquisition jobs that take turns.
-        self._init_future: Optional["asyncio.Future[_DriverHandle]"] = None
-        self._init_future_loop: Optional[asyncio.AbstractEventLoop] = None
         self._init_shared(
             endpoint, master_key, client_config, token_credential, runtime
         )
@@ -195,40 +182,6 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         driver_handle = await self._ensure_driver_handle()
         return int(_rust_module._debug_fault_injection_rule_hit_count(driver_handle, rule_id))
 
-    def _acquire_driver_handle(self) -> _DriverHandle:
-        """Return the stored driver handle or acquire one through the binding.
-
-        This runs on a worker thread. Acquisition may reuse a CosmosDriver from
-        the binding's driver cache; it does not necessarily create a new object.
-        If close wins before the handle is stored, release that acquisition here.
-        """
-        # Only one worker at a time acquires a handle, without holding
-        # _driver_handle_lock during the binding call.
-        if _rust_module is None:
-            raise NotImplementedError(
-                "AsyncBindingAdapter: the compiled azure.cosmos._rust "
-                "module is not present in this environment. Build it "
-                "with `maturin develop` from the repo root."
-            )
-        with self._driver_acquisition_lock:
-            with self._driver_handle_lock:
-                if self._closing:
-                    raise RuntimeError("AsyncBindingAdapter: the client is closed.")
-                if self._driver_handle is not None:
-                    return self._driver_handle
-                # Retain inputs before close can clear the adapter's references.
-                runtime = self._runtime
-                args = self._acquire_driver_handle_args()
-            driver_handle = self._initialize_driver(_rust_module, runtime, acquisition_args=args)
-            with self._driver_handle_lock:
-                closed = self._closing
-                if not closed:
-                    self._driver_handle = driver_handle
-        if closed:
-            release_driver_handle_quietly(driver_handle, _rust_module)
-            raise RuntimeError("AsyncBindingAdapter: the client was closed during initialization.")
-        return driver_handle
-
     def _take_driver_handle_for_close(self) -> Optional[_DriverHandle]:
         """Mark the client closed and remove its stored driver handle for release."""
         with self._driver_handle_lock:
@@ -241,18 +194,19 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
     async def _ensure_driver_handle(self) -> _DriverHandle:
         """Reuse the driver handle or await a worker-thread acquisition attempt.
 
-        Same-loop callers can share _init_future. Async credentials require
-        that same application loop for every use. With an account key or sync
-        credential, different loops can submit separate jobs;
-        _driver_acquisition_lock makes them take turns.
-        Each job rechecks the stored handle before acquiring one through the
-        binding. A failed attempt can be retried on a later call.
-        Shielding prevents a waiter's cancellation from cancelling that shared
-        future. It does not cancel the worker job or release its eventual handle;
-        acquisition and close coordinate that ownership separately.
+        Each caller wraps the shared concurrent future for its customer event loop.
+        Async credentials still require their original customer event loop.
+        Shielding makes cancellation stop only this caller's wait, not the
+        shared worker. A failed attempt can be retried; close releases late handles.
         """
         if _REQUEST_CONTRACT_ERROR is not None:
             raise RuntimeError(_REQUEST_CONTRACT_ERROR)
+        if _rust_module is None:
+            raise NotImplementedError(
+                "AsyncBindingAdapter: the compiled azure.cosmos._rust "
+                "module is not present in this environment. Build it "
+                "with `maturin develop` from the repo root."
+            )
         loop = asyncio.get_running_loop()
         with self._driver_handle_lock:
             if self._closing:
@@ -263,54 +217,34 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
                 self._token_credential = AsyncTokenCredentialBridge.acquire(self._token_credential, loop=loop)
             if self._driver_handle is not None:
                 return self._driver_handle
-            init_future = self._init_future
-            if init_future is None or self._init_future_loop is not loop:
-                init_future = loop.run_in_executor(_DRIVER_ACQUISITION_EXECUTOR, self._acquire_driver_handle)
-                self._init_future = init_future
-                self._init_future_loop = loop
-                init_future.add_done_callback(self._driver_acquisition_finished)
-        return await asyncio.shield(init_future)
+            init_future = self._start_driver_acquisition(_rust_module, _LOGGER)
+        waiter = asyncio.wrap_future(init_future, loop=loop)
+        waiter.add_done_callback(self._driver_acquisition_finished)
+        return await asyncio.shield(waiter)
 
-    def _driver_acquisition_finished(self, future: "asyncio.Future[_DriverHandle]") -> None:
-        """Clear this attempt's stored future and observe any unawaited error."""
-        with self._driver_handle_lock:
-            if self._init_future is future:
-                self._init_future = None
-                self._init_future_loop = None
-        # Observe failures even when every waiter was cancelled; active waiters
-        # still receive the original exception through their shielded await.
-        if not future.cancelled() and future.exception() is not None:
-            _LOGGER.debug("Rust driver initialization failed")
+    @staticmethod
+    def _driver_acquisition_finished(future: "asyncio.Future[_DriverHandle]") -> None:
+        """Observe this loop's result even if its caller stopped waiting."""
+        if not future.cancelled():
+            future.exception()
 
     async def close(self) -> None:
         """Release this client's driver acquisition and async credential bridge use.
 
-        Same release rules as the synchronous ``BindingAdapter.close``, but
-        cleanup normally runs in the event loop's default Python thread pool.
-        The event loop runs asyncio tasks on one thread. The pool is separate:
-        its worker threads run submitted functions, not those asyncio tasks.
-        The pool reuses workers; close does not create a dedicated thread.
-        These are Python worker threads, not Rust runtime workers.
+        Cleanup normally uses the event loop's default Python thread pool and
+        starts at most once. Callers on different loops share _close_future;
+        cancelling one caller stops its wait, not cleanup.
 
-        All close callers share the cleanup result stored in _close_future.
-        Each caller waits through its own event loop; its asyncio task does
-        not move onto the worker thread. Cancelling one caller stops its wait,
-        not cleanup. Later callers wait for the same result.
-
-        If submission fails or the worker job is reported as failed or
-        cancelled, the calling thread attempts cleanup. A guard prevents
-        cleanup from starting more than once. Errors escaping the cleanup
-        helpers are stored for waiting callers, not retried.
-
-        Close is not guaranteed to avoid blocking the event loop. Cleanup
-        does not close the customer app's token credential.
+        If submission fails or the worker job fails or is cancelled, the
+        calling thread attempts cleanup and may block the event loop.
+        Cleanup helpers log ordinary release errors; escaping errors are
+        stored in _close_future for waiting callers, not retried.
+        The customer app still owns and closes its token credential.
         """
         loop = asyncio.get_running_loop()
         with self._close_lock:
             close_future = self._close_future
             if close_future is None:
-                with self._driver_handle_lock:
-                    self._closing = True
                 driver_handle = self._take_driver_handle_for_close()
                 credential = self._take_token_credential_for_close()
                 pending_close_future: Future[None] = Future()
@@ -444,6 +378,10 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             if deadline is None:
                 raise
             raise CosmosClientTimeoutError(error=exc) from exc
+        except ClientAuthenticationError as exc:
+            if contribution is not None:
+                contribution.error(exc)
+            raise
         except _DRIVER_TRANSPORT_ERROR as exc:
             if contribution is not None:
                 contribution.error(exc)
@@ -451,7 +389,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         except _DRIVER_RESPONSE_ERROR as exc:
             if contribution is not None:
                 contribution.error(exc)
-            raise metadata_exception_from_binding(exc) from exc
+            raise response_exception_from_binding(exc) from exc
         if result is None:
             raise BindingProtocolError(f"The binding returned no response for {prepared.op!r}")
         if contribution is not None:
@@ -491,7 +429,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         except _DRIVER_TRANSPORT_ERROR as exc:
             raise ServiceResponseError(message=str(exc)) from exc
         except _DRIVER_RESPONSE_ERROR as exc:
-            raise metadata_exception_from_binding(exc) from exc
+            raise response_exception_from_binding(exc) from exc
         return build_container_metadata(result)
 
     async def execute_pages(
@@ -540,11 +478,19 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
                 if contribution is not None:
                     contribution.error(exc)
                 raise
+            except ClientAuthenticationError as exc:
+                if contribution is not None:
+                    contribution.error(exc)
+                raise
             except _DRIVER_TRANSPORT_ERROR as exc:
                 if contribution is not None:
                     contribution.error(exc)
                 raise
             except _UNSUPPORTED_QUERY_ERROR as exc:
+                if contribution is not None:
+                    contribution.error(exc)
+                raise
+            except ValueError as exc:
                 if contribution is not None:
                     contribution.error(exc)
                 raise

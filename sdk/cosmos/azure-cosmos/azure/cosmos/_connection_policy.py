@@ -19,8 +19,13 @@ from .documents import ConnectionPolicy
 from ._backend.capabilities import reject_removed_options
 
 
-def reject_rust_connection_policy_options(kwargs: Mapping[str, Any]) -> None:
-    """Reject client retry and routing controls that Rust cannot honor."""
+def reject_rust_connection_policy_options(kwargs: Mapping[str, Any], *, is_async: bool = False) -> None:
+    """Reject client retry, hedging and routing controls that Rust cannot honor.
+
+    :param kwargs: Resolved client construction options.
+    :type kwargs: Mapping[str, Any]
+    :keyword bool is_async: Whether to check the asynchronous client's configuration routes.
+    """
     if "connection_retry_policy" in kwargs:
         raise TypeError(
             "connection_retry_policy is not supported by Rust-backed clients; omit this keyword. "
@@ -32,7 +37,24 @@ def reject_rust_connection_policy_options(kwargs: Mapping[str, Any]) -> None:
                 f"{keyword} is not supported by Rust-backed clients; omit this keyword. "
                 "The Rust driver does not expose an equivalent connection/read retry-count control."
             )
+    for keyword in ("retry_mode", "retry_backoff_factor"):
+        if keyword in kwargs:
+            raise TypeError(
+                f"{keyword} is not supported by Rust-backed clients; omit this keyword. "
+                "The Rust driver does not expose an equivalent connection-retry delay control."
+            )
+    hedging_keyword = "availability_strategy_max_concurrency" if is_async else "availability_strategy_executor"
+    if hedging_keyword in kwargs:
+        raise TypeError(
+            f"{hedging_keyword} is not supported by Rust-backed clients; omit this keyword. "
+            "The Rust driver manages regional requests without this Python execution control."
+        )
     policy = kwargs.get("connection_policy")
+    if is_async and policy is not None and policy.ConnectionRetryConfiguration is not None:
+        raise TypeError(
+            "connection_policy.ConnectionRetryConfiguration is not supported by Rust-backed async clients; "
+            "leave this field at None. Python connection retry configurations do not control Rust requests."
+        )
     if "retry_fixed_interval" in kwargs or (
         policy is not None and policy.RetryOptions.FixedRetryIntervalInMilliseconds is not None
     ):
@@ -106,8 +128,8 @@ def resolve_connection_policy_kwargs(kwargs: Mapping[str, Any]) -> dict[str, Any
     treat None as unspecified. Unchanged policy defaults are not copied into
     the keyword arguments.
 
-    Connection timeouts are resolved separately by
-    resolve_client_connection_timeout, not by this function.
+    Connection timeouts are handled separately by the legacy connection-policy
+    builder; Rust clients require runtime-level connection settings.
     """
     reject_removed_options(kwargs)
     resolved = dict(kwargs)

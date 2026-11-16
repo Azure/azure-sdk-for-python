@@ -44,7 +44,9 @@ from ..exceptions import _container_recreate_exception
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict
-from .._throughput_rust_routing import (
+from ..offer import ThroughputProperties
+from .._operation_deadline import remaining_timeout, run_with_deadline
+from ._throughput_rust_routing import (
     can_use_rust_backend_for_get_throughput,
     can_use_rust_backend_for_replace_throughput,
     process_get_throughput_response,
@@ -52,8 +54,6 @@ from .._throughput_rust_routing import (
     build_get_throughput_from_connection,
     build_replace_throughput_from_connection,
 )
-from ..offer import ThroughputProperties
-from .._operation_deadline import remaining_timeout, run_with_deadline
 from ._throughput_setup import gather_rust_call_inputs, offer_query
 from ._throughput_read import prepare_read_kwargs, finish_read, legacy_read_kwargs, read_routing
 from ._throughput_replace import finish_replacement, validate_replacement_throughput

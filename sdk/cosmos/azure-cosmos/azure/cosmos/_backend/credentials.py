@@ -21,10 +21,7 @@ import asyncio
 import inspect
 from collections.abc import Mapping
 from collections.abc import Sequence as _AbcSequence
-from contextlib import contextmanager
-from typing import Any, Iterator, Optional, Tuple
-
-from ._binding_adapter_shared import close_credential_bridge_quietly
+from typing import Any, Optional, Tuple
 
 _RESOURCE_TOKEN_ERROR = (
     "CosmosClient does not support resource-token (per-user / permission) credentials. "
@@ -39,24 +36,28 @@ def reject_resource_token_fields(credential: Mapping[str, Any]) -> None:
         raise ValueError(_RESOURCE_TOKEN_ERROR)
 
 
+def _is_coroutine_method(credential: Any, name: str) -> bool:
+    """Recognize async methods, including decorated and asyncio-marked wrappers."""
+    method = getattr(credential, name, None)
+    if method is None:
+        return False
+    if asyncio.iscoroutinefunction(method) or inspect.iscoroutinefunction(method):
+        return True
+    unwrapped = inspect.unwrap(method) if callable(method) else method
+    return asyncio.iscoroutinefunction(unwrapped) or inspect.iscoroutinefunction(unwrapped)
+
+
 def _is_async_credential(credential: Any) -> bool:
-    """Detect credentials that need their application's event loop for token requests.
+    """Detect credentials routed through their application's event loop.
 
     Check for async get_token or get_token_info, including methods wrapped by
     decorators that expose __wrapped__. Also recognize credentials supporting
-    async context entry. The async adapter wraps the retained credential on
-    first use rather than passing an async method as a synchronous token method.
+    async context entry as a hint for opaque wrappers returning awaitables.
+    That hint does not prove the token result is awaitable; the bridge checks
+    the result on first use rather than invoking customer code during validation.
     """
     for attr in ("get_token", "get_token_info"):
-        method = getattr(credential, attr, None)
-        if method is None:
-            continue
-        if asyncio.iscoroutinefunction(method) or inspect.iscoroutinefunction(method):
-            return True
-        unwrapped = inspect.unwrap(method) if callable(method) else method
-        if asyncio.iscoroutinefunction(unwrapped) or inspect.iscoroutinefunction(
-            unwrapped
-        ):
+        if _is_coroutine_method(credential, attr):
             return True
     # Also recognize async context entry when the method check did not detect it.
     if hasattr(credential, "__aenter__") and (
@@ -96,7 +97,7 @@ def validate_credential(credential: Any) -> None:
     if isinstance(credential, Mapping) and "masterKey" in credential:
         master_key = credential["masterKey"]
         if not isinstance(master_key, str) or not master_key:
-            # Report an invalid key at client construction, before driver creation.
+            # Reject an invalid key before acquiring a driver handle.
             raise ValueError(
                 "CosmosClient requires the 'masterKey' entry to be a non-empty string."
             )
@@ -134,22 +135,3 @@ def resolve_credential(
             )
         return None, credential
     return None, credential
-
-
-@contextmanager
-def resolved_credential(
-    credential: Any,
-    *,
-    allow_async: bool = False,
-) -> Iterator[Tuple[Optional[str], Optional[Any]]]:
-    """Validate factory inputs without acquiring a loop or fetching a token.
-
-    Async credentials remain caller-owned. If an internal bridge was supplied
-    directly, release that acquired use on failure, never the customer's credential.
-    """
-    master_key, token_credential = resolve_credential(credential, allow_async=allow_async)
-    try:
-        yield master_key, token_credential
-    except BaseException:
-        close_credential_bridge_quietly(token_credential)
-        raise

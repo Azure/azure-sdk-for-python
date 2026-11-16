@@ -11,13 +11,12 @@ offer, or handed back a different object type, a capacity change could silently 
 or report the wrong value -- at exactly the moment (a sale, a nightly load) the
 change was meant to protect.
 
-What it does: these are the real legacy tests copied verbatim from
-``tests/test_crud_container.py``, changed in exactly one place -- the client is
-built with ``_backend="rust"`` -- so the same assertions now run against the Rust
-path. They set throughput to a fixed 2500 RU/s (as an int and as a
+What it does: these tests were copied from ``tests/test_crud_container.py``
+and use ``_backend="rust"``. Mixed-setting rejection now expects ``ValueError``
+instead of the original ``KeyError``. They set throughput to a fixed 2500 RU/s (as an int and as a
 ``ThroughputProperties``) and confirm ``get_throughput`` reads 2500 back, and they
 confirm that a ``ThroughputProperties`` mixing fixed and autoscale settings raises
-``KeyError`` before any write (the same client-side guard on both engines). Fixed
+``ValueError`` before any write. Fixed
 absolute values (not read-then-add) keep the request deterministic.
 
 This file runs on Rust only and reuses assertions the team already trusts.
@@ -118,7 +117,7 @@ class TestCRUDContainerOperations(unittest.TestCase):
         """Mixing fixed and autoscale settings is refused before anything is sent.
 
         A ``ThroughputProperties`` carrying both a fixed throughput and
-        autoscale settings is contradictory, and raises a ``KeyError`` on the
+        autoscale settings is contradictory, and raises a ``ValueError`` on the
         client rather than reaching the service.
 
         Failing early is the point. The two modes are mutually exclusive, so a
@@ -131,7 +130,7 @@ class TestCRUDContainerOperations(unittest.TestCase):
 
         new_throughput = ThroughputProperties(offer_throughput=2500, auto_scale_max_throughput=4000, auto_scale_increment_percent=5)
 
-        with pytest.raises(KeyError):
+        with pytest.raises(ValueError):
             collection.replace_throughput(new_throughput)
 
 

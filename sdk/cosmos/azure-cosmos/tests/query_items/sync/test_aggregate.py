@@ -19,6 +19,8 @@ import uuid
 
 import pytest
 
+from config.settings import TestSettings
+
 import azure.cosmos.documents as documents
 from azure.cosmos import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -31,7 +33,7 @@ KEY = os.environ.get(
     "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
 )
 # Source helper: tests/test_config.py::TestConfig.data_auth_mode
-DATA_AUTH_MODE = os.environ.get("COSMOS_TEST_DATA_AUTH_MODE", "key").lower()
+DATA_AUTH_MODE = TestSettings.data_auth_mode
 
 
 class _config:

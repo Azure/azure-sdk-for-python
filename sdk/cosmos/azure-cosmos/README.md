@@ -1114,23 +1114,39 @@ Also, requests with an invalid bucket ID (less than 1 or greater than 5) results
 See [here][cosmos_throughput_bucket_configuration] for instructions on configuring throughput buckets through the Azure portal.
 After throughput buckets have been configured, you can find our sync samples [here][cosmos_throughput_bucket_sample] and our async samples [here][cosmos_throughput_bucket_sample_async] as well for additional guidance.
 
-### Per Partition Circuit Breaker 
-Per partition circuit breaker is a feature that allows the SDK to failover requests on a partition level to another region based on client side statistics on 408 and 5xx error codes. This feature is only applicable for 
-reads in single write region accounts and reads and writes for multi-write region accounts. The following are the environment variables to enable per partition circuit breaker and to modify the thresholds for failing over 
-requests to another region:
-- `AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER`: Default is `False`.
-  - Enables the per partition circuit breaker feature.
-- `AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ`: Default is `10` consecutive errors.
-  - After a partition has encountered 10 consecutive errors for read requests, the SDK will send requests routed to that partition to another region.
-- `AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE`: Default is `5` consecutive errors.
-    - After a partition has encountered 5 consecutive errors for write requests, the SDK will send requests routed to that partition to another region.
-- `AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED`: Default is a `90` percent failure rate.
-  - After a partition reaches a 90 percent failure rate for all requests, the SDK will send requests routed to that partition to another region.
+### Per Partition Circuit Breaker
+
+When one partition's regional path repeatedly fails, the customer app needs later
+requests to avoid that path without avoiding the entire region. The per-partition
+circuit breaker retains a routing change for that partition. Rust supports this
+for eligible reads and multi-write-account writes when multiple read endpoints
+are available.
+
+**The legacy Python environment variables do not configure Rust-backed requests.**
+The Rust driver has its own controls:
+
+| Legacy Python variable | Available Rust control | Rust behavior |
+|---|---|---|
+| `AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER` | `AZURE_COSMOS_PPCB_ENABLED` | Base enablement defaults to `true`, not legacy Python's `False`. Use lowercase `true` or `false`. |
+| `AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ` | `AZURE_COSMOS_PPCB_READ_FAILURE_THRESHOLD` | Recorded read-failure count; default `10`, minimum `1`. |
+| `AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE` | `AZURE_COSMOS_PPCB_WRITE_FAILURE_THRESHOLD` | Recorded write-failure count; default `5`, minimum `1`. |
+| `AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED` | No equivalent | The legacy percentage-based trigger is not implemented by the current Rust driver. |
+
+For example, set `AZURE_COSMOS_PPCB_READ_FAILURE_THRESHOLD=3` before the app
+acquires a driver to change its read-failure threshold. These settings are read
+when a driver is built; changing the environment does not retune a cached driver.
+The count controls do not establish parity with legacy consecutive-error or
+percentage-based behavior.
+
+Base enablement of `false` does not force the feature off when the account enables
+per-partition automatic failover. See the [Rust circuit-breaker guide](docs/core/PER_PARTITION_CIRCUIT_BREAKER.md#8-configure-the-feature-without-overpromising-isolation)
+for account interaction, the internal override, recovery controls and timing.
+The missing percentage trigger is tracked in [gap 38](docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-38).
 
 ### Per Partition Automatic Failover (Public Preview)
 Per partition automatic failover enables the SDK to automatically redirect write requests at the partition level to another region based on service-side signals. This feature is available 
-only for single write region accounts that have at least one read-only region. When per partition automatic failover is enabled, per partition circuit breaker and cross-region hedging is enabled by default, meaning 
-all its configurable options also apply to per partition automatic failover. To enable this feature, follow the guide [here](https://learn.microsoft.com/azure/cosmos-db/how-to-configure-per-partition-automatic-failover).
+only for single write region accounts that have at least one read-only region. When per partition automatic failover is enabled, per partition circuit breaker and cross-region hedging is enabled by default.
+Configuration is backend-specific; use the Rust circuit-breaker controls above for Rust-backed clients. To enable this feature, follow the guide [here](https://learn.microsoft.com/azure/cosmos-db/how-to-configure-per-partition-automatic-failover).
 
 ### Cross Region Hedging Availability Strategy
 

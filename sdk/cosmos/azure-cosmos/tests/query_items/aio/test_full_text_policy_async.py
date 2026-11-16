@@ -116,6 +116,8 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.test_db.delete_container(container.id)
 
+    @pytest.mark.skip(reason="environment-gap: the original is skipped until the testing pipeline "
+                             "supports full-text multi-language.")
     async def test_multi_path_multi_language_policy_async_rust(self):
         # pylint: disable-next=line-too-long
         # Source: tests/test_full_text_policy_async.py::TestFullTextPolicyAsync.test_multi_path_multi_language_policy_async

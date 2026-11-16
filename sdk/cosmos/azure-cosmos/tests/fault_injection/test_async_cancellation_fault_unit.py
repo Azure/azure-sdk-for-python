@@ -6,7 +6,17 @@ import pytest
 
 from azure.cosmos import exceptions
 from azure.cosmos._backend.client_config import _prepare_fault_injection_rules
-from fault_injection._async_cancellation import assert_cancelled, cancellation_rule
+from fault_injection._async_cancellation import assert_cancelled, cancellation_rule, capture_read_lifecycle
+
+
+def test_missing_probe_requires_test_build_before_instrumenting_read_rust(monkeypatch):
+    from azure.cosmos import _rust
+
+    original = _rust.read_item_async
+    monkeypatch.delattr(_rust, "_AsyncOperationProbe", raising=False)
+    with pytest.raises(RuntimeError, match="maturin develop --locked --features test-probes"):
+        capture_read_lifecycle(monkeypatch)
+    assert _rust.read_item_async is original
 
 
 @pytest.mark.parametrize("inject", [True, False])

@@ -141,8 +141,9 @@ async fn run_query_future(
     let options = build_operation_options(
         None,
         modifiers.excluded_regions_value,
-        modifiers.driver_timeout_policy,
+        modifiers.configured_driver_timeout_policy,
         modifiers.availability_strategy,
+        modifiers.throughput_control,
         modifiers.custom_headers,
     );
     driver.execute_operation(op, options).await

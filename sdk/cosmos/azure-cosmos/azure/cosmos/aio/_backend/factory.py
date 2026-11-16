@@ -6,8 +6,7 @@
 """Construct the asynchronous Python backend using shared preparation rules.
 
 ``azure.cosmos._backend.factory._make_backend`` decides which Python backend to
-use and checks its startup inputs. It also cleans up the async credential bridge
-if construction fails.
+use and checks its startup inputs without acquiring a credential bridge.
 This module supplies AsyncBindingAdapter and the shared AsyncLegacyBackend instance.
 Legacy-path selection is a migration control, not a release execution choice.
 
@@ -41,8 +40,6 @@ def make_async_backend(
     availability_strategy: Any = None,
     user_agent_suffix: Optional[str] = None,
     consistency_level: Optional[str] = None,
-    proxy_allowed: Optional[bool] = None,
-    connection_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Any = None,
     headers: Optional[Mapping[str, str]] = None,
 ) -> AsyncCosmosBackend:
@@ -68,8 +65,6 @@ def make_async_backend(
         availability_strategy=availability_strategy,
         user_agent_suffix=user_agent_suffix,
         consistency_level=consistency_level,
-        proxy_allowed=proxy_allowed,
-        connection_timeout_seconds=connection_timeout_seconds,
         fault_injection_rules=fault_injection_rules,
         headers=headers,
     )

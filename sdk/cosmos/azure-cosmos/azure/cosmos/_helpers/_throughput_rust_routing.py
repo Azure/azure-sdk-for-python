@@ -1,23 +1,5 @@
-# The MIT License (MIT)
 # Copyright (c) 2014 Microsoft Corporation
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# Licensed under the MIT License. See License.txt in the project root for license information.
 """Prepare offer requests and parse their responses for throughput methods.
 
 Eligibility checks tell the caller whether its selected Python backend and
@@ -32,17 +14,18 @@ response headers belong to that operation.
 
 from __future__ import annotations
 
-from typing import Any, Mapping, cast
 from copy import deepcopy
+from typing import Any, Mapping, cast
+
 from azure.core.utils import CaseInsensitiveDict
 
-from ._backend.constants import is_rust_backend
-from ._backend.contracts import PreparedRequest
-from ._constants import _Constants as Constants
-from ._cosmos_responses import CosmosDict, CosmosList
-from ._helpers._request_settings import overrides_driver_owned_header
-from ._helpers._request_throughput import build_get_throughput_request, build_replace_throughput_request
-from ._helpers._response_parse import process_backend_response
+from .._backend.constants import is_rust_backend
+from .._backend.contracts import PreparedRequest
+from .._constants import _Constants as Constants
+from .._cosmos_responses import CosmosDict, CosmosList
+from ._request_settings import overrides_driver_owned_header
+from ._request_throughput import build_get_throughput_request, build_replace_throughput_request
+from ._response_parse import process_backend_response
 
 
 def can_use_rust_backend_for_get_throughput(*, backend: Any, options: Mapping[str, Any], kwargs: Mapping[str, Any]) -> bool:
@@ -77,8 +60,6 @@ def build_get_throughput_from_connection(
         request_options=options,
         default_headers=client_connection.default_headers,
     )
-
-
 
 
 def process_get_throughput_response(backend_response: Any, *, client_connection: Any) -> list[dict[str, Any]]:
@@ -154,8 +135,6 @@ def build_replace_throughput_from_connection(
         request_options=options,
         default_headers=client_connection.default_headers,
     )
-
-
 
 
 def process_replace_throughput_response(backend_response: Any, *, client_connection: Any) -> Any:

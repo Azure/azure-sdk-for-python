@@ -33,7 +33,8 @@ KEY = os.environ.get(
 )
 
 
-# Copied verbatim from tests/test_feed_range.py (test_subset_ranges):
+# Adapted from tests/test_feed_range.py (test_subset_ranges), correcting the
+# excluded-lower-bound case rather than preserving legacy arithmetic.
 # each row is (parent_range, child_range, expected_is_subset).
 test_subset_ranges = [(Range("", "FF", True, False),
                        Range("3F", "7F", True, False),
@@ -49,7 +50,7 @@ test_subset_ranges = [(Range("", "FF", True, False),
                        True),
                       (Range("3F", "7F", False, True),
                        Range("3F", "7F", True, True),
-                       True),
+                       False),
                       (Range("3F", "7F", True, False),
                        Range("3F", "7F", True, True),
                        False),

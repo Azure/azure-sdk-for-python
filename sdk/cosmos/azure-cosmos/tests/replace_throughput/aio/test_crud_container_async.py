@@ -8,9 +8,9 @@ surface of the same contract: a customer who changes throughput through the asyn
 client must get the same applied RU/s back, and the same client-side guard when a
 ``ThroughputProperties`` mixes fixed and autoscale settings.
 
-What it does: the real legacy async tests copied verbatim from
-``tests/test_crud_container_async.py``, changed in exactly one place -- the client is
-built with ``_backend="rust"`` -- so the same assertions run against the Rust path.
+What it does: these tests were copied from ``tests/test_crud_container_async.py``
+and use ``_backend="rust"``. Mixed-setting rejection now expects ``ValueError``
+instead of the original ``KeyError``.
 
 This file runs on Rust only and reuses assertions the team already trusts.
 
@@ -112,7 +112,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         """Mixing fixed and autoscale settings is refused before anything is sent.
 
         A ``ThroughputProperties`` carrying both a fixed throughput and
-        autoscale settings is contradictory, and raises a ``KeyError`` on the
+        autoscale settings is contradictory, and raises a ``ValueError`` on the
         client rather than reaching the service.
 
         Failing early is the point. The two modes are mutually exclusive, so a
@@ -125,7 +125,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         new_throughput = ThroughputProperties(offer_throughput=2500, auto_scale_max_throughput=4000, auto_scale_increment_percent=5)
 
-        with pytest.raises(KeyError):
+        with pytest.raises(ValueError):
             await collection.replace_throughput(new_throughput)
 
 

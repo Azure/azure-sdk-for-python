@@ -259,7 +259,9 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         Retained for the legacy comparison backend only. Rust uses the
         account's multi-write capability and rejects explicit assignment.
     :ivar ConnectionRetryConfiguration:
-        Retry Configuration to be used for connection retries.
+        Connection retry configuration for legacy async clients. Rust-backed async
+        clients reject non-None values; leave this field at None for driver-managed
+        retries. Synchronous clients construct their retry policy separately.
     :vartype ConnectionRetryConfiguration:
         int or ~azure.cosmos.ConnectionRetryPolicy
     :ivar boolean ResponsePayloadOnWriteDisabled:
