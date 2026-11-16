@@ -42,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-08-02-preview/ManagedClustersGenerateUpgradeInsights_NodeImage.json
+# x-ms-original-file: 2026-09-02-preview/ManagedClustersGenerateUpgradeInsights_NodeImage.json
 if __name__ == "__main__":
     main()

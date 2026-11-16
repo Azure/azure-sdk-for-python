@@ -55,7 +55,6 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                         "backupPolicy": "backup_policy",
                         "capabilities": [{"name": "str"}],
                         "capacity": {"totalThroughputLimit": 0},
-                        "capacityMode": "str",
                         "connectorOffer": "str",
                         "consistencyPolicy": {
                             "defaultConsistencyLevel": "str",
@@ -75,16 +74,13 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                         "customerManagedKeyStatus": "str",
                         "defaultIdentity": "str",
                         "defaultPriorityLevel": "str",
-                        "diagnosticLogSettings": {"enableFullTextQuery": "str"},
                         "disableKeyBasedMetadataWriteAccess": bool,
                         "disableLocalAuth": bool,
-                        "enableAllVersionsAndDeletesChangeFeed": bool,
                         "enableAnalyticalStorage": bool,
                         "enableAutomaticFailover": bool,
                         "enableBurstCapacity": bool,
                         "enableCassandraConnector": bool,
                         "enableFreeTier": bool,
-                        "enableMaterializedViews": bool,
                         "enableMultipleWriteLocations": bool,
                         "enablePartitionMerge": bool,
                         "enablePerRegionPerPartitionAutoscale": bool,
@@ -94,26 +90,15 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                         "isVirtualNetworkFilterEnabled": bool,
                         "keyVaultKeyUri": "str",
                         "keysMetadata": {
-                            "primaryMasterKey": {
-                                "approximateLastUsageTime": "2020-02-20 00:00:00",
-                                "generationTime": "2020-02-20 00:00:00",
-                            },
-                            "primaryReadonlyMasterKey": {
-                                "approximateLastUsageTime": "2020-02-20 00:00:00",
-                                "generationTime": "2020-02-20 00:00:00",
-                            },
-                            "secondaryMasterKey": {
-                                "approximateLastUsageTime": "2020-02-20 00:00:00",
-                                "generationTime": "2020-02-20 00:00:00",
-                            },
-                            "secondaryReadonlyMasterKey": {
-                                "approximateLastUsageTime": "2020-02-20 00:00:00",
-                                "generationTime": "2020-02-20 00:00:00",
-                            },
+                            "primaryMasterKey": {"generationTime": "2020-02-20 00:00:00"},
+                            "primaryReadonlyMasterKey": {"generationTime": "2020-02-20 00:00:00"},
+                            "secondaryMasterKey": {"generationTime": "2020-02-20 00:00:00"},
+                            "secondaryReadonlyMasterKey": {"generationTime": "2020-02-20 00:00:00"},
                         },
                         "minimalTlsVersion": "str",
                         "networkAclBypass": "str",
                         "networkAclBypassResourceIds": ["str"],
+                        "perPartitionAutomaticFailoverEnabled": bool,
                         "publicNetworkAccess": "str",
                         "restoreParameters": {
                             "databasesToRestore": [{"collectionNames": ["str"], "databaseName": "str"}],
@@ -124,11 +109,6 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                             "restoreWithTtlDisabled": bool,
                             "sourceBackupLocation": "str",
                             "tablesToRestore": ["str"],
-                        },
-                        "softDeleteConfiguration": {
-                            "minMinutesBeforePermanentDeletionAllowed": 0,
-                            "softDeleteRetentionPeriodInMinutes": 0,
-                            "softDeletionEnabled": bool,
                         },
                         "virtualNetworkRules": [{"id": "str", "ignoreMissingVNetServiceEndpoint": bool}],
                     },
@@ -172,7 +152,6 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                         "backupPolicy": "backup_policy",
                         "capabilities": [{"name": "str"}],
                         "capacity": {"totalThroughputLimit": 0},
-                        "capacityMode": "str",
                         "connectorOffer": "str",
                         "consistencyPolicy": {
                             "defaultConsistencyLevel": "str",
@@ -191,16 +170,13 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                         "customerManagedKeyStatus": "str",
                         "defaultIdentity": "str",
                         "defaultPriorityLevel": "str",
-                        "diagnosticLogSettings": {"enableFullTextQuery": "str"},
                         "disableKeyBasedMetadataWriteAccess": bool,
                         "disableLocalAuth": bool,
-                        "enableAllVersionsAndDeletesChangeFeed": bool,
                         "enableAnalyticalStorage": bool,
                         "enableAutomaticFailover": bool,
                         "enableBurstCapacity": bool,
                         "enableCassandraConnector": bool,
                         "enableFreeTier": bool,
-                        "enableMaterializedViews": bool,
                         "enableMultipleWriteLocations": bool,
                         "enablePartitionMerge": bool,
                         "enablePerRegionPerPartitionAutoscale": bool,
@@ -210,22 +186,10 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                         "isVirtualNetworkFilterEnabled": bool,
                         "keyVaultKeyUri": "str",
                         "keysMetadata": {
-                            "primaryMasterKey": {
-                                "approximateLastUsageTime": "2020-02-20 00:00:00",
-                                "generationTime": "2020-02-20 00:00:00",
-                            },
-                            "primaryReadonlyMasterKey": {
-                                "approximateLastUsageTime": "2020-02-20 00:00:00",
-                                "generationTime": "2020-02-20 00:00:00",
-                            },
-                            "secondaryMasterKey": {
-                                "approximateLastUsageTime": "2020-02-20 00:00:00",
-                                "generationTime": "2020-02-20 00:00:00",
-                            },
-                            "secondaryReadonlyMasterKey": {
-                                "approximateLastUsageTime": "2020-02-20 00:00:00",
-                                "generationTime": "2020-02-20 00:00:00",
-                            },
+                            "primaryMasterKey": {"generationTime": "2020-02-20 00:00:00"},
+                            "primaryReadonlyMasterKey": {"generationTime": "2020-02-20 00:00:00"},
+                            "secondaryMasterKey": {"generationTime": "2020-02-20 00:00:00"},
+                            "secondaryReadonlyMasterKey": {"generationTime": "2020-02-20 00:00:00"},
                         },
                         "locations": [
                             {
@@ -240,12 +204,8 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                         "minimalTlsVersion": "str",
                         "networkAclBypass": "str",
                         "networkAclBypassResourceIds": ["str"],
+                        "perPartitionAutomaticFailoverEnabled": bool,
                         "publicNetworkAccess": "str",
-                        "softDeleteConfiguration": {
-                            "minMinutesBeforePermanentDeletionAllowed": 0,
-                            "softDeleteRetentionPeriodInMinutes": 0,
-                            "softDeletionEnabled": bool,
-                        },
                         "virtualNetworkRules": [{"id": "str", "ignoreMissingVNetServiceEndpoint": bool}],
                     },
                     "tags": {"str": "str"},
@@ -380,7 +340,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
             await self.client.database_accounts.begin_regenerate_key(
                 resource_group_name=resource_group.name,
                 account_name="str",
-                key_to_regenerate={"keyKind": "str", "skipAccountKeysLastUsageCheck": bool},
+                key_to_regenerate={"keyKind": "str"},
             )
         ).result()  # call '.result()' to poll until service return final result
 

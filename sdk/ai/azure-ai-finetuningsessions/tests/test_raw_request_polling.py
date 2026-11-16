@@ -27,6 +27,7 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    ResponseNotReadError,
     ServiceRequestError,
 )
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryPolicy
@@ -65,6 +66,12 @@ class Reply:
     payload: Any
     status: int = 200
     headers: dict[str, str] = field(default_factory=dict)
+    chunks: tuple[bytes | BaseException, ...] | None = None
+
+
+def file_reply(content: bytes = b"x" * 123, *, etag: str = '"file-v1"', **headers: str) -> Reply:
+    """A raw stream; never buffer it with read/content/json."""
+    return Reply(b"", headers={"Content-Length": str(len(content)), "ETag": etag, **headers}, chunks=(content,))
 
 
 class ResponseBuffer:
@@ -78,19 +85,28 @@ class ResponseBuffer:
         self._body = reply.payload if isinstance(reply.payload, bytes) else json.dumps(reply.payload).encode("utf-8")
         self.is_closed = False
         self.is_stream_consumed = False
+        self._chunks = reply.chunks
 
     @property
     def content(self) -> bytes:
+        if self._chunks is not None:
+            raise ResponseNotReadError()
         return self._body
 
     def body(self) -> bytes:
-        return self._body
+        return self.content
 
     def text(self, encoding: str | None = None) -> str:
-        return self._body.decode(encoding or "utf-8")
+        return self.content.decode(encoding or "utf-8")
 
     def json(self) -> Any:
-        return json.loads(self._body)
+        return json.loads(self.content)
+
+    def raw_chunks(self):
+        for chunk in self._chunks if self._chunks is not None else (self._body,):
+            if isinstance(chunk, BaseException):
+                raise chunk
+            yield chunk
 
     def raise_for_status(self) -> None:
         if self.status_code >= 400:
@@ -105,6 +121,7 @@ class SyncResponse(ResponseBuffer, HttpResponse):
         self.initialize(reply)
 
     def read(self) -> bytes:
+        assert self._chunks is None, "Streaming responses must not be eagerly read"
         self.is_stream_consumed = True
         return self._body
 
@@ -115,7 +132,7 @@ class SyncResponse(ResponseBuffer, HttpResponse):
         yield self._body
 
     def iter_raw(self, **_: Any):
-        yield self._body
+        yield from self.raw_chunks()
 
     def stream_download(self, pipeline: Any, **kwargs: Any):
         return self.iter_bytes(**kwargs)
@@ -129,6 +146,7 @@ class AsyncResponse(ResponseBuffer, AsyncHttpResponse):
         self.initialize(reply)
 
     async def read(self) -> bytes:
+        assert self._chunks is None, "Streaming responses must not be eagerly read"
         self.is_stream_consumed = True
         return self._body
 
@@ -139,7 +157,8 @@ class AsyncResponse(ResponseBuffer, AsyncHttpResponse):
         yield self._body
 
     async def iter_raw(self, **_: Any):
-        yield self._body
+        for chunk in self.raw_chunks():
+            yield chunk
 
     def stream_download(self, pipeline: Any, **kwargs: Any):
         return self.iter_bytes(**kwargs)
@@ -152,6 +171,7 @@ class Script:
         self.replies = deque(replies)
         self.requests: list[dict[str, Any]] = []
         self.delays: list[float] = []
+        self.responses: list[Any] = []
 
     def receive(self, request: Any, options: dict[str, Any]) -> Reply:
         content = request.content
@@ -181,7 +201,9 @@ class SyncTransport(HttpTransport):
         self.script = script
 
     def send(self, request: Any, **kwargs: Any) -> SyncResponse:
-        return SyncResponse(request, self.script.receive(request, kwargs))
+        response = SyncResponse(request, self.script.receive(request, kwargs))
+        self.script.responses.append(response)
+        return response
 
     def open(self) -> None:
         pass
@@ -203,7 +225,9 @@ class AsyncTransport(AsyncHttpTransport):
         self.script = script
 
     async def send(self, request: Any, **kwargs: Any) -> AsyncResponse:
-        return AsyncResponse(request, self.script.receive(request, kwargs))
+        response = AsyncResponse(request, self.script.receive(request, kwargs))
+        self.script.responses.append(response)
+        return response
 
     async def open(self) -> None:
         pass
@@ -267,11 +291,12 @@ def test_public_source_import() -> None:
         }
 
     expected = inventory(source)
-    assert len(expected) == 32
+    assert len(expected) == 33
     assert {
         "_text_only.py",
         "models/_text_only.py",
         "_checkpoint_download.py",
+        "_checkpoint_files.py",
         "_scalar_serialization.py",
     } <= expected.keys()
     assert inventory(imported.parent) == expected
@@ -318,7 +343,7 @@ async def test_raw_sampling_poller_preserves_public_choices(asynchronous: bool) 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("keyword_inputs", [False, True], ids=["positional", "keyword"])
 @pytest.mark.parametrize("token_credential", [False, True], ids=["key", "token"])
-async def test_download_weights_validates_and_polls_without_writing_files(
+async def test_download_weights_validates_polls_and_delivers_files(
     asynchronous, keyword_inputs, token_credential, tmp_path
 ):
     scopes_requested = []
@@ -340,6 +365,7 @@ async def test_download_weights_validates_and_polls_without_writing_files(
         Reply({"status": "Pending"}, status=202, headers={"Retry-After": "1000"}),
         Reply({"status": "Pending"}, status=202),
         Reply({"status": "Succeeded", "files": [download_file(api_version="test-preview")]}),
+        file_reply(),
     )
     (tmp_path / "unrelated.txt").write_text("keep")
     client = client_for(script, asynchronous, credential=credential, api_version="test-preview", polling_interval=7)
@@ -354,10 +380,8 @@ async def test_download_weights_validates_and_polls_without_writing_files(
         if asynchronous:
             result = await result
         assert result is None
-        assert len(script.requests) == 4
+        assert len(script.requests) == 5
         for request in script.requests:
-            assert request["method"] == "POST"
-            assert request["url"] == DOWNLOAD_URL.replace("api-version=v1", "api-version=test-preview")
             assert request["headers"]["Foundry-Features"] == COMMON["foundry_features"]
             if token_credential:
                 assert request["headers"]["Authorization"] == "Bearer fixture-token"
@@ -366,10 +390,21 @@ async def test_download_weights_validates_and_polls_without_writing_files(
                 assert request["headers"]["api-key"] == "fixture-key"
                 assert "Authorization" not in request["headers"]
             assert request["body"] is None
+        assert all(request["method"] == "POST" for request in script.requests[:-1])
+        assert all(
+            request["url"] == DOWNLOAD_URL.replace("api-version=v1", "api-version=test-preview")
+            for request in script.requests[:-1]
+        )
+        get = script.requests[-1]
+        assert get["method"] == "GET"
+        assert get["url"] == DOWNLOAD_URL.partition("?")[0] + "/files/" + "a" * 64 + "?api-version=test-preview"
+        assert get["headers"]["If-Match"] == '"file-v1"'
+        assert get["options"]["stream"] is True
+        assert all(response.is_closed for response in script.responses)
         assert scopes_requested == ([("https://ai.azure.com/.default",)] if token_credential else [])
         assert script.delays == [30, 60, 7]
         assert not script.replies
-        assert [path.name for path in tmp_path.iterdir()] == ["unrelated.txt"]
+        assert (tmp_path / "session_test" / "checkpoint_test" / "nested" / "weights.bin").read_bytes() == b"x" * 123
         assert (tmp_path / "unrelated.txt").read_text() == "keep"
     finally:
         await close_client(client, asynchronous)
@@ -469,15 +504,14 @@ async def test_download_normalizes_http_ids_but_preserves_local_path(
         other = tmp_path / expected_session_id / checkpoint_id
         other.mkdir(parents=True)
         (other / "weights.bin").write_bytes(b"keep")
-    before = list(tmp_path.rglob("*"))
-    script = Script(Reply({"status": "Succeeded", "files": [download_file()]}))
+    script = Script(Reply({"status": "Succeeded", "files": [download_file()]}), file_reply())
     client = client_for(script, asynchronous, endpoint=endpoint)
     try:
         result = client.checkpoints.download_weights(session_id, checkpoint_id, tmp_path)
         if asynchronous:
             result = await result
         assert result is None
-        assert len(script.requests) == 1
+        assert len(script.requests) == 2
         request = script.requests[0]
         assert request["method"] == "POST"
         assert request["url"] == (
@@ -491,7 +525,11 @@ async def test_download_normalizes_http_ids_but_preserves_local_path(
         assert request["body"] is None
         assert request["headers"]["apim-subscription-id"] == "fixture-sub"
         assert not script.delays
-        assert list(tmp_path.rglob("*")) == before
+        assert (tmp_path / session_id / checkpoint_id / "nested" / "weights.bin").read_bytes() == b"x" * 123
+        assert script.requests[1]["method"] == "GET"
+        assert script.requests[1]["headers"]["apim-subscription-id"] == "fixture-sub"
+        if session_id != expected_session_id:
+            assert (other / "weights.bin").read_bytes() == b"keep"
     finally:
         await close_client(client, asynchronous)
 

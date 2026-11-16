@@ -43,6 +43,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/CosmosDBTableThroughputUpdate.json
+# x-ms-original-file: 2026-07-15/CosmosDBTableThroughputUpdate.json
 if __name__ == "__main__":
     main()

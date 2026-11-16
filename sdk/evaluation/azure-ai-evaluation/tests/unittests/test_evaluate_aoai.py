@@ -2,10 +2,15 @@ import pytest
 import copy
 import httpx
 import pandas as pd
+from types import SimpleNamespace
+from typing import Any, Dict, List
 from unittest.mock import MagicMock, patch
 from openai import BadRequestError
+from openai.types.eval_create_response import TestingCriterionEvalGraderScoreModel
+from openai.types.graders import LabelModelGrader
 from azure.ai.evaluation._evaluate._evaluate_aoai import (
     _begin_eval_run,
+    _begin_single_aoai_evaluation,
     _combine_item_schemas,
     _get_single_run_results,
 )
@@ -24,6 +29,119 @@ def test_begin_eval_run_surfaces_aoai_input_rejection_as_user_error():
     assert error.value.blame == ErrorBlame.USER_ERROR
     assert "score must be a number" in error.value.message
     assert isinstance(error.value.__cause__, BadRequestError)
+
+
+@pytest.mark.unittest
+class TestBeginSingleAOAIEvaluationCriteriaResponse:
+    """Reject missing criteria explicitly without submitting a native run."""
+
+    @staticmethod
+    def _begin(client: MagicMock) -> dict:
+        grader = SimpleNamespace(
+            _grader_config={"type": "string_check", "name": "native"},
+            get_client=lambda: client,
+        )
+        return _begin_single_aoai_evaluation({"alias": grader}, pd.DataFrame([{"response": "fixture"}]), {}, "test")
+
+    @pytest.mark.parametrize("include_field", [False, True])
+    def test_missing_criteria_raise_typed_response_error(self, include_field: bool) -> None:
+        client = MagicMock()
+        group = SimpleNamespace(id="eval-test")
+        if include_field:
+            group.testing_criteria = None
+        client.evals.create.return_value = group
+
+        with pytest.raises(EvaluationException) as error:
+            self._begin(client)
+
+        assert error.value.blame == ErrorBlame.UNKNOWN
+        assert "testing criteria" in str(error.value)
+        client.evals.runs.create.assert_not_called()
+
+    def test_empty_criteria_preserve_count_mismatch_error(self) -> None:
+        client = MagicMock()
+        client.evals.create.return_value = SimpleNamespace(id="eval-test", testing_criteria=[])
+
+        with pytest.raises(EvaluationException) as error:
+            self._begin(client)
+
+        assert error.value.blame == ErrorBlame.USER_ERROR
+        assert "Number of testing criteria" in str(error.value)
+        client.evals.runs.create.assert_not_called()
+
+    def test_present_criteria_continue_to_run_creation(self) -> None:
+        client = MagicMock()
+        client.evals.create.return_value = SimpleNamespace(
+            id="eval-test", testing_criteria=[SimpleNamespace(id="legacy")]
+        )
+        client.evals.runs.create.return_value = SimpleNamespace(id="run-test")
+
+        result = self._begin(client)
+
+        assert result["grader_name_map"] == {"legacy": "alias"}
+        client.evals.runs.create.assert_called_once()
+
+
+@pytest.mark.unittest
+class TestBeginSingleAOAIEvaluationGraderIdentifiers:
+    """Map real native grader responses without requiring service-specific IDs."""
+
+    @staticmethod
+    def _score(name: str) -> TestingCriterionEvalGraderScoreModel:
+        return TestingCriterionEvalGraderScoreModel(
+            name=name,
+            type="score_model",
+            model="unused",
+            input=[{"role": "user", "content": "{{item.response}}"}],
+        )
+
+    @staticmethod
+    def _label(name: str) -> LabelModelGrader:
+        return LabelModelGrader(
+            name=name,
+            type="label_model",
+            model="unused",
+            input=[{"role": "user", "content": "{{item.response}}"}],
+            labels=["pass", "fail"],
+            passing_labels=["pass"],
+        )
+
+    @staticmethod
+    def _client(criteria: List[Any]) -> MagicMock:
+        client = MagicMock()
+        client.evals.create.return_value = SimpleNamespace(id="eval-test", testing_criteria=criteria)
+        client.evals.runs.create.return_value = SimpleNamespace(id="run-test")
+        return client
+
+    @staticmethod
+    def _begin(client: MagicMock, configs: Dict[str, Any]) -> Dict[str, Any]:
+        graders = {
+            alias: SimpleNamespace(_grader_config=config, get_client=lambda: client)
+            for alias, config in configs.items()
+        }
+        return _begin_single_aoai_evaluation(
+            graders,
+            pd.DataFrame([{"response": "synthetic fixture"}]),
+            {},
+            "test",
+        )
+
+    @pytest.mark.parametrize("kind", ["score", "label"])
+    def test_native_criterion_name_maps_to_caller_alias(self, kind: str) -> None:
+        criterion = self._score("native") if kind == "score" else self._label("native")
+        client = self._client([criterion])
+
+        result = self._begin(client, {"caller_alias": criterion})
+
+        assert result["grader_name_map"] == {"native": "caller_alias"}
+        client.evals.runs.create.assert_called_once()
+
+    def test_legacy_criterion_id_takes_precedence_over_name(self) -> None:
+        client = self._client([SimpleNamespace(id="legacy", name="native")])
+
+        result = self._begin(client, {"caller_alias": {"type": "string_check"}})
+
+        assert result["grader_name_map"] == {"legacy": "caller_alias"}
 
 
 @pytest.fixture

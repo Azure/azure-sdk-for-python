@@ -81,6 +81,19 @@ def _client() -> SearchIndexerClient:
     return SearchIndexerClient(ENDPOINT, AzureKeyCredential(KEY))
 
 
+class TestSearchIndexerClientDelete:
+    @pytest.mark.parametrize("resource", ["data_source_connection", "indexer", "skillset"])
+    def test_delete_resource_by_name_preserves_condition_and_etag(self, resource):
+        with _client() as client:
+            with mock.patch.object(client, "_delete_" + resource) as operation:
+                getattr(client, "delete_" + resource)(
+                    "owned-resource", match_condition=MatchConditions.IfPresent, etag='"etag"'
+                )
+        operation.assert_called_once_with(
+            name="owned-resource", match_condition=MatchConditions.IfPresent, etag='"etag"'
+        )
+
+
 class TestSearchIndexerCreateOrUpdateDataSourceConnection:
     @mock.patch(
         "azure.search.documents.indexes._operations._operations."

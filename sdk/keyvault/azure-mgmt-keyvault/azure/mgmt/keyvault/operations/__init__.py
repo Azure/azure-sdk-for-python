@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 from ._operations import Operations  # type: ignore
 from ._operations import VaultsOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
+from ._operations import NetworkSecurityPerimeterConfigurationsOperations  # type: ignore
 from ._operations import ManagedHsmsOperations  # type: ignore
 from ._operations import SecretsOperations  # type: ignore
 from ._operations import KeysOperations  # type: ignore
@@ -32,6 +33,7 @@ __all__ = [
     "Operations",
     "VaultsOperations",
     "PrivateEndpointConnectionsOperations",
+    "NetworkSecurityPerimeterConfigurationsOperations",
     "ManagedHsmsOperations",
     "SecretsOperations",
     "KeysOperations",

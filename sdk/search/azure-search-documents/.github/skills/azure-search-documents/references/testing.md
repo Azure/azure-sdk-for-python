@@ -5,11 +5,13 @@ Tests use `pytest` plus the [Test Proxy](https://github.com/Azure/azure-sdk-tool
 Run commands from `sdk/search/azure-search-documents/` using the `venv` alias from `SKILL.md`:
 
 ```powershell
-cd sdk/search/azure-search-documents
+cd sdk\search\azure-search-documents
+$env:PYTHONPATH = (Get-Location).Path
 venv python -m pytest tests
 ```
 
 Use `python -m pytest` rather than bare `pytest` so tests run with the selected package venv.
+Set `PYTHONPATH` as above so an older installed SDK does not shadow the current source.
 
 ## Unit tests
 
@@ -37,12 +39,15 @@ Make HTTP calls to Azure AI Search. Runs in playback by default; switch to live 
 
 Replays existing recordings. Fast, offline.
 
-Recordings must target the API version used by the generated client. After an API version change,
-preview recordings cannot establish GA compatibility. Re-record the supported scenarios against
-the GA API; do not ignore or rewrite API-version differences just to make playback pass.
+Recordings must match the API version actually sent by the client. This branch defaults to
+`2026-11-01-preview`. After an API version or recorded request changes, re-record the affected
+scenarios; do not ignore or rewrite API-version differences to make playback pass. Testing clients
+configured for `2026-10-01` requires matching GA recordings: preview playback alone does not
+establish GA compatibility.
 
 ```powershell
 $env:AZURE_TEST_RUN_LIVE = "false"
+$env:AZURE_SKIP_LIVE_RECORDING = "false"
 venv python -m pytest tests/ -k "live"
 ```
 
@@ -50,45 +55,44 @@ venv python -m pytest tests/ -k "live"
 
 New live tests require new [Test Proxy](https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy) recordings. Pushing recordings updates the `Tag` in `assets.json`, which points to this package's recordings in `Azure/azure-sdk-assets`.
 
-Use a **dedicated, disposable Search service** with the `2026-10-01` API enabled.
-The live preparer deletes every index, alias, knowledge base, knowledge source, indexer,
-data source, and skillset on the configured service before each test. Do not target a shared
-or production service. Run these scenarios serially; parallel tests can delete one another's
-resources. Do not configure pytest-xdist workers for the recording run.
+Use a **dedicated, disposable Search service** that supports the API version and capabilities
+under test. Live scenarios create, update, and delete resources. The current environment preparer
+only supplies configuration; test helpers clean up their own named resources, not every resource
+on the service. Check inventories before and after a run and investigate any leftovers. Do not
+target production or assume that unrelated resources are safe to delete. Run scenarios serially
+unless their resource naming and service limits have been verified for parallel execution.
 
-The configured identity must be able to manage search resources and read/write documents.
+The configured identity must be able to manage Search resources and read/write documents.
 Knowledge retrieval needs semantic search and knowledge-base support in the target region.
 Indexer tests need the configured Blob container and a usable storage connection string.
 File knowledge-source tests additionally need the configured Azure OpenAI embedding deployment
-and the service identities/roles needed to use it. The environment template lists variable
-names and placeholders only; never commit actual resource credentials.
+and service identities/roles needed to use it. Keep real credentials in the untracked local
+environment file; the committed template contains placeholders only.
 
-1. Copy `scripts\Set-LiveTestEnvironment.sample.ps1` to `scripts\Set-LiveTestEnvironment.ps1`, fill in local values, and dot-source it:
+1. Copy `.github\skills\azure-search-documents\scripts\Set-LiveTestEnvironment.sample.ps1` to the sibling `Set-LiveTestEnvironment.ps1`, fill in local values, and dot-source it:
    ```powershell
    . .\.github\skills\azure-search-documents\scripts\Set-LiveTestEnvironment.ps1
    ```
-2. Ensure recording is enabled and run the supported live scenarios:
+2. Enable recording and run the supported live scenarios:
    ```powershell
    $env:AZURE_TEST_RUN_LIVE = "true"
    $env:AZURE_SKIP_LIVE_RECORDING = "false"
    venv python -m pytest tests/ -k "live"
    ```
-   Samples run directly against the service; they do not produce test-proxy recordings.
-   The corresponding recorded tests are the source of playback assets. The existing assets
-   tag targets the prior preview and must be replaced with recordings of the GA requests.
    Start with index CRUD/statistics, then document queries/indexing, knowledge retrieval
    (including native typed streaming), and finally storage/OpenAI-dependent scenarios.
-   Index-statistics summary paging and name-based conditional deletes have dedicated
-   sync/async recording scenarios. Retrieval fixtures seed hotel documents before querying;
-   retrieval tests require nonempty references and activity rather than accepting an empty index.
-   Indexer `resync` live recording is blocked until a permission-ingestion data-source scenario
-   is supplied. Its existing SDK-owned routing is covered by unit tests; the basic Blob fixture
-   does not establish that the service accepts permission resync.
-3. Review new recording diffs for credentials, authorization tokens, endpoints, and storage
-   connection strings. Confirm the requests target `2026-10-01`; do not normalize the
-   API-version difference away. Replay the newly recorded scenarios before pushing:
+   Index-statistics paging and name-based conditional deletes have sync/async scenarios.
+   Retrieval checks that require references must seed documents and wait for indexing/source
+   readiness; an empty response does not establish retrieval quality. Basic Blob indexer
+   recordings do not establish permission-ingestion or permission-resync support, which needs
+   a dedicated data-source scenario, ACL fixtures, and authorized identities.
+   Running samples does not produce test-proxy recordings; use the corresponding recorded tests.
+3. Review new recordings for credentials, authorization tokens, endpoints, and storage connection
+   strings. Confirm that requests target the intended API version (`2026-11-01-preview` for the
+   default November scenarios), then replay the newly recorded scenarios before pushing:
    ```powershell
    $env:AZURE_TEST_RUN_LIVE = "false"
+   $env:AZURE_SKIP_LIVE_RECORDING = "false"
    venv python -m pytest tests/ -k "live"
    ```
 4. Push recordings:
@@ -97,38 +101,52 @@ names and placeholders only; never commit actual resource credentials.
    ```
 5. Keep the updated `assets.json` with your changes.
 
-### Observing live retrieval streaming
+### Validate live without replacing recordings
+
+After configuring the same disposable service, use these flags for a validation-only run:
+
+```powershell
+$env:AZURE_TEST_RUN_LIVE = "true"
+$env:AZURE_SKIP_LIVE_RECORDING = "true"
+venv python -m pytest tests/ -k "live"
+```
+
+This contacts the service but does not refresh playback assets. Reset both flags to `"false"`
+before running playback.
+
+### Diagnosing live retrieval streaming
 
 The sync and async retrieval live files each contain
-`test_retrieve_stream_returns_typed_lifecycle_events`. They consume and log each payload as it
-arrives, rather than collecting the entire stream before logging. INFO logs show the HTTP status,
-SSE content type, event number/type, elapsed time since the request started, and completion counts.
-DEBUG logs additionally show the deserialized JSON body of every event, including reference lists
-and the completed response. These are test diagnostics, not raw HTTP body reads: they do not consume
-the response ahead of the SDK's SSE parser.
+`test_retrieve_stream_returns_typed_lifecycle_events`. They consume the stream and verify a typed
+start event, exactly one completion event with status `200` or `206`, a typed completed response,
+and no stream-error event. They currently collect the events before asserting; they do not log
+each payload or its arrival time.
 
 From the package directory in PowerShell, after configuring the live environment:
 
 ```powershell
 $env:AZURE_TEST_RUN_LIVE = "true"
-$env:AZURE_SKIP_LIVE_RECORDING = "false"
+$env:AZURE_SKIP_LIVE_RECORDING = "true"
 $env:PYTHONPATH = (Get-Location).Path
 $streamTests = @(
-    "tests/test_knowledge_base_retrieval_client_retrieve_live.py"
-    "tests/test_knowledge_base_retrieval_client_retrieve_live_async.py"
+    "tests\test_knowledge_base_retrieval_client_retrieve_live.py"
+    "tests\test_knowledge_base_retrieval_client_retrieve_live_async.py"
 )
-./.venv/bin/python -m pytest @streamTests `
+venv python -m pytest @streamTests `
     -k "test_retrieve_stream_returns_typed_lifecycle_events" `
-    -vv -s --log-cli-level=DEBUG --tb=long
+    -vv -s --log-cli-level=INFO --tb=long
 ```
 
-Use `--log-cli-level=INFO` for progress without payload bodies. Keep DEBUG logs local and review them
-before sharing: returned content and citation URLs are not sanitized by the test proxy's recording
-sanitizers when printed to the console. The tests explicitly request reference source data from their
-seeded hotel index and require intermediate activity/reference payloads plus nonempty response text.
-They do not generate answer-synthesis token deltas, and event timings alone do not prove that the
-service or a proxy delivered each event in a separate network chunk. Recordings must be regenerated
-for the updated request before playback can establish service compatibility.
+Use `--log-cli-level=DEBUG` for more verbose library diagnostics, not as evidence of per-event
+logging. For an arrival-time investigation, instrument the consuming `for` or `async for` loop
+locally rather than logging only after collecting the entire stream. Do not read the raw response
+body ahead of the SDK's SSE parser.
+
+Keep diagnostic logs local and review them before sharing: console output is not sanitized by
+the test proxy's recording sanitizers and may expose returned content or citation URLs. These
+lifecycle tests do not establish answer-synthesis token-delta delivery, and event timings alone
+do not prove that the service or a proxy delivered each event in a separate network chunk.
+Re-record changed requests before using playback as service-contract evidence.
 
 ## Adding new tests
 

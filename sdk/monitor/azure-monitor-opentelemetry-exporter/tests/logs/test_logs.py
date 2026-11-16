@@ -32,7 +32,7 @@ from opentelemetry.trace import set_span_in_context, SpanContext, NonRecordingSp
 
 from azure.monitor.opentelemetry.exporter.export._base import BaseExporter, ExportResult
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import ServiceRequestError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.transport import HttpResponse, HttpTransport
 from azure.monitor.opentelemetry.exporter.export.logs._exporter import (
     AzureMonitorLogExporter,
@@ -1205,6 +1205,57 @@ class TestMultiEndpointRouting(unittest.TestCase):
             resource=Resource({"service.name": "resource-role", "service.instance.id": "resource-instance"}),
         )
 
+    def test_routed_storage_failure_diagnostics_are_safe(self):
+        for storage_result in (
+            "secret-path: secret-telemetry",
+            StorageExportResult.CLIENT_READONLY,
+        ):
+            with self.subTest(storage_result=storage_result):
+                exporter = self._exporter(disable_offline_storage=False)
+                self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+                route = next(iter(exporter._route_exporters.values()))
+                self.transport.send.side_effect = ServiceRequestError("secret-path: secret-telemetry")
+                with mock.patch.object(route.storage, "put", return_value=storage_result):
+                    with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="ERROR") as logs:
+                        self.assertEqual(
+                            exporter.export([self._record(), self._record()]), LogRecordExportResult.FAILURE
+                        )
+                self.assertEqual(logs.records[0].levelname, "ERROR")
+                self.assertNotIn("secret-", "\n".join(logs.output))
+                self.assertTrue(all(record.exc_info is None for record in logs.records))
+                self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+
+    def test_export_failure_diagnostics_do_not_include_exception_or_telemetry(self):
+        for error, level in (
+            (ServiceRequestError("secret-credential"), "WARNING"),
+            (ServiceResponseError("secret-credential"), "WARNING"),
+            (ValueError("secret-credential"), "ERROR"),
+        ):
+            with self.subTest(error=type(error).__name__):
+                exporter = self._exporter()
+                self.transport.send.side_effect = error
+                with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level=level) as logs:
+                    self.assertEqual(
+                        exporter.export([self._record(body="secret-telemetry")] * 2), LogRecordExportResult.FAILURE
+                    )
+                self.assertIn(level, [record.levelname for record in logs.records])
+                self.assertNotIn("secret-", "\n".join(logs.output))
+                self.assertTrue(all(record.exc_info is None for record in logs.records))
+
+    def test_http_failure_diagnostics_are_safe(self):
+        for code in (400, 401, 403, 429, 500):
+            with self.subTest(code=code):
+                exporter = self._exporter()
+
+                def fail(request, status=code, **kwargs):
+                    raise HttpResponseError("secret-service-response", response=_Response(request, status))
+
+                self.transport.send.side_effect = fail
+                with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="ERROR") as logs:
+                    self.assertEqual(exporter.export([self._record()] * 2), LogRecordExportResult.FAILURE)
+                self.assertEqual(logs.records[0].levelname, "ERROR")
+                self.assertNotIn("secret-service-response", "\n".join(logs.output))
+
     def test_grouping_and_per_item_keys(self):
         exporter = self._exporter()
         records = [
@@ -1401,9 +1452,10 @@ class TestMultiEndpointRouting(unittest.TestCase):
 
     def test_missing_aad_credential_does_not_block_other_routes(self):
         exporter = self._exporter(credential=None)
-        with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="ERROR"):
+        with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="ERROR") as logs:
             result = exporter.export([self._record(auth="aad"), self._record(endpoint="https://two.example/")])
         self.assertEqual(result, LogRecordExportResult.FAILURE)
+        self.assertEqual(logs.records[0].levelname, "ERROR")
         self.transport.send.assert_called_once()
         self.assertTrue(self.transport.send.call_args.args[0].url.startswith("https://two.example/"))
 
@@ -1412,7 +1464,9 @@ class TestMultiEndpointRouting(unittest.TestCase):
         with mock.patch.object(exporter, "_transmit_routed", side_effect=RuntimeError("test failure")):
             with self.assertLogs("azure.monitor.opentelemetry.exporter.export.logs._exporter", level="ERROR") as logs:
                 self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.FAILURE)
-        self.assertIn("test failure", logs.output[0])
+        self.assertEqual(logs.records[0].levelname, "ERROR")
+        self.assertNotIn("test failure", logs.output[0])
+        self.assertIsNone(logs.records[0].exc_info)
 
     def test_invalid_destination_response_does_not_shutdown_host_stats(self):
         exporter = self._exporter()
@@ -1566,11 +1620,19 @@ class TestMultiEndpointRouting(unittest.TestCase):
             request,
             206,
             headers={"Retry-After": "60"},
-            errors=[{"index": 1, "statusCode": 429, "message": "retry"}],
+            errors=[
+                {"index": 1, "statusCode": 429, "message": "secret-service-response"},
+                {"index": 2, "statusCode": 400, "message": "secret-service-response"},
+            ],
         )
         with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
-            result = exporter.export([self._record(key="accepted"), self._record(key="rejected")])
+            with self.assertLogs("azure.monitor.opentelemetry.exporter", level="WARNING") as logs:
+                result = exporter.export(
+                    [self._record(key="accepted"), self._record(key="rejected"), self._record(key="dropped")]
+                )
         self.assertEqual(result, LogRecordExportResult.FAILURE)
+        self.assertCountEqual([record.levelname for record in logs.records], ["WARNING", "ERROR"])
+        self.assertNotIn("secret-service-response", "\n".join(logs.output))
         self.transport.send.reset_mock()
         self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
         clock.return_value = 130
@@ -2067,7 +2129,8 @@ class TestMultiEndpointRouting(unittest.TestCase):
             with mock.patch.object(second, "_transmit_from_storage") as drain:
                 with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="ERROR") as logs:
                     retry()
-        self.assertIn("test failure", logs.output[0])
+        self.assertEqual(logs.records[0].levelname, "ERROR")
+        self.assertNotIn("test failure", logs.output[0])
         drain.assert_called_once()
         self.assertEqual(suppression, [True])
         self.assertFalse(get_value(_SUPPRESS_INSTRUMENTATION_KEY))

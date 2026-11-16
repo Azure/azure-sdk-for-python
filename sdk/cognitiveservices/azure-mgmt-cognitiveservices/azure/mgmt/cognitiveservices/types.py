@@ -10,40 +10,22 @@
 from typing import Any, Literal, Optional, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
-from .models._enums import (
-    AgentDeploymentType,
-    AgentHostingType,
-    BuiltInAuthorizationScheme,
-    ComputeType,
-    ConnectionAuthType,
-    RuleType,
-)
+from .models._enums import AgentDeploymentType, BuiltInAuthorizationScheme, ConnectionAuthType, RuleType
 
 if TYPE_CHECKING:
     from .models import (
         AbusePenaltyAction,
-        AdapterDeploymentOperationState,
-        AdapterDeploymentOperationType,
         AgentDeploymentProvisioningState,
         AgentDeploymentState,
         AgentProtocol,
         AgenticApplicationProvisioningState,
-        ArcDeploymentComputeType,
-        ArcDeploymentRuntime,
-        ArcDeploymentSkuName,
         ByPassSelection,
         CapabilityHostKind,
         CapabilityHostProvisioningState,
         CommitmentPlanProvisioningState,
-        ComputeProvisioningState,
         ConnectionCategory,
         ConnectionGroup,
         ContentLevel,
-        CostControlDimensionType,
-        CostControlPeriod,
-        CostControlThresholdAction,
-        CostControlThresholdType,
-        CostControlUnit,
         CreatedByType,
         DefenderForAISettingState,
         DeploymentModelVersionUpgradeOption,
@@ -53,7 +35,6 @@ if TYPE_CHECKING:
         EncryptionScopeProvisioningState,
         EncryptionScopeState,
         FirewallSku,
-        FoundryAutoUpgradeMode,
         HostingModel,
         IdentityKind,
         IdentityManagementType,
@@ -71,12 +52,6 @@ if TYPE_CHECKING:
         PrivateEndpointServiceConnectionStatus,
         ProvisioningState,
         PublicNetworkAccess,
-        RaiAcsHarmCategory,
-        RaiAcsModerationSubjectFormat,
-        RaiAcsPolicyDefinitionType,
-        RaiAcsPolicyTarget,
-        RaiAcsPolicyTargetKind,
-        RaiAcsToolNameSelector,
         RaiActionType,
         RaiEgressDefaultAction,
         RaiEgressHeaderOperation,
@@ -85,10 +60,8 @@ if TYPE_CHECKING:
         RaiEgressRuleType,
         RaiEgressScheme,
         RaiPolicyContentSource,
-        RaiPolicyFormat,
         RaiPolicyMode,
         RaiPolicyType,
-        RaiRegoEncoding,
         ResourceIdentityType,
         RoutingMethods,
         RoutingMode,
@@ -100,10 +73,8 @@ if TYPE_CHECKING:
         SkuTier,
         TierUpgradePolicy,
         TrafficRoutingProtocol,
+        TrustedCertificateSourceType,
         UpgradeAvailabilityStatus,
-        VmPriority,
-        WorkbenchProvisioningState,
-        WorkbenchStatus,
     )
 
 
@@ -123,11 +94,11 @@ class AADAuthTypeConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
-     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
-     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
-     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
-     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
+     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
+     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
+     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
+     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -178,10 +149,10 @@ class AADAuthTypeConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
-     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
-     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
-     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
+     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
+     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
+     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -247,11 +218,11 @@ class AccessKeyAuthTypeConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
-     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
-     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
-     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
-     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
+     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
+     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
+     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
+     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -304,10 +275,10 @@ class AccessKeyAuthTypeConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
-     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
-     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
-     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
+     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
+     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
+     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -447,11 +418,11 @@ class AccountKeyAuthTypeConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
-     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
-     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
-     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
-     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
+     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
+     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
+     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
+     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -504,10 +475,10 @@ class AccountKeyAuthTypeConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
-     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
-     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
-     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
+     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
+     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
+     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -587,7 +558,7 @@ class AccountProperties(TypedDict, total=False):
 
     :ivar provisioningState: Gets the status of the cognitive services account at the time the
      operation was called. Known values are: "Accepted", "Creating", "Deleting", "Moving", "Failed",
-     "Succeeded", "Canceled", "ResolvingDNS", and "ExtensionUnreachable".
+     "Succeeded", "Canceled", and "ResolvingDNS".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar endpoint: Endpoint of the created account.
     :vartype endpoint: str
@@ -660,9 +631,6 @@ class AccountProperties(TypedDict, total=False):
     :vartype raiMonitorConfig: "RaiMonitorConfig"
     :ivar networkInjections:
     :vartype networkInjections: list["NetworkInjection"]
-    :ivar foundryAutoUpgrade: Represents the foundry auto-upgrade configuration for a Cognitive
-     Services account.
-    :vartype foundryAutoUpgrade: "FoundryAutoUpgrade"
     :ivar allowProjectManagement: Specifies whether this resource support project management as
      child resources, used as containers for access management, data isolation and cost in AI
      Foundry.
@@ -673,33 +641,19 @@ class AccountProperties(TypedDict, total=False):
     :ivar associatedProjects: Specifies the projects, by project name, that are associated with
      this resource.
     :vartype associatedProjects: list[str]
-    :ivar capabilitySettings: Reusable default agent capability settings inherited by child
-     projects.
-    :vartype capabilitySettings: "CapabilitySettings"
-    :ivar agentHostingConfigurations: Customer-owned AKS hosting configurations for Foundry agents.
-     This property can only be specified when the account is created; an existing account without a
-     hosting configuration cannot add one later. This API version supports exactly one
-     configuration, while the array shape is reserved for future API versions that may support
-     multiple configurations. Once set, the configuration cannot be changed, removed, or reordered.
-     Account update requests should omit this property or send the complete existing value
-     unchanged. Responses only include hosting configuration types defined by the requested API
-     version.
-    :vartype agentHostingConfigurations: list["AgentHostingConfiguration"]
-    :ivar costControlIds: The full resource IDs of cost controls directly attached to this account.
-     At the moment the service only supports a single cost control. This will be expanded in future
-     API versions.
-    :vartype costControlIds: list[str]
-    :ivar costControlConnections: The account-level connections used to publish cost control
-     telemetry and events. Application Insights is optional for attachment, accounting, and
-     enforcement and can be configured later. Event Grid must be configured before attaching a cost
-     control with an alert threshold.
-    :vartype costControlConnections: "CostControlConnections"
+    :ivar trustedCertificateSources: Private CA trust sources for supported features in an
+     AIServices account with allowProjectManagement enabled. Supports one Azure Key Vault source
+     containing version-pinned references to secrets with PEM-encoded CA certificates or certificate
+     bundles. On PUT or PATCH, a non-null array replaces the complete configuration, so include all
+     references to retain. Omit this property or send null to preserve the existing configuration;
+     send an empty array to clear it.
+    :vartype trustedCertificateSources: list["TrustedCertificateSource"]
     """
 
     provisioningState: Union[str, "ProvisioningState"]
     """Gets the status of the cognitive services account at the time the operation was called. Known
      values are: \"Accepted\", \"Creating\", \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\",
-     \"Canceled\", \"ResolvingDNS\", and \"ExtensionUnreachable\"."""
+     \"Canceled\", and \"ResolvingDNS\"."""
     endpoint: str
     """Endpoint of the created account."""
     internalId: str
@@ -760,8 +714,6 @@ class AccountProperties(TypedDict, total=False):
     raiMonitorConfig: "RaiMonitorConfig"
     """Cognitive Services Rai Monitor Config."""
     networkInjections: list["NetworkInjection"]
-    foundryAutoUpgrade: "FoundryAutoUpgrade"
-    """Represents the foundry auto-upgrade configuration for a Cognitive Services account."""
     allowProjectManagement: bool
     """Specifies whether this resource support project management as child resources, used as
      containers for access management, data isolation and cost in AI Foundry."""
@@ -770,127 +722,13 @@ class AccountProperties(TypedDict, total=False):
      without a project parameter."""
     associatedProjects: list[str]
     """Specifies the projects, by project name, that are associated with this resource."""
-    capabilitySettings: "CapabilitySettings"
-    """Reusable default agent capability settings inherited by child projects."""
-    agentHostingConfigurations: list["AgentHostingConfiguration"]
-    """Customer-owned AKS hosting configurations for Foundry agents. This property can only be
-     specified when the account is created; an existing account without a hosting configuration
-     cannot add one later. This API version supports exactly one configuration, while the array
-     shape is reserved for future API versions that may support multiple configurations. Once set,
-     the configuration cannot be changed, removed, or reordered. Account update requests should omit
-     this property or send the complete existing value unchanged. Responses only include hosting
-     configuration types defined by the requested API version."""
-    costControlIds: list[str]
-    """The full resource IDs of cost controls directly attached to this account. At the moment the
-     service only supports a single cost control. This will be expanded in future API versions."""
-    costControlConnections: Optional["CostControlConnections"]
-    """The account-level connections used to publish cost control telemetry and events. Application
-     Insights is optional for attachment, accounting, and enforcement and can be configured later.
-     Event Grid must be configured before attaching a cost control with an alert threshold."""
-
-
-class AdapterDeployment(ProxyResource):
-    """An independently managed LoRA adapter attached to a managed compute deployment.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar properties: Properties of the Cognitive Services adapter deployment.
-    :vartype properties: "AdapterDeploymentProperties"
-    :ivar etag: The concurrency token for this adapter deployment.
-    :vartype etag: str
-    """
-
-    properties: "AdapterDeploymentProperties"
-    """Properties of the Cognitive Services adapter deployment."""
-    etag: str
-    """The concurrency token for this adapter deployment."""
-
-
-class AdapterDeploymentLastOperation(TypedDict, total=False):
-    """The most recently requested adapter lifecycle operation.
-
-    :ivar type: The type of lifecycle operation. Required. Known values are: "Create", "Update",
-     and "Delete".
-    :vartype type: Union[str, "AdapterDeploymentOperationType"]
-    :ivar status: The current or terminal operation state. Required. Known values are: "Accepted",
-     "Running", "Succeeded", and "Failed".
-    :vartype status: Union[str, "AdapterDeploymentOperationState"]
-    :ivar requestedTargetDeploymentName: The target deployment requested by a create or re-target
-     operation.
-    :vartype requestedTargetDeploymentName: str
-    :ivar startedAt: The time at which the operation started. Required.
-    :vartype startedAt: str
-    :ivar completedAt: The time at which the operation reached a terminal state.
-    :vartype completedAt: str
-    """
-
-    type: Required[Union[str, "AdapterDeploymentOperationType"]]
-    """The type of lifecycle operation. Required. Known values are: \"Create\", \"Update\", and
-     \"Delete\"."""
-    status: Required[Union[str, "AdapterDeploymentOperationState"]]
-    """The current or terminal operation state. Required. Known values are: \"Accepted\", \"Running\",
-     \"Succeeded\", and \"Failed\"."""
-    requestedTargetDeploymentName: str
-    """The target deployment requested by a create or re-target operation."""
-    startedAt: Required[str]
-    """The time at which the operation started. Required."""
-    completedAt: str
-    """The time at which the operation reached a terminal state."""
-
-
-class AdapterDeploymentProperties(TypedDict, total=False):
-    """Properties of an adapter deployment.
-
-    :ivar sourceModelId: The immutable Project Models version produced by Foundry fine-tuning. The
-     identifier uses the Azure AI project model URI format. Model and version segments use ASCII
-     letters, digits, periods, underscores, and hyphens. The service validates LoRA weight type,
-     protected status, provenance, compatibility metadata, and registration state. Required.
-    :vartype sourceModelId: str
-    :ivar targetDeploymentName: The name of the compatible managed compute parent deployment. The
-     service resolves this name within the adapter's owning account; full Azure Resource Manager
-     resource IDs and cross-account references are not accepted. It cannot equal the adapter
-     deployment's resource name. Updating this value re-targets the adapter while its source model
-     remains unchanged. Required.
-    :vartype targetDeploymentName: str
-    :ivar activeTargetDeploymentName: The managed compute deployment currently serving the adapter.
-     During re-targeting this remains the prior deployment until atomic cutover.
-    :vartype activeTargetDeploymentName: str
-    :ivar provisioningState: The provisioning state of the adapter deployment. Known values are:
-     "Accepted", "Creating", "Deleting", "Moving", "Failed", "Succeeded", "Canceled",
-     "ResolvingDNS", and "ExtensionUnreachable".
-    :vartype provisioningState: Union[str, "ProvisioningState"]
-    :ivar lastOperation: Information about the most recently requested lifecycle operation.
-    :vartype lastOperation: "AdapterDeploymentLastOperation"
-    """
-
-    sourceModelId: Required[str]
-    """The immutable Project Models version produced by Foundry fine-tuning. The identifier uses the
-     Azure AI project model URI format. Model and version segments use ASCII letters, digits,
-     periods, underscores, and hyphens. The service validates LoRA weight type, protected status,
-     provenance, compatibility metadata, and registration state. Required."""
-    targetDeploymentName: Required[str]
-    """The name of the compatible managed compute parent deployment. The service resolves this name
-     within the adapter's owning account; full Azure Resource Manager resource IDs and cross-account
-     references are not accepted. It cannot equal the adapter deployment's resource name. Updating
-     this value re-targets the adapter while its source model remains unchanged. Required."""
-    activeTargetDeploymentName: str
-    """The managed compute deployment currently serving the adapter. During re-targeting this remains
-     the prior deployment until atomic cutover."""
-    provisioningState: Union[str, "ProvisioningState"]
-    """The provisioning state of the adapter deployment. Known values are: \"Accepted\", \"Creating\",
-     \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\", \"Canceled\", \"ResolvingDNS\", and
-     \"ExtensionUnreachable\"."""
-    lastOperation: "AdapterDeploymentLastOperation"
-    """Information about the most recently requested lifecycle operation."""
+    trustedCertificateSources: Optional[list["TrustedCertificateSource"]]
+    """Private CA trust sources for supported features in an AIServices account with
+     allowProjectManagement enabled. Supports one Azure Key Vault source containing version-pinned
+     references to secrets with PEM-encoded CA certificates or certificate bundles. On PUT or PATCH,
+     a non-null array replaces the complete configuration, so include all references to retain. Omit
+     this property or send null to preserve the existing configuration; send an empty array to clear
+     it."""
 
 
 class AgentApplication(ProxyResource):
@@ -1074,11 +912,11 @@ class ApiKeyAuthConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
-     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
-     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
-     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
-     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
+     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
+     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
+     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
+     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -1131,10 +969,10 @@ class ApiKeyAuthConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
-     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
-     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
-     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
+     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
+     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
+     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -1230,305 +1068,6 @@ class ApplicationTrafficRoutingPolicy(TypedDict, total=False):
     """Methodology used to route traffic to the application's deployments. \"FixedRatio\""""
     rules: Optional[list["TrafficRoutingRule"]]
     """Gets or sets the collection of traffic routing rules."""
-
-
-class ArcDeployment(ProxyResource):
-    """Cognitive Services account Arc deployment, backed by customer-managed Arc-enabled Kubernetes
-    resources.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar properties: Properties of the Cognitive Services Arc deployment. Required.
-    :vartype properties: "ArcDeploymentProperties"
-    :ivar sku: The Arc deployment SKU. Only the SKU name is required for Arc deployments. Required.
-    :vartype sku: "ArcDeploymentSku"
-    :ivar etag: Resource Etag.
-    :vartype etag: str
-    """
-
-    properties: Required["ArcDeploymentProperties"]
-    """Properties of the Cognitive Services Arc deployment. Required."""
-    sku: Required["ArcDeploymentSku"]
-    """The Arc deployment SKU. Only the SKU name is required for Arc deployments. Required."""
-    etag: str
-    """Resource Etag."""
-
-
-class ArcDeploymentCpuMemoryResourceRequirements(TypedDict, total=False):  # pylint: disable=name-too-long
-    """CPU and memory resource requirements for an Arc deployment replica.
-
-    :ivar cpu: Kubernetes CPU quantity string, for example 500m, 2, 4, or 8. Required.
-    :vartype cpu: str
-    :ivar memory: Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi. Required.
-    :vartype memory: str
-    """
-
-    cpu: Required[str]
-    """Kubernetes CPU quantity string, for example 500m, 2, 4, or 8. Required."""
-    memory: Required[str]
-    """Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi. Required."""
-
-
-class ArcDeploymentKubernetesResources(TypedDict, total=False):
-    """Per-replica Kubernetes resource requests and limits for an Arc deployment.
-
-    :ivar requests: Kubernetes CPU and memory resource requests for each deployment replica.
-    :vartype requests: "ArcDeploymentCpuMemoryResourceRequirements"
-    :ivar limits: Kubernetes resource limits for each deployment replica.
-    :vartype limits: "ArcDeploymentResourceRequirements"
-    """
-
-    requests: "ArcDeploymentCpuMemoryResourceRequirements"
-    """Kubernetes CPU and memory resource requests for each deployment replica."""
-    limits: "ArcDeploymentResourceRequirements"
-    """Kubernetes resource limits for each deployment replica."""
-
-
-class ArcDeploymentModel(TypedDict, total=False):
-    """Model reference for an Arc deployment.
-
-    :ivar format: Deployment model format. Required.
-    :vartype format: str
-    :ivar name: Deployment model name. Required.
-    :vartype name: str
-    """
-
-    format: Required[str]
-    """Deployment model format. Required."""
-    name: Required[str]
-    """Deployment model name. Required."""
-
-
-class ArcDeploymentPatchCpuMemoryResourceRequirements(TypedDict, total=False):  # pylint: disable=name-too-long
-    """CPU and memory resource requirements for an Arc deployment replica update.
-
-    :ivar cpu: Kubernetes CPU quantity string, for example 500m, 2, 4, or 8.
-    :vartype cpu: str
-    :ivar memory: Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi.
-    :vartype memory: str
-    """
-
-    cpu: str
-    """Kubernetes CPU quantity string, for example 500m, 2, 4, or 8."""
-    memory: str
-    """Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi."""
-
-
-class ArcDeploymentPatchKubernetesResources(TypedDict, total=False):
-    """Per-replica Kubernetes resource requests and limits for an Arc deployment update.
-
-    :ivar requests: Kubernetes CPU and memory resource requests for each deployment replica.
-    :vartype requests: "ArcDeploymentPatchCpuMemoryResourceRequirements"
-    :ivar limits: Kubernetes resource limits for each deployment replica.
-    :vartype limits: "ArcDeploymentResourceRequirements"
-    """
-
-    requests: "ArcDeploymentPatchCpuMemoryResourceRequirements"
-    """Kubernetes CPU and memory resource requests for each deployment replica."""
-    limits: "ArcDeploymentResourceRequirements"
-    """Kubernetes resource limits for each deployment replica."""
-
-
-class ArcDeploymentProperties(TypedDict, total=False):
-    """Properties of a Cognitive Services Arc deployment.
-
-    :ivar model: Model reference. Required on creation and immutable after creation. Required.
-    :vartype model: "ArcDeploymentModel"
-    :ivar extensionId: Full Azure resource ID of the Foundry inference extension on the target
-     Arc-enabled Kubernetes cluster. Required on creation and immutable after creation. Required.
-    :vartype extensionId: str
-    :ivar runtime: Inference runtime. Required on creation and immutable after creation. Required.
-     Known values are: "vllm" and "onnx-genai".
-    :vartype runtime: Union[str, "ArcDeploymentRuntime"]
-    :ivar compute: Compute type for the deployment. Required on creation and immutable after
-     creation. Required. Known values are: "gpu" and "cpu".
-    :vartype compute: Union[str, "ArcDeploymentComputeType"]
-    :ivar deploymentTemplate: Optional deployment template identifier for advanced vLLM tuning.
-     Allowed only when runtime is vllm. Example:
-     azureml://registries/{registry}/deploymenttemplates/{template}/versions/{version}.
-    :vartype deploymentTemplate: str
-    :ivar vllmParameters: Read-only. Effective vLLM runtime parameters resolved for the deployed
-     model. Returned only when runtime is vllm.
-    :vartype vllmParameters: "ArcDeploymentVllmParameters"
-    :ivar replicas: Physical replica count on the Arc cluster. Required.
-    :vartype replicas: int
-    :ivar resources: Per-replica Kubernetes resource requests and limits. Required.
-    :vartype resources: "ArcDeploymentKubernetesResources"
-    :ivar nodeSelector: Kubernetes node selector key-value map used to schedule pods onto nodes
-     with matching labels.
-    :vartype nodeSelector: dict[str, str]
-    :ivar deploymentState: The deployment state. Known values are: "Running" and "Paused".
-    :vartype deploymentState: Union[str, "DeploymentState"]
-    :ivar raiPolicyName: The name of RAI policy.
-    :vartype raiPolicyName: str
-    :ivar provisioningState: Read-only. Current provisioning state. Known values are: "Accepted",
-     "Creating", "Deleting", "Moving", "Failed", "Succeeded", "Canceled", "ResolvingDNS", and
-     "ExtensionUnreachable".
-    :vartype provisioningState: Union[str, "ProvisioningState"]
-    :ivar provisioningDetails: Read-only. Status message and timestamp from the last provisioning
-     operation.
-    :vartype provisioningDetails: "ArcDeploymentProvisioningDetails"
-    :ivar inferenceEndpoint: Read-only. Base URL for inference calls to this deployment on the Arc
-     cluster. Populated when provisioningState is Succeeded.
-    :vartype inferenceEndpoint: str
-    :ivar capabilities: Read-only. Deployment capabilities represented as key-value pairs.
-    :vartype capabilities: dict[str, str]
-    """
-
-    model: Required["ArcDeploymentModel"]
-    """Model reference. Required on creation and immutable after creation. Required."""
-    extensionId: Required[str]
-    """Full Azure resource ID of the Foundry inference extension on the target Arc-enabled Kubernetes
-     cluster. Required on creation and immutable after creation. Required."""
-    runtime: Required[Union[str, "ArcDeploymentRuntime"]]
-    """Inference runtime. Required on creation and immutable after creation. Required. Known values
-     are: \"vllm\" and \"onnx-genai\"."""
-    compute: Required[Union[str, "ArcDeploymentComputeType"]]
-    """Compute type for the deployment. Required on creation and immutable after creation. Required.
-     Known values are: \"gpu\" and \"cpu\"."""
-    deploymentTemplate: str
-    """Optional deployment template identifier for advanced vLLM tuning. Allowed only when runtime is
-     vllm. Example:
-     azureml://registries/{registry}/deploymenttemplates/{template}/versions/{version}."""
-    vllmParameters: "ArcDeploymentVllmParameters"
-    """Read-only. Effective vLLM runtime parameters resolved for the deployed model. Returned only
-     when runtime is vllm."""
-    replicas: Required[int]
-    """Physical replica count on the Arc cluster. Required."""
-    resources: Required["ArcDeploymentKubernetesResources"]
-    """Per-replica Kubernetes resource requests and limits. Required."""
-    nodeSelector: dict[str, str]
-    """Kubernetes node selector key-value map used to schedule pods onto nodes with matching labels."""
-    deploymentState: Union[str, "DeploymentState"]
-    """The deployment state. Known values are: \"Running\" and \"Paused\"."""
-    raiPolicyName: str
-    """The name of RAI policy."""
-    provisioningState: Union[str, "ProvisioningState"]
-    """Read-only. Current provisioning state. Known values are: \"Accepted\", \"Creating\",
-     \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\", \"Canceled\", \"ResolvingDNS\", and
-     \"ExtensionUnreachable\"."""
-    provisioningDetails: "ArcDeploymentProvisioningDetails"
-    """Read-only. Status message and timestamp from the last provisioning operation."""
-    inferenceEndpoint: str
-    """Read-only. Base URL for inference calls to this deployment on the Arc cluster. Populated when
-     provisioningState is Succeeded."""
-    capabilities: dict[str, str]
-    """Read-only. Deployment capabilities represented as key-value pairs."""
-
-
-class ArcDeploymentProvisioningDetails(TypedDict, total=False):
-    """Provisioning status details for an Arc deployment.
-
-    :ivar message: A human-readable status message from the last provisioning operation.
-    :vartype message: str
-    :ivar lastOperationTimestamp: Timestamp of the last provisioning operation.
-    :vartype lastOperationTimestamp: str
-    """
-
-    message: str
-    """A human-readable status message from the last provisioning operation."""
-    lastOperationTimestamp: str
-    """Timestamp of the last provisioning operation."""
-
-
-class ArcDeploymentResourceRequirements(TypedDict, total=False):
-    """Kubernetes resource requirements for an Arc deployment replica. Specify either cpu and memory
-    together, or gpu. GPU is supported only in limits, not requests.
-
-    :ivar cpu: Kubernetes CPU quantity string, for example 500m, 2, 4, or 8. Required with memory
-     when specifying CPU and memory limits. Do not specify with gpu.
-    :vartype cpu: str
-    :ivar memory: Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi. Required with
-     cpu when specifying CPU and memory limits. Do not specify with gpu.
-    :vartype memory: str
-    :ivar gpu: Kubernetes GPU quantity, for example 1, 2, or 5. Required when specifying GPU
-     limits. Do not specify with cpu or memory.
-    :vartype gpu: int
-    """
-
-    cpu: str
-    """Kubernetes CPU quantity string, for example 500m, 2, 4, or 8. Required with memory when
-     specifying CPU and memory limits. Do not specify with gpu."""
-    memory: str
-    """Kubernetes memory quantity string, for example 512Mi, 2Gi, or 16Gi. Required with cpu when
-     specifying CPU and memory limits. Do not specify with gpu."""
-    gpu: int
-    """Kubernetes GPU quantity, for example 1, 2, or 5. Required when specifying GPU limits. Do not
-     specify with cpu or memory."""
-
-
-class ArcDeploymentSku(TypedDict, total=False):
-    """SKU for an Arc deployment.
-
-    :ivar name: The name of the Arc deployment SKU. Must be Arc. Required. "Arc"
-    :vartype name: Union[str, "ArcDeploymentSkuName"]
-    """
-
-    name: Required[Union[str, "ArcDeploymentSkuName"]]
-    """The name of the Arc deployment SKU. Must be Arc. Required. \"Arc\""""
-
-
-class ArcDeploymentUpdate(TypedDict, total=False):
-    """The object used to update an Arc deployment.
-
-    :ivar properties: Properties that can be updated on an Arc deployment.
-    :vartype properties: "ArcDeploymentUpdateProperties"
-    """
-
-    properties: "ArcDeploymentUpdateProperties"
-    """Properties that can be updated on an Arc deployment."""
-
-
-class ArcDeploymentUpdateProperties(TypedDict, total=False):
-    """Mutable properties for an Arc deployment.
-
-    :ivar replicas: Physical replica count on the Arc cluster.
-    :vartype replicas: int
-    :ivar resources: Per-replica Kubernetes resource requests and limits.
-    :vartype resources: "ArcDeploymentPatchKubernetesResources"
-    :ivar nodeSelector: Kubernetes node selector key-value map used to schedule pods onto nodes
-     with matching labels.
-    :vartype nodeSelector: dict[str, str]
-    """
-
-    replicas: int
-    """Physical replica count on the Arc cluster."""
-    resources: "ArcDeploymentPatchKubernetesResources"
-    """Per-replica Kubernetes resource requests and limits."""
-    nodeSelector: dict[str, str]
-    """Kubernetes node selector key-value map used to schedule pods onto nodes with matching labels."""
-
-
-class ArcDeploymentVllmParameters(TypedDict, total=False):
-    """Effective vLLM runtime parameters for an Arc deployment.
-
-    :ivar tensorParallelSize: Number of GPUs used for tensor parallelism.
-    :vartype tensorParallelSize: int
-    :ivar maxModelLen: Maximum model context length.
-    :vartype maxModelLen: int
-    :ivar gpuMemoryUtilization: Fraction of GPU memory reserved for model execution.
-    :vartype gpuMemoryUtilization: float
-    :ivar enforceEager: Whether eager execution is enforced for the vLLM runtime.
-    :vartype enforceEager: bool
-    """
-
-    tensorParallelSize: int
-    """Number of GPUs used for tensor parallelism."""
-    maxModelLen: int
-    """Maximum model context length."""
-    gpuMemoryUtilization: float
-    """Fraction of GPU memory reserved for model execution."""
-    enforceEager: bool
-    """Whether eager execution is enforced for the vLLM runtime."""
 
 
 class AssignedIdentity(TypedDict, total=False):
@@ -1683,25 +1222,25 @@ class CapabilityHostProperties(ResourceBase):
     """Whether public hosting environment is enabled for the capability host."""
 
 
-class CapabilitySettings(TypedDict, total=False):
-    """Extensible agent capability configuration. Carries the Azure resource IDs of the agent storage
-    dependencies. Modeled as an object so future capability-backed resources can be added without
-    changing the account or project contract.
+class CertificateBundleReference(TypedDict, total=False):
+    """A reference to a specific version of a Key Vault secret containing a PEM-encoded CA certificate
+    or certificate bundle.
 
-    :ivar documentStore: Azure resource ID of the document store used by agent runtime state.
-    :vartype documentStore: str
-    :ivar vectorStore: Azure resource ID of the vector store used by agent retrieval and indexing.
-    :vartype vectorStore: str
-    :ivar blobStore: Azure resource ID of the blob store used by agent file and artifact storage.
-    :vartype blobStore: str
+    :ivar secretName: Name of the Key Vault secret containing the CA certificate or certificate
+     bundle. Required.
+    :vartype secretName: str
+    :ivar secretVersion: Required, pinned version of the Key Vault secret. Newer secret versions
+     are not followed automatically. To rotate a bundle, update this value and resubmit the complete
+     account trust configuration. Required.
+    :vartype secretVersion: str
     """
 
-    documentStore: str
-    """Azure resource ID of the document store used by agent runtime state."""
-    vectorStore: str
-    """Azure resource ID of the vector store used by agent retrieval and indexing."""
-    blobStore: str
-    """Azure resource ID of the blob store used by agent file and artifact storage."""
+    secretName: Required[str]
+    """Name of the Key Vault secret containing the CA certificate or certificate bundle. Required."""
+    secretVersion: Required[str]
+    """Required, pinned version of the Key Vault secret. Newer secret versions are not followed
+     automatically. To rotate a bundle, update this value and resubmit the complete account trust
+     configuration. Required."""
 
 
 class ChannelsBuiltInAuthorizationPolicy(TypedDict, total=False):
@@ -1753,45 +1292,6 @@ class CheckSkuAvailabilityParameter(TypedDict, total=False):
     """The kind (type) of cognitive service account. Required."""
     type: Required[str]
     """The Type of the resource. Required."""
-
-
-class ClusterComputeProperties(TypedDict, total=False):
-    """Properties for a Cluster (AKS-backed) compute resource.
-
-    :ivar location: The location of the compute resource. Required.
-    :vartype location: str
-    :ivar provisioningState: Provisioning state of the compute resource. Known values are:
-     "Accepted", "Succeeded", "Failed", "Canceled", "Deleting", "Scaling", "Disabled", "Starting",
-     "Stopping", "Restarting", and "Stopped".
-    :vartype provisioningState: Union[str, "ComputeProvisioningState"]
-    :ivar errors: Error details for the compute resource.
-    :vartype errors: list["ErrorDetail"]
-    :ivar creationTime: Creation time of the compute resource.
-    :vartype creationTime: str
-    :ivar computeType: The type of compute resource. Required. Cluster (AKS-backed) compute type.
-    :vartype computeType: Literal[ComputeType.CLUSTER]
-    :ivar pools: Pools attached to this compute cluster. Required.
-    :vartype pools: list["Pool"]
-    :ivar subnetArmId: ARM ID of the subnet used for compute.
-    :vartype subnetArmId: str
-    """
-
-    location: Required[str]
-    """The location of the compute resource. Required."""
-    provisioningState: Union[str, "ComputeProvisioningState"]
-    """Provisioning state of the compute resource. Known values are: \"Accepted\", \"Succeeded\",
-     \"Failed\", \"Canceled\", \"Deleting\", \"Scaling\", \"Disabled\", \"Starting\", \"Stopping\",
-     \"Restarting\", and \"Stopped\"."""
-    errors: list["ErrorDetail"]
-    """Error details for the compute resource."""
-    creationTime: str
-    """Creation time of the compute resource."""
-    computeType: Required[Literal[ComputeType.CLUSTER]]
-    """The type of compute resource. Required. Cluster (AKS-backed) compute type."""
-    pools: Required[list["Pool"]]
-    """Pools attached to this compute cluster. Required."""
-    subnetArmId: str
-    """ARM ID of the subnet used for compute."""
 
 
 class CommitmentPeriod(TypedDict, total=False):
@@ -1983,43 +1483,6 @@ class CommitmentQuota(TypedDict, total=False):
     """Commitment quota unit."""
 
 
-class Compute(ProxyResource):
-    """Cognitive Services compute resource. Supports polymorphic compute types (Cluster,
-    ContainerInstance) via the computeType discriminator in properties.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar properties: Polymorphic properties of the compute resource. Use computeType to select
-     Cluster or ContainerInstance. Required.
-    :vartype properties: "ComputeProperties"
-    :ivar etag: Resource Etag.
-    :vartype etag: str
-    :ivar kind: The kind (type) of compute resource.
-    :vartype kind: str
-    :ivar identity: Identity for the resource.
-    :vartype identity: "Identity"
-    """
-
-    properties: Required["ComputeProperties"]
-    """Polymorphic properties of the compute resource. Use computeType to select Cluster or
-     ContainerInstance. Required."""
-    etag: str
-    """Resource Etag."""
-    kind: str
-    """The kind (type) of compute resource."""
-    identity: "Identity"
-    """Identity for the resource."""
-
-
 class ConnectionAccessKey(TypedDict, total=False):
     """ConnectionAccessKey.
 
@@ -2196,308 +1659,6 @@ class ConnectionUsernamePassword(TypedDict, total=False):
     username: str
 
 
-class ConnectivityEndpoints(TypedDict, total=False):
-    """Network connectivity endpoints for a Container Instance compute.
-
-    :ivar publicIpAddress: The public IP address of the compute instance.
-    :vartype publicIpAddress: str
-    :ivar sshPort: The SSH port for the compute instance.
-    :vartype sshPort: int
-    """
-
-    publicIpAddress: str
-    """The public IP address of the compute instance."""
-    sshPort: int
-    """The SSH port for the compute instance."""
-
-
-class ContainerInstanceComputeProperties(TypedDict, total=False):
-    """Properties for a Container Instance compute resource.
-
-    :ivar location: The location of the compute resource. Required.
-    :vartype location: str
-    :ivar provisioningState: Provisioning state of the compute resource. Known values are:
-     "Accepted", "Succeeded", "Failed", "Canceled", "Deleting", "Scaling", "Disabled", "Starting",
-     "Stopping", "Restarting", and "Stopped".
-    :vartype provisioningState: Union[str, "ComputeProvisioningState"]
-    :ivar errors: Error details for the compute resource.
-    :vartype errors: list["ErrorDetail"]
-    :ivar creationTime: Creation time of the compute resource.
-    :vartype creationTime: str
-    :ivar computeType: The type of compute resource. Required. Container Instance compute type.
-    :vartype computeType: Literal[ComputeType.CONTAINER_INSTANCE]
-    :ivar targetClusterId: ARM resource ID of the parent cluster that hosts this container
-     instance. Required.
-    :vartype targetClusterId: str
-    :ivar imageLink: Container image URI (e.g., MCR or ACR image path) for the container instance.
-     Required.
-    :vartype imageLink: str
-    :ivar idleTimeBeforeShutdown: ISO 8601 duration before the idle instance is automatically shut
-     down (e.g., 'PT30M').
-    :vartype idleTimeBeforeShutdown: str
-    :ivar sshSettings: SSH configuration for remote access to the container instance.
-    :vartype sshSettings: "SshSettings"
-    :ivar connectivityEndpoints: Network connectivity endpoints assigned to the container instance.
-    :vartype connectivityEndpoints: "ConnectivityEndpoints"
-    """
-
-    location: Required[str]
-    """The location of the compute resource. Required."""
-    provisioningState: Union[str, "ComputeProvisioningState"]
-    """Provisioning state of the compute resource. Known values are: \"Accepted\", \"Succeeded\",
-     \"Failed\", \"Canceled\", \"Deleting\", \"Scaling\", \"Disabled\", \"Starting\", \"Stopping\",
-     \"Restarting\", and \"Stopped\"."""
-    errors: list["ErrorDetail"]
-    """Error details for the compute resource."""
-    creationTime: str
-    """Creation time of the compute resource."""
-    computeType: Required[Literal[ComputeType.CONTAINER_INSTANCE]]
-    """The type of compute resource. Required. Container Instance compute type."""
-    targetClusterId: Required[str]
-    """ARM resource ID of the parent cluster that hosts this container instance. Required."""
-    imageLink: Required[str]
-    """Container image URI (e.g., MCR or ACR image path) for the container instance. Required."""
-    idleTimeBeforeShutdown: str
-    """ISO 8601 duration before the idle instance is automatically shut down (e.g., 'PT30M')."""
-    sshSettings: "SshSettings"
-    """SSH configuration for remote access to the container instance."""
-    connectivityEndpoints: "ConnectivityEndpoints"
-    """Network connectivity endpoints assigned to the container instance."""
-
-
-class CostControl(ProxyResource):
-    """A cost control owned by a Cognitive Services account.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "CostControlProperties"
-    :ivar etag: The entity tag used for optimistic concurrency.
-    :vartype etag: str
-    """
-
-    properties: "CostControlProperties"
-    """The resource-specific properties for this resource."""
-    etag: str
-    """The entity tag used for optimistic concurrency."""
-
-
-class CostControlConnections(TypedDict, total=False):
-    """Defines account-level connections used to publish cost-control telemetry and events.
-    Application Insights is optional and may be removed while policies remain attached. Event Grid
-    is required for alerts; supplied connection references must still be valid.
-
-    :ivar appInsightsConnectionId: Gets or sets the full resource ID of the optional Application
-     Insights connection.
-    :vartype appInsightsConnectionId: str
-    :ivar eventGridConnectionId: The full resource ID of the Event Grid connection used for cost
-     control alerts. This connection must be configured when an attached cost control contains an
-     alert threshold action and cannot be removed while such an action remains attached.
-    :vartype eventGridConnectionId: str
-    """
-
-    appInsightsConnectionId: Optional[str]
-    """Gets or sets the full resource ID of the optional Application Insights connection."""
-    eventGridConnectionId: Optional[str]
-    """The full resource ID of the Event Grid connection used for cost control alerts. This connection
-     must be configured when an attached cost control contains an alert threshold action and cannot
-     be removed while such an action remains attached."""
-
-
-class CostControlDimension(TypedDict, total=False):
-    """A request dimension used to partition cost control consumption.
-
-    :ivar type: The kind of request dimension. Required. Known values are: "Agent", "Identity",
-     "Session", "Project", "Account", and "Custom".
-    :vartype type: Union[str, "CostControlDimensionType"]
-    :ivar attribute: Gets or sets the attribute path retained for legacy Custom counters. Authored
-     rules cannot select Custom; built-in dimensions must omit this property.
-    :vartype attribute: str
-    """
-
-    type: Required[Union[str, "CostControlDimensionType"]]
-    """The kind of request dimension. Required. Known values are: \"Agent\", \"Identity\",
-     \"Session\", \"Project\", \"Account\", and \"Custom\"."""
-    attribute: str
-    """Gets or sets the attribute path retained for legacy Custom counters. Authored rules cannot
-     select Custom; built-in dimensions must omit this property."""
-
-
-class CostControlMatch(TypedDict, total=False):
-    """Gets or sets optional match arrays keyed by ``agentResourceIds``, ``identityObjectIds``,
-    ``sessionIds``, or ``projectIds``. Each array contains 1 to 20 non-empty values. Agent resource
-    IDs use
-    /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}.
-    Legacy dotted identity, session, and project keys remain accepted, but cannot be combined with
-    their canonical key.
-
-    :ivar agentResourceIds: Agent resource IDs use
-     /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}.
-    :vartype agentResourceIds: list[str]
-    :ivar identityObjectIds: The authenticated principal object IDs to match.
-    :vartype identityObjectIds: list[str]
-    :ivar sessionIds: The Foundry session IDs to match.
-    :vartype sessionIds: list[str]
-    :ivar projectIds: The Foundry project resource IDs to match.
-    :vartype projectIds: list[str]
-    """
-
-    agentResourceIds: list[str]
-    """Agent resource IDs use
-     /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}."""
-    identityObjectIds: list[str]
-    """The authenticated principal object IDs to match."""
-    sessionIds: list[str]
-    """The Foundry session IDs to match."""
-    projectIds: list[str]
-    """The Foundry project resource IDs to match."""
-
-
-class CostControlPatch(TypedDict, total=False):
-    """The request used to update a cost control.
-
-    :ivar properties: The cost control properties to update.
-    :vartype properties: "CostControlPatchProperties"
-    """
-
-    properties: "CostControlPatchProperties"
-    """The cost control properties to update."""
-
-
-class CostControlPatchProperties(TypedDict, total=False):
-    """The properties that can be changed on a cost control.
-
-    :ivar displayName: An optional human-readable name for the cost control. Set this property to
-     null to clear it.
-    :vartype displayName: str
-    :ivar rules: The complete replacement set of cost control rules.
-    :vartype rules: list["CostControlRule"]
-    """
-
-    displayName: Optional[str]
-    """An optional human-readable name for the cost control. Set this property to null to clear it."""
-    rules: list["CostControlRule"]
-    """The complete replacement set of cost control rules."""
-
-
-class CostControlProperties(TypedDict, total=False):
-    """The customer-authored settings of a cost control.
-
-    :ivar displayName: An optional human-readable name for the cost control.
-    :vartype displayName: str
-    :ivar rules: The rules enforced by the cost control. Required.
-    :vartype rules: list["CostControlRule"]
-    """
-
-    displayName: str
-    """An optional human-readable name for the cost control."""
-    rules: Required[list["CostControlRule"]]
-    """The rules enforced by the cost control. Required."""
-
-
-class CostControlRule(TypedDict, total=False):
-    """A cost limit and the population to which it applies.
-
-    :ivar name: The stable rule identifier, unique within the cost control without regard to case.
-     Required.
-    :vartype name: str
-    :ivar counterKey: Gets or sets the single built-in dimension used to partition consumption.
-     Custom dimensions are retained only for legacy reads and metadata-only updates. Legacy
-     singleton arrays are accepted on read; serialization always emits an object. To track another
-     field, create another rule. Required.
-    :vartype counterKey: "CostControlDimension"
-    :ivar unit: The unit used for the cost control amount and absolute thresholds. Required. "Usd"
-    :vartype unit: Union[str, "CostControlUnit"]
-    :ivar amount: The maximum consumption allowed by this rule, expressed in the selected unit.
-     Required.
-    :vartype amount: float
-    :ivar period: Gets or sets the calendar-aligned UTC renewal period. Authored rules support Day,
-     Week, or Month. This field is required for recurring rules and must be omitted for
-     non-recurring rules. Legacy stored minute, hour, and year periods are preserved when reading
-     definitions. Known values are: "Minute", "Hour", "Day", "Week", "Month", and "Year".
-    :vartype period: Union[str, "CostControlPeriod"]
-    :ivar recurring: Whether the cost control renews. The default is true.
-    :vartype recurring: bool
-    :ivar match: Gets or sets optional match arrays keyed by ``agentResourceIds``,
-     ``identityObjectIds``, ``sessionIds``, or ``projectIds``. Each array contains 1 to 20 non-empty
-     values. Agent resource IDs use
-     /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}.
-     Legacy dotted identity, session, and project keys remain accepted, but cannot be combined with
-     their canonical key.
-    :vartype match: "CostControlMatch"
-    :ivar thresholds: Gets or sets optional thresholds. Omitted or empty thresholds track usage
-     without explicit actions. Authored thresholds must explicitly specify Alert or Block; Audit is
-     retained for legacy reads.
-    :vartype thresholds: list["CostControlThreshold"]
-    """
-
-    name: Required[str]
-    """The stable rule identifier, unique within the cost control without regard to case. Required."""
-    counterKey: Required["CostControlDimension"]
-    """Gets or sets the single built-in dimension used to partition consumption. Custom dimensions are
-     retained only for legacy reads and metadata-only updates. Legacy singleton arrays are accepted
-     on read; serialization always emits an object. To track another field, create another rule.
-     Required."""
-    unit: Required[Union[str, "CostControlUnit"]]
-    """The unit used for the cost control amount and absolute thresholds. Required. \"Usd\""""
-    amount: Required[float]
-    """The maximum consumption allowed by this rule, expressed in the selected unit. Required."""
-    period: Union[str, "CostControlPeriod"]
-    """Gets or sets the calendar-aligned UTC renewal period. Authored rules support Day, Week, or
-     Month. This field is required for recurring rules and must be omitted for non-recurring rules.
-     Legacy stored minute, hour, and year periods are preserved when reading definitions. Known
-     values are: \"Minute\", \"Hour\", \"Day\", \"Week\", \"Month\", and \"Year\"."""
-    recurring: bool
-    """Whether the cost control renews. The default is true."""
-    match: "CostControlMatch"
-    """Gets or sets optional match arrays keyed by ``agentResourceIds``, ``identityObjectIds``,
-     ``sessionIds``, or ``projectIds``. Each array contains 1 to 20 non-empty values. Agent resource
-     IDs use
-     /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}.
-     Legacy dotted identity, session, and project keys remain accepted, but cannot be combined with
-     their canonical key."""
-    thresholds: Optional[list["CostControlThreshold"]]
-    """Gets or sets optional thresholds. Omitted or empty thresholds track usage without explicit
-     actions. Authored thresholds must explicitly specify Alert or Block; Audit is retained for
-     legacy reads."""
-
-
-class CostControlThreshold(TypedDict, total=False):
-    """An action evaluated when cost control consumption reaches a threshold.
-
-    :ivar type: How the threshold value is interpreted. Required. Known values are: "Percentage"
-     and "Absolute".
-    :vartype type: Union[str, "CostControlThresholdType"]
-    :ivar value: Gets or sets the threshold value. Legacy Audit definitions retain their stored
-     values; new thresholds support only Alert or Block. Required.
-    :vartype value: float
-    :ivar action: Gets or sets the threshold action. Authored thresholds must explicitly specify
-     Alert or Block. Legacy stored definitions with omitted actions continue to read as Audit.
-     Required. Known values are: "Audit", "Alert", and "Block".
-    :vartype action: Union[str, "CostControlThresholdAction"]
-    """
-
-    type: Required[Union[str, "CostControlThresholdType"]]
-    """How the threshold value is interpreted. Required. Known values are: \"Percentage\" and
-     \"Absolute\"."""
-    value: Required[float]
-    """Gets or sets the threshold value. Legacy Audit definitions retain their stored values; new
-     thresholds support only Alert or Block. Required."""
-    action: Required[Union[str, "CostControlThresholdAction"]]
-    """Gets or sets the threshold action. Authored thresholds must explicitly specify Alert or Block.
-     Legacy stored definitions with omitted actions continue to read as Audit. Required. Known
-     values are: \"Audit\", \"Alert\", and \"Block\"."""
-
-
 class RaiBlocklistConfig(TypedDict, total=False):
     """Azure OpenAI blocklist config.
 
@@ -2559,11 +1720,11 @@ class CustomKeysConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
-     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
-     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
-     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
-     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
+     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
+     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
+     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
+     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -2616,10 +1777,10 @@ class CustomKeysConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
-     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
-     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
-     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
+     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
+     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
+     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -2755,9 +1916,6 @@ class DeploymentProperties(TypedDict, total=False):
     :ivar contextCacheContainerId: The resource ID of the context cache container associated with
      this deployment.
     :vartype contextCacheContainerId: str
-    :ivar speculativeDecoding: Speculative decoding settings for the deployment. This configuration
-     applies to Fireworks model formats.
-    :vartype speculativeDecoding: "DeploymentSpeculativeDecoding"
     :ivar scaleSettings: Properties of Cognitive Services account deployment model. (Deprecated,
      please use Deployment.sku instead.).
     :vartype scaleSettings: "DeploymentScaleSettings"
@@ -2800,10 +1958,6 @@ class DeploymentProperties(TypedDict, total=False):
      select the models subset for routing and the routing mode (balanced, quality, cost) for routing
      across all supported models or the model subset.
     :vartype routing: "DeploymentRouting"
-    :ivar costControlIds: The full resource IDs of cost controls directly attached to this
-     deployment. At the moment the service only supports a single cost control. This will be
-     expanded in future API versions.
-    :vartype costControlIds: list[str]
     """
 
     provisioningState: Union[str, "DeploymentProvisioningState"]
@@ -2814,9 +1968,6 @@ class DeploymentProperties(TypedDict, total=False):
     """Properties of Cognitive Services account deployment model."""
     contextCacheContainerId: str
     """The resource ID of the context cache container associated with this deployment."""
-    speculativeDecoding: "DeploymentSpeculativeDecoding"
-    """Speculative decoding settings for the deployment. This configuration applies to Fireworks model
-     formats."""
     scaleSettings: "DeploymentScaleSettings"
     """Properties of Cognitive Services account deployment model. (Deprecated, please use
      Deployment.sku instead.)."""
@@ -2856,9 +2007,6 @@ class DeploymentProperties(TypedDict, total=False):
      the deployed model is 'model-router' version 2025-11-18 or later. Allows you to select the
      models subset for routing and the routing mode (balanced, quality, cost) for routing across all
      supported models or the model subset."""
-    costControlIds: list[str]
-    """The full resource IDs of cost controls directly attached to this deployment. At the moment the
-     service only supports a single cost control. This will be expanded in future API versions."""
 
 
 class DeploymentRouting(TypedDict, total=False):
@@ -2903,21 +2051,6 @@ class DeploymentScaleSettings(TypedDict, total=False):
     activeCapacity: int
     """Deployment active capacity. This value might be different from ``capacity`` if customer
      recently updated ``capacity``."""
-
-
-class DeploymentSpeculativeDecoding(TypedDict, total=False):
-    """Speculative decoding settings for a deployment.
-
-    :ivar draftModel: Draft model used to generate speculative decoding tokens. Required.
-    :vartype draftModel: "DeploymentModel"
-    :ivar draftTokenCount: The number of draft tokens attempted per speculation step.
-    :vartype draftTokenCount: int
-    """
-
-    draftModel: Required["DeploymentModel"]
-    """Draft model used to generate speculative decoding tokens. Required."""
-    draftTokenCount: int
-    """The number of draft tokens attempted per speculation step."""
 
 
 class Encryption(TypedDict, total=False):
@@ -2991,115 +2124,6 @@ class EncryptionScopeProperties(Encryption):
     """The encryptionScope state. Known values are: \"Disabled\" and \"Enabled\"."""
 
 
-class ErrorAdditionalInfo(TypedDict, total=False):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: Any
-    """
-
-    type: str
-    """The additional info type."""
-    info: Any
-    """The additional info."""
-
-
-class ErrorDetail(TypedDict, total=False):
-    """The error detail.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list["ErrorDetail"]
-    :ivar additionalInfo: The error additional info.
-    :vartype additionalInfo: list["ErrorAdditionalInfo"]
-    """
-
-    code: str
-    """The error code."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-    details: list["ErrorDetail"]
-    """The error details."""
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
-
-
-class EvaluateDeploymentPoliciesDeployment(TypedDict, total=False):
-    """A hypothetical deployment definition used for policy dry-run evaluation.
-
-    :ivar name: The name of the hypothetical deployment. Required.
-    :vartype name: str
-    :ivar properties: Properties of the hypothetical deployment. Required.
-    :vartype properties: "EvaluateDeploymentPoliciesDeploymentProperties"
-    """
-
-    name: Required[str]
-    """The name of the hypothetical deployment. Required."""
-    properties: Required["EvaluateDeploymentPoliciesDeploymentProperties"]
-    """Properties of the hypothetical deployment. Required."""
-
-
-class EvaluateDeploymentPoliciesDeploymentProperties(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Properties of a hypothetical deployment for policy evaluation.
-
-    :ivar model: The model to evaluate. Required.
-    :vartype model: "DeploymentModel"
-    :ivar raiPolicyName: The name of the RAI policy to evaluate.
-    :vartype raiPolicyName: str
-    """
-
-    model: Required["DeploymentModel"]
-    """The model to evaluate. Required."""
-    raiPolicyName: str
-    """The name of the RAI policy to evaluate."""
-
-
-class EvaluateDeploymentPoliciesRequest(TypedDict, total=False):
-    """Request body for the evaluateDeploymentPolicies action.
-
-    :ivar deployments: The list of hypothetical deployments to evaluate against Azure Policy.
-     Required.
-    :vartype deployments: list["EvaluateDeploymentPoliciesDeployment"]
-    """
-
-    deployments: Required[list["EvaluateDeploymentPoliciesDeployment"]]
-    """The list of hypothetical deployments to evaluate against Azure Policy. Required."""
-
-
-class FoundryAutoUpgrade(TypedDict, total=False):
-    """Represents the foundry auto-upgrade configuration for a Cognitive Services account. Customers
-    can opt out of auto-upgrade by setting mode to Disabled.
-
-    :ivar mode: Gets or sets the auto-upgrade mode. Known values are: "Enabled" and "Disabled".
-    :vartype mode: Union[str, "FoundryAutoUpgradeMode"]
-    :ivar plannedByMicrosoft: Gets or sets a value indicating whether the auto-upgrade is planned
-     by Microsoft.
-    :vartype plannedByMicrosoft: bool
-    :ivar statusReason: Gets or sets the status reason for the auto-upgrade configuration.
-    :vartype statusReason: str
-    :ivar scheduledAt: Gets or sets the scheduled time for the auto-upgrade.
-    :vartype scheduledAt: str
-    """
-
-    mode: Union[str, "FoundryAutoUpgradeMode"]
-    """Gets or sets the auto-upgrade mode. Known values are: \"Enabled\" and \"Disabled\"."""
-    plannedByMicrosoft: bool
-    """Gets or sets a value indicating whether the auto-upgrade is planned by Microsoft."""
-    statusReason: str
-    """Gets or sets the status reason for the auto-upgrade configuration."""
-    scheduledAt: str
-    """Gets or sets the scheduled time for the auto-upgrade."""
-
-
 class FqdnOutboundRule(TypedDict, total=False):
     """FQDN Outbound Rule for the managed network of a cognitive services account.
 
@@ -3134,19 +2158,6 @@ class FqdnOutboundRule(TypedDict, total=False):
     destination: str
     type: Required[Literal[RuleType.FQDN]]
     """Type of a managed network Outbound Rule of a cognitive services account. Required. FQDN."""
-
-
-class GatedModelAccessProperties(TypedDict, total=False):
-    """Gated model access configuration for a managed compute deployment.
-
-    :ivar connectionId: The fully qualified Azure resource ID of the project connection used to
-     authorize access to a gated model during deployment creation. Required.
-    :vartype connectionId: str
-    """
-
-    connectionId: Required[str]
-    """The fully qualified Azure resource ID of the project connection used to authorize access to a
-     gated model during deployment creation. Required."""
 
 
 class HostedAgentDeployment(TypedDict, total=False):
@@ -3327,206 +2338,6 @@ class ManagedAgentDeployment(TypedDict, total=False):
      the platform in the deployer's subscription."""
 
 
-class ManagedClusterAgentHostingConfiguration(TypedDict, total=False):
-    """Configuration for hosting Foundry agents on an Azure Kubernetes Service managed cluster.
-
-    :ivar name: Unique name of the hosting configuration within the Foundry account. Required.
-    :vartype name: str
-    :ivar hostingType: Type of infrastructure used to host Foundry agents. Required. Agents are
-     hosted on an Azure Kubernetes Service managed cluster.
-    :vartype hostingType: Literal[AgentHostingType.MANAGED_CLUSTER]
-    :ivar hostingManagementIdentityResourceId: Azure resource ID of the user-assigned managed
-     identity used by the Foundry resource provider to manage the hosting configuration. The
-     identity must be assigned to the Foundry account in identity.userAssignedIdentities. Required.
-    :vartype hostingManagementIdentityResourceId: str
-    :ivar workloadIdentityResourceId: Azure resource ID of the separate user-assigned managed
-     identity federated to service accounts on the AKS cluster. Hosted agents use this identity to
-     access the Azure Storage blob data plane. Required.
-    :vartype workloadIdentityResourceId: str
-    :ivar clusterResourceId: Azure resource ID of the customer-owned AKS managed cluster that runs
-     the hosted agent workloads. Required.
-    :vartype clusterResourceId: str
-    :ivar storageAccountResourceId: Azure resource ID of the customer-owned storage account used by
-     the hosted agents. The storage account must be in the same subscription and region as the AKS
-     cluster, and its data-plane endpoint must be reachable from the workload network. Required.
-    :vartype storageAccountResourceId: str
-    """
-
-    name: Required[str]
-    """Unique name of the hosting configuration within the Foundry account. Required."""
-    hostingType: Required[Literal[AgentHostingType.MANAGED_CLUSTER]]
-    """Type of infrastructure used to host Foundry agents. Required. Agents are hosted on an Azure
-     Kubernetes Service managed cluster."""
-    hostingManagementIdentityResourceId: Required[str]
-    """Azure resource ID of the user-assigned managed identity used by the Foundry resource provider
-     to manage the hosting configuration. The identity must be assigned to the Foundry account in
-     identity.userAssignedIdentities. Required."""
-    workloadIdentityResourceId: Required[str]
-    """Azure resource ID of the separate user-assigned managed identity federated to service accounts
-     on the AKS cluster. Hosted agents use this identity to access the Azure Storage blob data
-     plane. Required."""
-    clusterResourceId: Required[str]
-    """Azure resource ID of the customer-owned AKS managed cluster that runs the hosted agent
-     workloads. Required."""
-    storageAccountResourceId: Required[str]
-    """Azure resource ID of the customer-owned storage account used by the hosted agents. The storage
-     account must be in the same subscription and region as the AKS cluster, and its data-plane
-     endpoint must be reachable from the workload network. Required."""
-
-
-class ManagedComputeDeployment(ProxyResource):
-    """Cognitive Services account managed compute deployment, backed by managed compute (GPU)
-    resources.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar properties: Properties of the Cognitive Services managed compute deployment.
-    :vartype properties: "ManagedComputeDeploymentProperties"
-    :ivar sku: The resource model definition representing SKU.
-    :vartype sku: "Sku"
-    :ivar etag: Resource Etag.
-    :vartype etag: str
-    """
-
-    properties: "ManagedComputeDeploymentProperties"
-    """Properties of the Cognitive Services managed compute deployment."""
-    sku: "Sku"
-    """The resource model definition representing SKU."""
-    etag: str
-    """Resource Etag."""
-
-
-class ManagedComputeDeploymentProperties(TypedDict, total=False):
-    """Properties of a Cognitive Services managed compute deployment.
-
-    :ivar model: AzureML Registry model asset URI. Required on creation; immutable after creation.
-     Example: azureml://registries/{registry}/models/{model}/versions/{version}. Required.
-    :vartype model: str
-    :ivar deploymentTemplate: Deployment template identifier. Optional on creation. Accepts an
-     AzureML Registry deployment template URI or a project-scoped deployment template path for
-     VmManagedCompute. Examples:
-     azureml://registries/{registry}/deploymenttemplates/{template}/versions/{version},
-     projects/{project}/deploymentTemplates/{template}/versions/{version}.
-    :vartype deploymentTemplate: str
-    :ivar acceleratorType: Accelerator type (e.g., H100_80GB). Optional on creation; immutable
-     after creation.
-    :vartype acceleratorType: str
-    :ivar versionUpgradeOption: Template auto-upgrade policy. Defaults to
-     OnceNewDefaultVersionAvailable. Known values are: "OnceNewDefaultVersionAvailable",
-     "OnceCurrentVersionExpired", and "NoAutoUpgrade".
-    :vartype versionUpgradeOption: Union[str, "DeploymentModelVersionUpgradeOption"]
-    :ivar gatedModelAccess: Configuration used to authorize access to a gated model during
-     deployment creation.
-    :vartype gatedModelAccess: "GatedModelAccessProperties"
-    :ivar capabilities: Deployment capabilities represented as key-value pairs. Example: {
-     assetsV2: "true" }.
-    :vartype capabilities: dict[str, str]
-    :ivar computeId: Foundry compute ARM resource ID for VM-backed managed compute deployments.
-     Required when sku.name is VmManagedCompute; immutable after creation.
-    :vartype computeId: str
-    :ivar priority: Scheduling priority for VM-backed managed compute deployments. Immutable after
-     creation.
-    :vartype priority: str
-    :ivar acceleratorsPerInstance: Read-only. Number of accelerators (GPUs) consumed by each model
-     instance, sourced from the deployment template.
-    :vartype acceleratorsPerInstance: int
-    :ivar totalAccelerators: Read-only. Total accelerators allocated: sku.capacity (instances) x
-     acceleratorsPerInstance.
-    :vartype totalAccelerators: int
-    :ivar provisioningState: Read-only. Current provisioning state. Known values are: "Accepted",
-     "Creating", "Deleting", "Moving", "Failed", "Succeeded", "Canceled", "ResolvingDNS", and
-     "ExtensionUnreachable".
-    :vartype provisioningState: Union[str, "ProvisioningState"]
-    :ivar provisioningDetails: Read-only. Status message and timestamp from the last provisioning
-     operation.
-    :vartype provisioningDetails: "ManagedComputeDeploymentProvisioningDetails"
-    :ivar routes: Read-only. Inference route paths relative to the account endpoint. Populated when
-     provisioningState is Succeeded.
-    :vartype routes: "ManagedComputeDeploymentRoutes"
-    """
-
-    model: Required[str]
-    """AzureML Registry model asset URI. Required on creation; immutable after creation. Example:
-     azureml://registries/{registry}/models/{model}/versions/{version}. Required."""
-    deploymentTemplate: str
-    """Deployment template identifier. Optional on creation. Accepts an AzureML Registry deployment
-     template URI or a project-scoped deployment template path for VmManagedCompute. Examples:
-     azureml://registries/{registry}/deploymenttemplates/{template}/versions/{version},
-     projects/{project}/deploymentTemplates/{template}/versions/{version}."""
-    acceleratorType: str
-    """Accelerator type (e.g., H100_80GB). Optional on creation; immutable after creation."""
-    versionUpgradeOption: Union[str, "DeploymentModelVersionUpgradeOption"]
-    """Template auto-upgrade policy. Defaults to OnceNewDefaultVersionAvailable. Known values are:
-     \"OnceNewDefaultVersionAvailable\", \"OnceCurrentVersionExpired\", and \"NoAutoUpgrade\"."""
-    gatedModelAccess: "GatedModelAccessProperties"
-    """Configuration used to authorize access to a gated model during deployment creation."""
-    capabilities: dict[str, str]
-    """Deployment capabilities represented as key-value pairs. Example: { assetsV2: \"true\" }."""
-    computeId: str
-    """Foundry compute ARM resource ID for VM-backed managed compute deployments. Required when
-     sku.name is VmManagedCompute; immutable after creation."""
-    priority: str
-    """Scheduling priority for VM-backed managed compute deployments. Immutable after creation."""
-    acceleratorsPerInstance: int
-    """Read-only. Number of accelerators (GPUs) consumed by each model instance, sourced from the
-     deployment template."""
-    totalAccelerators: int
-    """Read-only. Total accelerators allocated: sku.capacity (instances) x acceleratorsPerInstance."""
-    provisioningState: Union[str, "ProvisioningState"]
-    """Read-only. Current provisioning state. Known values are: \"Accepted\", \"Creating\",
-     \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\", \"Canceled\", \"ResolvingDNS\", and
-     \"ExtensionUnreachable\"."""
-    provisioningDetails: "ManagedComputeDeploymentProvisioningDetails"
-    """Read-only. Status message and timestamp from the last provisioning operation."""
-    routes: "ManagedComputeDeploymentRoutes"
-    """Read-only. Inference route paths relative to the account endpoint. Populated when
-     provisioningState is Succeeded."""
-
-
-class ManagedComputeDeploymentProvisioningDetails(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Provisioning status details for a managed compute deployment.
-
-    :ivar message: A human-readable status message from the last provisioning operation.
-    :vartype message: str
-    :ivar lastOperationTimestamp: Timestamp of the last provisioning operation.
-    :vartype lastOperationTimestamp: str
-    """
-
-    message: str
-    """A human-readable status message from the last provisioning operation."""
-    lastOperationTimestamp: str
-    """Timestamp of the last provisioning operation."""
-
-
-class ManagedComputeDeploymentRoutes(TypedDict, total=False):
-    """Inference route paths for a managed compute deployment, relative to the account endpoint.
-    Populated when provisioningState is Succeeded.
-
-    :ivar chatCompletionsScoringPath: Relative path to the chat completions scoring endpoint.
-    :vartype chatCompletionsScoringPath: str
-    :ivar swagger: Relative path to the Swagger/OpenAPI endpoint.
-    :vartype swagger: str
-    :ivar messagesApiScoringPath: Relative path to the messages API scoring endpoint.
-    :vartype messagesApiScoringPath: str
-    """
-
-    chatCompletionsScoringPath: str
-    """Relative path to the chat completions scoring endpoint."""
-    swagger: str
-    """Relative path to the Swagger/OpenAPI endpoint."""
-    messagesApiScoringPath: str
-    """Relative path to the messages API scoring endpoint."""
-
-
 class ManagedIdentityAuthTypeConnectionProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """ManagedIdentityAuthTypeConnectionProperties.
 
@@ -3543,11 +2354,11 @@ class ManagedIdentityAuthTypeConnectionProperties(TypedDict, total=False):  # py
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
-     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
-     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
-     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
-     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
+     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
+     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
+     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
+     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -3600,10 +2411,10 @@ class ManagedIdentityAuthTypeConnectionProperties(TypedDict, total=False):  # py
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
-     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
-     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
-     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
+     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
+     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
+     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -3907,11 +2718,11 @@ class NoneAuthTypeConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
-     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
-     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
-     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
-     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
+     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
+     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
+     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
+     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -3962,10 +2773,10 @@ class NoneAuthTypeConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
-     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
-     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
-     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
+     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
+     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
+     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -4012,11 +2823,11 @@ class OAuth2AuthTypeConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
-     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
-     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
-     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
-     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
+     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
+     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
+     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
+     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -4070,10 +2881,10 @@ class OAuth2AuthTypeConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
-     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
-     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
-     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
+     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
+     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
+     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -4159,11 +2970,11 @@ class PATAuthTypeConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
-     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
-     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
-     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
-     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
+     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
+     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
+     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
+     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -4216,10 +3027,10 @@ class PATAuthTypeConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
-     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
-     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
-     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
+     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
+     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
+     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -4251,17 +3062,6 @@ class PATAuthTypeConnectionProperties(TypedDict, total=False):
     """Authentication type of the connection target. Required. PAT."""
 
 
-class PatchResourceSku(TypedDict, total=False):
-    """The object being used to update sku of a resource, in general used for PATCH operations.
-
-    :ivar sku: The resource model definition representing SKU.
-    :vartype sku: "Sku"
-    """
-
-    sku: "Sku"
-    """The resource model definition representing SKU."""
-
-
 class PatchResourceTags(TypedDict, total=False):
     """The object being used to update tags of a resource, in general used for PATCH operations.
 
@@ -4285,29 +3085,6 @@ class PatchResourceTagsAndSku(PatchResourceTags):
 
     sku: "Sku"
     """The resource model definition representing SKU."""
-
-
-class Pool(TypedDict, total=False):
-    """A compute pool configuration.
-
-    :ivar name: The name of the pool. Required.
-    :vartype name: str
-    :ivar vmPriority: The VM priority of the pool. Known values are: "Regular" and "Spot".
-    :vartype vmPriority: Union[str, "VmPriority"]
-    :ivar instanceType: The instance type (VM SKU) used in the pool. Required.
-    :vartype instanceType: str
-    :ivar nodeCount: The number of nodes in the pool. Required.
-    :vartype nodeCount: int
-    """
-
-    name: Required[str]
-    """The name of the pool. Required."""
-    vmPriority: Union[str, "VmPriority"]
-    """The VM priority of the pool. Known values are: \"Regular\" and \"Spot\"."""
-    instanceType: Required[str]
-    """The instance type (VM SKU) used in the pool. Required."""
-    nodeCount: Required[int]
-    """The number of nodes in the pool. Required."""
 
 
 class PrivateEndpoint(TypedDict, total=False):
@@ -4559,7 +3336,7 @@ class ProjectProperties(TypedDict, total=False):
 
     :ivar provisioningState: Gets the status of the cognitive services project at the time the
      operation was called. Known values are: "Accepted", "Creating", "Deleting", "Moving", "Failed",
-     "Succeeded", "Canceled", "ResolvingDNS", and "ExtensionUnreachable".
+     "Succeeded", "Canceled", and "ResolvingDNS".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar displayName: The display name of the Cognitive Services Project.
     :vartype displayName: str
@@ -4569,16 +3346,12 @@ class ProjectProperties(TypedDict, total=False):
     :vartype endpoints: dict[str, str]
     :ivar isDefault: Indicates whether the project is the default project for the account.
     :vartype isDefault: bool
-    :ivar capabilitySettings: Effective agent capability settings for the project. Optional partial
-     override of the account defaults; omitted fields inherit from the parent account when present.
-     Settable only at create time.
-    :vartype capabilitySettings: "CapabilitySettings"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
     """Gets the status of the cognitive services project at the time the operation was called. Known
      values are: \"Accepted\", \"Creating\", \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\",
-     \"Canceled\", \"ResolvingDNS\", and \"ExtensionUnreachable\"."""
+     \"Canceled\", and \"ResolvingDNS\"."""
     displayName: str
     """The display name of the Cognitive Services Project."""
     description: str
@@ -4587,10 +3360,6 @@ class ProjectProperties(TypedDict, total=False):
     """The list of endpoint for this Cognitive Services Project."""
     isDefault: bool
     """Indicates whether the project is the default project for the account."""
-    capabilitySettings: "CapabilitySettings"
-    """Effective agent capability settings for the project. Optional partial override of the account
-     defaults; omitted fields inherit from the parent account when present. Settable only at create
-     time."""
 
 
 class QuotaLimit(TypedDict, total=False):
@@ -4684,293 +3453,6 @@ class QuotaTierUpgradeEligibilityInfo(TypedDict, total=False):
      TierUpgradePolicy is \"OnceUpgradeIsAvailable\" (UTC)."""
     upgradeUnavailabilityReason: Optional[str]
     """Reason in case the subscription is not eligible for upgrade to the next tier."""
-
-
-class RaiAcsEmptyObject(TypedDict, total=False):
-    """An object that must contain no properties."""
-
-
-class RaiAcsHarmConfiguration(TypedDict, total=False):
-    """Selects one Azure AI Content Safety harm-detector configuration.
-
-    :ivar category: The logical harm category exposed under input.snapshot.moderation.harm.
-     Required. Known values are: "Hate", "SelfHarm", "Sexual", "Violence", "PromptInjection",
-     "ProtectedMaterialText", and "ProtectedMaterialCode".
-    :vartype category: Union[str, "RaiAcsHarmCategory"]
-    :ivar harm_config_id: The Azure AI Content Safety detector configuration identifier. When
-     supplied, it must be the configuration supported for the selected category.
-    :vartype harm_config_id: str
-    """
-
-    category: Required[Union[str, "RaiAcsHarmCategory"]]
-    """The logical harm category exposed under input.snapshot.moderation.harm. Required. Known values
-     are: \"Hate\", \"SelfHarm\", \"Sexual\", \"Violence\", \"PromptInjection\",
-     \"ProtectedMaterialText\", and \"ProtectedMaterialCode\"."""
-    harm_config_id: str
-    """The Azure AI Content Safety detector configuration identifier. When supplied, it must be the
-     configuration supported for the selected category."""
-
-
-class RaiAcsInterventionPoint(TypedDict, total=False):
-    """Binds one logical policy to an Agent Control Specification intervention point.
-
-    :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
-     Required. Known values are: "$snap.input", "$snap.output", "$snap.tool_call.args", and
-     "$snap.tool_result.value".
-    :vartype policy_target: Union[str, "RaiAcsPolicyTarget"]
-    :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Known
-     values are: "user_input", "assistant_output", "tool_args", and "tool_result".
-    :vartype policy_target_kind: Union[str, "RaiAcsPolicyTargetKind"]
-    :ivar policy: The logical policy evaluated at this intervention point. Required.
-    :vartype policy: "RaiAcsPolicyBinding"
-    :ivar annotations: Standard Agent Control Specification annotation bindings are disabled; when
-     present, this object must be empty.
-    :vartype annotations: "RaiAcsEmptyObject"
-    """
-
-    policy_target: Required[Union[str, "RaiAcsPolicyTarget"]]
-    """The canonical Agent Hooks snapshot path projected as the policy target. Required. Known values
-     are: \"$snap.input\", \"$snap.output\", \"$snap.tool_call.args\", and
-     \"$snap.tool_result.value\"."""
-    policy_target_kind: Required[Union[str, "RaiAcsPolicyTargetKind"]]
-    """The semantic kind of the projected policy target. Required. Known values are: \"user_input\",
-     \"assistant_output\", \"tool_args\", and \"tool_result\"."""
-    policy: Required["RaiAcsPolicyBinding"]
-    """The logical policy evaluated at this intervention point. Required."""
-    annotations: "RaiAcsEmptyObject"
-    """Standard Agent Control Specification annotation bindings are disabled; when present, this
-     object must be empty."""
-
-
-class RaiAcsInterventionPoints(TypedDict, total=False):
-    """Intervention points supported by the Azure AI Content Safety Unified Moderate host profile.
-
-    :ivar input: The policy evaluated for user input.
-    :vartype input: "RaiAcsInterventionPoint"
-    :ivar pre_tool_call: The policy evaluated before a tool call.
-    :vartype pre_tool_call: "RaiAcsToolInterventionPoint"
-    :ivar post_tool_call: The policy evaluated after a tool call.
-    :vartype post_tool_call: "RaiAcsToolInterventionPoint"
-    :ivar output: The policy evaluated for final output.
-    :vartype output: "RaiAcsInterventionPoint"
-    """
-
-    input: "RaiAcsInterventionPoint"
-    """The policy evaluated for user input."""
-    pre_tool_call: "RaiAcsToolInterventionPoint"
-    """The policy evaluated before a tool call."""
-    post_tool_call: "RaiAcsToolInterventionPoint"
-    """The policy evaluated after a tool call."""
-    output: "RaiAcsInterventionPoint"
-    """The policy evaluated for final output."""
-
-
-class RaiAcsManifest(TypedDict, total=False):
-    """The closed Rego-only Agent Control Specification (ACS) profile supported by Azure AI Content
-    Safety Unified Moderate.
-
-    :ivar agent_control_specification_version: The declared Agent Control Specification manifest
-     version. Required.
-    :vartype agent_control_specification_version: str
-    :ivar metadata: Non-policy manifest metadata.
-    :vartype metadata: dict[str, Any]
-    :ivar policies: Named Rego policies in this manifest. Required.
-    :vartype policies: dict[str, "RaiAcsRegoPolicyDefinition"]
-    :ivar intervention_points: Agent Control Specification intervention-point bindings. At least
-     one intervention point is required. Required.
-    :vartype intervention_points: "RaiAcsInterventionPoints"
-    :ivar tools: Static tool catalog keyed by canonical tool name. The catalog may be omitted or
-     empty when no tool selector is configured. A tool selector requires a non-empty catalog, and an
-     unknown selected key fails closed.
-    :vartype tools: dict[str, "RaiAcsToolDefinition"]
-    :ivar annotators: Standard Agent Control Specification annotator dispatch is disabled; when
-     present, this object must be empty.
-    :vartype annotators: "RaiAcsEmptyObject"
-    """
-
-    agent_control_specification_version: Required[str]
-    """The declared Agent Control Specification manifest version. Required."""
-    metadata: dict[str, Any]
-    """Non-policy manifest metadata."""
-    policies: Required[dict[str, "RaiAcsRegoPolicyDefinition"]]
-    """Named Rego policies in this manifest. Required."""
-    intervention_points: Required["RaiAcsInterventionPoints"]
-    """Agent Control Specification intervention-point bindings. At least one intervention point is
-     required. Required."""
-    tools: dict[str, "RaiAcsToolDefinition"]
-    """Static tool catalog keyed by canonical tool name. The catalog may be omitted or empty when no
-     tool selector is configured. A tool selector requires a non-empty catalog, and an unknown
-     selected key fails closed."""
-    annotators: "RaiAcsEmptyObject"
-    """Standard Agent Control Specification annotator dispatch is disabled; when present, this object
-     must be empty."""
-
-
-class RaiAcsModerationBindingExtension(TypedDict, total=False):
-    """Azure AI Content Safety moderation work performed before the Agent Control Specification
-    runtime evaluates the selected Rego query.
-
-    :ivar subject_format: How the selected policy target is represented to moderation capabilities.
-     Required. Known values are: "text" and "canonical_json".
-    :vartype subject_format: Union[str, "RaiAcsModerationSubjectFormat"]
-    :ivar harm_configs: Harm signals requested for this intervention point. Required.
-    :vartype harm_configs: list["RaiAcsHarmConfiguration"]
-    """
-
-    subject_format: Required[Union[str, "RaiAcsModerationSubjectFormat"]]
-    """How the selected policy target is represented to moderation capabilities. Required. Known
-     values are: \"text\" and \"canonical_json\"."""
-    harm_configs: Required[list["RaiAcsHarmConfiguration"]]
-    """Harm signals requested for this intervention point. Required."""
-
-
-class RaiAcsPolicyBinding(TypedDict, total=False):
-    """Identifies the logical policy evaluated at an Agent Control Specification intervention point.
-
-    :ivar id: The logical policy identifier. Required.
-    :vartype id: str
-    :ivar query: An optional intervention-specific Rego query override.
-    :vartype query: str
-    :ivar aacs_moderation: Optional Azure AI Content Safety moderation capabilities invoked before
-     Rego evaluation.
-    :vartype aacs_moderation: "RaiAcsModerationBindingExtension"
-    """
-
-    id: Required[str]
-    """The logical policy identifier. Required."""
-    query: str
-    """An optional intervention-specific Rego query override."""
-    aacs_moderation: "RaiAcsModerationBindingExtension"
-    """Optional Azure AI Content Safety moderation capabilities invoked before Rego evaluation."""
-
-
-class RaiAcsRegoPolicyDefinition(TypedDict, total=False):
-    """A Rego policy definition in the Azure AI Content Safety Unified Moderate host profile.
-
-    :ivar type: The policy language. This profile supports only Rego. Required. "rego"
-    :vartype type: Union[str, "RaiAcsPolicyDefinitionType"]
-    :ivar query: The fully qualified Rego query evaluated for this policy. Required.
-    :vartype query: str
-    """
-
-    type: Required[Union[str, "RaiAcsPolicyDefinitionType"]]
-    """The policy language. This profile supports only Rego. Required. \"rego\""""
-    query: Required[str]
-    """The fully qualified Rego query evaluated for this policy. Required."""
-
-
-class RaiAcsToolDefinition(TypedDict, total=False):
-    """Static policy metadata for one Agent Control Specification tool catalog entry.
-
-    :ivar id: Optional host-defined tool identifier. The catalog map key, not this value, controls
-     tool lookup.
-    :vartype id: str
-    :ivar type: Optional host-defined tool type.
-    :vartype type: str
-    :ivar description: Human-readable policy metadata.
-    :vartype description: str
-    :ivar security_labels: Labels describing the sink or capability.
-    :vartype security_labels: list[str]
-    :ivar clearance: Maximum sensitivity or host-defined clearance metadata.
-    :vartype clearance: str
-    """
-
-    id: str
-    """Optional host-defined tool identifier. The catalog map key, not this value, controls tool
-     lookup."""
-    type: str
-    """Optional host-defined tool type."""
-    description: str
-    """Human-readable policy metadata."""
-    security_labels: list[str]
-    """Labels describing the sink or capability."""
-    clearance: str
-    """Maximum sensitivity or host-defined clearance metadata."""
-
-
-class RaiAcsToolInterventionPoint(TypedDict, total=False):
-    """Binds one logical policy to a tool-call intervention point.
-
-    :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
-     Required. Known values are: "$snap.input", "$snap.output", "$snap.tool_call.args", and
-     "$snap.tool_result.value".
-    :vartype policy_target: Union[str, "RaiAcsPolicyTarget"]
-    :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Known
-     values are: "user_input", "assistant_output", "tool_args", and "tool_result".
-    :vartype policy_target_kind: Union[str, "RaiAcsPolicyTargetKind"]
-    :ivar policy: The logical policy evaluated at this intervention point. Required.
-    :vartype policy: "RaiAcsPolicyBinding"
-    :ivar annotations: Standard Agent Control Specification annotation bindings are disabled; when
-     present, this object must be empty.
-    :vartype annotations: "RaiAcsEmptyObject"
-    :ivar tool_name_from: Selects the tool catalog key from the raw Agent Hooks snapshot using an
-     extensible snapshot path. Known values are: "$snap.tool_call.name" and "$.tool_call.name".
-    :vartype tool_name_from: Union[str, "RaiAcsToolNameSelector"]
-    """
-
-    policy_target: Required[Union[str, "RaiAcsPolicyTarget"]]
-    """The canonical Agent Hooks snapshot path projected as the policy target. Required. Known values
-     are: \"$snap.input\", \"$snap.output\", \"$snap.tool_call.args\", and
-     \"$snap.tool_result.value\"."""
-    policy_target_kind: Required[Union[str, "RaiAcsPolicyTargetKind"]]
-    """The semantic kind of the projected policy target. Required. Known values are: \"user_input\",
-     \"assistant_output\", \"tool_args\", and \"tool_result\"."""
-    policy: Required["RaiAcsPolicyBinding"]
-    """The logical policy evaluated at this intervention point. Required."""
-    annotations: "RaiAcsEmptyObject"
-    """Standard Agent Control Specification annotation bindings are disabled; when present, this
-     object must be empty."""
-    tool_name_from: Union[str, "RaiAcsToolNameSelector"]
-    """Selects the tool catalog key from the raw Agent Hooks snapshot using an extensible snapshot
-     path. Known values are: \"$snap.tool_call.name\" and \"$.tool_call.name\"."""
-
-
-class RaiBinding(ProxyResource):
-    """An account-scoped binding from an Azure resource to an Agent Control Specification policy.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar properties: Properties of the RAI binding.
-    :vartype properties: "RaiBindingProperties"
-    :ivar etag: Resource ETag.
-    :vartype etag: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    properties: "RaiBindingProperties"
-    """Properties of the RAI binding."""
-    etag: str
-    """Resource ETag."""
-    tags: dict[str, str]
-    """Resource tags."""
-
-
-class RaiBindingProperties(TypedDict, total=False):
-    """Properties of a binding from an Azure resource to an Agent Control Specification policy.
-
-    :ivar boundResourceId: A valid Azure Resource Manager resource ID of the resource to bind to
-     the target RAI policy. Required.
-    :vartype boundResourceId: str
-    :ivar targetPolicyName: The same-account Agent Control Specification policy name targeted by
-     the binding. Required.
-    :vartype targetPolicyName: str
-    """
-
-    boundResourceId: Required[str]
-    """A valid Azure Resource Manager resource ID of the resource to bind to the target RAI policy.
-     Required."""
-    targetPolicyName: Required[str]
-    """The same-account Agent Control Specification policy name targeted by the binding. Required."""
 
 
 class RaiBlocklist(ProxyResource):
@@ -5458,43 +3940,9 @@ class RaiPolicyContentFilter(TypedDict, total=False):
      \"ANNOTATING\", \"HITL\", and \"RETRY\"."""
 
 
-class RaiPolicyCustomExternalSafetyProviderReference(TypedDict, total=False):  # pylint: disable=name-too-long
-    """A customer-visible reference to a subscription-level external safety provider.
-
-    :ivar externalSafetyProviderName: The registered external safety-provider name. Required.
-    :vartype externalSafetyProviderName: str
-    :ivar managedIdentityResourceId: Optional managed identity used when invoking the external
-     safety provider.
-    :vartype managedIdentityResourceId: str
-    :ivar source: The request stage at which the provider runs. Required. Known values are:
-     "Prompt", "Completion", "PreToolCall", "PostToolCall", "PreRun", and "PostRun".
-    :vartype source: Union[str, "RaiPolicyContentSource"]
-    :ivar blocking: Whether a provider rejection blocks the request.
-    :vartype blocking: bool
-    """
-
-    externalSafetyProviderName: Required[str]
-    """The registered external safety-provider name. Required."""
-    managedIdentityResourceId: str
-    """Optional managed identity used when invoking the external safety provider."""
-    source: Required[Union[str, "RaiPolicyContentSource"]]
-    """The request stage at which the provider runs. Required. Known values are: \"Prompt\",
-     \"Completion\", \"PreToolCall\", \"PostToolCall\", \"PreRun\", and \"PostRun\"."""
-    blocking: bool
-    """Whether a provider rejection blocks the request."""
-
-
 class RaiPolicyProperties(TypedDict, total=False):
     """Azure OpenAI Content Filters properties.
 
-    :ivar format: The policy representation. Omission selects ContentFilters when creating a
-     policy. ACS policy creation and replacement require ACS. Known values are: "ContentFilters" and
-     "ACS".
-    :vartype format: Union[str, "RaiPolicyFormat"]
-    :ivar acs: The ACS manifest. Required by service validation when format is ACS.
-    :vartype acs: "RaiAcsManifest"
-    :ivar acsRegos: Reusable same-account Rego resources loaded with the ACS manifest.
-    :vartype acsRegos: list["RaiRegoReference"]
     :ivar type: Content Filters policy type. Known values are: "UserManaged" and "SystemManaged".
     :vartype type: Union[str, "RaiPolicyType"]
     :ivar mode: Rai policy mode. The enum value mapping is as below: Default = 0, Deferred=1,
@@ -5510,21 +3958,11 @@ class RaiPolicyProperties(TypedDict, total=False):
     :vartype customBlocklists: list["CustomBlocklistConfig"]
     :ivar safetyProviders: The list of Safety Providers.
     :vartype safetyProviders: list["SafetyProviderConfig"]
-    :ivar customExternalSafetyProviders: Optional external safety-provider references used by this
-     policy.
-    :vartype customExternalSafetyProviders: list["RaiPolicyCustomExternalSafetyProviderReference"]
     :ivar egressPolicy: Egress (outbound network) policy controlling which external endpoints
      sandboxed agents can reach. Includes rules with Allow/Deny/Transform/Rewrite actions.
     :vartype egressPolicy: "RaiEgressPolicyConfig"
     """
 
-    format: Union[str, "RaiPolicyFormat"]
-    """The policy representation. Omission selects ContentFilters when creating a policy. ACS policy
-     creation and replacement require ACS. Known values are: \"ContentFilters\" and \"ACS\"."""
-    acs: "RaiAcsManifest"
-    """The ACS manifest. Required by service validation when format is ACS."""
-    acsRegos: list["RaiRegoReference"]
-    """Reusable same-account Rego resources loaded with the ACS manifest."""
     type: Union[str, "RaiPolicyType"]
     """Content Filters policy type. Known values are: \"UserManaged\" and \"SystemManaged\"."""
     mode: Union[str, "RaiPolicyMode"]
@@ -5540,69 +3978,9 @@ class RaiPolicyProperties(TypedDict, total=False):
     """The list of custom Blocklist."""
     safetyProviders: list["SafetyProviderConfig"]
     """The list of Safety Providers."""
-    customExternalSafetyProviders: list["RaiPolicyCustomExternalSafetyProviderReference"]
-    """Optional external safety-provider references used by this policy."""
     egressPolicy: "RaiEgressPolicyConfig"
     """Egress (outbound network) policy controlling which external endpoints sandboxed agents can
      reach. Includes rules with Allow/Deny/Transform/Rewrite actions."""
-
-
-class RaiRego(ProxyResource):
-    """An account-scoped reusable Rego artifact.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar properties: Properties of the reusable Rego artifact.
-    :vartype properties: "RaiRegoProperties"
-    :ivar etag: Resource ETag.
-    :vartype etag: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    properties: "RaiRegoProperties"
-    """Properties of the reusable Rego artifact."""
-    etag: str
-    """Resource ETag."""
-    tags: dict[str, str]
-    """Resource tags."""
-
-
-class RaiRegoProperties(TypedDict, total=False):
-    """Properties of an account-scoped reusable Rego resource.
-
-    :ivar encoding: How the Rego source is encoded on the wire. The default is None. Known values
-     are: "None" and "Base64".
-    :vartype encoding: Union[str, "RaiRegoEncoding"]
-    :ivar rego: Rego source in the selected transport encoding. Required.
-    :vartype rego: str
-    """
-
-    encoding: Union[str, "RaiRegoEncoding"]
-    """How the Rego source is encoded on the wire. The default is None. Known values are: \"None\" and
-     \"Base64\"."""
-    rego: Required[str]
-    """Rego source in the selected transport encoding. Required."""
-
-
-class RaiRegoReference(TypedDict, total=False):
-    """References one reusable Rego resource on the same account.
-
-    :ivar regoName: The same-account Rego resource name. Required.
-    :vartype regoName: str
-    """
-
-    regoName: Required[str]
-    """The same-account Rego resource name. Required."""
 
 
 class RaiSafetyProviderConfig(TypedDict, total=False):
@@ -5851,11 +4229,11 @@ class SASAuthTypeConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
-     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
-     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
-     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
-     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
+     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
+     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
+     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
+     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -5908,10 +4286,10 @@ class SASAuthTypeConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
-     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
-     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
-     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
+     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
+     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
+     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -5959,11 +4337,11 @@ class ServicePrincipalAuthTypeConnectionProperties(TypedDict, total=False):  # p
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
-     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
-     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
-     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
-     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
+     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
+     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
+     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
+     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -6016,10 +4394,10 @@ class ServicePrincipalAuthTypeConnectionProperties(TypedDict, total=False):  # p
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
-     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
-     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
-     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
+     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
+     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
+     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -6188,21 +4566,6 @@ class SkuChangeInfo(TypedDict, total=False):
     """Gets the last change date."""
 
 
-class SshSettings(TypedDict, total=False):
-    """SSH configuration for a Container Instance compute.
-
-    :ivar sshPublicKey: The SSH public key for authenticating to the compute instance.
-    :vartype sshPublicKey: str
-    :ivar adminEnabled: Whether SSH admin access is enabled.
-    :vartype adminEnabled: bool
-    """
-
-    sshPublicKey: str
-    """The SSH public key for authenticating to the compute instance."""
-    adminEnabled: bool
-    """Whether SSH admin access is enabled."""
-
-
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
@@ -6287,6 +4650,35 @@ class TrafficRoutingRule(TypedDict, total=False):
     """Gets or sets the percentage of traffic allocated to this instance."""
 
 
+class TrustedCertificateSource(TypedDict, total=False):
+    """An Azure resource containing the CA certificate bundles trusted by supported features in the
+    account.
+
+    :ivar type: Type of resource containing the certificate bundles. Currently only AzureKeyVault
+     is supported. Required. "AzureKeyVault"
+    :vartype type: Union[str, "TrustedCertificateSourceType"]
+    :ivar resourceId: Azure resource ID of the Key Vault containing the referenced secrets. The
+     account identity must have permission to read these secrets. Required.
+    :vartype resourceId: str
+    :ivar certificateBundleReferences: References to secrets containing one or more PEM-encoded CA
+     certificates. Each secret name and version pair must be unique within the source, using
+     case-insensitive comparison. The same secret name can be referenced with different versions.
+     Required.
+    :vartype certificateBundleReferences: list["CertificateBundleReference"]
+    """
+
+    type: Required[Union[str, "TrustedCertificateSourceType"]]
+    """Type of resource containing the certificate bundles. Currently only AzureKeyVault is supported.
+     Required. \"AzureKeyVault\""""
+    resourceId: Required[str]
+    """Azure resource ID of the Key Vault containing the referenced secrets. The account identity must
+     have permission to read these secrets. Required."""
+    certificateBundleReferences: Required[list["CertificateBundleReference"]]
+    """References to secrets containing one or more PEM-encoded CA certificates. Each secret name and
+     version pair must be unique within the source, using case-insensitive comparison. The same
+     secret name can be referenced with different versions. Required."""
+
+
 class UserAssignedIdentity(TypedDict, total=False):
     """User-assigned managed identity.
 
@@ -6318,11 +4710,11 @@ class UsernamePasswordAuthTypeConnectionProperties(TypedDict, total=False):  # p
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
-     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
-     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
-     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
-     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
+     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
+     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
+     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
+     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -6375,10 +4767,10 @@ class UsernamePasswordAuthTypeConnectionProperties(TypedDict, total=False):  # p
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
-     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
-     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
-     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
+     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
+     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
+     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -6477,181 +4869,6 @@ class VirtualNetworkRule(TypedDict, total=False):
     """Ignore missing vnet service endpoint or not."""
 
 
-class Workbench(ProxyResource):
-    """Workbench resource under a Cognitive Services project. Provides interactive compute with data
-    access for AI development.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar properties: Properties of the workbench resource. Required.
-    :vartype properties: "WorkbenchProperties"
-    :ivar etag: Resource Etag.
-    :vartype etag: str
-    :ivar identity: Identity for the resource.
-    :vartype identity: "Identity"
-    """
-
-    properties: Required["WorkbenchProperties"]
-    """Properties of the workbench resource. Required."""
-    etag: str
-    """Resource Etag."""
-    identity: "Identity"
-    """Identity for the resource."""
-
-
-class WorkbenchProperties(TypedDict, total=False):
-    """Properties for a Workbench resource.
-
-    :ivar targetClusterId: Resource ID of the Foundry Compute or virtual cluster that hosts this
-     workbench. Changing the cluster requires the workbench to be stopped. Required.
-    :vartype targetClusterId: str
-    :ivar imageLink: Container image URI (e.g., MCR or ACR image path) for the workbench. Immutable
-     after creation. Required.
-    :vartype imageLink: str
-    :ivar instanceType: For virtual clusters, an exact Singularity instance type or a full-node
-     Azure VM size. If omitted on creation, defaults to Singularity.D4_v3. Foundry Compute ignores
-     this override and uses the pool configuration. Changing the instance type requires the
-     workbench to be stopped.
-    :vartype instanceType: str
-    :ivar gpuCount: GPU count for GPU pools or vCPU count for CPU pools. Must be 1, 2, 4, 8, or a
-     positive multiple of 8. A full-node Azure VM size permits partition selection; omission uses
-     the full node. For an exact Singularity instance type, a supplied count must match that type;
-     the Singularity.D4_v3 fallback accepts 4.
-    :vartype gpuCount: int
-    :ivar idleTimeBeforeShutdown: ISO 8601 duration before the idle workbench is automatically shut
-     down (e.g., 'PT30M').
-    :vartype idleTimeBeforeShutdown: str
-    :ivar datasetId: The dataset ID to mount for the workbench. Set only during creation.
-    :vartype datasetId: str
-    :ivar sshSettings: SSH configuration for remote access to the workbench. Set only during
-     creation.
-    :vartype sshSettings: "SshSettings"
-    :ivar connectivityEndpoints: Network connectivity endpoints assigned to the workbench.
-    :vartype connectivityEndpoints: "ConnectivityEndpoints"
-    :ivar webEndpoint: The web endpoint URL for accessing the workbench.
-    :vartype webEndpoint: str
-    :ivar provisioningState: Provisioning state of the workbench resource, independent of runtime
-     lifecycle status. Known values are: "Creating", "Succeeded", "Failed", and "Canceled".
-    :vartype provisioningState: Union[str, "WorkbenchProvisioningState"]
-    :ivar status: Runtime lifecycle status of the workbench. Independent of resource provisioning;
-     start, stop, restart, and runtime health changes do not change provisioningState. Known values
-     are: "Unknown", "Creating", "Starting", "Running", "Stopping", "Stopped", "Restarting",
-     "Updating", "Deleting", and "Failed".
-    :vartype status: Union[str, "WorkbenchStatus"]
-    :ivar errors: Error details for the workbench resource.
-    :vartype errors: list["ErrorDetail"]
-    :ivar creationTime: Creation time of the workbench resource.
-    :vartype creationTime: str
-    """
-
-    targetClusterId: Required[str]
-    """Resource ID of the Foundry Compute or virtual cluster that hosts this workbench. Changing the
-     cluster requires the workbench to be stopped. Required."""
-    imageLink: Required[str]
-    """Container image URI (e.g., MCR or ACR image path) for the workbench. Immutable after creation.
-     Required."""
-    instanceType: str
-    """For virtual clusters, an exact Singularity instance type or a full-node Azure VM size. If
-     omitted on creation, defaults to Singularity.D4_v3. Foundry Compute ignores this override and
-     uses the pool configuration. Changing the instance type requires the workbench to be stopped."""
-    gpuCount: int
-    """GPU count for GPU pools or vCPU count for CPU pools. Must be 1, 2, 4, 8, or a positive multiple
-     of 8. A full-node Azure VM size permits partition selection; omission uses the full node. For
-     an exact Singularity instance type, a supplied count must match that type; the
-     Singularity.D4_v3 fallback accepts 4."""
-    idleTimeBeforeShutdown: str
-    """ISO 8601 duration before the idle workbench is automatically shut down (e.g., 'PT30M')."""
-    datasetId: str
-    """The dataset ID to mount for the workbench. Set only during creation."""
-    sshSettings: "SshSettings"
-    """SSH configuration for remote access to the workbench. Set only during creation."""
-    connectivityEndpoints: "ConnectivityEndpoints"
-    """Network connectivity endpoints assigned to the workbench."""
-    webEndpoint: str
-    """The web endpoint URL for accessing the workbench."""
-    provisioningState: Union[str, "WorkbenchProvisioningState"]
-    """Provisioning state of the workbench resource, independent of runtime lifecycle status. Known
-     values are: \"Creating\", \"Succeeded\", \"Failed\", and \"Canceled\"."""
-    status: Union[str, "WorkbenchStatus"]
-    """Runtime lifecycle status of the workbench. Independent of resource provisioning; start, stop,
-     restart, and runtime health changes do not change provisioningState. Known values are:
-     \"Unknown\", \"Creating\", \"Starting\", \"Running\", \"Stopping\", \"Stopped\",
-     \"Restarting\", \"Updating\", \"Deleting\", and \"Failed\"."""
-    errors: list["ErrorDetail"]
-    """Error details for the workbench resource."""
-    creationTime: str
-    """Creation time of the workbench resource."""
-
-
-class WorkbenchUpdate(TypedDict, total=False):
-    """The mutable fields of a workbench resource.
-
-    :ivar properties: Properties of the workbench to update.
-    :vartype properties: "WorkbenchUpdateProperties"
-    :ivar identity: Identity for the resource. May be changed while the workbench is running only
-     when properties is omitted or null; the change takes effect after restart. If a properties
-     object is supplied, including an empty object or timeout-only update, changing identity
-     requires the workbench to be stopped.
-    :vartype identity: "Identity"
-    """
-
-    properties: "WorkbenchUpdateProperties"
-    """Properties of the workbench to update."""
-    identity: "Identity"
-    """Identity for the resource. May be changed while the workbench is running only when properties
-     is omitted or null; the change takes effect after restart. If a properties object is supplied,
-     including an empty object or timeout-only update, changing identity requires the workbench to
-     be stopped."""
-
-
-class WorkbenchUpdateProperties(TypedDict, total=False):
-    """Mutable properties for a Workbench resource.
-
-    :ivar targetClusterId: Resource ID of the Foundry Compute or virtual cluster that hosts this
-     workbench. Changing the cluster requires the workbench to be stopped.
-    :vartype targetClusterId: str
-    :ivar idleTimeBeforeShutdown: ISO 8601 duration before the idle workbench is automatically shut
-     down (e.g., 'PT30M').
-    :vartype idleTimeBeforeShutdown: str
-    :ivar instanceType: For virtual clusters, an exact Singularity instance type or a full-node
-     Azure VM size. Omit to preserve the current value; null resets to the Singularity.D4_v3
-     fallback. Foundry Compute ignores this override and uses the pool configuration. An actual
-     instance type change requires the workbench to be stopped.
-    :vartype instanceType: str
-    :ivar gpuCount: GPU count for GPU pools or vCPU count for CPU pools. Must be 1, 2, 4, 8, or a
-     positive multiple of 8. Omit to preserve the current value; null clears the override to use the
-     full node or the instance type's default count. Full-node Azure VM sizes permit partition
-     selection. A supplied count must match an exact Singularity instance type; the
-     Singularity.D4_v3 fallback accepts 4.
-    :vartype gpuCount: int
-    """
-
-    targetClusterId: str
-    """Resource ID of the Foundry Compute or virtual cluster that hosts this workbench. Changing the
-     cluster requires the workbench to be stopped."""
-    idleTimeBeforeShutdown: str
-    """ISO 8601 duration before the idle workbench is automatically shut down (e.g., 'PT30M')."""
-    instanceType: Optional[str]
-    """For virtual clusters, an exact Singularity instance type or a full-node Azure VM size. Omit to
-     preserve the current value; null resets to the Singularity.D4_v3 fallback. Foundry Compute
-     ignores this override and uses the pool configuration. An actual instance type change requires
-     the workbench to be stopped."""
-    gpuCount: Optional[int]
-    """GPU count for GPU pools or vCPU count for CPU pools. Must be 1, 2, 4, 8, or a positive multiple
-     of 8. Omit to preserve the current value; null clears the override to use the full node or the
-     instance type's default count. Full-node Azure VM sizes permit partition selection. A supplied
-     count must match an exact Singularity instance type; the Singularity.D4_v3 fallback accepts 4."""
-
-
 ConnectionPropertiesV2 = Union[
     AADAuthTypeConnectionProperties,
     AccessKeyAuthTypeConnectionProperties,
@@ -6667,11 +4884,9 @@ ConnectionPropertiesV2 = Union[
     UsernamePasswordAuthTypeConnectionProperties,
 ]
 AgentDeploymentProperties = Union[HostedAgentDeployment, ManagedAgentDeployment]
-AgentHostingConfiguration = Union[ManagedClusterAgentHostingConfiguration]
 ApplicationAuthorizationPolicy = Union[
     ChannelsBuiltInAuthorizationPolicy,
     RoleBasedBuiltInAuthorizationPolicy,
     OrganizationSharedBuiltInAuthorizationPolicy,
 ]
-ComputeProperties = Union[ClusterComputeProperties, ContainerInstanceComputeProperties]
 OutboundRule = Union[FqdnOutboundRule, PrivateEndpointOutboundRule, ServiceTagOutboundRule]
