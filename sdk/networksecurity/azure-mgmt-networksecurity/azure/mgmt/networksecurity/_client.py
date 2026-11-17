@@ -21,13 +21,19 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from ._configuration import NetworkSecurityMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
+    AgentFabricsOperations,
+    ClusterAssociationsOperations,
+    EgressTrustBundlesOperations,
+    MembersOperations,
     NeuroShieldFindingsOperations,
     NeuroShieldMitigationsOperations,
     NeuroShieldOperationStatusesOperations,
     NeuroShieldProtectedResourcesOperations,
     NeuroShieldSummariesOperations,
     NeuroShieldsOperations,
+    OperationStatusOperations,
     Operations,
+    PolicyGroupsOperations,
 )
 
 if sys.version_info >= (3, 11):
@@ -40,7 +46,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class NetworkSecurityMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
+class NetworkSecurityMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """NetworkSecurityMgmtClient.
 
     :ivar operations: Operations operations
@@ -62,6 +68,20 @@ class NetworkSecurityMgmtClient:  # pylint: disable=too-many-instance-attributes
     :ivar neuro_shield_mitigations: NeuroShieldMitigationsOperations operations
     :vartype neuro_shield_mitigations:
      azure.mgmt.networksecurity.operations.NeuroShieldMitigationsOperations
+    :ivar agent_fabrics: AgentFabricsOperations operations
+    :vartype agent_fabrics: azure.mgmt.networksecurity.operations.AgentFabricsOperations
+    :ivar members: MembersOperations operations
+    :vartype members: azure.mgmt.networksecurity.operations.MembersOperations
+    :ivar policy_groups: PolicyGroupsOperations operations
+    :vartype policy_groups: azure.mgmt.networksecurity.operations.PolicyGroupsOperations
+    :ivar operation_status: OperationStatusOperations operations
+    :vartype operation_status: azure.mgmt.networksecurity.operations.OperationStatusOperations
+    :ivar cluster_associations: ClusterAssociationsOperations operations
+    :vartype cluster_associations:
+     azure.mgmt.networksecurity.operations.ClusterAssociationsOperations
+    :ivar egress_trust_bundles: EgressTrustBundlesOperations operations
+    :vartype egress_trust_bundles:
+     azure.mgmt.networksecurity.operations.EgressTrustBundlesOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -71,11 +91,6 @@ class NetworkSecurityMgmtClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-10-01-preview" and None. Default value is None. If not set, the operation's default API
-     version will be used. Note that overriding this default value may result in unsupported
-     behavior.
-    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -142,6 +157,18 @@ class NetworkSecurityMgmtClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.neuro_shield_mitigations = NeuroShieldMitigationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.agent_fabrics = AgentFabricsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.members = MembersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.policy_groups = PolicyGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operation_status = OperationStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.cluster_associations = ClusterAssociationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.egress_trust_bundles = EgressTrustBundlesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
