@@ -1,0 +1,49 @@
+{
+  "properties": {
+    "componentSpec": {
+      "_source": "CLASS",
+      "args": "--input ${{inputs.data}} --output ${{outputs.output}}",
+      "code": "azureml:./src",
+      "conf": {
+        "spark.driver.cores": 1,
+        "spark.driver.memory": "2g",
+        "spark.executor.cores": 2,
+        "spark.executor.instances": 2,
+        "spark.executor.memory": "2g"
+      },
+      "description": "smoke spark component",
+      "display_name": "smoke spark component",
+      "entry": {
+        "file": "main.py"
+      },
+      "inputs": {
+        "data": {
+          "mode": "direct",
+          "type": "uri_file"
+        }
+      },
+      "is_deterministic": true,
+      "name": "smoke_spark_component",
+      "outputs": {
+        "output": {
+          "mode": "direct",
+          "type": "uri_folder"
+        }
+      },
+      "tags": {
+        "tag1": "value1"
+      },
+      "type": "spark",
+      "version": "1"
+    },
+    "description": "smoke spark component",
+    "isAnonymous": false,
+    "isArchived": false,
+    "properties": {
+      "client_component_hash": "4578f78a-68a0-60eb-78be-b9f5a3cd467a"
+    },
+    "tags": {
+      "tag1": "value1"
+    }
+  }
+}

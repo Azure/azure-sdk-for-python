@@ -1,8 +1,89 @@
 # Release History
 
-## 12.31.0b1 (Unreleased)
+## 12.33.0b1 (Unreleased)
 
 ### Features Added
+
+## 12.32.0b1 (2026-11-05)
+
+### Breaking Changes
+- Custom transports that use legacy `azure-core` Request/Response types will no longer be supported and may now cause errors if used. Please ensure custom transports are utilizing types from `azure.core.rest`.
+- Changed the default `max_single_put_size` from 64 MiB to 4 MiB. This means uploads greater than 4 MiB will now be performed in multiple requests instead of a single request. This may result in more requests and a block blob with more blocks than in previous versions. To restore the previous behavior, pass `max_single_put_size = 64 * 1024 * 1024` when constructing the client.
+- Changed the default `max_single_get_size` from 32 MiB to 4 MiB. This means the initial download request will now be 4 MiB rather than 32 MiB which may result in more requests than previous versions depending on blob size. This also means some blob downloads may use parallel requests when they were not previously, if `max_concurrency` is set greater than 1. To restore the previous behavior, pass `max_single_get_size = 32 * 1024 * 1024` when constructing the client.
+
+### Features Added
+- Added support for service versions 2026-12-06 and 2027-03-07.
+- Added opt-in client session-based authentication via the new `use_session` keyword argument. When enabled, eligible blob download requests are authenticated with a short-lived, per-container session credential obtained from the service rather than the bearer token. Requires a `TokenCredential`. Sessions are managed by a session provider, which can be shared across clients via the `session_provider` keyword, and the account name used for signing can be set explicitly with `session_account_name`.
+
+### Bugs Fixed
+- Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning an empty list.
+- Fixed an issue where a SAS generated for a blob name containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
+
+### Other Changes
+- Added `nanoarrow>=0.7.0` as a required dependency.
+- Added public `SignedIdentifier` model and updated `ContainerClient.get_container_access_policy`
+  and `azure.storage.blob.aio.ContainerClient.get_container_access_policy` to return public
+  models instead of generated internal types.
+- `ContainerClient`'s `list_blobs`, `list_blob_names`, and `walk_blobs` now use Arrow by default. Pass `response_format="xml"` to use the previous behavior.
+- Migrated generated code to use the new TypeSpec generator.
+
+## 12.31.1 (2026-10-29)
+
+### Bugs Fixed
+- Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_container_sas`,
+  `generate_blob_sas`, and `BlobServiceClient.get_user_delegation_key` (sync and async).
+  Datetimes without timezone information continue to be treated as UTC.
+- Fixed an issue where certain headers were not being properly redacted when DEBUG logging was enabled.
+
+## 12.31.0 (2026-09-30)
+
+This version and all future versions will require Python 3.10+. Python 3.9 is no longer supported.
+
+### Features Added
+- Stable release of features from 12.31.0b1
+- Added `list` support to `BlobSasPermissions` for use with directory-scoped SAS tokens.
+
+### Bugs Fixed
+- Fixed an issue where `destination_snapshot` on a blob's copy properties was always `None` when listing blobs with `response_format="arrow"`.
+
+## 12.30.3 (2026-09-22)
+
+### Bugs Fixed
+- Async clients now reject header names and values containing a `\r` or `\n` when sending a batch request, matching the behavior of the sync clients.
+
+## 12.30.2 (2026-09-16)
+
+### Bugs Fixed
+- Fixed an issue where a header name or value containing a `\r` or `\n` was written directly into a batch request body. Such headers are now rejected with a `ValueError`.
+
+## 12.30.1 (2026-08-27)
+
+### Bugs Fixed
+- Fixed a bug where client-side encryption 2.0 could not detect a rearrangement of otherwise-untampered authenticated regions in blob content. This is now detected and exceptions are thrown. For data recovery purposes, this behavior can be reverted by setting the "AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS" environment variable.
+- Fixed a bug in client-side encryption where version downgrades, and other metadata tampering, was only detected at the start of a download.
+
+## 12.31.0b1 (2026-08-10)
+
+### Features Added
+- Added support for service version 2026-10-06.
+- Added support for parsing List Blobs responses in Apache Arrow format by passing
+`response_format="arrow"` keyword to `ContainerClient`'s `list_blobs`, `walk_blobs`, and `list_blob_names` APIs
+(`response_format` defaults to `"auto"`, and `"auto"` currently means `"xml"`).
+The use of `"response_format=arrow"` requires `nanoarrow` to be installed.
+This change also enables the new `end_before` keyword for range-based listing.
+- Added access tier information to the response of `BlobClient`'s `download_blob` API.
+The `blob_tier`, `blob_tier_inferred`, `blob_tier_change_time`, and `smart_access_tier`
+properties are now populated on the downloaded blob's `properties`.
+- The service-calculated CRC64 is now surfaced as `content_crc64` on the response of
+`BlobClient` upload operations (`stage_block`, `stage_block_from_url`, `upload_page`,
+`upload_pages_from_url`, `append_block`, `append_block_from_url`, `upload_blob`, and
+`upload_blob_from_url`) in addition to `content_md5` when a content MD5 is
+provided with the request.
+
+### Other Changes
+- Partitioned upload via `upload_blob` with Block Blobs will now generate random,
+unique block ids for each block rather than using a sequential count.
+The length of the new block ids will be the same as previous versions to ensure backwards compatibility.
 
 ## 12.30.0 (2026-06-08)
 

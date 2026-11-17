@@ -373,5 +373,5 @@
         "azure.mgmt.databoxedge.operations.AvailableSkusOperations.list": "Microsoft.DataBoxEdge.AvailableSkusOperationGroup.list",
         "azure.mgmt.databoxedge.aio.operations.AvailableSkusOperations.list": "Microsoft.DataBoxEdge.AvailableSkusOperationGroup.list"
     },
-    "CrossLanguageVersion": "8a271ae7c361"
+    "CrossLanguageVersion": "f480cf828d7c"
 }

@@ -5,9 +5,9 @@
 # --------------------------------------------------------------------------
 
 from typing import Any, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
-from urllib.parse import quote, unquote, urlparse
+from urllib.parse import parse_qs, quote, unquote, urlparse
 
-from ._serialize import get_access_conditions, get_source_conditions
+from ._serialize import get_lease_id, get_source_conditions
 from ._shared.base_client import parse_query
 from ._shared.response_handlers import return_response_headers
 
@@ -15,15 +15,32 @@ if TYPE_CHECKING:
     from urllib.parse import ParseResult
 
 
-def _parse_url(account_url: str, share_name: str, file_path: str) -> "ParseResult":
+def _parse_file_id(parsed_url: "ParseResult") -> Optional[str]:
+    file_id = parse_qs(parsed_url.query).get("fileid")
+    return file_id[0] if file_id else None
+
+
+def _format_file_id_url(scheme: str, hostname: str, share_name: bytes, file_id: str, query_str: str) -> str:
+    query = f"fileid={quote(file_id, safe='')}"
+    if query_str:
+        query += "&" + query_str.lstrip("?")
+    return f"{scheme}://{hostname}/{quote(share_name)}?{query}"
+
+
+def _assert_not_file_id_addressed(file_id: Optional[str]) -> None:
+    if file_id is not None:
+        raise ValueError("This operation is not supported on a client created from a file ID.")
+
+
+def _parse_url(account_url: str, share_name: str, file_path: str, file_id: Optional[str] = None) -> "ParseResult":
     try:
         if not account_url.lower().startswith("http"):
             account_url = "https://" + account_url
     except AttributeError as exc:
         raise ValueError("Account URL must be a string.") from exc
     parsed_url = urlparse(account_url.rstrip("/"))
-    if not (share_name and file_path):
-        raise ValueError("Please specify a share name and file name.")
+    if not (share_name and (file_path or file_id)):
+        raise ValueError("Please specify a share name and either a file path or a file ID.")
     if not parsed_url.netloc:
         raise ValueError(f"Invalid URL: {account_url}")
     return parsed_url
@@ -31,7 +48,7 @@ def _parse_url(account_url: str, share_name: str, file_path: str) -> "ParseResul
 
 def _from_file_url(
     file_url: str, snapshot: Optional[Union[str, Dict[str, Any]]] = None
-) -> Tuple[str, str, str, Optional[Union[str, Dict[str, Any]]]]:
+) -> Tuple[str, str, Optional[str], Optional[Union[str, Dict[str, Any]]], Optional[str]]:
     try:
         if not file_url.lower().startswith("http"):
             file_url = "https://" + file_url
@@ -45,19 +62,28 @@ def _from_file_url(
 
     path_share, _, path_file = parsed_url.path.lstrip("/").partition("/")
     path_snapshot, _ = parse_query(parsed_url.query)
+    file_id = _parse_file_id(parsed_url)
     snapshot = snapshot or path_snapshot
     share_name = unquote(path_share)
     file_path = "/".join([unquote(p) for p in path_file.split("/")])
 
-    return account_url, share_name, file_path, snapshot
+    return account_url, share_name, None if file_id else file_path, snapshot, file_id
 
 
-def _format_url(scheme: str, hostname: str, share_name: Union[str, bytes], file_path: List[str], query_str: str) -> str:
+def _format_url(
+    scheme: str,
+    hostname: str,
+    share_name: Union[str, bytes],
+    file_path: Optional[List[str]],
+    query_str: str,
+    file_id: Optional[str] = None,
+) -> str:
     if isinstance(share_name, str):
         share_name = share_name.encode("UTF-8")
-    return (
-        f"{scheme}://{hostname}/{quote(share_name)}" f"/{'/'.join([quote(p, safe='~') for p in file_path])}{query_str}"
-    )
+    if file_id:
+        return _format_file_id_url(scheme, hostname, share_name, file_id, query_str)
+    path = "/".join([quote(p, safe="~") for p in file_path or []])
+    return f"{scheme}://{hostname}/{quote(share_name)}/{path}{query_str}"
 
 
 def _upload_range_from_url_options(
@@ -75,8 +101,9 @@ def _upload_range_from_url_options(
     destination_range = f"bytes={offset}-{end_range}"
     source_range = f"bytes={source_offset}-{source_offset + length - 1}"
     source_authorization = kwargs.pop("source_authorization", None)
-    source_mod_conditions = get_source_conditions(kwargs)
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    # Drain the source-condition kwargs so they aren't forwarded to the service via options.update(kwargs) below.
+    get_source_conditions(kwargs)
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     file_last_write_mode = kwargs.pop("file_last_write_mode", None)
 
     options = {
@@ -85,9 +112,12 @@ def _upload_range_from_url_options(
         "content_length": 0,
         "source_range": source_range,
         "range": destination_range,
+        "file_range_write_from_url": "update",
         "file_last_written_mode": file_last_write_mode,
-        "source_modified_access_conditions": source_mod_conditions,
-        "lease_access_conditions": access_conditions,
+        "source_content_crc64": kwargs.pop("source_content_crc64", None),
+        "source_if_match_crc64": kwargs.pop("source_if_match_crc64", None),
+        "source_if_none_match_crc64": kwargs.pop("source_if_none_match_crc64", None),
+        "lease_id": lease_id,
         "timeout": kwargs.pop("timeout", None),
         "cls": return_response_headers,
     }
@@ -97,16 +127,15 @@ def _upload_range_from_url_options(
 
 
 def _get_ranges_options(
-    snapshot: Optional[str],
     offset: Optional[int] = None,
     length: Optional[int] = None,
     previous_sharesnapshot: Optional[Union[str, Dict[str, Any]]] = None,
     **kwargs: Any,
 ) -> Dict[str, Any]:
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
 
     content_range = None
-    if offset:
+    if offset is not None:
         if length:
             end_range = offset + length - 1  # Reformat to an inclusive range index
             content_range = f"bytes={offset}-{end_range}"
@@ -114,8 +143,7 @@ def _get_ranges_options(
             content_range = f"bytes={offset}-"
 
     options = {
-        "sharesnapshot": snapshot,
-        "lease_access_conditions": access_conditions,
+        "lease_id": lease_id,
         "timeout": kwargs.pop("timeout", None),
         "range": content_range,
     }

@@ -246,6 +246,7 @@ def main(generate_input, generate_output):
             try:
                 package_total.add(package_name)
                 sdk_code_path = str(Path(sdk_folder, folder_name, package_name))
+                package_path = Path(folder_name, package_name).as_posix()
                 # Sanitize invalid Python escape sequences (e.g. `\W`) in
                 # generated docstrings to avoid SyntaxWarning on Python 3.12+.
                 # See https://github.com/Azure/azure-sdk-for-python/issues/47011
@@ -257,7 +258,7 @@ def main(generate_input, generate_output):
                 if package_name not in result:
                     package_entry = {}
                     package_entry["packageName"] = package_name
-                    package_entry["path"] = [folder_name]
+                    package_entry["path"] = [package_path]
                     package_entry[spec_word] = [readme_or_tsp]
                     package_entry["tagIsStable"] = (
                         sdk_release_type == "stable"
@@ -267,7 +268,7 @@ def main(generate_input, generate_output):
                     package_entry["targetReleaseDate"] = data.get("targetReleaseDate", "")
                     result[package_name] = package_entry
                 else:
-                    result[package_name]["path"].append(folder_name)
+                    result[package_name]["path"].append(package_path)
                     result[package_name][spec_word].append(readme_or_tsp)
             except Exception as e:
                 _LOGGER.error(f"Fail to process package {package_name} in {readme_or_tsp}: {str(e)}")
@@ -316,29 +317,6 @@ def main(generate_input, generate_output):
                 apiview_start_time = time.time()
                 try:
                     _LOGGER.info(f"install apiview generation tool")
-                    # Workaround for Python 3.13: lazy-object-proxy==1.10.0 (pinned in
-                    # eng/apiview_reqs.txt) ships no cp313 wheel, so pip builds it from
-                    # source. The isolated build environment fails to fetch its build deps
-                    # (setuptools_scm) from the azure-sdk private feed (401 -> interactive
-                    # prompt -> EOFError), which breaks the whole install. Pre-install the
-                    # build deps from PyPI and disable build isolation so the source build
-                    # uses them instead of reaching out to the private feed.
-                    # TODO: revert this logic once it works on Python 3.13 (e.g. once
-                    # lazy-object-proxy ships a cp313 wheel on the feed).
-                    check_call(
-                        [
-                            "python",
-                            "-m",
-                            "pip",
-                            "install",
-                            "setuptools>=64",
-                            "setuptools_scm>=8",
-                            "wheel",
-                            "--index-url=https://pypi.org/simple/",
-                        ],
-                        timeout=600,
-                        stderr=None if data.get("runMode") == "release" else subprocess.DEVNULL,
-                    )
                     check_call(
                         [
                             "python",
@@ -348,7 +326,6 @@ def main(generate_input, generate_output):
                             "-r",
                             "eng/apiview_reqs.txt",
                             "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
-                            "--no-build-isolation",
                         ],
                         timeout=600,
                         stderr=None if data.get("runMode") == "release" else subprocess.DEVNULL,
@@ -388,7 +365,7 @@ def main(generate_input, generate_output):
 
             # Build artifacts for package
             try:
-                create_package(result[package_name]["path"][0], package_name)
+                create_package(folder_name, package_name)
                 dist_path = Path(sdk_folder, folder_name, package_name, "dist")
                 result[package_name]["artifacts"] = [
                     str(dist_path / package_file) for package_file in os.listdir(dist_path)
@@ -407,7 +384,7 @@ def main(generate_input, generate_output):
                 "lite": f"pip install {package_name}",
             }
             result[package_name]["result"] = "succeeded"
-            result[package_name]["packageFolder"] = result[package_name]["path"][0]
+            result[package_name]["packageFolder"] = folder_name
 
     # remove duplicates
     try:

@@ -4,6 +4,7 @@ trigger:
   branches:
     include:
     - main
+    - azure-identity-beta
     - hotfix/*
     - release/*
     - restapi*
@@ -16,6 +17,7 @@ pr:
   branches:
     include:
     - main
+    - azure-identity-beta
     - feature/*
     - hotfix/*
     - release/*

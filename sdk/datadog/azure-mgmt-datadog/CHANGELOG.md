@@ -1,5 +1,59 @@
 # Release History
 
+## 3.0.0b1 (2026-07-03)
+
+### Features Added
+
+  - Client `MicrosoftDatadogClient` added parameter `cloud_setting` in method `__init__`
+  - Client `MicrosoftDatadogClient` added method `send_request`
+  - Client `MicrosoftDatadogClient` added operation group `datadog_monitor_resources`
+  - Client `MicrosoftDatadogClient` added operation group `saa_soperation_group`
+  - Client `MicrosoftDatadogClient` added operation group `billing_info`
+  - Client `MicrosoftDatadogClient` added operation group `organizations`
+  - Model `DatadogOrganizationProperties` added property `resource_collection`
+  - Model `LinkedResource` added property `location`
+  - Model `MonitorProperties` added property `saa_s_data`
+  - Model `MonitorProperties` added property `sre_agent_configuration`
+  - Model `MonitorProperties` added property `marketplace_offer_details`
+  - Model `MonitorUpdateProperties` added property `resource_collection`
+  - Model `MonitoredSubscriptionProperties` added property `system_data`
+  - Model `MonitoringTagRulesProperties` added property `agent_rules`
+  - Model `MonitoringTagRulesProperties` added property `custom_metrics`
+  - Added model `ActivateSaaSParameterRequest`
+  - Added model `AgentRules`
+  - Added model `BillingInfoResponse`
+  - Added enum `ConnectorAction`
+  - Added model `DatadogApplicationKey`
+  - Added model `LatestLinkedSaaSResponse`
+  - Added model `MarketplaceOfferDetails`
+  - Added model `MarketplaceSaaSInfo`
+  - Added model `PartnerBillingEntity`
+  - Added model `ProxyResource`
+  - Added model `Resource`
+  - Added model `ResubscribeProperties`
+  - Added model `SaaSData`
+  - Added model `SaaSResourceDetailsResponse`
+  - Added model `SreAgentConfiguration`
+  - Added model `SreAgentConfigurationListResponse`
+  - Added model `SreAgentConnectorRequest`
+  - Added model `TrackedResource`
+  - Operation group `MonitorsOperations` added method `get_default_application_key`
+  - Operation group `MonitorsOperations` added method `manage_sre_agent_connectors`
+  - Added operation group `BillingInfoOperations`
+  - Added operation group `DatadogMonitorResourcesOperations`
+  - Added operation group `OrganizationsOperations`
+  - Added operation group `SaaSOperationGroupOperations`
+
+### Breaking Changes
+
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Method `CreationSupportedOperations.get` changed its parameter `datadog_organization_id` from `positional_or_keyword` to `keyword_only`
+  - Method `CreationSupportedOperations.list` changed its parameter `datadog_organization_id` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `CreateResourceSupportedResponseList`/`DatadogAgreementResourceListResponse`/`DatadogApiKeyListResponse`/`DatadogHostListResponse`/`DatadogMonitorResourceListResponse`/`DatadogSingleSignOnResourceListResponse`/`LinkedResourceListResponse`/`MonitoredResourceListResponse`/`MonitoredSubscriptionPropertiesList`/`MonitoringTagRulesListResponse`/`OperationListResult` which actually were not used by SDK users
+
 ## 2.1.0 (2023-10-23)
 
 ### Features Added

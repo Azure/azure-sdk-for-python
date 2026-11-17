@@ -6,6 +6,8 @@
 """
 Examples to show basic use case of python azure-servicebus SDK, including:
     - Create ServiceBusClient
+    - Configure a per-attempt timeout
+    - Decode a received message from raw AMQP bytes
     - Create ServiceBusSender/ServiceBusReceiver
     - Send single message and batch messages
     - Peek, receive and settle messages
@@ -40,10 +42,22 @@ def example_create_servicebus_client_sync():
 
     fully_qualified_namespace = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
     servicebus_client = ServiceBusClient(
-        fully_qualified_namespace=fully_qualified_namespace, credential=DefaultAzureCredential()
+        fully_qualified_namespace=fully_qualified_namespace,
+        credential=DefaultAzureCredential(),
+        try_timeout=30,
     )
     # [END create_sb_client_sync]
     return servicebus_client
+
+
+def example_decode_received_message_from_bytes_sync():
+    # [START decode_received_message_from_bytes_sync]
+    from azure.servicebus import ServiceBusReceivedMessage
+
+    raw_amqp_message = b"\x00Su\xa0\x0fminimal payload"
+    received_message = ServiceBusReceivedMessage.from_bytes(raw_amqp_message)
+    print(b"".join(received_message.body))
+    # [END decode_received_message_from_bytes_sync]
 
 
 def example_create_servicebus_sender_sync():
@@ -386,6 +400,7 @@ def example_schedule_ops_sync():
 
 
 example_send_and_receive_sync()
+example_decode_received_message_from_bytes_sync()
 example_receive_deferred_sync()
 example_schedule_ops_sync()
 example_receive_deadletter_sync()

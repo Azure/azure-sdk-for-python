@@ -52,6 +52,15 @@ class AlertsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DISABLED."""
 
 
+class BackupSolutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Backup solution types for PostgreSQL Flexible Server."""
+
+    LOGICAL_BACKUP = "LogicalBackup"
+    """Logical backup type."""
+    PHYSICAL_BACKUP = "PhysicalBackup"
+    """Physical backup type."""
+
+
 class BCDRSecurityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Security Level of Backup Vault."""
 
@@ -223,6 +232,17 @@ class FeatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DATA_SOURCE_TYPE."""
 
 
+class GranularityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of GranularityLevel."""
+
+    VAULT_LEVEL = "VaultLevel"
+    """VAULT_LEVEL."""
+    PROTECTED_ITEM_LEVEL = "ProtectedItemLevel"
+    """PROTECTED_ITEM_LEVEL."""
+    PROTECTED_ITEM_WITH_PARENT_TAG = "ProtectedItemWithParentTag"
+    """PROTECTED_ITEM_WITH_PARENT_TAG."""
+
+
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type. 'SystemAssigned' and 'UserAssigned' are mutually exclusive. 'SystemAssigned'
     will use implicitly created managed identity.
@@ -243,6 +263,15 @@ class ImmutabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UNLOCKED."""
     LOCKED = "Locked"
     """LOCKED."""
+
+
+class ImmutabilityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of immutability configuration."""
+
+    AS_PER_POLICY = "AsPerPolicy"
+    """Immutability is enforced as per the backup policy retention."""
+    TIME_BASED = "TimeBased"
+    """Time-based immutability with a configurable duration window."""
 
 
 class InfrastructureEncryptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

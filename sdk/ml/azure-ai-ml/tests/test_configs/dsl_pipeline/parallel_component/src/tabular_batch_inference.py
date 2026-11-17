@@ -5,10 +5,13 @@
 
 import argparse
 import os
+import sys
 
 from mlflow.sklearn import load_model
+from sklearn.linear_model import _logistic
 
 MODEL_NAME = "iris_model"
+sys.modules.setdefault("sklearn.linear_model.logistic", _logistic)
 
 
 def init():

@@ -61,6 +61,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                                 "avsDataStore": "str",
                                 "backupId": "str",
                                 "baremetalTenantId": "str",
+                                "breakthroughMode": "str",
                                 "capacityPoolResourceId": "str",
                                 "cloneProgress": 0,
                                 "coolAccess": bool,
@@ -105,7 +106,6 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                                 "defaultUserQuotaInKiBs": 0,
                                 "deleteBaseSnapshot": bool,
                                 "effectiveNetworkFeatures": "str",
-                                "enableSubvolumes": "str",
                                 "encrypted": bool,
                                 "encryptionKeySource": "str",
                                 "exportPolicy": {
@@ -138,6 +138,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                                 "kerberosEnabled": bool,
                                 "keyVaultPrivateEndpointResourceId": "str",
                                 "ldapEnabled": bool,
+                                "ldapServerType": "str",
                                 "maximumNumberOfFiles": 0,
                                 "mountTargets": [
                                     {
@@ -161,6 +162,7 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                                 "smbContinuouslyAvailable": bool,
                                 "smbEncryption": bool,
                                 "smbNonBrowsable": "str",
+                                "smbOplocks": "str",
                                 "snapshotDirectoryVisible": bool,
                                 "snapshotId": "str",
                                 "storageToNetworkProximity": "str",

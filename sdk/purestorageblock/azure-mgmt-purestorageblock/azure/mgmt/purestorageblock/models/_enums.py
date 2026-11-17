@@ -23,11 +23,11 @@ class AlertLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Severity level of the alert."""
 
     INFO = "info"
-    """Information level"""
+    """Information level."""
     WARNING = "warning"
-    """Warning level"""
+    """Warning level."""
     ERROR = "error"
-    """Error level"""
+    """Error level."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -62,13 +62,13 @@ class MarketplaceSubscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """Marketplace subscription status."""
 
     PENDING_FULFILLMENT_START = "PendingFulfillmentStart"
-    """Marketplace subscription purchased but not yet activated"""
+    """Marketplace subscription purchased but not yet activated."""
     SUBSCRIBED = "Subscribed"
-    """Marketplace subscription activated"""
+    """Marketplace subscription activated."""
     SUSPENDED = "Suspended"
-    """Marketplace subscription suspended due to missing customer payment"""
+    """Marketplace subscription suspended due to missing customer payment."""
     UNSUBSCRIBED = "Unsubscribed"
-    """Marketplace subscription cancelled"""
+    """Marketplace subscription cancelled."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -84,6 +84,26 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
+class PlatformConsoleAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Discriminator values for platform console authentication types. Extensible to support new auth
+    mechanisms without API changes.
+    """
+
+    SSH = "ssh"
+    """SSH public key authentication."""
+
+
+class PlatformConsoleRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Role assigned to a user on the platform console."""
+
+    ARRAY_ADMIN = "array_admin"
+    """Full administrative access to the array."""
+    STORAGE_ADMIN = "storage_admin"
+    """Administrative access to storage resources."""
+    READ_ONLY = "read_only"
+    """Read-only access to the platform console."""
+
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the current operation."""
 
@@ -94,9 +114,9 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     DELETING = "Deleting"
-    """Deletion in progress"""
+    """Deletion in progress."""
     ACCEPTED = "Accepted"
-    """Change accepted for processing"""
+    """Change accepted for processing."""
 
 
 class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -114,31 +134,59 @@ class UsageSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Severity levels for billing usage properties."""
 
     ALERT = "alert"
-    """Indicates an alert condition"""
+    """Indicates an alert condition."""
     INFORMATION = "information"
-    """Provides informational details"""
+    """Provides informational details."""
     WARNING = "warning"
-    """Indicates a warning condition"""
+    """Indicates a warning condition."""
     NONE = "none"
-    """Indicates no severity"""
+    """Indicates no severity."""
 
 
 class VmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AVS VM storage types."""
 
     V_VOL = "vvol"
-    """VM using vVols as underlying storage"""
+    """VM using vVols as underlying storage."""
 
 
 class VolumeContainerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specify which control plane handles the lifecycle of the volume container."""
 
     AVS = "avs"
-    """AVS/VMware"""
+    """AVS/VMware."""
+
+
+class VolumeGroupSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source type for volume group creation."""
+
+    NONE = "none"
+    """No source; create an empty volume group."""
+    VOLUME_GROUP = "volumeGroup"
+    """Clone from an existing volume group."""
+    SNAPSHOT = "snapshot"
+    """Restore from a volume group snapshot."""
+    RECOVERABLE_VOLUME_GROUP = "recoverableVolumeGroup"
+    """Recover a soft-deleted volume group."""
+
+
+class VolumeSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source type for volume creation."""
+
+    NONE = "none"
+    """No source; create an empty volume with the specified provisioned size."""
+    VOLUME = "volume"
+    """Clone from an existing volume."""
+    SERIAL_NUMBER = "serialNumber"
+    """Import a volume by its serial number."""
+    SNAPSHOT = "snapshot"
+    """Restore from a volume group snapshot."""
+    RECOVERABLE_VOLUME = "recoverableVolume"
+    """Recover a soft-deleted volume within the same volume group."""
 
 
 class VolumeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specify which control plane handles the lifecycle of the volume."""
 
     AVS = "avs"
-    """AVS/VMware"""
+    """AVS/VMware."""

@@ -8,6 +8,7 @@ Pytest configuration for azure-ai-discovery tests.
 This module configures the test environment for both recorded (playback) and live tests.
 Uses devtools_testutils for Azure SDK test infrastructure.
 """
+
 import os
 import pytest
 from dotenv import load_dotenv
@@ -23,7 +24,6 @@ from devtools_testutils import (
     remove_batch_sanitizers,
     test_proxy,
 )
-
 
 # Environment Variables for test configuration
 # Set AZURE_TEST_RUN_LIVE=true to run live tests
@@ -46,12 +46,12 @@ def add_sanitizers(test_proxy):
     # Sanitize workspace endpoints in URLs
     add_general_regex_sanitizer(
         regex=r"https://[a-zA-Z0-9-]+\.workspace[a-zA-Z0-9-]*\.discovery\.azure\.com",
-        value="https://test-workspace.workspace.discovery.azure.com",
+        value="https://test-wkspc.workspace.discovery.azure.com",
     )
     # Sanitize bookshelf endpoints in URLs
     add_general_regex_sanitizer(
         regex=r"https://[a-zA-Z0-9-]+\.bookshelf[a-zA-Z0-9-]*\.discovery\.azure\.com",
-        value="https://test-bookshelf.bookshelf.discovery.azure.com",
+        value="https://test-bkshlf.bookshelf.discovery.azure.com",
     )
     # Sanitize bogus Location header (service returns https://example.com for LROs)
     # Replace with empty string so the LRO poller uses operation-location instead

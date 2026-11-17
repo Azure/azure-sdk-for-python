@@ -7,12 +7,14 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import Any, Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
 from ._client import KnowledgeBaseRetrievalClient as _KnowledgeBaseRetrievalClient
+from .._stream import AsyncKnowledgeBaseRetrievalStream, KnowledgeBaseRetrievalEvent, KnowledgeBaseRetrievalEventData
 
 
 class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
@@ -27,9 +29,9 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
     :param knowledge_base_name: The name of the knowledge base. Required.
     :type knowledge_base_name: str
     :keyword api_version: The API version to use for this operation. Known values are
-     listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
-     ``ApiVersion.V2026_05_01_PREVIEW``. Note that overriding this default value may
-     result in unsupported behavior.
+        listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
+        ``ApiVersion.V2026_11_01_PREVIEW``. Note that overriding this default value may
+        result in unsupported behavior.
     :paramtype api_version: str or ~azure.search.documents.ApiVersion
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
      audience is not considered when using a shared key. If audience is not provided, the public cloud
@@ -46,7 +48,10 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
 
 
 __all__: list[str] = [
+    "AsyncKnowledgeBaseRetrievalStream",
     "KnowledgeBaseRetrievalClient",
+    "KnowledgeBaseRetrievalEvent",
+    "KnowledgeBaseRetrievalEventData",
 ]
 
 

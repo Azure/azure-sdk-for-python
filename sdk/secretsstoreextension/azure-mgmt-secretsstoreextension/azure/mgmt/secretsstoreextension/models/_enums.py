@@ -19,6 +19,21 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class AzureCloudName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Azure clouds for the in-cluster Azure Key Vault provider."""
+
+    AZURE_PUBLIC_CLOUD = "AzurePublicCloud"
+    """Azure public cloud."""
+    AZURE_US_GOVERNMENT_CLOUD = "AzureUSGovernmentCloud"
+    """Azure US Government cloud."""
+    AZURE_CHINA_CLOUD = "AzureChinaCloud"
+    """Azure China cloud."""
+    AZURE_GERMAN_CLOUD = "AzureGermanCloud"
+    """Azure Germany cloud."""
+    AZURE_STACK_CLOUD = "AzureStackCloud"
+    """Azure Stack cloud."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -36,9 +51,9 @@ class ExtendedLocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The supported ExtendedLocation types."""
 
     EDGE_ZONE = "EdgeZone"
-    """Azure Edge Zones location type"""
+    """Azure Edge Zones location type."""
     CUSTOM_LOCATION = "CustomLocation"
-    """Azure Custom Locations type"""
+    """Azure Custom Locations type."""
 
 
 class KubernetesSecretType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -79,8 +94,8 @@ class StatusConditionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status conditions types."""
 
     TRUE = "True"
-    """The status is true"""
+    """The status is true."""
     FALSE = "False"
-    """The status is false"""
+    """The status is false."""
     UNKNOWN = "Unknown"
-    """The status is unknown"""
+    """The status is unknown."""

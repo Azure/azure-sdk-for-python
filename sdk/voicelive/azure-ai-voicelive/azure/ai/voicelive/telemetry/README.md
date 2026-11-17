@@ -106,7 +106,7 @@ connect (parent span — open for the entire session lifetime)
 | `az.namespace` | string | Always `"Microsoft.CognitiveServices"` |
 | `gen_ai.system` | string | Always `"az.ai.voicelive"` |
 | `gen_ai.operation.name` | string | The operation: `connect`, `send`, `recv`, `close` |
-| `gen_ai.request.model` | string | The model name (e.g., `gpt-4o-realtime-preview`) |
+| `gen_ai.request.model` | string | The model name (e.g., `gpt-realtime`) |
 | `gen_ai.usage.input_tokens` | int | Input token count (from `response.done` usage) |
 | `gen_ai.usage.output_tokens` | int | Output token count (from `response.done` usage) |
 | `server.address` | string | Server hostname |

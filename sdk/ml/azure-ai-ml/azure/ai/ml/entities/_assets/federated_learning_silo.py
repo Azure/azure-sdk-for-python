@@ -33,13 +33,13 @@ class FederatedLearningSilo:
         as a necessary input for FL processes.
 
 
-        :param compute: The resource id of a compute.
-        :type compute: str
-        :param datastore: The resource id of a datastore.
-        :type datastore: str
-        :param inputs: A dictionary of input entities that exist in the previously specified datastore.
+        :keyword compute: The resource id of a compute.
+        :paramtype compute: str
+        :keyword datastore: The resource id of a datastore.
+        :paramtype datastore: str
+        :keyword inputs: A dictionary of input entities that exist in the previously specified datastore.
             The keys of this dictionary are the keyword names that these inputs should be entered into.
-        :type inputs: dict[str, Input]
+        :paramtype inputs: dict[str, Input]
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """

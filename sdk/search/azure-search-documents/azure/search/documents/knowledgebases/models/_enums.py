@@ -13,6 +13,8 @@ from azure.core import CaseInsensitiveEnumMeta
 class KnowledgeBaseActivityRecordType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of activity record."""
 
+    GRAPH_SEARCH = "graphSearch"
+    """Graph retrieval over a graph-enabled knowledge source."""
     SEARCH_INDEX = "searchIndex"
     """Search index retrieval activity."""
     AZURE_BLOB = "azureBlob"
@@ -59,6 +61,8 @@ class KnowledgeBaseMessageContentType(str, Enum, metaclass=CaseInsensitiveEnumMe
 class KnowledgeBaseReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of reference."""
 
+    GRAPH_SEARCH = "graphSearch"
+    """Graph result or hydrated graph-source document reference."""
     SEARCH_INDEX = "searchIndex"
     """Search index document reference."""
     AZURE_BLOB = "azureBlob"
@@ -83,6 +87,15 @@ class KnowledgeBaseReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """File document reference."""
     INDEXED_SQL = "indexedSql"
     """Indexed SQL document reference."""
+
+
+class KnowledgeBaseRetrievalStatusCode(int, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The semantic HTTP status of a completed streaming retrieval."""
+
+    OK = 200
+    """The retrieval completed successfully."""
+    PARTIAL_CONTENT = 206
+    """The retrieval completed with partial results."""
 
 
 class KnowledgeRetrievalIntentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -110,3 +123,25 @@ class KnowledgeRetrievalReasoningEffortKind(str, Enum, metaclass=CaseInsensitive
     """Use low reasoning during retrieval."""
     MEDIUM = "medium"
     """Use a moderate amount of reasoning during retrieval."""
+    AUTO = "auto"
+    """Automatically select the reasoning effort during retrieval, escalating from the cheapest tier
+    only as far as needed."""
+
+
+class KnowledgeSourceGraphProvenanceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source-document behavior for graph-based knowledge retrieval."""
+
+    NONE = "none"
+    """Return graph results without hydrating their source documents."""
+    HYDRATE = "hydrate"
+    """Also return selected source documents from the configured provenance index."""
+
+
+class KnowledgeSourceNetworkAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the network access mode for knowledge source ingestion. Default is 'public'."""
+
+    PUBLIC = "public"
+    """Ingestion runs in the standard, publicly reachable execution environment. This is the default."""
+    PRIVATE = "private"
+    """Ingestion runs in a private execution environment so it can reach data sources and dependencies
+    over a private network (private endpoint / shared private link)."""

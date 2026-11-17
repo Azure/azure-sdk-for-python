@@ -25,7 +25,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
         response = await self.client.capacity_reservation_groups.get(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
 
         # please add some check logic here by yourself
@@ -47,6 +47,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
                         "capacityReservations": [
                             {
                                 "name": "str",
+                                "reservationStateInfo": {"reservationState": "str"},
                                 "statuses": [
                                     {
                                         "code": "str",
@@ -56,7 +57,11 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
                                         "time": "2020-02-20 00:00:00",
                                     }
                                 ],
-                                "utilizationInfo": {"currentCapacity": 0, "virtualMachinesAllocated": [{"id": "str"}]},
+                                "utilizationInfo": {
+                                    "currentCapacity": 0,
+                                    "usedReservedCountBySubscription": {"str": 0},
+                                    "virtualMachinesAllocated": [{"id": "str"}],
+                                },
                             }
                         ],
                         "sharedSubscriptionIds": [{"id": "str"}],
@@ -77,7 +82,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
 
         # please add some check logic here by yourself
@@ -96,6 +101,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
                         "capacityReservations": [
                             {
                                 "name": "str",
+                                "reservationStateInfo": {"reservationState": "str"},
                                 "statuses": [
                                     {
                                         "code": "str",
@@ -105,7 +111,11 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
                                         "time": "2020-02-20 00:00:00",
                                     }
                                 ],
-                                "utilizationInfo": {"currentCapacity": 0, "virtualMachinesAllocated": [{"id": "str"}]},
+                                "utilizationInfo": {
+                                    "currentCapacity": 0,
+                                    "usedReservedCountBySubscription": {"str": 0},
+                                    "virtualMachinesAllocated": [{"id": "str"}],
+                                },
                             }
                         ],
                         "sharedSubscriptionIds": [{"id": "str"}],
@@ -116,7 +126,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
 
         # please add some check logic here by yourself
@@ -124,12 +134,14 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_capacity_reservation_groups_delete(self, resource_group):
-        response = await self.client.capacity_reservation_groups.delete(
-            resource_group_name=resource_group.name,
-            capacity_reservation_group_name="str",
-            api_version="2026-03-01",
-        )
+    async def test_capacity_reservation_groups_begin_delete(self, resource_group):
+        response = await (
+            await self.client.capacity_reservation_groups.begin_delete(
+                resource_group_name=resource_group.name,
+                capacity_reservation_group_name="str",
+                api_version="2026-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
@@ -139,7 +151,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
     async def test_capacity_reservation_groups_list_by_resource_group(self, resource_group):
         response = self.client.capacity_reservation_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -149,7 +161,7 @@ class TestComputeManagementCapacityReservationGroupsOperationsAsync(AzureMgmtRec
     @recorded_by_proxy_async
     async def test_capacity_reservation_groups_list_by_subscription(self, resource_group):
         response = self.client.capacity_reservation_groups.list_by_subscription(
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

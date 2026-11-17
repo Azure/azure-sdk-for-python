@@ -6,8 +6,10 @@
 
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageSweepSettings as RestImageSweepSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.arm_ml_service.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
+from azure.ai.ml._restclient.arm_ml_service.models import ImageSweepSettings as RestImageSweepSettings
+from azure.ai.ml._restclient.arm_ml_service.models import SamplingAlgorithmType
+from azure.ai.ml.entities._job._input_output_helpers import to_hybrid_rest_model
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
     BanditPolicy,
     EarlyTerminationPolicy,
@@ -64,7 +66,12 @@ class ImageSweepSettings(RestTranslatableMixin):
     def _to_rest_object(self) -> RestImageSweepSettings:
         return RestImageSweepSettings(
             sampling_algorithm=self.sampling_algorithm,
-            early_termination=self.early_termination._to_rest_object() if self.early_termination else None,
+            # ``early_termination_policy`` is a shared msrest boundary helper; convert its msrest
+            # rest object to the arm_ml_service hybrid equivalent so it fits this arm envelope.
+            early_termination=to_hybrid_rest_model(
+                self.early_termination._to_rest_object() if self.early_termination else None,
+                RestEarlyTerminationPolicy,
+            ),
         )
 
     @classmethod

@@ -32,14 +32,13 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import SiteRecoveryManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -59,7 +58,7 @@ def build_migration_recovery_points_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,7 +98,7 @@ def build_migration_recovery_points_list_by_replication_migration_items_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -136,7 +135,7 @@ def build_replication_protected_items_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -176,7 +175,7 @@ def build_replication_protected_items_create_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -218,7 +217,7 @@ def build_replication_protected_items_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -258,7 +257,7 @@ def build_replication_protected_items_purge_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}"
     path_format_arguments = {
@@ -291,7 +290,7 @@ def build_replication_protected_items_list_by_replication_protection_containers_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -328,7 +327,7 @@ def build_replication_protected_items_add_disks_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -370,7 +369,7 @@ def build_replication_protected_items_apply_recovery_point_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -411,7 +410,7 @@ def build_replication_protected_items_failover_cancel_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -450,7 +449,7 @@ def build_replication_protected_items_failover_commit_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -490,7 +489,7 @@ def build_replication_protected_items_planned_failover_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -532,7 +531,7 @@ def build_replication_protected_items_delete_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/remove"
     path_format_arguments = {
@@ -571,7 +570,7 @@ def build_replication_protected_items_remove_disks_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -612,7 +611,7 @@ def build_replication_protected_items_repair_replication_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -652,7 +651,7 @@ def build_replication_protected_items_reprotect_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -694,7 +693,7 @@ def build_replication_protected_items_resolve_health_errors_request(  # pylint: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -736,7 +735,7 @@ def build_replication_protected_items_switch_provider_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -778,7 +777,7 @@ def build_replication_protected_items_test_failover_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -820,7 +819,7 @@ def build_replication_protected_items_test_failover_cleanup_request(  # pylint: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -862,7 +861,7 @@ def build_replication_protected_items_unplanned_failover_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -904,7 +903,7 @@ def build_replication_protected_items_update_appliance_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -946,7 +945,7 @@ def build_replication_protected_items_update_mobility_service_request(  # pylint
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -988,7 +987,7 @@ def build_replication_protected_items_reinstall_mobility_service_request(  # pyl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1029,7 +1028,7 @@ def build_replication_protected_items_list_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1067,7 +1066,7 @@ def build_target_compute_sizes_list_by_replication_protected_items_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1107,7 +1106,7 @@ def build_recovery_points_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1147,7 +1146,7 @@ def build_recovery_points_list_by_replication_protected_items_request(  # pylint
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1186,7 +1185,7 @@ def build_replication_protection_clusters_get_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1226,7 +1225,7 @@ def build_replication_protection_clusters_create_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1266,7 +1265,7 @@ def build_replication_protection_clusters_purge_request(  # pylint: disable=name
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectionClusters/{replicationProtectionClusterName}"
     path_format_arguments = {
@@ -1301,7 +1300,7 @@ def build_replication_protection_clusters_apply_recovery_point_request(  # pylin
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1342,7 +1341,7 @@ def build_replication_protection_clusters_failover_commit_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1381,7 +1380,7 @@ def build_replication_protection_clusters_repair_replication_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1421,7 +1420,7 @@ def build_replication_protection_clusters_test_failover_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1463,7 +1462,7 @@ def build_replication_protection_clusters_test_failover_cleanup_request(  # pyli
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1505,7 +1504,7 @@ def build_replication_protection_clusters_unplanned_failover_request(  # pylint:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1547,7 +1546,7 @@ def build_replication_protection_clusters_get_operation_results_request(  # pyli
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1586,7 +1585,7 @@ def build_replication_protection_clusters_list_by_replication_protection_contain
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1622,7 +1621,7 @@ def build_replication_protection_clusters_list_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1660,7 +1659,7 @@ def build_cluster_recovery_points_list_by_replication_protection_cluster_request
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1693,7 +1692,7 @@ def build_replication_protection_intents_get_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1723,7 +1722,7 @@ def build_replication_protection_intents_create_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1760,7 +1759,7 @@ def build_replication_protection_intents_list_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1792,7 +1791,7 @@ def build_replication_alert_settings_get_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1822,7 +1821,7 @@ def build_replication_alert_settings_create_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1853,7 +1852,7 @@ def build_replication_alert_settings_list_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1881,11 +1880,11 @@ def build_replication_eligibility_results_get_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachines/{virtualMachineName}/providers/Microsoft.RecoveryServices/replicationEligibilityResults/default"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{virtualMachineName}/providers/Microsoft.RecoveryServices/replicationEligibilityResults/default"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -1909,11 +1908,11 @@ def build_replication_eligibility_results_list_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.Compute/virtualMachines/{virtualMachineName}/providers/Microsoft.RecoveryServices/replicationEligibilityResults"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachines/{virtualMachineName}/providers/Microsoft.RecoveryServices/replicationEligibilityResults"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -1937,7 +1936,7 @@ def build_replication_events_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1966,7 +1965,7 @@ def build_replication_events_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2002,7 +2001,7 @@ def build_replication_fabrics_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2034,7 +2033,7 @@ def build_replication_fabrics_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2064,7 +2063,7 @@ def build_replication_fabrics_purge_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}"
     path_format_arguments = {
@@ -2088,7 +2087,7 @@ def build_replication_fabrics_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2116,7 +2115,7 @@ def build_replication_fabrics_check_consistency_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2144,7 +2143,7 @@ def build_replication_fabrics_migrate_to_aad_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/migratetoaad"
     path_format_arguments = {
@@ -2169,7 +2168,7 @@ def build_replication_fabrics_reassociate_gateway_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2199,7 +2198,7 @@ def build_replication_fabrics_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/remove"
     path_format_arguments = {
@@ -2224,7 +2223,7 @@ def build_replication_fabrics_renew_certificate_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2254,7 +2253,7 @@ def build_replication_fabrics_remove_infra_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/removeInfra"
     path_format_arguments = {
@@ -2283,7 +2282,7 @@ def build_replication_logical_networks_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2313,7 +2312,7 @@ def build_replication_logical_networks_list_by_replication_fabrics_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2347,7 +2346,7 @@ def build_replication_networks_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2377,7 +2376,7 @@ def build_replication_networks_list_by_replication_fabrics_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2406,7 +2405,7 @@ def build_replication_networks_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2440,7 +2439,7 @@ def build_replication_network_mappings_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2478,7 +2477,7 @@ def build_replication_network_mappings_create_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2518,7 +2517,7 @@ def build_replication_network_mappings_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2556,7 +2555,7 @@ def build_replication_network_mappings_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationNetworks/{networkName}/replicationNetworkMappings/{networkMappingName}"
     path_format_arguments = {
@@ -2587,7 +2586,7 @@ def build_replication_network_mappings_list_by_replication_networks_request(  # 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2617,7 +2616,7 @@ def build_replication_network_mappings_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2650,7 +2649,7 @@ def build_replication_protection_containers_get_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2686,7 +2685,7 @@ def build_replication_protection_containers_create_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2718,7 +2717,7 @@ def build_replication_protection_containers_list_by_replication_fabrics_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2753,7 +2752,7 @@ def build_replication_protection_containers_discover_protectable_item_request(  
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2789,7 +2788,7 @@ def build_replication_protection_containers_delete_request(  # pylint: disable=n
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/remove"
     path_format_arguments = {
@@ -2820,7 +2819,7 @@ def build_replication_protection_containers_switch_cluster_protection_request(  
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2858,7 +2857,7 @@ def build_replication_protection_containers_switch_protection_request(  # pylint
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2890,7 +2889,7 @@ def build_replication_protection_containers_list_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2924,7 +2923,7 @@ def build_replication_migration_items_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2962,7 +2961,7 @@ def build_replication_migration_items_create_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3002,7 +3001,7 @@ def build_replication_migration_items_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3042,7 +3041,7 @@ def build_replication_migration_items_delete_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationMigrationItems/{migrationItemName}"
     path_format_arguments = {
@@ -3079,7 +3078,7 @@ def build_replication_migration_items_list_by_replication_protection_containers_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3122,7 +3121,7 @@ def build_replication_migration_items_migrate_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3162,7 +3161,7 @@ def build_replication_migration_items_pause_replication_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3202,7 +3201,7 @@ def build_replication_migration_items_resume_replication_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3242,7 +3241,7 @@ def build_replication_migration_items_resync_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3282,7 +3281,7 @@ def build_replication_migration_items_test_migrate_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3322,7 +3321,7 @@ def build_replication_migration_items_test_migrate_cleanup_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3362,7 +3361,7 @@ def build_replication_migration_items_list_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3402,7 +3401,7 @@ def build_replication_protectable_items_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3442,7 +3441,7 @@ def build_replication_protectable_items_list_by_replication_protection_container
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3485,7 +3484,7 @@ def build_cluster_recovery_point_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3525,7 +3524,7 @@ def build_replication_protection_container_mappings_get_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3563,7 +3562,7 @@ def build_replication_protection_container_mappings_create_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3603,7 +3602,7 @@ def build_replication_protection_container_mappings_update_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3641,7 +3640,7 @@ def build_replication_protection_container_mappings_purge_request(  # pylint: di
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectionContainerMappings/{mappingName}"
     path_format_arguments = {
@@ -3672,7 +3671,7 @@ def build_replication_protection_container_mappings_list_by_replication_protecti
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3709,7 +3708,7 @@ def build_replication_protection_container_mappings_delete_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectionContainerMappings/{mappingName}/remove"
     path_format_arguments = {
@@ -3739,7 +3738,7 @@ def build_replication_protection_container_mappings_list_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3772,7 +3771,7 @@ def build_replication_recovery_services_providers_get_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3808,7 +3807,7 @@ def build_replication_recovery_services_providers_create_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3844,7 +3843,7 @@ def build_replication_recovery_services_providers_purge_request(  # pylint: disa
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationRecoveryServicesProviders/{providerName}"
     path_format_arguments = {
@@ -3869,7 +3868,7 @@ def build_replication_recovery_services_providers_list_by_replication_fabrics_re
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3903,7 +3902,7 @@ def build_replication_recovery_services_providers_refresh_provider_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3937,7 +3936,7 @@ def build_replication_recovery_services_providers_delete_request(  # pylint: dis
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationRecoveryServicesProviders/{providerName}/remove"
     path_format_arguments = {
@@ -3962,7 +3961,7 @@ def build_replication_recovery_services_providers_list_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3995,7 +3994,7 @@ def build_replication_storage_classifications_get_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4025,7 +4024,7 @@ def build_replication_storage_classifications_list_by_replication_fabrics_reques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4054,7 +4053,7 @@ def build_replication_storage_classifications_list_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4088,7 +4087,7 @@ def build_replication_storage_classification_mappings_get_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4128,7 +4127,7 @@ def build_replication_storage_classification_mappings_create_request(  # pylint:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4168,7 +4167,7 @@ def build_replication_storage_classification_mappings_delete_request(  # pylint:
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationStorageClassifications/{storageClassificationName}/replicationStorageClassificationMappings/{storageClassificationMappingName}"
     path_format_arguments = {
@@ -4201,7 +4200,7 @@ def build_replication_storage_classification_mappings_list_by_replication_storag
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4231,7 +4230,7 @@ def build_replication_storage_classification_mappings_list_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4264,7 +4263,7 @@ def build_replicationv_centers_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4300,7 +4299,7 @@ def build_replicationv_centers_create_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4338,7 +4337,7 @@ def build_replicationv_centers_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4374,7 +4373,7 @@ def build_replicationv_centers_delete_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationvCenters/{vcenterName}"
     path_format_arguments = {
@@ -4399,7 +4398,7 @@ def build_replicationv_centers_list_by_replication_fabrics_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4428,7 +4427,7 @@ def build_replicationv_centers_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4456,7 +4455,7 @@ def build_replication_jobs_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4485,7 +4484,7 @@ def build_replication_jobs_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4515,7 +4514,7 @@ def build_replication_jobs_cancel_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4544,7 +4543,7 @@ def build_replication_jobs_restart_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4574,7 +4573,7 @@ def build_replication_jobs_resume_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4606,7 +4605,7 @@ def build_replication_jobs_export_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4636,7 +4635,7 @@ def build_replication_policies_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4666,7 +4665,7 @@ def build_replication_policies_create_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4698,7 +4697,7 @@ def build_replication_policies_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4728,7 +4727,7 @@ def build_replication_policies_delete_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationPolicies/{policyName}"
     path_format_arguments = {
@@ -4752,7 +4751,7 @@ def build_replication_policies_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4780,7 +4779,7 @@ def build_replication_recovery_plans_get_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4810,7 +4809,7 @@ def build_replication_recovery_plans_create_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4842,7 +4841,7 @@ def build_replication_recovery_plans_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4872,7 +4871,7 @@ def build_replication_recovery_plans_delete_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationRecoveryPlans/{recoveryPlanName}"
     path_format_arguments = {
@@ -4896,7 +4895,7 @@ def build_replication_recovery_plans_list_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4924,7 +4923,7 @@ def build_replication_recovery_plans_failover_cancel_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4953,7 +4952,7 @@ def build_replication_recovery_plans_failover_commit_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4983,7 +4982,7 @@ def build_replication_recovery_plans_planned_failover_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5014,7 +5013,7 @@ def build_replication_recovery_plans_reprotect_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5044,7 +5043,7 @@ def build_replication_recovery_plans_test_failover_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5076,7 +5075,7 @@ def build_replication_recovery_plans_test_failover_cleanup_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5108,7 +5107,7 @@ def build_replication_recovery_plans_unplanned_failover_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5139,7 +5138,7 @@ def build_replication_vault_setting_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5169,7 +5168,7 @@ def build_replication_vault_setting_create_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5200,7 +5199,7 @@ def build_replication_vault_setting_list_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5226,7 +5225,7 @@ def build_operations_list_request(resource_group_name: str, subscription_id: str
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5253,7 +5252,7 @@ def build_replication_appliances_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5288,7 +5287,7 @@ def build_supported_operating_systems_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5318,7 +5317,7 @@ def build_replication_vault_health_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5346,7 +5345,7 @@ def build_replication_vault_health_refresh_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5368,7 +5367,7 @@ def build_replication_vault_health_refresh_request(  # pylint: disable=name-too-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class MigrationRecoveryPointsOperations:
+class MigrationRecoveryPointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5551,7 +5550,10 @@ class MigrationRecoveryPointsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5590,7 +5592,7 @@ class MigrationRecoveryPointsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-methods
+class ReplicationProtectedItemsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5702,7 +5704,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        input: Union[_models.EnableProtectionInput, JSON, IO[bytes]],
+        input: Union[_models.EnableProtectionInput, _types.EnableProtectionInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5820,7 +5822,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        input: JSON,
+        input: _types.EnableProtectionInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5841,7 +5843,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param input: Enable Protection Input. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.types.EnableProtectionInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5900,7 +5902,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        input: Union[_models.EnableProtectionInput, JSON, IO[bytes]],
+        input: Union[_models.EnableProtectionInput, _types.EnableProtectionInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Enables protection.
@@ -5918,10 +5920,10 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
-        :param input: Enable Protection Input. Is one of the following types: EnableProtectionInput,
-         JSON, IO[bytes] Required.
-        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.EnableProtectionInput or JSON or
-         IO[bytes]
+        :param input: Enable Protection Input. Is either a EnableProtectionInput type or a IO[bytes]
+         type. Required.
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.EnableProtectionInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.EnableProtectionInput or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectedItem. The
          ReplicationProtectedItem is compatible with MutableMapping
         :rtype:
@@ -5990,7 +5992,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        update_protection_input: Union[_models.UpdateReplicationProtectedItemInput, JSON, IO[bytes]],
+        update_protection_input: Union[
+            _models.UpdateReplicationProtectedItemInput, _types.UpdateReplicationProtectedItemInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6109,7 +6113,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        update_protection_input: JSON,
+        update_protection_input: _types.UpdateReplicationProtectedItemInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6130,7 +6134,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param update_protection_input: Update protection input. Required.
-        :type update_protection_input: JSON
+        :type update_protection_input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.UpdateReplicationProtectedItemInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6189,7 +6194,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        update_protection_input: Union[_models.UpdateReplicationProtectedItemInput, JSON, IO[bytes]],
+        update_protection_input: Union[
+            _models.UpdateReplicationProtectedItemInput, _types.UpdateReplicationProtectedItemInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Updates the replication protected item settings.
@@ -6207,11 +6214,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
-        :param update_protection_input: Update protection input. Is one of the following types:
-         UpdateReplicationProtectedItemInput, JSON, IO[bytes] Required.
+        :param update_protection_input: Update protection input. Is either a
+         UpdateReplicationProtectedItemInput type or a IO[bytes] type. Required.
         :type update_protection_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.UpdateReplicationProtectedItemInput or JSON or
-         IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.UpdateReplicationProtectedItemInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.UpdateReplicationProtectedItemInput or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectedItem. The
          ReplicationProtectedItem is compatible with MutableMapping
         :rtype:
@@ -6488,7 +6495,10 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6533,7 +6543,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        add_disks_input: Union[_models.AddDisksInput, JSON, IO[bytes]],
+        add_disks_input: Union[_models.AddDisksInput, _types.AddDisksInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6651,7 +6661,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        add_disks_input: JSON,
+        add_disks_input: _types.AddDisksInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6672,7 +6682,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param add_disks_input: Add disks input. Required.
-        :type add_disks_input: JSON
+        :type add_disks_input: ~azure.mgmt.recoveryservicessiterecovery.types.AddDisksInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6731,7 +6741,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        add_disks_input: Union[_models.AddDisksInput, JSON, IO[bytes]],
+        add_disks_input: Union[_models.AddDisksInput, _types.AddDisksInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Add disk(s) for protection.
@@ -6749,10 +6759,10 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
-        :param add_disks_input: Add disks input. Is one of the following types: AddDisksInput, JSON,
-         IO[bytes] Required.
-        :type add_disks_input: ~azure.mgmt.recoveryservicessiterecovery.models.AddDisksInput or JSON or
-         IO[bytes]
+        :param add_disks_input: Add disks input. Is either a AddDisksInput type or a IO[bytes] type.
+         Required.
+        :type add_disks_input: ~azure.mgmt.recoveryservicessiterecovery.models.AddDisksInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.AddDisksInput or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectedItem. The
          ReplicationProtectedItem is compatible with MutableMapping
         :rtype:
@@ -6821,7 +6831,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        apply_recovery_point_input: Union[_models.ApplyRecoveryPointInput, JSON, IO[bytes]],
+        apply_recovery_point_input: Union[_models.ApplyRecoveryPointInput, _types.ApplyRecoveryPointInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6940,7 +6950,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        apply_recovery_point_input: JSON,
+        apply_recovery_point_input: _types.ApplyRecoveryPointInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6961,7 +6971,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param apply_recovery_point_input: The ApplyRecoveryPointInput. Required.
-        :type apply_recovery_point_input: JSON
+        :type apply_recovery_point_input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.ApplyRecoveryPointInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7020,7 +7031,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        apply_recovery_point_input: Union[_models.ApplyRecoveryPointInput, JSON, IO[bytes]],
+        apply_recovery_point_input: Union[_models.ApplyRecoveryPointInput, _types.ApplyRecoveryPointInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Change or apply recovery point.
@@ -7038,10 +7049,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
-        :param apply_recovery_point_input: The ApplyRecoveryPointInput. Is one of the following types:
-         ApplyRecoveryPointInput, JSON, IO[bytes] Required.
+        :param apply_recovery_point_input: The ApplyRecoveryPointInput. Is either a
+         ApplyRecoveryPointInput type or a IO[bytes] type. Required.
         :type apply_recovery_point_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.ApplyRecoveryPointInput or JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.ApplyRecoveryPointInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.ApplyRecoveryPointInput or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectedItem. The
          ReplicationProtectedItem is compatible with MutableMapping
         :rtype:
@@ -7408,7 +7420,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        failover_input: Union[_models.PlannedFailoverInput, JSON, IO[bytes]],
+        failover_input: Union[_models.PlannedFailoverInput, _types.PlannedFailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7526,7 +7538,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        failover_input: JSON,
+        failover_input: _types.PlannedFailoverInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7547,7 +7559,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param failover_input: Planned failover input. Required.
-        :type failover_input: JSON
+        :type failover_input: ~azure.mgmt.recoveryservicessiterecovery.types.PlannedFailoverInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7606,7 +7618,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        failover_input: Union[_models.PlannedFailoverInput, JSON, IO[bytes]],
+        failover_input: Union[_models.PlannedFailoverInput, _types.PlannedFailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Execute planned failover.
@@ -7624,10 +7636,10 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
-        :param failover_input: Planned failover input. Is one of the following types:
-         PlannedFailoverInput, JSON, IO[bytes] Required.
+        :param failover_input: Planned failover input. Is either a PlannedFailoverInput type or a
+         IO[bytes] type. Required.
         :type failover_input: ~azure.mgmt.recoveryservicessiterecovery.models.PlannedFailoverInput or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.types.PlannedFailoverInput or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectedItem. The
          ReplicationProtectedItem is compatible with MutableMapping
         :rtype:
@@ -7696,7 +7708,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        disable_protection_input: Union[_models.DisableProtectionInput, JSON, IO[bytes]],
+        disable_protection_input: Union[_models.DisableProtectionInput, _types.DisableProtectionInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7814,7 +7826,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        disable_protection_input: JSON,
+        disable_protection_input: _types.DisableProtectionInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7836,7 +7848,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param disable_protection_input: Disable protection input. Required.
-        :type disable_protection_input: JSON
+        :type disable_protection_input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.DisableProtectionInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7892,7 +7905,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        disable_protection_input: Union[_models.DisableProtectionInput, JSON, IO[bytes]],
+        disable_protection_input: Union[_models.DisableProtectionInput, _types.DisableProtectionInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Disables protection.
@@ -7911,10 +7924,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
-        :param disable_protection_input: Disable protection input. Is one of the following types:
-         DisableProtectionInput, JSON, IO[bytes] Required.
+        :param disable_protection_input: Disable protection input. Is either a DisableProtectionInput
+         type or a IO[bytes] type. Required.
         :type disable_protection_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.DisableProtectionInput or JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.DisableProtectionInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.DisableProtectionInput or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7976,7 +7990,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        remove_disks_input: Union[_models.RemoveDisksInput, JSON, IO[bytes]],
+        remove_disks_input: Union[_models.RemoveDisksInput, _types.RemoveDisksInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8094,7 +8108,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        remove_disks_input: JSON,
+        remove_disks_input: _types.RemoveDisksInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8115,7 +8129,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param remove_disks_input: Remove disks input. Required.
-        :type remove_disks_input: JSON
+        :type remove_disks_input: ~azure.mgmt.recoveryservicessiterecovery.types.RemoveDisksInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8174,7 +8188,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        remove_disks_input: Union[_models.RemoveDisksInput, JSON, IO[bytes]],
+        remove_disks_input: Union[_models.RemoveDisksInput, _types.RemoveDisksInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Removes disk(s).
@@ -8192,10 +8206,10 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
-        :param remove_disks_input: Remove disks input. Is one of the following types: RemoveDisksInput,
-         JSON, IO[bytes] Required.
+        :param remove_disks_input: Remove disks input. Is either a RemoveDisksInput type or a IO[bytes]
+         type. Required.
         :type remove_disks_input: ~azure.mgmt.recoveryservicessiterecovery.models.RemoveDisksInput or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.types.RemoveDisksInput or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectedItem. The
          ReplicationProtectedItem is compatible with MutableMapping
         :rtype:
@@ -8414,7 +8428,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        reprotect_input: Union[_models.ReverseReplicationInput, JSON, IO[bytes]],
+        reprotect_input: Union[_models.ReverseReplicationInput, _types.ReverseReplicationInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8532,7 +8546,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        reprotect_input: JSON,
+        reprotect_input: _types.ReverseReplicationInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8553,7 +8567,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param reprotect_input: Reverse replication input. Required.
-        :type reprotect_input: JSON
+        :type reprotect_input: ~azure.mgmt.recoveryservicessiterecovery.types.ReverseReplicationInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8612,7 +8626,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        reprotect_input: Union[_models.ReverseReplicationInput, JSON, IO[bytes]],
+        reprotect_input: Union[_models.ReverseReplicationInput, _types.ReverseReplicationInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Execute Reverse Replication\\Reprotect.
@@ -8630,10 +8644,10 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
-        :param reprotect_input: Reverse replication input. Is one of the following types:
-         ReverseReplicationInput, JSON, IO[bytes] Required.
+        :param reprotect_input: Reverse replication input. Is either a ReverseReplicationInput type or
+         a IO[bytes] type. Required.
         :type reprotect_input: ~azure.mgmt.recoveryservicessiterecovery.models.ReverseReplicationInput
-         or JSON or IO[bytes]
+         or ~azure.mgmt.recoveryservicessiterecovery.types.ReverseReplicationInput or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectedItem. The
          ReplicationProtectedItem is compatible with MutableMapping
         :rtype:
@@ -8702,7 +8716,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        resolve_health_input: Union[_models.ResolveHealthInput, JSON, IO[bytes]],
+        resolve_health_input: Union[_models.ResolveHealthInput, _types.ResolveHealthInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8820,7 +8834,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        resolve_health_input: JSON,
+        resolve_health_input: _types.ResolveHealthInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8841,7 +8855,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param resolve_health_input: Health issue input object. Required.
-        :type resolve_health_input: JSON
+        :type resolve_health_input: ~azure.mgmt.recoveryservicessiterecovery.types.ResolveHealthInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8900,7 +8914,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        resolve_health_input: Union[_models.ResolveHealthInput, JSON, IO[bytes]],
+        resolve_health_input: Union[_models.ResolveHealthInput, _types.ResolveHealthInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Resolve health errors.
@@ -8918,10 +8932,10 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
-        :param resolve_health_input: Health issue input object. Is one of the following types:
-         ResolveHealthInput, JSON, IO[bytes] Required.
+        :param resolve_health_input: Health issue input object. Is either a ResolveHealthInput type or
+         a IO[bytes] type. Required.
         :type resolve_health_input: ~azure.mgmt.recoveryservicessiterecovery.models.ResolveHealthInput
-         or JSON or IO[bytes]
+         or ~azure.mgmt.recoveryservicessiterecovery.types.ResolveHealthInput or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectedItem. The
          ReplicationProtectedItem is compatible with MutableMapping
         :rtype:
@@ -8990,7 +9004,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        switch_provider_input: Union[_models.SwitchProviderInput, JSON, IO[bytes]],
+        switch_provider_input: Union[_models.SwitchProviderInput, _types.SwitchProviderInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -9111,7 +9125,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        switch_provider_input: JSON,
+        switch_provider_input: _types.SwitchProviderInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9132,7 +9146,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param switch_provider_input: Switch provider input. Required.
-        :type switch_provider_input: JSON
+        :type switch_provider_input: ~azure.mgmt.recoveryservicessiterecovery.types.SwitchProviderInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9191,7 +9205,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        switch_provider_input: Union[_models.SwitchProviderInput, JSON, IO[bytes]],
+        switch_provider_input: Union[_models.SwitchProviderInput, _types.SwitchProviderInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Execute switch provider.
@@ -9209,10 +9223,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
-        :param switch_provider_input: Switch provider input. Is one of the following types:
-         SwitchProviderInput, JSON, IO[bytes] Required.
+        :param switch_provider_input: Switch provider input. Is either a SwitchProviderInput type or a
+         IO[bytes] type. Required.
         :type switch_provider_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.SwitchProviderInput or JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.SwitchProviderInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.SwitchProviderInput or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectedItem. The
          ReplicationProtectedItem is compatible with MutableMapping
         :rtype:
@@ -9281,7 +9296,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        testfailover_input: Union[_models.TestFailoverInput, JSON, IO[bytes]],
+        testfailover_input: Union[_models.TestFailoverInput, _types.TestFailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -9399,7 +9414,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        testfailover_input: JSON,
+        testfailover_input: _types.TestFailoverInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9420,7 +9435,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param testfailover_input: Test failover input. Required.
-        :type testfailover_input: JSON
+        :type testfailover_input: ~azure.mgmt.recoveryservicessiterecovery.types.TestFailoverInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9479,7 +9494,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        testfailover_input: Union[_models.TestFailoverInput, JSON, IO[bytes]],
+        testfailover_input: Union[_models.TestFailoverInput, _types.TestFailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Execute test failover.
@@ -9497,10 +9512,10 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
-        :param testfailover_input: Test failover input. Is one of the following types:
-         TestFailoverInput, JSON, IO[bytes] Required.
+        :param testfailover_input: Test failover input. Is either a TestFailoverInput type or a
+         IO[bytes] type. Required.
         :type testfailover_input: ~azure.mgmt.recoveryservicessiterecovery.models.TestFailoverInput or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.types.TestFailoverInput or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectedItem. The
          ReplicationProtectedItem is compatible with MutableMapping
         :rtype:
@@ -9569,7 +9584,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        cleanup_input: Union[_models.TestFailoverCleanupInput, JSON, IO[bytes]],
+        cleanup_input: Union[_models.TestFailoverCleanupInput, _types.TestFailoverCleanupInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -9687,7 +9702,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        cleanup_input: JSON,
+        cleanup_input: _types.TestFailoverCleanupInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9708,7 +9723,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param cleanup_input: Test failover cleanup input. Required.
-        :type cleanup_input: JSON
+        :type cleanup_input: ~azure.mgmt.recoveryservicessiterecovery.types.TestFailoverCleanupInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9767,7 +9782,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        cleanup_input: Union[_models.TestFailoverCleanupInput, JSON, IO[bytes]],
+        cleanup_input: Union[_models.TestFailoverCleanupInput, _types.TestFailoverCleanupInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Execute test failover cleanup.
@@ -9785,10 +9800,10 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
-        :param cleanup_input: Test failover cleanup input. Is one of the following types:
-         TestFailoverCleanupInput, JSON, IO[bytes] Required.
+        :param cleanup_input: Test failover cleanup input. Is either a TestFailoverCleanupInput type or
+         a IO[bytes] type. Required.
         :type cleanup_input: ~azure.mgmt.recoveryservicessiterecovery.models.TestFailoverCleanupInput
-         or JSON or IO[bytes]
+         or ~azure.mgmt.recoveryservicessiterecovery.types.TestFailoverCleanupInput or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectedItem. The
          ReplicationProtectedItem is compatible with MutableMapping
         :rtype:
@@ -9857,7 +9872,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        failover_input: Union[_models.UnplannedFailoverInput, JSON, IO[bytes]],
+        failover_input: Union[_models.UnplannedFailoverInput, _types.UnplannedFailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -9975,7 +9990,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        failover_input: JSON,
+        failover_input: _types.UnplannedFailoverInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9996,7 +10011,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param failover_input: Failover input. Required.
-        :type failover_input: JSON
+        :type failover_input: ~azure.mgmt.recoveryservicessiterecovery.types.UnplannedFailoverInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10055,7 +10070,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        failover_input: Union[_models.UnplannedFailoverInput, JSON, IO[bytes]],
+        failover_input: Union[_models.UnplannedFailoverInput, _types.UnplannedFailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Execute unplanned failover.
@@ -10073,10 +10088,10 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
-        :param failover_input: Failover input. Is one of the following types: UnplannedFailoverInput,
-         JSON, IO[bytes] Required.
+        :param failover_input: Failover input. Is either a UnplannedFailoverInput type or a IO[bytes]
+         type. Required.
         :type failover_input: ~azure.mgmt.recoveryservicessiterecovery.models.UnplannedFailoverInput or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.types.UnplannedFailoverInput or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectedItem. The
          ReplicationProtectedItem is compatible with MutableMapping
         :rtype:
@@ -10145,7 +10160,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        appliance_update_input: Union[_models.UpdateApplianceForReplicationProtectedItemInput, JSON, IO[bytes]],
+        appliance_update_input: Union[
+            _models.UpdateApplianceForReplicationProtectedItemInput,
+            _types.UpdateApplianceForReplicationProtectedItemInput,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10264,7 +10283,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        appliance_update_input: JSON,
+        appliance_update_input: _types.UpdateApplianceForReplicationProtectedItemInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10285,7 +10304,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param appliance_update_input: Appliance update protection input. Required.
-        :type appliance_update_input: JSON
+        :type appliance_update_input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.UpdateApplianceForReplicationProtectedItemInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10344,7 +10364,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        appliance_update_input: Union[_models.UpdateApplianceForReplicationProtectedItemInput, JSON, IO[bytes]],
+        appliance_update_input: Union[
+            _models.UpdateApplianceForReplicationProtectedItemInput,
+            _types.UpdateApplianceForReplicationProtectedItemInput,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Updates appliance for replication protected Item.
@@ -10362,11 +10386,13 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
-        :param appliance_update_input: Appliance update protection input. Is one of the following
-         types: UpdateApplianceForReplicationProtectedItemInput, JSON, IO[bytes] Required.
+        :param appliance_update_input: Appliance update protection input. Is either a
+         UpdateApplianceForReplicationProtectedItemInput type or a IO[bytes] type. Required.
         :type appliance_update_input:
          ~azure.mgmt.recoveryservicessiterecovery.models.UpdateApplianceForReplicationProtectedItemInput
-         or JSON or IO[bytes]
+         or
+         ~azure.mgmt.recoveryservicessiterecovery.types.UpdateApplianceForReplicationProtectedItemInput
+         or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectedItem. The
          ReplicationProtectedItem is compatible with MutableMapping
         :rtype:
@@ -10435,7 +10461,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        update_mobility_service_request: Union[_models.UpdateMobilityServiceRequest, JSON, IO[bytes]],
+        update_mobility_service_request: Union[
+            _models.UpdateMobilityServiceRequest, _types.UpdateMobilityServiceRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10556,7 +10584,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        update_mobility_service_request: JSON,
+        update_mobility_service_request: _types.UpdateMobilityServiceRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10579,7 +10607,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :type replicated_protected_item_name: str
         :param update_mobility_service_request: Request to update the mobility service on the protected
          item. Required.
-        :type update_mobility_service_request: JSON
+        :type update_mobility_service_request:
+         ~azure.mgmt.recoveryservicessiterecovery.types.UpdateMobilityServiceRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10640,7 +10669,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        update_mobility_service_request: Union[_models.UpdateMobilityServiceRequest, JSON, IO[bytes]],
+        update_mobility_service_request: Union[
+            _models.UpdateMobilityServiceRequest, _types.UpdateMobilityServiceRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Update the mobility service on a protected item.
@@ -10660,10 +10691,10 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param update_mobility_service_request: Request to update the mobility service on the protected
-         item. Is one of the following types: UpdateMobilityServiceRequest, JSON, IO[bytes] Required.
+         item. Is either a UpdateMobilityServiceRequest type or a IO[bytes] type. Required.
         :type update_mobility_service_request:
-         ~azure.mgmt.recoveryservicessiterecovery.models.UpdateMobilityServiceRequest or JSON or
-         IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.UpdateMobilityServiceRequest or
+         ~azure.mgmt.recoveryservicessiterecovery.types.UpdateMobilityServiceRequest or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectedItem. The
          ReplicationProtectedItem is compatible with MutableMapping
         :rtype:
@@ -10732,7 +10763,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        update_mobility_service_request: Union[_models.ReinstallMobilityServiceRequest, JSON, IO[bytes]],
+        update_mobility_service_request: Union[
+            _models.ReinstallMobilityServiceRequest, _types.ReinstallMobilityServiceRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10858,7 +10891,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        update_mobility_service_request: JSON,
+        update_mobility_service_request: _types.ReinstallMobilityServiceRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10882,7 +10915,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         :type replicated_protected_item_name: str
         :param update_mobility_service_request: Request to update the mobility service on the protected
          item. Required.
-        :type update_mobility_service_request: JSON
+        :type update_mobility_service_request:
+         ~azure.mgmt.recoveryservicessiterecovery.types.ReinstallMobilityServiceRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10944,7 +10978,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
-        update_mobility_service_request: Union[_models.ReinstallMobilityServiceRequest, JSON, IO[bytes]],
+        update_mobility_service_request: Union[
+            _models.ReinstallMobilityServiceRequest, _types.ReinstallMobilityServiceRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Reinstall the mobility service on a protected item.
@@ -10965,10 +11001,10 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
          be updated. Required.
         :type replicated_protected_item_name: str
         :param update_mobility_service_request: Request to update the mobility service on the protected
-         item. Is one of the following types: ReinstallMobilityServiceRequest, JSON, IO[bytes] Required.
+         item. Is either a ReinstallMobilityServiceRequest type or a IO[bytes] type. Required.
         :type update_mobility_service_request:
-         ~azure.mgmt.recoveryservicessiterecovery.models.ReinstallMobilityServiceRequest or JSON or
-         IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.ReinstallMobilityServiceRequest or
+         ~azure.mgmt.recoveryservicessiterecovery.types.ReinstallMobilityServiceRequest or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectedItem. The
          ReplicationProtectedItem is compatible with MutableMapping
         :rtype:
@@ -11001,14 +11037,10 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.ReplicationProtectedItem, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -11107,7 +11139,10 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11146,7 +11181,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         return ItemPaged(get_next, extract_data)
 
 
-class TargetComputeSizesOperations:
+class TargetComputeSizesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11240,7 +11275,10 @@ class TargetComputeSizesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11279,7 +11317,7 @@ class TargetComputeSizesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RecoveryPointsOperations:
+class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11462,7 +11500,10 @@ class RecoveryPointsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11501,7 +11542,7 @@ class RecoveryPointsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationProtectionClustersOperations:
+class ReplicationProtectionClustersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11617,7 +11658,9 @@ class ReplicationProtectionClustersOperations:
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
-        replication_protection_cluster: Union[_models.ReplicationProtectionCluster, JSON, IO[bytes]],
+        replication_protection_cluster: Union[
+            _models.ReplicationProtectionCluster, _types.ReplicationProtectionCluster, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -11743,7 +11786,7 @@ class ReplicationProtectionClustersOperations:
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
-        replication_protection_cluster: JSON,
+        replication_protection_cluster: _types.ReplicationProtectionCluster,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11764,7 +11807,8 @@ class ReplicationProtectionClustersOperations:
         :param replication_protection_cluster_name: Replication protection cluster name. Required.
         :type replication_protection_cluster_name: str
         :param replication_protection_cluster: Create replication protection cluster Input. Required.
-        :type replication_protection_cluster: JSON
+        :type replication_protection_cluster:
+         ~azure.mgmt.recoveryservicessiterecovery.types.ReplicationProtectionCluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11823,7 +11867,9 @@ class ReplicationProtectionClustersOperations:
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
-        replication_protection_cluster: Union[_models.ReplicationProtectionCluster, JSON, IO[bytes]],
+        replication_protection_cluster: Union[
+            _models.ReplicationProtectionCluster, _types.ReplicationProtectionCluster, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectionCluster]:
         """Create Replication protection Cluster.
@@ -11841,11 +11887,11 @@ class ReplicationProtectionClustersOperations:
         :type protection_container_name: str
         :param replication_protection_cluster_name: Replication protection cluster name. Required.
         :type replication_protection_cluster_name: str
-        :param replication_protection_cluster: Create replication protection cluster Input. Is one of
-         the following types: ReplicationProtectionCluster, JSON, IO[bytes] Required.
+        :param replication_protection_cluster: Create replication protection cluster Input. Is either a
+         ReplicationProtectionCluster type or a IO[bytes] type. Required.
         :type replication_protection_cluster:
-         ~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectionCluster or JSON or
-         IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectionCluster or
+         ~azure.mgmt.recoveryservicessiterecovery.types.ReplicationProtectionCluster or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectionCluster. The
          ReplicationProtectionCluster is compatible with MutableMapping
         :rtype:
@@ -12065,7 +12111,9 @@ class ReplicationProtectionClustersOperations:
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
-        apply_cluster_recovery_point_input: Union[_models.ApplyClusterRecoveryPointInput, JSON, IO[bytes]],
+        apply_cluster_recovery_point_input: Union[
+            _models.ApplyClusterRecoveryPointInput, _types.ApplyClusterRecoveryPointInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -12191,7 +12239,7 @@ class ReplicationProtectionClustersOperations:
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
-        apply_cluster_recovery_point_input: JSON,
+        apply_cluster_recovery_point_input: _types.ApplyClusterRecoveryPointInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12212,7 +12260,8 @@ class ReplicationProtectionClustersOperations:
         :param replication_protection_cluster_name: Replication protection cluster name. Required.
         :type replication_protection_cluster_name: str
         :param apply_cluster_recovery_point_input: Apply recovery point input. Required.
-        :type apply_cluster_recovery_point_input: JSON
+        :type apply_cluster_recovery_point_input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.ApplyClusterRecoveryPointInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12271,7 +12320,9 @@ class ReplicationProtectionClustersOperations:
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
-        apply_cluster_recovery_point_input: Union[_models.ApplyClusterRecoveryPointInput, JSON, IO[bytes]],
+        apply_cluster_recovery_point_input: Union[
+            _models.ApplyClusterRecoveryPointInput, _types.ApplyClusterRecoveryPointInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectionCluster]:
         """Execute the change recovery point operation for cluster.
@@ -12289,11 +12340,11 @@ class ReplicationProtectionClustersOperations:
         :type protection_container_name: str
         :param replication_protection_cluster_name: Replication protection cluster name. Required.
         :type replication_protection_cluster_name: str
-        :param apply_cluster_recovery_point_input: Apply recovery point input. Is one of the following
-         types: ApplyClusterRecoveryPointInput, JSON, IO[bytes] Required.
+        :param apply_cluster_recovery_point_input: Apply recovery point input. Is either a
+         ApplyClusterRecoveryPointInput type or a IO[bytes] type. Required.
         :type apply_cluster_recovery_point_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.ApplyClusterRecoveryPointInput or JSON or
-         IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.ApplyClusterRecoveryPointInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.ApplyClusterRecoveryPointInput or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectionCluster. The
          ReplicationProtectionCluster is compatible with MutableMapping
         :rtype:
@@ -12695,7 +12746,7 @@ class ReplicationProtectionClustersOperations:
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
-        failover_input: Union[_models.ClusterTestFailoverInput, JSON, IO[bytes]],
+        failover_input: Union[_models.ClusterTestFailoverInput, _types.ClusterTestFailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -12820,7 +12871,7 @@ class ReplicationProtectionClustersOperations:
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
-        failover_input: JSON,
+        failover_input: _types.ClusterTestFailoverInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12841,7 +12892,7 @@ class ReplicationProtectionClustersOperations:
         :param replication_protection_cluster_name: Replication protection cluster name. Required.
         :type replication_protection_cluster_name: str
         :param failover_input: Cluster test failover input body. Required.
-        :type failover_input: JSON
+        :type failover_input: ~azure.mgmt.recoveryservicessiterecovery.types.ClusterTestFailoverInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12900,7 +12951,7 @@ class ReplicationProtectionClustersOperations:
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
-        failover_input: Union[_models.ClusterTestFailoverInput, JSON, IO[bytes]],
+        failover_input: Union[_models.ClusterTestFailoverInput, _types.ClusterTestFailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectionCluster]:
         """Execute test failover for cluster.
@@ -12918,10 +12969,10 @@ class ReplicationProtectionClustersOperations:
         :type protection_container_name: str
         :param replication_protection_cluster_name: Replication protection cluster name. Required.
         :type replication_protection_cluster_name: str
-        :param failover_input: Cluster test failover input body. Is one of the following types:
-         ClusterTestFailoverInput, JSON, IO[bytes] Required.
+        :param failover_input: Cluster test failover input body. Is either a ClusterTestFailoverInput
+         type or a IO[bytes] type. Required.
         :type failover_input: ~azure.mgmt.recoveryservicessiterecovery.models.ClusterTestFailoverInput
-         or JSON or IO[bytes]
+         or ~azure.mgmt.recoveryservicessiterecovery.types.ClusterTestFailoverInput or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectionCluster. The
          ReplicationProtectionCluster is compatible with MutableMapping
         :rtype:
@@ -12997,7 +13048,9 @@ class ReplicationProtectionClustersOperations:
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
-        cleanup_input: Union[_models.ClusterTestFailoverCleanupInput, JSON, IO[bytes]],
+        cleanup_input: Union[
+            _models.ClusterTestFailoverCleanupInput, _types.ClusterTestFailoverCleanupInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -13123,7 +13176,7 @@ class ReplicationProtectionClustersOperations:
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
-        cleanup_input: JSON,
+        cleanup_input: _types.ClusterTestFailoverCleanupInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13144,7 +13197,8 @@ class ReplicationProtectionClustersOperations:
         :param replication_protection_cluster_name: Replication protection cluster name. Required.
         :type replication_protection_cluster_name: str
         :param cleanup_input: Test failover cleanup input. Required.
-        :type cleanup_input: JSON
+        :type cleanup_input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.ClusterTestFailoverCleanupInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13203,7 +13257,9 @@ class ReplicationProtectionClustersOperations:
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
-        cleanup_input: Union[_models.ClusterTestFailoverCleanupInput, JSON, IO[bytes]],
+        cleanup_input: Union[
+            _models.ClusterTestFailoverCleanupInput, _types.ClusterTestFailoverCleanupInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectionCluster]:
         """Execute test failover cleanup for cluster.
@@ -13221,11 +13277,11 @@ class ReplicationProtectionClustersOperations:
         :type protection_container_name: str
         :param replication_protection_cluster_name: Replication protection cluster name. Required.
         :type replication_protection_cluster_name: str
-        :param cleanup_input: Test failover cleanup input. Is one of the following types:
-         ClusterTestFailoverCleanupInput, JSON, IO[bytes] Required.
+        :param cleanup_input: Test failover cleanup input. Is either a ClusterTestFailoverCleanupInput
+         type or a IO[bytes] type. Required.
         :type cleanup_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.ClusterTestFailoverCleanupInput or JSON or
-         IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.ClusterTestFailoverCleanupInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.ClusterTestFailoverCleanupInput or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectionCluster. The
          ReplicationProtectionCluster is compatible with MutableMapping
         :rtype:
@@ -13301,7 +13357,7 @@ class ReplicationProtectionClustersOperations:
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
-        failover_input: Union[_models.ClusterUnplannedFailoverInput, JSON, IO[bytes]],
+        failover_input: Union[_models.ClusterUnplannedFailoverInput, _types.ClusterUnplannedFailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -13427,7 +13483,7 @@ class ReplicationProtectionClustersOperations:
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
-        failover_input: JSON,
+        failover_input: _types.ClusterUnplannedFailoverInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13448,7 +13504,8 @@ class ReplicationProtectionClustersOperations:
         :param replication_protection_cluster_name: Replication protection cluster name. Required.
         :type replication_protection_cluster_name: str
         :param failover_input: Failover input. Required.
-        :type failover_input: JSON
+        :type failover_input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.ClusterUnplannedFailoverInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13507,7 +13564,7 @@ class ReplicationProtectionClustersOperations:
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
-        failover_input: Union[_models.ClusterUnplannedFailoverInput, JSON, IO[bytes]],
+        failover_input: Union[_models.ClusterUnplannedFailoverInput, _types.ClusterUnplannedFailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectionCluster]:
         """Execute unplanned cluster failover.
@@ -13525,11 +13582,11 @@ class ReplicationProtectionClustersOperations:
         :type protection_container_name: str
         :param replication_protection_cluster_name: Replication protection cluster name. Required.
         :type replication_protection_cluster_name: str
-        :param failover_input: Failover input. Is one of the following types:
-         ClusterUnplannedFailoverInput, JSON, IO[bytes] Required.
+        :param failover_input: Failover input. Is either a ClusterUnplannedFailoverInput type or a
+         IO[bytes] type. Required.
         :type failover_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.ClusterUnplannedFailoverInput or JSON or
-         IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.ClusterUnplannedFailoverInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.ClusterUnplannedFailoverInput or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationProtectionCluster. The
          ReplicationProtectionCluster is compatible with MutableMapping
         :rtype:
@@ -13763,7 +13820,10 @@ class ReplicationProtectionClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13878,7 +13938,10 @@ class ReplicationProtectionClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13921,7 +13984,7 @@ class ReplicationProtectionClustersOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ClusterRecoveryPointsOperations:
+class ClusterRecoveryPointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14015,7 +14078,10 @@ class ClusterRecoveryPointsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14058,7 +14124,7 @@ class ClusterRecoveryPointsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationProtectionIntentsOperations:
+class ReplicationProtectionIntentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14190,7 +14256,7 @@ class ReplicationProtectionIntentsOperations:
         resource_group_name: str,
         resource_name: str,
         intent_object_name: str,
-        input: JSON,
+        input: _types.CreateProtectionIntentInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14207,7 +14273,7 @@ class ReplicationProtectionIntentsOperations:
         :param intent_object_name: Replication protection intent name. Required.
         :type intent_object_name: str
         :param input: Create Protection Intent Input. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.types.CreateProtectionIntentInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14256,7 +14322,7 @@ class ReplicationProtectionIntentsOperations:
         resource_group_name: str,
         resource_name: str,
         intent_object_name: str,
-        input: Union[_models.CreateProtectionIntentInput, JSON, IO[bytes]],
+        input: Union[_models.CreateProtectionIntentInput, _types.CreateProtectionIntentInput, IO[bytes]],
         **kwargs: Any
     ) -> _models.ReplicationProtectionIntent:
         """Create protection intent Resource.
@@ -14270,10 +14336,10 @@ class ReplicationProtectionIntentsOperations:
         :type resource_name: str
         :param intent_object_name: Replication protection intent name. Required.
         :type intent_object_name: str
-        :param input: Create Protection Intent Input. Is one of the following types:
-         CreateProtectionIntentInput, JSON, IO[bytes] Required.
+        :param input: Create Protection Intent Input. Is either a CreateProtectionIntentInput type or a
+         IO[bytes] type. Required.
         :type input: ~azure.mgmt.recoveryservicessiterecovery.models.CreateProtectionIntentInput or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.types.CreateProtectionIntentInput or IO[bytes]
         :return: ReplicationProtectionIntent. The ReplicationProtectionIntent is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectionIntent
@@ -14415,7 +14481,10 @@ class ReplicationProtectionIntentsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14454,7 +14523,7 @@ class ReplicationProtectionIntentsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationAlertSettingsOperations:
+class ReplicationAlertSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14584,7 +14653,7 @@ class ReplicationAlertSettingsOperations:
         resource_group_name: str,
         resource_name: str,
         alert_setting_name: str,
-        request: JSON,
+        request: _types.ConfigureAlertRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14601,7 +14670,7 @@ class ReplicationAlertSettingsOperations:
         :param alert_setting_name: The name of the email notification configuration. Required.
         :type alert_setting_name: str
         :param request: The input to configure the email notification(alert). Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.recoveryservicessiterecovery.types.ConfigureAlertRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14648,7 +14717,7 @@ class ReplicationAlertSettingsOperations:
         resource_group_name: str,
         resource_name: str,
         alert_setting_name: str,
-        request: Union[_models.ConfigureAlertRequest, JSON, IO[bytes]],
+        request: Union[_models.ConfigureAlertRequest, _types.ConfigureAlertRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.Alert:
         """Configures email notifications for this vault.
@@ -14662,10 +14731,10 @@ class ReplicationAlertSettingsOperations:
         :type resource_name: str
         :param alert_setting_name: The name of the email notification configuration. Required.
         :type alert_setting_name: str
-        :param request: The input to configure the email notification(alert). Is one of the following
-         types: ConfigureAlertRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.recoveryservicessiterecovery.models.ConfigureAlertRequest or JSON or
-         IO[bytes]
+        :param request: The input to configure the email notification(alert). Is either a
+         ConfigureAlertRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.recoveryservicessiterecovery.models.ConfigureAlertRequest or
+         ~azure.mgmt.recoveryservicessiterecovery.types.ConfigureAlertRequest or IO[bytes]
         :return: Alert. The Alert is compatible with MutableMapping
         :rtype: ~azure.mgmt.recoveryservicessiterecovery.models.Alert
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14791,7 +14860,10 @@ class ReplicationAlertSettingsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14830,7 +14902,7 @@ class ReplicationAlertSettingsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationEligibilityResultsOperations:
+class ReplicationEligibilityResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14992,7 +15064,7 @@ class ReplicationEligibilityResultsOperations:
         return deserialized  # type: ignore
 
 
-class ReplicationEventsOperations:
+class ReplicationEventsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15144,7 +15216,10 @@ class ReplicationEventsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15183,7 +15258,7 @@ class ReplicationEventsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationFabricsOperations:
+class ReplicationFabricsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15289,7 +15364,7 @@ class ReplicationFabricsOperations:
         resource_group_name: str,
         resource_name: str,
         fabric_name: str,
-        input: Union[_models.FabricCreationInput, JSON, IO[bytes]],
+        input: Union[_models.FabricCreationInput, _types.FabricCreationInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -15396,7 +15471,7 @@ class ReplicationFabricsOperations:
         resource_group_name: str,
         resource_name: str,
         fabric_name: str,
-        input: JSON,
+        input: _types.FabricCreationInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15413,7 +15488,7 @@ class ReplicationFabricsOperations:
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param input: Fabric creation input. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.types.FabricCreationInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15462,7 +15537,7 @@ class ReplicationFabricsOperations:
         resource_group_name: str,
         resource_name: str,
         fabric_name: str,
-        input: Union[_models.FabricCreationInput, JSON, IO[bytes]],
+        input: Union[_models.FabricCreationInput, _types.FabricCreationInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Fabric]:
         """Creates an Azure Site Recovery fabric.
@@ -15476,10 +15551,10 @@ class ReplicationFabricsOperations:
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
-        :param input: Fabric creation input. Is one of the following types: FabricCreationInput, JSON,
-         IO[bytes] Required.
-        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.FabricCreationInput or JSON or
-         IO[bytes]
+        :param input: Fabric creation input. Is either a FabricCreationInput type or a IO[bytes] type.
+         Required.
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.FabricCreationInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.FabricCreationInput or IO[bytes]
         :return: An instance of LROPoller that returns Fabric. The Fabric is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.Fabric]
@@ -15717,7 +15792,10 @@ class ReplicationFabricsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16010,7 +16088,9 @@ class ReplicationFabricsOperations:
         resource_group_name: str,
         resource_name: str,
         fabric_name: str,
-        failover_process_server_request: Union[_models.FailoverProcessServerRequest, JSON, IO[bytes]],
+        failover_process_server_request: Union[
+            _models.FailoverProcessServerRequest, _types.FailoverProcessServerRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -16119,7 +16199,7 @@ class ReplicationFabricsOperations:
         resource_group_name: str,
         resource_name: str,
         fabric_name: str,
-        failover_process_server_request: JSON,
+        failover_process_server_request: _types.FailoverProcessServerRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16137,7 +16217,8 @@ class ReplicationFabricsOperations:
         :type fabric_name: str
         :param failover_process_server_request: The input to the failover process server operation.
          Required.
-        :type failover_process_server_request: JSON
+        :type failover_process_server_request:
+         ~azure.mgmt.recoveryservicessiterecovery.types.FailoverProcessServerRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16187,7 +16268,9 @@ class ReplicationFabricsOperations:
         resource_group_name: str,
         resource_name: str,
         fabric_name: str,
-        failover_process_server_request: Union[_models.FailoverProcessServerRequest, JSON, IO[bytes]],
+        failover_process_server_request: Union[
+            _models.FailoverProcessServerRequest, _types.FailoverProcessServerRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.Fabric]:
         """Perform failover of the process server.
@@ -16202,10 +16285,10 @@ class ReplicationFabricsOperations:
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param failover_process_server_request: The input to the failover process server operation. Is
-         one of the following types: FailoverProcessServerRequest, JSON, IO[bytes] Required.
+         either a FailoverProcessServerRequest type or a IO[bytes] type. Required.
         :type failover_process_server_request:
-         ~azure.mgmt.recoveryservicessiterecovery.models.FailoverProcessServerRequest or JSON or
-         IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.FailoverProcessServerRequest or
+         ~azure.mgmt.recoveryservicessiterecovery.types.FailoverProcessServerRequest or IO[bytes]
         :return: An instance of LROPoller that returns Fabric. The Fabric is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.Fabric]
@@ -16391,7 +16474,7 @@ class ReplicationFabricsOperations:
         resource_group_name: str,
         resource_name: str,
         fabric_name: str,
-        renew_certificate: Union[_models.RenewCertificateInput, JSON, IO[bytes]],
+        renew_certificate: Union[_models.RenewCertificateInput, _types.RenewCertificateInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -16498,7 +16581,7 @@ class ReplicationFabricsOperations:
         resource_group_name: str,
         resource_name: str,
         fabric_name: str,
-        renew_certificate: JSON,
+        renew_certificate: _types.RenewCertificateInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16515,7 +16598,7 @@ class ReplicationFabricsOperations:
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param renew_certificate: Renew certificate input. Required.
-        :type renew_certificate: JSON
+        :type renew_certificate: ~azure.mgmt.recoveryservicessiterecovery.types.RenewCertificateInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16564,7 +16647,7 @@ class ReplicationFabricsOperations:
         resource_group_name: str,
         resource_name: str,
         fabric_name: str,
-        renew_certificate: Union[_models.RenewCertificateInput, JSON, IO[bytes]],
+        renew_certificate: Union[_models.RenewCertificateInput, _types.RenewCertificateInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Fabric]:
         """Renews certificate for the fabric.
@@ -16578,10 +16661,10 @@ class ReplicationFabricsOperations:
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
-        :param renew_certificate: Renew certificate input. Is one of the following types:
-         RenewCertificateInput, JSON, IO[bytes] Required.
+        :param renew_certificate: Renew certificate input. Is either a RenewCertificateInput type or a
+         IO[bytes] type. Required.
         :type renew_certificate: ~azure.mgmt.recoveryservicessiterecovery.models.RenewCertificateInput
-         or JSON or IO[bytes]
+         or ~azure.mgmt.recoveryservicessiterecovery.types.RenewCertificateInput or IO[bytes]
         :return: An instance of LROPoller that returns Fabric. The Fabric is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.Fabric]
@@ -16766,7 +16849,7 @@ class ReplicationFabricsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ReplicationLogicalNetworksOperations:
+class ReplicationLogicalNetworksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16924,7 +17007,10 @@ class ReplicationLogicalNetworksOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16963,7 +17049,7 @@ class ReplicationLogicalNetworksOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationNetworksOperations:
+class ReplicationNetworksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17120,7 +17206,10 @@ class ReplicationNetworksOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -17215,7 +17304,10 @@ class ReplicationNetworksOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -17254,7 +17346,7 @@ class ReplicationNetworksOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationNetworkMappingsOperations:
+class ReplicationNetworkMappingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17365,7 +17457,7 @@ class ReplicationNetworkMappingsOperations:
         fabric_name: str,
         network_name: str,
         network_mapping_name: str,
-        input: Union[_models.CreateNetworkMappingInput, JSON, IO[bytes]],
+        input: Union[_models.CreateNetworkMappingInput, _types.CreateNetworkMappingInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -17483,7 +17575,7 @@ class ReplicationNetworkMappingsOperations:
         fabric_name: str,
         network_name: str,
         network_mapping_name: str,
-        input: JSON,
+        input: _types.CreateNetworkMappingInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17504,7 +17596,7 @@ class ReplicationNetworkMappingsOperations:
         :param network_mapping_name: Network mapping name. Required.
         :type network_mapping_name: str
         :param input: Create network mapping input. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.types.CreateNetworkMappingInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17563,7 +17655,7 @@ class ReplicationNetworkMappingsOperations:
         fabric_name: str,
         network_name: str,
         network_mapping_name: str,
-        input: Union[_models.CreateNetworkMappingInput, JSON, IO[bytes]],
+        input: Union[_models.CreateNetworkMappingInput, _types.CreateNetworkMappingInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.NetworkMapping]:
         """Creates network mapping.
@@ -17581,10 +17673,10 @@ class ReplicationNetworkMappingsOperations:
         :type network_name: str
         :param network_mapping_name: Network mapping name. Required.
         :type network_mapping_name: str
-        :param input: Create network mapping input. Is one of the following types:
-         CreateNetworkMappingInput, JSON, IO[bytes] Required.
-        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.CreateNetworkMappingInput or JSON
-         or IO[bytes]
+        :param input: Create network mapping input. Is either a CreateNetworkMappingInput type or a
+         IO[bytes] type. Required.
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.CreateNetworkMappingInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.CreateNetworkMappingInput or IO[bytes]
         :return: An instance of LROPoller that returns NetworkMapping. The NetworkMapping is compatible
          with MutableMapping
         :rtype:
@@ -17653,7 +17745,7 @@ class ReplicationNetworkMappingsOperations:
         fabric_name: str,
         network_name: str,
         network_mapping_name: str,
-        input: Union[_models.UpdateNetworkMappingInput, JSON, IO[bytes]],
+        input: Union[_models.UpdateNetworkMappingInput, _types.UpdateNetworkMappingInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -17771,7 +17863,7 @@ class ReplicationNetworkMappingsOperations:
         fabric_name: str,
         network_name: str,
         network_mapping_name: str,
-        input: JSON,
+        input: _types.UpdateNetworkMappingInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17792,7 +17884,7 @@ class ReplicationNetworkMappingsOperations:
         :param network_mapping_name: Network mapping name. Required.
         :type network_mapping_name: str
         :param input: Update network mapping input. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.types.UpdateNetworkMappingInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17851,7 +17943,7 @@ class ReplicationNetworkMappingsOperations:
         fabric_name: str,
         network_name: str,
         network_mapping_name: str,
-        input: Union[_models.UpdateNetworkMappingInput, JSON, IO[bytes]],
+        input: Union[_models.UpdateNetworkMappingInput, _types.UpdateNetworkMappingInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.NetworkMapping]:
         """Updates network mapping.
@@ -17869,10 +17961,10 @@ class ReplicationNetworkMappingsOperations:
         :type network_name: str
         :param network_mapping_name: Network mapping name. Required.
         :type network_mapping_name: str
-        :param input: Update network mapping input. Is one of the following types:
-         UpdateNetworkMappingInput, JSON, IO[bytes] Required.
-        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.UpdateNetworkMappingInput or JSON
-         or IO[bytes]
+        :param input: Update network mapping input. Is either a UpdateNetworkMappingInput type or a
+         IO[bytes] type. Required.
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.UpdateNetworkMappingInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.UpdateNetworkMappingInput or IO[bytes]
         :return: An instance of LROPoller that returns NetworkMapping. The NetworkMapping is compatible
          with MutableMapping
         :rtype:
@@ -18142,7 +18234,10 @@ class ReplicationNetworkMappingsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -18238,7 +18333,10 @@ class ReplicationNetworkMappingsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -18277,7 +18375,7 @@ class ReplicationNetworkMappingsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-long
+class ReplicationProtectionContainersOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18383,7 +18481,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
-        creation_input: Union[_models.CreateProtectionContainerInput, JSON, IO[bytes]],
+        creation_input: Union[_models.CreateProtectionContainerInput, _types.CreateProtectionContainerInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -18497,7 +18595,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
-        creation_input: JSON,
+        creation_input: _types.CreateProtectionContainerInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18516,7 +18614,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
         :param creation_input: Creation input. Required.
-        :type creation_input: JSON
+        :type creation_input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.CreateProtectionContainerInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18571,7 +18670,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
-        creation_input: Union[_models.CreateProtectionContainerInput, JSON, IO[bytes]],
+        creation_input: Union[_models.CreateProtectionContainerInput, _types.CreateProtectionContainerInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ProtectionContainer]:
         """Create a protection container.
@@ -18587,11 +18686,11 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
-        :param creation_input: Creation input. Is one of the following types:
-         CreateProtectionContainerInput, JSON, IO[bytes] Required.
+        :param creation_input: Creation input. Is either a CreateProtectionContainerInput type or a
+         IO[bytes] type. Required.
         :type creation_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.CreateProtectionContainerInput or JSON or
-         IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.CreateProtectionContainerInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.CreateProtectionContainerInput or IO[bytes]
         :return: An instance of LROPoller that returns ProtectionContainer. The ProtectionContainer is
          compatible with MutableMapping
         :rtype:
@@ -18715,7 +18814,10 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -18759,7 +18861,9 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
-        discover_protectable_item_request: Union[_models.DiscoverProtectableItemRequest, JSON, IO[bytes]],
+        discover_protectable_item_request: Union[
+            _models.DiscoverProtectableItemRequest, _types.DiscoverProtectableItemRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -18874,7 +18978,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
-        discover_protectable_item_request: JSON,
+        discover_protectable_item_request: _types.DiscoverProtectableItemRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18894,7 +18998,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         :type protection_container_name: str
         :param discover_protectable_item_request: The request object to add a protectable item.
          Required.
-        :type discover_protectable_item_request: JSON
+        :type discover_protectable_item_request:
+         ~azure.mgmt.recoveryservicessiterecovery.types.DiscoverProtectableItemRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18950,7 +19055,9 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
-        discover_protectable_item_request: Union[_models.DiscoverProtectableItemRequest, JSON, IO[bytes]],
+        discover_protectable_item_request: Union[
+            _models.DiscoverProtectableItemRequest, _types.DiscoverProtectableItemRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ProtectionContainer]:
         """Adds a protectable item to the replication protection container.
@@ -18966,11 +19073,11 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
-        :param discover_protectable_item_request: The request object to add a protectable item. Is one
-         of the following types: DiscoverProtectableItemRequest, JSON, IO[bytes] Required.
+        :param discover_protectable_item_request: The request object to add a protectable item. Is
+         either a DiscoverProtectableItemRequest type or a IO[bytes] type. Required.
         :type discover_protectable_item_request:
-         ~azure.mgmt.recoveryservicessiterecovery.models.DiscoverProtectableItemRequest or JSON or
-         IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.DiscoverProtectableItemRequest or
+         ~azure.mgmt.recoveryservicessiterecovery.types.DiscoverProtectableItemRequest or IO[bytes]
         :return: An instance of LROPoller that returns ProtectionContainer. The ProtectionContainer is
          compatible with MutableMapping
         :rtype:
@@ -19173,7 +19280,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
-        switch_input: Union[_models.SwitchClusterProtectionInput, JSON, IO[bytes]],
+        switch_input: Union[_models.SwitchClusterProtectionInput, _types.SwitchClusterProtectionInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -19294,7 +19401,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
-        switch_input: JSON,
+        switch_input: _types.SwitchClusterProtectionInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19313,7 +19420,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
         :param switch_input: Switch protection input. Required.
-        :type switch_input: JSON
+        :type switch_input: ~azure.mgmt.recoveryservicessiterecovery.types.SwitchClusterProtectionInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19368,7 +19475,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
-        switch_input: Union[_models.SwitchClusterProtectionInput, JSON, IO[bytes]],
+        switch_input: Union[_models.SwitchClusterProtectionInput, _types.SwitchClusterProtectionInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ProtectionContainer]:
         """Switches protection from one container to another.
@@ -19384,11 +19491,11 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
-        :param switch_input: Switch protection input. Is one of the following types:
-         SwitchClusterProtectionInput, JSON, IO[bytes] Required.
+        :param switch_input: Switch protection input. Is either a SwitchClusterProtectionInput type or
+         a IO[bytes] type. Required.
         :type switch_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.SwitchClusterProtectionInput or JSON or
-         IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.SwitchClusterProtectionInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.SwitchClusterProtectionInput or IO[bytes]
         :return: An instance of LROPoller that returns ProtectionContainer. The ProtectionContainer is
          compatible with MutableMapping
         :rtype:
@@ -19462,7 +19569,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
-        switch_input: Union[_models.SwitchProtectionInput, JSON, IO[bytes]],
+        switch_input: Union[_models.SwitchProtectionInput, _types.SwitchProtectionInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -19579,7 +19686,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
-        switch_input: JSON,
+        switch_input: _types.SwitchProtectionInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19599,7 +19706,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
         :param switch_input: Switch protection input. Required.
-        :type switch_input: JSON
+        :type switch_input: ~azure.mgmt.recoveryservicessiterecovery.types.SwitchProtectionInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19655,7 +19762,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
-        switch_input: Union[_models.SwitchProtectionInput, JSON, IO[bytes]],
+        switch_input: Union[_models.SwitchProtectionInput, _types.SwitchProtectionInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ProtectionContainer]:
         """Switches protection from one container to another or one replication provider to another.
@@ -19672,10 +19779,10 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
-        :param switch_input: Switch protection input. Is one of the following types:
-         SwitchProtectionInput, JSON, IO[bytes] Required.
+        :param switch_input: Switch protection input. Is either a SwitchProtectionInput type or a
+         IO[bytes] type. Required.
         :type switch_input: ~azure.mgmt.recoveryservicessiterecovery.models.SwitchProtectionInput or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.types.SwitchProtectionInput or IO[bytes]
         :return: An instance of LROPoller that returns ProtectionContainer. The ProtectionContainer is
          compatible with MutableMapping
         :rtype:
@@ -19796,7 +19903,10 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -19835,7 +19945,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-methods
+class ReplicationMigrationItemsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -19946,7 +20056,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        input: Union[_models.EnableMigrationInput, JSON, IO[bytes]],
+        input: Union[_models.EnableMigrationInput, _types.EnableMigrationInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -20064,7 +20174,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        input: JSON,
+        input: _types.EnableMigrationInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20085,7 +20195,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         :param migration_item_name: Migration item name. Required.
         :type migration_item_name: str
         :param input: Enable migration input. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.types.EnableMigrationInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20144,7 +20254,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        input: Union[_models.EnableMigrationInput, JSON, IO[bytes]],
+        input: Union[_models.EnableMigrationInput, _types.EnableMigrationInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MigrationItem]:
         """Enables migration.
@@ -20162,10 +20272,10 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param migration_item_name: Migration item name. Required.
         :type migration_item_name: str
-        :param input: Enable migration input. Is one of the following types: EnableMigrationInput,
-         JSON, IO[bytes] Required.
-        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.EnableMigrationInput or JSON or
-         IO[bytes]
+        :param input: Enable migration input. Is either a EnableMigrationInput type or a IO[bytes]
+         type. Required.
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.EnableMigrationInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.EnableMigrationInput or IO[bytes]
         :return: An instance of LROPoller that returns MigrationItem. The MigrationItem is compatible
          with MutableMapping
         :rtype:
@@ -20234,7 +20344,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        input: Union[_models.UpdateMigrationItemInput, JSON, IO[bytes]],
+        input: Union[_models.UpdateMigrationItemInput, _types.UpdateMigrationItemInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -20352,7 +20462,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        input: JSON,
+        input: _types.UpdateMigrationItemInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20373,7 +20483,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         :param migration_item_name: Migration item name. Required.
         :type migration_item_name: str
         :param input: Update migration item input. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.types.UpdateMigrationItemInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20432,7 +20542,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        input: Union[_models.UpdateMigrationItemInput, JSON, IO[bytes]],
+        input: Union[_models.UpdateMigrationItemInput, _types.UpdateMigrationItemInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MigrationItem]:
         """Updates migration item.
@@ -20450,10 +20560,10 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param migration_item_name: Migration item name. Required.
         :type migration_item_name: str
-        :param input: Update migration item input. Is one of the following types:
-         UpdateMigrationItemInput, JSON, IO[bytes] Required.
-        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.UpdateMigrationItemInput or JSON
-         or IO[bytes]
+        :param input: Update migration item input. Is either a UpdateMigrationItemInput type or a
+         IO[bytes] type. Required.
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.UpdateMigrationItemInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.UpdateMigrationItemInput or IO[bytes]
         :return: An instance of LROPoller that returns MigrationItem. The MigrationItem is compatible
          with MutableMapping
         :rtype:
@@ -20749,7 +20859,10 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -20794,7 +20907,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        migrate_input: Union[_models.MigrateInput, JSON, IO[bytes]],
+        migrate_input: Union[_models.MigrateInput, _types.MigrateInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -20912,7 +21025,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        migrate_input: JSON,
+        migrate_input: _types.MigrateInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20933,7 +21046,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         :param migration_item_name: Migration item name. Required.
         :type migration_item_name: str
         :param migrate_input: Migrate input. Required.
-        :type migrate_input: JSON
+        :type migrate_input: ~azure.mgmt.recoveryservicessiterecovery.types.MigrateInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20992,7 +21105,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        migrate_input: Union[_models.MigrateInput, JSON, IO[bytes]],
+        migrate_input: Union[_models.MigrateInput, _types.MigrateInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MigrationItem]:
         """Migrate item.
@@ -21010,10 +21123,10 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param migration_item_name: Migration item name. Required.
         :type migration_item_name: str
-        :param migrate_input: Migrate input. Is one of the following types: MigrateInput, JSON,
-         IO[bytes] Required.
-        :type migrate_input: ~azure.mgmt.recoveryservicessiterecovery.models.MigrateInput or JSON or
-         IO[bytes]
+        :param migrate_input: Migrate input. Is either a MigrateInput type or a IO[bytes] type.
+         Required.
+        :type migrate_input: ~azure.mgmt.recoveryservicessiterecovery.models.MigrateInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.MigrateInput or IO[bytes]
         :return: An instance of LROPoller that returns MigrationItem. The MigrationItem is compatible
          with MutableMapping
         :rtype:
@@ -21082,7 +21195,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        pause_replication_input: Union[_models.PauseReplicationInput, JSON, IO[bytes]],
+        pause_replication_input: Union[_models.PauseReplicationInput, _types.PauseReplicationInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -21201,7 +21314,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        pause_replication_input: JSON,
+        pause_replication_input: _types.PauseReplicationInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21222,7 +21335,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         :param migration_item_name: Migration item name. Required.
         :type migration_item_name: str
         :param pause_replication_input: Pause replication input. Required.
-        :type pause_replication_input: JSON
+        :type pause_replication_input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.PauseReplicationInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21281,7 +21395,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        pause_replication_input: Union[_models.PauseReplicationInput, JSON, IO[bytes]],
+        pause_replication_input: Union[_models.PauseReplicationInput, _types.PauseReplicationInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MigrationItem]:
         """Pause replication.
@@ -21299,10 +21413,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param migration_item_name: Migration item name. Required.
         :type migration_item_name: str
-        :param pause_replication_input: Pause replication input. Is one of the following types:
-         PauseReplicationInput, JSON, IO[bytes] Required.
+        :param pause_replication_input: Pause replication input. Is either a PauseReplicationInput type
+         or a IO[bytes] type. Required.
         :type pause_replication_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.PauseReplicationInput or JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.PauseReplicationInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.PauseReplicationInput or IO[bytes]
         :return: An instance of LROPoller that returns MigrationItem. The MigrationItem is compatible
          with MutableMapping
         :rtype:
@@ -21371,7 +21486,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        resume_replication_input: Union[_models.ResumeReplicationInput, JSON, IO[bytes]],
+        resume_replication_input: Union[_models.ResumeReplicationInput, _types.ResumeReplicationInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -21490,7 +21605,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        resume_replication_input: JSON,
+        resume_replication_input: _types.ResumeReplicationInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21511,7 +21626,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         :param migration_item_name: Migration item name. Required.
         :type migration_item_name: str
         :param resume_replication_input: Resume replication input. Required.
-        :type resume_replication_input: JSON
+        :type resume_replication_input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.ResumeReplicationInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21570,7 +21686,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        resume_replication_input: Union[_models.ResumeReplicationInput, JSON, IO[bytes]],
+        resume_replication_input: Union[_models.ResumeReplicationInput, _types.ResumeReplicationInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MigrationItem]:
         """Resume replication.
@@ -21588,10 +21704,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param migration_item_name: Migration item name. Required.
         :type migration_item_name: str
-        :param resume_replication_input: Resume replication input. Is one of the following types:
-         ResumeReplicationInput, JSON, IO[bytes] Required.
+        :param resume_replication_input: Resume replication input. Is either a ResumeReplicationInput
+         type or a IO[bytes] type. Required.
         :type resume_replication_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.ResumeReplicationInput or JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.ResumeReplicationInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.ResumeReplicationInput or IO[bytes]
         :return: An instance of LROPoller that returns MigrationItem. The MigrationItem is compatible
          with MutableMapping
         :rtype:
@@ -21660,7 +21777,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        input: Union[_models.ResyncInput, JSON, IO[bytes]],
+        input: Union[_models.ResyncInput, _types.ResyncInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -21778,7 +21895,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        input: JSON,
+        input: _types.ResyncInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21799,7 +21916,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         :param migration_item_name: Migration item name. Required.
         :type migration_item_name: str
         :param input: Resync input. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.types.ResyncInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21858,7 +21975,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        input: Union[_models.ResyncInput, JSON, IO[bytes]],
+        input: Union[_models.ResyncInput, _types.ResyncInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MigrationItem]:
         """Resynchronizes replication.
@@ -21876,9 +21993,9 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param migration_item_name: Migration item name. Required.
         :type migration_item_name: str
-        :param input: Resync input. Is one of the following types: ResyncInput, JSON, IO[bytes]
-         Required.
-        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.ResyncInput or JSON or IO[bytes]
+        :param input: Resync input. Is either a ResyncInput type or a IO[bytes] type. Required.
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.ResyncInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.ResyncInput or IO[bytes]
         :return: An instance of LROPoller that returns MigrationItem. The MigrationItem is compatible
          with MutableMapping
         :rtype:
@@ -21947,7 +22064,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        test_migrate_input: Union[_models.TestMigrateInput, JSON, IO[bytes]],
+        test_migrate_input: Union[_models.TestMigrateInput, _types.TestMigrateInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -22065,7 +22182,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        test_migrate_input: JSON,
+        test_migrate_input: _types.TestMigrateInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22086,7 +22203,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         :param migration_item_name: Migration item name. Required.
         :type migration_item_name: str
         :param test_migrate_input: Test migrate input. Required.
-        :type test_migrate_input: JSON
+        :type test_migrate_input: ~azure.mgmt.recoveryservicessiterecovery.types.TestMigrateInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22145,7 +22262,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        test_migrate_input: Union[_models.TestMigrateInput, JSON, IO[bytes]],
+        test_migrate_input: Union[_models.TestMigrateInput, _types.TestMigrateInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MigrationItem]:
         """Test migrate item.
@@ -22163,10 +22280,10 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param migration_item_name: Migration item name. Required.
         :type migration_item_name: str
-        :param test_migrate_input: Test migrate input. Is one of the following types: TestMigrateInput,
-         JSON, IO[bytes] Required.
+        :param test_migrate_input: Test migrate input. Is either a TestMigrateInput type or a IO[bytes]
+         type. Required.
         :type test_migrate_input: ~azure.mgmt.recoveryservicessiterecovery.models.TestMigrateInput or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.types.TestMigrateInput or IO[bytes]
         :return: An instance of LROPoller that returns MigrationItem. The MigrationItem is compatible
          with MutableMapping
         :rtype:
@@ -22235,7 +22352,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        test_migrate_cleanup_input: Union[_models.TestMigrateCleanupInput, JSON, IO[bytes]],
+        test_migrate_cleanup_input: Union[_models.TestMigrateCleanupInput, _types.TestMigrateCleanupInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -22354,7 +22471,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        test_migrate_cleanup_input: JSON,
+        test_migrate_cleanup_input: _types.TestMigrateCleanupInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22375,7 +22492,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         :param migration_item_name: Migration item name. Required.
         :type migration_item_name: str
         :param test_migrate_cleanup_input: Test migrate cleanup input. Required.
-        :type test_migrate_cleanup_input: JSON
+        :type test_migrate_cleanup_input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.TestMigrateCleanupInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22434,7 +22552,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
-        test_migrate_cleanup_input: Union[_models.TestMigrateCleanupInput, JSON, IO[bytes]],
+        test_migrate_cleanup_input: Union[_models.TestMigrateCleanupInput, _types.TestMigrateCleanupInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MigrationItem]:
         """Test migrate cleanup.
@@ -22452,10 +22570,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         :type protection_container_name: str
         :param migration_item_name: Migration item name. Required.
         :type migration_item_name: str
-        :param test_migrate_cleanup_input: Test migrate cleanup input. Is one of the following types:
-         TestMigrateCleanupInput, JSON, IO[bytes] Required.
+        :param test_migrate_cleanup_input: Test migrate cleanup input. Is either a
+         TestMigrateCleanupInput type or a IO[bytes] type. Required.
         :type test_migrate_cleanup_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.TestMigrateCleanupInput or JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.TestMigrateCleanupInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.TestMigrateCleanupInput or IO[bytes]
         :return: An instance of LROPoller that returns MigrationItem. The MigrationItem is compatible
          with MutableMapping
         :rtype:
@@ -22593,7 +22712,10 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -22632,7 +22754,7 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationProtectableItemsOperations:
+class ReplicationProtectableItemsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22820,7 +22942,10 @@ class ReplicationProtectableItemsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -22859,7 +22984,7 @@ class ReplicationProtectableItemsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ClusterRecoveryPointOperations:
+class ClusterRecoveryPointOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22972,7 +23097,7 @@ class ClusterRecoveryPointOperations:
         return deserialized  # type: ignore
 
 
-class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-too-long
+class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -23084,7 +23209,9 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
         fabric_name: str,
         protection_container_name: str,
         mapping_name: str,
-        creation_input: Union[_models.CreateProtectionContainerMappingInput, JSON, IO[bytes]],
+        creation_input: Union[
+            _models.CreateProtectionContainerMappingInput, _types.CreateProtectionContainerMappingInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -23203,7 +23330,7 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
         fabric_name: str,
         protection_container_name: str,
         mapping_name: str,
-        creation_input: JSON,
+        creation_input: _types.CreateProtectionContainerMappingInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23224,7 +23351,8 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
         :param mapping_name: Protection Container mapping name. Required.
         :type mapping_name: str
         :param creation_input: Mapping creation input. Required.
-        :type creation_input: JSON
+        :type creation_input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.CreateProtectionContainerMappingInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23283,7 +23411,9 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
         fabric_name: str,
         protection_container_name: str,
         mapping_name: str,
-        creation_input: Union[_models.CreateProtectionContainerMappingInput, JSON, IO[bytes]],
+        creation_input: Union[
+            _models.CreateProtectionContainerMappingInput, _types.CreateProtectionContainerMappingInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ProtectionContainerMapping]:
         """Create protection container mapping.
@@ -23301,11 +23431,12 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
         :type protection_container_name: str
         :param mapping_name: Protection Container mapping name. Required.
         :type mapping_name: str
-        :param creation_input: Mapping creation input. Is one of the following types:
-         CreateProtectionContainerMappingInput, JSON, IO[bytes] Required.
+        :param creation_input: Mapping creation input. Is either a
+         CreateProtectionContainerMappingInput type or a IO[bytes] type. Required.
         :type creation_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.CreateProtectionContainerMappingInput or JSON
-         or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.CreateProtectionContainerMappingInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.CreateProtectionContainerMappingInput or
+         IO[bytes]
         :return: An instance of LROPoller that returns ProtectionContainerMapping. The
          ProtectionContainerMapping is compatible with MutableMapping
         :rtype:
@@ -23374,7 +23505,9 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
         fabric_name: str,
         protection_container_name: str,
         mapping_name: str,
-        update_input: Union[_models.UpdateProtectionContainerMappingInput, JSON, IO[bytes]],
+        update_input: Union[
+            _models.UpdateProtectionContainerMappingInput, _types.UpdateProtectionContainerMappingInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -23493,7 +23626,7 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
         fabric_name: str,
         protection_container_name: str,
         mapping_name: str,
-        update_input: JSON,
+        update_input: _types.UpdateProtectionContainerMappingInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23514,7 +23647,8 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
         :param mapping_name: Protection Container mapping name. Required.
         :type mapping_name: str
         :param update_input: Mapping update input. Required.
-        :type update_input: JSON
+        :type update_input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.UpdateProtectionContainerMappingInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23573,7 +23707,9 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
         fabric_name: str,
         protection_container_name: str,
         mapping_name: str,
-        update_input: Union[_models.UpdateProtectionContainerMappingInput, JSON, IO[bytes]],
+        update_input: Union[
+            _models.UpdateProtectionContainerMappingInput, _types.UpdateProtectionContainerMappingInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ProtectionContainerMapping]:
         """Update protection container mapping.
@@ -23591,11 +23727,12 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
         :type protection_container_name: str
         :param mapping_name: Protection Container mapping name. Required.
         :type mapping_name: str
-        :param update_input: Mapping update input. Is one of the following types:
-         UpdateProtectionContainerMappingInput, JSON, IO[bytes] Required.
+        :param update_input: Mapping update input. Is either a UpdateProtectionContainerMappingInput
+         type or a IO[bytes] type. Required.
         :type update_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.UpdateProtectionContainerMappingInput or JSON
-         or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.UpdateProtectionContainerMappingInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.UpdateProtectionContainerMappingInput or
+         IO[bytes]
         :return: An instance of LROPoller that returns ProtectionContainerMapping. The
          ProtectionContainerMapping is compatible with MutableMapping
         :rtype:
@@ -23872,7 +24009,10 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -23917,7 +24057,9 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
         fabric_name: str,
         protection_container_name: str,
         mapping_name: str,
-        removal_input: Union[_models.RemoveProtectionContainerMappingInput, JSON, IO[bytes]],
+        removal_input: Union[
+            _models.RemoveProtectionContainerMappingInput, _types.RemoveProtectionContainerMappingInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -24034,7 +24176,7 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
         fabric_name: str,
         protection_container_name: str,
         mapping_name: str,
-        removal_input: JSON,
+        removal_input: _types.RemoveProtectionContainerMappingInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24055,7 +24197,8 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
         :param mapping_name: Protection Container mapping name. Required.
         :type mapping_name: str
         :param removal_input: Removal input. Required.
-        :type removal_input: JSON
+        :type removal_input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.RemoveProtectionContainerMappingInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24110,7 +24253,9 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
         fabric_name: str,
         protection_container_name: str,
         mapping_name: str,
-        removal_input: Union[_models.RemoveProtectionContainerMappingInput, JSON, IO[bytes]],
+        removal_input: Union[
+            _models.RemoveProtectionContainerMappingInput, _types.RemoveProtectionContainerMappingInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Remove protection container mapping.
@@ -24128,11 +24273,12 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
         :type protection_container_name: str
         :param mapping_name: Protection Container mapping name. Required.
         :type mapping_name: str
-        :param removal_input: Removal input. Is one of the following types:
-         RemoveProtectionContainerMappingInput, JSON, IO[bytes] Required.
+        :param removal_input: Removal input. Is either a RemoveProtectionContainerMappingInput type or
+         a IO[bytes] type. Required.
         :type removal_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.RemoveProtectionContainerMappingInput or JSON
-         or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.RemoveProtectionContainerMappingInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.RemoveProtectionContainerMappingInput or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -24247,7 +24393,10 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -24286,7 +24435,7 @@ class ReplicationProtectionContainerMappingsOperations:  # pylint: disable=name-
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationRecoveryServicesProvidersOperations:  # pylint: disable=name-too-long
+class ReplicationRecoveryServicesProvidersOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24388,7 +24537,9 @@ class ReplicationRecoveryServicesProvidersOperations:  # pylint: disable=name-to
         resource_name: str,
         fabric_name: str,
         provider_name: str,
-        add_provider_input: Union[_models.AddRecoveryServicesProviderInput, JSON, IO[bytes]],
+        add_provider_input: Union[
+            _models.AddRecoveryServicesProviderInput, _types.AddRecoveryServicesProviderInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -24502,7 +24653,7 @@ class ReplicationRecoveryServicesProvidersOperations:  # pylint: disable=name-to
         resource_name: str,
         fabric_name: str,
         provider_name: str,
-        add_provider_input: JSON,
+        add_provider_input: _types.AddRecoveryServicesProviderInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24521,7 +24672,8 @@ class ReplicationRecoveryServicesProvidersOperations:  # pylint: disable=name-to
         :param provider_name: Recovery services provider name. Required.
         :type provider_name: str
         :param add_provider_input: Add provider input. Required.
-        :type add_provider_input: JSON
+        :type add_provider_input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.AddRecoveryServicesProviderInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24576,7 +24728,9 @@ class ReplicationRecoveryServicesProvidersOperations:  # pylint: disable=name-to
         resource_name: str,
         fabric_name: str,
         provider_name: str,
-        add_provider_input: Union[_models.AddRecoveryServicesProviderInput, JSON, IO[bytes]],
+        add_provider_input: Union[
+            _models.AddRecoveryServicesProviderInput, _types.AddRecoveryServicesProviderInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.RecoveryServicesProvider]:
         """Adds a recovery services provider.
@@ -24592,11 +24746,11 @@ class ReplicationRecoveryServicesProvidersOperations:  # pylint: disable=name-to
         :type fabric_name: str
         :param provider_name: Recovery services provider name. Required.
         :type provider_name: str
-        :param add_provider_input: Add provider input. Is one of the following types:
-         AddRecoveryServicesProviderInput, JSON, IO[bytes] Required.
+        :param add_provider_input: Add provider input. Is either a AddRecoveryServicesProviderInput
+         type or a IO[bytes] type. Required.
         :type add_provider_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.AddRecoveryServicesProviderInput or JSON or
-         IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.AddRecoveryServicesProviderInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.AddRecoveryServicesProviderInput or IO[bytes]
         :return: An instance of LROPoller that returns RecoveryServicesProvider. The
          RecoveryServicesProvider is compatible with MutableMapping
         :rtype:
@@ -24846,7 +25000,10 @@ class ReplicationRecoveryServicesProvidersOperations:  # pylint: disable=name-to
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -25206,7 +25363,10 @@ class ReplicationRecoveryServicesProvidersOperations:  # pylint: disable=name-to
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -25245,7 +25405,7 @@ class ReplicationRecoveryServicesProvidersOperations:  # pylint: disable=name-to
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationStorageClassificationsOperations:  # pylint: disable=name-too-long
+class ReplicationStorageClassificationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25408,7 +25568,10 @@ class ReplicationStorageClassificationsOperations:  # pylint: disable=name-too-l
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -25506,7 +25669,10 @@ class ReplicationStorageClassificationsOperations:  # pylint: disable=name-too-l
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -25545,7 +25711,7 @@ class ReplicationStorageClassificationsOperations:  # pylint: disable=name-too-l
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=name-too-long
+class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25657,7 +25823,9 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
-        pairing_input: Union[_models.StorageClassificationMappingInput, JSON, IO[bytes]],
+        pairing_input: Union[
+            _models.StorageClassificationMappingInput, _types.StorageClassificationMappingInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -25776,7 +25944,7 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
-        pairing_input: JSON,
+        pairing_input: _types.StorageClassificationMappingInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25797,7 +25965,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
         :param storage_classification_mapping_name: Storage classification mapping name. Required.
         :type storage_classification_mapping_name: str
         :param pairing_input: Pairing input. Required.
-        :type pairing_input: JSON
+        :type pairing_input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.StorageClassificationMappingInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25856,7 +26025,9 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
-        pairing_input: Union[_models.StorageClassificationMappingInput, JSON, IO[bytes]],
+        pairing_input: Union[
+            _models.StorageClassificationMappingInput, _types.StorageClassificationMappingInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.StorageClassificationMapping]:
         """Create storage classification mapping.
@@ -25874,11 +26045,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
         :type storage_classification_name: str
         :param storage_classification_mapping_name: Storage classification mapping name. Required.
         :type storage_classification_mapping_name: str
-        :param pairing_input: Pairing input. Is one of the following types:
-         StorageClassificationMappingInput, JSON, IO[bytes] Required.
+        :param pairing_input: Pairing input. Is either a StorageClassificationMappingInput type or a
+         IO[bytes] type. Required.
         :type pairing_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.StorageClassificationMappingInput or JSON or
-         IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.StorageClassificationMappingInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.StorageClassificationMappingInput or IO[bytes]
         :return: An instance of LROPoller that returns StorageClassificationMapping. The
          StorageClassificationMapping is compatible with MutableMapping
         :rtype:
@@ -26153,7 +26324,10 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -26251,7 +26425,10 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -26290,7 +26467,7 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationvCentersOperations:
+class ReplicationvCentersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26391,7 +26568,7 @@ class ReplicationvCentersOperations:
         resource_name: str,
         fabric_name: str,
         vcenter_name: str,
-        add_v_center_request: Union[_models.AddVCenterRequest, JSON, IO[bytes]],
+        add_v_center_request: Union[_models.AddVCenterRequest, _types.AddVCenterRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -26503,7 +26680,7 @@ class ReplicationvCentersOperations:
         resource_name: str,
         fabric_name: str,
         vcenter_name: str,
-        add_v_center_request: JSON,
+        add_v_center_request: _types.AddVCenterRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26522,7 +26699,7 @@ class ReplicationvCentersOperations:
         :param vcenter_name: vcenter name. Required.
         :type vcenter_name: str
         :param add_v_center_request: The input to the add vCenter operation. Required.
-        :type add_v_center_request: JSON
+        :type add_v_center_request: ~azure.mgmt.recoveryservicessiterecovery.types.AddVCenterRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26575,7 +26752,7 @@ class ReplicationvCentersOperations:
         resource_name: str,
         fabric_name: str,
         vcenter_name: str,
-        add_v_center_request: Union[_models.AddVCenterRequest, JSON, IO[bytes]],
+        add_v_center_request: Union[_models.AddVCenterRequest, _types.AddVCenterRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VCenter]:
         """Add vCenter.
@@ -26591,10 +26768,10 @@ class ReplicationvCentersOperations:
         :type fabric_name: str
         :param vcenter_name: vcenter name. Required.
         :type vcenter_name: str
-        :param add_v_center_request: The input to the add vCenter operation. Is one of the following
-         types: AddVCenterRequest, JSON, IO[bytes] Required.
+        :param add_v_center_request: The input to the add vCenter operation. Is either a
+         AddVCenterRequest type or a IO[bytes] type. Required.
         :type add_v_center_request: ~azure.mgmt.recoveryservicessiterecovery.models.AddVCenterRequest
-         or JSON or IO[bytes]
+         or ~azure.mgmt.recoveryservicessiterecovery.types.AddVCenterRequest or IO[bytes]
         :return: An instance of LROPoller that returns VCenter. The VCenter is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.VCenter]
@@ -26660,7 +26837,7 @@ class ReplicationvCentersOperations:
         resource_name: str,
         fabric_name: str,
         vcenter_name: str,
-        update_v_center_request: Union[_models.UpdateVCenterRequest, JSON, IO[bytes]],
+        update_v_center_request: Union[_models.UpdateVCenterRequest, _types.UpdateVCenterRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -26773,7 +26950,7 @@ class ReplicationvCentersOperations:
         resource_name: str,
         fabric_name: str,
         vcenter_name: str,
-        update_v_center_request: JSON,
+        update_v_center_request: _types.UpdateVCenterRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26792,7 +26969,8 @@ class ReplicationvCentersOperations:
         :param vcenter_name: vcenter name. Required.
         :type vcenter_name: str
         :param update_v_center_request: The input to the update vCenter operation. Required.
-        :type update_v_center_request: JSON
+        :type update_v_center_request:
+         ~azure.mgmt.recoveryservicessiterecovery.types.UpdateVCenterRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26845,7 +27023,7 @@ class ReplicationvCentersOperations:
         resource_name: str,
         fabric_name: str,
         vcenter_name: str,
-        update_v_center_request: Union[_models.UpdateVCenterRequest, JSON, IO[bytes]],
+        update_v_center_request: Union[_models.UpdateVCenterRequest, _types.UpdateVCenterRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VCenter]:
         """Update vCenter operation.
@@ -26861,10 +27039,11 @@ class ReplicationvCentersOperations:
         :type fabric_name: str
         :param vcenter_name: vcenter name. Required.
         :type vcenter_name: str
-        :param update_v_center_request: The input to the update vCenter operation. Is one of the
-         following types: UpdateVCenterRequest, JSON, IO[bytes] Required.
+        :param update_v_center_request: The input to the update vCenter operation. Is either a
+         UpdateVCenterRequest type or a IO[bytes] type. Required.
         :type update_v_center_request:
-         ~azure.mgmt.recoveryservicessiterecovery.models.UpdateVCenterRequest or JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.models.UpdateVCenterRequest or
+         ~azure.mgmt.recoveryservicessiterecovery.types.UpdateVCenterRequest or IO[bytes]
         :return: An instance of LROPoller that returns VCenter. The VCenter is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.VCenter]
@@ -27112,7 +27291,10 @@ class ReplicationvCentersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -27207,7 +27389,10 @@ class ReplicationvCentersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -27246,7 +27431,7 @@ class ReplicationvCentersOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationJobsOperations:
+class ReplicationJobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -27398,7 +27583,10 @@ class ReplicationJobsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -27691,7 +27879,7 @@ class ReplicationJobsOperations:
         resource_group_name: str,
         resource_name: str,
         job_name: str,
-        resume_job_params: Union[_models.ResumeJobParams, JSON, IO[bytes]],
+        resume_job_params: Union[_models.ResumeJobParams, _types.ResumeJobParams, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -27797,7 +27985,7 @@ class ReplicationJobsOperations:
         resource_group_name: str,
         resource_name: str,
         job_name: str,
-        resume_job_params: JSON,
+        resume_job_params: _types.ResumeJobParams,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27814,7 +28002,7 @@ class ReplicationJobsOperations:
         :param job_name: Job identifier. Required.
         :type job_name: str
         :param resume_job_params: Resume rob comments. Required.
-        :type resume_job_params: JSON
+        :type resume_job_params: ~azure.mgmt.recoveryservicessiterecovery.types.ResumeJobParams
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27861,7 +28049,7 @@ class ReplicationJobsOperations:
         resource_group_name: str,
         resource_name: str,
         job_name: str,
-        resume_job_params: Union[_models.ResumeJobParams, JSON, IO[bytes]],
+        resume_job_params: Union[_models.ResumeJobParams, _types.ResumeJobParams, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Job]:
         """Resumes the specified job.
@@ -27875,10 +28063,10 @@ class ReplicationJobsOperations:
         :type resource_name: str
         :param job_name: Job identifier. Required.
         :type job_name: str
-        :param resume_job_params: Resume rob comments. Is one of the following types: ResumeJobParams,
-         JSON, IO[bytes] Required.
+        :param resume_job_params: Resume rob comments. Is either a ResumeJobParams type or a IO[bytes]
+         type. Required.
         :type resume_job_params: ~azure.mgmt.recoveryservicessiterecovery.models.ResumeJobParams or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.types.ResumeJobParams or IO[bytes]
         :return: An instance of LROPoller that returns Job. The Job is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.Job]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -27938,7 +28126,7 @@ class ReplicationJobsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        job_query_parameter: Union[_models.JobQueryParameter, JSON, IO[bytes]],
+        job_query_parameter: Union[_models.JobQueryParameter, _types.JobQueryParameter, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -28039,7 +28227,7 @@ class ReplicationJobsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        job_query_parameter: JSON,
+        job_query_parameter: _types.JobQueryParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28054,7 +28242,7 @@ class ReplicationJobsOperations:
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param job_query_parameter: The request body. Required.
-        :type job_query_parameter: JSON
+        :type job_query_parameter: ~azure.mgmt.recoveryservicessiterecovery.types.JobQueryParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28097,7 +28285,7 @@ class ReplicationJobsOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        job_query_parameter: Union[_models.JobQueryParameter, JSON, IO[bytes]],
+        job_query_parameter: Union[_models.JobQueryParameter, _types.JobQueryParameter, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Job]:
         """Exports the details of the Azure Site Recovery jobs of the vault.
@@ -28109,10 +28297,10 @@ class ReplicationJobsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
-        :param job_query_parameter: The request body. Is one of the following types: JobQueryParameter,
-         JSON, IO[bytes] Required.
+        :param job_query_parameter: The request body. Is either a JobQueryParameter type or a IO[bytes]
+         type. Required.
         :type job_query_parameter: ~azure.mgmt.recoveryservicessiterecovery.models.JobQueryParameter or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.types.JobQueryParameter or IO[bytes]
         :return: An instance of LROPoller that returns Job. The Job is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.Job]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -28140,14 +28328,10 @@ class ReplicationJobsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.Job, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -28172,7 +28356,7 @@ class ReplicationJobsOperations:
         return LROPoller[_models.Job](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ReplicationPoliciesOperations:
+class ReplicationPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -28267,7 +28451,7 @@ class ReplicationPoliciesOperations:
         resource_group_name: str,
         resource_name: str,
         policy_name: str,
-        input: Union[_models.CreatePolicyInput, JSON, IO[bytes]],
+        input: Union[_models.CreatePolicyInput, _types.CreatePolicyInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -28374,7 +28558,7 @@ class ReplicationPoliciesOperations:
         resource_group_name: str,
         resource_name: str,
         policy_name: str,
-        input: JSON,
+        input: _types.CreatePolicyInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28391,7 +28575,7 @@ class ReplicationPoliciesOperations:
         :param policy_name: Replication policy name. Required.
         :type policy_name: str
         :param input: Create policy input. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.types.CreatePolicyInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28440,7 +28624,7 @@ class ReplicationPoliciesOperations:
         resource_group_name: str,
         resource_name: str,
         policy_name: str,
-        input: Union[_models.CreatePolicyInput, JSON, IO[bytes]],
+        input: Union[_models.CreatePolicyInput, _types.CreatePolicyInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Policy]:
         """Creates the policy.
@@ -28454,10 +28638,10 @@ class ReplicationPoliciesOperations:
         :type resource_name: str
         :param policy_name: Replication policy name. Required.
         :type policy_name: str
-        :param input: Create policy input. Is one of the following types: CreatePolicyInput, JSON,
-         IO[bytes] Required.
-        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.CreatePolicyInput or JSON or
-         IO[bytes]
+        :param input: Create policy input. Is either a CreatePolicyInput type or a IO[bytes] type.
+         Required.
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.CreatePolicyInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.CreatePolicyInput or IO[bytes]
         :return: An instance of LROPoller that returns Policy. The Policy is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.Policy]
@@ -28521,7 +28705,7 @@ class ReplicationPoliciesOperations:
         resource_group_name: str,
         resource_name: str,
         policy_name: str,
-        input: Union[_models.UpdatePolicyInput, JSON, IO[bytes]],
+        input: Union[_models.UpdatePolicyInput, _types.UpdatePolicyInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -28628,7 +28812,7 @@ class ReplicationPoliciesOperations:
         resource_group_name: str,
         resource_name: str,
         policy_name: str,
-        input: JSON,
+        input: _types.UpdatePolicyInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28645,7 +28829,7 @@ class ReplicationPoliciesOperations:
         :param policy_name: Replication policy name. Required.
         :type policy_name: str
         :param input: Update Policy Input. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.types.UpdatePolicyInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28694,7 +28878,7 @@ class ReplicationPoliciesOperations:
         resource_group_name: str,
         resource_name: str,
         policy_name: str,
-        input: Union[_models.UpdatePolicyInput, JSON, IO[bytes]],
+        input: Union[_models.UpdatePolicyInput, _types.UpdatePolicyInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Policy]:
         """Updates the policy.
@@ -28708,10 +28892,10 @@ class ReplicationPoliciesOperations:
         :type resource_name: str
         :param policy_name: Replication policy name. Required.
         :type policy_name: str
-        :param input: Update Policy Input. Is one of the following types: UpdatePolicyInput, JSON,
-         IO[bytes] Required.
-        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.UpdatePolicyInput or JSON or
-         IO[bytes]
+        :param input: Update Policy Input. Is either a UpdatePolicyInput type or a IO[bytes] type.
+         Required.
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.UpdatePolicyInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.UpdatePolicyInput or IO[bytes]
         :return: An instance of LROPoller that returns Policy. The Policy is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.Policy]
@@ -28949,7 +29133,10 @@ class ReplicationPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -28988,7 +29175,7 @@ class ReplicationPoliciesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-methods
+class ReplicationRecoveryPlansOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29085,7 +29272,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: Union[_models.CreateRecoveryPlanInput, JSON, IO[bytes]],
+        input: Union[_models.CreateRecoveryPlanInput, _types.CreateRecoveryPlanInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -29193,7 +29380,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: JSON,
+        input: _types.CreateRecoveryPlanInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29210,7 +29397,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         :param recovery_plan_name: Name of the recovery plan. Required.
         :type recovery_plan_name: str
         :param input: Recovery Plan creation input. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.types.CreateRecoveryPlanInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29261,7 +29448,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: Union[_models.CreateRecoveryPlanInput, JSON, IO[bytes]],
+        input: Union[_models.CreateRecoveryPlanInput, _types.CreateRecoveryPlanInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.RecoveryPlan]:
         """Creates a recovery plan with the given details.
@@ -29275,10 +29462,10 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         :type resource_name: str
         :param recovery_plan_name: Name of the recovery plan. Required.
         :type recovery_plan_name: str
-        :param input: Recovery Plan creation input. Is one of the following types:
-         CreateRecoveryPlanInput, JSON, IO[bytes] Required.
-        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.CreateRecoveryPlanInput or JSON or
-         IO[bytes]
+        :param input: Recovery Plan creation input. Is either a CreateRecoveryPlanInput type or a
+         IO[bytes] type. Required.
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.CreateRecoveryPlanInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.CreateRecoveryPlanInput or IO[bytes]
         :return: An instance of LROPoller that returns RecoveryPlan. The RecoveryPlan is compatible
          with MutableMapping
         :rtype:
@@ -29343,7 +29530,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: Union[_models.UpdateRecoveryPlanInput, JSON, IO[bytes]],
+        input: Union[_models.UpdateRecoveryPlanInput, _types.UpdateRecoveryPlanInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -29451,7 +29638,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: JSON,
+        input: _types.UpdateRecoveryPlanInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29468,7 +29655,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         :param recovery_plan_name: Name of the recovery plan. Required.
         :type recovery_plan_name: str
         :param input: Update recovery plan input. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.types.UpdateRecoveryPlanInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29519,7 +29706,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: Union[_models.UpdateRecoveryPlanInput, JSON, IO[bytes]],
+        input: Union[_models.UpdateRecoveryPlanInput, _types.UpdateRecoveryPlanInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.RecoveryPlan]:
         """Updates the given recovery plan.
@@ -29533,10 +29720,10 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         :type resource_name: str
         :param recovery_plan_name: Name of the recovery plan. Required.
         :type recovery_plan_name: str
-        :param input: Update recovery plan input. Is one of the following types:
-         UpdateRecoveryPlanInput, JSON, IO[bytes] Required.
-        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.UpdateRecoveryPlanInput or JSON or
-         IO[bytes]
+        :param input: Update recovery plan input. Is either a UpdateRecoveryPlanInput type or a
+         IO[bytes] type. Required.
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.UpdateRecoveryPlanInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.UpdateRecoveryPlanInput or IO[bytes]
         :return: An instance of LROPoller that returns RecoveryPlan. The RecoveryPlan is compatible
          with MutableMapping
         :rtype:
@@ -29776,7 +29963,10 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -30077,7 +30267,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: Union[_models.RecoveryPlanPlannedFailoverInput, JSON, IO[bytes]],
+        input: Union[_models.RecoveryPlanPlannedFailoverInput, _types.RecoveryPlanPlannedFailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -30185,7 +30375,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: JSON,
+        input: _types.RecoveryPlanPlannedFailoverInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30202,7 +30392,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         :param recovery_plan_name: Name of the recovery plan. Required.
         :type recovery_plan_name: str
         :param input: Failover input. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanPlannedFailoverInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30253,7 +30443,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: Union[_models.RecoveryPlanPlannedFailoverInput, JSON, IO[bytes]],
+        input: Union[_models.RecoveryPlanPlannedFailoverInput, _types.RecoveryPlanPlannedFailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.RecoveryPlan]:
         """Execute planned failover of the recovery plan.
@@ -30267,10 +30457,10 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         :type resource_name: str
         :param recovery_plan_name: Name of the recovery plan. Required.
         :type recovery_plan_name: str
-        :param input: Failover input. Is one of the following types: RecoveryPlanPlannedFailoverInput,
-         JSON, IO[bytes] Required.
+        :param input: Failover input. Is either a RecoveryPlanPlannedFailoverInput type or a IO[bytes]
+         type. Required.
         :type input: ~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPlanPlannedFailoverInput
-         or JSON or IO[bytes]
+         or ~azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanPlannedFailoverInput or IO[bytes]
         :return: An instance of LROPoller that returns RecoveryPlan. The RecoveryPlan is compatible
          with MutableMapping
         :rtype:
@@ -30465,7 +30655,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: Union[_models.RecoveryPlanTestFailoverInput, JSON, IO[bytes]],
+        input: Union[_models.RecoveryPlanTestFailoverInput, _types.RecoveryPlanTestFailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -30573,7 +30763,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: JSON,
+        input: _types.RecoveryPlanTestFailoverInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30590,7 +30780,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         :param recovery_plan_name: Name of the recovery plan. Required.
         :type recovery_plan_name: str
         :param input: Recovery plan test failover input. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanTestFailoverInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30641,7 +30831,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: Union[_models.RecoveryPlanTestFailoverInput, JSON, IO[bytes]],
+        input: Union[_models.RecoveryPlanTestFailoverInput, _types.RecoveryPlanTestFailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.RecoveryPlan]:
         """Execute test failover of the recovery plan.
@@ -30655,10 +30845,10 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         :type resource_name: str
         :param recovery_plan_name: Name of the recovery plan. Required.
         :type recovery_plan_name: str
-        :param input: Recovery plan test failover input. Is one of the following types:
-         RecoveryPlanTestFailoverInput, JSON, IO[bytes] Required.
+        :param input: Recovery plan test failover input. Is either a RecoveryPlanTestFailoverInput type
+         or a IO[bytes] type. Required.
         :type input: ~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPlanTestFailoverInput or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanTestFailoverInput or IO[bytes]
         :return: An instance of LROPoller that returns RecoveryPlan. The RecoveryPlan is compatible
          with MutableMapping
         :rtype:
@@ -30723,7 +30913,9 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: Union[_models.RecoveryPlanTestFailoverCleanupInput, JSON, IO[bytes]],
+        input: Union[
+            _models.RecoveryPlanTestFailoverCleanupInput, _types.RecoveryPlanTestFailoverCleanupInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -30832,7 +31024,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: JSON,
+        input: _types.RecoveryPlanTestFailoverCleanupInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30849,7 +31041,8 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         :param recovery_plan_name: Name of the recovery plan. Required.
         :type recovery_plan_name: str
         :param input: Recovery plan test failover cleanup input. Required.
-        :type input: JSON
+        :type input:
+         ~azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanTestFailoverCleanupInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30900,7 +31093,9 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: Union[_models.RecoveryPlanTestFailoverCleanupInput, JSON, IO[bytes]],
+        input: Union[
+            _models.RecoveryPlanTestFailoverCleanupInput, _types.RecoveryPlanTestFailoverCleanupInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.RecoveryPlan]:
         """Execute test failover cleanup of the recovery plan.
@@ -30914,10 +31109,11 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         :type resource_name: str
         :param recovery_plan_name: Name of the recovery plan. Required.
         :type recovery_plan_name: str
-        :param input: Recovery plan test failover cleanup input. Is one of the following types:
-         RecoveryPlanTestFailoverCleanupInput, JSON, IO[bytes] Required.
+        :param input: Recovery plan test failover cleanup input. Is either a
+         RecoveryPlanTestFailoverCleanupInput type or a IO[bytes] type. Required.
         :type input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPlanTestFailoverCleanupInput or JSON or
+         ~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPlanTestFailoverCleanupInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanTestFailoverCleanupInput or
          IO[bytes]
         :return: An instance of LROPoller that returns RecoveryPlan. The RecoveryPlan is compatible
          with MutableMapping
@@ -30983,7 +31179,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: Union[_models.RecoveryPlanUnplannedFailoverInput, JSON, IO[bytes]],
+        input: Union[_models.RecoveryPlanUnplannedFailoverInput, _types.RecoveryPlanUnplannedFailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -31091,7 +31287,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: JSON,
+        input: _types.RecoveryPlanUnplannedFailoverInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31108,7 +31304,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         :param recovery_plan_name: Name of the recovery plan. Required.
         :type recovery_plan_name: str
         :param input: Recovery plan unplanned failover input. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanUnplannedFailoverInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31159,7 +31355,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         resource_group_name: str,
         resource_name: str,
         recovery_plan_name: str,
-        input: Union[_models.RecoveryPlanUnplannedFailoverInput, JSON, IO[bytes]],
+        input: Union[_models.RecoveryPlanUnplannedFailoverInput, _types.RecoveryPlanUnplannedFailoverInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.RecoveryPlan]:
         """Execute unplanned failover of the recovery plan.
@@ -31173,10 +31369,11 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         :type resource_name: str
         :param recovery_plan_name: Name of the recovery plan. Required.
         :type recovery_plan_name: str
-        :param input: Recovery plan unplanned failover input. Is one of the following types:
-         RecoveryPlanUnplannedFailoverInput, JSON, IO[bytes] Required.
+        :param input: Recovery plan unplanned failover input. Is either a
+         RecoveryPlanUnplannedFailoverInput type or a IO[bytes] type. Required.
         :type input: ~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPlanUnplannedFailoverInput
-         or JSON or IO[bytes]
+         or ~azure.mgmt.recoveryservicessiterecovery.types.RecoveryPlanUnplannedFailoverInput or
+         IO[bytes]
         :return: An instance of LROPoller that returns RecoveryPlan. The RecoveryPlan is compatible
          with MutableMapping
         :rtype:
@@ -31237,7 +31434,7 @@ class ReplicationRecoveryPlansOperations:  # pylint: disable=too-many-public-met
         )
 
 
-class ReplicationVaultSettingOperations:
+class ReplicationVaultSettingOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31334,7 +31531,7 @@ class ReplicationVaultSettingOperations:
         resource_group_name: str,
         resource_name: str,
         vault_setting_name: str,
-        input: Union[_models.VaultSettingCreationInput, JSON, IO[bytes]],
+        input: Union[_models.VaultSettingCreationInput, _types.VaultSettingCreationInput, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -31442,7 +31639,7 @@ class ReplicationVaultSettingOperations:
         resource_group_name: str,
         resource_name: str,
         vault_setting_name: str,
-        input: JSON,
+        input: _types.VaultSettingCreationInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31460,7 +31657,7 @@ class ReplicationVaultSettingOperations:
         :param vault_setting_name: Vault setting name. Required.
         :type vault_setting_name: str
         :param input: Vault setting creation input. Required.
-        :type input: JSON
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.types.VaultSettingCreationInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31512,7 +31709,7 @@ class ReplicationVaultSettingOperations:
         resource_group_name: str,
         resource_name: str,
         vault_setting_name: str,
-        input: Union[_models.VaultSettingCreationInput, JSON, IO[bytes]],
+        input: Union[_models.VaultSettingCreationInput, _types.VaultSettingCreationInput, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VaultSetting]:
         """Updates vault setting. A vault setting object is a singleton per vault and it is always present
@@ -31527,10 +31724,10 @@ class ReplicationVaultSettingOperations:
         :type resource_name: str
         :param vault_setting_name: Vault setting name. Required.
         :type vault_setting_name: str
-        :param input: Vault setting creation input. Is one of the following types:
-         VaultSettingCreationInput, JSON, IO[bytes] Required.
-        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.VaultSettingCreationInput or JSON
-         or IO[bytes]
+        :param input: Vault setting creation input. Is either a VaultSettingCreationInput type or a
+         IO[bytes] type. Required.
+        :type input: ~azure.mgmt.recoveryservicessiterecovery.models.VaultSettingCreationInput or
+         ~azure.mgmt.recoveryservicessiterecovery.types.VaultSettingCreationInput or IO[bytes]
         :return: An instance of LROPoller that returns VaultSetting. The VaultSetting is compatible
          with MutableMapping
         :rtype:
@@ -31652,7 +31849,10 @@ class ReplicationVaultSettingOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -31691,7 +31891,7 @@ class ReplicationVaultSettingOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31765,7 +31965,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -31804,7 +32007,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationAppliancesOperations:
+class ReplicationAppliancesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31886,7 +32089,10 @@ class ReplicationAppliancesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -31925,7 +32131,7 @@ class ReplicationAppliancesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SupportedOperatingSystemsOperations:
+class SupportedOperatingSystemsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32019,7 +32225,7 @@ class SupportedOperatingSystemsOperations:
         return deserialized  # type: ignore
 
 
-class ReplicationVaultHealthOperations:
+class ReplicationVaultHealthOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32200,14 +32406,10 @@ class ReplicationVaultHealthOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.VaultHealthDetails, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {

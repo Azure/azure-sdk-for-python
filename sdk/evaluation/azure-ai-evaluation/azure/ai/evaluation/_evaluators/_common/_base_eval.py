@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import asyncio
 import inspect
 import logging
 from abc import ABC, abstractmethod
@@ -248,13 +249,14 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     def _get_all_singleton_inputs(self) -> List[str]:
         """Get a flattened list of all possible singleton inputs across all overloads.
 
+        Names keep the order in which the overloads declare them, so an evaluator's inputs, and the state of a decision
+        request that sends them unchanged, have the same order in every process. A set's order would vary with the
+        process's hash seed.
+
         :return: Flattened list of all singleton input names.
         :rtype: List[str]
         """
-        all_inputs = set()
-        for inputs in self._singleton_inputs:
-            all_inputs.update(inputs)
-        return list(all_inputs)
+        return list(dict.fromkeys(name for inputs in self._singleton_inputs for name in inputs))
 
     def _derive_conversation_converter(
         self,
@@ -355,11 +357,17 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 raise EvaluationException(
                     message="Mismatched number of user and assistant messages.",
                     internal_message=("Mismatched number of user and assistant messages."),
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.CONVERSATION,
                 )
             if len(assistant_messages) > 1:
                 raise EvaluationException(
                     message="Conversation can have only one assistant message.",
                     internal_message=("Conversation can have only one assistant message."),
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.CONVERSATION,
                 )
             eval_conv_inputs = []
             for user_msg, assist_msg in zip(user_messages, assistant_messages):
@@ -555,7 +563,8 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     "Tool call must be a dictionary.",
                     internal_message=str(tool_call),
                     target=ErrorTarget.EVALUATE,
-                    category=ErrorCategory.UNKNOWN,
+                    category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.USER_ERROR,
                 )
             if tool_call.get("type") != "tool_call":
                 raise EvaluationException(
@@ -563,6 +572,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     internal_message=str(tool_call),
                     target=ErrorTarget.EVALUATE,
                     category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.USER_ERROR,
                 )
 
             if "name" not in tool_call:
@@ -571,6 +581,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     internal_message=str(tool_call),
                     target=ErrorTarget.EVALUATE,
                     category=ErrorCategory.MISSING_FIELD,
+                    blame=ErrorBlame.USER_ERROR,
                 )
 
             tool_name = str(tool_call["name"]).strip()
@@ -593,11 +604,19 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                             internal_message=str(tool_call),
                             target=ErrorTarget.EVALUATE,
                             category=ErrorCategory.INVALID_VALUE,
+                            blame=ErrorBlame.USER_ERROR,
                         )
 
             tool_name_param_pairs.append((tool_name, parameters))
 
         return tool_name_param_pairs
+
+    def _on_evaluation_error(
+        self,
+        error: Union[EvaluationException, asyncio.CancelledError],
+        per_turn_results: List[DoEvalResult[T_EvalValue]],
+    ) -> None:
+        """Allow a model-backed evaluator to retain completed-turn metadata on a later failure."""
 
     async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """The asynchronous call where real end-to-end evaluation logic is performed.
@@ -616,7 +635,11 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         per_turn_results = []
         # Evaluate all inputs.
         for eval_input in eval_input_list:
-            result = await self._do_eval(eval_input)
+            try:
+                result = await self._do_eval(eval_input)
+            except (EvaluationException, asyncio.CancelledError) as error:
+                self._on_evaluation_error(error, per_turn_results)
+                raise
             # logic to determine threshold pass/fail
             # if it wasn't computed in _do_eval
             try:
@@ -639,6 +662,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                                     internal_message=str(threshold_value),
                                     target=ErrorTarget.EVALUATE,
                                     category=ErrorCategory.INVALID_VALUE,
+                                    blame=ErrorBlame.USER_ERROR,
                                 )
 
                             if not contains_threshold_key:

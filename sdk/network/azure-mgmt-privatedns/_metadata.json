@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-06-01-preview",
+  "apiVersions": {
+    "Microsoft.Network": "2026-06-01-preview"
+  },
+  "commit": "20f54bc0008e83da963412c67397b17ed52b4f29",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/privatedns/resource-manager/Microsoft.Network/PrivateDns",
+  "emitterVersion": "0.63.11",
+  "httpClientPythonVersion": "0.40.0"
+}

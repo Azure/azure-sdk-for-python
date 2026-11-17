@@ -9,6 +9,7 @@ from ci_tools.variables import DEFAULT_BUILD_ID, str_to_bool, discover_repo_root
 from ci_tools.versioning.version_shared import set_version_py, set_dev_classifier
 from ci_tools.versioning.version_set_dev import get_dev_version, format_build_id
 from ci_tools.logging import logger, configure_logging, run_logged
+from ci_tools.windows_wheels import windows_wheel_config
 
 
 def build_package() -> None:
@@ -221,55 +222,89 @@ def create_package(
     setup_directory_or_file: str, dest_folder: str, enable_wheel: bool = True, enable_sdist: bool = True
 ):
     """
-    Uses the invoking python executable to build a wheel and sdist file given a setup.py or setup.py directory. Outputs
-    into a distribution directory and defaults to the value of get_artifact_directory().
+    Builds a wheel and/or sdist file given a setup.py, pyproject.toml, or directory containing either.
+
+    For packages with compiled extensions (ext_modules or a [tool.cibuildwheel] table):
+    - setup.py: uses cibuildwheel to build platform-specific wheels
+    - pyproject.toml: uses cibuildwheel to build platform-specific wheels (respects [tool.cibuildwheel] config)
+
+    For pure Python packages:
+    - Uses python -m build
+
+    Outputs into a distribution directory and defaults to get_artifact_directory().
     """
 
     dist = get_artifact_directory(dest_folder)
     setup_parsed = ParsedSetup.from_path(setup_directory_or_file)
 
     should_log_build_output = logger.getEffectiveLevel() <= logging.DEBUG
+    # Backends such as Maturin compile extensions without declaring setuptools ext_modules.
+    # Honor their cibuildwheel matrix instead of building only a host wheel.
+    is_compiled = bool(setup_parsed.ext_modules) or setup_parsed.uses_cibuildwheel
 
     if setup_parsed.is_pyproject:
-        # when building with pyproject, we will use `python -m build` to build the package
-        # -n argument will not use an isolated environment, which means the current environment must have all the dependencies of the package installed, to successfully
-        # pull in the dynamic `__version__` attribute. This is because setuptools is actually walking the __init__.py to get that attribute, which will fail
-        # if the imports within the setup.py don't work. Perhaps an isolated environment is better, pulling all the "dependencies" into the [build-system].requires list
-
-        # given the additional requirements of the package, we should install them in the current environment before attempting to build the package
-        # we assume the presence of `wheel`, `build`, `setuptools>=61.0.0`
-        pip_output = get_pip_list_output(sys.executable)
-        necessary_install_requirements = [
-            req for req in setup_parsed.requires if parse_require(req).name not in pip_output.keys()
-        ]
-        run_logged(
-            [sys.executable, "-m", "pip", "install", *necessary_install_requirements],
-            cwd=setup_parsed.folder,
-            check=False,
-            should_stream_to_console=should_log_build_output,
-        )
-        run_logged(
-            [
-                sys.executable,
-                "-m",
-                "build",
-                f"-n{'s' if enable_sdist else ''}{'w' if enable_wheel else ''}",
-                "-o",
-                dist,
-            ],
-            cwd=setup_parsed.folder,
-            check=True,
-            should_stream_to_console=should_log_build_output,
-        )
-    else:
-        if enable_wheel:
-            if setup_parsed.ext_modules:
+        # when building with pyproject, check if package has compiled extensions
+        if is_compiled:
+            if enable_wheel:
+                # Use cibuildwheel for compiled extensions (respects [tool.cibuildwheel] config)
+                with windows_wheel_config(setup_parsed.folder) as (arguments, environment):
+                    run_logged(
+                        [sys.executable, "-m", "cibuildwheel", "--output-dir", dist, *arguments],
+                        cwd=setup_parsed.folder,
+                        check=True,
+                        should_stream_to_console=should_log_build_output,
+                        **environment,
+                    )
+            if enable_sdist:
+                # Build isolation installs package-specific backends such as Maturin.
                 run_logged(
-                    [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
+                    [sys.executable, "-m", "build", "-s", "-o", dist],
                     cwd=setup_parsed.folder,
                     check=True,
                     should_stream_to_console=should_log_build_output,
                 )
+        else:
+            # Use python -m build for pure Python packages
+            # -n argument will not use an isolated environment, which means the current environment must have all the dependencies of the package installed, to successfully
+            # pull in the dynamic `__version__` attribute. This is because setuptools is actually walking the __init__.py to get that attribute, which will fail
+            # if the imports within the setup.py don't work. Perhaps an isolated environment is better, pulling all the "dependencies" into the [build-system].requires list
+
+            # given the additional requirements of the package, we should install them in the current environment before attempting to build the package
+            # we assume the presence of `wheel`, `build`, `setuptools>=61.0.0`
+            pip_output = get_pip_list_output(sys.executable)
+            necessary_install_requirements = [
+                req for req in setup_parsed.requires if parse_require(req).name not in pip_output.keys()
+            ]
+            run_logged(
+                [sys.executable, "-m", "pip", "install", *necessary_install_requirements],
+                cwd=setup_parsed.folder,
+                check=False,
+                should_stream_to_console=should_log_build_output,
+            )
+            run_logged(
+                [
+                    sys.executable,
+                    "-m",
+                    "build",
+                    f"-n{'s' if enable_sdist else ''}{'w' if enable_wheel else ''}",
+                    "-o",
+                    dist,
+                ],
+                cwd=setup_parsed.folder,
+                check=True,
+                should_stream_to_console=should_log_build_output,
+            )
+    else:
+        if enable_wheel:
+            if is_compiled:
+                with windows_wheel_config(setup_parsed.folder) as (arguments, environment):
+                    run_logged(
+                        [sys.executable, "-m", "cibuildwheel", "--output-dir", dist, *arguments],
+                        cwd=setup_parsed.folder,
+                        check=True,
+                        should_stream_to_console=should_log_build_output,
+                        **environment,
+                    )
             else:
                 run_logged(
                     [sys.executable, "setup.py", "bdist_wheel", "-d", dist],

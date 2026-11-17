@@ -23,12 +23,12 @@ class EnumInput(Input):
     ) -> None:
         """Enum parameter parse the value according to its enum values.
 
-        :param enum: Enum values.
-        :type enum: Union[EnumMeta, Sequence[str]]
-        :param default: Default value of the parameter
-        :type default: Any
-        :param description: Description of the parameter
-        :type description: str
+        :keyword enum: Enum values.
+        :paramtype enum: Union[EnumMeta, Sequence[str]]
+        :keyword default: Default value of the parameter
+        :paramtype default: Any
+        :keyword description: Description of the parameter
+        :paramtype description: str
         """
         enum_values = self._assert_enum_valid(enum)
         self._enum_class: Optional[EnumMeta] = None

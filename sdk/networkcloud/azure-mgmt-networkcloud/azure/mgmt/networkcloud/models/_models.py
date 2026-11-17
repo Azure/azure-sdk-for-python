@@ -530,6 +530,40 @@ class AdministrativeCredentials(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AdministrativeCredentialsPatch(_Model):
+    """AdministrativeCredentialsPatch represents the admin credentials for the device requiring
+    password-based authentication.
+
+    :ivar password: The password of the administrator of the device used during initialization.
+    :vartype password: str
+    :ivar username: The username of the administrator of the device used during initialization.
+    :vartype username: str
+    """
+
+    password: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The password of the administrator of the device used during initialization."""
+    username: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The username of the administrator of the device used during initialization."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        password: Optional[str] = None,
+        username: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AdministratorConfiguration(_Model):
     """AdministratorConfiguration represents the administrative credentials that will be applied to
     the control plane and agent pool nodes in Kubernetes clusters.
@@ -1361,6 +1395,94 @@ class BareMetalMachineConfigurationData(_Model):
         super().__init__(*args, **kwargs)
 
 
+class BareMetalMachineConfigurationDataPatch(_Model):
+    """BareMetalMachineConfigurationDataPatch represents configuration for the bare metal machine for
+    patch operations.
+
+    :ivar bmc_connection_string: The connection string for the baseboard management controller
+     including IP address and protocol.
+    :vartype bmc_connection_string: str
+    :ivar bmc_credentials: The credentials of the baseboard management controller on this bare
+     metal machine. The password field is expected to be an Azure Key Vault key URL. Until the
+     cluster is converted to utilize managed identity by setting the secret archive settings, the
+     actual password value should be provided instead.
+    :vartype bmc_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentialsPatch
+    :ivar bmc_mac_address: The MAC address of the BMC for this machine.
+    :vartype bmc_mac_address: str
+    :ivar boot_mac_address: The MAC address associated with the PXE NIC card.
+    :vartype boot_mac_address: str
+    :ivar machine_details: The free-form additional information about the machine, e.g. an asset
+     tag.
+    :vartype machine_details: str
+    :ivar machine_name: The user-provided name for the bare metal machine created from this
+     specification. If not provided, the machine name will be generated programmatically.
+    :vartype machine_name: str
+    :ivar rack_slot: The slot the physical machine is in the rack based on the BOM configuration.
+    :vartype rack_slot: int
+    :ivar serial_number: The serial number of the machine. Hardware suppliers may use an alternate
+     value. For example, service tag.
+    :vartype serial_number: str
+    """
+
+    bmc_connection_string: Optional[str] = rest_field(name="bmcConnectionString", visibility=["read"])
+    """The connection string for the baseboard management controller including IP address and
+     protocol."""
+    bmc_credentials: Optional["_models.AdministrativeCredentialsPatch"] = rest_field(
+        name="bmcCredentials", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The credentials of the baseboard management controller on this bare metal machine. The password
+     field is expected to be an Azure Key Vault key URL. Until the cluster is converted to utilize
+     managed identity by setting the secret archive settings, the actual password value should be
+     provided instead."""
+    bmc_mac_address: Optional[str] = rest_field(
+        name="bmcMacAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The MAC address of the BMC for this machine."""
+    boot_mac_address: Optional[str] = rest_field(
+        name="bootMacAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The MAC address associated with the PXE NIC card."""
+    machine_details: Optional[str] = rest_field(
+        name="machineDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The free-form additional information about the machine, e.g. an asset tag."""
+    machine_name: Optional[str] = rest_field(
+        name="machineName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The user-provided name for the bare metal machine created from this specification. If not
+     provided, the machine name will be generated programmatically."""
+    rack_slot: Optional[int] = rest_field(name="rackSlot", visibility=["read", "create", "update", "delete", "query"])
+    """The slot the physical machine is in the rack based on the BOM configuration."""
+    serial_number: Optional[str] = rest_field(
+        name="serialNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The serial number of the machine. Hardware suppliers may use an alternate value. For example,
+     service tag."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        bmc_credentials: Optional["_models.AdministrativeCredentialsPatch"] = None,
+        bmc_mac_address: Optional[str] = None,
+        boot_mac_address: Optional[str] = None,
+        machine_details: Optional[str] = None,
+        machine_name: Optional[str] = None,
+        rack_slot: Optional[int] = None,
+        serial_number: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class BareMetalMachineCordonParameters(_Model):
     """BareMetalMachineCordonParameters represents the body of the request to evacuate workloads from
     node on a bare metal machine.
@@ -1715,20 +1837,20 @@ class BareMetalMachineMonitoringConfigurationStatus(_Model):  # pylint: disable=
     :ivar log_level: The log level for the monitoring configuration status of the bare metal
      machine. Known values are: "Default" and "Nexus".
     :vartype log_level: str or
-     ~azure.mgmt.networkcloud.models.BareMetalMachineMetricsConfigurationStatusLogLevel
+     ~azure.mgmt.networkcloud.models.BareMetalMachineMonitoringConfigurationStatusLogLevel
     :ivar metrics_level: The metrics level for the monitoring configuration status of the bare
      metal machine. Known values are: "Default" and "Nexus".
     :vartype metrics_level: str or
-     ~azure.mgmt.networkcloud.models.BareMetalMachineMetricsConfigurationStatusMetricsLevel
+     ~azure.mgmt.networkcloud.models.BareMetalMachineMonitoringConfigurationStatusMetricsLevel
     """
 
-    log_level: Optional[Union[str, "_models.BareMetalMachineMetricsConfigurationStatusLogLevel"]] = rest_field(
+    log_level: Optional[Union[str, "_models.BareMetalMachineMonitoringConfigurationStatusLogLevel"]] = rest_field(
         name="logLevel", visibility=["read", "create", "update", "delete", "query"]
     )
     """The log level for the monitoring configuration status of the bare metal machine. Known values
      are: \"Default\" and \"Nexus\"."""
-    metrics_level: Optional[Union[str, "_models.BareMetalMachineMetricsConfigurationStatusMetricsLevel"]] = rest_field(
-        name="metricsLevel", visibility=["read", "create", "update", "delete", "query"]
+    metrics_level: Optional[Union[str, "_models.BareMetalMachineMonitoringConfigurationStatusMetricsLevel"]] = (
+        rest_field(name="metricsLevel", visibility=["read", "create", "update", "delete", "query"])
     )
     """The metrics level for the monitoring configuration status of the bare metal machine. Known
      values are: \"Default\" and \"Nexus\"."""
@@ -1737,8 +1859,8 @@ class BareMetalMachineMonitoringConfigurationStatus(_Model):  # pylint: disable=
     def __init__(
         self,
         *,
-        log_level: Optional[Union[str, "_models.BareMetalMachineMetricsConfigurationStatusLogLevel"]] = None,
-        metrics_level: Optional[Union[str, "_models.BareMetalMachineMetricsConfigurationStatusMetricsLevel"]] = None,
+        log_level: Optional[Union[str, "_models.BareMetalMachineMonitoringConfigurationStatusLogLevel"]] = None,
+        metrics_level: Optional[Union[str, "_models.BareMetalMachineMonitoringConfigurationStatusMetricsLevel"]] = None,
     ) -> None: ...
 
     @overload
@@ -4307,7 +4429,8 @@ class ClusterPatchProperties(_Model):
 
     :ivar aggregator_or_single_rack_definition: The rack definition that is intended to reflect
      only a single rack in a single rack cluster, or an aggregator rack in a multi-rack cluster.
-    :vartype aggregator_or_single_rack_definition: ~azure.mgmt.networkcloud.models.RackDefinition
+    :vartype aggregator_or_single_rack_definition:
+     ~azure.mgmt.networkcloud.models.RackDefinitionPatch
     :ivar analytics_output_settings: The settings for the log analytics workspace used for output
      of logs from this cluster.
     :vartype analytics_output_settings: ~azure.mgmt.networkcloud.models.AnalyticsOutputSettings
@@ -4316,34 +4439,35 @@ class ClusterPatchProperties(_Model):
     :vartype cluster_location: str
     :ivar cluster_service_principal: Field Deprecated: Use managed identity to provide cluster
      privileges. The service principal to be used by the cluster during Arc Appliance installation.
-    :vartype cluster_service_principal: ~azure.mgmt.networkcloud.models.ServicePrincipalInformation
+    :vartype cluster_service_principal:
+     ~azure.mgmt.networkcloud.models.ServicePrincipalInformationPatch
     :ivar command_output_settings: The settings for commands run in this cluster, such as bare
      metal machine run read only commands and data extracts.
     :vartype command_output_settings: ~azure.mgmt.networkcloud.models.CommandOutputSettings
     :ivar compute_deployment_threshold: The validation threshold indicating the allowable failures
      of compute machines during environment validation and deployment.
-    :vartype compute_deployment_threshold: ~azure.mgmt.networkcloud.models.ValidationThreshold
+    :vartype compute_deployment_threshold: ~azure.mgmt.networkcloud.models.ValidationThresholdPatch
     :ivar compute_rack_definitions: The list of rack definitions for the compute racks in a
      multi-rack cluster, or an empty list in a single-rack cluster.
-    :vartype compute_rack_definitions: list[~azure.mgmt.networkcloud.models.RackDefinition]
+    :vartype compute_rack_definitions: list[~azure.mgmt.networkcloud.models.RackDefinitionPatch]
     :ivar runtime_protection_configuration: The settings for cluster runtime protection.
     :vartype runtime_protection_configuration:
-     ~azure.mgmt.networkcloud.models.RuntimeProtectionConfiguration
+     ~azure.mgmt.networkcloud.models.RuntimeProtectionConfigurationPatch
     :ivar secret_archive: The configuration for use of a key vault to store secrets for later
      retrieval by the operator.
-    :vartype secret_archive: ~azure.mgmt.networkcloud.models.ClusterSecretArchive
+    :vartype secret_archive: ~azure.mgmt.networkcloud.models.ClusterSecretArchivePatch
     :ivar secret_archive_settings: The settings for the secret archive used to hold credentials for
      the cluster.
     :vartype secret_archive_settings: ~azure.mgmt.networkcloud.models.SecretArchiveSettings
     :ivar update_strategy: The strategy for updating the cluster.
-    :vartype update_strategy: ~azure.mgmt.networkcloud.models.ClusterUpdateStrategy
+    :vartype update_strategy: ~azure.mgmt.networkcloud.models.ClusterUpdateStrategyPatch
     :ivar vulnerability_scanning_settings: The settings for how security vulnerability scanning is
      applied to the cluster.
     :vartype vulnerability_scanning_settings:
      ~azure.mgmt.networkcloud.models.VulnerabilityScanningSettingsPatch
     """
 
-    aggregator_or_single_rack_definition: Optional["_models.RackDefinition"] = rest_field(
+    aggregator_or_single_rack_definition: Optional["_models.RackDefinitionPatch"] = rest_field(
         name="aggregatorOrSingleRackDefinition", visibility=["read", "create", "update", "delete", "query"]
     )
     """The rack definition that is intended to reflect only a single rack in a single rack cluster, or
@@ -4356,7 +4480,7 @@ class ClusterPatchProperties(_Model):
         name="clusterLocation", visibility=["read", "create", "update", "delete", "query"]
     )
     """The customer-provided location information to identify where the cluster resides."""
-    cluster_service_principal: Optional["_models.ServicePrincipalInformation"] = rest_field(
+    cluster_service_principal: Optional["_models.ServicePrincipalInformationPatch"] = rest_field(
         name="clusterServicePrincipal", visibility=["read", "create", "update", "delete", "query"]
     )
     """Field Deprecated: Use managed identity to provide cluster privileges. The service principal to
@@ -4366,21 +4490,21 @@ class ClusterPatchProperties(_Model):
     )
     """The settings for commands run in this cluster, such as bare metal machine run read only
      commands and data extracts."""
-    compute_deployment_threshold: Optional["_models.ValidationThreshold"] = rest_field(
+    compute_deployment_threshold: Optional["_models.ValidationThresholdPatch"] = rest_field(
         name="computeDeploymentThreshold", visibility=["read", "create", "update", "delete", "query"]
     )
     """The validation threshold indicating the allowable failures of compute machines during
      environment validation and deployment."""
-    compute_rack_definitions: Optional[list["_models.RackDefinition"]] = rest_field(
+    compute_rack_definitions: Optional[list["_models.RackDefinitionPatch"]] = rest_field(
         name="computeRackDefinitions", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of rack definitions for the compute racks in a multi-rack cluster, or an empty list in
      a single-rack cluster."""
-    runtime_protection_configuration: Optional["_models.RuntimeProtectionConfiguration"] = rest_field(
+    runtime_protection_configuration: Optional["_models.RuntimeProtectionConfigurationPatch"] = rest_field(
         name="runtimeProtectionConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The settings for cluster runtime protection."""
-    secret_archive: Optional["_models.ClusterSecretArchive"] = rest_field(
+    secret_archive: Optional["_models.ClusterSecretArchivePatch"] = rest_field(
         name="secretArchive", visibility=["read", "create", "update", "delete", "query"]
     )
     """The configuration for use of a key vault to store secrets for later retrieval by the operator."""
@@ -4388,7 +4512,7 @@ class ClusterPatchProperties(_Model):
         name="secretArchiveSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """The settings for the secret archive used to hold credentials for the cluster."""
-    update_strategy: Optional["_models.ClusterUpdateStrategy"] = rest_field(
+    update_strategy: Optional["_models.ClusterUpdateStrategyPatch"] = rest_field(
         name="updateStrategy", visibility=["read", "create", "update", "delete", "query"]
     )
     """The strategy for updating the cluster."""
@@ -4401,17 +4525,17 @@ class ClusterPatchProperties(_Model):
     def __init__(
         self,
         *,
-        aggregator_or_single_rack_definition: Optional["_models.RackDefinition"] = None,
+        aggregator_or_single_rack_definition: Optional["_models.RackDefinitionPatch"] = None,
         analytics_output_settings: Optional["_models.AnalyticsOutputSettings"] = None,
         cluster_location: Optional[str] = None,
-        cluster_service_principal: Optional["_models.ServicePrincipalInformation"] = None,
+        cluster_service_principal: Optional["_models.ServicePrincipalInformationPatch"] = None,
         command_output_settings: Optional["_models.CommandOutputSettings"] = None,
-        compute_deployment_threshold: Optional["_models.ValidationThreshold"] = None,
-        compute_rack_definitions: Optional[list["_models.RackDefinition"]] = None,
-        runtime_protection_configuration: Optional["_models.RuntimeProtectionConfiguration"] = None,
-        secret_archive: Optional["_models.ClusterSecretArchive"] = None,
+        compute_deployment_threshold: Optional["_models.ValidationThresholdPatch"] = None,
+        compute_rack_definitions: Optional[list["_models.RackDefinitionPatch"]] = None,
+        runtime_protection_configuration: Optional["_models.RuntimeProtectionConfigurationPatch"] = None,
+        secret_archive: Optional["_models.ClusterSecretArchivePatch"] = None,
         secret_archive_settings: Optional["_models.SecretArchiveSettings"] = None,
-        update_strategy: Optional["_models.ClusterUpdateStrategy"] = None,
+        update_strategy: Optional["_models.ClusterUpdateStrategyPatch"] = None,
         vulnerability_scanning_settings: Optional["_models.VulnerabilityScanningSettingsPatch"] = None,
     ) -> None: ...
 
@@ -4799,6 +4923,46 @@ class ClusterSecretArchive(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ClusterSecretArchivePatch(_Model):
+    """ClusterSecretArchivePatch configures the key vault to archive the secrets of the cluster for
+    later retrieval for patch operations.
+
+    :ivar key_vault_id: The resource ID of the key vault to archive the secrets of the cluster.
+    :vartype key_vault_id: str
+    :ivar use_key_vault: The indicator if the specified key vault should be used to archive the
+     secrets of the cluster. Known values are: "True" and "False".
+    :vartype use_key_vault: str or ~azure.mgmt.networkcloud.models.ClusterSecretArchiveEnabled
+    """
+
+    key_vault_id: Optional[str] = rest_field(
+        name="keyVaultId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the key vault to archive the secrets of the cluster."""
+    use_key_vault: Optional[Union[str, "_models.ClusterSecretArchiveEnabled"]] = rest_field(
+        name="useKeyVault", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The indicator if the specified key vault should be used to archive the secrets of the cluster.
+     Known values are: \"True\" and \"False\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_vault_id: Optional[str] = None,
+        use_key_vault: Optional[Union[str, "_models.ClusterSecretArchiveEnabled"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ClusterUpdateStrategy(_Model):
     """ClusterUpdateStrategy represents the strategy for updating the cluster.
 
@@ -4850,6 +5014,74 @@ class ClusterUpdateStrategy(_Model):
         threshold_type: Union[str, "_models.ValidationThresholdType"],
         threshold_value: int,
         max_unavailable: Optional[int] = None,
+        wait_time_minutes: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterUpdateStrategyPatch(_Model):
+    """ClusterUpdateStrategyPatch represents the strategy for updating the cluster for patch
+    operations.
+
+    :ivar max_unavailable: The maximum number of worker nodes that can be offline within the
+     increment of update, e.g., rack-by-rack. Limited by the maximum number of machines in the
+     increment. Defaults to the whole increment size.
+    :vartype max_unavailable: int
+    :ivar strategy_type: The mode of operation for runtime protection. Known values are: "Rack" and
+     "PauseAfterRack".
+    :vartype strategy_type: str or ~azure.mgmt.networkcloud.models.ClusterUpdateStrategyType
+    :ivar threshold_type: Selection of how the threshold should be evaluated. Known values are:
+     "CountSuccess" and "PercentSuccess".
+    :vartype threshold_type: str or ~azure.mgmt.networkcloud.models.ValidationThresholdType
+    :ivar threshold_value: The numeric threshold value.
+    :vartype threshold_value: int
+    :ivar wait_time_minutes: The time to wait between the increments of update defined by the
+     strategy.
+    :vartype wait_time_minutes: int
+    """
+
+    max_unavailable: Optional[int] = rest_field(
+        name="maxUnavailable", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum number of worker nodes that can be offline within the increment of update, e.g.,
+     rack-by-rack. Limited by the maximum number of machines in the increment. Defaults to the whole
+     increment size."""
+    strategy_type: Optional[Union[str, "_models.ClusterUpdateStrategyType"]] = rest_field(
+        name="strategyType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The mode of operation for runtime protection. Known values are: \"Rack\" and
+     \"PauseAfterRack\"."""
+    threshold_type: Optional[Union[str, "_models.ValidationThresholdType"]] = rest_field(
+        name="thresholdType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Selection of how the threshold should be evaluated. Known values are: \"CountSuccess\" and
+     \"PercentSuccess\"."""
+    threshold_value: Optional[int] = rest_field(
+        name="thresholdValue", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The numeric threshold value."""
+    wait_time_minutes: Optional[int] = rest_field(
+        name="waitTimeMinutes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The time to wait between the increments of update defined by the strategy."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_unavailable: Optional[int] = None,
+        strategy_type: Optional[Union[str, "_models.ClusterUpdateStrategyType"]] = None,
+        threshold_type: Optional[Union[str, "_models.ValidationThresholdType"]] = None,
+        threshold_value: Optional[int] = None,
         wait_time_minutes: Optional[int] = None,
     ) -> None: ...
 
@@ -5168,7 +5400,7 @@ class ConsolePatchProperties(_Model):
     :vartype expiration: ~datetime.datetime
     :ivar ssh_public_key: The SSH public key that will be provisioned for user access. The user is
      expected to have the corresponding SSH private key for logging in.
-    :vartype ssh_public_key: ~azure.mgmt.networkcloud.models.SshPublicKey
+    :vartype ssh_public_key: ~azure.mgmt.networkcloud.models.SshPublicKeyPatch
     """
 
     enabled: Optional[Union[str, "_models.ConsoleEnabled"]] = rest_field(
@@ -5180,7 +5412,7 @@ class ConsolePatchProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The date and time after which the key will be disallowed access."""
-    ssh_public_key: Optional["_models.SshPublicKey"] = rest_field(
+    ssh_public_key: Optional["_models.SshPublicKeyPatch"] = rest_field(
         name="sshPublicKey", visibility=["read", "create", "update", "delete", "query"]
     )
     """The SSH public key that will be provisioned for user access. The user is expected to have the
@@ -5192,7 +5424,7 @@ class ConsolePatchProperties(_Model):
         *,
         enabled: Optional[Union[str, "_models.ConsoleEnabled"]] = None,
         expiration: Optional[datetime.datetime] = None,
-        ssh_public_key: Optional["_models.SshPublicKey"] = None,
+        ssh_public_key: Optional["_models.SshPublicKeyPatch"] = None,
     ) -> None: ...
 
     @overload
@@ -5760,6 +5992,48 @@ class ImageRepositoryCredentials(_Model):
         password: str,
         registry_url: str,
         username: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ImageRepositoryCredentialsPatch(_Model):
+    """ImageRepositoryCredentialsPatch represents the credentials used to login to the image
+    repository for patch operations.
+
+    :ivar password: The password or token used to access an image in the target repository.
+    :vartype password: str
+    :ivar registry_url: The URL of the authentication server used to validate the repository
+     credentials.
+    :vartype registry_url: str
+    :ivar username: The username used to access an image in the target repository.
+    :vartype username: str
+    """
+
+    password: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The password or token used to access an image in the target repository."""
+    registry_url: Optional[str] = rest_field(
+        name="registryUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URL of the authentication server used to validate the repository credentials."""
+    username: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The username used to access an image in the target repository."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        password: Optional[str] = None,
+        registry_url: Optional[str] = None,
+        username: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -8500,6 +8774,86 @@ class RackDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
+class RackDefinitionPatch(_Model):
+    """RackDefinitionPatch represents details regarding the rack for patch operations.
+
+    :ivar availability_zone: The zone name used for this rack when created. Availability zones are
+     used for workload placement.
+    :vartype availability_zone: str
+    :ivar bare_metal_machine_configuration_data: The unordered list of bare metal machine
+     configuration.
+    :vartype bare_metal_machine_configuration_data:
+     list[~azure.mgmt.networkcloud.models.BareMetalMachineConfigurationDataPatch]
+    :ivar network_rack_id: The resource ID of the network rack that matches this rack definition.
+    :vartype network_rack_id: str
+    :ivar rack_location: The free-form description of the rack's location.
+    :vartype rack_location: str
+    :ivar rack_serial_number: The unique identifier for the rack within Network Cloud cluster. An
+     alternate unique alphanumeric value other than a serial number may be provided if desired.
+    :vartype rack_serial_number: str
+    :ivar rack_sku_id: The resource ID of the sku for the rack being added.
+    :vartype rack_sku_id: str
+    :ivar storage_appliance_configuration_data: The list of storage appliance configuration data
+     for this rack.
+    :vartype storage_appliance_configuration_data:
+     list[~azure.mgmt.networkcloud.models.StorageApplianceConfigurationDataPatch]
+    """
+
+    availability_zone: Optional[str] = rest_field(
+        name="availabilityZone", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The zone name used for this rack when created. Availability zones are used for workload
+     placement."""
+    bare_metal_machine_configuration_data: Optional[list["_models.BareMetalMachineConfigurationDataPatch"]] = (
+        rest_field(name="bareMetalMachineConfigurationData", visibility=["read", "create", "update", "delete", "query"])
+    )
+    """The unordered list of bare metal machine configuration."""
+    network_rack_id: Optional[str] = rest_field(
+        name="networkRackId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the network rack that matches this rack definition."""
+    rack_location: Optional[str] = rest_field(
+        name="rackLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The free-form description of the rack's location."""
+    rack_serial_number: Optional[str] = rest_field(
+        name="rackSerialNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The unique identifier for the rack within Network Cloud cluster. An alternate unique
+     alphanumeric value other than a serial number may be provided if desired."""
+    rack_sku_id: Optional[str] = rest_field(
+        name="rackSkuId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the sku for the rack being added."""
+    storage_appliance_configuration_data: Optional[list["_models.StorageApplianceConfigurationDataPatch"]] = rest_field(
+        name="storageApplianceConfigurationData", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of storage appliance configuration data for this rack."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        availability_zone: Optional[str] = None,
+        bare_metal_machine_configuration_data: Optional[list["_models.BareMetalMachineConfigurationDataPatch"]] = None,
+        network_rack_id: Optional[str] = None,
+        rack_location: Optional[str] = None,
+        rack_serial_number: Optional[str] = None,
+        rack_sku_id: Optional[str] = None,
+        storage_appliance_configuration_data: Optional[list["_models.StorageApplianceConfigurationDataPatch"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RackPatchParameters(_Model):
     """RackPatchParameters represents the body of the request to patch the rack properties.
 
@@ -8809,6 +9163,50 @@ class RacksPatchProperties(_Model):
 
 class RuntimeProtectionConfiguration(_Model):
     """RuntimeProtectionConfiguration represents the runtime protection configuration for the cluster.
+
+    :ivar definition_update_mode: The definition update mode for runtime protection. Known values
+     are: "Automatic" and "None".
+    :vartype definition_update_mode: str or
+     ~azure.mgmt.networkcloud.models.RuntimeProtectionDefinitionUpdateMode
+    :ivar enforcement_level: The mode of operation for runtime protection. Known values are:
+     "Audit", "Disabled", "OnDemand", "Passive", and "RealTime".
+    :vartype enforcement_level: str or
+     ~azure.mgmt.networkcloud.models.RuntimeProtectionEnforcementLevel
+    """
+
+    definition_update_mode: Optional[Union[str, "_models.RuntimeProtectionDefinitionUpdateMode"]] = rest_field(
+        name="definitionUpdateMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The definition update mode for runtime protection. Known values are: \"Automatic\" and
+     \"None\"."""
+    enforcement_level: Optional[Union[str, "_models.RuntimeProtectionEnforcementLevel"]] = rest_field(
+        name="enforcementLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The mode of operation for runtime protection. Known values are: \"Audit\", \"Disabled\",
+     \"OnDemand\", \"Passive\", and \"RealTime\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        definition_update_mode: Optional[Union[str, "_models.RuntimeProtectionDefinitionUpdateMode"]] = None,
+        enforcement_level: Optional[Union[str, "_models.RuntimeProtectionEnforcementLevel"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RuntimeProtectionConfigurationPatch(_Model):
+    """RuntimeProtectionConfigurationPatch represents the runtime protection configuration for the
+    cluster for patch operations.
 
     :ivar definition_update_mode: The definition update mode for runtime protection. Known values
      are: "Automatic" and "None".
@@ -9160,6 +9558,56 @@ class ServicePrincipalInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ServicePrincipalInformationPatch(_Model):
+    """ServicePrincipalInformationPatch represents the details of the service principal to be used by
+    the cluster during Arc Appliance installation for patch operations.
+
+    :ivar application_id: The application ID, also known as client ID, of the service principal.
+    :vartype application_id: str
+    :ivar password: The password of the service principal.
+    :vartype password: str
+    :ivar principal_id: The principal ID, also known as the object ID, of the service principal.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID, also known as the directory ID, of the tenant in which the
+     service principal is created.
+    :vartype tenant_id: str
+    """
+
+    application_id: Optional[str] = rest_field(
+        name="applicationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The application ID, also known as client ID, of the service principal."""
+    password: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The password of the service principal."""
+    principal_id: Optional[str] = rest_field(
+        name="principalId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The principal ID, also known as the object ID, of the service principal."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The tenant ID, also known as the directory ID, of the tenant in which the service principal is
+     created."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        application_id: Optional[str] = None,
+        password: Optional[str] = None,
+        principal_id: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SshPublicKey(_Model):
     """SshPublicKey represents the public key used to authenticate with a resource through SSH.
 
@@ -9175,6 +9623,34 @@ class SshPublicKey(_Model):
         self,
         *,
         key_data: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SshPublicKeyPatch(_Model):
+    """SshPublicKeyPatch represents the public key used to authenticate with a resource through SSH.
+
+    :ivar key_data: The SSH public key data.
+    :vartype key_data: str
+    """
+
+    key_data: Optional[str] = rest_field(name="keyData", visibility=["read", "create", "update", "delete", "query"])
+    """The SSH public key data."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_data: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -9415,6 +9891,63 @@ class StorageApplianceConfigurationData(_Model):
         super().__init__(*args, **kwargs)
 
 
+class StorageApplianceConfigurationDataPatch(_Model):
+    """StorageApplianceConfigurationDataPatch represents configuration for the storage application for
+    patch operations.
+
+    :ivar admin_credentials: The credentials of the administrative interface on this storage
+     appliance. The password field is expected to be an Azure Key Vault key URL. Until the cluster
+     is converted to utilize managed identity by setting the secret archive settings, the actual
+     password value should be provided instead.
+    :vartype admin_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentialsPatch
+    :ivar rack_slot: The slot that storage appliance is in the rack based on the BOM configuration.
+    :vartype rack_slot: int
+    :ivar serial_number: The serial number of the appliance.
+    :vartype serial_number: str
+    :ivar storage_appliance_name: The user-provided name for the storage appliance that will be
+     created from this specification.
+    :vartype storage_appliance_name: str
+    """
+
+    admin_credentials: Optional["_models.AdministrativeCredentialsPatch"] = rest_field(
+        name="adminCredentials", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The credentials of the administrative interface on this storage appliance. The password field
+     is expected to be an Azure Key Vault key URL. Until the cluster is converted to utilize managed
+     identity by setting the secret archive settings, the actual password value should be provided
+     instead."""
+    rack_slot: Optional[int] = rest_field(name="rackSlot", visibility=["read", "create", "update", "delete", "query"])
+    """The slot that storage appliance is in the rack based on the BOM configuration."""
+    serial_number: Optional[str] = rest_field(
+        name="serialNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The serial number of the appliance."""
+    storage_appliance_name: Optional[str] = rest_field(
+        name="storageApplianceName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The user-provided name for the storage appliance that will be created from this specification."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        admin_credentials: Optional["_models.AdministrativeCredentialsPatch"] = None,
+        rack_slot: Optional[int] = None,
+        serial_number: Optional[str] = None,
+        storage_appliance_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class StorageApplianceEnableRemoteVendorManagementParameters(_Model):  # pylint: disable=name-too-long
     """StorageApplianceEnableRemoteVendorManagementParameters represents the body of the request to
     enable remote vendor management of a storage appliance.
@@ -9490,20 +10023,20 @@ class StorageApplianceMonitoringConfigurationStatus(_Model):  # pylint: disable=
     :ivar log_level: The log level for the monitoring configuration status of the storage
      appliance. Known values are: "Default" and "Nexus".
     :vartype log_level: str or
-     ~azure.mgmt.networkcloud.models.StorageApplianceMetricsConfigurationStatusLogLevel
+     ~azure.mgmt.networkcloud.models.StorageApplianceMonitoringConfigurationStatusLogLevel
     :ivar metrics_level: The metrics level for the monitoring configuration status of the storage
      appliance. Known values are: "Default" and "Nexus".
     :vartype metrics_level: str or
-     ~azure.mgmt.networkcloud.models.StorageApplianceMetricsConfigurationStatusMetricsLevel
+     ~azure.mgmt.networkcloud.models.StorageApplianceMonitoringConfigurationStatusMetricsLevel
     """
 
-    log_level: Optional[Union[str, "_models.StorageApplianceMetricsConfigurationStatusLogLevel"]] = rest_field(
+    log_level: Optional[Union[str, "_models.StorageApplianceMonitoringConfigurationStatusLogLevel"]] = rest_field(
         name="logLevel", visibility=["read", "create", "update", "delete", "query"]
     )
     """The log level for the monitoring configuration status of the storage appliance. Known values
      are: \"Default\" and \"Nexus\"."""
-    metrics_level: Optional[Union[str, "_models.StorageApplianceMetricsConfigurationStatusMetricsLevel"]] = rest_field(
-        name="metricsLevel", visibility=["read", "create", "update", "delete", "query"]
+    metrics_level: Optional[Union[str, "_models.StorageApplianceMonitoringConfigurationStatusMetricsLevel"]] = (
+        rest_field(name="metricsLevel", visibility=["read", "create", "update", "delete", "query"])
     )
     """The metrics level for the monitoring configuration status of the storage appliance. Known
      values are: \"Default\" and \"Nexus\"."""
@@ -9512,8 +10045,8 @@ class StorageApplianceMonitoringConfigurationStatus(_Model):  # pylint: disable=
     def __init__(
         self,
         *,
-        log_level: Optional[Union[str, "_models.StorageApplianceMetricsConfigurationStatusLogLevel"]] = None,
-        metrics_level: Optional[Union[str, "_models.StorageApplianceMetricsConfigurationStatusMetricsLevel"]] = None,
+        log_level: Optional[Union[str, "_models.StorageApplianceMonitoringConfigurationStatusLogLevel"]] = None,
+        metrics_level: Optional[Union[str, "_models.StorageApplianceMonitoringConfigurationStatusMetricsLevel"]] = None,
     ) -> None: ...
 
     @overload
@@ -10342,6 +10875,53 @@ class ValidationThreshold(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ValidationThresholdPatch(_Model):
+    """ValidationThresholdPatch indicates allowed machine and node hardware and deployment failures
+    for patch operations.
+
+    :ivar grouping: Selection of how the type evaluation is applied to the cluster calculation.
+     Known values are: "PerCluster" and "PerRack".
+    :vartype grouping: str or ~azure.mgmt.networkcloud.models.ValidationThresholdGrouping
+    :ivar type: Selection of how the threshold should be evaluated. Known values are:
+     "CountSuccess" and "PercentSuccess".
+    :vartype type: str or ~azure.mgmt.networkcloud.models.ValidationThresholdType
+    :ivar value: The numeric threshold value.
+    :vartype value: int
+    """
+
+    grouping: Optional[Union[str, "_models.ValidationThresholdGrouping"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Selection of how the type evaluation is applied to the cluster calculation. Known values are:
+     \"PerCluster\" and \"PerRack\"."""
+    type: Optional[Union[str, "_models.ValidationThresholdType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Selection of how the threshold should be evaluated. Known values are: \"CountSuccess\" and
+     \"PercentSuccess\"."""
+    value: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The numeric threshold value."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        grouping: Optional[Union[str, "_models.ValidationThresholdGrouping"]] = None,
+        type: Optional[Union[str, "_models.ValidationThresholdType"]] = None,
+        value: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class VirtualMachine(TrackedResource):
     """VirtualMachine represents the on-premises Network Cloud virtual machine.
 
@@ -10571,10 +11151,10 @@ class VirtualMachinePatchProperties(_Model):
     :ivar vm_image_repository_credentials: The credentials used to login to the image repository
      that has access to the specified image.
     :vartype vm_image_repository_credentials:
-     ~azure.mgmt.networkcloud.models.ImageRepositoryCredentials
+     ~azure.mgmt.networkcloud.models.ImageRepositoryCredentialsPatch
     """
 
-    vm_image_repository_credentials: Optional["_models.ImageRepositoryCredentials"] = rest_field(
+    vm_image_repository_credentials: Optional["_models.ImageRepositoryCredentialsPatch"] = rest_field(
         name="vmImageRepositoryCredentials", visibility=["read", "create", "update", "delete", "query"]
     )
     """The credentials used to login to the image repository that has access to the specified image."""
@@ -10583,7 +11163,7 @@ class VirtualMachinePatchProperties(_Model):
     def __init__(
         self,
         *,
-        vm_image_repository_credentials: Optional["_models.ImageRepositoryCredentials"] = None,
+        vm_image_repository_credentials: Optional["_models.ImageRepositoryCredentialsPatch"] = None,
     ) -> None: ...
 
     @overload

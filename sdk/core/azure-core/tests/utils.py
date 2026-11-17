@@ -3,20 +3,24 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import pytest
 import types
 import io
+
+import pytest
 
 ############################## LISTS USED TO PARAMETERIZE TESTS ##############################
 from azure.core.rest import HttpRequest as RestHttpRequest
 from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest
 from azure.core.pipeline._tools import is_rest
+from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse
+from azure.core.rest._http_response_impl import HttpResponseImpl as RestHttpResponse
+from azure.core.pipeline.transport._base import (
+    HttpClientTransportResponse as PipelineTransportHttpClientTransportResponse,
+)
+from azure.core.rest._http_response_impl import RestHttpClientTransportResponse
 
 HTTP_REQUESTS = [PipelineTransportHttpRequest, RestHttpRequest]
 REQUESTS_TRANSPORT_RESPONSES = []
-
-from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse
-from azure.core.rest._http_response_impl import HttpResponseImpl as RestHttpResponse
 
 HTTP_RESPONSES = [PipelineTransportHttpResponse, RestHttpResponse]
 
@@ -37,11 +41,6 @@ try:
     REQUESTS_TRANSPORT_RESPONSES = [PipelineTransportRequestsTransportResponse, RestRequestsTransportResponse]
 except ImportError:
     pass
-
-from azure.core.pipeline.transport._base import (
-    HttpClientTransportResponse as PipelineTransportHttpClientTransportResponse,
-)
-from azure.core.rest._http_response_impl import RestHttpClientTransportResponse
 
 HTTP_CLIENT_TRANSPORT_RESPONSES = [PipelineTransportHttpClientTransportResponse, RestHttpClientTransportResponse]
 
@@ -164,7 +163,7 @@ def readonly_checks(response, old_response_class):
         if attr[0] == "_":
             # don't care about private variables
             continue
-        if type(getattr(response, attr)) == types.MethodType:
+        if isinstance(getattr(response, attr), types.MethodType):
             # methods aren't "readonly"
             continue
         if attr == "encoding":

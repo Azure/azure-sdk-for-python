@@ -8,9 +8,7 @@
 import pytest
 from azure.mgmt.search import SearchManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
-
-AZURE_LOCATION = "eastus"
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 
 
 @pytest.mark.live_test_only
@@ -18,9 +16,8 @@ class TestSearchManagement(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(SearchManagementClient)
 
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_usage_by_subscription_sku(self, resource_group):
+    def test_usage_by_subscription_sku(self):
         response = self.client.usage_by_subscription_sku(
             location="eastus",
             sku_name="standard",

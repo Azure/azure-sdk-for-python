@@ -42,5 +42,5 @@
         "azure.mgmt.serialconsole.MicrosoftSerialConsoleClient.enable_console": "Microsoft.SerialConsole.SerialConsoleOperationGroup.enableConsole",
         "azure.mgmt.serialconsole.aio.MicrosoftSerialConsoleClient.enable_console": "Microsoft.SerialConsole.SerialConsoleOperationGroup.enableConsole"
     },
-    "CrossLanguageVersion": "5adfdb87c1a4"
+    "CrossLanguageVersion": "84ed473fce85"
 }

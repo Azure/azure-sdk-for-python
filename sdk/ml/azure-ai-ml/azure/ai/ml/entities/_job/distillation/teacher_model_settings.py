@@ -17,10 +17,10 @@ class TeacherModelSettings:
     ):
         """Initialize TeacherModelSettings
 
-        :param inference_parameters: The inference parameters inferencing requests will use, defaults to None
-        :type inference_parameters: typing.Optional[typing.Dict], optional
-        :param endpoint_request_settings: The settings to use for the endpoint, defaults to None
-        :type endpoint_request_settings: typing.Optional[EndpointRequestSettings], optional
+        :keyword inference_parameters: The inference parameters inferencing requests will use, defaults to None
+        :paramtype inference_parameters: typing.Optional[typing.Dict], optional
+        :keyword endpoint_request_settings: The settings to use for the endpoint, defaults to None
+        :paramtype endpoint_request_settings: typing.Optional[EndpointRequestSettings], optional
         """
         self._inference_parameters = inference_parameters
         self._endpoint_request_settings = endpoint_request_settings

@@ -32,7 +32,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 # -------------------------------------------------------------------------
 
-import asyncio # pylint:disable=do-not-import-asyncio
+import asyncio  # pylint:disable=do-not-import-asyncio
 import errno
 import socket
 import ssl
@@ -273,28 +273,25 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
                 self.connected = False
             raise
 
-    def _get_tcp_socket_defaults(self, sock):
+    def _get_tcp_socket_defaults(self):
         tcp_opts = {}
-        for opt in KNOWN_TCP_OPTS:
+        for opt, val in DEFAULT_SOCKET_SETTINGS.items():
+            if opt not in KNOWN_TCP_OPTS:
+                continue
             enum = None
             if opt == "TCP_USER_TIMEOUT":
                 try:
                     from socket import TCP_USER_TIMEOUT as enum
                 except ImportError:
-                    # should be in Python 3.6+ on Linux.
                     enum = 18
             elif hasattr(socket, opt):
                 enum = getattr(socket, opt)
-
             if enum:
-                if opt in DEFAULT_SOCKET_SETTINGS:
-                    tcp_opts[enum] = DEFAULT_SOCKET_SETTINGS[opt]
-                elif hasattr(socket, opt):
-                    tcp_opts[enum] = sock.getsockopt(SOL_TCP, getattr(socket, opt))
+                tcp_opts[enum] = val
         return tcp_opts
 
     def _set_socket_options(self, sock, socket_settings):
-        tcp_opts = self._get_tcp_socket_defaults(sock)
+        tcp_opts = self._get_tcp_socket_defaults()
         if socket_settings:
             tcp_opts.update(socket_settings)
         for opt, val in tcp_opts.items():
@@ -448,6 +445,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
 
             http_proxy_auth = BasicAuth(login=username, password=password)
 
+        await self._close_session()
         self.session = ClientSession()
         if self._custom_endpoint:
             url = f"wss://{self._custom_endpoint}" if self._use_tls else f"ws://{self._custom_endpoint}"
@@ -477,6 +475,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
             )
         except ClientConnectorError as exc:
             _LOGGER.info("Websocket connect failed: %r", exc, extra=self.network_trace_params)
+            await self._close_session(suppress_errors=True)
             if self._custom_endpoint:
                 raise AuthenticationException(
                     ErrorCondition.ClientError,
@@ -484,7 +483,21 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
                     error=exc,
                 ) from exc
             raise ConnectionError("Failed to establish websocket connection: " + str(exc)) from exc
+        except BaseException:  # pylint: disable=broad-except
+            await self._close_session(suppress_errors=True)
+            raise
         self.connected = True
+
+    async def _close_session(self, *, suppress_errors=False):
+        session, self.session = self.session, None
+        if session is None:
+            return
+        try:
+            await session.close()
+        except BaseException as exc:  # pylint: disable=broad-except
+            if not suppress_errors:
+                raise
+            _LOGGER.debug("Error closing aiohttp session: %r", exc, extra=self.network_trace_params)
 
     async def _read(self, toread, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer.
@@ -524,9 +537,17 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
         async with self.socket_lock:
-            await self.sock.close()
-            await self.session.close()
-            self.connected = False
+            try:
+                if self.sock is not None:
+                    await self.sock.close()
+            except BaseException:  # pylint: disable=broad-except
+                await self._close_session(suppress_errors=True)
+                raise
+            else:
+                await self._close_session()
+            finally:
+                self.sock = None
+                self.connected = False
 
     async def _write(self, s):
         """Completely write a string (byte array) to the peer.

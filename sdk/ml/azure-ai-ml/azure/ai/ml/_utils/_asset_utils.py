@@ -10,6 +10,7 @@ import logging
 import os
 import uuid
 import warnings
+from collections.abc import MutableMapping
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import suppress
 from multiprocessing import cpu_count
@@ -765,25 +766,27 @@ def _get_next_version_from_container(
     resource_group_name: str,
     workspace_name: str,
     registry_name: str = None,
+    registry_service_client: Any = None,
+    asset_plural: str = None,
     **kwargs,
 ) -> str:
     try:
-        container = (
-            container_operation.get(
-                name=name,
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                **kwargs,
+        if registry_name:
+            # Byte-identical to the legacy v2021_10 registry container GET (same MFE endpoint + api-version).
+            from azure.ai.ml._utils._registry_utils import get_registry_container_asset
+
+            container = get_registry_container_asset(
+                registry_service_client, asset_plural, name, resource_group_name, registry_name
             )
-            if registry_name
-            else container_operation.get(
+            version = container["properties"]["nextVersion"]
+        else:
+            container = container_operation.get(
                 name=name,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 **kwargs,
             )
-        )
-        version = container.properties.next_version
+            version = container.properties.next_version
 
     except ResourceNotFoundError:
         version = "1"
@@ -796,26 +799,28 @@ def _get_next_latest_versions_from_container(
     resource_group_name: str,
     workspace_name: str,
     registry_name: str = None,
+    registry_service_client: Any = None,
+    asset_plural: str = None,
     **kwargs,
 ) -> str:
     try:
-        container = (
-            container_operation.get(
-                name=name,
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                **kwargs,
+        if registry_name:
+            from azure.ai.ml._utils._registry_utils import get_registry_container_asset
+
+            container = get_registry_container_asset(
+                registry_service_client, asset_plural, name, resource_group_name, registry_name
             )
-            if registry_name
-            else container_operation.get(
+            next_version = container["properties"]["nextVersion"]
+            latest_version = container["properties"]["latestVersion"]
+        else:
+            container = container_operation.get(
                 name=name,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 **kwargs,
             )
-        )
-        next_version = container.properties.next_version
-        latest_version = container.properties.latest_version
+            next_version = container.properties.next_version
+            latest_version = container.properties.latest_version
 
     except ResourceNotFoundError:
         next_version = "1"
@@ -829,25 +834,26 @@ def _get_latest_version_from_container(
     resource_group_name: str,
     workspace_name: Optional[str] = None,
     registry_name: Optional[str] = None,
+    registry_service_client: Any = None,
+    asset_plural: str = None,
     **kwargs,
 ) -> str:
     try:
-        container = (
-            container_operation.get(
-                name=asset_name,
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                **kwargs,
+        if registry_name:
+            from azure.ai.ml._utils._registry_utils import get_registry_container_asset
+
+            container = get_registry_container_asset(
+                registry_service_client, asset_plural, asset_name, resource_group_name, registry_name
             )
-            if registry_name
-            else container_operation.get(
+            version = container["properties"]["latestVersion"]
+        else:
+            container = container_operation.get(
                 name=asset_name,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 **kwargs,
             )
-        )
-        version = container.properties.latest_version
+            version = container.properties.latest_version
 
     except ResourceNotFoundError as e:
         message = (
@@ -877,6 +883,9 @@ def _get_latest(
     workspace_name: Optional[str] = None,
     registry_name: Optional[str] = None,
     order_by: Literal[OrderString.CREATED_AT, OrderString.CREATED_AT_DESC] = OrderString.CREATED_AT_DESC,
+    registry_service_client: Any = None,
+    asset_plural: str = None,
+    arm_cls: Any = None,
     **kwargs,
 ) -> Union[ModelVersionData, DataVersionBaseData]:
     """Retrieve the latest version of the asset with the given name.
@@ -895,20 +904,32 @@ def _get_latest(
     :type registry_name: Optional[str]
     :param order_by: Specifies how to order the results. Defaults to :attr:`OrderString.CREATED_AT_DESC`
     :type order_by: Literal[OrderString.CREATED_AT, OrderString.CREATED_AT_DESC]
+    :param registry_service_client: The registry data-plane service client (registry scenario only).
+    :type registry_service_client: Any
+    :param asset_plural: The plural asset segment used in the registry URL (registry scenario only).
+    :type asset_plural: str
+    :param arm_cls: The arm model class used to deserialize the registry response (registry scenario only).
+    :type arm_cls: Any
     :return: The latest version of the requested asset
     :rtype: Union[ModelVersionData, DataVersionBaseData]
     """
-    result = (
-        version_operation.list(
-            name=asset_name,
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
+    if registry_name:
+        # Byte-identical to the legacy v2021_10 registry version list ($orderBy + $top=1 on the MFE endpoint).
+        from azure.ai.ml._utils._registry_utils import list_registry_assets
+
+        result = list_registry_assets(
+            registry_service_client,
+            asset_plural,
+            asset_name,
+            resource_group_name,
+            registry_name,
+            arm_cls,
+            lambda x: x,
             order_by=order_by,
             top=1,
-            **kwargs,
         )
-        if registry_name
-        else version_operation.list(
+    else:
+        result = version_operation.list(
             name=asset_name,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
@@ -916,7 +937,6 @@ def _get_latest(
             top=1,
             **kwargs,
         )
-    )
     try:
         latest = result.next()
     except StopIteration:
@@ -946,6 +966,32 @@ def _get_latest(
     return latest
 
 
+def _archive_restore_body(resource: Any, drop_stage: bool) -> Any:
+    """Prune an arm asset model in place so its archive/restore PUT body is byte-identical to the legacy client.
+
+    The wire recordings were captured with the legacy msrest client, which omitted ``None``-valued properties and, for
+    versioned assets, dropped ``stage`` (the old code set ``properties.stage = None``). The hybrid ``SdkJSONEncoder``
+    instead emits untyped ``None`` keys as explicit ``null`` and retains the untyped ``stage`` key. This removes those
+    keys from the model's ``properties`` mapping in place (``is_archived`` must already be set) so serialization matches
+    the original request body. The same model object is returned so callers keep passing one ``body`` reference.
+
+    :param resource: The arm hybrid version/container model (with ``is_archived`` already set).
+    :type resource: Any
+    :param drop_stage: When ``True`` (version assets) the ``stage`` property is removed to match the legacy behavior of
+        setting it to ``None``; containers have no ``stage`` and pass ``False``.
+    :type drop_stage: bool
+    :return: The same ``resource`` with its properties pruned.
+    :rtype: Any
+    """
+    props = getattr(resource, "properties", None)
+    if isinstance(props, MutableMapping):
+        for key in [k for k, v in list(props.items()) if v is None]:
+            del props[key]
+        if drop_stage and "stage" in props:
+            del props["stage"]
+    return resource
+
+
 def _archive_or_restore(
     asset_operations: Union[
         "DataOperations",
@@ -969,10 +1015,14 @@ def _archive_or_restore(
     name: str,
     version: Optional[str] = None,
     label: Optional[str] = None,
+    asset_plural: str = None,
+    version_arm_cls: Any = None,
+    container_arm_cls: Any = None,
 ) -> None:
     resource_group_name = asset_operations._operation_scope._resource_group_name
     workspace_name = asset_operations._workspace_name
     registry_name = asset_operations._registry_name
+    registry_service_client = getattr(asset_operations, "_registry_service_client", None)
     if version and label:
         msg = "Cannot specify both version and label."
         raise ValidationException(
@@ -986,70 +1036,79 @@ def _archive_or_restore(
         version = _resolve_label_to_asset(asset_operations, name, label).version
 
     if version:
-        version_resource = (
-            version_operation.get(
-                name=name,
-                version=version,
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
+        if registry_name:
+            # Byte-identical registry version archive/restore: GET -> mutate is_archived/stage -> PUT (all on MFE).
+            from azure.ai.ml._utils._registry_utils import (
+                begin_create_or_update_registry_versioned_asset,
+                get_registry_versioned_asset,
             )
-            if registry_name
-            else version_operation.get(
+
+            version_resource = version_arm_cls._deserialize(
+                get_registry_versioned_asset(
+                    registry_service_client, asset_plural, name, version, resource_group_name, registry_name
+                ),
+                [],
+            )
+            version_resource.properties.is_archived = is_archived
+            begin_create_or_update_registry_versioned_asset(
+                registry_service_client,
+                asset_plural,
+                name,
+                version,
+                resource_group_name,
+                registry_name,
+                _archive_restore_body(version_resource, drop_stage=True),
+            )
+        else:
+            version_resource = version_operation.get(
                 name=name,
                 version=version,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
             )
-        )
-        version_resource.properties.is_archived = is_archived
-        version_resource.properties.stage = None
-        (  # pylint: disable=expression-not-assigned
-            version_operation.begin_create_or_update(
-                name=name,
-                version=version,
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                body=version_resource,
-            )
-            if registry_name
-            else version_operation.create_or_update(
+            version_resource.properties.is_archived = is_archived
+            version_operation.create_or_update(
                 name=name,
                 version=version,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
-                body=version_resource,
+                body=_archive_restore_body(version_resource, drop_stage=True),
             )
-        )
     else:
-        container_resource = (
-            container_operation.get(
-                name=name,
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
+        if registry_name:
+            from azure.ai.ml._utils._registry_utils import (
+                begin_create_or_update_registry_container,
+                get_registry_container_asset,
             )
-            if registry_name
-            else container_operation.get(
+
+            container_resource = container_arm_cls._deserialize(
+                get_registry_container_asset(
+                    registry_service_client, asset_plural, name, resource_group_name, registry_name
+                ),
+                [],
+            )
+            container_resource.properties.is_archived = is_archived
+            begin_create_or_update_registry_container(
+                registry_service_client,
+                asset_plural,
+                name,
+                resource_group_name,
+                registry_name,
+                _archive_restore_body(container_resource, drop_stage=False),
+            )
+        else:
+            container_resource = container_operation.get(
                 name=name,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
             )
-        )
-        container_resource.properties.is_archived = is_archived
-        (  # pylint: disable=expression-not-assigned
-            container_operation.begin_create_or_update(
-                name=name,
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                body=container_resource,
-            )
-            if registry_name
-            else container_operation.create_or_update(
+            container_resource.properties.is_archived = is_archived
+            container_operation.create_or_update(
                 name=name,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
-                body=container_resource,
+                body=_archive_restore_body(container_resource, drop_stage=False),
             )
-        )
 
 
 def _resolve_label_to_asset(

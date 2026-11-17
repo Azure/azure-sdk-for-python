@@ -35,12 +35,12 @@ class Import(BaseNode):
     You should not instantiate this class directly. Instead, you should
     create from a builder function.
 
-    :param component: Id or instance of the import component/job to be run for the step.
-    :type component: ~azure.ai.ml.entities._component.import_component.ImportComponent
-    :param inputs: Input parameters to the import.
-    :type inputs: Dict[str, str]
-    :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: Dict[str, Union[str, ~azure.ai.ml.entities.Output]]
+    :keyword component: Id or instance of the import component/job to be run for the step.
+    :paramtype component: ~azure.ai.ml.entities._component.import_component.ImportComponent
+    :keyword inputs: Input parameters to the import.
+    :paramtype inputs: Dict[str, str]
+    :keyword outputs: Mapping of output data bindings used in the job.
+    :paramtype outputs: Dict[str, Union[str, ~azure.ai.ml.entities.Output]]
     :param name: Name of the import.
     :type name: str
     :param description: Description of the import.

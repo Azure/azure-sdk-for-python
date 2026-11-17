@@ -1,0 +1,43 @@
+{
+  "properties": {
+    "action": {
+      "actionType": "CreateJob",
+      "jobDefinition": {
+        "inputs": {},
+        "isArchived": false,
+        "jobType": "Pipeline",
+        "jobs": {
+          "node1": {
+            "_source": "BUILDER",
+            "componentId": "name: node1\ntype: command\ninputs:\n  x:\n    type: integer\n    default: '1'\ncommand: echo ${{inputs.x}}\nenvironment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33\nis_deterministic: true\n",
+            "computeId": "smoke-compute",
+            "inputs": {
+              "x": {
+                "job_input_type": "literal",
+                "value": "1"
+              }
+            },
+            "name": "node1",
+            "type": "command"
+          }
+        },
+        "outputs": {},
+        "properties": {},
+        "settings": {
+          "_source": "CLASS",
+          "default_compute": "smoke-compute"
+        },
+        "tags": {}
+      }
+    },
+    "displayName": "smoke-schedule-pipeline-display",
+    "properties": {},
+    "tags": {},
+    "trigger": {
+      "expression": "15 10 * * 1",
+      "startTime": "2026-01-01T00:00:00",
+      "timeZone": "UTC",
+      "triggerType": "Cron"
+    }
+  }
+}

@@ -1,0 +1,1094 @@
+# pylint: disable=networking-import-outside-azure-core-transport,too-many-lines
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
+"""Asynchronous Realtime voice-agent client.
+
+Use ``async with client.voice_agents.realtime.connect(...)`` to open a session.
+Send text or audio through the connection and use ``async for`` to receive events.
+Known events use SDK models; unknown event types are returned as dictionaries.
+Install ``azure-ai-projects[voice]`` for the optional WebSocket dependencies.
+"""
+
+from __future__ import annotations
+
+import asyncio  # pylint: disable=do-not-import-asyncio
+import base64
+import json
+import logging
+from urllib.parse import quote, urlparse
+from typing import (
+    Any,
+    AsyncIterator,
+    cast,
+    Dict,
+    Generic,
+    List,
+    Mapping,
+    Optional,
+    Protocol,
+    Tuple,
+    Type,
+    TypeVar,
+    TYPE_CHECKING,
+    Union,
+)
+
+from azure.core.pipeline.policies import UserAgentPolicy
+
+from .. import models as _models
+from ..models._enums import _AgentDefinitionOptInKeys
+from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
+from .._utils.model_base import Model as _Model, SdkJSONEncoder
+from .._version import VERSION
+from .._realtime_utils import _normalize_transport, _without_transport_query
+
+_LOGGER = logging.getLogger("azure.ai.projects.realtime")
+
+# Preview voice features use the same opt-in for WebSocket and REST requests.
+_VOICE_AGENT_FEATURE_HEADER: str = _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value
+
+# The WebSocket handshake does not use the HTTP pipeline, so identify the SDK explicitly.
+_USER_AGENT: str = UserAgentPolicy(sdk_moniker=f"ai-projects/{VERSION}").user_agent
+
+if TYPE_CHECKING:
+    from aiohttp import ClientSession, ClientWebSocketResponse
+    from azure.core.credentials_async import AsyncTokenCredential
+    from ._configuration import AIProjectClientConfiguration
+
+
+class _ConfigProvider(Protocol):
+    """Provide the project endpoint, credential, and shared client settings."""
+
+    _config: "AIProjectClientConfiguration"
+
+
+__all__ = [
+    "AsyncRealtime",
+    "AsyncRealtimeConnection",
+    "AsyncRealtimeConnectionManager",
+    "ClientEvent",
+    "ConversationItem",
+    "ServerEvent",
+]
+
+# Union of the client event models sendable over the connection, plus a raw mapping escape
+# hatch for forward compatibility with event types not yet represented in the generated models.
+ClientEvent = Union[
+    _models.RealtimeClientEventConversationItemCreate,
+    _models.RealtimeClientEventConversationItemDelete,
+    _models.RealtimeClientEventConversationItemRetrieve,
+    _models.RealtimeClientEventConversationItemTruncate,
+    _models.RealtimeClientEventInputAudioBufferAppend,
+    _models.RealtimeClientEventInputAudioBufferClear,
+    _models.RealtimeClientEventInputAudioBufferCommit,
+    _models.RealtimeClientEventOutputAudioBufferClear,
+    _models.RealtimeClientEventResponseCancel,
+    _models.RealtimeClientEventResponseCreate,
+    _models.VoiceAgentClientEventRtcCallSdpCreate,
+    _models.VoiceAgentClientEventSessionAvatarConnect,
+    _models.VoiceAgentClientEventSessionUpdate,
+    str,
+    Mapping[str, Any],
+]
+
+# The conversation item variants accepted by ``conversation.item.create``.
+ConversationItem = Union[
+    _models.RealtimeConversationItemMessageSystem,
+    _models.RealtimeConversationItemMessageUser,
+    _models.RealtimeConversationItemMessageAssistant,
+    _models.RealtimeConversationItemFunctionCall,
+    _models.RealtimeConversationItemFunctionCallOutput,
+    _models.RealtimeMCPApprovalResponse,
+    Mapping[str, Any],
+]
+
+# Every server event ``type`` string mapped to its generated model, used to deserialize
+# inbound frames into strongly-typed objects. Event types not represented by a dedicated
+# generated model in this package (for example ``conversation.created``) are intentionally
+# left out here and fall back to a plain ``dict``, as do any newly-added service events.
+_SERVER_EVENT_TYPES: Dict[str, Type[_Model]] = {
+    "conversation.item.added": _models.RealtimeServerEventConversationItemAdded,
+    "conversation.item.created": _models.RealtimeServerEventConversationItemCreated,
+    "conversation.item.deleted": _models.RealtimeServerEventConversationItemDeleted,
+    "conversation.item.done": _models.RealtimeServerEventConversationItemDone,
+    "conversation.item.input_audio_transcription.completed": (
+        _models.RealtimeServerEventConversationItemInputAudioTranscriptionCompleted
+    ),
+    "conversation.item.input_audio_transcription.delta": (
+        _models.RealtimeServerEventConversationItemInputAudioTranscriptionDelta
+    ),
+    "conversation.item.input_audio_transcription.failed": (
+        _models.RealtimeServerEventConversationItemInputAudioTranscriptionFailed
+    ),
+    "conversation.item.input_audio_transcription.segment": (
+        _models.RealtimeServerEventConversationItemInputAudioTranscriptionSegment
+    ),
+    "conversation.item.retrieved": _models.RealtimeServerEventConversationItemRetrieved,
+    "conversation.item.truncated": _models.RealtimeServerEventConversationItemTruncated,
+    # Shared OpenAI-style Realtime error event (not voice-agent specific in this package).
+    "error": _models.RealtimeServerEventError,
+    "input_audio_buffer.cleared": _models.RealtimeServerEventInputAudioBufferCleared,
+    "input_audio_buffer.committed": _models.RealtimeServerEventInputAudioBufferCommitted,
+    "input_audio_buffer.speech_started": _models.RealtimeServerEventInputAudioBufferSpeechStarted,
+    "input_audio_buffer.speech_stopped": _models.RealtimeServerEventInputAudioBufferSpeechStopped,
+    "input_audio_buffer.timeout_triggered": (_models.RealtimeServerEventInputAudioBufferTimeoutTriggered),
+    "input_collection.status": _models.VoiceAgentServerEventInputCollectionStatus,
+    "mcp_list_tools.completed": _models.RealtimeServerEventMCPListToolsCompleted,
+    "mcp_list_tools.failed": _models.RealtimeServerEventMCPListToolsFailed,
+    "mcp_list_tools.in_progress": _models.RealtimeServerEventMCPListToolsInProgress,
+    "output_audio_buffer.cleared": _models.RealtimeServerEventOutputAudioBufferCleared,
+    "rate_limits.updated": _models.RealtimeServerEventRateLimitsUpdated,
+    "response.animation_blendshapes.delta": (_models.VoiceAgentServerEventResponseAnimationBlendshapesDelta),
+    "response.animation_blendshapes.done": (_models.VoiceAgentServerEventResponseAnimationBlendshapesDone),
+    "response.animation_viseme.delta": _models.VoiceAgentServerEventResponseAnimationVisemeDelta,
+    "response.animation_viseme.done": _models.VoiceAgentServerEventResponseAnimationVisemeDone,
+    "response.audio_timestamp.delta": _models.VoiceAgentServerEventResponseAudioTimestampDelta,
+    "response.audio_timestamp.done": _models.VoiceAgentServerEventResponseAudioTimestampDone,
+    "response.content_part.added": _models.RealtimeServerEventResponseContentPartAdded,
+    "response.content_part.done": _models.RealtimeServerEventResponseContentPartDone,
+    "response.created": _models.RealtimeServerEventResponseCreated,
+    "response.done": _models.RealtimeServerEventResponseDone,
+    "response.function_call_arguments.delta": (_models.RealtimeServerEventResponseFunctionCallArgumentsDelta),
+    "response.function_call_arguments.done": (_models.RealtimeServerEventResponseFunctionCallArgumentsDone),
+    "response.mcp_call.completed": _models.RealtimeServerEventResponseMCPCallCompleted,
+    "response.mcp_call.failed": _models.RealtimeServerEventResponseMCPCallFailed,
+    "response.mcp_call.in_progress": _models.RealtimeServerEventResponseMCPCallInProgress,
+    "response.mcp_call_arguments.delta": _models.RealtimeServerEventResponseMCPCallArgumentsDelta,
+    "response.mcp_call_arguments.done": _models.RealtimeServerEventResponseMCPCallArgumentsDone,
+    "response.output_audio.delta": _models.RealtimeServerEventResponseAudioDelta,
+    "response.output_audio.done": _models.RealtimeServerEventResponseAudioDone,
+    "response.output_audio_transcript.delta": (_models.RealtimeServerEventResponseAudioTranscriptDelta),
+    "response.output_audio_transcript.done": (_models.RealtimeServerEventResponseAudioTranscriptDone),
+    "response.output_item.added": _models.RealtimeServerEventResponseOutputItemAdded,
+    "response.output_item.done": _models.RealtimeServerEventResponseOutputItemDone,
+    "response.output_text.delta": _models.RealtimeServerEventResponseTextDelta,
+    "response.output_text.done": _models.RealtimeServerEventResponseTextDone,
+    "response.system_tool_arguments.delta": _models.VoiceAgentServerEventSystemToolArgumentsDelta,
+    "response.system_tool_arguments.done": _models.VoiceAgentServerEventSystemToolArgumentsDone,
+    "response.video.delta": _models.VoiceAgentServerEventResponseVideoDelta,
+    "rtc.call.error": _models.VoiceAgentServerEventRtcCallError,
+    "rtc.call.sdp.created": _models.VoiceAgentServerEventRtcCallSdpCreated,
+    "session.avatar.connecting": _models.VoiceAgentServerEventSessionAvatarConnecting,
+    "session.avatar.switch_to_idle": _models.VoiceAgentServerEventSessionAvatarSwitchToIdle,
+    "session.avatar.switch_to_speaking": _models.VoiceAgentServerEventSessionAvatarSwitchToSpeaking,
+    "session.created": _models.RealtimeServerEventSessionCreated,
+    "session.handoff.aborted": _models.VoiceAgentServerEventSessionHandoffAborted,
+    "session.handoff.completed": _models.VoiceAgentServerEventSessionHandoffCompleted,
+    "session.handoff.started": _models.VoiceAgentServerEventSessionHandoffStarted,
+    "session.subagent.aborted": _models.VoiceAgentServerEventSessionSubagentAborted,
+    "session.subagent.completed": _models.VoiceAgentServerEventSessionSubagentCompleted,
+    "session.subagent.started": _models.VoiceAgentServerEventSessionSubagentStarted,
+    "session.updated": _models.RealtimeServerEventSessionUpdated,
+    "warning": _models.VoiceAgentServerEventWarning,
+}
+
+# Every generated server event model, for consumers that want a precise return type.
+ServerEvent = Union[
+    _models.RealtimeServerEventError,
+    _models.RealtimeServerEventResponseContentPartAdded,
+    _models.RealtimeServerEventConversationItemAdded,
+    _models.RealtimeServerEventConversationItemCreated,
+    _models.RealtimeServerEventConversationItemDeleted,
+    _models.RealtimeServerEventConversationItemDone,
+    _models.RealtimeServerEventConversationItemInputAudioTranscriptionCompleted,
+    _models.RealtimeServerEventConversationItemInputAudioTranscriptionDelta,
+    _models.RealtimeServerEventConversationItemInputAudioTranscriptionFailed,
+    _models.RealtimeServerEventConversationItemInputAudioTranscriptionSegment,
+    _models.RealtimeServerEventConversationItemRetrieved,
+    _models.RealtimeServerEventConversationItemTruncated,
+    _models.RealtimeServerEventInputAudioBufferCleared,
+    _models.RealtimeServerEventInputAudioBufferCommitted,
+    _models.RealtimeServerEventInputAudioBufferSpeechStarted,
+    _models.RealtimeServerEventInputAudioBufferSpeechStopped,
+    _models.RealtimeServerEventInputAudioBufferTimeoutTriggered,
+    _models.VoiceAgentServerEventInputCollectionStatus,
+    _models.RealtimeServerEventMCPListToolsCompleted,
+    _models.RealtimeServerEventMCPListToolsFailed,
+    _models.RealtimeServerEventMCPListToolsInProgress,
+    _models.RealtimeServerEventOutputAudioBufferCleared,
+    _models.RealtimeServerEventRateLimitsUpdated,
+    _models.VoiceAgentServerEventResponseAnimationBlendshapesDelta,
+    _models.VoiceAgentServerEventResponseAnimationBlendshapesDone,
+    _models.VoiceAgentServerEventResponseAnimationVisemeDelta,
+    _models.VoiceAgentServerEventResponseAnimationVisemeDone,
+    _models.RealtimeServerEventResponseAudioDelta,
+    _models.RealtimeServerEventResponseAudioDone,
+    _models.VoiceAgentServerEventResponseAudioTimestampDelta,
+    _models.VoiceAgentServerEventResponseAudioTimestampDone,
+    _models.RealtimeServerEventResponseAudioTranscriptDelta,
+    _models.RealtimeServerEventResponseAudioTranscriptDone,
+    _models.RealtimeServerEventResponseContentPartDone,
+    _models.RealtimeServerEventResponseCreated,
+    _models.RealtimeServerEventResponseDone,
+    _models.RealtimeServerEventResponseFunctionCallArgumentsDelta,
+    _models.RealtimeServerEventResponseFunctionCallArgumentsDone,
+    _models.RealtimeServerEventResponseMCPCallArgumentsDelta,
+    _models.RealtimeServerEventResponseMCPCallArgumentsDone,
+    _models.RealtimeServerEventResponseMCPCallCompleted,
+    _models.RealtimeServerEventResponseMCPCallFailed,
+    _models.RealtimeServerEventResponseMCPCallInProgress,
+    _models.RealtimeServerEventResponseOutputItemAdded,
+    _models.RealtimeServerEventResponseOutputItemDone,
+    _models.RealtimeServerEventResponseTextDelta,
+    _models.RealtimeServerEventResponseTextDone,
+    _models.VoiceAgentServerEventSystemToolArgumentsDelta,
+    _models.VoiceAgentServerEventSystemToolArgumentsDone,
+    _models.VoiceAgentServerEventResponseVideoDelta,
+    _models.VoiceAgentServerEventRtcCallError,
+    _models.VoiceAgentServerEventRtcCallSdpCreated,
+    _models.VoiceAgentServerEventSessionAvatarConnecting,
+    _models.VoiceAgentServerEventSessionAvatarSwitchToIdle,
+    _models.VoiceAgentServerEventSessionAvatarSwitchToSpeaking,
+    _models.RealtimeServerEventSessionCreated,
+    _models.VoiceAgentServerEventSessionHandoffAborted,
+    _models.VoiceAgentServerEventSessionHandoffCompleted,
+    _models.VoiceAgentServerEventSessionHandoffStarted,
+    _models.VoiceAgentServerEventSessionSubagentAborted,
+    _models.VoiceAgentServerEventSessionSubagentCompleted,
+    _models.VoiceAgentServerEventSessionSubagentStarted,
+    _models.RealtimeServerEventSessionUpdated,
+    _models.VoiceAgentServerEventWarning,
+    Mapping[str, Any],
+]
+
+
+def _to_ws_url(endpoint: str, agent_name: str) -> str:
+    """Build the realtime WebSocket URL from the HTTPS project endpoint.
+
+    Only the ``https://`` scheme is translated (to ``wss://``); any other scheme is left
+    unchanged so that :meth:`AsyncRealtimeConnectionManager.enter`'s ``wss://``-only check
+    rejects it with a clear error instead of silently producing an unencrypted ``ws://`` URL
+    that would also send the live Authorization token in plain text.
+
+    :param str endpoint: The Foundry project endpoint (``https://.../api/projects/...``).
+    :param str agent_name: The name of the voice agent to connect to.
+    :return: A ``wss://`` URL targeting the realtime route.
+    :rtype: str
+    """
+    base = endpoint.rstrip("/")
+    if base.startswith("https://"):
+        base = "wss://" + base[len("https://") :]
+    return f"{base}/agents/{quote(agent_name, safe='')}/endpoint/protocols/voice"
+
+
+_DEFAULT_PORT_BY_SCHEME = {"http": 80, "https": 443, "ws": 80, "wss": 443}
+
+
+def _normalized_authority(url: str) -> Tuple[str, Optional[int]]:
+    """Return a ``(hostname, port)`` tuple with the scheme's default port filled in.
+
+    ``urlparse(...).port`` is ``None`` when a URL omits an explicit port, which would make
+    ``https://host/...`` and ``https://host:8443/...`` compare as equal on hostname alone.
+    Resolving the scheme's default port here lets callers compare authorities (not just
+    hostnames) so a same-host override on a different, non-default port is correctly rejected.
+
+    :param str url: The URL to parse.
+    :return: A tuple of the lower-cased hostname (or empty string) and the resolved port
+     (or ``None`` if the scheme has no known default and none was specified).
+    :rtype: tuple[str, Optional[int]]
+    """
+    parsed = urlparse(url)
+    port = parsed.port
+    if port is None:
+        port = _DEFAULT_PORT_BY_SCHEME.get((parsed.scheme or "").lower())
+    return (parsed.hostname or "").lower(), port
+
+
+def _assert_trusted_connection_url(connection_url: str, endpoint: str) -> None:
+    """Guard against attaching the caller's Entra bearer token to an untrusted host.
+
+    ``connection_url`` is an escape hatch that lets a caller override the computed
+    scheme/host/path, but the Authorization header carrying the live credential's
+    token must never be sent to a host other than the configured Foundry project
+    endpoint: a caller-controlled or compromised URL could otherwise be used to
+    exfiltrate the token to an arbitrary host or port.
+
+    :param str connection_url: The caller-supplied override URL.
+    :param str endpoint: The configured, trusted Foundry project endpoint.
+    :raises ValueError: If the override URL's host or port does not match the endpoint's.
+    """
+    override_host, override_port = _normalized_authority(connection_url)
+    trusted_host, trusted_port = _normalized_authority(endpoint)
+    if not override_host or (override_host, override_port) != (trusted_host, trusted_port):
+        got = override_host or connection_url
+        if override_host and override_port:
+            got = f"{override_host}:{override_port}"
+        raise ValueError(
+            "The 'connection_url' override must target the same host and port as the configured "
+            f"Foundry project endpoint ('{trusted_host}:{trusted_port}') to avoid sending the "
+            f"Authorization token to an untrusted host; got '{got}'."
+        )
+
+
+class _BaseResource:  # pylint: disable=too-few-public-methods
+    """Base helper that forwards typed helpers to the parent connection."""
+
+    def __init__(self, connection: "AsyncRealtimeConnection") -> None:
+        self._connection = connection
+
+    async def _send(self, event: ClientEvent) -> None:
+        await self._connection.send(event)
+
+
+class SessionResource(_BaseResource):
+    """Send ``session.*`` client events."""
+
+    async def update(
+        self,
+        *,
+        session: Union["_models.VoiceAgentSessionUpdateConfig", Mapping[str, Any]],
+        event_id: Optional[str] = None,
+    ) -> None:
+        """Update the realtime session configuration.
+
+        :keyword session: The session configuration to apply.
+        :paramtype session: ~azure.ai.projects.models.VoiceAgentSessionUpdateConfig or
+         Mapping[str, Any]
+        :keyword event_id: Optional client-generated ID used to identify this event.
+        :paramtype event_id: str or None
+        """
+        await self._send(
+            cast(Any, _models.VoiceAgentClientEventSessionUpdate)(
+                type=_models.RealtimeClientEventType.SESSION_UPDATE,
+                session=session,
+                event_id=event_id,
+            )
+        )
+
+    async def avatar_connect(self, *, client_sdp: str, event_id: Optional[str] = None) -> None:
+        """Negotiate an avatar media session over WebRTC.
+
+        :keyword str client_sdp: The client's SDP offer for avatar media negotiation.
+        :keyword event_id: An optional client-generated event identifier.
+        :paramtype event_id: str or None
+        """
+        await self._send(
+            _models.VoiceAgentClientEventSessionAvatarConnect(
+                client_sdp=client_sdp,
+                event_id=event_id,
+            )
+        )
+
+
+class InputAudioBufferResource(_BaseResource):
+    """Send ``input_audio_buffer.*`` client events."""
+
+    async def append(self, *, audio: Union[str, bytes], event_id: Optional[str] = None) -> None:
+        """Append audio bytes to the input buffer.
+
+        :keyword audio: Raw audio bytes, or an already base64-encoded string.
+        :paramtype audio: str or bytes
+        :keyword event_id: Optional client-generated ID used to identify this event.
+        :paramtype event_id: str or None
+        """
+        if isinstance(audio, (bytes, bytearray)):
+            audio = base64.b64encode(bytes(audio)).decode("ascii")
+        await self._send(
+            _models.RealtimeClientEventInputAudioBufferAppend(
+                audio=audio,
+                event_id=event_id,
+            )
+        )
+
+    async def commit(self, *, event_id: Optional[str] = None) -> None:
+        """Commit the buffered input audio as a user turn.
+
+        :keyword event_id: Optional client-generated ID used to identify this event.
+        :paramtype event_id: str or None
+        """
+        await self._send(_models.RealtimeClientEventInputAudioBufferCommit(event_id=event_id))
+
+    async def clear(self, *, event_id: Optional[str] = None) -> None:
+        """Discard any buffered input audio.
+
+        :keyword event_id: Optional client-generated ID used to identify this event.
+        :paramtype event_id: str or None
+        """
+        await self._send(_models.RealtimeClientEventInputAudioBufferClear(event_id=event_id))
+
+
+class OutputAudioBufferResource(_BaseResource):  # pylint: disable=too-few-public-methods
+    """Send ``output_audio_buffer.*`` client events."""
+
+    async def clear(self, *, event_id: Optional[str] = None) -> None:
+        """Stop and clear any audio the service is currently playing back (barge-in).
+
+        :keyword event_id: Optional client-generated ID used to identify this event.
+        :paramtype event_id: str or None
+        """
+        await self._send(_models.RealtimeClientEventOutputAudioBufferClear(event_id=event_id))
+
+
+class ConversationItemResource(_BaseResource):
+    """Send ``conversation.item.*`` client events."""
+
+    async def create(
+        self,
+        *,
+        item: ConversationItem,
+        previous_item_id: Optional[str] = None,
+        event_id: Optional[str] = None,
+    ) -> None:
+        """Insert an item into the conversation.
+
+        :keyword item: The conversation item to create.
+        :paramtype item: ~azure.ai.projects.models.RealtimeConversationItemMessageSystem or
+         ~azure.ai.projects.models.RealtimeConversationItemMessageUser or
+         ~azure.ai.projects.models.RealtimeConversationItemMessageAssistant or
+         ~azure.ai.projects.models.RealtimeConversationItemFunctionCall or
+         ~azure.ai.projects.models.RealtimeConversationItemFunctionCallOutput or
+         ~azure.ai.projects.models.RealtimeMCPApprovalResponse or Mapping[str, Any]
+        :keyword previous_item_id: The ID of the preceding item after which the new item will be
+         inserted. Default value is None.
+        :paramtype previous_item_id: str or None
+        :keyword event_id: Optional client-generated ID used to identify this event.
+        :paramtype event_id: str or None
+        """
+        await self._send(
+            cast(Any, _models.RealtimeClientEventConversationItemCreate)(
+                item=item,
+                previous_item_id=previous_item_id,
+                event_id=event_id,
+            )
+        )
+
+    async def delete(self, *, item_id: str, event_id: Optional[str] = None) -> None:
+        """Delete an item from the conversation.
+
+        :keyword str item_id: The ID of the item to delete.
+        :keyword event_id: Optional client-generated ID used to identify this event.
+        :paramtype event_id: str or None
+        """
+        await self._send(
+            _models.RealtimeClientEventConversationItemDelete(
+                item_id=item_id,
+                event_id=event_id,
+            )
+        )
+
+    async def retrieve(self, *, item_id: str, event_id: Optional[str] = None) -> None:
+        """Ask the server to emit a ``conversation.item.retrieved`` event for an item.
+
+        :keyword str item_id: The ID of the item to retrieve.
+        :keyword event_id: Optional client-generated ID used to identify this event.
+        :paramtype event_id: str or None
+        """
+        await self._send(
+            _models.RealtimeClientEventConversationItemRetrieve(
+                item_id=item_id,
+                event_id=event_id,
+            )
+        )
+
+    async def truncate(
+        self, *, item_id: str, content_index: int, audio_end_ms: int, event_id: Optional[str] = None
+    ) -> None:
+        """Truncate a previously produced assistant audio item (used for barge-in).
+
+        :keyword str item_id: The ID of the assistant message item to truncate.
+        :keyword int content_index: The index of the content part to truncate. Use ``0``.
+        :keyword int audio_end_ms: The point, in milliseconds, to truncate the audio to.
+        :keyword event_id: Optional client-generated ID used to identify this event.
+        :paramtype event_id: str or None
+        """
+        await self._send(
+            _models.RealtimeClientEventConversationItemTruncate(
+                item_id=item_id,
+                content_index=content_index,
+                audio_end_ms=audio_end_ms,
+                event_id=event_id,
+            )
+        )
+
+
+class ConversationResource(_BaseResource):  # pylint: disable=too-few-public-methods
+    """Send ``conversation.*`` client events."""
+
+    def __init__(self, connection: "AsyncRealtimeConnection") -> None:
+        super().__init__(connection)
+        self.item: ConversationItemResource = ConversationItemResource(connection)
+
+
+class ResponseResource(_BaseResource):
+    """Send ``response.*`` client events."""
+
+    async def create(
+        self,
+        *,
+        response: Optional[Union["_models.VoiceAgentResponseCreateParams", Mapping[str, Any]]] = None,
+        event_id: Optional[str] = None,
+    ) -> None:
+        """Ask the model to generate a response.
+
+        :keyword response: Optional per-response overrides. Default value is None.
+        :paramtype response: ~azure.ai.projects.models.VoiceAgentResponseCreateParams or
+         Mapping[str, Any] or None
+        :keyword event_id: Optional client-generated ID used to identify this event.
+        :paramtype event_id: str or None
+        """
+        await self._send(
+            cast(Any, _models.RealtimeClientEventResponseCreate)(
+                response=response,
+                event_id=event_id,
+            )
+        )
+
+    async def cancel(self, *, response_id: Optional[str] = None, event_id: Optional[str] = None) -> None:
+        """Cancel an in-progress response.
+
+        :keyword response_id: The ID of the response to cancel, if targeting a specific one.
+         Default value is None.
+        :paramtype response_id: str or None
+        :keyword event_id: Optional client-generated ID used to identify this event.
+        :paramtype event_id: str or None
+        """
+        await self._send(
+            _models.RealtimeClientEventResponseCancel(
+                response_id=response_id,
+                event_id=event_id,
+            )
+        )
+
+
+class _AbnormalWebSocketClosure(Exception):
+    """Internal marker chained onto :exc:`ConnectionResetError` for a non-graceful WebSocket
+    closure (an abnormal close code), so :meth:`AsyncRealtimeConnection._iter` can tell it apart
+    from a normal end of stream, which chains no cause."""
+
+
+_ServerEventT = TypeVar("_ServerEventT", bound=Union[_Model, Mapping[str, Any]])
+_ClientEventT = TypeVar("_ClientEventT", bound=Union[_Model, str, Mapping[str, Any]])
+
+
+class _BaseWebSocketConnection(Generic[_ServerEventT, _ClientEventT]):
+    """Shared asynchronous WebSocket transport for the two voice protocols.
+
+    :param connection: The open WebSocket.
+    :type connection: ~aiohttp.ClientWebSocketResponse
+    :param session: The HTTP session that owns the WebSocket.
+    :type session: ~aiohttp.ClientSession
+    """
+
+    _logger = _LOGGER
+    _server_event_types = _SERVER_EVENT_TYPES
+    _protocol_name = "realtime"
+
+    def __init__(self, connection: "ClientWebSocketResponse", session: "ClientSession") -> None:
+        self._connection = connection
+        self._session = session
+        self._close_task: Optional[asyncio.Task[None]] = None
+
+    async def __aenter__(self) -> "_BaseWebSocketConnection[_ServerEventT, _ClientEventT]":
+        return self
+
+    async def __aexit__(self, *exc_details: Any) -> None:
+        await self.close()
+
+    def __repr__(self) -> str:
+        state = "closed" if self.closed else "open"
+        return f"<{type(self).__name__} [{state}]>"
+
+    @property
+    def closed(self) -> bool:
+        """Whether the underlying WebSocket connection has been closed.
+
+        :rtype: bool
+        """
+        return self._connection.closed
+
+    def __aiter__(self) -> AsyncIterator[_ServerEventT]:
+        return self._iter()
+
+    async def _iter(self) -> AsyncIterator[_ServerEventT]:
+        while True:
+            try:
+                yield await self.recv()
+            except ConnectionResetError as exc:
+                if exc.__cause__ is None:
+                    return
+                raise
+
+    async def recv(self) -> _ServerEventT:
+        """Receive a typed event, or a mapping for an unknown event.
+
+        :return: The server event.
+        :rtype: object
+        :raises ConnectionResetError: On graceful or abnormal socket closure.
+        :raises ValueError: If the server event is not a JSON object.
+        """
+        import aiohttp  # pylint: disable=import-outside-toplevel
+
+        msg = await self._connection.receive()
+        while msg.type in (aiohttp.WSMsgType.PING, aiohttp.WSMsgType.PONG):
+            msg = await self._connection.receive()
+        if msg.type in (
+            aiohttp.WSMsgType.CLOSE,
+            aiohttp.WSMsgType.CLOSING,
+            aiohttp.WSMsgType.CLOSED,
+        ):
+            code = self._connection.close_code
+            if code not in (1000, 1001):
+                raise ConnectionResetError(
+                    f"The {self._protocol_name} connection was closed abnormally (code {code!r})."
+                ) from _AbnormalWebSocketClosure(code)
+            raise ConnectionResetError(f"The {self._protocol_name} connection was closed.")
+        if msg.type == aiohttp.WSMsgType.ERROR:
+            error = self._connection.exception()
+            raise ConnectionResetError(f"The {self._protocol_name} connection encountered an error.") from (
+                error if error is not None else _AbnormalWebSocketClosure()
+            )
+        raw = msg.data.decode("utf-8") if msg.type == aiohttp.WSMsgType.BINARY else msg.data
+        payload: Dict[str, Any] = json.loads(raw)
+        if not isinstance(payload, dict):
+            raise ValueError("The WebSocket server event must be a JSON object.")
+        event_type = payload.get("type")
+        self._logger.debug(
+            "WebSocket RECEIVE type=%s bytes=%d",
+            event_type if isinstance(event_type, str) else "unknown",
+            len(raw.encode("utf-8")),
+        )
+        event_cls = self._server_event_types.get(event_type) if isinstance(event_type, str) else None
+        return cast(_ServerEventT, event_cls(payload) if event_cls else payload)
+
+    async def send(self, event: _ClientEventT) -> None:
+        """Send a generated event, mapping, or JSON string.
+
+        :param event: The client event.
+        :type event: object
+        :raises ValueError: If the JSON string is invalid.
+        """
+        payload: str
+        if isinstance(event, str):
+            try:
+                event_payload = json.loads(event)
+            except ValueError as exc:
+                raise ValueError(f"'event' is not valid JSON: {exc}") from exc
+            payload = event
+        else:
+            payload = json.dumps(event, cls=SdkJSONEncoder)
+            event_payload = json.loads(payload)
+        event_type = event_payload.get("type") if isinstance(event_payload, dict) else None
+        self._logger.debug(
+            "WebSocket SEND type=%s bytes=%d",
+            event_type if isinstance(event_type, str) else "unknown",
+            len(payload.encode("utf-8")),
+        )
+        await self._connection.send_str(payload)
+
+    async def close(self, *, code: int = 1000, reason: str = "") -> None:
+        """Close the socket and its HTTP session once.
+
+        Concurrent callers await the same cleanup. Caller cancellation is
+        propagated after both resources have finished closing.
+
+        :keyword int code: WebSocket close code.
+        :keyword str reason: WebSocket close reason.
+        """
+        if self._close_task is not None and self._close_task.done():
+            return
+        if self._close_task is None:
+            self._close_task = asyncio.create_task(self._close_resources(code, reason))
+        cancelled = False
+        while True:
+            try:
+                await asyncio.shield(self._close_task)
+                break
+            except asyncio.CancelledError:
+                if self._close_task.cancelled():
+                    await self._close_task
+                    raise
+                cancelled = True
+        if cancelled:
+            raise asyncio.CancelledError
+
+    async def _close_resources(self, code: int, reason: str) -> None:
+        self._logger.debug("WebSocket CLOSE code=%d", code)
+        try:
+            await self._connection.close(code=code, message=reason.encode("utf-8"))
+        finally:
+            await self._session.close()
+
+
+class AsyncRealtimeConnection(  # pylint: disable=too-many-instance-attributes
+    _BaseWebSocketConnection[ServerEvent, ClientEvent]
+):
+    """An open realtime WebSocket connection to a voice agent.
+
+    Iterate to receive events. Use ``conversation``, ``response``, and the audio
+    buffers to send messages and control replies::
+
+        async with client.voice_agents.realtime.connect(agent_name="my-agent") as conn:
+            await conn.input_audio_buffer.append(audio=chunk)
+            await conn.input_audio_buffer.commit()
+            await conn.response.create()
+            async for event in conn:
+                if event.type == RealtimeServerEventType.RESPONSE_DONE:
+                    break
+    """
+
+    def __init__(self, connection: "ClientWebSocketResponse", session: "ClientSession") -> None:
+        super().__init__(connection, session)
+        self.session: SessionResource = SessionResource(self)
+        self.input_audio_buffer: InputAudioBufferResource = InputAudioBufferResource(self)
+        self.output_audio_buffer: OutputAudioBufferResource = OutputAudioBufferResource(self)
+        self.conversation: ConversationResource = ConversationResource(self)
+        self.response: ResponseResource = ResponseResource(self)
+
+    async def __aenter__(self) -> "AsyncRealtimeConnection":
+        return self
+
+    async def __aexit__(self, *exc_details: Any) -> None:
+        await super().__aexit__(*exc_details)
+
+    @property
+    def closed(self) -> bool:
+        """Whether the underlying WebSocket connection has been closed.
+
+        :rtype: bool
+        """
+        return super().closed
+
+    def __aiter__(self) -> AsyncIterator[ServerEvent]:
+        return super().__aiter__()
+
+    async def recv(self) -> ServerEvent:
+        """Receive and parse the next server event.
+
+        Known events use SDK model classes. Unknown event types are returned
+        as dictionaries.
+
+        :return: The parsed server event.
+        :rtype: ~azure.ai.projects.aio.ServerEvent
+        :raises ConnectionResetError: If the connection was closed by the server, gracefully or
+         otherwise, or if the transport reported an error. Iterating over the connection
+         (``async for event in conn:``) treats only a graceful closure as end-of-stream and
+         re-raises this for an abnormal one.
+        :raises ValueError: If the server event is not a JSON object.
+        """
+        return await super().recv()
+
+    async def send(self, event: ClientEvent) -> None:
+        """Send a client event over the connection.
+
+        :param event: A client event model, mapping, or JSON string.
+        :type event: ~azure.ai.projects.aio.ClientEvent or str
+        :raises ValueError: If ``event`` is a ``str`` that is not valid JSON.
+        """
+        await super().send(event)
+
+    async def close(self, *, code: int = 1000, reason: str = "") -> None:
+        """Close the connection and release the underlying HTTP session.
+
+        :keyword int code: The WebSocket close code.
+        :keyword str reason: The close reason.
+        """
+        await super().close(code=code, reason=reason)
+
+
+_ConnectionT = TypeVar("_ConnectionT", bound=_BaseWebSocketConnection[Any, Any])
+
+
+class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable=too-many-instance-attributes
+    """Shared asynchronous voice protocol handshake and connection lifetime.
+
+    :keyword str endpoint: The Foundry project endpoint.
+    :keyword credential: The credential used for the WebSocket handshake.
+    :paramtype credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword credential_scopes: The token scopes for the handshake.
+    :paramtype credential_scopes: list[str]
+    :keyword str api_version: The API version for the handshake.
+    :keyword str agent_name: The name of the voice agent.
+    :keyword bool allow_preview: Enable preview voice features. Default is False.
+    :keyword agent_session_id: An optional session correlation identifier.
+    :paramtype agent_session_id: str or None
+    :keyword transport: The optional Realtime connection transport.
+    :paramtype transport: str or ~azure.ai.projects.models.VoiceAgentTransport or None
+    :keyword structured_inputs: Optional structured prompt inputs.
+    :paramtype structured_inputs: Mapping[str, Any] or None
+    :keyword connection_url: An optional WebSocket URL overriding the computed route.
+    :paramtype connection_url: str or None
+    :keyword extra_query: Additional handshake query parameters.
+    :paramtype extra_query: Mapping[str, str] or None
+    :keyword extra_headers: Additional handshake headers.
+    :paramtype extra_headers: Mapping[str, str] or None
+    """
+
+    _logger = _LOGGER
+    _subprotocol: Optional[str] = "realtime"
+    _protocol_name = "realtime"
+    _requires_preview = False
+
+    def __init__(  # pylint: disable=too-many-arguments
+        self,
+        *,
+        endpoint: str,
+        credential: "AsyncTokenCredential",
+        credential_scopes: List[str],
+        api_version: str,
+        agent_name: str,
+        allow_preview: bool = False,
+        agent_session_id: Optional[str] = None,
+        transport: Optional[Union[str, "_models.VoiceAgentTransport"]] = None,
+        structured_inputs: Optional[Mapping[str, Any]] = None,
+        connection_url: Optional[str] = None,
+        extra_query: Optional[Mapping[str, str]] = None,
+        extra_headers: Optional[Mapping[str, str]] = None,
+        **kwargs: Any,
+    ) -> None:
+        self._endpoint = endpoint
+        self._credential = credential
+        self._credential_scopes = credential_scopes
+        self._api_version = api_version
+        self._agent_name = agent_name
+        self._allow_preview = allow_preview
+        self._agent_session_id = agent_session_id
+        self._transport = _normalize_transport(transport)
+        self._structured_inputs = structured_inputs
+        self._connection_url = connection_url
+        self._extra_query = dict(extra_query or {})
+        self._extra_headers = dict(extra_headers or {})
+        self._kwargs = kwargs
+        self._connection: Optional[_ConnectionT] = None
+
+    async def __aenter__(self) -> _ConnectionT:
+        return await self.enter()
+
+    async def enter(self) -> _ConnectionT:  # pylint: disable=too-many-locals
+        """Open the connection.
+
+        :return: The live realtime connection.
+        :rtype: ~azure.ai.projects.aio.operations.AsyncRealtimeConnection
+        :raises RuntimeError: If ``aiohttp`` is not installed.
+        :raises ValueError: If the computed or supplied WebSocket URL does not use ``wss://``.
+        :raises ConnectionError: If the WebSocket upgrade handshake fails (for example, a
+         network error, DNS failure, or a non-101 response from the service).
+        """
+        try:
+            import aiohttp  # pylint: disable=import-outside-toplevel
+        except ImportError as exc:  # pragma: no cover - dependency guard
+            raise RuntimeError(
+                f"The {self._protocol_name} client requires `aiohttp`. Install it with `pip install aiohttp`."
+            ) from exc
+
+        # ``connection_url`` fully overrides the computed route (scheme/host/path). This is the
+        # escape hatch used to reach a specific data-plane host/path directly.
+        if self._connection_url is not None:
+            _assert_trusted_connection_url(self._connection_url, self._endpoint)
+        url = self._connection_url or self._get_url()
+        if self._transport is not None:
+            url = _without_transport_query(url)
+        if not url.startswith("wss://"):
+            raise ValueError(
+                f"The {self._protocol_name} WebSocket URL must use wss:// to protect credentials in transit."
+            )
+
+        # Protocol-specific query values include the x-ms-client-sdk identification.
+        params = self._get_query()
+
+        target_url = urlparse(url)._replace(query="", fragment="").geturl()
+        self._logger.debug("WebSocket CONNECT target=%s", target_url)
+
+        session = aiohttp.ClientSession()
+        try:
+            token = await self._credential.get_token(*self._credential_scopes)
+            headers: Dict[str, str] = {
+                "Authorization": "Bearer " + token.token,
+            }
+            headers.update(self._extra_headers)
+            if (self._requires_preview or self._allow_preview) and not _has_header_case_insensitive(
+                headers, _FOUNDRY_FEATURES_HEADER_NAME
+            ):
+                headers[_FOUNDRY_FEATURES_HEADER_NAME] = _VOICE_AGENT_FEATURE_HEADER
+            if not _has_header_case_insensitive(headers, "User-Agent"):
+                # Header names are case-insensitive; preserve caller overrides in any casing.
+                headers["User-Agent"] = _USER_AGENT
+
+            # Each protocol owns its handshake subprotocol, not the caller's kwargs.
+            ws_connect_kwargs = dict(self._kwargs)
+            ws_connect_kwargs.pop("protocols", None)
+            try:
+                connection = await session.ws_connect(
+                    url,
+                    headers=headers,
+                    params=params,
+                    protocols=(self._subprotocol,) if self._subprotocol else (),
+                    **ws_connect_kwargs,
+                )
+            except Exception as exc:
+                if isinstance(exc, (ValueError, RuntimeError)):
+                    raise
+                raise ConnectionError(
+                    f"Failed to open the {self._protocol_name} WebSocket connection to voice agent "
+                    f"'{self._agent_name}' at '{url}': {exc}"
+                ) from exc
+            self._connection = self._create_connection(cast("ClientWebSocketResponse", connection), session)
+            self._logger.debug("WebSocket CONNECTED target=%s", target_url)
+        except BaseException:
+            await session.close()
+            raise
+        return self._connection
+
+    def _get_url(self) -> str:
+        return _to_ws_url(self._endpoint, self._agent_name)
+
+    def _get_query(self) -> Dict[str, str]:
+        params: Dict[str, str] = {"api-version": self._api_version, "x-ms-client-sdk": _USER_AGENT}
+        if self._agent_session_id is not None:
+            params["agent_session_id"] = self._agent_session_id
+        if self._structured_inputs is not None:
+            params["structured_inputs"] = json.dumps(self._structured_inputs, cls=SdkJSONEncoder)
+        params.update(self._extra_query)
+        if self._transport is not None:
+            params["transport"] = self._transport
+        return params
+
+    def _create_connection(self, connection: "ClientWebSocketResponse", session: "ClientSession") -> _ConnectionT:
+        raise NotImplementedError
+
+    async def __aexit__(self, *exc_details: Any) -> None:
+        connection = self._connection
+        if connection is not None:
+            try:
+                await connection.close()
+            finally:
+                if self._connection is connection:
+                    self._connection = None
+
+
+class AsyncRealtimeConnectionManager(_BaseWebSocketConnectionManager[AsyncRealtimeConnection]):
+    """Async context manager that opens an :class:`AsyncRealtimeConnection`.
+
+    Returned by :meth:`AsyncRealtime.connect`; you normally use it as
+    ``async with client.voice_agents.realtime.connect(...) as conn:``.
+
+    :keyword str endpoint: The Foundry project endpoint.
+    :keyword credential: The credential used for the WebSocket handshake.
+    :paramtype credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword credential_scopes: The token scopes for the handshake.
+    :paramtype credential_scopes: list[str]
+    :keyword str api_version: The API version for the handshake.
+    :keyword str agent_name: The name of the voice agent.
+    :keyword agent_session_id: An optional session correlation identifier.
+    :paramtype agent_session_id: str or None
+    :keyword transport: The optional connection transport. The SDK encodes its wire value internally.
+    :paramtype transport: str or ~azure.ai.projects.models.VoiceAgentTransport or None
+    :keyword structured_inputs: Optional structured prompt inputs.
+    :paramtype structured_inputs: Mapping[str, Any] or None
+    :keyword connection_url: An optional WebSocket URL overriding the computed route.
+    :paramtype connection_url: str or None
+    :keyword extra_query: Additional handshake query parameters.
+    :paramtype extra_query: Mapping[str, str] or None
+    :keyword extra_headers: Additional handshake headers.
+    :paramtype extra_headers: Mapping[str, str] or None
+    """
+
+    async def __aenter__(self) -> AsyncRealtimeConnection:
+        return await self.enter()
+
+    async def enter(self) -> AsyncRealtimeConnection:
+        """Open the connection.
+
+        :return: The live realtime connection.
+        :rtype: ~azure.ai.projects.aio.operations.AsyncRealtimeConnection
+        :raises RuntimeError: If ``aiohttp`` is not installed.
+        :raises ValueError: If the computed or supplied WebSocket URL does not use ``wss://``.
+        :raises ConnectionError: If the WebSocket upgrade handshake fails (for example, a
+         network error, DNS failure, or a non-101 response from the service).
+        """
+        return await super().enter()
+
+    def _create_connection(
+        self, connection: "ClientWebSocketResponse", session: "ClientSession"
+    ) -> AsyncRealtimeConnection:
+        return AsyncRealtimeConnection(connection, session)
+
+
+class AsyncRealtime:  # pylint: disable=too-few-public-methods
+    """Connect to a voice agent through ``client.voice_agents.realtime``.
+
+    Open a connection with :meth:`connect`::
+
+        from azure.ai.projects.aio import AIProjectClient
+        from azure.identity.aio import DefaultAzureCredential
+
+        client = AIProjectClient(endpoint, DefaultAzureCredential())
+        async with client.voice_agents.realtime.connect(agent_name="my-agent") as conn:
+            await conn.input_audio_buffer.append(audio=chunk)
+            await conn.input_audio_buffer.commit()
+            await conn.response.create()
+            async for event in conn:
+                if event.type == RealtimeServerEventType.RESPONSE_DONE:
+                    break
+
+    :param client: The voice-agent client that supplies the project endpoint and credential.
+    :type client: ~azure.ai.projects.aio.operations.VoiceAgentsOperations
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        input_args = list(args)
+        client: "_ConfigProvider" = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = client._config  # pylint: disable=protected-access
+
+    def connect(  # pylint: disable=too-many-arguments
+        self,
+        *,
+        agent_name: str,
+        agent_session_id: Optional[str] = None,
+        transport: Optional[Union[str, "_models.VoiceAgentTransport"]] = None,
+        structured_inputs: Optional[Mapping[str, Any]] = None,
+        connection_url: Optional[str] = None,
+        api_version: Optional[str] = None,
+        credential_scopes: Optional[List[str]] = None,
+        extra_query: Optional[Mapping[str, str]] = None,
+        extra_headers: Optional[Mapping[str, str]] = None,
+        **kwargs: Any,
+    ) -> AsyncRealtimeConnectionManager:
+        """Open a realtime WebSocket connection to a voice agent.
+
+        :keyword str agent_name: The name of the voice agent to connect to.
+        :keyword agent_session_id: An optional identifier used to correlate the voice session.
+         Default value is None.
+        :paramtype agent_session_id: str or None
+        :keyword transport: ``VoiceAgentTransport.WEBSOCKET`` (service default) or
+         ``VoiceAgentTransport.WEBRTC``. An explicit value overrides ``extra_query``.
+         WebRTC requires your app to handle the peer connection, media, and SDP exchange.
+        :paramtype transport: str or ~azure.ai.projects.models.VoiceAgentTransport or None
+        :keyword structured_inputs: Values for the agent's structured-input placeholders.
+        :paramtype structured_inputs: Mapping[str, Any] or None
+        :keyword connection_url: Full ``wss://`` URL that overrides the route computed
+         from the client endpoint. Query parameters are still appended. Default value is None.
+        :paramtype connection_url: str or None
+        :keyword api_version: Overrides the client's API version for the handshake. Default
+         value is None.
+        :paramtype api_version: str or None
+        :keyword credential_scopes: Overrides the client's token scopes for the handshake.
+         Default value is None.
+        :paramtype credential_scopes: list[str] or None
+        :keyword extra_query: Additional query-string parameters for the handshake.
+        :paramtype extra_query: Mapping[str, str] or None
+        :keyword extra_headers: Additional headers for the handshake. Preview voice features
+         require ``allow_preview=True`` on the project client or an explicit
+         ``{"Foundry-Features": "VoiceAgents=V1Preview"}`` header. GA voice sessions need no opt-in.
+        :paramtype extra_headers: Mapping[str, str] or None
+        :return: An async context manager yielding an :class:`AsyncRealtimeConnection`.
+        :rtype: ~azure.ai.projects.aio.operations.AsyncRealtimeConnectionManager
+        :raises TypeError: If ``transport`` is not a string or VoiceAgentTransport.
+        """
+        return AsyncRealtimeConnectionManager(
+            endpoint=self._config.endpoint,
+            credential=self._config.credential,
+            credential_scopes=credential_scopes or self._config.credential_scopes,
+            api_version=api_version or self._config.api_version,
+            agent_name=agent_name,
+            allow_preview=bool(self._config.allow_preview),
+            agent_session_id=agent_session_id,
+            transport=transport,
+            structured_inputs=structured_inputs,
+            connection_url=connection_url,
+            extra_query=extra_query,
+            extra_headers=extra_headers,
+            **kwargs,
+        )

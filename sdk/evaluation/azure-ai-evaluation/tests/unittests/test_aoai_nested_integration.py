@@ -5,6 +5,7 @@
 
 import pytest
 import pandas as pd
+from copy import deepcopy
 from unittest.mock import Mock, patch, MagicMock
 from typing import Dict, Any
 
@@ -12,6 +13,7 @@ from azure.ai.evaluation._evaluate._evaluate_aoai import (
     _generate_data_source_config,
     _get_data_source,
     _begin_eval_run,
+    _begin_aoai_evaluation,
     WRAPPER_KEY,
 )
 
@@ -19,6 +21,61 @@ from azure.ai.evaluation._evaluate._evaluate_aoai import (
 @pytest.mark.unittest
 class TestAOAINestedDataIntegration:
     """Test suite for AOAI evaluation integration with nested data structures."""
+
+    @pytest.mark.parametrize("schema_source", ["item_schema", "data_source_config", "both"])
+    def test_explicit_schema_is_isolated_and_used_by_each_grader_group(self, schema_source):
+        client = Mock()
+        client.evals.create.return_value = Mock(id="group-id", testing_criteria=[Mock(id="criterion-id")])
+        client.evals.runs.create.return_value = Mock(id="run-id")
+        graders = {
+            name: Mock(get_client=Mock(return_value=client), _grader_config={"type": kind})
+            for name, kind in [("first", "score_model"), ("second", "string_check")]
+        }
+        schema = {
+            "type": "object",
+            "properties": {
+                "count": {"type": "integer", "enum": [0, 2]},
+                "ratio": {"type": "number", "minimum": 0},
+            },
+            "required": ["count"],
+            "additionalProperties": False,
+        }
+        kwargs = {}
+        if schema_source in ("data_source_config", "both"):
+            kwargs["data_source_config"] = {
+                "type": "custom",
+                "item_schema": deepcopy(schema),
+                "include_sample_schema": False,
+            }
+        if schema_source in ("item_schema", "both"):
+            kwargs["item_schema"] = schema
+        if schema_source == "both":
+            kwargs["data_source_config"]["item_schema"]["properties"]["count"] = {"type": "string"}
+            kwargs["data_source_config"]["item_schema"]["required"] = ["count", "ratio"]
+        snapshot = deepcopy(kwargs)
+        frame = pd.DataFrame([{"count": 0, "ratio": 1.5}])
+        frame_snapshot = frame.copy(deep=True)
+        mappings = {
+            "first": {"count": "${data.count}", "ratio": "${data.ratio}"},
+            "second": {"ratio": "${data.ratio}", "count": "${data.count}"},
+        }
+
+        _begin_aoai_evaluation(graders, mappings, frame, "typed-run", **kwargs)
+
+        assert client.evals.create.call_count == client.evals.runs.create.call_count == 2
+        configs = [call.kwargs["data_source_config"] for call in client.evals.create.call_args_list]
+        payloads = [call.kwargs["data_source"]["source"]["content"] for call in client.evals.runs.create.call_args_list]
+        for config, payload in zip(configs, payloads):
+            assert config["item_schema"] == schema
+            assert payload == [{"item": {"count": 0, "ratio": 1.5}}]
+            assert type(payload[0]["item"]["count"]) is int
+            assert type(payload[0]["item"]["ratio"]) is float
+        configs[0]["item_schema"]["properties"]["count"]["enum"].append(9)
+        payloads[0][0]["item"]["count"] = 9
+        assert configs[1]["item_schema"] == schema
+        assert payloads[1][0]["item"]["count"] == 0
+        assert kwargs == snapshot
+        pd.testing.assert_frame_equal(frame, frame_snapshot)
 
     def test_aoai_eval_run_with_flat_data(self):
         """Test _begin_eval_run with flat data structure."""

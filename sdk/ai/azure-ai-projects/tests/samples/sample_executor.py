@@ -28,7 +28,7 @@ from pydantic import BaseModel
 import json
 import unittest.mock as mock
 from typing import cast
-from io import BytesIO
+from io import BytesIO, StringIO
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from devtools_testutils.fake_credentials import FakeTokenCredential
@@ -37,6 +37,7 @@ from devtools_testutils import is_live
 from devtools_testutils import add_general_string_sanitizer
 from azure.ai.projects import AIProjectClient
 from llm_instructions import get_instructions_for_sample_path
+from sample_log import sanitize_log, write_log_file
 
 # Fixed timestamp for playback mode (Nov 2023).
 # Must match the timestamp sanitizers in conftest.py (e.g., `Evaluation -\d{10}`).
@@ -192,11 +193,16 @@ class BaseSampleExecutor:
         env_vars: dict[str, str] = {},
         allowed_llm_validation_failures: Optional[set[str]] = None,
         validation_text_preprocessor: Optional[Callable[[list[str]], str]] = None,
+        log_directory: Optional[str] = None,
         **kwargs,
     ):
         self.test_instance = test_instance
         self.sample_path = sample_path
         self.print_calls: list[str] = []
+        self.print_output_calls: list[str] = []
+        self.log_directory = log_directory
+        self.log_file_path: Optional[str] = None
+        self.print_output_file_path: Optional[str] = None
         self._original_print = print
         self.allowed_llm_validation_failures = allowed_llm_validation_failures or set()
         self._validation_text_preprocessor = validation_text_preprocessor
@@ -235,22 +241,12 @@ class BaseSampleExecutor:
         """Capture print calls while still outputting to console."""
         text = " ".join(str(arg) for arg in args)
         self.print_calls.append(text)
+        self.print_output_calls.append(text)
         self._original_print(*args, **kwargs)
 
     @contextmanager
     def _capture_debug_logs(self):
         """Capture logger DEBUG output into the same array used for print capture."""
-
-        bearer_token_pattern = re.compile(r"(?i)(Bearer\s+)([^\s\"',;]+)")
-        # Matches raw JWT-like tokens assigned to an "authorization" JSON field
-        # (e.g., when a sample passes `authorization=token` to MCPTool, the request
-        # body is logged as `"authorization": "eyJ..."` without a "Bearer " prefix).
-        json_authorization_pattern = re.compile(r"(?i)(\"authorization\"\s*:\s*\")([^\"]+)(\")")
-
-        def _sanitize_log_message(message: str) -> str:
-            message = bearer_token_pattern.sub(r"\1<REDACTED>", message)
-            message = json_authorization_pattern.sub(r"\1<REDACTED>\3", message)
-            return message
 
         class _PrintCaptureLogHandler(logging.Handler):
             def __init__(self, sink: list[str]):
@@ -259,8 +255,6 @@ class BaseSampleExecutor:
                 self._included_logger_prefixes = (
                     "azure",
                     "msrest",
-                    "openai",
-                    "httpx",
                 )
 
             def emit(self, record: logging.LogRecord) -> None:
@@ -270,7 +264,7 @@ class BaseSampleExecutor:
                     message = self.format(record)
                 except Exception:  # pylint: disable=broad-exception-caught
                     message = record.getMessage()
-                self._sink.append(_sanitize_log_message(message))
+                self._sink.append(sanitize_log(message))
 
         root_logger = logging.getLogger()
         previous_root_level = root_logger.level
@@ -279,10 +273,9 @@ class BaseSampleExecutor:
             "azure",
             "azure.core",
             "azure.core.pipeline.policies.http_logging_policy",
+            "azure.ai.projects.openai_transport",
             "msrest",
             "msrest.http_logger",
-            "httpx",
-            "openai",
         ]
 
         previous_logger_levels: dict[str, int] = {}
@@ -308,14 +301,22 @@ class BaseSampleExecutor:
                 continue
 
         capture_handler = _PrintCaptureLogHandler(self.print_calls)
-        capture_handler.setFormatter(logging.Formatter("[%(name)s] %(message)s"))
+        capture_handler.setFormatter(logging.Formatter("%(message)s"))
 
         root_logger.setLevel(logging.DEBUG)
         root_logger.addHandler(capture_handler)
 
+        directly_attached_loggers = []
+        for logger_name in ("azure.ai.projects.openai_transport",):
+            logger_instance = logging.getLogger(logger_name)
+            logger_instance.addHandler(capture_handler)
+            directly_attached_loggers.append(logger_instance)
+
         try:
             yield
         finally:
+            for logger_instance in directly_attached_loggers:
+                logger_instance.removeHandler(capture_handler)
             root_logger.removeHandler(capture_handler)
             root_logger.setLevel(previous_root_level)
 
@@ -325,36 +326,37 @@ class BaseSampleExecutor:
             for module_logger, original_is_enabled_for in patched_is_enabled_for:
                 module_logger.isEnabledFor = original_is_enabled_for
 
-    def _get_log_file_path(self, log_env_var: str) -> Optional[str]:
-        """Get and prepare log file path based on environment variable.
+    def _build_live_log_file_path(self, suffix: str) -> Optional[str]:
+        """Build a live-mode sample log path in the requested or system temp directory."""
 
-        Args:
-            log_env_var: Environment variable name to check for log format
-
-        Returns:
-            Path to the log file (cleaned up and ready to write), or None if logging is disabled
-        """
         # Only create logs in live mode
         if not _is_live_mode():
-            return None
-
-        # Only log if environment variable is set
-        log_format = os.environ.get(log_env_var)
-        if not log_format:
             return None
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         sample_filename = os.path.basename(self.sample_path).replace(".py", "")
 
-        # Replace placeholders in the format template
-        log_filename = log_format.replace("<sample_filename>", sample_filename).replace("<timestamp>", timestamp)
-        log_file = os.path.join(tempfile.gettempdir(), log_filename)
+        log_filename = f"{sample_filename}_{suffix}_{timestamp}.log"
+        log_directory = self.log_directory or tempfile.gettempdir()
+        os.makedirs(log_directory, exist_ok=True)
+        log_file = os.path.join(log_directory, log_filename)
 
         # Remove existing file if present to ensure clean overwrite
         if os.path.exists(log_file):
             os.remove(log_file)
 
         return log_file
+
+    def _get_sample_display_path(self) -> str:
+        """Get the sample path relative to the package root when possible."""
+
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        package_root = os.path.normpath(os.path.join(current_dir, os.pardir, os.pardir))
+
+        try:
+            return os.path.relpath(self.sample_path, package_root)
+        except ValueError:
+            return self.sample_path
 
     def _write_error_log(self, reason: str, exception_info: str) -> Optional[str]:
         """Write captured print statements to a log file for execution errors.
@@ -366,22 +368,7 @@ class BaseSampleExecutor:
         Returns:
             Path to the created log file, or None if logging is disabled
         """
-        log_file = self._get_log_file_path("SAMPLE_TEST_ERROR_LOG")
-        if not log_file:
-            return None
-
-        with open(log_file, "w", encoding="utf-8") as f:
-            f.write(f"Sample: {self.sample_path}\n")
-            f.write(f"Execution Error:\n{reason}\n\n")
-            f.write("Exception Details:\n")
-            f.write("=" * 80 + "\n")
-            f.write(exception_info)
-            f.write("\n" + "=" * 80 + "\n\n")
-            f.write("Print Statements:\n")
-            f.write("=" * 80 + "\n")
-            for i, print_call in enumerate(self.print_calls, 1):
-                f.write(f"{i}. {print_call}\n")
-        return log_file
+        return self._write_sample_log("errors", f"Execution Error:\n{reason}\n\n", exception_info)
 
     def _write_failed_log(self, reason: str) -> Optional[str]:
         """Write captured print statements to a log file for validation failures.
@@ -392,18 +379,7 @@ class BaseSampleExecutor:
         Returns:
             Path to the created log file, or None if logging is disabled
         """
-        log_file = self._get_log_file_path("SAMPLE_TEST_FAILED_LOG")
-        if not log_file:
-            return None
-
-        with open(log_file, "w", encoding="utf-8") as f:
-            f.write(f"Sample: {self.sample_path}\n")
-            f.write(f"Validation Failed: {reason}\n\n")
-            f.write("Print Statements:\n")
-            f.write("=" * 80 + "\n")
-            for i, print_call in enumerate(self.print_calls, 1):
-                f.write(f"{i}. {print_call}\n")
-        return log_file
+        return self._write_sample_log("failed", f"Validation Failed: {reason}\n\n")
 
     def _write_passed_log(self, reason: str = "Validation passed") -> Optional[str]:
         """Write captured print statements to a log file for validation passes.
@@ -414,18 +390,112 @@ class BaseSampleExecutor:
         Returns:
             Path to the created log file, or None if logging is disabled
         """
-        log_file = self._get_log_file_path("SAMPLE_TEST_PASSED_LOG")
+        return self._write_sample_log("success", f"Validation Passed: {reason}\n\n")
+
+    def _write_sample_log(self, suffix: str, heading: str, exception_info: Optional[str] = None) -> Optional[str]:
+        """Format the existing API/print log once and sanitize it through the shared writer."""
+        log_file = self._build_live_log_file_path(suffix)
         if not log_file:
             return None
 
-        with open(log_file, "w", encoding="utf-8") as f:
-            f.write(f"Sample: {self.sample_path}\n")
-            f.write(f"Validation Passed: {reason}\n\n")
-            f.write("Print Statements:\n")
-            f.write("=" * 80 + "\n")
-            for i, print_call in enumerate(self.print_calls, 1):
-                f.write(f"{i}. {print_call}\n")
+        self._write_output_log()
+        content = StringIO()
+        content.write(f"Sample: {self._get_sample_display_path()}\n{heading}")
+        if exception_info is not None:
+            content.write("Exception Details:\n" + "=" * 80 + "\n")
+            content.write(exception_info + "\n" + "=" * 80 + "\n\n")
+        content.write("API Logs and Print Statements:\n" + "=" * 80 + "\n")
+        self._write_numbered_print_calls(content)
+        write_log_file(log_file, content.getvalue())
+        self.log_file_path = log_file
         return log_file
+
+    def _write_output_log(self) -> Optional[str]:
+        """Write captured print-only output through the same shared sanitizer as API logs."""
+        log_file = self._build_live_log_file_path("output")
+        if not log_file:
+            return None
+
+        content = StringIO()
+        content.write(f"Sample: {self._get_sample_display_path()}\nPrint Output:\n" + "=" * 80 + "\n")
+        content.write(
+            "\n".join(self.print_output_calls)
+            if self.print_output_calls
+            else "(No print() output was captured before the sample stopped.)"
+        )
+        content.write("\n")
+        write_log_file(log_file, content.getvalue())
+        self.print_output_file_path = log_file
+        return log_file
+
+    def write_capture_logs(self) -> list[str]:
+        """Return existing live log files, creating capture-only logs if no validation wrote them."""
+        if not _is_live_mode():
+            return []
+        if self.log_file_path is None:
+            self._write_sample_log("capture", "Captured sample output (no validation result recorded).\n\n")
+        elif self.print_output_file_path is None:
+            self._write_output_log()
+        return [path for path in (self.log_file_path, self.print_output_file_path) if path is not None]
+
+    def _write_numbered_print_calls(self, file_handle) -> None:
+        """Write captured entries with numbering anchored to the first meaningful line."""
+
+        numbered_index = 0
+        current_block: list[str] = []
+
+        labeled_block_prefixes = (
+            "Request URL:",
+            "Request method:",
+            "Request headers:",
+            "Request body:",
+            "Response status:",
+            "Response headers:",
+            "Response content:",
+        )
+
+        def _starts_labeled_block(line: str) -> bool:
+            stripped = line.strip()
+            return any(stripped.startswith(prefix) for prefix in labeled_block_prefixes)
+
+        def _current_block_is_labeled() -> bool:
+            return bool(current_block) and _starts_labeled_block(current_block[0])
+
+        def _flush_current_block() -> None:
+            nonlocal numbered_index, current_block
+            if not current_block:
+                return
+            numbered_index += 1
+            file_handle.write(f"{numbered_index}. {current_block[0]}\n")
+            for line in current_block[1:]:
+                file_handle.write(f"{line}\n")
+            current_block = []
+
+        for print_call in self.print_calls:
+            lines = print_call.splitlines()
+            while lines and not lines[0].strip():
+                lines.pop(0)
+
+            if not lines:
+                _flush_current_block()
+                numbered_index += 1
+                file_handle.write(f"{numbered_index}.\n")
+                continue
+
+            for line_index, line in enumerate(lines):
+                if _starts_labeled_block(line):
+                    _flush_current_block()
+                    current_block = [line]
+                    continue
+
+                if current_block and (line[:1].isspace() or (_current_block_is_labeled() and line_index > 0)):
+                    current_block.append(line)
+                    continue
+
+                _flush_current_block()
+                current_block = [line]
+
+        _flush_current_block()
 
     def _get_validation_request_params(
         self,
@@ -488,9 +558,10 @@ class BaseSampleExecutor:
         """Assert validation result and print reason."""
         sample_filename = os.path.basename(self.sample_path)
         is_allowed_to_fail = sample_filename in self.allowed_llm_validation_failures
+        reason = sanitize_log(test_report["reason"])
 
         if not test_report["correct"]:
-            log_file = self._write_failed_log(test_report["reason"])
+            log_file = self._write_failed_log(reason)
             if log_file:
                 print(f"\nValidation failed! Print statements logged to: {log_file}")
 
@@ -498,14 +569,14 @@ class BaseSampleExecutor:
                 print(
                     f"\nWARNING: '{sample_filename}' is in allowed_llm_validation_failures - test passing despite validation failure"
                 )
-                print(f"Reason: {test_report['reason']}")
+                print(f"Reason: {reason}")
             else:
-                assert False, f"Error is identified: {test_report['reason']}"
+                assert False, f"Error is identified: {reason}"
         else:
-            log_file = self._write_passed_log(test_report["reason"])
+            log_file = self._write_passed_log(reason)
             if log_file:
                 print(f"\nValidation passed! Print statements logged to: {log_file}")
-            print(f"Reason: {test_report['reason']}")
+            print(f"Reason: {reason}")
 
     def _resolve_local_module_file(
         self,
@@ -713,7 +784,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
         else:
             endpoint = PLAYBACK_LLM_VALIDATION_PROJECT_ENDPOINT
             model = PLAYBACK_LLM_VALIDATION_MODEL
-        print(f"For validating console output, creating AIProjectClient with endpoint: {endpoint}")
+        print("For validating console output, using the configured LLM validation project.")
         assert isinstance(self.tokenCredential, TokenCredential) or isinstance(
             self.tokenCredential, FakeTokenCredential
         )
@@ -916,7 +987,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         else:
             endpoint = PLAYBACK_LLM_VALIDATION_PROJECT_ENDPOINT
             model = PLAYBACK_LLM_VALIDATION_MODEL
-        print(f"For validating console output, creating AIProjectClient with endpoint: {endpoint}")
+        print("For validating console output, using the configured LLM validation project.")
         assert isinstance(self.tokenCredential, AsyncTokenCredential) or isinstance(
             self.tokenCredential, AsyncFakeCredential
         )
@@ -1039,6 +1110,26 @@ def _is_live_mode() -> bool:
 
 def _normalize_sample_filename(sample_file: str) -> str:
     return os.path.basename(sample_file)
+
+
+def _resolve_sample_path_from_filename(sample_filename: str) -> str:
+    """Resolve a sample filename to its unique path under the package samples tree."""
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    samples_root = os.path.normpath(os.path.join(current_dir, os.pardir, os.pardir, "samples"))
+
+    matches: list[str] = []
+    for root, _, files in os.walk(samples_root):
+        if sample_filename in files:
+            matches.append(os.path.join(root, sample_filename))
+
+    if not matches:
+        raise ValueError(f"Could not resolve sample file under samples/: {sample_filename}")
+
+    if len(matches) > 1:
+        matches_text = ", ".join(sorted(matches))
+        raise ValueError(f"Sample filename matched multiple files under samples/: {sample_filename} -> {matches_text}")
+
+    return matches[0]
 
 
 def _resolve_additional_env_vars(
@@ -1222,13 +1313,21 @@ def additionalSampleTests(additional_tests: list[AdditionalSampleTestDetail]):
 
             # If a sample was excluded from discovery (e.g., via samples_to_skip), it won't appear in argvalues.
             # In that case, still synthesize *variant-only* cases for any configured env-var sets.
-            if inferred_sample_dir and template_values is not None:
+            if env_var_sets_by_sample:
                 for sample_filename, playback_sets in env_var_sets_by_sample.items():
                     if sample_filename in seen_sample_filenames:
                         continue
 
-                    synthetic_sample_path = os.path.join(inferred_sample_dir, sample_filename)
-                    synthetic_values = list(template_values)
+                    if inferred_sample_dir is not None:
+                        synthetic_sample_path = os.path.join(inferred_sample_dir, sample_filename)
+                    else:
+                        synthetic_sample_path = _resolve_sample_path_from_filename(sample_filename)
+
+                    if template_values is not None:
+                        synthetic_values: list[object] = list(template_values)
+                    else:
+                        synthetic_values = [None] * len(argnames)
+
                     synthetic_values[sample_path_index] = synthetic_sample_path
 
                     for detail in playback_sets:
@@ -1276,14 +1375,14 @@ def additionalSampleTests(additional_tests: list[AdditionalSampleTestDetail]):
             @functools.wraps(fn)
             async def _wrapper_async(test_class, sample_path: str, *args, **kwargs):
                 _inject_env_vars(sample_path=sample_path, kwargs=kwargs)
-                return await fn(test_class, sample_path, *args, **kwargs)
+                return await fn(test_class, *args, sample_path=sample_path, **kwargs)
 
             return _wrapper_async
 
         @functools.wraps(fn)
         def _wrapper_sync(test_class, sample_path: str, *args, **kwargs):
             _inject_env_vars(sample_path=sample_path, kwargs=kwargs)
-            return fn(test_class, sample_path, *args, **kwargs)
+            return fn(test_class, *args, sample_path=sample_path, **kwargs)
 
         return _wrapper_sync
 

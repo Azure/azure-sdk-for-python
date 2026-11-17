@@ -14,7 +14,7 @@ Run a specific sample from the Azure AI Content Understanding SDK.
 - Python >= 3.9
 - Virtual environment set up with SDK installed (see `cu-sdk-setup` skill)
 - Environment variables configured in `.env`
-- Model deployments configured via `sample_update_defaults.py` -- required for any sample that uses GPT-4.1 / text-embedding-3-large (prebuilt analyzers like `prebuilt-invoice`, custom analyzers with `extract` / `generate` / `classify` field methods, and `sample_create_analyzer_with_labels`)
+- Model deployments configured via `sample_update_defaults.py` -- required for any sample that uses gpt-5.2 / text-embedding-3-large (prebuilt analyzers like `prebuilt-invoice`, custom analyzers with `extract` / `generate` / `classify` field methods, and `sample_create_analyzer_with_labels`)
 
 > **[ASK USER] Prerequisites check (run BEFORE Step 1 of the Workflow below):**
 > Before starting the numbered Workflow, verify the user's environment by asking these three questions in order. Do NOT skip Step 1 until each has a yes/handled answer:
@@ -35,7 +35,7 @@ All sync samples have async versions with `_async` suffix in `samples/async_samp
 ### Getting Started (Run These First)
 
 #### `sample_update_defaults` -- Required First!
-**One-time setup** - Configures model deployment mappings (GPT-4.1, GPT-4.1-mini, text-embedding-3-large) for your Microsoft Foundry resource. Must run before using prebuilt analyzers.
+**One-time setup** - Configures model deployment mappings (gpt-5.2, text-embedding-3-large) for your Microsoft Foundry resource. Must run before using prebuilt analyzers.
 
 #### `sample_analyze_url` -- Start Here!
 Analyzes content from a URL using `prebuilt-documentSearch`. Works with documents, images, audio, and video.
@@ -161,15 +161,15 @@ Now that the chosen sample is known, run only the subsections below that apply t
 
 #### Samples that require `sample_update_defaults` first
 
-These samples invoke an analyzer that depends on GPT-4.1 / GPT-4.1-mini / text-embedding-3-large model deployments. They will fail with a *model deployment not found* error unless `sample_update_defaults.py` has been run for the resource:
+These samples invoke an analyzer that depends on gpt-5.2 / gpt-5.2 / text-embedding-3-large model deployments. They will fail with a *model deployment not found* error unless `sample_update_defaults.py` has been run for the resource:
 
 | Sample | Why |
 |--------|-----|
-| `sample_analyze_invoice` | `prebuilt-invoice` uses GPT-4.1 for field extraction |
-| `sample_analyze_configs` | Advanced features (charts, formulas, etc.) use GPT-4.1 |
+| `sample_analyze_invoice` | `prebuilt-invoice` uses gpt-5.2 for field extraction |
+| `sample_analyze_configs` | Advanced features (charts, formulas, etc.) use gpt-5.2 |
 | `sample_create_analyzer` | Custom field schema with `extract` / `generate` / `classify` methods |
-| `sample_create_classifier` | Document classification uses GPT-4.1 |
-| `sample_create_analyzer_with_labels` | Labeled-data analyzer uses GPT-4.1 + text-embedding-3-large |
+| `sample_create_classifier` | Document classification uses gpt-5.2 |
+| `sample_create_analyzer_with_labels` | Labeled-data analyzer uses gpt-5.2 + text-embedding-3-large |
 
 Samples that do **not** require `sample_update_defaults` (safe to run first): `sample_analyze_url`, `sample_analyze_binary`, `sample_analyze_return_raw_json`, `sample_to_llm_input`, all analyzer-management samples (`sample_get_*`, `sample_list_*`, `sample_update_analyzer`, `sample_delete_*`, `sample_copy_analyzer`, `sample_grant_copy_auth`).
 
@@ -185,9 +185,12 @@ Samples that do **not** require `sample_update_defaults` (safe to run first): `s
 |---------|-------------|-------------|
 | `CONTENTUNDERSTANDING_ENDPOINT` | **All samples** | Your Microsoft Foundry resource endpoint URL |
 | `CONTENTUNDERSTANDING_KEY` | All samples (optional) | API key for key-based auth. If empty, `DefaultAzureCredential` is used (recommended -- run `az login` first) |
-| `GPT_4_1_DEPLOYMENT` | sample_update_defaults | Deployment name for gpt-4.1 model (default: `gpt-4.1`) |
-| `GPT_4_1_MINI_DEPLOYMENT` | sample_update_defaults | Deployment name for gpt-4.1-mini model (default: `gpt-4.1-mini`) |
-| `TEXT_EMBEDDING_3_LARGE_DEPLOYMENT` | sample_update_defaults | Deployment name for text-embedding-3-large model (default: `text-embedding-3-large`) |
+| `CU_COMPLETION_MODEL` | sample_update_defaults (optional) | Completion model name (default: `gpt-5.2`) |
+| `CU_COMPLETION_MODEL_MINI` | sample_update_defaults (optional) | Mini completion model name (default: `CU_COMPLETION_MODEL`) |
+| `CU_EMBEDDING_MODEL` | sample_update_defaults (optional) | Embedding model name (default: `text-embedding-3-large`) |
+| `CU_COMPLETION_MODEL_DEPLOYMENT` | sample_update_defaults | Completion model deployment name (required) |
+| `CU_COMPLETION_MINI_DEPLOYMENT` | sample_update_defaults (optional) | Mini completion deployment name (default: `CU_COMPLETION_MODEL_DEPLOYMENT`) |
+| `CU_EMBEDDING_DEPLOYMENT` | sample_update_defaults | Embedding model deployment name (required) |
 | `CONTENTUNDERSTANDING_SOURCE_RESOURCE_ID` | sample_grant_copy_auth | Source ARM resource ID for cross-resource copy |
 | `CONTENTUNDERSTANDING_SOURCE_REGION` | sample_grant_copy_auth | Source region (e.g., `eastus`) for cross-resource copy |
 | `CONTENTUNDERSTANDING_TARGET_ENDPOINT` | sample_grant_copy_auth | Target Foundry resource endpoint for cross-resource copy |
@@ -346,7 +349,7 @@ After the sample completes, the skill **must** do the following for the user (do
    | `sample_analyze_invoice` | `prebuilt-invoice` field schema, `Field` confidence scores, array fields (line items) |
    | `sample_analyze_configs` | `AnalysisConfig` options (charts, formulas, hyperlinks, annotations), Chart.js / LaTeX outputs |
    | `sample_analyze_return_raw_json` | Accessing the raw JSON via `cls=lambda pipeline_response, deserialized, _: pipeline_response.http_response.text()` -- bypassing the typed model |
-   | `sample_to_llm_input` | `to_llm_input()` helper, output options (fields-only / markdown-only / metadata), `content_range` page markers |
+   | `sample_to_llm_input` | `to_llm_input()` helper, output options (fields-only / markdown-only / custom_metadata), `content_range` page markers |
    | `sample_update_defaults` | `update_defaults()` -- mapping model aliases to your deployment names; idempotent one-time setup |
    | `sample_create_analyzer` | `Analyzer` schema, field types, `extract` / `generate` / `classify` field methods |
    | `sample_create_classifier` | `ContentCategory` definitions, document segmentation, classification routing |
@@ -432,7 +435,7 @@ For environment setup (creating `.venv`, installing the SDK, writing `.env`), us
 | `Access denied` on Blob (running `sample_create_analyzer_with_labels` Option B) | Assign **Storage Blob Data Contributor** to the `DefaultAzureCredential` principal on the storage account, then re-run `az login`. |
 | `SAS signature invalid` / `AuthenticationFailed` (running `sample_create_analyzer_with_labels` Option A) | The SAS URL has expired or is missing **Read + List** permissions. Regenerate the SAS URL with both permissions. |
 | `Model deployment not found` | The sample requires `sample_update_defaults.py` to be run first. See the **"Samples that require `sample_update_defaults` first"** table in Step 4. Then run: `cd samples && python sample_update_defaults.py`. |
-| `Model deployment '<name>' not found` even after running `sample_update_defaults` | Your `GPT_4_1_DEPLOYMENT` / `GPT_4_1_MINI_DEPLOYMENT` / `TEXT_EMBEDDING_3_LARGE_DEPLOYMENT` env vars don't match the actual deployment names in your Foundry resource. Check the resource's deployments page and update `.env`. |
+| `Model deployment '<name>' not found` even after running `sample_update_defaults` | Your configured `CU_*_MODEL` names or `CU_*_DEPLOYMENT` names don't match the models and deployments in your Foundry resource. Check the resource's deployments page and update `.env`. |
 
 ## Related Skills
 

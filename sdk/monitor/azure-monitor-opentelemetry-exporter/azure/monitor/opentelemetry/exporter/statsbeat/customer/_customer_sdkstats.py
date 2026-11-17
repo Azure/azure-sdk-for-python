@@ -22,6 +22,7 @@ def collect_customer_sdkstats(exporter: "BaseExporter") -> None:  # type: ignore
         customer_stats.initialize(
             connection_string=exporter._connection_string,  # type: ignore
             credential=exporter._credential,  # type: ignore
+            disable_offline_storage=exporter._disable_offline_storage,  # type: ignore
         )
 
 

@@ -6,6 +6,7 @@
 
 import pytest
 from unittest.mock import AsyncMock, patch
+from urllib.parse import parse_qs, urlparse
 
 pytest.importorskip(
     "aiohttp",
@@ -21,6 +22,7 @@ from azure.ai.voicelive.aio import (
     connect,
 )
 from azure.ai.voicelive.aio._patch import _VoiceLiveConnectionManager
+from azure.ai.voicelive._version import VERSION
 from azure.ai.voicelive.models import (
     ClientEventSessionUpdate,
     ClientEventResponseCreate,
@@ -69,7 +71,7 @@ class TestSessionResource:
     @pytest.mark.asyncio
     async def test_session_update_with_request_session(self):
         """Test session update with RequestSession object."""
-        session = RequestSession(model="gpt-4o-realtime-preview", modalities=[Modality.TEXT, Modality.AUDIO])
+        session = RequestSession(model="gpt-realtime", modalities=[Modality.TEXT, Modality.AUDIO])
 
         await self.session_resource.update(session=session)
 
@@ -81,7 +83,7 @@ class TestSessionResource:
     @pytest.mark.asyncio
     async def test_session_update_with_mapping(self):
         """Test session update with dictionary mapping."""
-        session_dict = {"model": "gpt-4o-realtime-preview", "modalities": ["text", "audio"], "temperature": 0.7}
+        session_dict = {"model": "gpt-realtime", "modalities": ["text", "audio"], "temperature": 0.7}
 
         await self.session_resource.update(session=session_dict)
 
@@ -93,7 +95,7 @@ class TestSessionResource:
     @pytest.mark.asyncio
     async def test_session_update_with_event_id(self):
         """Test session update with event ID."""
-        session = RequestSession(model="gpt-4o-realtime-preview")
+        session = RequestSession(model="gpt-realtime")
         event_id = "test-event-123"
 
         await self.session_resource.update(session=session, event_id=event_id)
@@ -208,6 +210,42 @@ class TestVoiceLiveConnectionMocked:
         assert connection.response._connection is connection
 
 
+@pytest.mark.asyncio
+class TestConnectionIdentification:
+    """Test SDK identification on WebSocket connections."""
+
+    async def _connect_and_get_headers(self, headers=None):
+        with patch("azure.ai.voicelive.aio._patch.aiohttp.ClientSession") as mock_client_session:
+            session = mock_client_session.return_value
+            session.ws_connect = AsyncMock(return_value=AsyncMock())
+            session.close = AsyncMock()
+
+            async with connect(
+                credential=AzureKeyCredential("test-key"),
+                endpoint="wss://test-endpoint.com",
+                model="gpt-realtime",
+                headers=headers,
+            ):
+                pass
+
+            return session.ws_connect.await_args.kwargs["headers"]
+
+    async def test_connection_uses_sdk_user_agent(self):
+        """Test the default User-Agent identifies the package and version."""
+        headers = await self._connect_and_get_headers()
+
+        assert "azsdk-python-ai-voicelive" in headers["User-Agent"]
+        assert VERSION in headers["User-Agent"]
+
+    @pytest.mark.parametrize("header_name", ["User-Agent", "user-agent", "USER-AGENT", "uSeR-aGeNt"])
+    async def test_connection_preserves_caller_user_agent(self, header_name):
+        """Test caller User-Agent overrides are case-insensitive and do not create duplicates."""
+        headers = await self._connect_and_get_headers({header_name: "custom-user-agent"})
+
+        assert headers[header_name] == "custom-user-agent"
+        assert [value for name, value in headers.items() if name.lower() == "user-agent"] == ["custom-user-agent"]
+
+
 class TestVoiceLiveConnectionIntegration:
     """Integration tests for VoiceLiveConnection."""
 
@@ -249,7 +287,7 @@ class TestVoiceLiveConnectionIntegration:
                 connection = VoiceLiveConnection(endpoint, credential)
 
                 # Test session update
-                session = RequestSession(model="gpt-4o-realtime-preview", voice=OpenAIVoice(name=OpenAIVoiceName.ALLOY))
+                session = RequestSession(model="gpt-realtime", voice=OpenAIVoice(name=OpenAIVoiceName.ALLOY))
 
                 # Mock the send method
                 connection.send = AsyncMock()
@@ -278,7 +316,7 @@ class TestConnectionResourceInteraction:
         response_resource = ResponseResource(self.mock_connection)
 
         # Update session
-        session = RequestSession(model="gpt-4o-realtime-preview", temperature=0.8)
+        session = RequestSession(model="gpt-realtime", temperature=0.8)
         await session_resource.update(session=session)
 
         # Create response
@@ -293,11 +331,11 @@ class TestConnectionResourceInteraction:
         session_resource = SessionResource(self.mock_connection)
 
         # First update
-        session1 = RequestSession(model="gpt-4o-realtime-preview")
+        session1 = RequestSession(model="gpt-realtime")
         await session_resource.update(session=session1, event_id="update-1")
 
         # Second update
-        session2 = RequestSession(model="gpt-4o-realtime-preview", temperature=0.5)
+        session2 = RequestSession(model="gpt-realtime", temperature=0.5)
         await session_resource.update(session=session2, event_id="update-2")
 
         # Verify both updates were sent
@@ -333,7 +371,7 @@ class TestConnectionErrorScenarios:
         session_resource = SessionResource(self.mock_connection)
 
         with pytest.raises(ConnectionError):
-            session = RequestSession(model="gpt-4o-realtime-preview")
+            session = RequestSession(model="gpt-realtime")
             await session_resource.update(session=session)
 
     @pytest.mark.asyncio
@@ -671,7 +709,7 @@ class TestAgentConfigUrlPreparation:
         manager = _VoiceLiveConnectionManager(
             credential=self.credential,
             endpoint="https://test.azure.com",
-            api_version="2026-04-10",
+            api_version="2026-07-15",
             agent_config=agent_config,
             extra_query={},
             extra_headers={},
@@ -679,7 +717,7 @@ class TestAgentConfigUrlPreparation:
 
         url = manager._prepare_url()
 
-        assert "api-version=2026-04-10" in url
+        assert "api-version=2026-07-15" in url
 
     def test_url_uses_default_api_version(self):
         """Test that URL uses the current SDK default API version when none is provided."""
@@ -698,4 +736,34 @@ class TestAgentConfigUrlPreparation:
 
         url = manager._prepare_url()
 
-        assert "api-version=2026-06-01-preview" in url
+        assert "api-version=2026-07-15" in url
+
+    def test_url_includes_sdk_identifier(self):
+        """Test that the connection URL identifies the SDK."""
+        manager = _VoiceLiveConnectionManager(
+            credential=self.credential,
+            endpoint=self.endpoint,
+            agent_config=None,
+            extra_query={},
+            extra_headers={},
+        )
+
+        query = parse_qs(urlparse(manager._prepare_url()).query)
+        sdk_identifier = query["x-ms-client-sdk"][0]
+
+        assert "azsdk-python-ai-voicelive" in sdk_identifier
+        assert VERSION in sdk_identifier
+
+    def test_url_preserves_traffic_type(self):
+        """Test that SDK identification does not overwrite customer traffic tagging."""
+        manager = _VoiceLiveConnectionManager(
+            credential=self.credential,
+            endpoint=f"{self.endpoint}?trafficType=customer-tag",
+            agent_config=None,
+            extra_query={},
+            extra_headers={},
+        )
+
+        query = parse_qs(urlparse(manager._prepare_url()).query)
+
+        assert query["trafficType"] == ["customer-tag"]

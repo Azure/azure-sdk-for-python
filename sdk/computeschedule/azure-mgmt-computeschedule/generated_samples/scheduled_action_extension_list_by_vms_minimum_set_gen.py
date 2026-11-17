@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -31,12 +32,12 @@ def main():
     )
 
     response = client.scheduled_action_extension.list_by_vms(
-        resource_uri="sazvpabfud",
+        resource_uri="subscriptions/732116BD-AF31-4E74-9283-B387C44B4A44/resourceGroups/rgcomputeschedule/providers/Microsoft.Compute/virtualMachines/myVm",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2025-04-15-preview/ScheduledActionExtension_ListByVms_MinimumSet_Gen.json
+# x-ms-original-file: 2026-04-15-preview/ScheduledActionExtension_ListByVms_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

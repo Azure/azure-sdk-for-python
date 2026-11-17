@@ -32,7 +32,9 @@ from ._lease import ShareLeaseClient
 from ._models import (
     ContentSettings,
     FileProperties,
+    FileRange,
     Handle,
+    HardLink,
     NTFSAttributes,
 )
 from ._shared.base_client import StorageAccountHostsMixin
@@ -46,6 +48,7 @@ class ShareFileClient(StorageAccountHostsMixin):
     allow_trailing_dot: Optional[bool]
     allow_source_trailing_dot: Optional[bool]
     file_request_intent: Optional[Literal["backup"]]
+    file_id: Optional[str]
     def __init__(
         self,
         account_url: str,
@@ -307,6 +310,17 @@ class ShareFileClient(StorageAccountHostsMixin):
         **kwargs: Any
     ) -> List[Dict[str, int]]: ...
     @distributed_trace
+    def list_ranges(
+        self,
+        *,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        results_per_page: Optional[int] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged[FileRange]: ...
+    @distributed_trace
     def get_ranges_diff(
         self,
         previous_sharesnapshot: Union[str, Dict[str, Any]],
@@ -318,6 +332,19 @@ class ShareFileClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]: ...
+    @distributed_trace
+    def list_ranges_diff(
+        self,
+        previous_sharesnapshot: Union[str, Dict[str, Any]],
+        *,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        include_renames: Optional[bool] = None,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        results_per_page: Optional[int] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged[FileRange]: ...
     @distributed_trace
     def clear_range(
         self,
@@ -370,3 +397,7 @@ class ShareFileClient(StorageAccountHostsMixin):
     ) -> Dict[str, Any]: ...
     @distributed_trace
     def get_symlink(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
+    @distributed_trace
+    def get_file_links(
+        self, *, lease: Optional[Union[ShareLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
+    ) -> List[HardLink]: ...

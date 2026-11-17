@@ -41,6 +41,11 @@ class TestSqlManagementSyncGroupsOperations(AzureMgmtRecordedTestCase):
             sync_group_name="str",
             parameters={
                 "id": "str",
+                "identity": {
+                    "type": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
                 "properties": {
                     "conflictLoggingRetentionInDays": 0,
@@ -90,6 +95,11 @@ class TestSqlManagementSyncGroupsOperations(AzureMgmtRecordedTestCase):
             sync_group_name="str",
             parameters={
                 "id": "str",
+                "identity": {
+                    "type": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
                 "properties": {
                     "conflictLoggingRetentionInDays": 0,

@@ -24,7 +24,6 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import logging
 import pickle
 
 try:
@@ -34,6 +33,15 @@ except ImportError:
 
 import requests
 import pytest
+from utils import (
+    HTTP_REQUESTS,
+    create_http_request,
+    HTTP_RESPONSES,
+    REQUESTS_TRANSPORT_RESPONSES,
+    create_http_response,
+    create_transport_response,
+    request_and_responses_product,
+)
 
 from azure.core.exceptions import DecodeError, AzureError
 from azure.core.pipeline import Pipeline, PipelineResponse, PipelineRequest, PipelineContext
@@ -44,15 +52,6 @@ from azure.core.pipeline.policies import (
     RequestHistory,
     RetryPolicy,
     HTTPPolicy,
-)
-from utils import (
-    HTTP_REQUESTS,
-    create_http_request,
-    HTTP_RESPONSES,
-    REQUESTS_TRANSPORT_RESPONSES,
-    create_http_response,
-    create_transport_response,
-    request_and_responses_product,
 )
 from azure.core.pipeline._tools import is_rest
 
@@ -199,7 +198,9 @@ def test_retry_without_http_response(http_request):
     "http_request,http_response,requests_transport_response",
     request_and_responses_product(HTTP_RESPONSES, REQUESTS_TRANSPORT_RESPONSES),
 )
-def test_raw_deserializer(http_request, http_response, requests_transport_response):
+def test_raw_deserializer(  # pylint: disable=too-many-statements
+    http_request, http_response, requests_transport_response
+):
     raw_deserializer = ContentDecodePolicy()
     context = PipelineContext(None, stream=False)
     universal_request = http_request("GET", "http://localhost/")

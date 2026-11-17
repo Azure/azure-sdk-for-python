@@ -7,6 +7,7 @@ import logging
 import os
 import random
 import subprocess
+import threading
 import errno
 from typing import Union, Optional, Any, Generator, Tuple, List, Type
 from enum import Enum
@@ -23,6 +24,13 @@ from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
 logger = logging.getLogger(__name__)
 
 ICACLS_PATH = os.path.join(os.environ.get("SYSTEMDRIVE", "C:"), r"\Windows\System32\icacls.exe")
+_CAPACITY_LOCKS: dict[str, threading.Lock] = {}
+_CAPACITY_LOCKS_GUARD = threading.Lock()
+
+
+def _get_capacity_lock(path: str) -> threading.Lock:
+    with _CAPACITY_LOCKS_GUARD:
+        return _CAPACITY_LOCKS.setdefault(path, threading.Lock())
 
 
 def _fmt(timestamp: datetime.datetime) -> str:
@@ -114,11 +122,18 @@ class LocalFileStorage:
         write_timeout: int = 60,  # 1 minute,
         name: Optional[str] = None,
         lease_period: int = 60,  # 1 minute
+        capacity_path: Optional[str] = None,
     ) -> None:
         self._path = os.path.abspath(path)
+        self._capacity_path = os.path.abspath(capacity_path) if capacity_path is not None else self._path
+        self._capacity_lock = _get_capacity_lock(self._capacity_path) if capacity_path is not None else None
         self._max_size = max_size
         self._retention_period = retention_period
         self._write_timeout = write_timeout
+        # Remote (OneSettings) on/off toggle, independent of _enabled (folder permissions).
+        # When False, put()/gets() no-op but the instance and its maintenance thread stay alive,
+        # so the FEATURE_LOCAL_STORAGE kill-switch can flip storage on/off without teardown.
+        self._active = True
         self._enabled = self._check_and_set_folder_permissions()
         if self._enabled:
             self._maintenance_routine()
@@ -137,6 +152,16 @@ class LocalFileStorage:
         if self._enabled:
             self._maintenance_task.cancel()
             self._maintenance_task.join()
+
+    def enable(self) -> None:
+        # Turn the remote toggle on; put()/gets() resume. No-op if folder permissions were denied.
+        self._active = True
+
+    def disable(self) -> None:
+        # Turn the remote toggle off; put()/gets() become no-ops. The instance and maintenance
+        # thread are left running so storage can be re-enabled later without reconstruction. Any
+        # telemetry already persisted to disk is left in place for retry once re-enabled.
+        self._active = False
 
     def __enter__(self) -> "LocalFileStorage":
         return self
@@ -157,7 +182,7 @@ class LocalFileStorage:
 
     # pylint: disable=too-many-nested-blocks
     def gets(self) -> Generator[LocalFileBlob, None, None]:
-        if self._enabled:
+        if self._enabled and self._active:
             now = _now()
             lease_deadline = _fmt(now)
             retention_deadline = _fmt(now - _seconds(self._retention_period))
@@ -170,7 +195,9 @@ class LocalFileStorage:
                     if path.endswith(".tmp"):
                         if name < timeout_deadline:
                             try:
-                                os.remove(path)  # TODO: log data loss
+                                os.remove(path)
+                                if self._capacity_lock is not None:
+                                    logger.warning("Retry write timed out. Check storage write access.")
                             except Exception:
                                 pass  # keep silent
                     if path.endswith(".lock"):
@@ -185,7 +212,9 @@ class LocalFileStorage:
                     if path.endswith(".blob"):
                         if name < retention_deadline:
                             try:
-                                os.remove(path)  # TODO: log data loss
+                                os.remove(path)
+                                if self._capacity_lock is not None:
+                                    logger.warning("Data expired. Check storage_retention_period.")
                             except Exception:
                                 pass  # keep silent
                         else:
@@ -196,6 +225,7 @@ class LocalFileStorage:
             pass
 
     def get(self) -> Optional[LocalFileBlob]:
+        # gets() already gates on _enabled and _active, so no need to re-check _active here.
         if not self._enabled:
             return None
         cursor = self.gets()
@@ -207,29 +237,38 @@ class LocalFileStorage:
 
     def put(self, data: List[Any], lease_period: Optional[int] = None) -> Union[StorageExportResult, str]:
         try:
-            if not self._enabled:
-                if get_local_storage_setup_state_readonly():
-                    return StorageExportResult.CLIENT_READONLY
-                if get_local_storage_setup_state_exception() != "":
-                    # Type conversion has been done to match the return type of this function
-                    return str(get_local_storage_setup_state_exception())
+            # Storage is unavailable when remotely disabled (_active) or never set up (_enabled).
+            if not self._active or not self._enabled:
+                # Only report the specific setup-failure reason when not remotely disabled.
+                if self._active:
+                    if get_local_storage_setup_state_readonly():
+                        return StorageExportResult.CLIENT_READONLY
+                    if get_local_storage_setup_state_exception() != "":
+                        # Type conversion has been done to match the return type of this function
+                        return str(get_local_storage_setup_state_exception())
                 return StorageExportResult.CLIENT_STORAGE_DISABLED
-            if not self._check_storage_size():
-                return StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED
-            blob = LocalFileBlob(
-                os.path.join(
-                    self._path,
-                    "{}-{}.blob".format(
-                        _fmt(_now()),
-                        "{:08x}".format(random.getrandbits(32)),  # thread-safe random
-                    ),
-                )
-            )
-            if lease_period is None:
-                lease_period = self._lease_period
-            return blob.put(data, lease_period=lease_period)
+            if self._capacity_lock is None:
+                return self._put(data, lease_period)
+            with self._capacity_lock:
+                return self._put(data, lease_period)
         except Exception as ex:
             return str(ex)
+
+    def _put(self, data: List[Any], lease_period: Optional[int]) -> Union[StorageExportResult, str]:
+        if not self._check_storage_size():
+            return StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED
+        blob = LocalFileBlob(
+            os.path.join(
+                self._path,
+                "{}-{}.blob".format(
+                    _fmt(_now()),
+                    "{:08x}".format(random.getrandbits(32)),  # thread-safe random
+                ),
+            )
+        )
+        if lease_period is None:
+            lease_period = self._lease_period
+        return blob.put(data, lease_period=lease_period)
 
     def _check_and_set_folder_permissions(self) -> bool:
         """
@@ -272,13 +311,18 @@ class LocalFileStorage:
                     owner_uid = dir_stat.st_uid
                     current_uid = os.getuid()  # pylint: disable=no-member
                     if owner_uid not in (current_uid, 0):
-                        logger.error(
-                            "Storage directory %s is owned by uid %d, not the current user (%d) or admin (uid 0). "
-                            "Refusing to use this directory.",
-                            self._path,
-                            owner_uid,
-                            current_uid,
-                        )
+                        if self._capacity_lock is not None:
+                            logger.error(
+                                "Storage setup failed. Configure a directory owned by the current user or admin."
+                            )
+                        else:
+                            logger.error(
+                                "Storage directory %s is owned by uid %d, not the current user (%d) or admin (uid 0). "
+                                "Refusing to use this directory.",
+                                self._path,
+                                owner_uid,
+                                current_uid,
+                            )
                         set_local_storage_setup_state_exception(
                             f"Directory owned by uid {owner_uid}, expected {current_uid} or 0"
                         )
@@ -297,9 +341,11 @@ class LocalFileStorage:
         return False
 
     def _check_storage_size(self) -> bool:
+        if self._capacity_lock is not None:
+            self._cleanup_expired_capacity()
         size = 0
         # pylint: disable=unused-variable
-        for dirpath, dirnames, filenames in os.walk(self._path):
+        for dirpath, dirnames, filenames in os.walk(self._capacity_path):
             for filename in filenames:
                 path = os.path.join(dirpath, filename)
                 # skip if it is symbolic link
@@ -307,10 +353,10 @@ class LocalFileStorage:
                     try:
                         size += os.path.getsize(path)
                     except OSError:
-                        logger.error(
-                            "Path %s does not exist or is inaccessible.",
-                            path,
-                        )
+                        if self._capacity_lock is not None:
+                            logger.error("Retry file is inaccessible. Check storage permissions.")
+                        else:
+                            logger.error("Path %s does not exist or is inaccessible.", path)
                         continue
                     if size >= self._max_size:
                         # pylint: disable=logging-format-interpolation
@@ -322,6 +368,41 @@ class LocalFileStorage:
                         )
                         return False
         return True
+
+    def _cleanup_expired_capacity(self) -> None:
+        now = _now()
+        lease_deadline = _fmt(now)
+        retention_deadline = _fmt(now - _seconds(self._retention_period))
+        timeout_deadline = _fmt(now - _seconds(self._write_timeout))
+        for dirpath, _, filenames in os.walk(self._capacity_path):
+            for filename in filenames:
+                path = os.path.join(dirpath, filename)
+                if os.path.islink(path):
+                    continue
+                if filename.endswith(".tmp"):
+                    if filename < timeout_deadline:
+                        try:
+                            os.remove(path)
+                            if self._capacity_lock is not None:
+                                logger.warning("Retry write timed out. Check storage write access.")
+                        except OSError:
+                            pass
+                    continue
+                if filename.endswith(".lock"):
+                    try:
+                        if filename[filename.rindex("@") + 1 : -5] > lease_deadline:
+                            continue
+                    except ValueError:
+                        continue
+                elif not filename.endswith(".blob"):
+                    continue
+                if filename < retention_deadline:
+                    try:
+                        os.remove(path)
+                        if self._capacity_lock is not None:
+                            logger.warning("Data expired. Check storage_retention_period.")
+                    except OSError:
+                        pass
 
     def _get_current_user(self) -> str:
         user = ""

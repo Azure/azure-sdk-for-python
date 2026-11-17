@@ -50,6 +50,7 @@ class TestSqlManagementExtendedDatabaseBlobAuditingPoliciesOperationsAsync(Azure
                     "isStorageSecondaryKeyInUse": bool,
                     "predicateExpression": "str",
                     "queueDelayMs": 0,
+                    "requiredFields": ["str"],
                     "retentionDays": 0,
                     "storageAccountAccessKey": "str",
                     "storageAccountSubscriptionId": "str",

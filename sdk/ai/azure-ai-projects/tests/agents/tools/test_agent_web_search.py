@@ -13,7 +13,7 @@ from azure.ai.projects.models import PromptAgentDefinition, WebSearchPreviewTool
 class TestAgentWebSearch(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_web_search(self, **kwargs):
         """
         Test agent with Web Search tool for real-time information.

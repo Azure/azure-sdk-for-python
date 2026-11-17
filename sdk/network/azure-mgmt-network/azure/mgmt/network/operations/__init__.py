@@ -16,6 +16,7 @@ from ._operations import Operations  # type: ignore
 from ._operations import ApplicationGatewaysOperations  # type: ignore
 from ._operations import ApplicationGatewayPrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import ApplicationSecurityGroupsOperations  # type: ignore
+from ._operations import AuthenticationPoliciesOperations  # type: ignore
 from ._operations import AzureFirewallsOperations  # type: ignore
 from ._operations import BastionHostsOperations  # type: ignore
 from ._operations import NetworkInterfacesOperations  # type: ignore
@@ -31,8 +32,11 @@ from ._operations import ExpressRouteCrossConnectionsOperations  # type: ignore
 from ._operations import ExpressRoutePortsLocationsOperations  # type: ignore
 from ._operations import ExpressRoutePortsOperations  # type: ignore
 from ._operations import ExpressRoutePortAuthorizationsOperations  # type: ignore
+from ._operations import ExpressRouteLagsOperations  # type: ignore
+from ._operations import ExpressRouteLagAuthorizationsOperations  # type: ignore
 from ._operations import FirewallPoliciesOperations  # type: ignore
 from ._operations import FirewallPolicyRuleCollectionGroupsOperations  # type: ignore
+from ._operations import FirewallPolicyKubeSelectorGroupsOperations  # type: ignore
 from ._operations import FirewallPolicyIdpsSignaturesOverridesOperations  # type: ignore
 from ._operations import FirewallPolicyDraftsOperations  # type: ignore
 from ._operations import FirewallPolicyRuleCollectionGroupDraftsOperations  # type: ignore
@@ -54,6 +58,7 @@ from ._operations import NetworkManagerRoutingConfigurationsOperations  # type: 
 from ._operations import RoutingRuleCollectionsOperations  # type: ignore
 from ._operations import RoutingRulesOperations  # type: ignore
 from ._operations import ScopeConnectionsOperations  # type: ignore
+from ._operations import CommitsOperations  # type: ignore
 from ._operations import SecurityAdminConfigurationsOperations  # type: ignore
 from ._operations import AdminRuleCollectionsOperations  # type: ignore
 from ._operations import SecurityUserConfigurationsOperations  # type: ignore
@@ -102,9 +107,15 @@ from ._operations import VpnSiteLinkConnectionsOperations  # type: ignore
 from ._operations import P2SVpnGatewaysOperations  # type: ignore
 from ._operations import ExpressRouteGatewaysOperations  # type: ignore
 from ._operations import HubRouteTablesOperations  # type: ignore
+from ._operations import ConnectionPoliciesOperations  # type: ignore
 from ._operations import WebApplicationFirewallPoliciesOperations  # type: ignore
 from ._operations import VirtualNetworkAppliancesOperations  # type: ignore
+from ._operations import VirtualNetworkApplianceCapabilitiesOperations  # type: ignore
 from ._operations import ServiceGatewaysOperations  # type: ignore
+from ._operations import InterconnectGroupsOperations  # type: ignore
+from ._operations import SubgroupsOperations  # type: ignore
+from ._operations import FirstPartyServiceTagsOperations  # type: ignore
+from ._operations import AddressPrefixSetsOperations  # type: ignore
 from ._operations import ApplicationGatewayPrivateLinkResourcesOperations  # type: ignore
 from ._operations import ApplicationGatewayWafDynamicManifestsDefaultOperations  # type: ignore
 from ._operations import ApplicationGatewayWafDynamicManifestsOperations  # type: ignore
@@ -181,6 +192,7 @@ __all__ = [
     "ApplicationGatewaysOperations",
     "ApplicationGatewayPrivateEndpointConnectionsOperations",
     "ApplicationSecurityGroupsOperations",
+    "AuthenticationPoliciesOperations",
     "AzureFirewallsOperations",
     "BastionHostsOperations",
     "NetworkInterfacesOperations",
@@ -196,8 +208,11 @@ __all__ = [
     "ExpressRoutePortsLocationsOperations",
     "ExpressRoutePortsOperations",
     "ExpressRoutePortAuthorizationsOperations",
+    "ExpressRouteLagsOperations",
+    "ExpressRouteLagAuthorizationsOperations",
     "FirewallPoliciesOperations",
     "FirewallPolicyRuleCollectionGroupsOperations",
+    "FirewallPolicyKubeSelectorGroupsOperations",
     "FirewallPolicyIdpsSignaturesOverridesOperations",
     "FirewallPolicyDraftsOperations",
     "FirewallPolicyRuleCollectionGroupDraftsOperations",
@@ -219,6 +234,7 @@ __all__ = [
     "RoutingRuleCollectionsOperations",
     "RoutingRulesOperations",
     "ScopeConnectionsOperations",
+    "CommitsOperations",
     "SecurityAdminConfigurationsOperations",
     "AdminRuleCollectionsOperations",
     "SecurityUserConfigurationsOperations",
@@ -267,9 +283,15 @@ __all__ = [
     "P2SVpnGatewaysOperations",
     "ExpressRouteGatewaysOperations",
     "HubRouteTablesOperations",
+    "ConnectionPoliciesOperations",
     "WebApplicationFirewallPoliciesOperations",
     "VirtualNetworkAppliancesOperations",
+    "VirtualNetworkApplianceCapabilitiesOperations",
     "ServiceGatewaysOperations",
+    "InterconnectGroupsOperations",
+    "SubgroupsOperations",
+    "FirstPartyServiceTagsOperations",
+    "AddressPrefixSetsOperations",
     "ApplicationGatewayPrivateLinkResourcesOperations",
     "ApplicationGatewayWafDynamicManifestsDefaultOperations",
     "ApplicationGatewayWafDynamicManifestsOperations",

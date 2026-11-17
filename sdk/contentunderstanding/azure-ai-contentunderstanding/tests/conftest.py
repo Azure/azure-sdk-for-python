@@ -25,6 +25,43 @@ load_dotenv()
 SANITIZED_CONTAINER_SAS_URL = "https://sanitized.blob.core.windows.net/container?sv=sanitized-sas-token"
 
 
+def pytest_configure(config):
+    """Register dual-version markers used by the Content Understanding test matrix."""
+    config.addinivalue_line(
+        "markers",
+        "preview: preview-API-only test (requires CONTENTUNDERSTANDING_TEST_API_VERSION=2026-06-01-preview)",
+    )
+    config.addinivalue_line(
+        "markers",
+        "ga: GA-surface / back-compat test; runs on every matrix pass "
+        "(CONTENTUNDERSTANDING_TEST_API_VERSION GA and preview)",
+    )
+
+
+def pytest_collection_modifyitems(config, items):
+    """Skip preview-only tests when the active test API version is not preview.
+
+    Run the suite twice to cover both service versions::
+
+        CONTENTUNDERSTANDING_TEST_API_VERSION=2025-11-01 pytest
+        CONTENTUNDERSTANDING_TEST_API_VERSION=2026-06-01-preview pytest
+
+    Unmarked and ``@pytest.mark.ga`` tests run in both passes so GA-surface coverage
+    also executes against the preview API version. ``@pytest.mark.preview`` tests run
+    only in the preview pass.
+    """
+    # Import locally so collection still works if package import paths differ.
+    from testpreparer import PREVIEW_API_VERSION, get_test_api_version
+
+    api_version = get_test_api_version()
+    skip_preview = pytest.mark.skip(
+        reason=f"preview-only test skipped when CONTENTUNDERSTANDING_TEST_API_VERSION={api_version}"
+    )
+    for item in items:
+        if item.get_closest_marker("preview") and api_version != PREVIEW_API_VERSION:
+            item.add_marker(skip_preview)
+
+
 @pytest.fixture(scope="session", autouse=True)
 def start_proxy(test_proxy):
     # Ensures the test proxy is started for the session
@@ -50,6 +87,7 @@ def configure_test_proxy_matcher(test_proxy):
     set_custom_default_matcher(
         compare_bodies=False,
         excluded_headers="User-Agent,x-ms-client-request-id,x-ms-request-id,Authorization,Content-Length,Accept,Connection",
+        ignored_query_parameters="api-version",
     )
 
 
@@ -76,15 +114,18 @@ def add_sanitizers(test_proxy):
         and contentunderstanding_subscription_id != "00000000-0000-0000-0000-000000000000"
     ):
         add_general_string_sanitizer(
-            target=contentunderstanding_subscription_id, value="00000000-0000-0000-0000-000000000000"
+            target=contentunderstanding_subscription_id,
+            value="00000000-0000-0000-0000-000000000000",
         )
     if contentunderstanding_tenant_id and contentunderstanding_tenant_id != "00000000-0000-0000-0000-000000000000":
         add_general_string_sanitizer(
-            target=contentunderstanding_tenant_id, value="00000000-0000-0000-0000-000000000000"
+            target=contentunderstanding_tenant_id,
+            value="00000000-0000-0000-0000-000000000000",
         )
     if contentunderstanding_client_id and contentunderstanding_client_id != "00000000-0000-0000-0000-000000000000":
         add_general_string_sanitizer(
-            target=contentunderstanding_client_id, value="00000000-0000-0000-0000-000000000000"
+            target=contentunderstanding_client_id,
+            value="00000000-0000-0000-0000-000000000000",
         )
     if (
         contentunderstanding_client_secret

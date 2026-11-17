@@ -31,13 +31,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.migration.begin_start(
+    response = client.migrations.begin_start(
         resource_group_name="rg1",
         cluster_name="cache1",
         parameters={
             "properties": {
                 "skipDataMigration": True,
-                "sourceResourceId": "/subscriptions/e7b5a9d2-6b6a-4d2f-9143-20d9a10f5b8f/resourceGroups/rg1/providers/Microsoft.Cache/redis/cache1",
+                "sourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Cache/redis/cache1",
                 "sourceType": "AzureCacheForRedis",
                 "switchDns": True,
             }
@@ -46,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/RedisEnterpriseMigrationStart.json
+# x-ms-original-file: 2026-10-01-preview/RedisEnterpriseMigrationStart.json
 if __name__ == "__main__":
     main()

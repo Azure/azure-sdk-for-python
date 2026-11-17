@@ -65,19 +65,21 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                         },
                         "comments": "str",
                         "deviceHostName": "str",
-                        "deviceRegistry": {"identityResourceId": "str", "namespaceResourceId": "str"},
-                        "deviceStreams": {"streamingEndpoints": ["str"]},
+                        "deviceRegistry": {
+                            "dataPlaneHostName": "str",
+                            "identity": {"type": "str", "userAssignedIdentity": "str"},
+                            "linkingProperties": {
+                                "error": {"code": "str", "details": "str", "httpStatusCode": "str", "message": "str"},
+                                "state": "str",
+                            },
+                            "namespaceResourceId": "str",
+                            "namespaceUuid": "str",
+                        },
                         "disableDeviceSAS": bool,
                         "disableLocalAuth": bool,
                         "disableModuleSAS": bool,
                         "enableDataResidency": bool,
                         "enableFileUploadNotifications": bool,
-                        "encryption": {
-                            "keySource": "str",
-                            "keyVaultProperties": [
-                                {"identity": {"userAssignedIdentity": "str"}, "keyIdentifier": "str"}
-                            ],
-                        },
                         "eventHubEndpoints": {
                             "str": {
                                 "endpoint": "str",
@@ -91,7 +93,6 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                         "hostName": "str",
                         "iotHubDetails": {"gatewayVersion": "str"},
                         "ipFilterRules": [{"action": "str", "filterName": "str", "ipMask": "str"}],
-                        "ipVersion": "str",
                         "locations": [{"location": "str", "role": "str"}],
                         "messagingEndpoints": {
                             "str": {
@@ -132,10 +133,6 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                         "provisioningState": "str",
                         "publicNetworkAccess": "str",
                         "restrictOutboundNetworkAccess": bool,
-                        "rootCertificate": {
-                            "enableRootCertificateV2": bool,
-                            "lastUpdatedTimeUtc": "2020-02-20 00:00:00",
-                        },
                         "routing": {
                             "endpoints": {
                                 "cosmosDBSqlContainers": [
@@ -166,6 +163,19 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                                         "identity": {"userAssignedIdentity": "str"},
                                         "resourceGroup": "str",
                                         "subscriptionId": "str",
+                                    }
+                                ],
+                                "eventStreams": [
+                                    {
+                                        "endpointUri": "str",
+                                        "entityPath": "str",
+                                        "name": "str",
+                                        "authenticationType": "str",
+                                        "eventStreamId": "str",
+                                        "id": "str",
+                                        "identity": {"userAssignedIdentity": "str"},
+                                        "sourceId": "str",
+                                        "workspaceId": "str",
                                     }
                                 ],
                                 "serviceBusQueues": [
@@ -369,7 +379,7 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
             input={
                 "message": {"appProperties": {"str": "str"}, "body": "str", "systemProperties": {"str": "str"}},
                 "routingSource": "str",
-                "twin": {"properties": {"desired": {}, "reported": {}}, "tags": {}},
+                "twin": {"properties": {"desired": {"str": {}}, "reported": {"str": {}}}, "tags": {"str": {}}},
             },
         )
 
@@ -391,7 +401,7 @@ class TestIotHubIotHubResourceOperationsAsync(AzureMgmtRecordedTestCase):
                     "condition": "str",
                 },
                 "message": {"appProperties": {"str": "str"}, "body": "str", "systemProperties": {"str": "str"}},
-                "twin": {"properties": {"desired": {}, "reported": {}}, "tags": {}},
+                "twin": {"properties": {"desired": {"str": {}}, "reported": {"str": {}}}, "tags": {"str": {}}},
             },
         )
 

@@ -62,12 +62,14 @@ class TestCustomerSdkStats(unittest.TestCase):
         mock_exporter = mock.Mock()
         mock_exporter._connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
         mock_exporter._credential = mock.Mock()
+        mock_exporter._disable_offline_storage = False
 
         collect_customer_sdkstats(mock_exporter)
 
         mock_manager.initialize.assert_called_once_with(
             connection_string=mock_exporter._connection_string,
             credential=mock_exporter._credential,
+            disable_offline_storage=mock_exporter._disable_offline_storage,
         )
 
     def test_collect_customer_sdkstats_multiple_calls(self):

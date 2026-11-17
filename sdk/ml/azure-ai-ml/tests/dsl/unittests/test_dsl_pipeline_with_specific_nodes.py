@@ -4,18 +4,40 @@ import pydash
 import pytest
 from test_utilities.utils import omit_with_wildcard, parse_local_path
 
+from azure.core.serialization import as_attribute_dict
 from azure.ai.ml import Input, Output, command, dsl, load_component, spark
 from azure.ai.ml import UserIdentityConfiguration
 from azure.ai.ml.automl import classification, regression
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.constants._component import DataCopyMode
-from azure.ai.ml.data_transfer import Database, FileSystem, copy_data, export_data, import_data
+from azure.ai.ml.data_transfer import (
+    Database,
+    FileSystem,
+    copy_data,
+    export_data,
+    import_data,
+)
 from azure.ai.ml.dsl._load_import import to_component
-from azure.ai.ml.entities import CommandComponent, CommandJob, Data, ParallelTask, PipelineJob, SparkJob
-from azure.ai.ml.entities._builders import Command, DataTransferImport, Parallel, Spark, Sweep
+from azure.ai.ml.entities import (
+    CommandComponent,
+    CommandJob,
+    Data,
+    ParallelTask,
+    PipelineJob,
+    SparkJob,
+)
+from azure.ai.ml.entities._builders import (
+    Command,
+    DataTransferImport,
+    Parallel,
+    Spark,
+    Sweep,
+)
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob
-from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferCopyJob
+from azure.ai.ml.entities._job.data_transfer.data_transfer_job import (
+    DataTransferCopyJob,
+)
 from azure.ai.ml.entities._job.job_service import (
     JobService,
     JupyterLabJobService,
@@ -322,7 +344,7 @@ class TestDSLPipelineWithSpecificNodes:
             "jobs.count_by_row.componentId",
             "jobs.count_by_row.properties",
         ]
-        actual_job = pydash.omit(dsl_pipeline._to_rest_object().properties.as_dict(), *omit_fields)
+        actual_job = pydash.omit(as_attribute_dict(dsl_pipeline._to_rest_object().properties), *omit_fields)
         assert actual_job == {
             "description": "submit a pipeline with spark job",
             "display_name": "spark_pipeline_from_yaml",
@@ -469,7 +491,7 @@ class TestDSLPipelineWithSpecificNodes:
         ]
 
         pipeline1 = pipeline(10, data)
-        pipeline_job1 = pipeline1._to_rest_object().as_dict()
+        pipeline_job1 = as_attribute_dict(pipeline1._to_rest_object())
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
             "properties": {
@@ -630,7 +652,7 @@ class TestDSLPipelineWithSpecificNodes:
         ]
 
         pipeline1 = pipeline(folder1, folder2)
-        pipeline_job1 = pipeline1._to_rest_object().as_dict()
+        pipeline_job1 = as_attribute_dict(pipeline1._to_rest_object())
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
             "properties": {
@@ -737,7 +759,7 @@ class TestDSLPipelineWithSpecificNodes:
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
 
         pipeline1 = pipeline(query_source_snowflake, connection_target_azuresql)
-        pipeline_job1 = pipeline1._to_rest_object().as_dict()
+        pipeline_job1 = as_attribute_dict(pipeline1._to_rest_object())
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
             "properties": {
@@ -823,7 +845,7 @@ class TestDSLPipelineWithSpecificNodes:
 
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
         pipeline1 = pipeline()
-        pipeline_job1 = pipeline1._to_rest_object().as_dict()
+        pipeline_job1 = as_attribute_dict(pipeline1._to_rest_object())
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
             "properties": {
@@ -898,7 +920,7 @@ class TestDSLPipelineWithSpecificNodes:
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
 
         pipeline1 = pipeline(path_source_s3, connection_target)
-        pipeline_job1 = pipeline1._to_rest_object().as_dict()
+        pipeline_job1 = as_attribute_dict(pipeline1._to_rest_object())
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
             "properties": {
@@ -1000,7 +1022,7 @@ class TestDSLPipelineWithSpecificNodes:
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
 
         pipeline1 = pipeline(table_name, connection_target_azuresql)
-        pipeline_job1 = pipeline1._to_rest_object().as_dict()
+        pipeline_job1 = as_attribute_dict(pipeline1._to_rest_object())
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
             "properties": {
@@ -1152,7 +1174,7 @@ class TestDSLPipelineWithSpecificNodes:
         ]
 
         pipeline1 = pipeline(iris_data, sample_rate)
-        pipeline_job1 = pipeline1._to_rest_object().as_dict()
+        pipeline_job1 = as_attribute_dict(pipeline1._to_rest_object())
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
             "properties": {
@@ -1382,7 +1404,7 @@ class TestDSLPipelineWithSpecificNodes:
         ]
 
         pipeline1 = pipeline(iris_data, sample_rate)
-        pipeline_job1 = pipeline1._to_rest_object().as_dict()
+        pipeline_job1 = as_attribute_dict(pipeline1._to_rest_object())
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
             "properties": {
@@ -1629,7 +1651,7 @@ class TestDSLPipelineWithSpecificNodes:
 
         pipeline1 = pipeline(iris_data, sample_rate)
         pipeline_rest_obj = pipeline1._to_rest_object()
-        pipeline_job1 = pipeline_rest_obj.as_dict()
+        pipeline_job1 = as_attribute_dict(pipeline_rest_obj)
 
         pipeline_regenerated_from_rest = PipelineJob._load_from_rest(pipeline_rest_obj)
         omit_field = [
@@ -1746,7 +1768,7 @@ class TestDSLPipelineWithSpecificNodes:
 
         pipeline1 = pipeline(folder1, folder2)
         pipeline_rest_obj = pipeline1._to_rest_object()
-        pipeline_job1 = pipeline_rest_obj.as_dict()
+        pipeline_job1 = as_attribute_dict(pipeline_rest_obj)
 
         pipeline_regenerated_from_rest = PipelineJob._load_from_rest(pipeline_rest_obj)
 
@@ -1866,7 +1888,7 @@ class TestDSLPipelineWithSpecificNodes:
 
         pipeline1 = pipeline(data)
         pipeline_rest_obj = pipeline1._to_rest_object()
-        pipeline_job1 = pipeline_rest_obj.as_dict()
+        pipeline_job1 = as_attribute_dict(pipeline_rest_obj)
         pipeline_regenerated_from_rest = PipelineJob._load_from_rest(pipeline_rest_obj)
         omit_field = [
             "jobs.parallel_node.task",
@@ -1995,7 +2017,7 @@ class TestDSLPipelineWithSpecificNodes:
 
         data = Input(type=AssetTypes.MLTABLE, path="/a/path/on/ds", mode="eval_mount")
         pipeline1 = pipeline(data)
-        pipeline_job1 = pipeline1._to_rest_object().as_dict()
+        pipeline_job1 = as_attribute_dict(pipeline1._to_rest_object())
         pipeline_job1 = pydash.omit(pipeline_job1, omit_fields)
         assert pipeline_job1 == {
             "properties": {
@@ -2142,7 +2164,7 @@ class TestDSLPipelineWithSpecificNodes:
 
         data = Input(type=AssetTypes.URI_FOLDER, path="/a/path/on/ds")
         pipeline1 = pipeline(10, data)
-        pipeline_job1 = pipeline1._to_rest_object().as_dict()
+        pipeline_job1 = as_attribute_dict(pipeline1._to_rest_object())
         pipeline_job1 = pydash.omit(pipeline_job1, omit_fields)
         assert pipeline_job1 == {
             "properties": {
@@ -2261,7 +2283,7 @@ class TestDSLPipelineWithSpecificNodes:
             "jobs.batch_inference_node2.componentId",
             "jobs.batch_inference_node2.properties",
         ]
-        actual_job = pydash.omit(pipeline._to_rest_object().properties.as_dict(), *omit_fields)
+        actual_job = pydash.omit(as_attribute_dict(pipeline._to_rest_object().properties), *omit_fields)
         assert actual_job == {
             "display_name": "parallel_in_pipeline",
             "experiment_name": "sdk-cli-v2",
@@ -2379,7 +2401,7 @@ class TestDSLPipelineWithSpecificNodes:
         )
         pipeline1: PipelineJob = train_with_automl_in_pipeline(job_input, "target", 10, 0.2)
 
-        pipeline_dict1 = pipeline1._to_rest_object().as_dict()
+        pipeline_dict1 = as_attribute_dict(pipeline1._to_rest_object())
         pipeline_dict1 = pydash.omit(
             pipeline_dict1["properties"],
             [
@@ -2479,7 +2501,7 @@ class TestDSLPipelineWithSpecificNodes:
         )
         pipeline1: PipelineJob = train_with_automl_in_pipeline(10, job_input, "target")
         pipeline1.compute = "cpu-cluster"
-        pipeline_dict1 = pipeline1._to_rest_object().as_dict()
+        pipeline_dict1 = as_attribute_dict(pipeline1._to_rest_object())
         pipeline_dict1 = pydash.omit(
             pipeline_dict1["properties"],
             "jobs.node1.componentId",
@@ -2556,7 +2578,7 @@ class TestDSLPipelineWithSpecificNodes:
         pipeline1: PipelineJob = train_with_automl_in_pipeline(job_input, "target")
         pipeline1.compute = "cpu-cluster"
 
-        pipeline_dict1 = pipeline1._to_rest_object().as_dict()
+        pipeline_dict1 = as_attribute_dict(pipeline1._to_rest_object())
         pipeline_dict1 = pydash.omit(
             pipeline_dict1["properties"],
             [
@@ -2605,7 +2627,7 @@ class TestDSLPipelineWithSpecificNodes:
 
         # in order to get right type, user need to specify it on pipeline level
         pipeline1.outputs.pipeline_job_out_best_model.mode = "rw_mount"
-        pipeline_dict2 = pipeline1._to_rest_object().as_dict()
+        pipeline_dict2 = as_attribute_dict(pipeline1._to_rest_object())
         pipeline_dict2 = pydash.omit(
             pipeline_dict2["properties"],
             [
@@ -2662,7 +2684,7 @@ class TestDSLPipelineWithSpecificNodes:
             path="fake_path",
         )
         pipeline1: PipelineJob = train_with_automl_in_pipeline(job_input, "target")
-        pipeline_dict1 = pipeline1._to_rest_object().as_dict()
+        pipeline_dict1 = as_attribute_dict(pipeline1._to_rest_object())
         assert set(pipeline_dict1["properties"]["jobs"].keys()) == {
             "regressionjob",
             "regressionjob_1",

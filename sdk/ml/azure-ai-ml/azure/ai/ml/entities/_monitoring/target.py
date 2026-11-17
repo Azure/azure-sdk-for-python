@@ -4,7 +4,7 @@
 
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringTarget as RestMonitoringTarget
+from azure.ai.ml._restclient.arm_ml_service.models import MonitoringTarget as RestMonitoringTarget
 from azure.ai.ml.constants._monitoring import MonitorTargetTasks
 
 

@@ -32,14 +32,13 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import AzureRedHatOpenShiftClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -909,7 +908,7 @@ class OpenShiftClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: Union[_models.OpenShiftCluster, JSON, IO[bytes]],
+        parameters: Union[_models.OpenShiftCluster, _types.OpenShiftCluster, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -970,7 +969,9 @@ class OpenShiftClustersOperations:
 
         response_headers = {}
         if response.status_code == 201:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -1016,7 +1017,7 @@ class OpenShiftClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: JSON,
+        parameters: _types.OpenShiftCluster,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1032,7 +1033,7 @@ class OpenShiftClustersOperations:
         :param resource_name: The name of the OpenShift cluster resource. Required.
         :type resource_name: str
         :param parameters: The OpenShift cluster resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.redhatopenshift.types.OpenShiftCluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1078,7 +1079,7 @@ class OpenShiftClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: Union[_models.OpenShiftCluster, JSON, IO[bytes]],
+        parameters: Union[_models.OpenShiftCluster, _types.OpenShiftCluster, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OpenShiftCluster]:
         """Creates or updates a OpenShift cluster with the specified subscription, resource group and
@@ -1091,9 +1092,10 @@ class OpenShiftClustersOperations:
         :type resource_group_name: str
         :param resource_name: The name of the OpenShift cluster resource. Required.
         :type resource_name: str
-        :param parameters: The OpenShift cluster resource. Is one of the following types:
-         OpenShiftCluster, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.redhatopenshift.models.OpenShiftCluster or JSON or IO[bytes]
+        :param parameters: The OpenShift cluster resource. Is either a OpenShiftCluster type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.redhatopenshift.models.OpenShiftCluster or
+         ~azure.mgmt.redhatopenshift.types.OpenShiftCluster or IO[bytes]
         :return: An instance of LROPoller that returns OpenShiftCluster. The OpenShiftCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redhatopenshift.models.OpenShiftCluster]
@@ -1155,7 +1157,7 @@ class OpenShiftClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: Union[_models.OpenShiftClusterUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.OpenShiftClusterUpdate, _types.OpenShiftClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1216,7 +1218,9 @@ class OpenShiftClustersOperations:
 
         response_headers = {}
         if response.status_code == 201:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -1262,7 +1266,7 @@ class OpenShiftClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: JSON,
+        parameters: _types.OpenShiftClusterUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1278,7 +1282,7 @@ class OpenShiftClustersOperations:
         :param resource_name: The name of the OpenShift cluster resource. Required.
         :type resource_name: str
         :param parameters: The OpenShift cluster resource. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.redhatopenshift.types.OpenShiftClusterUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1324,7 +1328,7 @@ class OpenShiftClustersOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        parameters: Union[_models.OpenShiftClusterUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.OpenShiftClusterUpdate, _types.OpenShiftClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OpenShiftCluster]:
         """Creates or updates a OpenShift cluster with the specified subscription, resource group and
@@ -1337,10 +1341,10 @@ class OpenShiftClustersOperations:
         :type resource_group_name: str
         :param resource_name: The name of the OpenShift cluster resource. Required.
         :type resource_name: str
-        :param parameters: The OpenShift cluster resource. Is one of the following types:
-         OpenShiftClusterUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.redhatopenshift.models.OpenShiftClusterUpdate or JSON or
-         IO[bytes]
+        :param parameters: The OpenShift cluster resource. Is either a OpenShiftClusterUpdate type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.redhatopenshift.models.OpenShiftClusterUpdate or
+         ~azure.mgmt.redhatopenshift.types.OpenShiftClusterUpdate or IO[bytes]
         :return: An instance of LROPoller that returns OpenShiftCluster. The OpenShiftCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redhatopenshift.models.OpenShiftCluster]

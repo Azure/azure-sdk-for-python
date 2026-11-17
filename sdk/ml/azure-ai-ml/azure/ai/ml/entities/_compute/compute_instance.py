@@ -9,11 +9,11 @@ import re
 import warnings
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ComputeInstance as CIRest
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ComputeInstanceProperties
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ComputeInstanceSshSettings as CiSShSettings
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import AssignedUser
+from azure.ai.ml._restclient.arm_ml_service.models import ComputeInstance as CIRest
+from azure.ai.ml._restclient.arm_ml_service.models import ComputeInstanceProperties
+from azure.ai.ml._restclient.arm_ml_service.models import ComputeInstanceSshSettings as CiSShSettings
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ComputeResource,
     PersonalComputeInstanceSettings,
     ResourceId,
@@ -35,14 +35,39 @@ from ._setup_scripts import SetupScripts
 module_logger = logging.getLogger(__name__)
 
 
+def _read_optional_compute_prop(properties: Any, attr_name: str, wire_key: str) -> Any:
+    """Read a compute property that is a typed attribute on the msrest 2023-08 response model but an
+    untyped wire key on the arm_ml_service hybrid model.
+
+    ``enableRootAccess`` / ``releaseQuotaOnStop`` / ``enableOSPatching`` are declared on the
+    2023-08-01-preview swagger (so the real GET/list response, deserialized by the v2023_08 msrest
+    client, exposes them as snake_case attributes) but were not declared on the shared arm_ml_service
+    model (so the entity's own ``_to_rest_object()`` round-trip stores them only as camelCase wire
+    keys). Read the typed attribute first, then fall back to the wire key.
+
+    :param properties: The compute ``properties`` object (msrest or arm hybrid).
+    :type properties: Any
+    :param attr_name: The snake_case attribute name on the msrest model.
+    :type attr_name: str
+    :param wire_key: The camelCase wire key on the arm hybrid model.
+    :type wire_key: str
+    :return: The property value, or None if absent on both.
+    :rtype: Any
+    """
+    value = getattr(properties, attr_name, None)
+    if value is None and hasattr(properties, "get"):
+        value = properties.get(wire_key)
+    return value
+
+
 class ComputeInstanceSshSettings:
     """Credentials for an administrator user account to SSH into the compute node.
 
     Can only be configured if `ssh_public_access_enabled` is set to true on compute
     resource.
 
-    :param ssh_key_value: The SSH public key of the administrator user account.
-    :type ssh_key_value: Optional[str]
+    :keyword ssh_key_value: The SSH public key of the administrator user account.
+    :paramtype ssh_key_value: Optional[str]
 
     .. admonition:: Example:
 
@@ -86,10 +111,10 @@ class ComputeInstanceSshSettings:
 class AssignedUserConfiguration(DictMixin):
     """Settings to create a compute resource on behalf of another user.
 
-    :param user_tenant_id: Tenant ID of the user to assign the compute target to.
-    :type user_tenant_id: str
-    :param user_object_id: Object ID of the user to assign the compute target to.
-    :type user_object_id: str
+    :keyword user_tenant_id: Tenant ID of the user to assign the compute target to.
+    :paramtype user_tenant_id: str
+    :keyword user_object_id: Object ID of the user to assign the compute target to.
+    :paramtype user_object_id: str
 
     .. admonition:: Example:
 
@@ -109,29 +134,29 @@ class AssignedUserConfiguration(DictMixin):
 class ComputeInstance(Compute):
     """Compute Instance resource.
 
-    :param name: Name of the compute.
-    :type name: str
+    :keyword name: Name of the compute.
+    :paramtype name: str
     :param location: The resource location.
     :type location: Optional[str]
-    :param description: Description of the resource.
-    :type description: Optional[str]
-    :param size: Compute size.
-    :type size: Optional[str]
-    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
-    :type tags: Optional[dict[str, str]]
-    :param create_on_behalf_of: Configuration to create resource on behalf of another user. Defaults to None.
-    :type create_on_behalf_of: Optional[~azure.ai.ml.entities.AssignedUserConfiguration]
+    :keyword description: Description of the resource.
+    :paramtype description: Optional[str]
+    :keyword size: Compute size.
+    :paramtype size: Optional[str]
+    :keyword tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :paramtype tags: Optional[dict[str, str]]
+    :keyword create_on_behalf_of: Configuration to create resource on behalf of another user. Defaults to None.
+    :paramtype create_on_behalf_of: Optional[~azure.ai.ml.entities.AssignedUserConfiguration]
     :ivar state: State of the resource.
     :type state: Optional[str]
     :ivar last_operation: The last operation.
     :type last_operation: Optional[Dict[str, str]]
     :ivar applications: Applications associated with the compute instance.
     :type applications: Optional[List[Dict[str, str]]]
-    :param network_settings: Network settings for the compute instance.
-    :type network_settings: Optional[~azure.ai.ml.entities.NetworkSettings]
-    :param ssh_settings: SSH settings for the compute instance.
-    :type ssh_settings: Optional[~azure.ai.ml.entities.ComputeInstanceSshSettings]
-    :param ssh_public_access_enabled: State of the public SSH port. Defaults to None.
+    :keyword network_settings: Network settings for the compute instance.
+    :paramtype network_settings: Optional[~azure.ai.ml.entities.NetworkSettings]
+    :keyword ssh_settings: SSH settings for the compute instance.
+    :paramtype ssh_settings: Optional[~azure.ai.ml.entities.ComputeInstanceSshSettings]
+    :keyword ssh_public_access_enabled: State of the public SSH port. Defaults to None.
         Possible values are:
 
         * False - Indicates that the public ssh port is closed on all nodes of the cluster.
@@ -140,37 +165,37 @@ class ComputeInstance(Compute):
             else is open all public nodes. It can be default only during cluster creation time, after
             creation it will be either True or False.
 
-    :type ssh_public_access_enabled: Optional[bool]
-    :param schedules: Compute instance schedules. Defaults to None.
-    :type schedules: Optional[~azure.ai.ml.entities.ComputeSchedules]
-    :param identity: The identities that are associated with the compute cluster.
-    :type identity: ~azure.ai.ml.entities.IdentityConfiguration
-    :param idle_time_before_shutdown: Deprecated. Use the `idle_time_before_shutdown_minutes` parameter instead.
+    :paramtype ssh_public_access_enabled: Optional[bool]
+    :keyword schedules: Compute instance schedules. Defaults to None.
+    :paramtype schedules: Optional[~azure.ai.ml.entities.ComputeSchedules]
+    :keyword identity: The identities that are associated with the compute cluster.
+    :paramtype identity: ~azure.ai.ml.entities.IdentityConfiguration
+    :keyword idle_time_before_shutdown: Deprecated. Use the `idle_time_before_shutdown_minutes` parameter instead.
         Stops compute instance after user defined period of inactivity.
         Time is defined in ISO8601 format. Minimum is 15 minutes, maximum is 3 days.
-    :type idle_time_before_shutdown: Optional[str]
-    :param idle_time_before_shutdown_minutes: Stops compute instance after a user defined period of
+    :paramtype idle_time_before_shutdown: Optional[str]
+    :keyword idle_time_before_shutdown_minutes: Stops compute instance after a user defined period of
         inactivity in minutes. Minimum is 15 minutes, maximum is 3 days.
-    :type idle_time_before_shutdown_minutes: Optional[int]
-    :param enable_node_public_ip: Enable or disable node public IP address provisioning. Defaults to True.
+    :paramtype idle_time_before_shutdown_minutes: Optional[int]
+    :keyword enable_node_public_ip: Enable or disable node public IP address provisioning. Defaults to True.
         Possible values are:
 
             * True - Indicates that the compute nodes will have public IPs provisioned.
             * False - Indicates that the compute nodes will have a private endpoint and no public IPs.
 
-    :type enable_node_public_ip: Optional[bool]
-    :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
-    :type setup_scripts: Optional[~azure.ai.ml.entities.SetupScripts]
-    :param custom_applications: List of custom applications and their endpoints for the compute instance.
-    :type custom_applications: Optional[List[~azure.ai.ml.entities.CustomApplications]]
-    :param enable_sso: Enable or disable single sign-on. Defaults to True.
-    :type enable_sso: bool
-    :param enable_root_access: Enable or disable root access. Defaults to True.
-    :type enable_root_access: bool
-    :param release_quota_on_stop: Release quota on stop for the compute instance. Defaults to False.
-    :type release_quota_on_stop: bool
-    :param enable_os_patching: Enable or disable OS patching for the compute instance. Defaults to False.
-    :type enable_os_patching: bool
+    :paramtype enable_node_public_ip: Optional[bool]
+    :keyword setup_scripts: Details of customized scripts to execute for setting up the cluster.
+    :paramtype setup_scripts: Optional[~azure.ai.ml.entities.SetupScripts]
+    :keyword custom_applications: List of custom applications and their endpoints for the compute instance.
+    :paramtype custom_applications: Optional[List[~azure.ai.ml.entities.CustomApplications]]
+    :keyword enable_sso: Enable or disable single sign-on. Defaults to True.
+    :paramtype enable_sso: bool
+    :keyword enable_root_access: Enable or disable root access. Defaults to True.
+    :paramtype enable_root_access: bool
+    :keyword release_quota_on_stop: Release quota on stop for the compute instance. Defaults to False.
+    :paramtype release_quota_on_stop: bool
+    :keyword enable_os_patching: Enable or disable OS patching for the compute instance. Defaults to False.
+    :paramtype enable_os_patching: bool
 
     .. admonition:: Example:
 
@@ -317,10 +342,17 @@ class ComputeInstance(Compute):
             idle_time_before_shutdown=idle_time_before_shutdown,
             enable_node_public_ip=self.enable_node_public_ip,
             enable_sso=self.enable_sso,
-            enable_root_access=self.enable_root_access,
-            release_quota_on_stop=self.release_quota_on_stop,
-            enable_os_patching=self.enable_os_patching,
         )
+        # enableRootAccess / releaseQuotaOnStop / enableOSPatching are in the 2023-08-01-preview swagger
+        # and were serialized by the legacy model, but were @removed from the shared arm_ml_service model
+        # (generated at api-version 2025-12-01). Set them via their wire keys to preserve the old wire.
+        compute_instance_prop["enableRootAccess"] = self.enable_root_access
+        compute_instance_prop["releaseQuotaOnStop"] = self.release_quota_on_stop
+        compute_instance_prop["enableOSPatching"] = self.enable_os_patching
+        # applicationSharingPolicy / computeInstanceAuthorizationType defaulted to "Shared" / "personal"
+        # on the legacy model and were serialized; preserve those defaults on the wire.
+        compute_instance_prop["applicationSharingPolicy"] = "Shared"
+        compute_instance_prop["computeInstanceAuthorizationType"] = "personal"
         compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
         compute_instance_prop.setup_scripts = self.setup_scripts._to_rest_object() if self.setup_scripts else None
         if self.custom_applications:
@@ -423,6 +455,21 @@ class ComputeInstance(Compute):
             custom_applications = []
             for app in prop.properties.custom_services:
                 custom_applications.append(CustomApplications._from_rest_object(app))
+        root_access = (
+            _read_optional_compute_prop(prop.properties, "enable_root_access", "enableRootAccess")
+            if prop.properties
+            else None
+        )
+        release_quota = (
+            _read_optional_compute_prop(prop.properties, "release_quota_on_stop", "releaseQuotaOnStop")
+            if prop.properties
+            else None
+        )
+        os_patching = (
+            _read_optional_compute_prop(prop.properties, "enable_os_patching", "enableOSPatching")
+            if prop.properties
+            else None
+        )
         response = ComputeInstance(
             name=rest_obj.name,
             id=rest_obj.id,
@@ -482,21 +529,9 @@ class ComputeInstance(Compute):
             enable_sso=(
                 prop.properties.enable_sso if (prop.properties and prop.properties.enable_sso is not None) else True
             ),
-            enable_root_access=(
-                prop.properties.enable_root_access
-                if (prop.properties and prop.properties.enable_root_access is not None)
-                else True
-            ),
-            release_quota_on_stop=(
-                prop.properties.release_quota_on_stop
-                if (prop.properties and prop.properties.release_quota_on_stop is not None)
-                else False
-            ),
-            enable_os_patching=(
-                prop.properties.enable_os_patching
-                if (prop.properties and prop.properties.enable_os_patching is not None)
-                else False
-            ),
+            enable_root_access=(root_access if root_access is not None else True),
+            release_quota_on_stop=(release_quota if release_quota is not None else False),
+            enable_os_patching=(os_patching if os_patching is not None else False),
         )
         return response
 

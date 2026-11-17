@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" python-dotenv azure-mgmt-authorization azure-mgmt-resource
+    pip install "azure-ai-projects>=2.8.0" python-dotenv azure-mgmt-authorization azure-mgmt-resource
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -36,7 +36,7 @@ from pprint import pprint
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.mgmt.authorization import AuthorizationManagementClient
-from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.resource.resources import ResourceManagementClient
 import uuid
 from azure.ai.projects.models import (
     TestingCriterionAzureAIEvaluator,
@@ -298,7 +298,7 @@ def schedule_trace_evaluation():
             print(f"Using agent filter: {agent_name} v{agent_version or '(latest)'}")
 
         data_source = {
-            "type": "azure_ai_trace_data_source_preview",
+            "type": "azure_ai_trace_data_source",
             "trace_source": trace_source,
         }
 

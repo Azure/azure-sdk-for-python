@@ -10,7 +10,9 @@ from ... import MpiDistribution, PyTorchDistribution, RayDistribution, TensorFlo
 from ..._schema import PathAwareSchema
 from ..._schema.core.fields import DistributionField
 from ...entities import CommandJobLimits, JobResourceConfiguration
-from ...entities._util import get_rest_dict_for_node_attrs
+from ...entities._builders.command import _resolve_job_services
+from ...entities._job.job_service import JobServiceBase
+from ...entities._util import from_rest_dict_to_dummy_rest_object, get_rest_dict_for_node_attrs
 from .._schema.component import NodeType
 from ..entities.component import InternalComponent
 from ..entities.node import InternalBaseNode
@@ -24,6 +26,7 @@ class Command(InternalBaseNode):
 
     def __init__(self, **kwargs):
         node_type = kwargs.pop("type", None) or NodeType.COMMAND
+        services = kwargs.pop("services", None)
         super(Command, self).__init__(type=node_type, **kwargs)
         self._init = True
         self._resources = kwargs.pop("resources", JobResourceConfiguration())
@@ -31,6 +34,7 @@ class Command(InternalBaseNode):
         self._environment = kwargs.pop("environment", None)
         self._environment_variables = kwargs.pop("environment_variables", None)
         self._limits = kwargs.pop("limits", CommandJobLimits())
+        self._services = _resolve_job_services(services)
         self._init = False
 
     @property
@@ -108,6 +112,30 @@ class Command(InternalBaseNode):
     def resources(self, value: JobResourceConfiguration):
         self._resources = value
 
+    @property
+    def services(self) -> Optional[Dict]:
+        """The interactive services for the node.
+
+        This is an experimental parameter, and may change at any time.
+        Please see https://aka.ms/azuremlexperimental for more information.
+
+        :return: The interactive services for the node.
+        :rtype: Optional[Dict]
+        """
+        return self._services
+
+    @services.setter
+    def services(self, value: Optional[Dict]) -> None:
+        """Sets the interactive services for the node.
+
+        This is an experimental parameter, and may change at any time.
+        Please see https://aka.ms/azuremlexperimental for more information.
+
+        :param value: The interactive services for the node.
+        :type value: Optional[Dict]
+        """
+        self._services = _resolve_job_services(value)
+
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
         return ["environment", "limits", "resources", "environment_variables"]
@@ -126,6 +154,9 @@ class Command(InternalBaseNode):
                 "resources": get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
             }
         )
+        services = get_rest_dict_for_node_attrs(self.services)
+        if services is not None:
+            rest_obj["services"] = services
         return rest_obj
 
     @classmethod
@@ -138,6 +169,17 @@ class Command(InternalBaseNode):
         # handle limits
         if "limits" in obj and obj["limits"]:
             obj["limits"] = CommandJobLimits._from_rest_object(obj["limits"])
+
+        # services, pipeline node rest object are dicts while _from_rest_job_services expect RestJobService
+        if "services" in obj and obj["services"]:
+            services = {}
+            for service_name, service in obj["services"].items():
+                # in rest object of a pipeline job, service will be transferred to a dict as
+                # it's attributes of a node, but JobService._from_rest_object expect a
+                # RestJobService, so we need to convert it back. Here we convert the dict to a
+                # dummy rest object which may work as a RestJobService instead.
+                services[service_name] = from_rest_dict_to_dummy_rest_object(service)
+            obj["services"] = JobServiceBase._from_rest_job_services(services)
         return obj
 
 

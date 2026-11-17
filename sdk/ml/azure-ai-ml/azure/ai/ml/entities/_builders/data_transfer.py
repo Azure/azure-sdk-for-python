@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase
 from azure.ai.ml._schema.job.data_transfer_job import (
     DataTransferCopyJobSchema,
     DataTransferExportJobSchema,
@@ -143,12 +143,12 @@ class DataTransferCopy(DataTransfer):
     You should not instantiate this class directly. Instead, you should
     create from builder function: copy_data.
 
-    :param component: Id or instance of the data transfer component/job to be run for the step
-    :type component: DataTransferCopyComponent
-    :param inputs: Inputs to the data transfer.
-    :type inputs: Dict[str, Union[NodeOutput, Input, str]]
-    :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: Dict[str, Union[str, Output, dict]]
+    :keyword component: Id or instance of the data transfer component/job to be run for the step
+    :paramtype component: DataTransferCopyComponent
+    :keyword inputs: Inputs to the data transfer.
+    :paramtype inputs: Dict[str, Union[NodeOutput, Input, str]]
+    :keyword outputs: Mapping of output data bindings used in the job.
+    :paramtype outputs: Dict[str, Union[str, Output, dict]]
     :param name: Name of the data transfer.
     :type name: str
     :param description: Description of the data transfer.
@@ -160,10 +160,10 @@ class DataTransferCopy(DataTransfer):
     :param experiment_name:  Name of the experiment the job will be created under,
         if None is provided, default will be set to current directory name.
     :type experiment_name: str
-    :param compute: The compute target the job runs on.
-    :type compute: str
-    :param data_copy_mode: data copy mode in copy task, possible value is "merge_with_overwrite", "fail_if_conflict".
-    :type data_copy_mode: str
+    :keyword compute: The compute target the job runs on.
+    :paramtype compute: str
+    :keyword data_copy_mode: data copy mode in copy task, possible value is "merge_with_overwrite", "fail_if_conflict".
+    :paramtype data_copy_mode: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if DataTransferCopy cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -293,12 +293,12 @@ class DataTransferImport(DataTransfer):
     You should not instantiate this class directly. Instead, you should
     create from builder function: import_data.
 
-    :param component: Id of the data transfer built in component to be run for the step
-    :type component: str
-    :param source: The data source of file system or database
-    :type source: Union[Dict, Database, FileSystem]
-    :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: Dict[str, Union[str, Output, dict]]
+    :keyword component: Id of the data transfer built in component to be run for the step
+    :paramtype component: str
+    :keyword source: The data source of file system or database
+    :paramtype source: Union[Dict, Database, FileSystem]
+    :keyword outputs: Mapping of output data bindings used in the job.
+    :paramtype outputs: Dict[str, Union[str, Output, dict]]
     :param name: Name of the data transfer.
     :type name: str
     :param description: Description of the data transfer.
@@ -310,8 +310,8 @@ class DataTransferImport(DataTransfer):
     :param experiment_name:  Name of the experiment the job will be created under,
         if None is provided, default will be set to current directory name.
     :type experiment_name: str
-    :param compute: The compute target the job runs on.
-    :type compute: str
+    :keyword compute: The compute target the job runs on.
+    :paramtype compute: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if DataTransferImport cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -433,12 +433,12 @@ class DataTransferExport(DataTransfer):
     You should not instantiate this class directly. Instead, you should
     create from builder function: export_data.
 
-    :param component: Id of the data transfer built in component to be run for the step
-    :type component: str
-    :param sink: The sink of external data and databases.
-    :type sink: Union[Dict, Database, FileSystem]
-    :param inputs: Mapping of input data bindings used in the job.
-    :type inputs: Dict[str, Union[NodeOutput, Input, str, Input]]
+    :keyword component: Id of the data transfer built in component to be run for the step
+    :paramtype component: str
+    :keyword sink: The sink of external data and databases.
+    :paramtype sink: Union[Dict, Database, FileSystem]
+    :keyword inputs: Mapping of input data bindings used in the job.
+    :paramtype inputs: Dict[str, Union[NodeOutput, Input, str, Input]]
     :param name: Name of the data transfer.
     :type name: str
     :param description: Description of the data transfer.
@@ -450,8 +450,8 @@ class DataTransferExport(DataTransfer):
     :param experiment_name:  Name of the experiment the job will be created under,
         if None is provided, default will be set to current directory name.
     :type experiment_name: str
-    :param compute: The compute target the job runs on.
-    :type compute: str
+    :keyword compute: The compute target the job runs on.
+    :paramtype compute: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if DataTransferExport cannot be successfully validated.
         Details will be provided in the error message.
     """

@@ -11,10 +11,10 @@ from azure.ai.agentserver.responses.hosting._validation import (
     to_api_error_response,
     validate_create_response,
 )
-from azure.ai.agentserver.responses.models.errors import RequestValidationError
+from azure.ai.agentserver.responses.models._errors import RequestValidationError
 
 
-class _FakeCreateRequest:
+class _FakeCreateRequest(dict):
     def __init__(
         self,
         store: bool | None = True,
@@ -23,11 +23,13 @@ class _FakeCreateRequest:
         stream_options: object | None = None,
         model: str | None = "gpt-4o-mini",
     ) -> None:
-        self.store = store
-        self.background = background
-        self.stream = stream
-        self.stream_options = stream_options
-        self.model = model
+        super().__init__(
+            store=store,
+            background=background,
+            stream=stream,
+            stream_options=stream_options,
+            model=model,
+        )
 
 
 def test_validation__non_object_payload_returns_invalid_request() -> None:
@@ -50,4 +52,4 @@ def test_validation__unexpected_exception_maps_to_bad_request_category() -> None
     error = ValueError("bad payload")
     envelope = to_api_error_response(error)
 
-    assert envelope.error.type == "invalid_request_error"
+    assert envelope["error"]["type"] == "invalid_request_error"

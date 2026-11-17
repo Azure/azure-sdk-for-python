@@ -13,7 +13,7 @@ from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from tests._helpers import poll_until
 
 
-def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_response_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Minimal handler used to wire lifecycle integration tests."""
 
     async def _events():
@@ -23,7 +23,7 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
     return _events()
 
 
-def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits response.created then blocks until cancelled (Phase 3)."""
 
     async def _events():

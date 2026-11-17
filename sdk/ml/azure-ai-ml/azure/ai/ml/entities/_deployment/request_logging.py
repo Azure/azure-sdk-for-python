@@ -4,7 +4,7 @@
 
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import RequestLogging as RestRequestLogging
+from azure.ai.ml._restclient.arm_ml_service.models import RequestLogging as RestRequestLogging
 from azure.ai.ml._schema._deployment.online.request_logging_schema import RequestLoggingSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -14,8 +14,8 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 class RequestLogging:
     """Request Logging deployment entity.
 
-    :param capture_headers: Request payload header.
-    :type capture_headers: list[str]
+    :keyword capture_headers: Request payload header.
+    :paramtype capture_headers: list[str]
     """
 
     def __init__(

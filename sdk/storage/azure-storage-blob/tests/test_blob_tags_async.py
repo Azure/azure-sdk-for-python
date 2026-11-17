@@ -399,7 +399,7 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         await self._create_block_blob(tags=tags)
         container = self.bsc.get_container_client(self.container_name)
-        blob_list = container.list_blobs(include="tags")
+        blob_list = container.list_blobs(include="tags", response_format="xml")
 
         # Assert
         async for blob in blob_list:

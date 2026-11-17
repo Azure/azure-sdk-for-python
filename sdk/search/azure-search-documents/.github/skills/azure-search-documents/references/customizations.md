@@ -1,6 +1,31 @@
 # Post-Regeneration Customization Checklist
 
-File-by-file inventory of every non-empty `_patch.py` in `azure-search-documents`. Use this after running `tsp-client update` to verify each customization still holds.
+Pattern checklist for `_patch.py` entry points in `azure-search-documents`. Use it after
+`tsp-client update`, checking the current branch's generated code and exports rather than treating
+these inventories as its API contract. Branch-specific diagnoses and regression/removal conditions
+are recorded in the [November generation notes](../../../../doc/generation-2026-11-01-preview.md).
+
+## Guarded post-generation workarounds
+
+Run the package-owned rewriter after regeneration:
+
+```bash
+python .github/skills/azure-search-documents/scripts/apply_generator_workarounds.py
+python .github/skills/azure-search-documents/scripts/apply_generator_workarounds.py --check
+```
+
+The script is idempotent and applies exact replacements only. It exits with an error before writing
+files if the emitter output no longer matches either the known generated or patched form.
+Its rules cover confirmed emitter defects, generated-code lint suppressions, and SDK-owned
+GA-compatible input typing. Remove individual rules only when unmodified generated output
+preserves the relevant runtime, typing, and documentation regressions; passing lint alone is not
+sufficient. Some rules skip absent prerequisite surfaces, but do not assume the November rewriter
+can be applied unchanged to another release track.
+
+The rewriter does not automatically refresh the TypedDict Sphinx sections or `MANIFEST.in`.
+After regeneration, reconcile those files and run the existing documentation and source-distribution
+checks. Verify generated cross-namespace imports without injecting fields removed by the service
+contract; the November query-hint diagnosis is documented in the generation notes above.
 
 ---
 

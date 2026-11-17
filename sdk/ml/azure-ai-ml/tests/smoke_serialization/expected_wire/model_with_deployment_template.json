@@ -1,0 +1,21 @@
+{
+  "properties": {
+    "allowedDeploymentTemplates": [
+      {
+        "assetId": "azureml:smoke-allowed-template-a:1"
+      },
+      {
+        "assetId": "azureml:smoke-allowed-template-b:2"
+      }
+    ],
+    "defaultDeploymentTemplate": {
+      "assetId": "azureml:smoke-default-template:1"
+    },
+    "isAnonymous": false,
+    "isArchived": false,
+    "modelType": "custom_model",
+    "modelUri": "azureml://datastores/workspaceblobstore/paths/smoke/model-template/",
+    "properties": {},
+    "tags": {}
+  }
+}

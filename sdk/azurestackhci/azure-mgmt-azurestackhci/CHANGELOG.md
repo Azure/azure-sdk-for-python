@@ -1,5 +1,233 @@
 # Release History
 
+## 8.2.0 (2026-10-15)
+
+### Features Added
+
+  - Client `AzureStackHCIClient` added operation group `cluster_jobs`
+  - Client `AzureStackHCIClient` added operation group `edge_machine_deployment_settings`
+  - Client `AzureStackHCIClient` added operation group `edge_machine_disk_jobs`
+  - Client `AzureStackHCIClient` added operation group `edge_machine_disk_privileged_jobs`
+  - Client `AzureStackHCIClient` added operation group `edge_machine_disks`
+  - Client `AzureStackHCIClient` added operation group `edge_machine_jobs`
+  - Client `AzureStackHCIClient` added operation group `edge_machine_network_adapter_jobs`
+  - Client `AzureStackHCIClient` added operation group `edge_machine_network_adapters`
+  - Client `AzureStackHCIClient` added operation group `edge_machine_security_settings_operations`
+  - Client `AzureStackHCIClient` added operation group `edge_machine_volumes`
+  - Client `AzureStackHCIClient` added operation group `edge_machines`
+  - Client `AzureStackHCIClient` added operation group `os_images`
+  - Client `AzureStackHCIClient` added operation group `ownership_vouchers`
+  - Model `ClusterProperties` added property `sdn_properties`
+  - Model `DeploymentStep` added property `additional_data`
+  - Model `DeploymentStep` added property `error`
+  - Model `DeploymentStep` added property `percent_complete`
+  - Model `DeploymentStep` added property `recommended_steps`
+  - Enum `EceSecrets` added member `CHAP_CREDENTIAL`
+  - Enum `EceSecrets` added member `MUTUAL_CHAP_CREDENTIAL`
+  - Model `HciNetworkProfile` added property `sdn_properties`
+  - Added model `AddServerJobServerDetails`
+  - Added model `ApplyConfigurationNetworkAdapterJobProperties`
+  - Added enum `Architecture`
+  - Added enum `AuthenticationType`
+  - Added model `ClusterJob`
+  - Added model `ClusterJobProperties`
+  - Added model `ClusterSdnProperties`
+  - Added enum `ConnectionState`
+  - Added model `CreateVolumeJobProperties`
+  - Added model `DeleteVolumeJobProperties`
+  - Added model `DiskActionStatus`
+  - Added model `DiskConfiguration`
+  - Added model `DiskDeploymentStep`
+  - Added enum `DiskFileSystemType`
+  - Added model `DiskJobReportedProperties`
+  - Added enum `DiskJobType`
+  - Added model `DiskReportedProperties`
+  - Added enum `DiskState`
+  - Added enum `DiskStorageType`
+  - Added enum `DiskType`
+  - Added model `DiskVolumeConfiguration`
+  - Added model `DiskVolumeReportedProperties`
+  - Added model `DownloadOsJobProperties`
+  - Added model `DownloadOsProfile`
+  - Added model `DownloadRequest`
+  - Added enum `EAPMethod`
+  - Added model `EdgeMachine`
+  - Added model `EdgeMachineAdapterPropertyOverrides`
+  - Added model `EdgeMachineCollectLogJobProperties`
+  - Added model `EdgeMachineCollectLogJobReportedProperties`
+  - Added enum `EdgeMachineConnectivityStatus`
+  - Added model `EdgeMachineDeploymentConfiguration`
+  - Added model `EdgeMachineDeploymentData`
+  - Added model `EdgeMachineDeploymentSetting`
+  - Added model `EdgeMachineDeploymentSettingProperties`
+  - Added model `EdgeMachineDisk`
+  - Added model `EdgeMachineDiskJob`
+  - Added model `EdgeMachineDiskJobProperties`
+  - Added model `EdgeMachineDiskPrivilegedJob`
+  - Added model `EdgeMachineDiskPrivilegedJobProperties`
+  - Added model `EdgeMachineDiskProperties`
+  - Added model `EdgeMachineHostNetwork`
+  - Added model `EdgeMachineHostNetworkIntent`
+  - Added model `EdgeMachineJob`
+  - Added model `EdgeMachineJobProperties`
+  - Added enum `EdgeMachineJobType`
+  - Added enum `EdgeMachineKind`
+  - Added enum `EdgeMachineLifecycleStatus`
+  - Added model `EdgeMachineNetworkAdapter`
+  - Added model `EdgeMachineNetworkAdapterJob`
+  - Added model `EdgeMachineNetworkAdapterJobProperties`
+  - Added model `EdgeMachineNetworkAdapterProperties`
+  - Added model `EdgeMachineNetworkProfile`
+  - Added model `EdgeMachineNicDetail`
+  - Added model `EdgeMachinePatch`
+  - Added model `EdgeMachineProperties`
+  - Added model `EdgeMachineRemoteSupportJobProperties`
+  - Added model `EdgeMachineRemoteSupportJobReportedProperties`
+  - Added model `EdgeMachineRemoteSupportNodeSettings`
+  - Added model `EdgeMachineReportedProperties`
+  - Added model `EdgeMachineScaleUnits`
+  - Added model `EdgeMachineSecurityComplianceStatus`
+  - Added model `EdgeMachineSecurityProperties`
+  - Added model `EdgeMachineSecuritySettings`
+  - Added enum `EdgeMachineState`
+  - Added model `EdgeMachineStorageAdapterIpInfo`
+  - Added model `EdgeMachineStorageNetwork`
+  - Added model `EdgeMachineValidateRequest`
+  - Added model `EdgeMachineValidateResponse`
+  - Added model `EdgeMachineVirtualSwitchConfigurationOverrides`
+  - Added model `EdgeMachineVolume`
+  - Added model `EdgeMachineVolumeProperties`
+  - Added model `EdgeMachineWorkloadInventoryItem`
+  - Added model `ForcePushNetworkAdapterJobProperties`
+  - Added model `HardwareProfile`
+  - Added model `HciAddServerJobProperties`
+  - Added model `HciConfigureSdnIntegrationJobProperties`
+  - Added enum `HciJobType`
+  - Added model `HciRepairServerJobProperties`
+  - Added enum `InterfaceState`
+  - Added model `IpAddressRange`
+  - Added enum `IpAssignmentType`
+  - Added enum `IpInterfaceType`
+  - Added model `IscsiAdapterIPConfig`
+  - Added model `IscsiAdapterProperties`
+  - Added model `IscsiChapSettings`
+  - Added enum `IscsiChapType`
+  - Added model `IscsiConfig`
+  - Added model `IscsiNetworkConfig`
+  - Added model `IscsiTargetPortalAddress`
+  - Added model `JobReportedProperties`
+  - Added model `LifecycleDetails`
+  - Added enum `LifecycleOperationStatus`
+  - Added model `LifecycleStage`
+  - Added model `LifecycleStatus`
+  - Added model `Metadata`
+  - Added model `NetworkAdapter`
+  - Added model `NetworkAdapterActionStatus`
+  - Added model `NetworkAdapterConfiguration`
+  - Added model `NetworkAdapterDeploymentStep`
+  - Added model `NetworkAdapterJobReportedProperties`
+  - Added enum `NetworkAdapterJobType`
+  - Added enum `NetworkAdapterOperationStatus`
+  - Added model `NetworkAdapterProvisioningStatus`
+  - Added model `NetworkAdapterReportedProperties`
+  - Added model `NetworkAdapterStatus`
+  - Added model `NetworkConfiguration`
+  - Added enum `NetworkInterfaceType`
+  - Added enum `NodeStorageType`
+  - Added enum `OSOperationType`
+  - Added model `OnboardingConfiguration`
+  - Added enum `OnboardingResourceType`
+  - Added model `OperationDetail`
+  - Added model `OsImage`
+  - Added model `OsImageProperties`
+  - Added model `OsProfile`
+  - Added model `OsProvisionProfile`
+  - Added enum `OwnerKeyType`
+  - Added model `OwnershipVoucherDetails`
+  - Added model `OwnershipVoucherValidationDetails`
+  - Added enum `OwnershipVoucherValidationStatus`
+  - Added enum `PrivilegedJobType`
+  - Added model `ProvisionOsJobProperties`
+  - Added model `ProvisionOsReportedProperties`
+  - Added model `ProvisioningDetails`
+  - Added enum `ProvisioningOsType`
+  - Added model `ProvisioningRequest`
+  - Added model `RepairServerJobServerDetails`
+  - Added enum `ResolutionStrategy`
+  - Added enum `SdnIntegrationIntent`
+  - Added model `SdnProperties`
+  - Added enum `SdnStatus`
+  - Added enum `SecretType`
+  - Added model `SiteDetails`
+  - Added enum `SolutionType`
+  - Added model `StorageConfiguration`
+  - Added model `StorageInitiator`
+  - Added enum `StorageInitiatorType`
+  - Added model `StorageProfile`
+  - Added model `SyncConfigurationJobProperties`
+  - Added model `SyncConfigurationNetworkAdapterJobProperties`
+  - Added model `TargetDeviceConfiguration`
+  - Added model `TimeConfiguration`
+  - Added model `UserDetails`
+  - Added model `ValidateOwnershipVouchersRequest`
+  - Added model `ValidateOwnershipVouchersResponse`
+  - Added model `VolumeConfiguration`
+  - Added model `VolumeReportedProperties`
+  - Added model `WebProxyConfiguration`
+  - Added model `WifiConfigurationDesiredProperties`
+  - Added model `WifiConfigurationReportedProperties`
+  - Added model `WifiSecret`
+  - Added enum `WifiSecretType`
+  - Added operation group `ClusterJobsOperations`
+  - Added operation group `EdgeMachineDeploymentSettingsOperations`
+  - Added operation group `EdgeMachineDiskJobsOperations`
+  - Added operation group `EdgeMachineDiskPrivilegedJobsOperations`
+  - Added operation group `EdgeMachineDisksOperations`
+  - Added operation group `EdgeMachineJobsOperations`
+  - Added operation group `EdgeMachineNetworkAdapterJobsOperations`
+  - Added operation group `EdgeMachineNetworkAdaptersOperations`
+  - Added operation group `EdgeMachineSecuritySettingsOperationsOperations`
+  - Added operation group `EdgeMachineVolumesOperations`
+  - Added operation group `EdgeMachinesOperations`
+  - Added operation group `OsImagesOperations`
+  - Added operation group `OwnershipVouchersOperations`
+
+## 8.1.0 (2026-07-29)
+
+### Features Added
+
+  - Client `AzureStackHCIClient` added operation group `update_summaries_operation_group`
+  - Model `Cluster` added property `kind`
+  - Model `ClusterProperties` added property `billing_properties`
+  - Model `ClusterProperties` added property `storage_type`
+  - Model `DeploymentSettingHostNetwork` added property `san_networks`
+  - Model `HciReportedProperties` added property `last_sync_timestamp`
+  - Model `HciStorageProfile` added property `disks`
+  - Model `PerNodeRemoteSupportSession` added property `transcript_location`
+  - Model `RemoteSupportProperties` added property `remote_support_provisioning_state`
+  - Model `ReportedProperties` added property `last_sync_timestamp`
+  - Enum `State` added member `HEALTH_CHECK_EXPIRED`
+  - Enum `State` added member `PENDING_OEM_VALIDATION`
+  - Model `Storage` added property `s2_d`
+  - Model `Storage` added property `san`
+  - Model `Storage` added property `storage_type`
+  - Added model `CheckUpdatesRequest`
+  - Added model `ClusterBillingProperties`
+  - Added model `EdgeDeviceDisks`
+  - Added model `NextBillingModel`
+  - Added enum `OverprovisioningRatio`
+  - Added enum `RemoteSupportProvisioningState`
+  - Added model `SanAdapterIPConfig`
+  - Added model `SanAdapterProperties`
+  - Added model `SanClusterNetworkConfig`
+  - Added model `SanNetworks`
+  - Added model `StorageS2dConfig`
+  - Added model `StorageSanConfig`
+  - Added enum `StorageType`
+  - Added enum `VolumeType`
+  - Operation group `UpdatesOperations` added method `begin_prepare`
+  - Added operation group `UpdateSummariesOperationGroupOperations`
+
 ## 8.1.0b1 (2026-04-13)
 
 ### Features Added

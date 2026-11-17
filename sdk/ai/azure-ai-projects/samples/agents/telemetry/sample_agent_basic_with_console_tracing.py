@@ -21,15 +21,17 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING - Set to `true` to enable GenAI telemetry tracing, which is
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING - Set to `true` to enable GenAI telemetry tracing, which is
        disabled by default.
-    4) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
+    5) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
 """
 
 import os
 from typing import Any
 from dotenv import load_dotenv
+from util import create_version_with_endpoint
 
 from azure.core.settings import settings
 
@@ -82,43 +84,39 @@ tracer = trace.get_tracer(__name__)
 AIProjectInstrumentor().instrument()
 
 scenario = os.path.basename(__file__)
-with tracer.start_as_current_span(scenario):
-    with (
-        DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"], credential=credential) as project_client,
-        project_client.get_openai_client() as openai_client,
-    ):
-        agent_definition = PromptAgentDefinition(
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+with (
+    tracer.start_as_current_span(scenario),
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"], credential=credential) as project_client,
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
+        definition=PromptAgentDefinition(
             model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant that answers general questions",
-        )
+        ),
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
+):
+    conversation = openai_client.conversations.create()
 
-        agent = project_client.agents.create_version(agent_name="MyAgent", definition=agent_definition)
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+    request = "Hello, tell me a joke."
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        input=request,
+    )
+    print(f"Answer: {response.output}")
 
-        conversation = openai_client.conversations.create()
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        input="Tell another one about computers.",
+    )
+    print(f"Answer: {response.output}")
 
-        request = "Hello, tell me a joke."
-        response = openai_client.responses.create(
-            conversation=conversation.id,
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-            input=request,
-        )
-        print(f"Answer: {response.output}")
+    print("\n📋 Listing conversation items...")
+    items = openai_client.conversations.items.list(conversation_id=conversation.id)
 
-        response = openai_client.responses.create(
-            conversation=conversation.id,
-            input="Tell another one about computers.",
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-        )
-        print(f"Answer: {response.output}")
-
-        print("\n📋 Listing conversation items...")
-        items = openai_client.conversations.items.list(conversation_id=conversation.id)
-
-        # Print all the items
-        for item in items:
-            display_conversation_item(item)
-
-        project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print("Agent deleted")
+    # Print all the items
+    for item in items:
+        display_conversation_item(item)

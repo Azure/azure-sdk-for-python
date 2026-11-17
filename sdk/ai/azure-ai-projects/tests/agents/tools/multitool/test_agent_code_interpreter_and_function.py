@@ -26,7 +26,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
     """Tests for agents using Code Interpreter + Function Tool combination."""
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_calculate_and_save(self, **kwargs):
         """
         Test calculation with Code Interpreter and saving with Function Tool.
@@ -86,7 +86,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_generate_data_and_report(self, **kwargs):
         """
         Test generating data with Code Interpreter and reporting with Function.

@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for port resolution and unknown-route handling."""
+"""Tests for port resolution and server host public helpers."""
 import os
 from unittest import mock
 
@@ -10,7 +10,6 @@ import httpx
 
 from azure.ai.agentserver.core import AgentServerHost
 from azure.ai.agentserver.core._config import resolve_port
-
 
 
 # ------------------------------------------------------------------ #

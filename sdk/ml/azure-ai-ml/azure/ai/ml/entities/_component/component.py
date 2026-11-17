@@ -5,11 +5,22 @@ import re
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, AnyStr, Callable, Dict, Iterable, Optional, Tuple, Union
+from typing import (
+    IO,
+    TYPE_CHECKING,
+    Any,
+    AnyStr,
+    Callable,
+    Dict,
+    Iterable,
+    Optional,
+    Tuple,
+    Union,
+)
 
 from marshmallow import INCLUDE
 
-from ..._restclient.v2024_01_01_preview.models import (
+from ..._restclient.arm_ml_service.models import (
     ComponentContainer,
     ComponentContainerProperties,
     ComponentVersion,
@@ -33,7 +44,11 @@ from ...entities._inputs_outputs import Input, Output
 from ...entities._mixins import LocalizableMixin, TelemetryMixin, YamlTranslatableMixin
 from ...entities._system_data import SystemData
 from ...entities._util import find_type_in_override
-from ...entities._validation import MutableValidationResult, PathAwareSchemaValidatableMixin, RemoteValidatableMixin
+from ...entities._validation import (
+    MutableValidationResult,
+    PathAwareSchemaValidatableMixin,
+    RemoteValidatableMixin,
+)
 from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
 from .._inputs_outputs import GroupInput
 
@@ -56,34 +71,34 @@ class Component(
 ):
     """Base class for component version, used to define a component. Can't be instantiated directly.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param version: Version of the resource.
-    :type version: str
-    :param id: Global ID of the resource, Azure Resource Manager ID.
-    :type id: str
-    :param type: Type of the command, supported is 'command'.
-    :type type: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict
-    :param properties: Internal use only.
-    :type properties: dict
-    :param display_name: Display name of the component.
-    :type display_name: str
-    :param is_deterministic: Whether the component is deterministic. Defaults to True.
-    :type is_deterministic: bool
-    :param inputs: Inputs of the component.
-    :type inputs: dict
-    :param outputs: Outputs of the component.
-    :type outputs: dict
-    :param yaml_str: The YAML string of the component.
-    :type yaml_str: str
-    :param _schema: Schema of the component.
-    :type _schema: str
-    :param creation_context: Creation metadata of the component.
-    :type creation_context: ~azure.ai.ml.entities.SystemData
+    :keyword name: Name of the resource.
+    :paramtype name: str
+    :keyword version: Version of the resource.
+    :paramtype version: str
+    :keyword id: Global ID of the resource, Azure Resource Manager ID.
+    :paramtype id: str
+    :keyword type: Type of the command, supported is 'command'.
+    :paramtype type: str
+    :keyword description: Description of the resource.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict
+    :keyword properties: Internal use only.
+    :paramtype properties: dict
+    :keyword display_name: Display name of the component.
+    :paramtype display_name: str
+    :keyword is_deterministic: Whether the component is deterministic. Defaults to True.
+    :paramtype is_deterministic: bool
+    :keyword inputs: Inputs of the component.
+    :paramtype inputs: dict
+    :keyword outputs: Outputs of the component.
+    :paramtype outputs: dict
+    :keyword yaml_str: The YAML string of the component.
+    :paramtype yaml_str: str
+    :keyword _schema: Schema of the component.
+    :paramtype _schema: str
+    :keyword creation_context: Creation metadata of the component.
+    :paramtype creation_context: ~azure.ai.ml.entities.SystemData
     :param kwargs: Additional parameters for the component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
         Details will be provided in the error message.
@@ -155,7 +170,9 @@ class Component(
 
     @property
     def _func(self) -> Callable[..., "BaseNode"]:
-        from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
+        from azure.ai.ml.entities._job.pipeline._load_component import (
+            _generate_component_function,
+        )
 
         # validate input/output names before creating component function
         validation_result = self._validate_io_names(self.inputs)
@@ -312,7 +329,8 @@ class Component(
             if lower_key in lower2original_kwargs:
                 msg = "Invalid component input names {!r} and {!r}, which are equal ignore case."
                 validation_result.append_error(
-                    message=msg.format(name, lower2original_kwargs[lower_key]), yaml_path=f"inputs.{name}"
+                    message=msg.format(name, lower2original_kwargs[lower_key]),
+                    yaml_path=f"inputs.{name}",
                 )
             else:
                 lower2original_kwargs[lower_key] = name
@@ -470,7 +488,9 @@ class Component(
         origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
         rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
         init_kwargs = cls._load_with_schema(
-            rest_component_version.component_spec, context={BASE_PATH_CONTEXT_KEY: Path.cwd()}, unknown=INCLUDE
+            rest_component_version.component_spec,
+            context={BASE_PATH_CONTEXT_KEY: Path.cwd()},
+            unknown=INCLUDE,
         )
         init_kwargs.update(
             {
@@ -570,11 +590,15 @@ class Component(
         if self._intellectual_property:
             # hack while full pass through supported is worked on for IPP fields
             component.pop("intellectual_property")
-            component["intellectualProperty"] = self._intellectual_property._to_rest_object().serialize()
+            component["intellectualProperty"] = self._intellectual_property._to_rest_object()
         properties = ComponentVersionProperties(
             component_spec=component,
             description=self.description,
             is_anonymous=self._is_anonymous,
+            # The v2024_01 msrest model defaulted is_archived to False and always emitted
+            # ``isArchived: false`` on the wire. The shared arm_ml_service model does not default it,
+            # so set it explicitly to keep the serialized body byte-identical to the previous client.
+            is_archived=False,
             properties=dict(self.properties) if self.properties else {},
             tags=self.tags,
         )

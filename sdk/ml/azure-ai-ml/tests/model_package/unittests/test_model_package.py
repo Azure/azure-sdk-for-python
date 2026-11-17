@@ -6,7 +6,6 @@ from marshmallow.exceptions import ValidationError
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_model
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import ModelVersionData, EnvironmentVersionData
 from azure.ai.ml._schema import ModelSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes
 from azure.ai.ml.entities._assets import Model, Environment

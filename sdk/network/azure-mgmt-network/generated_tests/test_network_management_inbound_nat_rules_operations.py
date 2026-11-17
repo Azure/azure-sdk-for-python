@@ -26,7 +26,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             inbound_nat_rule_name="str",
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -137,7 +137,11 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                 "location": "str",
                                 "name": "str",
                                 "properties": {
-                                    "ddosSettings": {"ddosProtectionPlan": {"id": "str"}, "protectionMode": "str"},
+                                    "ddosSettings": {
+                                        "ddosCustomPolicy": {"id": "str"},
+                                        "ddosProtectionPlan": {"id": "str"},
+                                        "protectionMode": "str",
+                                    },
                                     "deleteOption": "str",
                                     "dnsSettings": {
                                         "domainNameLabel": "str",
@@ -361,6 +365,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -387,6 +392,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -407,6 +415,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -466,6 +477,12 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
+                                                                                            "enableConnectionTracking": bool,
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -529,6 +546,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                             "type": "str",
                                                                                                         }
                                                                                                     ],
+                                                                                                    "billingSku": "str",
                                                                                                     "customDnsConfigs": [
                                                                                                         {
                                                                                                             "fqdn": "str",
@@ -557,6 +575,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -581,6 +602,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -641,6 +665,12 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        }
+                                                                                                    },
+                                                                                                    "enableConnectionTracking": bool,
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -774,6 +804,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "billingSku": "str",
                                                                 "customDnsConfigs": [
                                                                     {"fqdn": "str", "ipAddresses": ["str"]}
                                                                 ],
@@ -797,6 +828,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -1072,6 +1106,12 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    }
+                                                                                                },
+                                                                                                "enableConnectionTracking": bool,
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -1149,6 +1189,12 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            }
+                                                                                                        },
+                                                                                                        "enableConnectionTracking": bool,
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -1214,6 +1260,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -1257,6 +1306,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                         "name": "str",
                                                         "properties": {
                                                             "disableBgpRoutePropagation": bool,
+                                                            "disablePeeringRoute": "str",
                                                             "provisioningState": "str",
                                                             "resourceGuid": "str",
                                                             "routes": [
@@ -1268,6 +1318,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                         "nextHopType": "str",
                                                                         "addressPrefix": "str",
                                                                         "hasBgpOverride": bool,
+                                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                         "nextHopIpAddress": "str",
                                                                         "provisioningState": "str",
                                                                     },
@@ -1341,7 +1392,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                             },
                                         },
                                     },
-                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                    "ipTags": [{"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}],
                                     "linkedPublicIPAddress": ...,
                                     "migrationPhase": "str",
                                     "natGateway": {
@@ -1351,6 +1402,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                         "name": "str",
                                         "properties": {
                                             "idleTimeoutInMinutes": 0,
+                                            "nat64": "str",
                                             "provisioningState": "str",
                                             "publicIpAddresses": [{"id": "str"}],
                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -1372,6 +1424,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                     "publicIPPrefix": {"id": "str"},
                                     "resourceGuid": "str",
                                     "servicePublicIPAddress": ...,
+                                    "upgradedToV2": bool,
                                 },
                                 "sku": {"name": "str", "tier": "str"},
                                 "tags": {"str": "str"},
@@ -1435,6 +1488,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                     "name": "str",
                                                     "properties": {
                                                         "ddosSettings": {
+                                                            "ddosCustomPolicy": {"id": "str"},
                                                             "ddosProtectionPlan": {"id": "str"},
                                                             "protectionMode": "str",
                                                         },
@@ -1448,7 +1502,13 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                         "idleTimeoutInMinutes": 0,
                                                         "ipAddress": "str",
                                                         "ipConfiguration": ...,
-                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                        "ipTags": [
+                                                            {
+                                                                "firstPartyServiceTagId": "str",
+                                                                "ipTagType": "str",
+                                                                "tag": "str",
+                                                            }
+                                                        ],
                                                         "linkedPublicIPAddress": ...,
                                                         "migrationPhase": "str",
                                                         "natGateway": {
@@ -1458,6 +1518,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                             "name": "str",
                                                             "properties": {
                                                                 "idleTimeoutInMinutes": 0,
+                                                                "nat64": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -1479,6 +1540,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                         "publicIPPrefix": {"id": "str"},
                                                         "resourceGuid": "str",
                                                         "servicePublicIPAddress": ...,
+                                                        "upgradedToV2": bool,
                                                     },
                                                     "sku": {"name": "str", "tier": "str"},
                                                     "tags": {"str": "str"},
@@ -1644,6 +1706,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "billingSku": "str",
                                                                 "customDnsConfigs": [
                                                                     {"fqdn": "str", "ipAddresses": ["str"]}
                                                                 ],
@@ -1667,6 +1730,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -1687,6 +1753,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -1741,6 +1810,10 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"}
+                                                                            },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -1761,6 +1834,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -1789,6 +1865,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -1802,6 +1879,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -1835,6 +1913,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -1880,6 +1959,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -1906,6 +1986,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -1926,6 +2009,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -1982,6 +2068,12 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -2006,6 +2098,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -2034,6 +2129,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -2047,6 +2143,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -2084,6 +2181,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -2202,6 +2300,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                         "type": "str",
                                                     }
                                                 ],
+                                                "billingSku": "str",
                                                 "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                 "customNetworkInterfaceName": "str",
                                                 "ipConfigurations": [
@@ -2223,6 +2322,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "approvalReference": {"privateEndpointId": "str"},
                                                             "groupIds": ["str"],
                                                             "privateLinkServiceConnectionState": {
                                                                 "actionsRequired": "str",
@@ -2463,6 +2563,10 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"}
+                                                                                },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -2483,6 +2587,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -2511,6 +2618,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -2524,6 +2632,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -2559,6 +2668,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -2621,6 +2731,12 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -2651,6 +2767,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -2679,6 +2798,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -2692,6 +2812,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -2743,6 +2864,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -2787,6 +2909,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "approvalReference": {"privateEndpointId": "str"},
                                                             "groupIds": ["str"],
                                                             "privateLinkServiceConnectionState": {
                                                                 "actionsRequired": "str",
@@ -2830,6 +2953,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                         "name": "str",
                                         "properties": {
                                             "disableBgpRoutePropagation": bool,
+                                            "disablePeeringRoute": "str",
                                             "provisioningState": "str",
                                             "resourceGuid": "str",
                                             "routes": [
@@ -2841,6 +2965,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                         "nextHopType": "str",
                                                         "addressPrefix": "str",
                                                         "hasBgpOverride": bool,
+                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                         "nextHopIpAddress": "str",
                                                         "provisioningState": "str",
                                                     },
@@ -2924,6 +3049,8 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                             "id": "str",
                                             "name": "str",
                                             "properties": {
+                                                "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                "enableConnectionTracking": bool,
                                                 "gatewayLoadBalancer": {"id": "str"},
                                                 "inboundNatPools": [{"id": "str"}],
                                                 "inboundNatRules": [{"id": "str"}],
@@ -2941,6 +3068,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                     "name": "str",
                                                     "properties": {
                                                         "ddosSettings": {
+                                                            "ddosCustomPolicy": {"id": "str"},
                                                             "ddosProtectionPlan": {"id": "str"},
                                                             "protectionMode": "str",
                                                         },
@@ -3195,6 +3323,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                             "type": "str",
                                                                                                         }
                                                                                                     ],
+                                                                                                    "billingSku": "str",
                                                                                                     "customDnsConfigs": [
                                                                                                         {
                                                                                                             "fqdn": "str",
@@ -3223,6 +3352,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -3247,6 +3379,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -3343,6 +3478,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                                                 "type": "str",
                                                                                                                             }
                                                                                                                         ],
+                                                                                                                        "billingSku": "str",
                                                                                                                         "customDnsConfigs": [
                                                                                                                             {
                                                                                                                                 "fqdn": "str",
@@ -3371,6 +3507,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                                                 "id": "str",
                                                                                                                                 "name": "str",
                                                                                                                                 "properties": {
+                                                                                                                                    "approvalReference": {
+                                                                                                                                        "privateEndpointId": "str"
+                                                                                                                                    },
                                                                                                                                     "groupIds": [
                                                                                                                                         "str"
                                                                                                                                     ],
@@ -3395,6 +3534,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                                                 "id": "str",
                                                                                                                                 "name": "str",
                                                                                                                                 "properties": {
+                                                                                                                                    "approvalReference": {
+                                                                                                                                        "privateEndpointId": "str"
+                                                                                                                                    },
                                                                                                                                     "groupIds": [
                                                                                                                                         "str"
                                                                                                                                     ],
@@ -3558,6 +3700,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -3584,6 +3727,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -3942,6 +4088,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -3985,6 +4134,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                "disablePeeringRoute": "str",
                                                                                 "provisioningState": "str",
                                                                                 "resourceGuid": "str",
                                                                                 "routes": [
@@ -3996,6 +4146,11 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                             "nextHopType": "str",
                                                                                             "addressPrefix": "str",
                                                                                             "hasBgpOverride": bool,
+                                                                                            "nextHop": {
+                                                                                                "nextHopIpAddresses": [
+                                                                                                    "str"
+                                                                                                ]
+                                                                                            },
                                                                                             "nextHopIpAddress": "str",
                                                                                             "provisioningState": "str",
                                                                                         },
@@ -4073,7 +4228,13 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                 },
                                                             },
                                                         },
-                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                        "ipTags": [
+                                                            {
+                                                                "firstPartyServiceTagId": "str",
+                                                                "ipTagType": "str",
+                                                                "tag": "str",
+                                                            }
+                                                        ],
                                                         "linkedPublicIPAddress": ...,
                                                         "migrationPhase": "str",
                                                         "natGateway": {
@@ -4083,6 +4244,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                             "name": "str",
                                                             "properties": {
                                                                 "idleTimeoutInMinutes": 0,
+                                                                "nat64": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -4104,6 +4266,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                         "publicIPPrefix": {"id": "str"},
                                                         "resourceGuid": "str",
                                                         "servicePublicIPAddress": ...,
+                                                        "upgradedToV2": bool,
                                                     },
                                                     "sku": {"name": "str", "tier": "str"},
                                                     "tags": {"str": "str"},
@@ -4177,6 +4340,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -4191,7 +4355,11 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                             "ipAddress": "str",
                                                                             "ipConfiguration": ...,
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -4202,6 +4370,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -4231,6 +4400,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -4408,6 +4578,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -4434,6 +4605,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -4454,6 +4628,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -4544,6 +4721,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                                 "type": "str",
                                                                                                             }
                                                                                                         ],
+                                                                                                        "billingSku": "str",
                                                                                                         "customDnsConfigs": [
                                                                                                             {
                                                                                                                 "fqdn": "str",
@@ -4572,6 +4750,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -4596,6 +4777,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -4742,6 +4926,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                             "type": "str",
                                                                         }
                                                                     ],
+                                                                    "billingSku": "str",
                                                                     "customDnsConfigs": [
                                                                         {"fqdn": "str", "ipAddresses": ["str"]}
                                                                     ],
@@ -4765,6 +4950,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -5093,6 +5281,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -5136,6 +5327,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                             "name": "str",
                                                             "properties": {
                                                                 "disableBgpRoutePropagation": bool,
+                                                                "disablePeeringRoute": "str",
                                                                 "provisioningState": "str",
                                                                 "resourceGuid": "str",
                                                                 "routes": [
@@ -5147,6 +5339,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                                             "nextHopType": "str",
                                                                             "addressPrefix": "str",
                                                                             "hasBgpOverride": bool,
+                                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                             "nextHopIpAddress": "str",
                                                                             "provisioningState": "str",
                                                                         },
@@ -5256,7 +5449,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5269,7 +5462,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             inbound_nat_rule_name="str",
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5281,7 +5474,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
         response = self.client.inbound_nat_rules.list(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

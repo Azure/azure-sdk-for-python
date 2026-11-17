@@ -26,7 +26,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
             resource_group_name=resource_group.name,
             network_interface_name="str",
             tap_configuration_name="str",
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -56,6 +56,8 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                 "id": "str",
                                 "name": "str",
                                 "properties": {
+                                    "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                    "enableConnectionTracking": bool,
                                     "gatewayLoadBalancer": {"id": "str"},
                                     "inboundNatPools": [{"id": "str"}],
                                     "inboundNatRules": [{"id": "str"}],
@@ -73,6 +75,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                         "name": "str",
                                         "properties": {
                                             "ddosSettings": {
+                                                "ddosCustomPolicy": {"id": "str"},
                                                 "ddosProtectionPlan": {"id": "str"},
                                                 "protectionMode": "str",
                                             },
@@ -470,6 +473,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 "type": "str",
                                                                                             }
                                                                                         ],
+                                                                                        "billingSku": "str",
                                                                                         "customDnsConfigs": [
                                                                                             {
                                                                                                 "fqdn": "str",
@@ -496,6 +500,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -516,6 +523,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -606,6 +616,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                                     "type": "str",
                                                                                                                 }
                                                                                                             ],
+                                                                                                            "billingSku": "str",
                                                                                                             "customDnsConfigs": [
                                                                                                                 {
                                                                                                                     "fqdn": "str",
@@ -634,6 +645,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -658,6 +672,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -793,6 +810,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "billingSku": "str",
                                                                         "customDnsConfigs": [
                                                                             {"fqdn": "str", "ipAddresses": ["str"]}
                                                                         ],
@@ -816,6 +834,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -1299,6 +1320,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -1342,6 +1366,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "disableBgpRoutePropagation": bool,
+                                                                    "disablePeeringRoute": "str",
                                                                     "provisioningState": "str",
                                                                     "resourceGuid": "str",
                                                                     "routes": [
@@ -1353,6 +1378,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "nextHopType": "str",
                                                                                 "addressPrefix": "str",
                                                                                 "hasBgpOverride": bool,
+                                                                                "nextHop": {
+                                                                                    "nextHopIpAddresses": ["str"]
+                                                                                },
                                                                                 "nextHopIpAddress": "str",
                                                                                 "provisioningState": "str",
                                                                             },
@@ -1426,7 +1454,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                     },
                                                 },
                                             },
-                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                            "ipTags": [
+                                                {"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}
+                                            ],
                                             "linkedPublicIPAddress": ...,
                                             "migrationPhase": "str",
                                             "natGateway": {
@@ -1436,6 +1466,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                 "name": "str",
                                                 "properties": {
                                                     "idleTimeoutInMinutes": 0,
+                                                    "nat64": "str",
                                                     "provisioningState": "str",
                                                     "publicIpAddresses": [{"id": "str"}],
                                                     "publicIpAddressesV6": [{"id": "str"}],
@@ -1457,6 +1488,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                             "publicIPPrefix": {"id": "str"},
                                             "resourceGuid": "str",
                                             "servicePublicIPAddress": ...,
+                                            "upgradedToV2": bool,
                                         },
                                         "sku": {"name": "str", "tier": "str"},
                                         "tags": {"str": "str"},
@@ -1521,6 +1553,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                             "name": "str",
                                                             "properties": {
                                                                 "ddosSettings": {
+                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                     "protectionMode": "str",
                                                                 },
@@ -1534,7 +1567,13 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "idleTimeoutInMinutes": 0,
                                                                 "ipAddress": "str",
                                                                 "ipConfiguration": ...,
-                                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                "ipTags": [
+                                                                    {
+                                                                        "firstPartyServiceTagId": "str",
+                                                                        "ipTagType": "str",
+                                                                        "tag": "str",
+                                                                    }
+                                                                ],
                                                                 "linkedPublicIPAddress": ...,
                                                                 "migrationPhase": "str",
                                                                 "natGateway": {
@@ -1544,6 +1583,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "idleTimeoutInMinutes": 0,
+                                                                        "nat64": "str",
                                                                         "provisioningState": "str",
                                                                         "publicIpAddresses": [{"id": "str"}],
                                                                         "publicIpAddressesV6": [{"id": "str"}],
@@ -1565,6 +1605,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "publicIPPrefix": {"id": "str"},
                                                                 "resourceGuid": "str",
                                                                 "servicePublicIPAddress": ...,
+                                                                "upgradedToV2": bool,
                                                             },
                                                             "sku": {"name": "str", "tier": "str"},
                                                             "tags": {"str": "str"},
@@ -1856,6 +1897,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -1884,6 +1928,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -1897,6 +1942,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -1930,6 +1976,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -1968,6 +2015,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "billingSku": "str",
                                                                         "customDnsConfigs": [
                                                                             {"fqdn": "str", "ipAddresses": ["str"]}
                                                                         ],
@@ -1991,6 +2039,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -2011,6 +2062,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -2094,6 +2148,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                     "type": "str",
                                                                                                 }
                                                                                             ],
+                                                                                            "billingSku": "str",
                                                                                             "customDnsConfigs": [
                                                                                                 {
                                                                                                     "fqdn": "str",
@@ -2122,6 +2177,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -2144,6 +2202,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -2275,6 +2336,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "type": "str",
                                                             }
                                                         ],
+                                                        "billingSku": "str",
                                                         "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                         "customNetworkInterfaceName": "str",
                                                         "ipConfigurations": [
@@ -2296,6 +2358,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "approvalReference": {"privateEndpointId": "str"},
                                                                     "groupIds": ["str"],
                                                                     "privateLinkServiceConnectionState": {
                                                                         "actionsRequired": "str",
@@ -2489,6 +2552,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -2517,6 +2583,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -2530,6 +2597,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -2565,6 +2633,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -2841,6 +2910,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "approvalReference": {"privateEndpointId": "str"},
                                                                     "groupIds": ["str"],
                                                                     "privateLinkServiceConnectionState": {
                                                                         "actionsRequired": "str",
@@ -2884,6 +2954,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                 "name": "str",
                                                 "properties": {
                                                     "disableBgpRoutePropagation": bool,
+                                                    "disablePeeringRoute": "str",
                                                     "provisioningState": "str",
                                                     "resourceGuid": "str",
                                                     "routes": [
@@ -2895,6 +2966,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "nextHopType": "str",
                                                                 "addressPrefix": "str",
                                                                 "hasBgpOverride": bool,
+                                                                "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                 "nextHopIpAddress": "str",
                                                                 "provisioningState": "str",
                                                             },
@@ -3084,6 +3156,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                         "name": "str",
                                         "properties": {
                                             "ddosSettings": {
+                                                "ddosCustomPolicy": {"id": "str"},
                                                 "ddosProtectionPlan": {"id": "str"},
                                                 "protectionMode": "str",
                                             },
@@ -3319,6 +3392,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 "type": "str",
                                                                                             }
                                                                                         ],
+                                                                                        "billingSku": "str",
                                                                                         "customDnsConfigs": [
                                                                                             {
                                                                                                 "fqdn": "str",
@@ -3345,6 +3419,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -3365,6 +3442,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -3424,6 +3504,12 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        }
+                                                                                                    },
+                                                                                                    "enableConnectionTracking": bool,
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -3487,6 +3573,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                                     "type": "str",
                                                                                                                 }
                                                                                                             ],
+                                                                                                            "billingSku": "str",
                                                                                                             "customDnsConfigs": [
                                                                                                                 {
                                                                                                                     "fqdn": "str",
@@ -3515,6 +3602,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -3539,6 +3629,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "approvalReference": {
+                                                                                                                            "privateEndpointId": "str"
+                                                                                                                        },
                                                                                                                         "groupIds": [
                                                                                                                             "str"
                                                                                                                         ],
@@ -3674,6 +3767,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "billingSku": "str",
                                                                         "customDnsConfigs": [
                                                                             {"fqdn": "str", "ipAddresses": ["str"]}
                                                                         ],
@@ -3697,6 +3791,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -3974,6 +4071,12 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            }
+                                                                                                        },
+                                                                                                        "enableConnectionTracking": bool,
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -4056,6 +4159,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -4099,6 +4205,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "disableBgpRoutePropagation": bool,
+                                                                    "disablePeeringRoute": "str",
                                                                     "provisioningState": "str",
                                                                     "resourceGuid": "str",
                                                                     "routes": [
@@ -4110,6 +4217,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "nextHopType": "str",
                                                                                 "addressPrefix": "str",
                                                                                 "hasBgpOverride": bool,
+                                                                                "nextHop": {
+                                                                                    "nextHopIpAddresses": ["str"]
+                                                                                },
                                                                                 "nextHopIpAddress": "str",
                                                                                 "provisioningState": "str",
                                                                             },
@@ -4183,7 +4293,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                     },
                                                 },
                                             },
-                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                            "ipTags": [
+                                                {"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}
+                                            ],
                                             "linkedPublicIPAddress": ...,
                                             "migrationPhase": "str",
                                             "natGateway": {
@@ -4193,6 +4305,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                 "name": "str",
                                                 "properties": {
                                                     "idleTimeoutInMinutes": 0,
+                                                    "nat64": "str",
                                                     "provisioningState": "str",
                                                     "publicIpAddresses": [{"id": "str"}],
                                                     "publicIpAddressesV6": [{"id": "str"}],
@@ -4214,6 +4327,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                             "publicIPPrefix": {"id": "str"},
                                             "resourceGuid": "str",
                                             "servicePublicIPAddress": ...,
+                                            "upgradedToV2": bool,
                                         },
                                         "sku": {"name": "str", "tier": "str"},
                                         "tags": {"str": "str"},
@@ -4277,6 +4391,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                             "name": "str",
                                                             "properties": {
                                                                 "ddosSettings": {
+                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                     "protectionMode": "str",
                                                                 },
@@ -4290,7 +4405,13 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "idleTimeoutInMinutes": 0,
                                                                 "ipAddress": "str",
                                                                 "ipConfiguration": ...,
-                                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                "ipTags": [
+                                                                    {
+                                                                        "firstPartyServiceTagId": "str",
+                                                                        "ipTagType": "str",
+                                                                        "tag": "str",
+                                                                    }
+                                                                ],
                                                                 "linkedPublicIPAddress": ...,
                                                                 "migrationPhase": "str",
                                                                 "natGateway": {
@@ -4300,6 +4421,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "idleTimeoutInMinutes": 0,
+                                                                        "nat64": "str",
                                                                         "provisioningState": "str",
                                                                         "publicIpAddresses": [{"id": "str"}],
                                                                         "publicIpAddressesV6": [{"id": "str"}],
@@ -4321,6 +4443,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "publicIPPrefix": {"id": "str"},
                                                                 "resourceGuid": "str",
                                                                 "servicePublicIPAddress": ...,
+                                                                "upgradedToV2": bool,
                                                             },
                                                             "sku": {"name": "str", "tier": "str"},
                                                             "tags": {"str": "str"},
@@ -4486,6 +4609,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "billingSku": "str",
                                                                         "customDnsConfigs": [
                                                                             {"fqdn": "str", "ipAddresses": ["str"]}
                                                                         ],
@@ -4509,6 +4633,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -4529,6 +4656,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "approvalReference": {
+                                                                                        "privateEndpointId": "str"
+                                                                                    },
                                                                                     "groupIds": ["str"],
                                                                                     "privateLinkServiceConnectionState": {
                                                                                         "actionsRequired": "str",
@@ -4583,6 +4713,12 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -4607,6 +4743,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -4635,6 +4774,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -4648,6 +4788,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -4685,6 +4826,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -4735,6 +4877,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                     "type": "str",
                                                                                                 }
                                                                                             ],
+                                                                                            "billingSku": "str",
                                                                                             "customDnsConfigs": [
                                                                                                 {
                                                                                                     "fqdn": "str",
@@ -4763,6 +4906,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -4785,6 +4931,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -4916,6 +5065,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "type": "str",
                                                             }
                                                         ],
+                                                        "billingSku": "str",
                                                         "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                         "customNetworkInterfaceName": "str",
                                                         "ipConfigurations": [
@@ -4937,6 +5087,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "approvalReference": {"privateEndpointId": "str"},
                                                                     "groupIds": ["str"],
                                                                     "privateLinkServiceConnectionState": {
                                                                         "actionsRequired": "str",
@@ -5195,6 +5346,12 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -5225,6 +5382,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -5253,6 +5413,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -5266,6 +5427,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -5317,6 +5479,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -5376,6 +5539,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "approvalReference": {"privateEndpointId": "str"},
                                                                     "groupIds": ["str"],
                                                                     "privateLinkServiceConnectionState": {
                                                                         "actionsRequired": "str",
@@ -5419,6 +5583,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                 "name": "str",
                                                 "properties": {
                                                     "disableBgpRoutePropagation": bool,
+                                                    "disablePeeringRoute": "str",
                                                     "provisioningState": "str",
                                                     "resourceGuid": "str",
                                                     "routes": [
@@ -5430,6 +5595,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                                                                 "nextHopType": "str",
                                                                 "addressPrefix": "str",
                                                                 "hasBgpOverride": bool,
+                                                                "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                 "nextHopIpAddress": "str",
                                                                 "provisioningState": "str",
                                                             },
@@ -5516,7 +5682,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
                 },
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5529,7 +5695,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
             resource_group_name=resource_group.name,
             network_interface_name="str",
             tap_configuration_name="str",
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5541,7 +5707,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperations(AzureMgmt
         response = self.client.network_interface_tap_configurations.list(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

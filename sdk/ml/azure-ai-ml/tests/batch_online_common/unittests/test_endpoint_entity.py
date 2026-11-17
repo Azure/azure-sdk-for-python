@@ -205,14 +205,31 @@ class TestBatchEndpointYAML:
 
         assert rest_batch_endpoint.properties.defaults is None
 
-    def test_from_rest_object_defaults_returned_as_snake_case_dict(self) -> None:
+    def test_from_rest_object_defaults_supports_attribute_access(self) -> None:
         with open(TestBatchEndpointYAML.BATCH_ENDPOINT_REST, "r") as f:
             batch_endpoint_rest = _deserialize(BatchEndpointData, json.load(f))
 
         batch_endpoint = BatchEndpoint._from_rest_object(batch_endpoint_rest)
 
-        assert batch_endpoint.defaults == {"deployment_name": "hello-world-1"}
-        assert batch_endpoint.defaults["deployment_name"] == "hello-world-1"
+        # ``endpoint.defaults`` must remain an object that supports attribute
+        # get/set so the published sample pattern keeps working:
+        #     endpoint.defaults.deployment_name = deployment.name
+        assert batch_endpoint.defaults.deployment_name == "hello-world-1"
+
+    def test_from_rest_object_defaults_roundtrips_to_camel_case(self) -> None:
+        with open(TestBatchEndpointYAML.BATCH_ENDPOINT_REST, "r") as f:
+            batch_endpoint_rest = _deserialize(BatchEndpointData, json.load(f))
+
+        batch_endpoint = BatchEndpoint._from_rest_object(batch_endpoint_rest)
+
+        # Emulate the sample notebook flow: mutate the default deployment on the
+        # object returned by get() and serialize it back to the wire format.
+        batch_endpoint.defaults.deployment_name = "hello-world-2"
+        rest_batch_endpoint = batch_endpoint._to_rest_batch_endpoint("eastus")
+
+        rest_defaults = rest_batch_endpoint.properties.defaults
+        assert rest_defaults.deployment_name == "hello-world-2"
+        assert rest_defaults.as_dict() == {"deploymentName": "hello-world-2"}
 
 
 class TestKubernetesOnlineEndopint:

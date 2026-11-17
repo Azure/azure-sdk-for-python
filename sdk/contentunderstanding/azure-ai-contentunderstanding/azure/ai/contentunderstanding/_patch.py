@@ -9,11 +9,13 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import TYPE_CHECKING, Any, IO, Optional, Union, overload
+from typing import TYPE_CHECKING, Any, Callable, IO, Optional, TypeAlias, TypeVar, Union, overload
+from azure.core.pipeline import PipelineResponse
+from azure.core.rest import AsyncHttpResponse, HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 
 from ._client import ContentUnderstandingClient as GeneratedClient
-from ._helpers import to_llm_input
+from ._patch_llm_input import to_llm_input
 from . import models as _models
 from .models import AnalyzeLROPoller
 
@@ -22,8 +24,46 @@ if TYPE_CHECKING:
 
 JSON = dict[str, Any]
 _Unset: Any = object()
+_ResponseType = Union[HttpResponse, AsyncHttpResponse]
+_DeserializedType = TypeVar("_DeserializedType")
+_ResponseCallback: TypeAlias = Callable[
+    [PipelineResponse[HttpRequest, _ResponseType], _DeserializedType, dict[str, Any]], Any
+]
 
-__all__ = ["ContentUnderstandingClient", "to_llm_input"]
+__all__ = [
+    "ContentUnderstandingClient",
+    "to_llm_input",
+]
+
+
+def _wrap_inline_response_cls(
+    user_cls: Optional[_ResponseCallback[_DeserializedType]] = None,
+) -> _ResponseCallback[_DeserializedType]:
+    """Raise ``HttpResponseError`` when an inline analyze envelope is not Succeeded.
+
+    Matches completed analyze-LRO failure behavior while still returning
+    :class:`~azure.ai.contentunderstanding.models.ContentAnalyzerInlineResponse` on success.
+
+    :param user_cls: Optional caller-provided ``cls`` to compose after the Succeeded check.
+    :type user_cls: callable or None
+    :return: A ``cls`` callback suitable for the generated analyze inline methods.
+    :rtype: callable
+    """
+    from azure.core.exceptions import HttpResponseError
+
+    def cls(
+        pipeline_response: PipelineResponse[HttpRequest, _ResponseType],
+        deserialized: _DeserializedType,
+        response_headers: dict[str, Any],
+    ) -> Any:
+        status = getattr(deserialized, "status", None)
+        if status not in (_models.OperationState.SUCCEEDED, "Succeeded"):
+            raise HttpResponseError(response=pipeline_response.http_response)
+        if user_cls is not None:
+            return user_cls(pipeline_response, deserialized, response_headers)
+        return deserialized
+
+    return cls
 
 
 class ContentUnderstandingClient(GeneratedClient):
@@ -34,6 +74,7 @@ class ContentUnderstandingClient(GeneratedClient):
     - Returns AnalyzeLROPoller with .operation_id property
     - Fixes content_type default for begin_analyze_binary
     - Defaults polling_interval to 3 seconds
+    - Forwards allow_input_truncation on analyze APIs (JSON and binary; when omitted, the analyzer config applies)
 
     :param endpoint: Content Understanding service endpoint. Required.
     :type endpoint: str
@@ -41,8 +82,9 @@ class ContentUnderstandingClient(GeneratedClient):
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2025-11-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     ``2025-11-01`` (GA) and ``2026-06-01-preview``. Default value is
+     ``2026-06-01-preview``. Preview-only operations require the preview API version.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present. Default value is 3 seconds.
@@ -64,6 +106,7 @@ class ContentUnderstandingClient(GeneratedClient):
         analyzer_id: str,
         *,
         inputs: list[_models.AnalysisInput],
+        allow_input_truncation: Optional[bool] = None,
         model_deployments: Optional[dict[str, str]] = None,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         **kwargs: Any,
@@ -75,8 +118,11 @@ class ContentUnderstandingClient(GeneratedClient):
         :keyword inputs: Inputs to analyze. Currently, only pro mode supports multiple inputs.
          Required.
         :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalysisInput]
+        :keyword allow_input_truncation: Overrides the analyzer's allowInputTruncation setting for
+         this request. When omitted, the analyzer's configured value applies. Default value is None.
+        :paramtype allow_input_truncation: bool
         :keyword model_deployments: Override default mapping of model names to deployments.
-         Ex. { "gpt-4.1": "myGpt41Deployment", "text-embedding-3-large":
+         Ex. { "gpt-5.2": "myGpt52Deployment", "text-embedding-3-large":
          "myTextEmbedding3LargeDeployment" }. Default value is None.
         :paramtype model_deployments: dict[str, str]
         :keyword processing_location: The location where the data may be processed. Defaults to
@@ -99,6 +145,7 @@ class ContentUnderstandingClient(GeneratedClient):
         analyzer_id: str,
         body: JSON,
         *,
+        allow_input_truncation: Optional[bool] = None,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -109,6 +156,9 @@ class ContentUnderstandingClient(GeneratedClient):
         :type analyzer_id: str
         :param body: JSON body. Required.
         :type body: JSON
+        :keyword allow_input_truncation: Overrides the analyzer's allowInputTruncation setting for
+         this request. When omitted, the analyzer's configured value applies. Default value is None.
+        :paramtype allow_input_truncation: bool
         :keyword processing_location: The location where the data may be processed. Defaults to
          global. Known values are: "geography", "dataZone", and "global". Default value is None.
         :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
@@ -132,6 +182,7 @@ class ContentUnderstandingClient(GeneratedClient):
         analyzer_id: str,
         body: IO[bytes],
         *,
+        allow_input_truncation: Optional[bool] = None,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -142,6 +193,9 @@ class ContentUnderstandingClient(GeneratedClient):
         :type analyzer_id: str
         :param body: Binary stream body. Required.
         :type body: IO[bytes]
+        :keyword allow_input_truncation: Overrides the analyzer's allowInputTruncation setting for
+         this request. When omitted, the analyzer's configured value applies. Default value is None.
+        :paramtype allow_input_truncation: bool
         :keyword processing_location: The location where the data may be processed. Defaults to
          global. Known values are: "geography", "dataZone", and "global". Default value is None.
         :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
@@ -166,6 +220,7 @@ class ContentUnderstandingClient(GeneratedClient):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         inputs: list[_models.AnalysisInput] = _Unset,
+        allow_input_truncation: Optional[bool] = None,
         model_deployments: Optional[dict[str, str]] = None,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: Optional[str] = None,
@@ -180,8 +235,11 @@ class ContentUnderstandingClient(GeneratedClient):
         :keyword inputs: Inputs to analyze. Currently, only pro mode supports multiple inputs.
          Required.
         :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalysisInput]
+        :keyword allow_input_truncation: Overrides the analyzer's allowInputTruncation setting for
+         this request. When omitted, the analyzer's configured value applies. Default value is None.
+        :paramtype allow_input_truncation: bool
         :keyword model_deployments: Override default mapping of model names to deployments.
-         Ex. { "gpt-4.1": "myGpt41Deployment", "text-embedding-3-large":
+         Ex. { "gpt-5.2": "myGpt52Deployment", "text-embedding-3-large":
          "myTextEmbedding3LargeDeployment" }. Default value is None.
         :paramtype model_deployments: dict[str, str]
         :keyword processing_location: The location where the data may be processed. Defaults to
@@ -205,14 +263,13 @@ class ContentUnderstandingClient(GeneratedClient):
         # Call parent implementation
         # Only pass body if it's not _Unset (let parent construct from inputs if not provided)
         # Ensure content_type is always a string (not None)
-        content_type_str: str = (
-            content_type if content_type is not None else "application/json"
-        )
+        content_type_str: str = content_type if content_type is not None else "application/json"
         if body is not _Unset:
             poller = super().begin_analyze(  # pyright: ignore[reportCallIssue]
                 analyzer_id=analyzer_id,
                 body=body,
                 processing_location=processing_location,
+                allow_input_truncation=allow_input_truncation,
                 content_type=content_type_str,
                 inputs=inputs,
                 model_deployments=model_deployments,
@@ -222,6 +279,7 @@ class ContentUnderstandingClient(GeneratedClient):
             poller = super().begin_analyze(  # pyright: ignore[reportCallIssue]
                 analyzer_id=analyzer_id,
                 processing_location=processing_location,
+                allow_input_truncation=allow_input_truncation,
                 content_type=content_type_str,
                 inputs=inputs,
                 model_deployments=model_deployments,
@@ -238,6 +296,7 @@ class ContentUnderstandingClient(GeneratedClient):
         binary_input: bytes,
         *,
         content_range: Optional[str] = None,
+        allow_input_truncation: Optional[bool] = None,
         content_type: str = "application/octet-stream",
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         **kwargs: Any,
@@ -251,6 +310,9 @@ class ContentUnderstandingClient(GeneratedClient):
         :keyword content_range: Range of the input to analyze (ex. ``1-3,5,9-``). Document content uses
          1-based page numbers, while audio visual content uses integer milliseconds. Default value is None.
         :paramtype content_range: str
+        :keyword allow_input_truncation: Allows the input to be truncated to fit within the model's
+         processing limits when it would otherwise exceed them. Default value is None.
+        :paramtype allow_input_truncation: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/octet-stream".
         :paramtype content_type: str
@@ -268,7 +330,8 @@ class ContentUnderstandingClient(GeneratedClient):
            This ensures ContentSpan offsets work correctly with Python string slicing.
         """
         # Call parent implementation with string_encoding set to "codePoint"
-        # (matches Python's string indexing)
+        # (matches Python's string indexing). Pass allow_input_truncation through so
+        # generated api_version_validation can reject it on GA clients.
         poller = super().begin_analyze_binary(
             analyzer_id=analyzer_id,
             binary_input=binary_input,
@@ -276,11 +339,233 @@ class ContentUnderstandingClient(GeneratedClient):
             content_range=content_range,
             content_type=content_type,
             processing_location=processing_location,
+            allow_input_truncation=allow_input_truncation,
             **kwargs,
         )
 
         # Wrap in custom poller with .operation_id property (without re-initializing)
         return AnalyzeLROPoller.from_poller(poller)  # pyright: ignore[reportReturnType]
+
+    @overload  # type: ignore[override]
+    def analyze_inline(
+        self,
+        analyzer_id: str,
+        *,
+        inputs: list[_models.AnalysisInput],
+        allow_input_truncation: Optional[bool] = None,
+        model_deployments: Optional[dict[str, str]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        **kwargs: Any,
+    ) -> _models.ContentAnalyzerInlineResponse:
+        """Extract content and fields from input synchronously. Returns the result directly in
+        the response (no polling).
+
+        :param analyzer_id: The unique identifier of the analyzer. Required.
+        :type analyzer_id: str
+        :keyword inputs: Inputs to analyze. Required.
+        :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalysisInput]
+        :keyword allow_input_truncation: Overrides the analyzer's allowInputTruncation setting for
+         this request. When omitted, the analyzer's configured value applies. Default value is None.
+        :paramtype allow_input_truncation: bool
+        :keyword model_deployments: Override default mapping of model names to deployments.
+         Default value is None.
+        :paramtype model_deployments: dict[str, str]
+        :keyword processing_location: The location where the data may be processed. Defaults to
+         global. Known values are: "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :return: ContentAnalyzerInlineResponse. Access the ``AnalysisResult`` via ``.result``.
+        :rtype: ~azure.ai.contentunderstanding.models.ContentAnalyzerInlineResponse
+        :raises ~azure.core.exceptions.HttpResponseError: Service returned a non-success status
+         code, or the inline envelope ``status`` was not ``Succeeded``.
+
+        .. note::
+           The string_encoding parameter is automatically set to "codePoint" for Python as it
+           matches Python's native string indexing behavior (len() and str[i] use code points).
+        """
+
+    @overload  # type: ignore[override]
+    def analyze_inline(
+        self,
+        analyzer_id: str,
+        body: JSON,
+        *,
+        allow_input_truncation: Optional[bool] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.ContentAnalyzerInlineResponse:
+        """Extract content and fields from input synchronously. Returns the result directly in
+        the response (no polling).
+
+        :param analyzer_id: The unique identifier of the analyzer. Required.
+        :type analyzer_id: str
+        :param body: JSON body. Required.
+        :type body: JSON
+        :keyword allow_input_truncation: Overrides the analyzer's allowInputTruncation setting for
+         this request. When omitted, the analyzer's configured value applies. Default value is None.
+        :paramtype allow_input_truncation: bool
+        :keyword processing_location: The location where the data may be processed. Defaults to
+         global. Known values are: "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ContentAnalyzerInlineResponse. Access the ``AnalysisResult`` via ``.result``.
+        :rtype: ~azure.ai.contentunderstanding.models.ContentAnalyzerInlineResponse
+        :raises ~azure.core.exceptions.HttpResponseError: Service returned a non-success status
+         code, or the inline envelope ``status`` was not ``Succeeded``.
+
+        .. note::
+           The string_encoding parameter is automatically set to "codePoint" for Python as it
+           matches Python's native string indexing behavior (len() and str[i] use code points).
+        """
+
+    @overload  # type: ignore[override]
+    def analyze_inline(
+        self,
+        analyzer_id: str,
+        body: IO[bytes],
+        *,
+        allow_input_truncation: Optional[bool] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.ContentAnalyzerInlineResponse:
+        """Extract content and fields from input synchronously. Returns the result directly in
+        the response (no polling).
+
+        :param analyzer_id: The unique identifier of the analyzer. Required.
+        :type analyzer_id: str
+        :param body: Binary stream body. Required.
+        :type body: IO[bytes]
+        :keyword allow_input_truncation: Overrides the analyzer's allowInputTruncation setting for
+         this request. When omitted, the analyzer's configured value applies. Default value is None.
+        :paramtype allow_input_truncation: bool
+        :keyword processing_location: The location where the data may be processed. Defaults to
+         global. Known values are: "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ContentAnalyzerInlineResponse. Access the ``AnalysisResult`` via ``.result``.
+        :rtype: ~azure.ai.contentunderstanding.models.ContentAnalyzerInlineResponse
+        :raises ~azure.core.exceptions.HttpResponseError: Service returned a non-success status
+         code, or the inline envelope ``status`` was not ``Succeeded``.
+
+        .. note::
+           The string_encoding parameter is automatically set to "codePoint" for Python as it
+           matches Python's native string indexing behavior (len() and str[i] use code points).
+        """
+
+    @distributed_trace
+    def analyze_inline(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+        self,
+        analyzer_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        inputs: list[_models.AnalysisInput] = _Unset,
+        allow_input_truncation: Optional[bool] = None,
+        model_deployments: Optional[dict[str, str]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        content_type: Optional[str] = None,
+        **kwargs: Any,
+    ) -> _models.ContentAnalyzerInlineResponse:
+        """Extract content and fields from input synchronously. Returns the result directly in
+        the response (no polling).
+
+        :param analyzer_id: The unique identifier of the analyzer. Required.
+        :type analyzer_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Default value is None.
+        :type body: JSON or IO[bytes]
+        :keyword inputs: Inputs to analyze. Required.
+        :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalysisInput]
+        :keyword allow_input_truncation: Overrides the analyzer's allowInputTruncation setting for
+         this request. When omitted, the analyzer's configured value applies. Default value is None.
+        :paramtype allow_input_truncation: bool
+        :keyword model_deployments: Override default mapping of model names to deployments.
+         Default value is None.
+        :paramtype model_deployments: dict[str, str]
+        :keyword processing_location: The location where the data may be processed. Defaults to
+         global. Known values are: "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :keyword content_type: Body Parameter content-type. Default value is "application/json".
+        :paramtype content_type: str
+        :return: ContentAnalyzerInlineResponse. Access the ``AnalysisResult`` via ``.result``.
+        :rtype: ~azure.ai.contentunderstanding.models.ContentAnalyzerInlineResponse
+        :raises ~azure.core.exceptions.HttpResponseError: Service returned a non-success status
+         code, or the inline envelope ``status`` was not ``Succeeded``.
+
+        .. note::
+           The string_encoding parameter is automatically set to "codePoint" for Python as it
+           matches Python's native string indexing behavior (len() and str[i] use code points).
+        """
+        # Ensure content_type is always a string (not None) — matches begin_analyze.
+        content_type_str: str = content_type if content_type is not None else "application/json"
+        request_kwargs = {
+            "analyzer_id": analyzer_id,
+            "string_encoding": "codePoint",
+            "inputs": inputs,
+            "model_deployments": model_deployments,
+            "processing_location": processing_location,
+            "allow_input_truncation": allow_input_truncation,
+            "content_type": content_type_str,
+            **kwargs,
+        }
+        if body is not _Unset:
+            request_kwargs["body"] = body
+        request_kwargs["cls"] = _wrap_inline_response_cls(request_kwargs.pop("cls", None))
+
+        return super().analyze_inline(**request_kwargs)
+
+    @distributed_trace
+    def analyze_binary_inline(
+        self,
+        analyzer_id: str,
+        binary_input: bytes,
+        *,
+        content_range: Optional[str] = None,
+        allow_input_truncation: Optional[bool] = None,
+        content_type: str = "application/octet-stream",
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        **kwargs: Any,
+    ) -> _models.ContentAnalyzerInlineResponse:
+        """Extract content and fields from binary input synchronously. Returns the result directly
+        in the response (no polling).
+
+        :param analyzer_id: The unique identifier of the analyzer. Required.
+        :type analyzer_id: str
+        :param binary_input: The binary content of the document to analyze. Required.
+        :type binary_input: bytes
+        :keyword content_range: Range of the input to analyze (ex. ``1-3,5,9-``). Default is None.
+        :paramtype content_range: str
+        :keyword allow_input_truncation: Allows the input to be truncated to fit within the model's
+         processing limits when it would otherwise exceed them. Default value is None.
+        :paramtype allow_input_truncation: bool
+        :keyword content_type: Body Parameter content-type. Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword processing_location: The location where the data may be processed. Defaults to
+         global. Known values are: "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :return: ContentAnalyzerInlineResponse. Access the ``AnalysisResult`` via ``.result``.
+        :rtype: ~azure.ai.contentunderstanding.models.ContentAnalyzerInlineResponse
+        :raises ~azure.core.exceptions.HttpResponseError: Service returned a non-success status
+         code, or the inline envelope ``status`` was not ``Succeeded``.
+
+        .. note::
+           The string_encoding parameter is automatically set to "codePoint" for Python as it
+           matches Python's native string indexing behavior (len() and str[i] use code points).
+        """
+        kwargs["cls"] = _wrap_inline_response_cls(kwargs.pop("cls", None))
+        return super().analyze_binary_inline(
+            analyzer_id=analyzer_id,
+            binary_input=binary_input,
+            string_encoding="codePoint",
+            content_range=content_range,
+            content_type=content_type,
+            processing_location=processing_location,
+            allow_input_truncation=allow_input_truncation,
+            **kwargs,
+        )
 
 
 def patch_sdk():

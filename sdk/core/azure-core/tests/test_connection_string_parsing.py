@@ -5,7 +5,10 @@ from azure.core.utils import parse_connection_string
 class TestCoreConnectionStringParser:
     # cSpell:disable
     def test_parsing_with_case_sensitive_keys_for_sensitive_conn_str(self, **kwargs):
-        conn_str = "Endpoint=XXXXENDPOINTXXXX;SharedAccessKeyName=XXXXPOLICYXXXX;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        conn_str = (
+            "Endpoint=XXXXENDPOINTXXXX;SharedAccessKeyName=XXXXPOLICYXXXX;"
+            "SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        )
         parse_result = parse_connection_string(conn_str, True)
         assert parse_result["Endpoint"] == "XXXXENDPOINTXXXX"
         assert parse_result["SharedAccessKeyName"] == "XXXXPOLICYXXXX"
@@ -18,21 +21,30 @@ class TestCoreConnectionStringParser:
             parse_result["sharedaccesskey"]
 
     def test_parsing_with_case_insensitive_keys_for_sensitive_conn_str(self, **kwargs):
-        conn_str = "Endpoint=XXXXENDPOINTXXXX;SharedAccessKeyName=XXXXPOLICYXXXX;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        conn_str = (
+            "Endpoint=XXXXENDPOINTXXXX;SharedAccessKeyName=XXXXPOLICYXXXX;"
+            "SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        )
         parse_result = parse_connection_string(conn_str, False)
         assert parse_result["endpoint"] == "XXXXENDPOINTXXXX"
         assert parse_result["sharedaccesskeyname"] == "XXXXPOLICYXXXX"
         assert parse_result["sharedaccesskey"] == "THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
 
     def test_parsing_with_case_insensitive_keys_for_insensitive_conn_str(self, **kwargs):
-        conn_str = "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        conn_str = (
+            "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;"
+            "SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        )
         parse_result = parse_connection_string(conn_str, False)
         assert parse_result["endpoint"] == "XXXXENDPOINTXXXX"
         assert parse_result["sharedaccesskeyname"] == "XXXXPOLICYXXXX"
         assert parse_result["sharedaccesskey"] == "THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
 
     def test_error_with_duplicate_case_sensitive_keys_for_sensitive_conn_str(self, **kwargs):
-        conn_str = "Endpoint=XXXXENDPOINTXXXX;Endpoint=XXXXENDPOINT2XXXX;SharedAccessKeyName=XXXXPOLICYXXXX;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        conn_str = (
+            "Endpoint=XXXXENDPOINTXXXX;Endpoint=XXXXENDPOINT2XXXX;SharedAccessKeyName=XXXXPOLICYXXXX;"
+            "SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        )
         with pytest.raises(ValueError) as e:
             parse_result = parse_connection_string(conn_str, True)
         assert str(e.value) == "Connection string is either blank or malformed."
@@ -44,7 +56,10 @@ class TestCoreConnectionStringParser:
         assert parse_result["Endpoint"] == "XXXXENDPOINT2XXXX"
 
     def test_error_with_duplicate_case_insensitive_keys_for_insensitive_conn_str(self, **kwargs):
-        conn_str = "endPoinT=XXXXENDPOINTXXXX;eNdpOint=XXXXENDPOINT2XXXX;sharedaccesskeyname=XXXXPOLICYXXXX;SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        conn_str = (
+            "endPoinT=XXXXENDPOINTXXXX;eNdpOint=XXXXENDPOINT2XXXX;sharedaccesskeyname=XXXXPOLICYXXXX;"
+            "SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        )
         with pytest.raises(ValueError) as e:
             parse_result = parse_connection_string(conn_str, False)
         assert str(e.value) == "Duplicate key in connection string: endpoint"
@@ -56,19 +71,28 @@ class TestCoreConnectionStringParser:
             assert str(e.value) == "Connection string is either blank or malformed."
 
     def test_case_insensitive_clear_method(self):
-        conn_str = "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        conn_str = (
+            "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;"
+            "SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        )
         parse_result = parse_connection_string(conn_str, False)
         parse_result.clear()
         assert len(parse_result) == 0
 
     def test_case_insensitive_copy_method(self):
-        conn_str = "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        conn_str = (
+            "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;"
+            "SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        )
         parse_result = parse_connection_string(conn_str, False)
         copied = parse_result.copy()
         assert copied == parse_result
 
     def test_case_insensitive_get_method(self):
-        conn_str = "Endpoint=XXXXENDPOINTXXXX;SharedAccessKeyName=XXXXPOLICYXXXX;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        conn_str = (
+            "Endpoint=XXXXENDPOINTXXXX;SharedAccessKeyName=XXXXPOLICYXXXX;"
+            "SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        )
         parse_result = parse_connection_string(conn_str, False)
         assert parse_result.get("sharedaccesskeyname") == "XXXXPOLICYXXXX"
         assert parse_result.get("sharedaccesskey") == "THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
@@ -76,14 +100,20 @@ class TestCoreConnectionStringParser:
         assert parse_result.get("accesskey", "XXothertestkeyXX=") == "XXothertestkeyXX="
 
     def test_case_insensitive_keys_method(self):
-        conn_str = "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        conn_str = (
+            "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;"
+            "SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        )
         parse_result = parse_connection_string(conn_str, False)
         keys = parse_result.keys()
         assert len(keys) == 3
         assert "endpoint" in keys
 
     def test_case_insensitive_pop_method(self):
-        conn_str = "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        conn_str = (
+            "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;"
+            "SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        )
         parse_result = parse_connection_string(conn_str, False)
         endpoint = parse_result.pop("endpoint")
         sharedaccesskey = parse_result.pop("sharedaccesskey")
@@ -92,7 +122,10 @@ class TestCoreConnectionStringParser:
         assert sharedaccesskey == "THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
 
     def test_case_insensitive_update_with_insensitive_method(self):
-        conn_str = "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        conn_str = (
+            "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;"
+            "SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        )
         conn_str2 = "hostName=XXXXENDPOINTXXXX;ACCessKEy=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;"
         parse_result_insensitive = parse_connection_string(conn_str, False)
         parse_result_insensitive2 = parse_connection_string(conn_str2, False)
@@ -111,7 +144,10 @@ class TestCoreConnectionStringParser:
         assert len(parse_result_insensitive) == 5
 
     def test_case_sensitive_update_with_insensitive_method(self):
-        conn_str = "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        conn_str = (
+            "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;"
+            "SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        )
         conn_str2 = "hostName=XXXXENDPOINTXXXX;ACCessKEy=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;"
         parse_result_insensitive = parse_connection_string(conn_str, False)
         parse_result_sensitive = parse_connection_string(conn_str2, True)
@@ -123,7 +159,10 @@ class TestCoreConnectionStringParser:
             parse_result_sensitive["hostname"]
 
     def test_case_insensitive_values_method(self):
-        conn_str = "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        conn_str = (
+            "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;"
+            "SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+        )
         parse_result = parse_connection_string(conn_str, False)
         values = parse_result.values()
         assert len(values) == 3

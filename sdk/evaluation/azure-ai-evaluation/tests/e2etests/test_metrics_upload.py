@@ -5,14 +5,14 @@ import pathlib
 from unittest.mock import MagicMock, patch
 
 import pytest
-from devtools_testutils import is_live
 from ci_tools.variables import in_ci
+from devtools_testutils import add_remove_header_sanitizer, is_live
 
 from azure.ai.evaluation import F1ScoreEvaluator
+from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.ai.evaluation._evaluate import _utils as ev_utils
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._evaluate._evaluate import evaluate
-from azure.ai.evaluation._azure._clients import LiteMLClient
 
 
 @pytest.fixture
@@ -122,6 +122,8 @@ class TestMetricsUpload(object):
     @pytest.mark.parametrize("config_name", ["sas", "none"])
     def test_log_artifact(self, project_scope, azure_cred, datastore_project_scopes, caplog, tmp_path, config_name):
         """Test uploading artifact to the service."""
+        # Blob clients may send different Accept values across environments.
+        add_remove_header_sanitizer(headers="Accept", function_scoped=True)
         logger = logging.getLogger(EvalRun.__module__)
         # All loggers, having promptflow. prefix will have "promptflow" logger
         # as a parent. This logger does not propagate the logs and cannot be

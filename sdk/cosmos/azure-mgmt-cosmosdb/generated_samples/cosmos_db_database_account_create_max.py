@@ -47,6 +47,7 @@ def main():
                 "analyticalStorageConfiguration": {"schemaType": "WellDefined"},
                 "apiProperties": {"serverVersion": "3.2"},
                 "backupPolicy": {
+                    "backupRetentionLockExpirationTimestamp": "2030-01-01T00:00:00Z",
                     "periodicModeProperties": {
                         "backupIntervalInMinutes": 240,
                         "backupRetentionIntervalInHours": 8,
@@ -55,7 +56,6 @@ def main():
                     "type": "Periodic",
                 },
                 "capacity": {"totalThroughputLimit": 2000},
-                "capacityMode": "Provisioned",
                 "consistencyPolicy": {
                     "defaultConsistencyLevel": "BoundedStaleness",
                     "maxIntervalInSeconds": 10,
@@ -66,13 +66,12 @@ def main():
                 "databaseAccountOfferType": "Standard",
                 "defaultIdentity": "FirstPartyIdentity",
                 "defaultPriorityLevel": "Low",
-                "enableAllVersionsAndDeletesChangeFeed": False,
                 "enableAnalyticalStorage": True,
                 "enableBurstCapacity": True,
                 "enableFreeTier": False,
-                "enableMaterializedViews": False,
                 "enablePerRegionPerPartitionAutoscale": True,
                 "enablePriorityBasedExecution": True,
+                "enforceHierarchicalPartitionKeyIdLastLevel": False,
                 "ipRules": [{"ipAddressOrRange": "23.43.230.120"}, {"ipAddressOrRange": "110.12.240.0/12"}],
                 "isVirtualNetworkFilterEnabled": True,
                 "keyVaultKeyUri": "https://myKeyVault.vault.azure.net",
@@ -85,6 +84,7 @@ def main():
                 "networkAclBypassResourceIds": [
                     "/subscriptions/subId/resourcegroups/rgName/providers/Microsoft.Synapse/workspaces/workspaceName"
                 ],
+                "perPartitionAutomaticFailoverEnabled": True,
                 "publicNetworkAccess": "Enabled",
                 "virtualNetworkRules": [
                     {
@@ -99,6 +99,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/CosmosDBDatabaseAccountCreateMax.json
+# x-ms-original-file: 2026-07-15/CosmosDBDatabaseAccountCreateMax.json
 if __name__ == "__main__":
     main()

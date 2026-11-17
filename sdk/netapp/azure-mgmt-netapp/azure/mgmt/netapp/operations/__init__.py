@@ -32,7 +32,6 @@ from ._operations import BackupsUnderAccountOperations  # type: ignore
 from ._operations import PoolsOperations  # type: ignore
 from ._operations import BackupsUnderBackupVaultOperations  # type: ignore
 from ._operations import BackupsUnderVolumeOperations  # type: ignore
-from ._operations import SubvolumesOperations  # type: ignore
 from ._operations import NetAppResourceOperations  # type: ignore
 from ._operations import NetAppResourceUsagesOperations  # type: ignore
 
@@ -61,7 +60,6 @@ __all__ = [
     "PoolsOperations",
     "BackupsUnderBackupVaultOperations",
     "BackupsUnderVolumeOperations",
-    "SubvolumesOperations",
     "NetAppResourceOperations",
     "NetAppResourceUsagesOperations",
 ]

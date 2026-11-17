@@ -26,7 +26,7 @@ class TestAgentMemorySearchAsync(TestBase):
         reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
     )
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_memory_search_async(self, **kwargs):  # pylint: disable=too-many-statements
 
         model = kwargs.get("foundry_model_name")

@@ -1,5 +1,19 @@
 # Release History
 
+## 1.3.0b1 (2026-07-28)
+
+### Features Added
+
+  - Enum `PromoteOption` added member `PLANNED`
+
+## 1.2.0 (2026-06-24)
+
+### Features Added
+
+  - Model `MongoClusterProperties` added property `network_bypass_mode`
+  - Model `MongoClusterUpdateProperties` added property `network_bypass_mode`
+  - Added enum `NetworkBypassMode`
+
 ## 1.2.0b1 (2026-05-01)
 
 ### Features Added

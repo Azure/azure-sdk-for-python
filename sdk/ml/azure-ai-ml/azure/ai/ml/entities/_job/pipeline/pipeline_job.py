@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,too-many-statements
 import itertools
 import logging
 import typing
@@ -12,8 +12,14 @@ from typing import Any, Dict, Generator, List, Optional, Union, cast
 
 from typing_extensions import Literal
 
-from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2024_01_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    IdentityConfiguration as RestIdentityConfiguration,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase
+from azure.ai.ml._restclient.arm_ml_service.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.arm_ml_service.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.arm_ml_service.models import JobService as RestJobService
+from azure.ai.ml._restclient.arm_ml_service.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
@@ -24,7 +30,10 @@ from azure.ai.ml._utils.utils import (
     transform_dict_keys,
 )
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._common import (
+    AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    BASE_PATH_CONTEXT_KEY,
+)
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode
@@ -48,6 +57,7 @@ from azure.ai.ml.entities._inputs_outputs.group_input import GroupInput
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
+    to_hybrid_rest_model,
     to_rest_data_outputs,
     to_rest_dataset_literal_inputs,
 )
@@ -58,7 +68,10 @@ from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineJobIOM
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._validation import MutableValidationResult, PathAwareSchemaValidatableMixin
+from azure.ai.ml.entities._validation import (
+    MutableValidationResult,
+    PathAwareSchemaValidatableMixin,
+)
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationException
 
 module_logger = logging.getLogger(__name__)
@@ -70,36 +83,36 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
     You should not instantiate this class directly. Instead, you should
     use the `@pipeline` decorator to create a `PipelineJob`.
 
-    :param component: Pipeline component version. The field is mutually exclusive with 'jobs'.
-    :type component: Union[str, ~azure.ai.ml.entities._component.pipeline_component.PipelineComponent]
-    :param inputs: Inputs to the pipeline job.
-    :type inputs: dict[str, Union[~azure.ai.ml.entities.Input, str, bool, int, float]]
-    :param outputs: Outputs of the pipeline job.
-    :type outputs: dict[str, ~azure.ai.ml.entities.Output]
-    :param name: Name of the PipelineJob. Defaults to None.
-    :type name: str
-    :param description: Description of the pipeline job. Defaults to None
-    :type description: str
-    :param display_name: Display name of the pipeline job. Defaults to None
-    :type display_name: str
-    :param experiment_name: Name of the experiment the job will be created under.
+    :keyword component: Pipeline component version. The field is mutually exclusive with 'jobs'.
+    :paramtype component: Union[str, ~azure.ai.ml.entities._component.pipeline_component.PipelineComponent]
+    :keyword inputs: Inputs to the pipeline job.
+    :paramtype inputs: dict[str, Union[~azure.ai.ml.entities.Input, str, bool, int, float]]
+    :keyword outputs: Outputs of the pipeline job.
+    :paramtype outputs: dict[str, ~azure.ai.ml.entities.Output]
+    :keyword name: Name of the PipelineJob. Defaults to None.
+    :paramtype name: str
+    :keyword description: Description of the pipeline job. Defaults to None
+    :paramtype description: str
+    :keyword display_name: Display name of the pipeline job. Defaults to None
+    :paramtype display_name: str
+    :keyword experiment_name: Name of the experiment the job will be created under.
         If None is provided, the experiment will be set to the current directory. Defaults to None
-    :type experiment_name: str
-    :param jobs: Pipeline component node name to component object. Defaults to None
-    :type jobs: dict[str, ~azure.ai.ml.entities._builders.BaseNode]
-    :param settings: Setting of the pipeline job. Defaults to None
-    :type settings: ~azure.ai.ml.entities.PipelineJobSettings
-    :param identity: Identity that the training job will use while running on compute. Defaults to None
-    :type identity: Union[
+    :paramtype experiment_name: str
+    :keyword jobs: Pipeline component node name to component object. Defaults to None
+    :paramtype jobs: dict[str, ~azure.ai.ml.entities._builders.BaseNode]
+    :keyword settings: Setting of the pipeline job. Defaults to None
+    :paramtype settings: ~azure.ai.ml.entities.PipelineJobSettings
+    :keyword identity: Identity that the training job will use while running on compute. Defaults to None
+    :paramtype identity: Union[
         ~azure.ai.ml.entities._credentials.ManagedIdentityConfiguration,
         ~azure.ai.ml.entities._credentials.AmlTokenConfiguration,
         ~azure.ai.ml.entities._credentials.UserIdentityConfiguration
 
     ]
-    :param compute: Compute target name of the built pipeline. Defaults to None
-    :type compute: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None
-    :type tags: dict[str, str]
+    :keyword compute: Compute target name of the built pipeline. Defaults to None
+    :paramtype compute: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None
+    :paramtype tags: dict[str, str]
     :param kwargs: A dictionary of additional configuration parameters. Defaults to None
     :type kwargs: dict
 
@@ -126,7 +139,11 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         jobs: Optional[Dict[str, BaseNode]] = None,
         settings: Optional[PipelineJobSettings] = None,
         identity: Optional[
-            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[
+                ManagedIdentityConfiguration,
+                AmlTokenConfiguration,
+                UserIdentityConfiguration,
+            ]
         ] = None,
         compute: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -339,8 +356,13 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
                 )
         return validation_result
 
-    def _validate_init_finalize_job(self) -> MutableValidationResult:  # pylint: disable=too-many-statements
-        from azure.ai.ml.entities._job.pipeline._io import InputOutputBase, _GroupAttrDict
+    def _validate_init_finalize_job(
+        self,
+    ) -> MutableValidationResult:  # pylint: disable=too-many-statements
+        from azure.ai.ml.entities._job.pipeline._io import (
+            InputOutputBase,
+            _GroupAttrDict,
+        )
 
         validation_result = self._create_empty_validation_result()
         # subgraph (PipelineComponent) should not have on_init/on_finalize set
@@ -376,7 +398,10 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             append_on_finalize_error(f"Invalid on_finalize job {on_finalize}, it should be different from on_init.")
         # pipeline should have at least one normal node
         if len(set(self.jobs.keys()) - {on_init, on_finalize}) == 0:
-            validation_result.append_error(yaml_path="jobs", message="No other job except for on_init/on_finalize job.")
+            validation_result.append_error(
+                yaml_path="jobs",
+                message="No other job except for on_init/on_finalize job.",
+            )
 
         def _is_control_flow_node(_validate_job_name: str) -> bool:
             from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
@@ -386,7 +411,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
 
         def _is_isolated_job(_validate_job_name: str) -> bool:
             def _try_get_data_bindings(
-                _name: str, _input_output_data: Union["_GroupAttrDict", "InputOutputBase"]
+                _name: str,
+                _input_output_data: Union["_GroupAttrDict", "InputOutputBase"],
             ) -> Optional[List]:
                 """Try to get data bindings from input/output data, return None if not found.
                 :param _name: The name to use when flattening GroupAttrDict
@@ -558,11 +584,29 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             properties=self.properties,
             experiment_name=self.experiment_name,
             jobs=rest_component_jobs,
-            inputs=to_rest_dataset_literal_inputs(built_inputs, job_type=self.type),
-            outputs=to_rest_data_outputs(built_outputs),
+            # The shared arm_ml_service PipelineJob model defaults ``is_archived`` to None (omitted on
+            # the wire); the legacy msrest model serialized ``isArchived=false`` on create.
+            is_archived=False,
+            # The shared rest helpers below emit msrest models; convert each nested child to its
+            # arm_ml_service hybrid equivalent so the hybrid SdkJSONEncoder can serialize the body.
+            inputs=to_hybrid_rest_model(
+                to_rest_dataset_literal_inputs(built_inputs, job_type=self.type),
+                RestJobInput,
+            ),
+            outputs=to_hybrid_rest_model(to_rest_data_outputs(built_outputs), RestJobOutput),
             settings=settings_dict,
-            services={k: v._to_rest_object() for k, v in self.services.items()} if self.services else None,
-            identity=self.identity._to_job_rest_object() if self.identity else None,
+            services=(
+                to_hybrid_rest_model(
+                    {k: v._to_rest_object() for k, v in self.services.items()},
+                    RestJobService,
+                )
+                if self.services
+                else None
+            ),
+            identity=to_hybrid_rest_model(
+                self.identity._to_job_rest_object() if self.identity else None,
+                RestIdentityConfiguration,
+            ),
         )
 
         rest_job = JobBase(properties=pipeline_job)
@@ -614,8 +658,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             properties=properties.properties,
             experiment_name=properties.experiment_name,
             status=properties.status,
-            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
-            services=JobServiceBase._from_rest_job_services(properties.services) if properties.services else None,
+            creation_context=(SystemData._from_rest_object(obj.system_data) if obj.system_data else None),
+            services=(JobServiceBase._from_rest_job_services(properties.services) if properties.services else None),
             compute=get_resource_name_from_arm_id_safe(properties.compute_id),
             settings=settings_sdk,
             identity=(
@@ -697,7 +741,11 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         if ignored_keys:
             name = self.name or self.display_name
             name = f"{name!r} " if name else ""
-            module_logger.warning("%s ignored when translating PipelineJob %sto PipelineComponent.", ignored_keys, name)
+            module_logger.warning(
+                "%s ignored when translating PipelineJob %sto PipelineComponent.",
+                ignored_keys,
+                name,
+            )
         pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
         context = context or {BASE_PATH_CONTEXT_KEY: Path("./")}
 

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -77,9 +78,8 @@ from .._deserialize import (
 )
 from .._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from .._generated.aio import AzureBlobStorage
-from .._generated.models import CpkInfo
 from .._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, PageRange
-from .._serialize import get_access_conditions, get_api_version, get_modify_conditions, get_version_id
+from .._serialize import get_lease_id, get_api_version, get_modify_conditions, get_version_id
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
@@ -143,13 +143,13 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         Defaults to 4*1024*1024, or 4MB.
     :keyword int max_single_put_size: If the blob size is less than or equal max_single_put_size, then the blob will be
         uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
-        the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+        the blob will be uploaded in chunks. Defaults to 4*1024*1024, or 4MB.
     :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
         algorithm when uploading a block blob. Defaults to 4*1024*1024+1.
     :keyword bool use_byte_buffer: Use a byte buffer for block blob uploads. Defaults to False.
     :keyword int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
     :keyword int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
-        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 4*1024*1024, or 4MB.
     :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
     :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
@@ -157,6 +157,16 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
         authentication. Only has an effect when credential is of type TokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+    :keyword bool use_session: Whether to authenticate eligible requests with a short-lived,
+        per-container session credential instead of the bearer token. Requires a TokenCredential.
+    :keyword session_provider: Creates, caches, and invalidates the session credentials used for
+        session-based authentication. Supply a shared instance to reuse the session cache across
+        multiple clients; when omitted, one is created and scoped to this client. Only has an
+        effect when `use_session` is True.
+    :paramtype session_provider: ~azure.storage.blob.aio.SessionProvider
+    :keyword str session_account_name: The storage account name used to sign session-authenticated
+        requests. If omitted, it is derived from the account URL. Required when using a custom
+        endpoint, where the account name cannot be determined from the URL.
 
     .. admonition:: Example:
 
@@ -205,7 +215,11 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, get_api_version(kwargs), base_url=self.url, pipeline=self._pipeline)
+        self._client = AzureBlobStorage(
+            self.url,
+            version=get_api_version(kwargs),
+            pipeline=self._pipeline,
+        )
         self._configure_encryption(kwargs)
 
     async def __aenter__(self) -> Self:
@@ -913,7 +927,6 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         if cpk and self.scheme.lower() != "https":
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options, delimiter = _quick_query_options(
-            self.snapshot,
             query_expression,
             blob_format=blob_format,
             output_format=output_format,
@@ -928,7 +941,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             **kwargs,
         )
         try:
-            headers, raw_response_body = await self._client.blob.query(**options)
+            headers, raw_response_body = await self._client.block_blob.query(**options)
         except HttpResponseError as error:
             process_storage_error(error)
         blob_query_reader = BlobQueryReader(
@@ -1029,8 +1042,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 :dedent: 16
                 :caption: Delete a blob.
         """
+        if self.snapshot and delete_snapshots:
+            raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
         options = _delete_blob_options(
-            snapshot=self.snapshot,
             version_id=get_version_id(self.version_id, kwargs),
             delete_snapshots=delete_snapshots,
             **kwargs,
@@ -1094,7 +1108,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """
         version_id = get_version_id(self.version_id, kwargs)
         try:
-            await self._client.blob.get_properties(snapshot=self.snapshot, version_id=version_id, **kwargs)
+            await self._client.blob.get_properties(version_id=version_id, **kwargs)
             return True
         # Encrypted with CPK
         except ResourceExistsError:
@@ -1168,17 +1182,13 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 :dedent: 12
                 :caption: Getting the properties for a blob.
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         mod_conditions = get_modify_conditions(kwargs)
         version_id = get_version_id(self.version_id, kwargs)
         cpk = kwargs.pop("cpk", None)
-        cpk_info = None
         if cpk:
             if self.scheme.lower() != "https":
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(
-                encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
-            )
         try:
             cls_method = kwargs.pop("cls", None)
             if cls_method:
@@ -1186,11 +1196,16 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             blob_props = await self._client.blob.get_properties(
                 timeout=kwargs.pop("timeout", None),
                 version_id=version_id,
-                snapshot=self.snapshot,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
                 cls=kwargs.pop("cls", None) or deserialize_blob_properties,
-                cpk_info=cpk_info,
+                lease_id=lease_id,
+                if_modified_since=mod_conditions.get("if_modified_since"),
+                if_unmodified_since=mod_conditions.get("if_unmodified_since"),
+                if_tags=mod_conditions.get("if_tags"),
+                etag=mod_conditions.get("etag"),
+                match_condition=mod_conditions.get("match_condition"),
+                encryption_key=cpk.key_value if cpk else None,
+                encryption_key_sha256=cpk.key_hash if cpk else None,
+                encryption_algorithm=cpk.algorithm if cpk else None,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -1349,12 +1364,14 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """
 
         version_id = get_version_id(self.version_id, kwargs)
-        kwargs["immutability_policy_expiry"] = immutability_policy.expiry_time
-        kwargs["immutability_policy_mode"] = immutability_policy.policy_mode
         return cast(
             Dict[str, str],
             await self._client.blob.set_immutability_policy(
-                cls=return_response_headers, version_id=version_id, **kwargs
+                immutability_policy_expiry=immutability_policy.expiry_time,
+                immutability_policy_mode=immutability_policy.policy_mode,
+                cls=return_response_headers,
+                version_id=version_id,
+                **kwargs,
             ),
         )
 
@@ -1407,7 +1424,10 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         return cast(
             Dict[str, Union[str, datetime, bool]],
             await self._client.blob.set_legal_hold(
-                legal_hold, version_id=version_id, cls=return_response_headers, **kwargs
+                legal_hold=legal_hold,
+                version_id=version_id,
+                cls=return_response_headers,
+                **kwargs,
             ),
         )
 
@@ -2028,7 +2048,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :return: None
         :rtype: None
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         mod_conditions = get_modify_conditions(kwargs)
         version_id = get_version_id(self.version_id, kwargs)
         if standard_blob_tier is None:
@@ -2037,9 +2057,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             await self._client.blob.set_tier(
                 tier=standard_blob_tier,
                 timeout=kwargs.pop("timeout", None),
-                modified_access_conditions=mod_conditions,
-                lease_access_conditions=access_conditions,
                 version_id=version_id,
+                lease_id=lease_id,
+                if_tags=mod_conditions.get("if_tags"),
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -2214,15 +2234,14 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :return: A tuple of two lists - committed and uncommitted blocks
         :rtype: Tuple[List[BlobBlock], List[BlobBlock]]
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         mod_conditions = get_modify_conditions(kwargs)
         try:
             blocks = await self._client.block_blob.get_block_list(
                 list_type=block_list_type,
-                snapshot=self.snapshot,
                 timeout=kwargs.pop("timeout", None),
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
+                lease_id=lease_id,
+                if_tags=mod_conditions.get("if_tags"),
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -2369,7 +2388,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :return: None
         :rtype: None
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         mod_conditions = get_modify_conditions(kwargs)
         if premium_page_blob_tier is None:
             raise ValueError("A PremiumPageBlobTiermust be specified")
@@ -2377,8 +2396,8 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             await self._client.blob.set_tier(
                 tier=premium_page_blob_tier,
                 timeout=kwargs.pop("timeout", None),
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
+                if_tags=mod_conditions.get("if_tags"),
+                lease_id=lease_id,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -2494,7 +2513,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :rtype: Dict[str, str]
         """
         version_id = get_version_id(self.version_id, kwargs)
-        options = _get_blob_tags_options(version_id=version_id, snapshot=self.snapshot, **kwargs)
+        options = _get_blob_tags_options(version_id=version_id, **kwargs)
         try:
             _, tags = await self._client.blob.get_tags(**options)
             return cast(Dict[str, str], parse_tags(tags))
@@ -2571,7 +2590,6 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         warnings.warn("get_page_ranges is deprecated, use list_page_ranges instead", DeprecationWarning)
 
         options = _get_page_ranges_options(
-            snapshot=self.snapshot,
             offset=offset,
             length=length,
             previous_snapshot_diff=previous_snapshot_diff,
@@ -2659,7 +2677,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """
         results_per_page = kwargs.pop("results_per_page", None)
         options = _get_page_ranges_options(
-            snapshot=self.snapshot, offset=offset, length=length, previous_snapshot_diff=previous_snapshot, **kwargs
+            offset=offset, length=length, previous_snapshot_diff=previous_snapshot, **kwargs
         )
 
         if previous_snapshot:
@@ -2731,7 +2749,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
         options = _get_page_ranges_options(
-            snapshot=self.snapshot, offset=offset, length=length, prev_snapshot_url=previous_snapshot_url, **kwargs
+            offset=offset, length=length, prev_snapshot_url=previous_snapshot_url, **kwargs
         )
         try:
             ranges = await self._client.page_blob.get_page_ranges_diff(**options)
@@ -3437,7 +3455,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             _pipeline = AsyncPipeline(
                 transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
                 policies=cast(
-                    Iterable["AsyncHTTPPolicy"], self._pipeline._impl_policies  # pylint: disable = protected-access
+                    Iterable["AsyncHTTPPolicy"], self._pipeline._impl_policies  # pylint: disable=protected-access
                 ),
             )
         else:

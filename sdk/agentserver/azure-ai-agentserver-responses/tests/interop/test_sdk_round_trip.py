@@ -72,7 +72,7 @@ def _capturing(handler):
     """Wrap *handler* so the parsed ``CreateResponse`` is captured."""
     _captured.clear()
 
-    def wrapper(request, context, cancellation_signal):
+    async def wrapper(request, context, cancellation_signal):
         _captured["request"] = request
         _captured["context"] = context
         return handler(request, context, cancellation_signal)
@@ -89,9 +89,9 @@ def _capturing(handler):
 
 
 def _text_message_handler(text: str = "Hello, world!"):
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
-            s = ResponseEventStream(response_id=context.response_id, model=request.model)
+            s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
             for ev in s.output_item_message(text):
                 yield ev
@@ -107,9 +107,9 @@ def _function_call_handler(
     call_id: str = "call_abc123",
     arguments: str = '{"location":"Seattle"}',
 ):
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
-            s = ResponseEventStream(response_id=context.response_id, model=request.model)
+            s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
             for ev in s.output_item_function_call(name, call_id, arguments):
                 yield ev
@@ -124,9 +124,9 @@ def _function_call_output_handler(
     call_id: str = "call_abc123",
     output: str = "72°F and sunny",
 ):
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
-            s = ResponseEventStream(response_id=context.response_id, model=request.model)
+            s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
             for ev in s.output_item_function_call_output(call_id, output):
                 yield ev
@@ -138,9 +138,9 @@ def _function_call_output_handler(
 
 
 def _reasoning_handler(summary: str = "Let me think step by step..."):
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
-            s = ResponseEventStream(response_id=context.response_id, model=request.model)
+            s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
             for ev in s.output_item_reasoning_item(summary):
                 yield ev
@@ -152,9 +152,9 @@ def _reasoning_handler(summary: str = "Let me think step by step..."):
 
 
 def _file_search_handler():
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
-            s = ResponseEventStream(response_id=context.response_id, model=request.model)
+            s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
             b = s.add_output_item_file_search_call()
             yield b.emit_added()
@@ -177,9 +177,9 @@ def _web_search_handler():
     the item to include a valid search action.
     """
 
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
-            s = ResponseEventStream(response_id=context.response_id, model=request.model)
+            s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
             b = s.add_output_item_web_search_call()
             # Override the added item to include a valid action.
@@ -201,9 +201,9 @@ def _web_search_handler():
 
 
 def _code_interpreter_handler(code: str = "print('hello')"):
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
-            s = ResponseEventStream(response_id=context.response_id, model=request.model)
+            s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
             b = s.add_output_item_code_interpreter_call()
             yield b.emit_added()
@@ -219,9 +219,9 @@ def _code_interpreter_handler(code: str = "print('hello')"):
 
 
 def _image_gen_handler():
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
-            s = ResponseEventStream(response_id=context.response_id, model=request.model)
+            s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
             b = s.add_output_item_image_gen_call()
             yield b.emit_added()
@@ -239,9 +239,9 @@ def _mcp_call_handler(
     server_label: str = "my-server",
     name: str = "search_docs",
 ):
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
-            s = ResponseEventStream(response_id=context.response_id, model=request.model)
+            s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
             b = s.add_output_item_mcp_call(server_label, name)
             yield b.emit_added()
@@ -257,9 +257,9 @@ def _mcp_call_handler(
 
 
 def _mcp_list_tools_handler(server_label: str = "my-server"):
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
-            s = ResponseEventStream(response_id=context.response_id, model=request.model)
+            s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
             b = s.add_output_item_mcp_list_tools(server_label)
             yield b.emit_added()
@@ -275,9 +275,9 @@ def _mcp_list_tools_handler(server_label: str = "my-server"):
 def _multiple_items_handler():
     """Emit a message, a function call, and a reasoning item."""
 
-    def handler(request, context, cancellation_signal):
+    async def handler(request, context, cancellation_signal):
         async def events():
-            s = ResponseEventStream(response_id=context.response_id, model=request.model)
+            s = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
             yield s.emit_created()
             for ev in s.output_item_message("Here is the result."):
                 yield ev
@@ -657,19 +657,19 @@ class TestInputRoundTrip:
         handler = _text_message_handler()
         client = _make_sdk_client(_capturing(handler))
         client.responses.create(model="gpt-4o", input="hi")
-        assert _captured["request"].model == "gpt-4o"
+        assert _captured["request"]["model"] == "gpt-4o"
 
     def test_instructions_in_request(self):
         handler = _text_message_handler()
         client = _make_sdk_client(_capturing(handler))
         client.responses.create(model="test", input="hi", instructions="Be helpful")
-        assert _captured["request"].instructions == "Be helpful"
+        assert _captured["request"]["instructions"] == "Be helpful"
 
     def test_temperature_in_request(self):
         handler = _text_message_handler()
         client = _make_sdk_client(_capturing(handler))
         client.responses.create(model="test", input="hi", temperature=0.7)
-        assert _captured["request"].temperature == pytest.approx(0.7)
+        assert _captured["request"]["temperature"] == pytest.approx(0.7)
 
     def test_tools_in_request(self):
         handler = _text_message_handler()
@@ -689,8 +689,8 @@ class TestInputRoundTrip:
             ],
         )
         req = _captured["request"]
-        assert req.tools is not None
-        assert len(req.tools) >= 1
+        assert req.get("tools") is not None
+        assert len(req["tools"]) >= 1
 
     def test_max_output_tokens_in_request(self):
         handler = _text_message_handler()
@@ -700,7 +700,7 @@ class TestInputRoundTrip:
             input="hi",
             max_output_tokens=1024,
         )
-        assert _captured["request"].max_output_tokens == 1024
+        assert _captured["request"]["max_output_tokens"] == 1024
 
 
 # ---------------------------------------------------------------------------

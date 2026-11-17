@@ -78,6 +78,8 @@ _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES = (
     "django",
     "fastapi",
     "flask",
+    "httpx",
+    "httpx2",
     "psycopg2",
     "requests",
     "urllib",

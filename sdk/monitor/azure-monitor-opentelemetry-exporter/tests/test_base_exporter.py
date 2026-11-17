@@ -3,11 +3,13 @@
 
 import os
 import shutil
+import threading
 import unittest
 from unittest import mock
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
+from azure.core.pipeline.policies import HeadersPolicy, RetryPolicy
 from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter.export._base import (
     _get_auth_policy,
@@ -15,15 +17,21 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     _is_sampling_rejection,
     BaseExporter,
     ExportResult,
+    _ROUTING_REUSED_NAMED_POLICY_OPTIONS,
     _get_storage_directory,
 )
+from azure.monitor.opentelemetry.exporter._utils import _get_retry_delay_from_headers
+from azure.monitor.opentelemetry.exporter._configuration._utils import _ConfigurationProfile
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
     _STATSBEAT_STATE,
 )
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
+from azure.monitor.opentelemetry.exporter.export.logs._exporter import AzureMonitorLogExporter
+from azure.monitor.opentelemetry.exporter.export.trace._exporter import AzureMonitorTraceExporter
 from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES,
     _DEFAULT_AAD_SCOPE,
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,
@@ -100,6 +108,12 @@ class TestBaseExporter(unittest.TestCase):
         shutil.rmtree(cls._base.storage._path, True)
 
     def setUp(self) -> None:
+        for patch in (
+            mock.patch.dict(os.environ, {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: ""}),
+            mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None),
+        ):
+            patch.start()
+            self.addCleanup(patch.stop)
         _REQUESTS_MAP.clear()
         _STATSBEAT_STATE.clear()
         _STATSBEAT_STATE.update(
@@ -109,6 +123,8 @@ class TestBaseExporter(unittest.TestCase):
                 "SHUTDOWN": False,
                 "CUSTOM_EVENTS_FEATURE_SET": False,
                 "LIVE_METRICS_FEATURE_SET": False,
+                "GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE_FEATURE_SET": False,
+                "MULTI_ENDPOINT_ROUTING_FEATURE_SET": False,
             }
         )
 
@@ -149,6 +165,279 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._api_version, "2021-02-10_Preview")
         self.assertEqual(base._storage_min_retry_interval, 100)
         self.assertEqual(base._storage_directory, "test/path")
+        self.assertIs(base._enable_multi_endpoint_routing, False)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_constructor_multi_endpoint_routing(self, mock_client):
+        for features, enabled in (
+            ("", False),
+            ("gen_ai_input_output_limit_increase", False),
+            ("multi_endpoint_routing_extra", False),
+            ("multi_endpoint_routing", True),
+            (" MULTI_ENDPOINT_ROUTING, ,multi_endpoint_routing ", True),
+            ("gen_ai_input_output_limit_increase,multi_endpoint_routing", True),
+        ):
+            with mock.patch.dict(os.environ, {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: features}), mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None
+            ):
+                for exporter_type in (
+                    BaseExporter,
+                    AzureMonitorTraceExporter,
+                    AzureMonitorLogExporter,
+                    AzureMonitorMetricExporter,
+                ):
+                    with self.subTest(features=features, exporter_type=exporter_type):
+                        exporter = exporter_type(disable_offline_storage=True)
+                        self.assertIs(exporter._enable_multi_endpoint_routing, enabled)
+                        self.assertEqual(
+                            exporter._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+                            "gen_ai_input_output_limit_increase" in features,
+                        )
+        for call in mock_client.call_args_list:
+            self.assertNotIn("enable_multi_endpoint_routing", call.kwargs)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_multi_endpoint_routing_rejects_custom_pipeline(self, mock_client):
+        with mock.patch.dict(
+            os.environ,
+            {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: "multi_endpoint_routing"},
+        ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+            with self.assertRaisesRegex(
+                ValueError,
+                "Custom pipelines are not supported with multi-endpoint routing",
+            ):
+                BaseExporter(pipeline=mock.Mock())
+        mock_client.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_custom_pipeline_is_unchanged_without_routing(self, mock_client):
+        pipeline = mock.Mock()
+        BaseExporter(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab",
+            disable_offline_storage=True,
+            pipeline=pipeline,
+        )
+        self.assertIs(mock_client.call_args.kwargs["pipeline"], pipeline)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_multi_endpoint_routing_rejects_custom_authentication_policy(self, mock_client):
+        with mock.patch.dict(
+            os.environ, {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: "multi_endpoint_routing"}
+        ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+            with self.assertRaisesRegex(ValueError, "Custom authentication policies are not supported"):
+                BaseExporter(authentication_policy=HeadersPolicy())
+        mock_client.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_custom_authentication_policy_is_unchanged_without_routing(self, mock_client):
+        policy = HeadersPolicy()
+        BaseExporter(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab",
+            credential=None,
+            disable_offline_storage=True,
+            authentication_policy=policy,
+        )
+        self.assertIn(policy, mock_client.call_args.kwargs["policies"])
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_multi_endpoint_routing_rejects_custom_retry_policy(self, mock_client):
+        with mock.patch.dict(
+            os.environ,
+            {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: "multi_endpoint_routing"},
+        ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+            with self.assertRaisesRegex(
+                ValueError,
+                "Custom retry policies are not supported with multi-endpoint routing",
+            ):
+                BaseExporter(retry_policy=mock.Mock())
+        mock_client.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_custom_retry_policy_is_unchanged_without_routing(self, mock_client):
+        retry_policy = mock.Mock()
+        BaseExporter(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab",
+            disable_offline_storage=True,
+            retry_policy=retry_policy,
+        )
+        self.assertIn(retry_policy, mock_client.call_args.kwargs["policies"])
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_multi_endpoint_routing_rejects_http_policy_collections(self, mock_client):
+        for option in ("per_call_policies", "per_retry_policies"):
+            with self.subTest(option=option), mock.patch.dict(
+                os.environ,
+                {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: "multi_endpoint_routing"},
+            ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+                with self.assertRaisesRegex(
+                    ValueError,
+                    "HTTPPolicy instances in per_call_policies or per_retry_policies are not supported",
+                ):
+                    BaseExporter(**{option: [RetryPolicy()]})
+        mock_client.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_multi_endpoint_routing_allows_sans_io_policy_collections(self, mock_client):
+        with mock.patch.dict(
+            os.environ,
+            {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: "multi_endpoint_routing"},
+        ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+            BaseExporter(
+                disable_offline_storage=True,
+                per_call_policies=[HeadersPolicy()],
+                per_retry_policies=[HeadersPolicy()],
+            )
+        mock_client.assert_called_once()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_multi_endpoint_routing_rejects_http_policy_in_named_slots(self, mock_client):
+        for option in _ROUTING_REUSED_NAMED_POLICY_OPTIONS:
+            with self.subTest(option=option), mock.patch.dict(
+                os.environ,
+                {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: "multi_endpoint_routing"},
+            ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+                with self.assertRaisesRegex(
+                    ValueError,
+                    f"HTTPPolicy instances are not supported for {option}",
+                ):
+                    BaseExporter(**{option: RetryPolicy()})
+        mock_client.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_multi_endpoint_routing_allows_sans_io_policy_in_named_slots(self, mock_client):
+        for option in _ROUTING_REUSED_NAMED_POLICY_OPTIONS:
+            with self.subTest(option=option), mock.patch.dict(
+                os.environ,
+                {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: "multi_endpoint_routing"},
+            ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+                BaseExporter(disable_offline_storage=True, **{option: HeadersPolicy()})
+        self.assertEqual(mock_client.call_count, len(_ROUTING_REUSED_NAMED_POLICY_OPTIONS))
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_http_policy_in_named_slot_is_unchanged_without_routing(self, mock_client):
+        headers_policy = RetryPolicy()
+        BaseExporter(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab",
+            disable_offline_storage=True,
+            headers_policy=headers_policy,
+        )
+        self.assertIn(headers_policy, mock_client.call_args.kwargs["policies"])
+
+    @mock.patch.dict(os.environ)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.LocalFileStorage")
+    def test_routing_without_host_connection_string(self, mock_storage, mock_client):
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = "multi_endpoint_routing"
+        os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
+        for exporter_type in (
+            BaseExporter,
+            AzureMonitorLogExporter,
+            AzureMonitorTraceExporter,
+            AzureMonitorMetricExporter,
+        ):
+            with self.subTest(exporter_type=exporter_type):
+                exporter = exporter_type()
+                self.addCleanup(exporter.client.close)
+                self.assertIsNone(exporter._instrumentation_key)
+                self.assertIsNone(exporter._connection_string)
+                self.assertIsNone(exporter.storage)
+                self.assertIsNotNone(exporter._storage_directory)
+                self.assertFalse(exporter._should_collect_stats())
+                self.assertFalse(exporter._should_collect_customer_sdkstats())
+                if isinstance(exporter, AzureMonitorTraceExporter):
+                    self.assertIsNone(exporter.application_id)
+                with mock.patch.dict(os.environ, {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: ""}), mock.patch(
+                    "azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None
+                ):
+                    with self.assertRaisesRegex(ValueError, "Instrumentation key cannot be none or empty"):
+                        exporter_type()
+        mock_storage.assert_not_called()
+        self.assertEqual(mock_client.call_count, 4)
+
+    @mock.patch.dict(os.environ)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.is_statsbeat_enabled", return_value=True)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_statsbeat_shutdown", return_value=False)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_customer_stats_manager")
+    def test_routing_without_host_does_not_initialize_stats(
+        self, mock_customer_manager, _shutdown, _enabled, mock_config_manager
+    ):
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = "multi_endpoint_routing"
+        os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
+        mock_customer_manager.return_value.is_enabled = True
+        mock_customer_manager.return_value.is_shutdown = False
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics"
+        ) as statsbeat, mock.patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat.customer.collect_customer_sdkstats"
+        ) as customer_stats:
+            exporter = BaseExporter()
+            self.addCleanup(exporter.client.close)
+        statsbeat.assert_not_called()
+        customer_stats.assert_not_called()
+        self.assertTrue(_STATSBEAT_STATE["MULTI_ENDPOINT_ROUTING_FEATURE_SET"])
+        mock_config_manager.return_value.register_callback.assert_called_once_with(
+            exporter._local_storage_configuration_callback
+        )
+        self.assertEqual(mock_config_manager.return_value.initialize.call_args.kwargs["ikey"], "")
+        exporter._local_storage_configuration_callback(self._make_local_storage_settings(True))
+        self.assertIsNone(exporter.storage)
+
+    @mock.patch.dict(os.environ)
+    @mock.patch.multiple(_ConfigurationProfile, ikey="", region="")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_routing_without_host_preserves_later_configuration_profile(self, mock_config_manager):
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = "multi_endpoint_routing"
+        os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
+        mock_config_manager.return_value.initialize.side_effect = _ConfigurationProfile.fill
+        routed = BaseExporter(disable_offline_storage=True)
+        self.addCleanup(routed.client.close)
+        self.assertEqual(_ConfigurationProfile.ikey, "")
+        self.assertEqual(_ConfigurationProfile.region, "")
+        configured = BaseExporter(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab;"
+            "IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=True,
+        )
+        self.addCleanup(configured.client.close)
+        self.assertEqual(_ConfigurationProfile.ikey, "1234abcd-5678-4efa-8abc-1234567890ab")
+        self.assertEqual(_ConfigurationProfile.region, "westus")
+
+    @mock.patch.dict(os.environ)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_routing_with_instrumentation_key_is_not_hostless(self, mock_config_manager):
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = "multi_endpoint_routing"
+        os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
+        exporter = BaseExporter(disable_offline_storage=True)
+        self.addCleanup(exporter.client.close)
+        self.assertEqual(
+            mock_config_manager.return_value.initialize.call_args.kwargs["ikey"], exporter._instrumentation_key
+        )
+        self.assertIsNone(mock_config_manager.return_value.initialize.call_args.kwargs["region"])
+
+    @mock.patch.multiple(_ConfigurationProfile, ikey="", region="")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_non_routing_global_endpoint_preserves_configuration_region(self, mock_config_manager):
+        mock_config_manager.return_value.initialize.side_effect = _ConfigurationProfile.fill
+        global_exporter = BaseExporter(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab;"
+            "IngestionEndpoint=https://dc.services.visualstudio.com/",
+            disable_offline_storage=True,
+        )
+        self.addCleanup(global_exporter.client.close)
+        self.assertIsNone(_ConfigurationProfile.region)
+
+        regional_exporter = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+            "IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=True,
+        )
+        self.addCleanup(regional_exporter.client.close)
+        self.assertIsNone(_ConfigurationProfile.region)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
     def test_constructor_no_storage_directory(self, mock_get_temp_dir):
@@ -309,6 +598,196 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._storage_min_retry_interval, 100)
         self.assertEqual(base._storage_directory, "test/path")
         mock_get_temp_dir.assert_not_called()
+
+    # ========================================================================
+    # ONESETTINGS LOCAL STORAGE TOGGLE TESTS
+    # ========================================================================
+
+    def _make_local_storage_settings(self, enabled):
+        state = "enabled" if enabled else "disabled"
+        return {"FEATURE_LOCAL_STORAGE": {"default": state}}
+
+    def test_configuration_callback_disables_storage(self):
+        """OneSettings FEATURE_LOCAL_STORAGE=disabled turns off active local storage (put/gets no-op)."""
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        self.assertIsNotNone(base.storage)
+        try:
+            base._local_storage_configuration_callback(self._make_local_storage_settings(False))
+            # Flag model: the instance stays alive but is toggled off.
+            self.assertIsNotNone(base.storage)
+            self.assertFalse(base.storage._active)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    def test_configuration_callback_reenables_storage(self):
+        """After a disable, FEATURE_LOCAL_STORAGE=enabled toggles the same storage instance back on."""
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        base._local_storage_configuration_callback(self._make_local_storage_settings(False))
+        self.assertIsNotNone(base.storage)
+        self.assertFalse(base.storage._active)
+        storage_instance = base.storage
+        try:
+            base._local_storage_configuration_callback(self._make_local_storage_settings(True))
+            # Same instance is reused (not reconstructed) and toggled back on.
+            self.assertIs(base.storage, storage_instance)
+            self.assertTrue(base.storage._active)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    def test_configuration_callback_respects_user_optout(self):
+        """A user's explicit disable_offline_storage=True is a hard gate OneSettings cannot override."""
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=True,
+        )
+        self.assertIsNone(base.storage)
+        base._local_storage_configuration_callback(self._make_local_storage_settings(True))
+        self.assertIsNone(base.storage)
+
+    def test_configuration_callback_flag_absent_no_change(self):
+        """When FEATURE_LOCAL_STORAGE is absent, storage state is left unchanged."""
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        try:
+            base._local_storage_configuration_callback({})
+            self.assertIsNotNone(base.storage)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_constructor_registers_local_storage_callback(self, mock_get_config_manager):
+        """A normal exporter registers its local storage callback with the config manager."""
+        mock_manager = mock.Mock()
+        mock_manager.get_settings.return_value = {}
+        mock_get_config_manager.return_value = mock_manager
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        try:
+            mock_manager.register_callback.assert_called_once_with(base._local_storage_configuration_callback)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_constructor_no_callback_when_control_plane_disabled(self, mock_get_config_manager):
+        """When the control plane is disabled (manager is None), no callback is registered."""
+        mock_get_config_manager.return_value = None
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        try:
+            # No exception means the None manager was handled gracefully.
+            self.assertIsNotNone(base)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_stats_exporter_does_not_register_local_storage_callback(self, mock_get_config_manager):
+        """The statsbeat exporter manages its own storage and must not register the base callback."""
+        mock_manager = mock.Mock()
+        mock_get_config_manager.return_value = mock_manager
+        base = AzureMonitorMetricExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+            is_sdkstats=True,
+        )
+        try:
+            mock_manager.register_callback.assert_not_called()
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_customer_sdkstats_exporter_registers_local_storage_callback(self, mock_get_config_manager):
+        """The customer-sdkstats exporter shares the customer's storage folder, so it participates
+        in the remote FEATURE_LOCAL_STORAGE toggle and must register the base callback."""
+        mock_manager = mock.Mock()
+        mock_manager.get_settings.return_value = {}
+        mock_get_config_manager.return_value = mock_manager
+        base = AzureMonitorMetricExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+            is_customer_sdkstats=True,
+        )
+        try:
+            mock_manager.register_callback.assert_called_once_with(base._local_storage_configuration_callback)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    def test_late_exporter_applies_cached_disabled_settings(self):
+        """An exporter created after FEATURE_LOCAL_STORAGE=disabled was cached applies that cached
+        state at registration time (via the manager's centralized replay, no config change needed)
+        and starts with storage toggled off."""
+        from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+        from azure.monitor.opentelemetry.exporter._utils import Singleton
+
+        Singleton._instances.pop(_ConfigurationManager, None)
+        manager = _ConfigurationManager()
+        manager._current_state = manager._current_state.with_updates(
+            settings_cache=self._make_local_storage_settings(False)
+        )
+        try:
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager",
+                return_value=manager,
+            ):
+                base = BaseExporter(
+                    connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+                    disable_offline_storage=False,
+                )
+            try:
+                # Flag model: instance exists but is toggled off per the cached kill-switch.
+                self.assertIsNotNone(base.storage)
+                self.assertFalse(base.storage._active)
+            finally:
+                if base.storage is not None:
+                    clean_folder(base.storage._path)
+        finally:
+            manager.shutdown()
+            Singleton._instances.pop(_ConfigurationManager, None)
+
+    def test_late_exporter_empty_cache_leaves_storage_active(self):
+        """When the cached settings are empty (worker has not fetched yet), the replay is a no-op and
+        storage remains active per the user's disable_offline_storage setting."""
+        from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+        from azure.monitor.opentelemetry.exporter._utils import Singleton
+
+        Singleton._instances.pop(_ConfigurationManager, None)
+        manager = _ConfigurationManager()
+        try:
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager",
+                return_value=manager,
+            ):
+                base = BaseExporter(
+                    connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+                    disable_offline_storage=False,
+                )
+            try:
+                self.assertIsNotNone(base.storage)
+                self.assertTrue(base.storage._active)
+            finally:
+                if base.storage is not None:
+                    clean_folder(base.storage._path)
+        finally:
+            manager.shutdown()
+            Singleton._instances.pop(_ConfigurationManager, None)
 
     def test_normal_exporter_includes_http_logging_policy(self):
         from azure.core.pipeline.policies import HttpLoggingPolicy
@@ -655,6 +1134,24 @@ class TestBaseExporter(unittest.TestCase):
         # Verify storage.put was called with the serialized envelopes
         exporter.storage.put.assert_called_once_with(serialized_envelopes)
 
+    def test_handle_transmit_from_storage_429_retry_after_passed_as_lease_period(self):
+        """When _retry_after_delay_seconds is set (from a prior 429 full-request
+        failure), _handle_transmit_from_storage must forward it as lease_period
+        to storage.put so the blob stays locked for the server-requested delay."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        exporter.storage = mock.Mock()
+        exporter.storage.put.return_value = StorageExportResult.LOCAL_FILE_BLOB_SUCCESS
+
+        exporter._retry_after_delay_seconds = 120
+
+        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+        serialized_envelopes = [envelope.as_dict() for envelope in test_envelopes]
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+
+        exporter.storage.put.assert_called_once_with(serialized_envelopes, lease_period=120)
+        # _retry_after_delay_seconds must be cleared after consumption
+        self.assertIsNone(exporter._retry_after_delay_seconds)
+
     def test_handle_transmit_from_storage_success_triggers_transmit(self):
         exporter = BaseExporter(disable_offline_storage=False)
 
@@ -746,14 +1243,11 @@ class TestBaseExporter(unittest.TestCase):
     def test_transmit_http_error_redirect(self):
         response = HttpResponse(None, None)
         response.status_code = 307
-        # Redirect target whose host differs from the default ingestion host
-        # (`dc.services.visualstudio.com`) only in the leftmost DNS label, with
-        # the same number of labels and a 3-label shared suffix, so the
-        # cross-origin redirect guard permits it.
         response.headers = {"location": "https://westus.services.visualstudio.com"}
         prev_redirects = self._base.client._config.redirect_policy.max_redirects
         self._base.client._config.redirect_policy.max_redirects = 2
         prev_host = self._base.client._config.host
+        prev_endpoint, prev_region = self._base._endpoint, self._base._region
         error = HttpResponseError(response=response)
         with mock.patch.object(AzureMonitorClient, "track") as post:
             post.side_effect = error
@@ -766,6 +1260,7 @@ class TestBaseExporter(unittest.TestCase):
             )
         self._base.client._config.redirect_policy.max_redirects = prev_redirects
         self._base.client._config.host = prev_host
+        self._base._endpoint, self._base._region = prev_endpoint, prev_region
 
     def test_transmit_http_error_redirect_refuses_cross_origin(self):
         """A redirect to a different registered domain must be refused so the
@@ -805,11 +1300,148 @@ class TestBaseExporter(unittest.TestCase):
         # suffix (and vice versa).
         self.assertFalse(same("dc.services.visualstudio.com", "attacker.example.invalid"))
         self.assertFalse(same("legit-ingestion.example.invalid", "dc.services.visualstudio.com"))
-        # Mixing two different trusted suffixes is rejected.
-        self.assertFalse(same("dc.services.visualstudio.com", "westus-0.in.applicationinsights.azure.com"))
+        # Different trusted suffixes are allowed only within the same cloud.
+        self.assertTrue(same("dc.services.visualstudio.com", "westus-0.in.applicationinsights.azure.com"))
+        self.assertTrue(same("dc.applicationinsights.azure.us", "usgovvirginia.monitor.azure.us"))
+        self.assertTrue(same("dc.applicationinsights.azure.cn", "chinanorth.monitor.azure.cn"))
+        self.assertFalse(same("dc.services.visualstudio.com", "westus.monitor.azure.us"))
+        self.assertFalse(same("dc.monitor.azure.us", "chinanorth.monitor.azure.cn"))
+        self.assertFalse(same("dc.services.visualstudio.com", "evilapplicationinsights.azure.com"))
+        self.assertFalse(same("dc.services.visualstudio.com", "westeurope.monitor.azure.com.attacker.com"))
+        self.assertTrue(same("DC.SERVICES.VISUALSTUDIO.COM.:443", "westeurope.monitor.azure.com"))
+        self.assertFalse(same("dc.services.visualstudio.com:444", "westeurope.monitor.azure.com"))
+        self.assertFalse(same("custom.example:443", "custom.example:444"))
+        self.assertTrue(same("[::1]:444", "[::1]:444"))
+        self.assertFalse(same("[::1]", "[::2]"))
+        self.assertFalse(same("dc.services.visualstudio.com", "westeurope.monitor.azure.com:invalid"))
+        self.assertFalse(same("dc.services.visualstudio.com", "user@westeurope.monitor.azure.com"))
         # Empty inputs are treated as not-same.
         self.assertFalse(same("", "applicationinsights.azure.com"))
         self.assertFalse(same("applicationinsights.azure.com", ""))
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_statsbeat_manager")
+    def test_redirect_updates_statsbeat_before_retry(self, get_manager):
+        for status in (307, 308):
+            with self.subTest(status=status):
+                exporter = BaseExporter(disable_offline_storage=True)
+                target = "https://westeurope-5.in.applicationinsights.azure.com"
+                response = HttpResponse(None, None)
+                response.status_code = status
+                response.headers = {"location": target + "/v2.1/track"}
+                calls = []
+                get_manager.return_value._update_endpoint.side_effect = lambda endpoint: calls.append(endpoint)
+
+                def track(*args, **kwargs):
+                    calls.append(exporter.client._config.host)
+                    if len(calls) == 1:
+                        raise HttpResponseError(response=response)
+                    self.assertEqual(exporter._endpoint, target)
+                    self.assertEqual(exporter._region, "westeurope")
+                    return TrackResponse(items_received=1, items_accepted=1, errors=[])
+
+                with mock.patch.object(exporter, "_should_collect_stats", return_value=True), mock.patch.object(
+                    exporter.client, "track", side_effect=track
+                ):
+                    self.assertEqual(exporter._transmit(self._envelopes_to_export), ExportResult.SUCCESS)
+                self.assertEqual(calls, ["https://dc.services.visualstudio.com", target, target])
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_statsbeat_manager")
+    def test_rejected_redirect_leaves_both_routes_unchanged(self, get_manager):
+        targets = (
+            "http://westeurope.monitor.azure.com",
+            "https://westeurope.monitor.azure.us",
+            "https://westeurope.monitor.azure.com.attacker.example",
+            "https://user@westeurope.monitor.azure.com",
+            "https://@westeurope.monitor.azure.com",
+            "https://westeurope.monitor.azure.com:444",
+            "https://westeurope.monitor.azure.com:invalid",
+            "https://[invalid",
+            "/relative",
+            "",
+        )
+        for target in targets:
+            with self.subTest(target=target):
+                exporter = BaseExporter(disable_offline_storage=True)
+                original_endpoint = exporter._endpoint
+                response = HttpResponse(None, None)
+                response.status_code = 307
+                response.headers = {"location": target}
+                with mock.patch.object(exporter, "_should_collect_stats", return_value=True), mock.patch.object(
+                    exporter.client, "track", side_effect=HttpResponseError(response=response)
+                ) as track:
+                    self.assertEqual(exporter._transmit(self._envelopes_to_export), ExportResult.FAILED_NOT_RETRYABLE)
+                track.assert_called_once()
+                self.assertEqual(exporter.client._config.host, original_endpoint)
+                self.assertEqual(exporter._endpoint, original_endpoint)
+        get_manager.assert_not_called()
+
+    def test_redirect_limit_is_per_export_chain(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.client._config.redirect_policy.max_redirects = 2
+        response = HttpResponse(None, None)
+        response.status_code = 307
+        response.headers = {"location": "https://westeurope-5.in.applicationinsights.azure.com"}
+        redirect = HttpResponseError(response=response)
+        success = TrackResponse(items_received=1, items_accepted=1, errors=[])
+        with mock.patch.object(exporter.client, "track", side_effect=[redirect, redirect, redirect, success]) as track:
+            self.assertEqual(exporter._transmit(self._envelopes_to_export), ExportResult.FAILED_NOT_RETRYABLE)
+            self.assertEqual(exporter._transmit(self._envelopes_to_export), ExportResult.SUCCESS)
+        self.assertEqual(track.call_count, 4)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_statsbeat_manager")
+    def test_concurrent_nested_redirects_keep_route_and_retry_together(self, get_manager):
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.client._config.redirect_policy.max_redirects = 3
+        first_retry = threading.Event()
+        second_response = threading.Event()
+        calls = []
+        counts = {}
+        results = []
+        eu = "https://westeurope-5.in.applicationinsights.azure.com"
+        row = "https://westus-1.in.applicationinsights.azure.com"
+        nested = "https://germanynorth-1.in.applicationinsights.azure.com"
+        get_manager.return_value._update_endpoint.side_effect = lambda endpoint: calls.append(("update", endpoint))
+
+        def track(envelopes, **kwargs):
+            name = threading.current_thread().name
+            counts[name] = counts.get(name, 0) + 1
+            count = counts[name]
+            if name == "second" and count == 1:
+                self.assertTrue(first_retry.wait(5))
+                second_response.set()
+                target = row
+            elif name == "first" and count == 1:
+                target = eu
+            elif name == "first" and count == 2:
+                first_retry.set()
+                self.assertTrue(second_response.wait(5))
+                calls.append(("retry", exporter.client._config.host))
+                target = nested
+            else:
+                calls.append(("retry", exporter.client._config.host))
+                return TrackResponse(items_received=1, items_accepted=1, errors=[])
+            response = HttpResponse(None, None)
+            response.status_code = 307
+            response.headers = {"location": target}
+            raise HttpResponseError(response=response)
+
+        def transmit():
+            results.append(exporter._transmit(self._envelopes_to_export))
+
+        with mock.patch.object(exporter, "_should_collect_stats", return_value=True), mock.patch.object(
+            exporter.client, "track", side_effect=track
+        ):
+            threads = [threading.Thread(target=transmit, name=name, daemon=True) for name in ("first", "second")]
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join(10)
+                self.assertFalse(thread.is_alive())
+        self.assertEqual(results, [ExportResult.SUCCESS, ExportResult.SUCCESS])
+        self.assertEqual(
+            calls,
+            [("update", eu), ("retry", eu), ("update", nested), ("retry", nested), ("update", row), ("retry", row)],
+        )
 
     def test_transmit_http_error_redirect_missing_headers(self):
         response = HttpResponse(None, None)
@@ -839,6 +1471,11 @@ class TestBaseExporter(unittest.TestCase):
 
     def test_transmit_request_error(self):
         with mock.patch.object(AzureMonitorClient, "track", throw(ServiceRequestError, message="error")):
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmit_response_error(self):
+        with mock.patch.object(AzureMonitorClient, "track", throw(ServiceResponseError, message="Read timed out")):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
@@ -976,6 +1613,84 @@ class TestBaseExporter(unittest.TestCase):
         # Storage should NOT be called since all errors are sampling rejections
         exporter.storage.put.assert_not_called()
 
+    def test_transmission_206_retry_after_delay_seconds_applied_to_storage_lease(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        custom_envelopes_to_export = [
+            TelemetryItem(name="Test", time=datetime.now()),
+        ]
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.return_value = (
+                TrackResponse(
+                    items_received=1,
+                    items_accepted=0,
+                    errors=[
+                        TelemetryErrorDetails(index=0, status_code=429, message="throttled"),
+                    ],
+                ),
+                {"Retry-After": "120"},
+            )
+            result = exporter._transmit(custom_envelopes_to_export)
+
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        exporter.storage.put.assert_called_once()
+        self.assertEqual(exporter.storage.put.call_args[0][1], 120)
+
+    def test_transmission_206_invalid_retry_after_falls_back_to_default_storage_lease(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        custom_envelopes_to_export = [
+            TelemetryItem(name="Test", time=datetime.now()),
+        ]
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.return_value = (
+                TrackResponse(
+                    items_received=1,
+                    items_accepted=0,
+                    errors=[
+                        TelemetryErrorDetails(index=0, status_code=429, message="throttled"),
+                    ],
+                ),
+                {"Retry-After": "0"},
+            )
+            result = exporter._transmit(custom_envelopes_to_export)
+
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        exporter.storage.put.assert_called_once()
+        self.assertEqual(exporter.storage.put.call_args[0][1], exporter._storage_min_retry_interval)
+
+    def test_get_retry_delay_from_headers_delay_seconds(self):
+        headers = {"Retry-After": "120"}
+        self.assertEqual(_get_retry_delay_from_headers(headers), 120)
+
+    def test_get_retry_delay_from_headers_http_date(self):
+        fixed_now = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+        future = fixed_now + timedelta(seconds=121)
+        headers = {"Retry-After": future.strftime("%a, %d %b %Y %H:%M:%S GMT")}
+        with mock.patch("azure.monitor.opentelemetry.exporter._utils.datetime") as mock_dt:
+            mock_dt.datetime.now.return_value = fixed_now
+            mock_dt.datetime.strptime = datetime.strptime
+            mock_dt.timezone = timezone
+            self.assertEqual(_get_retry_delay_from_headers(headers), 121)
+
+    def test_get_retry_delay_from_headers_invalid_or_non_positive(self):
+        invalid_headers = (
+            None,
+            {},
+            {"Retry-After": ""},
+            {"Retry-After": "0"},
+            {"Retry-After": "-1"},
+            {"Retry-After": "not-a-date"},
+        )
+
+        for headers in invalid_headers:
+            with self.subTest(headers=headers):
+                self.assertIsNone(_get_retry_delay_from_headers(headers))
+
+    def test_get_retry_delay_from_headers_prefers_retry_after(self):
+        headers = {"Retry-After": "60", "x-ms-retry-after-ms": "90000"}
+        self.assertEqual(_get_retry_delay_from_headers(headers), 60)
+
     def test_is_sampling_rejection_true(self):
         """Test that _is_sampling_rejection correctly identifies sampling rejection messages."""
         self.assertTrue(_is_sampling_rejection("Telemetry sampled out."))
@@ -1013,6 +1728,23 @@ class TestBaseExporter(unittest.TestCase):
         with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(429)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmission_429_with_retry_after_header_sets_delay(self):
+        """A full-request 429 whose response carries a Retry-After header must
+        cause _transmit to set _retry_after_delay_seconds on the exporter so
+        that _handle_transmit_from_storage can forward it as the storage lease
+        period."""
+        response = HttpResponse(None, None)
+        response.status_code = 429
+        response.headers = {"Retry-After": "120"}
+        error = HttpResponseError(response=response)
+
+        exporter = BaseExporter(disable_offline_storage=True)
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=error):
+            result = exporter._transmit(self._envelopes_to_export)
+
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+        self.assertEqual(exporter._retry_after_delay_seconds, 120)
 
     def test_transmission_439(self):
         with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(439)):
@@ -1062,6 +1794,25 @@ class TestBaseExporter(unittest.TestCase):
         stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]]["ServiceRequestError"], 1)
+        self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
+        self.assertEqual(_REQUESTS_MAP["count"], 1)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+            "APPLICATIONINSIGHTS_SDKSTATS_DISABLED": "false",
+        },
+    )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    def test_transmit_response_error_statsbeat(self, stats_mock):
+        exporter = BaseExporter(disable_offline_storage=True)
+        with mock.patch.object(AzureMonitorClient, "track", throw(ServiceResponseError, message="Read timed out")):
+            result = exporter._transmit(self._envelopes_to_export)
+        stats_mock.assert_called_once()
+        self.assertEqual(len(_REQUESTS_MAP), 3)
+        self.assertEqual(_REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]]["ServiceResponseError"], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
         self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
@@ -1540,3 +2291,206 @@ class MockResponse:
 class MockRaw:
     def __init__(self):
         self.enforce_content_length = False
+
+
+class TestBaseExporterExperimentalFeatures(unittest.TestCase):
+    def setUp(self):
+        patches = [
+            mock.patch.dict("os.environ"),
+            mock.patch.dict(
+                _STATSBEAT_STATE,
+                {
+                    "GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE_FEATURE_SET": False,
+                    "MULTI_ENDPOINT_ROUTING_FEATURE_SET": False,
+                },
+            ),
+            mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None),
+            mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager", return_value=None
+            ),
+            mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base.BaseExporter._should_collect_stats",
+                return_value=False,
+            ),
+            mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base.BaseExporter._should_collect_customer_sdkstats",
+                return_value=False,
+            ),
+        ]
+        for patch in patches:
+            patch.start()
+            self.addCleanup(patch.stop)
+        os.environ.pop(_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES, None)
+
+    def _create_exporter(self, exporter_class=BaseExporter):
+        exporter = exporter_class(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab",
+            disable_offline_storage=True,
+        )
+        self.addCleanup(exporter.client.close)
+        return exporter
+
+    def test_experimental_feature_opt_ins_are_tracked(self):
+        cases = (
+            (None, False, False),
+            ("", False, False),
+            (" , , ", False, False),
+            ("unknown_feature", False, False),
+            ("*", False, False),
+            ("gen_ai_input_output_limit_increase", True, False),
+            (" GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE , gen_ai_input_output_limit_increase ", True, False),
+            ("multi_endpoint_routing", False, True),
+            (" MULTI_ENDPOINT_ROUTING , multi_endpoint_routing ", False, True),
+            ("gen_ai_input_output_limit_increase,multi_endpoint_routing,unknown_feature", True, True),
+        )
+        for value, gen_ai_enabled, routing_enabled in cases:
+            with self.subTest(value=value), mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None
+            ), mock.patch.dict(
+                _STATSBEAT_STATE,
+                {
+                    "GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE_FEATURE_SET": False,
+                    "MULTI_ENDPOINT_ROUTING_FEATURE_SET": False,
+                },
+            ):
+                if value is not None:
+                    os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = value
+                self._create_exporter()
+                self.assertEqual(_STATSBEAT_STATE["GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE_FEATURE_SET"], gen_ai_enabled)
+                self.assertEqual(_STATSBEAT_STATE["MULTI_ENDPOINT_ROUTING_FEATURE_SET"], routing_enabled)
+
+    def test_experimental_feature_tracking_uses_frozen_selection(self):
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = "gen_ai_input_output_limit_increase"
+        self._create_exporter()
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = "multi_endpoint_routing"
+        self._create_exporter()
+        self.assertTrue(_STATSBEAT_STATE["GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE_FEATURE_SET"])
+        self.assertFalse(_STATSBEAT_STATE["MULTI_ENDPOINT_ROUTING_FEATURE_SET"])
+
+    def test_experimental_feature_disabled_by_default(self):
+        for value in (None, "", "   ", ", ,,,"):
+            with self.subTest(value=value):
+                with mock.patch(
+                    "azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None
+                ):
+                    if value is not None:
+                        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = value
+                    exporter = self._create_exporter()
+                    self.assertFalse(exporter._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"))
+                    self.assertFalse(exporter._enable_multi_endpoint_routing)
+
+    def test_experimental_feature_enabled_from_environment(self):
+        for value in (
+            "gen_ai_input_output_limit_increase",
+            " GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE ",
+            "gen_ai_input_output_limit_increase, ,gen_ai_input_output_limit_increase,",
+        ):
+            with self.subTest(value=value):
+                with mock.patch(
+                    "azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None
+                ):
+                    os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = value
+                    exporter = self._create_exporter()
+                    self.assertTrue(exporter._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"))
+
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export._base._SUPPORTED_EXPERIMENTAL_FEATURES",
+        frozenset({"gen_ai_input_output_limit_increase", "another_feature"}),
+    )
+    def test_experimental_features_enabled_only_when_selected(self):
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = "gen_ai_input_output_limit_increase"
+        exporter = self._create_exporter()
+        self.assertTrue(exporter._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"))
+        self.assertFalse(exporter._is_experimental_feature_enabled("another_feature"))
+
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export._base._SUPPORTED_EXPERIMENTAL_FEATURES",
+        frozenset({"gen_ai_input_output_limit_increase", "another_feature"}),
+    )
+    def test_multiple_experimental_features_enabled(self):
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = "gen_ai_input_output_limit_increase,another_feature"
+        exporter = self._create_exporter()
+        self.assertTrue(exporter._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"))
+        self.assertTrue(exporter._is_experimental_feature_enabled("another_feature"))
+
+    def test_unknown_experimental_features_warn_once_and_remain_disabled(self):
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = (
+            "gen_ai_input_output_limit_increase,unknown_feature,unknown_feature"
+        )
+        with mock.patch("azure.monitor.opentelemetry.exporter.export._base.logger.warning") as warning:
+            first = self._create_exporter()
+            second = self._create_exporter()
+            self.assertTrue(first._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"))
+            self.assertFalse(second._is_experimental_feature_enabled("unknown_feature"))
+        warning.assert_called_once_with(
+            "Ignoring unknown experimental features in %s: %s",
+            _APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES,
+            "unknown_feature",
+        )
+
+    def test_experimental_feature_wildcard_does_not_enable_features(self):
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = "*"
+        with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="WARNING"):
+            exporter = self._create_exporter()
+        self.assertFalse(exporter._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"))
+        self.assertFalse(exporter._is_experimental_feature_enabled("*"))
+
+    def test_exporter_construction_freezes_experimental_feature_selection(self):
+        for initially_enabled in (False, True):
+            with self.subTest(initially_enabled=initially_enabled):
+                with mock.patch(
+                    "azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None
+                ):
+                    os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = (
+                        "gen_ai_input_output_limit_increase" if initially_enabled else ""
+                    )
+                    first = self._create_exporter()
+                    os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = (
+                        "" if initially_enabled else "gen_ai_input_output_limit_increase"
+                    )
+                    second = self._create_exporter()
+                    self.assertEqual(
+                        first._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+                        initially_enabled,
+                    )
+                    self.assertEqual(
+                        second._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+                        initially_enabled,
+                    )
+
+    def test_routing_uses_frozen_experimental_feature_selection(self):
+        for initially_enabled in (False, True):
+            with self.subTest(initially_enabled=initially_enabled), mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None
+            ):
+                os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = (
+                    "multi_endpoint_routing" if initially_enabled else ""
+                )
+                first = self._create_exporter()
+                os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = (
+                    "" if initially_enabled else "multi_endpoint_routing"
+                )
+                second = self._create_exporter()
+                self.assertIs(first._enable_multi_endpoint_routing, initially_enabled)
+                self.assertIs(second._enable_multi_endpoint_routing, initially_enabled)
+
+    def test_routing_selection_is_shared_across_signals(self):
+        exporter_classes = (AzureMonitorLogExporter, AzureMonitorMetricExporter, AzureMonitorTraceExporter)
+        for initially_enabled in (False, True):
+            for first_exporter_class in exporter_classes:
+                with self.subTest(
+                    initially_enabled=initially_enabled, first_exporter=first_exporter_class.__name__
+                ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+                    os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = (
+                        "multi_endpoint_routing" if initially_enabled else ""
+                    )
+                    first = self._create_exporter(first_exporter_class)
+                    self.addCleanup(first.shutdown)
+                    os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = (
+                        "" if initially_enabled else "multi_endpoint_routing"
+                    )
+                    self.assertIs(first._enable_multi_endpoint_routing, initially_enabled)
+                    for exporter_class in exporter_classes:
+                        exporter = self._create_exporter(exporter_class)
+                        self.addCleanup(exporter.shutdown)
+                        self.assertIs(exporter._enable_multi_endpoint_routing, initially_enabled)

@@ -27,7 +27,10 @@ USAGE:
 """
 
 from devtools_testutils import recorded_by_proxy
-from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
+from testpreparer import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBase,
+)
 from azure.ai.contentunderstanding import to_llm_input
 from azure.ai.contentunderstanding.models import (
     AnalysisInput,
@@ -42,13 +45,13 @@ class TestSampleToLlmInput(ContentUnderstandingClientTestBase):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_to_llm_input_output_options(self, contentunderstanding_endpoint: str) -> None:
-        """Section 1 of the sample — output option flags and custom metadata.
+        """Section 1 of the sample — output option flags and caller custom_metadata.
 
         Validates:
         - Default output (fields + markdown) contains both
         - include_markdown=False produces fields-only output (no markdown body)
         - include_fields=False produces markdown-only output (no 'fields:' block)
-        - metadata={...} injects custom keys into the YAML front matter
+        - custom_metadata={...} injects custom keys under customMetadata: into the YAML front matter
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
@@ -71,7 +74,7 @@ class TestSampleToLlmInput(ContentUnderstandingClientTestBase):
         default_text = to_llm_input(result)
         assert default_text.startswith("---"), "Default output should start with YAML front matter"
         assert "\n---\n" in default_text, "Default output should close YAML front matter"
-        assert "contentType: document" in default_text, "Default output should declare contentType: document"
+        assert "mimeType: application/pdf" in default_text, "Default output should declare mimeType: application/pdf"
         assert "fields:" in default_text, "Default output should include 'fields:' block"
         assert markdown in default_text, "Default output should include markdown body"
         print(f"[PASS] Default output: fields + markdown ({len(default_text)} chars)")
@@ -90,20 +93,22 @@ class TestSampleToLlmInput(ContentUnderstandingClientTestBase):
         print(f"[PASS] Markdown-only output validated ({len(markdown_only)} chars)")
 
         # --- Custom metadata ---
-        with_metadata = to_llm_input(
+        with_custom_metadata = to_llm_input(
             result,
-            metadata={"source": "invoice.pdf", "department": "finance"},
+            custom_metadata={"source": "invoice.pdf", "department": "finance"},
         )
-        assert "source: invoice.pdf" in with_metadata, "Metadata 'source' key should appear in front matter"
-        assert "department: finance" in with_metadata, "Metadata 'department' key should appear in front matter"
-        # Metadata is injected after contentType but before fields per helper ordering
-        assert with_metadata.index("contentType: document") < with_metadata.index("source: invoice.pdf"), (
-            "Custom metadata should appear after 'contentType' in front matter"
-        )
-        assert with_metadata.index("source: invoice.pdf") < with_metadata.index("fields:"), (
-            "Custom metadata should appear before the 'fields:' block in front matter"
-        )
-        print("[PASS] Custom metadata injected into YAML front matter")
+        assert "customMetadata:" in with_custom_metadata, "customMetadata block should appear in front matter"
+        assert "source: invoice.pdf" in with_custom_metadata, "Metadata 'source' key should appear under customMetadata"
+        assert (
+            "department: finance" in with_custom_metadata
+        ), "Metadata 'department' key should appear under customMetadata"
+        assert with_custom_metadata.index("mimeType: application/pdf") < with_custom_metadata.index(
+            "customMetadata:"
+        ), "customMetadata should appear after 'mimeType' in front matter"
+        assert with_custom_metadata.index("customMetadata:") < with_custom_metadata.index(
+            "fields:"
+        ), "customMetadata should appear before the 'fields:' block in front matter"
+        print("[PASS] customMetadata injected into YAML front matter")
 
         print("\n[SUCCESS] All test_to_llm_input_output_options assertions passed")
 
@@ -111,6 +116,9 @@ class TestSampleToLlmInput(ContentUnderstandingClientTestBase):
     @recorded_by_proxy
     def test_to_llm_input_multi_page_content_range(self, contentunderstanding_endpoint: str) -> None:
         """Section 2 of the sample — multi-page PDF with content_range.
+
+        Also covers the nested README example under "Convert results to LLM-ready text"
+        that uses ``content_range=\"2-3,5\"`` and asserts original ``InputPageNumber`` markers.
 
         Validates that to_llm_input preserves original document page numbers in the
         page markers (not the renumbered offsets within the requested range).
@@ -130,28 +138,30 @@ class TestSampleToLlmInput(ContentUnderstandingClientTestBase):
         doc = result.contents[0]
         assert isinstance(doc, DocumentContent), "Range analysis should return DocumentContent"
         page_numbers = sorted([p.page_number for p in (doc.pages or [])])
-        assert page_numbers == [2, 3, 5], (
-            f"content_range '2-3,5' should return pages [2, 3, 5], got {page_numbers}"
-        )
+        assert page_numbers == [
+            2,
+            3,
+            5,
+        ], f"content_range '2-3,5' should return pages [2, 3, 5], got {page_numbers}"
         print(f"[PASS] Range analysis returned pages {page_numbers}")
 
         text = to_llm_input(result)
         assert text.startswith("---"), "Output should start with YAML front matter"
-        assert "contentType: document" in text, "Output should declare contentType: document"
+        assert "mimeType: application/pdf" in text, "Output should declare mimeType: application/pdf"
         # The 'pages' front matter key should reflect the original page numbers (2, 3, 5),
         # compressed by the helper as "2-3, 5" — not renumbered to 1-3 within the range.
         assert "pages:" in text, "Output should include a 'pages' key in front matter"
-        assert "2-3, 5" in text or "'2-3, 5'" in text, (
-            f"'pages' value should be '2-3, 5' (original page numbers preserved). Output:\n{text[:500]}"
-        )
+        assert (
+            "2-3, 5" in text or "'2-3, 5'" in text
+        ), f"'pages' value should be '2-3, 5' (original page numbers preserved). Output:\n{text[:500]}"
         print(f"[PASS] to_llm_input output validated ({len(text)} chars, pages='2-3, 5' preserved)")
 
         # Page markers in the markdown body should use the original page numbers
         # (<!-- InputPageNumber: 2 -->, <!-- InputPageNumber: 3 -->, <!-- InputPageNumber: 5 -->),
         # not renumbered (1, 2, 3).
-        assert "<!-- InputPageNumber: 1 -->" not in text, (
-            "Page marker '<!-- InputPageNumber: 1 -->' should not appear — we only requested pages 2-3, 5"
-        )
+        assert (
+            "<!-- InputPageNumber: 1 -->" not in text
+        ), "Page marker '<!-- InputPageNumber: 1 -->' should not appear — we only requested pages 2-3, 5"
         for expected_page in [2, 3, 5]:
             assert f"<!-- InputPageNumber: {expected_page} -->" in text, (
                 f"Page marker '<!-- InputPageNumber: {expected_page} -->' should appear in the markdown body. "
@@ -183,15 +193,15 @@ class TestSampleToLlmInput(ContentUnderstandingClientTestBase):
         result = poller.result()
 
         assert result is not None and result.contents, "Video analysis should return contents"
-        assert all(isinstance(c, AudioVisualContent) for c in result.contents), (
-            "Video analysis should return AudioVisualContent items"
-        )
+        assert all(
+            isinstance(c, AudioVisualContent) for c in result.contents
+        ), "Video analysis should return AudioVisualContent items"
         segment_count = len(result.contents)
         print(f"[PASS] Video analyzed: {segment_count} segment(s)")
 
         text = to_llm_input(result)
         assert text.startswith("---"), "Output should start with YAML front matter"
-        assert "contentType: audioVisual" in text, "Output should declare contentType: audioVisual"
+        assert "mimeType: video/mp4" in text, "Output should declare mimeType: video/mp4"
 
         if segment_count > 1:
             # Multi-segment: each segment has its own front matter with timeRange
@@ -202,11 +212,12 @@ class TestSampleToLlmInput(ContentUnderstandingClientTestBase):
                 f"got {text.count('*****')}"
             )
             assert text.count("timeRange:") == segment_count, (
-                f"Each of {segment_count} segments should declare a 'timeRange', "
-                f"got {text.count('timeRange:')}"
+                f"Each of {segment_count} segments should declare a 'timeRange', " f"got {text.count('timeRange:')}"
             )
-            print(f"[PASS] Multi-segment output: {segment_count} timeRange entries, "
-                  f"{expected_dividers} '*****' dividers")
+            print(
+                f"[PASS] Multi-segment output: {segment_count} timeRange entries, "
+                f"{expected_dividers} '*****' dividers"
+            )
         else:
             # Single segment: no dividers, single timeRange (or no timeRange if absent)
             assert "*****" not in text, "Single-segment output should not contain '*****' divider"
@@ -218,7 +229,7 @@ class TestSampleToLlmInput(ContentUnderstandingClientTestBase):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
     def test_to_llm_input_audio_with_content_range(self, contentunderstanding_endpoint: str) -> None:
-        """Section 4 of the sample — audio with content_range and custom metadata.
+        """Section 4 of the sample — audio with content_range and caller custom_metadata.
 
         Validates that to_llm_input handles audio analysis with a content_range
         (first 10 seconds) and that custom metadata is injected into the front matter.
@@ -235,25 +246,23 @@ class TestSampleToLlmInput(ContentUnderstandingClientTestBase):
         result = poller.result()
 
         assert result is not None and result.contents, "Audio analysis should return contents"
-        assert all(isinstance(c, AudioVisualContent) for c in result.contents), (
-            "Audio analysis should return AudioVisualContent items"
-        )
+        assert all(
+            isinstance(c, AudioVisualContent) for c in result.contents
+        ), "Audio analysis should return AudioVisualContent items"
         print(f"[PASS] Audio analyzed: {len(result.contents)} segment(s)")
 
-        # Include metadata to track the source file in RAG pipelines
+        # Include custom_metadata to track the source file in RAG pipelines
         text = to_llm_input(
             result,
-            metadata={"source": "callCenterRecording.mp3"},
+            custom_metadata={"source": "callCenterRecording.mp3"},
         )
         assert text.startswith("---"), "Output should start with YAML front matter"
-        assert "contentType: audioVisual" in text, "Output should declare contentType: audioVisual"
-        assert "source: callCenterRecording.mp3" in text, (
-            "Custom metadata 'source' key should appear in front matter"
-        )
-        # Metadata should appear after contentType per helper ordering
-        assert text.index("contentType: audioVisual") < text.index("source: callCenterRecording.mp3"), (
-            "Custom metadata should appear after 'contentType' in front matter"
-        )
+        assert "mimeType: audio/mpeg" in text, "Output should declare mimeType: audio/mpeg"
+        assert "source: callCenterRecording.mp3" in text, "Custom metadata 'source' key should appear in front matter"
+        # Metadata should appear after mimeType per helper ordering
+        assert text.index("mimeType: audio/mpeg") < text.index(
+            "source: callCenterRecording.mp3"
+        ), "Custom metadata should appear after 'mimeType' in front matter"
         print(f"[PASS] to_llm_input output validated ({len(text)} chars, includes source metadata)")
 
         print("\n[SUCCESS] All test_to_llm_input_audio_with_content_range assertions passed")

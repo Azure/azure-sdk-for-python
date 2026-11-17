@@ -7,7 +7,12 @@ Validator for conversation-style query and response inputs.
 
 from typing import Any, Dict, List, Optional
 from typing_extensions import override
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
 from ._validation_constants import MessageRole, ContentType
 from ._validator_interface import ValidatorInterface
 
@@ -21,21 +26,27 @@ class ConversationValidator(ValidatorInterface):
     check_for_unsupported_tools: bool = False
     error_target: ErrorTarget
 
+    # Tools that evaluators with ``check_for_unsupported_tools=True`` reject.
+    # ``azure_ai_search``, ``azure_fabric``, and ``sharepoint_grounding`` are
+    # accepted by default because the shared formatter JSON-encodes their
+    # structured tool_result payloads (see ``_stringify_tool_result``).
+    # ``GroundednessConversationValidator`` overrides this list to keep
+    # rejecting them until a context-extractor helper lands.
     UNSUPPORTED_TOOLS: List[str] = [
-        "azure_ai_search",
         "bing_custom_search",
         "bing_grounding",
         "browser_automation",
         "code_interpreter_call",
         "computer_call",
-        "azure_fabric",
         "openapi_call",
-        "sharepoint_grounding",
         "web_search",
     ]
 
     def __init__(
-        self, error_target: ErrorTarget, requires_query: bool = True, check_for_unsupported_tools: bool = False
+        self,
+        error_target: ErrorTarget,
+        requires_query: bool = True,
+        check_for_unsupported_tools: bool = False,
     ):
         """Initialize with error target and query requirement."""
         self.requires_query = requires_query
@@ -130,7 +141,7 @@ class ConversationValidator(ValidatorInterface):
 
         if not isinstance(content_item["text"], str):
             return EvaluationException(
-                message=f"The 'text' field must be a string in content items.",
+                message="The 'text' field must be a string in content items.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=self.error_target,
@@ -196,16 +207,16 @@ class ConversationValidator(ValidatorInterface):
         """Validate assistant message content."""
         content = message["content"]
 
-        valid_assistant_content_types = [
-            ContentType.TEXT,
-            ContentType.OUTPUT_TEXT,
-            ContentType.TOOL_CALL,
-            ContentType.FUNCTION_CALL,
-            ContentType.MCP_APPROVAL_REQUEST,
-            ContentType.OPENAPI_CALL,
-        ]
-        valid_assistant_content_types_as_strings = [t.value for t in valid_assistant_content_types]
         if isinstance(content, list):
+            valid_assistant_content_types = [
+                ContentType.TEXT,
+                ContentType.OUTPUT_TEXT,
+                ContentType.TOOL_CALL,
+                ContentType.FUNCTION_CALL,
+                ContentType.MCP_APPROVAL_REQUEST,
+                ContentType.OPENAPI_CALL,
+            ]
+            valid_assistant_content_types_as_strings = [t.value for t in valid_assistant_content_types]
             for content_item in content:
                 content_type = content_item["type"]
                 if content_type not in valid_assistant_content_types:
@@ -220,7 +231,11 @@ class ConversationValidator(ValidatorInterface):
                     error = self._validate_text_content_item(content_item, MessageRole.ASSISTANT)
                     if error:
                         return error
-                elif content_type in [ContentType.TOOL_CALL, ContentType.FUNCTION_CALL, ContentType.OPENAPI_CALL]:
+                elif content_type in [
+                    ContentType.TOOL_CALL,
+                    ContentType.FUNCTION_CALL,
+                    ContentType.OPENAPI_CALL,
+                ]:
                     error = self._validate_tool_call_content_item(content_item)
                     if error:
                         return error
@@ -253,7 +268,9 @@ class ConversationValidator(ValidatorInterface):
             )
 
         error = self._validate_string_field(
-            message, "tool_call_id", f"content items for role '{MessageRole.TOOL.value}'"
+            message,
+            "tool_call_id",
+            f"content items for role '{MessageRole.TOOL.value}'",
         )
         if error:
             return error
@@ -281,7 +298,9 @@ class ConversationValidator(ValidatorInterface):
                 ContentType.FUNCTION_CALL_OUTPUT,
             ]:
                 error = self._validate_field_exists(
-                    content_item, content_type, f"content items for role '{MessageRole.TOOL.value}'"
+                    content_item,
+                    content_type,
+                    f"content items for role '{MessageRole.TOOL.value}'",
                 )
                 if error:
                     return error
@@ -314,7 +333,7 @@ class ConversationValidator(ValidatorInterface):
         )
         if not content_is_string_or_list_of_dicts:
             return EvaluationException(
-                message=f"The 'content' field must be a string or a list of dictionaries messages.",
+                message="The 'content' field must be a string or a list of dictionaries messages.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=self.error_target,
@@ -322,23 +341,22 @@ class ConversationValidator(ValidatorInterface):
 
         if len(content) == 0:
             return EvaluationException(
-                message=f"The 'content' field can't be empty.",
+                message="The 'content' field can't be empty.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=self.error_target,
             )
 
         if isinstance(content, list):
-            all_messages_have_type_field = all("type" in item for item in content)
-            if not all_messages_have_type_field:
+            if not all("type" in item for item in content):
                 return EvaluationException(
-                    message=f"Each content item in the 'content' list must contain a 'type' field.",
+                    message="Each content item in the 'content' list must contain a 'type' field.",
                     blame=ErrorBlame.USER_ERROR,
                     category=ErrorCategory.INVALID_VALUE,
                     target=self.error_target,
                 )
 
-        if role in [MessageRole.USER, MessageRole.SYSTEM]:
+        if role in [MessageRole.USER, MessageRole.SYSTEM, MessageRole.DEVELOPER]:
             error = self._validate_user_or_system_message(message, role)
             if error:
                 return error
@@ -454,3 +472,28 @@ class ConversationValidator(ValidatorInterface):
             raise response_validation_exception
 
         return True
+
+
+class GroundednessConversationValidator(ConversationValidator):
+    """
+    ConversationValidator override used by ``GroundednessEvaluator``.
+
+    Groundedness still rejects ``azure_ai_search``, ``azure_fabric``, and
+    ``sharepoint_grounding`` tool calls pending a helper that can extract
+    document bodies out of structured ``tool_result`` envelopes and feed
+    them in as the ``context`` input the groundedness judge prompt scores
+    against. Without that helper the judge would receive empty or wrong
+    context and return a silently low groundedness score, so the
+    enablement performed for ``ToolCallSuccessEvaluator`` and
+    ``ToolOutputUtilizationEvaluator`` is intentionally not extended here.
+
+    Once the context-extractor helper lands, this subclass can be deleted
+    and ``GroundednessEvaluator`` can use ``ConversationValidator``
+    directly.
+    """
+
+    UNSUPPORTED_TOOLS: List[str] = ConversationValidator.UNSUPPORTED_TOOLS + [
+        "azure_ai_search",
+        "azure_fabric",
+        "sharepoint_grounding",
+    ]

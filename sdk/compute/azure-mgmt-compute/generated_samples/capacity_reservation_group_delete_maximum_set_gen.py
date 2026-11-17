@@ -30,12 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.capacity_reservation_groups.delete(
+    client.capacity_reservation_groups.begin_delete(
         resource_group_name="rgcompute",
         capacity_reservation_group_name="a",
-    )
+    ).result()
 
 
-# x-ms-original-file: 2026-03-01/capacityReservationExamples/CapacityReservationGroup_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-04-01/capacityReservationExamples/CapacityReservationGroup_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -1,0 +1,9 @@
+{
+  "properties": {
+    "authType": "AAD",
+    "category": "AzureOneLake",
+    "isSharedToAll": true,
+    "metadata": {},
+    "target": "https://https://onelake.dfs.fabric.microsoft.com/smoke-onelake-workspace/smoke-lakehouse.Lakehouse.Lakehouse"
+  }
+}

@@ -89,7 +89,7 @@ def _wait_for_terminal(
 # ════════════════════════════════════════════════════════════
 
 
-def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Minimal handler — emits no events (framework auto-completes)."""
 
     async def _events():
@@ -99,7 +99,7 @@ def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-def _simple_text_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _simple_text_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits created + completed with no output items."""
 
     async def _events():
@@ -110,7 +110,7 @@ def _simple_text_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-def _output_producing_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _output_producing_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that produces a single message output item with text 'hello'."""
 
     async def _events():
@@ -130,7 +130,7 @@ def _output_producing_handler(request: Any, context: Any, cancellation_signal: A
     return _events()
 
 
-def _throwing_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _throwing_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that raises after emitting created."""
 
     async def _events():
@@ -141,7 +141,7 @@ def _throwing_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-def _incomplete_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _incomplete_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits an incomplete terminal event."""
 
     async def _events():
@@ -152,14 +152,14 @@ def _incomplete_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-def _delayed_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _delayed_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that sleeps briefly, checking for cancellation."""
 
     async def _events():
-        if cancellation_signal.is_set():
+        if context._cancellation_signal.is_set():
             return
         await asyncio.sleep(0.25)
-        if cancellation_signal.is_set():
+        if context._cancellation_signal.is_set():
             return
         if False:  # pragma: no cover
             yield None
@@ -167,7 +167,7 @@ def _delayed_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits response.created then blocks until cancelled.
 
     Suitable for Phase 3 cancel tests: response_created_signal is set on the
@@ -182,7 +182,7 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
         )
         yield stream.emit_created()  # unblocks run_background
         # Block until cancelled
-        while not cancellation_signal.is_set():
+        while not context._cancellation_signal.is_set():
             await asyncio.sleep(0.01)
 
     return _events()
@@ -191,11 +191,11 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
 def _make_blocking_sync_handler(started_gate: EventGate, release_gate: threading.Event):
     """Factory for a handler that blocks on a gate, for testing concurrent GET/Cancel on in-flight sync requests."""
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             started_gate.signal(True)
             while not release_gate.is_set():
-                if cancellation_signal.is_set():
+                if context._cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
             if False:  # pragma: no cover
@@ -214,7 +214,7 @@ def _make_two_item_gated_handler(
 ):
     """Factory for a handler that emits two message output items with gates between them."""
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
             yield stream.emit_created()
@@ -232,7 +232,7 @@ def _make_two_item_gated_handler(
 
             item1_emitted.signal()
             while not item1_gate.is_set():
-                if cancellation_signal.is_set():
+                if context._cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
 
@@ -248,7 +248,7 @@ def _make_two_item_gated_handler(
 
             item2_emitted.signal()
             while not item2_gate.is_set():
-                if cancellation_signal.is_set():
+                if context._cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
 
@@ -510,12 +510,20 @@ class TestC1SyncStored:
         t.join(timeout=5.0)
 
     @pytest.mark.asyncio
-    async def test_e6_disconnect_then_get_returns_not_found(self) -> None:
-        """B17 — connection termination cancels non-bg; not persisted → GET 404.
+    async def test_e6_disconnect_then_get_returns_cancelled(self) -> None:
+        """B17 — non-bg disconnect with store=true → cancelled, retrievable.
 
-        Uses a real Hypercorn server so that TCP disconnect propagates correctly.
-        A sync (non-streaming) POST with a blocking handler is aborted mid-flight,
-        then GET /responses/{id} must return 404.
+        Per the foundry Responses behaviour contract (Rule B17):
+          - Non-bg disconnect transitions the response to ``status: cancelled``.
+          - With ``store=true``, the cancelled response becomes retrievable
+            (GET 200 + status=cancelled).
+          - With ``store=false`` (covered separately), GET returns 404.
+
+        Uses a real Hypercorn server so that TCP disconnect propagates
+        correctly. A sync (non-streaming) POST with a blocking handler
+        is aborted mid-flight; the persisted snapshot must surface as
+        cancelled via subsequent GET. Pre-spec-024 this test asserted
+        the inverse (404) — the prior behaviour violated B17.
         """
         from tests._helpers import hypercorn_server
 
@@ -524,7 +532,7 @@ class TestC1SyncStored:
         app = ResponsesAgentServerHost()
 
         @app.response_handler
-        def _handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
             async def _events():
                 handler_started.set()
                 # Block long enough for the client to disconnect
@@ -570,11 +578,20 @@ class TestC1SyncStored:
 
             await asyncio.sleep(1.0)
 
-            # Non-bg in-flight responses are not persisted → GET returns 404
+            # Non-bg disconnect with store=true → cancelled, retrievable (B17).
             get_resp = await client.get(f"/responses/{response_id}")
-            assert get_resp.status_code == 404, (
-                f"Expected 404 for disconnected non-bg sync response, got {get_resp.status_code}"
+            assert get_resp.status_code == 200, (
+                f"Expected 200 for cancelled non-bg sync response (store=true) "
+                f"per B17, got {get_resp.status_code}: {get_resp.text}"
             )
+            body = get_resp.json()
+            assert (
+                body.get("status") == "cancelled"
+            ), f"Expected status=cancelled per B17/B11, got {body.get('status')}: {body}"
+            # B11 point 2: cancelled response has empty output[].
+            assert (
+                body.get("output") == []
+            ), f"Expected empty output[] per B11 cancellation rules, got {body.get('output')}: {body}"
 
 
 # ════════════════════════════════════════════════════════════
@@ -616,11 +633,21 @@ class TestC2StreamStored:
     # E11 moved to test_cross_api_e2e_async.py (requires async ASGI client)
 
     @pytest.mark.asyncio
-    async def test_e12_stream_disconnect_then_get_returns_not_found(self) -> None:
-        """B17 — connection termination cancels non-bg streaming; not persisted → GET 404.
+    async def test_e12_stream_disconnect_then_get_returns_cancelled(self) -> None:
+        """B17 — connection termination cancels non-bg streaming.
 
-        Uses a real Hypercorn server. Client starts streaming, reads a few SSE
-        events to capture the response_id, then disconnects. GET should return 404.
+        Per the Responses API behaviour contract (Rule B17):
+          - Non-bg streaming client disconnect → response transitions to
+            ``status: "cancelled"`` following B11 rules.
+          - With ``store=true``, the cancelled response becomes
+            retrievable once the cancellation completes (GET returns 200
+            with ``status: "cancelled"`` and empty ``output``).
+          - With ``store=false`` (not exercised here), GET would return
+            404.
+
+        Uses a real Hypercorn server. Client starts streaming, reads a
+        few SSE events to capture the response_id, then disconnects.
+        GET should return 200 with status="cancelled".
         """
         from tests._helpers import hypercorn_server
 
@@ -629,7 +656,7 @@ class TestC2StreamStored:
         app = ResponsesAgentServerHost()
 
         @app.response_handler
-        def _handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
             async def _events():
                 stream = ResponseEventStream(
                     response_id=context.response_id,
@@ -679,10 +706,19 @@ class TestC2StreamStored:
             assert response_id is not None, "Should have captured response_id from SSE events"
             await asyncio.sleep(1.5)
 
-            # Non-bg streaming response cancelled by disconnect → not persisted → 404
+            # Non-bg streaming + store=true cancelled by disconnect → retrievable as cancelled (B17).
             get_resp = await client.get(f"/responses/{response_id}")
-            assert get_resp.status_code == 404, (
-                f"Expected 404 for disconnected non-bg streaming response, got {get_resp.status_code}"
+            assert get_resp.status_code == 200, (
+                f"Expected 200 for cancelled non-bg streaming response (store=true) "
+                f"per B17, got {get_resp.status_code}: {get_resp.text}"
+            )
+            body = get_resp.json()
+            assert (
+                body.get("status") == "cancelled"
+            ), f"Expected status=cancelled per B11/B17, got {body.get('status')}: {body}"
+            # B11 point 2: cancelled response has empty output[].
+            assert body.get("output") == [], (
+                f"Expected empty output[] per B11 cancellation rules, got " f"{body.get('output')}: {body}"
             )
 
 

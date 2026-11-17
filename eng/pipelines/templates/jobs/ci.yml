@@ -29,6 +29,12 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 60
+  - name: BuildTimeoutInMinutes
+    type: number
+    default: 90
+  - name: SbomGenerationTimeoutInMinutes
+    type: number
+    default: 30
   - name: InjectedPackages
     type: string
     default: ''
@@ -61,10 +67,26 @@ parameters:
   - name: EnvVars
     type: object
     default: {}
+  - name: InstallMsRustToolchain
+    type: boolean
+    default: false
+  - name: MsRustWorkingDirectory
+    type: string
+    default: ''
+  - name: MsRustToolchainFeed
+    type: string
+    default: ''
+  - name: MsRustAdditionalTargets
+    type: string
+    default: ''
 
 jobs:
   - job: 'Build_Linux'
-    timeoutInMinutes: 90
+    # Native multi-target builds retain a minimum 240-minute budget.
+    ${{ if and(parameters.InstallMsRustToolchain, lt(parameters.BuildTimeoutInMinutes, 240)) }}:
+      timeoutInMinutes: 240
+    ${{ else }}:
+      timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
 
     pool:
       name: $(LINUXPOOL)
@@ -86,11 +108,19 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: linux
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ExcludePaths: ${{parameters.ExcludePaths}}
+        InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+        MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_Windows'
-    timeoutInMinutes: 90
+    ${{ if and(parameters.InstallMsRustToolchain, lt(parameters.BuildTimeoutInMinutes, 240)) }}:
+      timeoutInMinutes: 240
+    ${{ else }}:
+      timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
 
     pool:
       name: $(WINDOWSPOOL)
@@ -105,16 +135,31 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: windows
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ExcludePaths: ${{parameters.ExcludePaths}}
+        InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+        MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_MacOS'
-    timeoutInMinutes: 90
+    ${{ if and(parameters.InstallMsRustToolchain, lt(parameters.BuildTimeoutInMinutes, 240)) }}:
+      timeoutInMinutes: 240
+    ${{ else }}:
+      timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
 
     pool:
       name: $(MACPOOL)
       vmImage: $(MACVMIMAGE)
       os: macOS
+
+    templateContext:
+      sdl:
+        codeql:
+          compiled:
+            enabled: false
+            justificationForDisabling: "Compiled language support is not available on macOS ARM64. See: https://eng.ms/docs/coreai/devdiv/one-engineering-system-1es/1es-docs/codeql/troubleshooting/onboarding/language-compiled#arm64-cpu-on-macos"
 
     steps:
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
@@ -124,8 +169,13 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: mac
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ExcludePaths: ${{parameters.ExcludePaths}}
+        InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+        MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_Extended'
     displayName: Build Extended
@@ -134,7 +184,7 @@ jobs:
       - 'Build_Windows'
       - 'Build_MacOS'
 
-    timeoutInMinutes: 90
+    timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
 
     pool:
       name: $(LINUXPOOL)
@@ -142,12 +192,13 @@ jobs:
       os: linux
 
     steps:
-    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-      parameters:
-        ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
-          TokenToUseForAuth: $(azuresdk-github-pat)
-        Paths:
-          - '**'
+    - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+      - checkout: self
+    - ${{ else }}:
+      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+        parameters:
+          Paths:
+            - '**'
 
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
@@ -163,6 +214,7 @@ jobs:
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         BuildDocs: false
         RunApiStubGen: true
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
 
@@ -173,7 +225,7 @@ jobs:
       - 'Build_Windows'
       - 'Build_MacOS'
 
-    timeoutInMinutes: 90
+    timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
 
     pool:
       name: $(LINUXPOOL)
@@ -181,12 +233,13 @@ jobs:
       os: linux
 
     steps:
-    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-      parameters:
-        ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
-          TokenToUseForAuth: $(azuresdk-github-pat)
-        Paths:
-          - '**'
+    - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+      - checkout: self
+    - ${{ else }}:
+      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+        parameters:
+          Paths:
+            - '**'
 
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
@@ -204,6 +257,7 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         RunApiStubGen: false
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
 
   - job: 'Analyze'
     condition: and(succeeded(), ne(variables['Skip.Analyze'], 'true'))
@@ -219,6 +273,12 @@ jobs:
       os: linux
 
     steps:
+    # APIView compares the PR source with origin/<target>, including their merge base.
+    - checkout: self
+      ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+        fetchDepth: 0
+        fetchTags: false
+
     - task: UsePythonVersion@0
       displayName: "Use Python $(PythonVersion)"
       condition: succeededOrFailed()
@@ -235,16 +295,6 @@ jobs:
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
       parameters:
         ContinueOnError: false
-
-    - template: /eng/common/pipelines/templates/steps/verify-links.yml
-      parameters:
-        ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-          Directory: ''
-          Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
-        ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-          Directory: sdk/${{ parameters.ServiceDirectory }}
-        CheckLinkGuidance: $true
-        Condition: succeededOrFailed()
 
     - task: DownloadPipelineArtifact@2
       condition: succeededOrFailed()
@@ -316,6 +366,7 @@ jobs:
         EnvVars: ${{ parameters.EnvVars }}
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestPipeline: ${{ parameters.TestPipeline }}
+        Artifacts: ${{ parameters.Artifacts }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
         AfterTestSteps: ${{ parameters.AfterTestSteps }}

@@ -5,15 +5,15 @@
 
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import CustomService, Docker
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Endpoint as RestEndpoint
-from azure.ai.ml._restclient.v2022_10_01_preview.models import EnvironmentVariable as RestEnvironmentVariable
-from azure.ai.ml._restclient.v2022_10_01_preview.models import EnvironmentVariableType as RestEnvironmentVariableType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Image as RestImage
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ImageType as RestImageType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Protocol
-from azure.ai.ml._restclient.v2022_10_01_preview.models import VolumeDefinition as RestVolumeDefinition
-from azure.ai.ml._restclient.v2022_10_01_preview.models import VolumeDefinitionType as RestVolumeDefinitionType
+from azure.ai.ml._restclient.arm_ml_service.models import CustomService, Docker
+from azure.ai.ml._restclient.arm_ml_service.models import Endpoint as RestEndpoint
+from azure.ai.ml._restclient.arm_ml_service.models import EnvironmentVariable as RestEnvironmentVariable
+from azure.ai.ml._restclient.arm_ml_service.models import EnvironmentVariableType as RestEnvironmentVariableType
+from azure.ai.ml._restclient.arm_ml_service.models import Image as RestImage
+from azure.ai.ml._restclient.arm_ml_service.models import ImageType as RestImageType
+from azure.ai.ml._restclient.arm_ml_service.models import Protocol
+from azure.ai.ml._restclient.arm_ml_service.models import VolumeDefinition as RestVolumeDefinition
+from azure.ai.ml._restclient.arm_ml_service.models import VolumeDefinitionType as RestVolumeDefinitionType
 from azure.ai.ml.constants._compute import DUPLICATE_APPLICATION_ERROR, INVALID_VALUE_ERROR, CustomApplicationDefaults
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
@@ -21,8 +21,8 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 class ImageSettings:
     """Specifies an image configuration for a Custom Application.
 
-    :param reference: Image reference URL.
-    :type reference: str
+    :keyword reference: Image reference URL.
+    :paramtype reference: str
     """
 
     def __init__(self, *, reference: str):
@@ -39,10 +39,10 @@ class ImageSettings:
 class EndpointsSettings:
     """Specifies an endpoint configuration for a Custom Application.
 
-    :param target: Application port inside the container.
-    :type target: int
-    :param published: Port over which the application is exposed from container.
-    :type published: int
+    :keyword target: Application port inside the container.
+    :paramtype target: int
+    :keyword published: Port over which the application is exposed from container.
+    :paramtype published: int
     """
 
     def __init__(self, *, target: int, published: int):
@@ -85,10 +85,10 @@ class EndpointsSettings:
 class VolumeSettings:
     """Specifies the Bind Mount settings for a Custom Application.
 
-    :param source: The host path of the mount.
-    :type source: str
-    :param target: The path in the container for the mount.
-    :type target: str
+    :keyword source: The host path of the mount.
+    :paramtype source: str
+    :keyword target: The path in the container for the mount.
+    :paramtype target: str
     """
 
     def __init__(self, *, source: str, target: str):
@@ -111,18 +111,18 @@ class VolumeSettings:
 class CustomApplications:
     """Specifies the custom service application configuration.
 
-    :param name: Name of the Custom Application.
-    :type name: str
-    :param image: Describes the Image Specifications.
-    :type image: ImageSettings
-    :param type: Type of the Custom Application.
-    :type type: Optional[str]
-    :param endpoints: Configuring the endpoints for the container.
-    :type endpoints: List[EndpointsSettings]
-    :param environment_variables: Environment Variables for the container.
-    :type environment_variables: Optional[Dict[str, str]]
-    :param bind_mounts: Configuration of the bind mounts for the container.
-    :type bind_mounts: Optional[List[VolumeSettings]]
+    :keyword name: Name of the Custom Application.
+    :paramtype name: str
+    :keyword image: Describes the Image Specifications.
+    :paramtype image: ImageSettings
+    :keyword type: Type of the Custom Application.
+    :paramtype type: Optional[str]
+    :keyword endpoints: Configuring the endpoints for the container.
+    :paramtype endpoints: List[EndpointsSettings]
+    :keyword environment_variables: Environment Variables for the container.
+    :paramtype environment_variables: Optional[Dict[str, str]]
+    :keyword bind_mounts: Configuration of the bind mounts for the container.
+    :paramtype bind_mounts: Optional[List[VolumeSettings]]
     """
 
     def __init__(
@@ -160,15 +160,19 @@ class CustomApplications:
         if self.bind_mounts:
             volumes = [volume._to_rest_object() for volume in self.bind_mounts]
 
-        return CustomService(
+        custom_service = CustomService(
             name=self.name,
             image=self.image._to_rest_object(),
             endpoints=endpoints,
             environment_variables=environment_variables,
             volumes=volumes,
             docker=Docker(privileged=True),
-            additional_properties={**{"type": self.type}, **self.additional_properties},
         )
+        # ``type`` and any extra fields are not typed on the arm model; set them as wire fields.
+        custom_service["type"] = self.type
+        for key, value in self.additional_properties.items():
+            custom_service[key] = value
+        return custom_service
 
     @classmethod
     def _from_rest_object(cls, obj: CustomService) -> "CustomApplications":
@@ -187,14 +191,18 @@ class CustomApplications:
             for volume in obj.volumes:
                 bind_mounts.append(VolumeSettings._from_rest_object(volume))
 
+        # ``type`` and extra keys are stored as untyped wire fields on the arm model.
+        known_wire_fields = {"name", "image", "endpoints", "environmentVariables", "volumes", "docker"}
+        additional_properties = {key: value for key, value in dict(obj).items() if key not in known_wire_fields}
+
         return CustomApplications(
             name=obj.name,
             image=ImageSettings._from_rest_object(obj.image),
             endpoints=endpoints,
             environment_variables=environment_variables,
             bind_mounts=bind_mounts,
-            type=obj.additional_properties.pop("type", CustomApplicationDefaults.DOCKER),
-            **obj.additional_properties,
+            type=additional_properties.pop("type", CustomApplicationDefaults.DOCKER),
+            **additional_properties,
         )
 
 

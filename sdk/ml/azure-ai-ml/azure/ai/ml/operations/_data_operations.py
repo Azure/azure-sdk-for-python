@@ -9,7 +9,8 @@ import time
 import uuid
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterable, List, Optional, Union, cast
+from typing import Any, Dict, Generator, Iterable, List, Optional, cast
+from urllib.parse import quote
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -19,14 +20,10 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
+from azure.ai.ml._azure_environments import _get_default_cloud_name
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
-)
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023_preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
-from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024_preview
-from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient042023_preview
+from azure.ai.ml._restclient.arm_ml_service.models import DataContainer, DataVersionBase, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -49,13 +46,19 @@ from azure.ai.ml._utils._data_utils import (
     read_remote_mltable_metadata_contents,
     validate_mltable_metadata,
 )
+from azure.ai.ml._utils._data_path_resolver import _DataPathResolver
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
+    begin_create_or_update_registry_versioned_asset,
+    begin_import_registry_asset,
     get_asset_body_for_registry_storage,
     get_registry_client,
+    get_registry_container_asset,
+    get_registry_versioned_asset,
     get_sas_uri_for_registry_asset,
+    list_registry_assets,
 )
 from azure.ai.ml._utils.utils import is_url
 from azure.ai.ml.constants._common import (
@@ -68,6 +71,7 @@ from azure.ai.ml.data_transfer import import_data as import_data_func
 from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._assets import Data, WorkspaceAssetReference
 from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
+from azure.ai.ml.entities._data.resolved_data_path import ResolvedDataPath
 from azure.ai.ml.entities._data_import.data_import import DataImport
 from azure.ai.ml.entities._inputs_outputs import Output
 from azure.ai.ml.entities._inputs_outputs.external_data import Database
@@ -82,6 +86,7 @@ from azure.ai.ml.exceptions import (
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
+from azure.core.rest import HttpRequest
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -99,11 +104,9 @@ class DataOperations(_ScopeDependentOperations):
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
-        resources (ServiceClient042023Preview or ServiceClient102021Dataplane).
-    :type service_client: typing.Union[
-        ~azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
-        ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
-        AzureMachineLearningWorkspaces]
+        resources.
+    :type service_client:
+        ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient
     :param datastore_operations: Represents a client for performing operations on Datastores.
     :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
     """
@@ -112,8 +115,7 @@ class DataOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient042023_preview, ServiceClient102021Dataplane],
-        service_client_012024_preview: ServiceClient012024_preview,
+        service_client: ServiceClient042023_preview,
         datastore_operations: DatastoreOperations,
         **kwargs: Any,
     ):
@@ -122,14 +124,53 @@ class DataOperations(_ScopeDependentOperations):
         self._operation = service_client.data_versions
         self._container_operation = service_client.data_containers
         self._datastore_operation = datastore_operations
-        self._compute_operation = service_client_012024_preview.compute
         self._service_client = service_client
+        self._registry_service_client = kwargs.pop("registry_service_client", None)
+        self._cloud = kwargs.pop("cloud", None) or _get_default_cloud_name()
         self._init_kwargs = kwargs
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
         self._all_operations: OperationsContainer = kwargs.pop("all_operations")
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
+
+    @monitor_with_activity(ops_logger, "Data.ResolvePath", ActivityType.PUBLICAPI)
+    @experimental
+    def resolve_path(self, path: str, *, follow_mltable: bool = True) -> ResolvedDataPath:
+        """Resolve an AML datastore URI to physical storage locations.
+
+        Supports short or fully qualified datastore URIs in this client's workspace.
+        Azure Blob returns HTTPS; ADLS Gen2 and OneLake return ABFSS. Blob-backed
+        MLTable definitions retain their sources and transformations as a tree.
+        The method does not read table rows, apply transformations, or generate SAS tokens.
+        Returned URIs do not carry the credentials used for resolution. Authenticate separately
+        when reading them. MLTable discovery is limited to Blob-backed definitions of at most
+        1 MiB and eight definition levels, with at most 1024 resolved paths per call.
+        Non-Blob source references and patterns are returned without discovery or expansion.
+        Authenticated discovery only accesses the configured Azure cloud's Blob endpoints;
+        custom endpoints require metadata-only resolution. Missing optional definitions
+        leave the location unchanged.
+
+        :param path: AML datastore path URI. Asset IDs are not accepted; pass a retrieved asset's path.
+        :type path: str
+        :keyword follow_mltable: Discover and follow Blob-backed MLTable definitions. Defaults to True.
+            Set to False for metadata-only resolution without storage access.
+        :paramtype follow_mltable: bool
+        :return: Resolved location, source tree, and preserved MLTable transformations.
+        :rtype: ~azure.ai.ml.entities.ResolvedDataPath
+        :raises ~azure.ai.ml.exceptions.ValidationException: Invalid path, unsupported datastore,
+            cross-workspace reference, malformed definition, or a reference cycle.
+        :raises ~azure.core.exceptions.HttpResponseError: Datastore or storage access fails.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_resolve_data_path.py
+                :start-after: [START resolve_data_path]
+                :end-before: [END resolve_data_path]
+                :language: python
+                :dedent: 4
+        """
+        return _DataPathResolver(self._datastore_operation, follow_mltable, cloud=self._cloud).resolve(path)
 
     @monitor_with_activity(ops_logger, "Data.List", ActivityType.PUBLICAPI)
     def list(
@@ -144,7 +185,7 @@ class DataOperations(_ScopeDependentOperations):
         :type name: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived data assets.
             Default: ACTIVE_ONLY.
-        :type list_view_type: Optional[ListViewType]
+        :paramtype list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Data objects
         :rtype: ~azure.core.paging.ItemPaged[Data]
 
@@ -159,12 +200,15 @@ class DataOperations(_ScopeDependentOperations):
         """
         if name:
             return (
-                self._operation.list(
-                    name=name,
-                    registry_name=self._registry_name,
-                    cls=lambda objs: [Data._from_rest_object(obj) for obj in objs],
+                list_registry_assets(
+                    self._registry_service_client,
+                    "data",
+                    name,
+                    self._resource_group_name,
+                    self._registry_name,
+                    DataVersionBase,
+                    Data._from_rest_object,
                     list_view_type=list_view_type,
-                    **self._scope_kwargs,
                 )
                 if self._registry_name
                 else self._operation.list(
@@ -176,11 +220,15 @@ class DataOperations(_ScopeDependentOperations):
                 )
             )
         return (
-            self._container_operation.list(
-                registry_name=self._registry_name,
-                cls=lambda objs: [Data._from_container_rest_object(obj) for obj in objs],
+            list_registry_assets(
+                self._registry_service_client,
+                "data",
+                None,
+                self._resource_group_name,
+                self._registry_name,
+                DataContainer,
+                Data._from_container_rest_object,
                 list_view_type=list_view_type,
-                **self._scope_kwargs,
             )
             if self._registry_name
             else self._container_operation.list(
@@ -194,12 +242,16 @@ class DataOperations(_ScopeDependentOperations):
     def _get(self, name: Optional[str], version: Optional[str] = None) -> Data:
         if version:
             return (
-                self._operation.get(
-                    name=name,
-                    version=version,
-                    registry_name=self._registry_name,
-                    **self._scope_kwargs,
-                    **self._init_kwargs,
+                DataVersionBase._deserialize(
+                    get_registry_versioned_asset(
+                        self._registry_service_client,
+                        "data",
+                        name,
+                        version,
+                        self._resource_group_name,
+                        self._registry_name,
+                    ),
+                    [],
                 )
                 if self._registry_name
                 else self._operation.get(
@@ -211,11 +263,15 @@ class DataOperations(_ScopeDependentOperations):
                 )
             )
         return (
-            self._container_operation.get(
-                name=name,
-                registry_name=self._registry_name,
-                **self._scope_kwargs,
-                **self._init_kwargs,
+            DataContainer._deserialize(
+                get_registry_container_asset(
+                    self._registry_service_client,
+                    "data",
+                    name,
+                    self._resource_group_name,
+                    self._registry_name,
+                ),
+                [],
             )
             if self._registry_name
             else self._container_operation.get(
@@ -321,11 +377,13 @@ class DataOperations(_ScopeDependentOperations):
                 # If the data asset is a workspace asset, promote to registry
                 if isinstance(data, WorkspaceAssetReference):
                     try:
-                        self._operation.get(
-                            name=data.name,
-                            version=data.version,
-                            resource_group_name=self._resource_group_name,
-                            registry_name=self._registry_name,
+                        get_registry_versioned_asset(
+                            self._registry_service_client,
+                            "data",
+                            data.name,
+                            data.version,
+                            self._resource_group_name,
+                            self._registry_name,
                         )
                     except Exception as err:  # pylint: disable=W0718
                         if isinstance(err, ResourceNotFoundError):
@@ -341,18 +399,19 @@ class DataOperations(_ScopeDependentOperations):
                             error_category=ErrorCategory.USER_ERROR,
                         )
                     data_res_obj = data._to_rest_object()
-                    result = self._service_client.resource_management_asset_reference.begin_import_method(
-                        resource_group_name=self._resource_group_name,
-                        registry_name=self._registry_name,
-                        body=data_res_obj,
-                    ).result()
+                    result = begin_import_registry_asset(
+                        self._registry_service_client,
+                        self._resource_group_name,
+                        self._registry_name,
+                        data_res_obj,
+                    )
 
                     if not result:
                         data_res_obj = self._get(name=data.name, version=data.version)
                         return Data._from_rest_object(data_res_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
-                    service_client=self._service_client,
+                    service_client=self._registry_service_client,
                     name=name,
                     version=version,
                     resource_group=self._resource_group_name,
@@ -388,25 +447,32 @@ class DataOperations(_ScopeDependentOperations):
                     **self._init_kwargs,
                 )
             else:
-                result = (
-                    self._operation.begin_create_or_update(
-                        name=name,
-                        version=version,
-                        registry_name=self._registry_name,
-                        body=data_version_resource,
-                        **self._scope_kwargs,
-                    ).result()
-                    if self._registry_name
-                    else self._operation.create_or_update(
+                if self._registry_name:
+                    registry_rest_obj = begin_create_or_update_registry_versioned_asset(
+                        self._registry_service_client,
+                        "data",
+                        name,
+                        version,
+                        self._operation_scope.resource_group_name,
+                        self._registry_name,
+                        data_version_resource,
+                    )
+                    # The registry create LRO can complete with an empty body; only deserialize a
+                    # non-None result, otherwise fall through to the re-fetch guard below (a bare
+                    # ``_deserialize(None, [])`` would raise ``'NoneType' object has no attribute 'items'``).
+                    result = DataVersionBase._deserialize(registry_rest_obj, []) if registry_rest_obj else None
+                else:
+                    result = self._operation.create_or_update(
                         name=name,
                         version=version,
                         workspace_name=self._workspace_name,
                         body=data_version_resource,
                         **self._scope_kwargs,
                     )
-                )
 
-            if not result and self._registry_name:
+            if self._registry_name and (result is None or getattr(result, "id", None) is None):
+                # The registry create LRO body can be incomplete (missing the asset id, which
+                # ``_from_rest_object`` parses via AMLVersionedArmId); re-fetch the full resource.
                 result = self._get(name=name, version=version)
 
             return Data._from_rest_object(result)
@@ -622,6 +688,9 @@ class DataOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             label=label,
+            asset_plural="data",
+            version_arm_cls=DataVersionBase,
+            container_arm_cls=DataContainer,
         )
 
     @monitor_with_activity(ops_logger, "Data.Restore", ActivityType.PUBLICAPI)
@@ -661,6 +730,9 @@ class DataOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             label=label,
+            asset_plural="data",
+            version_arm_cls=DataVersionBase,
+            container_arm_cls=DataContainer,
         )
 
     def _get_latest_version(self, name: str) -> Data:
@@ -678,6 +750,8 @@ class DataOperations(_ScopeDependentOperations):
             self._resource_group_name,
             self._workspace_name,
             self._registry_name,
+            registry_service_client=self._registry_service_client,
+            asset_plural="data",
         )
         return self.get(name, version=latest_version)
 
@@ -763,14 +837,14 @@ class DataOperations(_ScopeDependentOperations):
         :param path: The data asset path to mount, in the form of `azureml:<name>` or `azureml:<name>:<version>`.
         :type path: str
         :keyword mount_point: A local path used as mount point.
-        :type mount_point: str
+        :paramtype mount_point: str
         :keyword mode: Mount mode. Only `ro_mount` (read-only) is supported for data asset mount.
-        :type mode: str
+        :paramtype mode: str
         :keyword debug: Whether to enable verbose logging.
-        :type debug: bool
+        :paramtype debug: bool
         :keyword persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance,
                 where the 'CI_NAME' environment variable is set."
-        :type persistent: bool
+        :paramtype persistent: bool
         :return: None
         """
 
@@ -796,38 +870,62 @@ class DataOperations(_ScopeDependentOperations):
         )
         if persistent and ci_name is not None:
             mount_name = f"unified_mount_{str(uuid.uuid4()).replace('-', '')}"
-            self._compute_operation.update_data_mounts(
-                self._resource_group_name,
-                self._workspace_name,
-                ci_name,
-                [
-                    ComputeInstanceDataMount(
-                        source=uri,
-                        source_type="URI",
-                        mount_name=mount_name,
-                        mount_action="Mount",
-                        mount_path=mount_point or "",
-                    )
-                ],
-                api_version="2021-01-01",
-                **kwargs,
+            # The shared arm_ml_service client has no generated ``compute.update_data_mounts`` method
+            # (update-data-mounts is only modeled on the pinned 2021-01-01 data-plane api-version), so the
+            # request is issued directly via ``send_request``. The URL/body match the generated
+            # 2024-01-01-preview ``build_update_data_mounts_request`` byte-for-byte.
+            compute_url = (
+                "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/"
+                "Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}"
+            ).format(
+                subscriptionId=quote(self._operation_scope._subscription_id, safe=""),
+                resourceGroupName=quote(self._resource_group_name, safe=""),
+                workspaceName=quote(self._workspace_name, safe=""),
+                computeName=quote(ci_name, safe=""),
             )
+            update_request = HttpRequest(
+                method="POST",
+                url=compute_url + "/updateDataMounts",
+                params={"api-version": "2021-01-01"},
+                headers={"Content-Type": "application/json", "Accept": "application/json"},
+                json=[
+                    {
+                        "source": uri,
+                        "sourceType": "URI",
+                        "mountName": mount_name,
+                        "mountAction": "Mount",
+                        "mountPath": mount_point or "",
+                    }
+                ],
+            )
+            update_response = self._service_client.send_request(update_request, **kwargs)
+            if update_response.status_code != 200:
+                raise HttpResponseError(response=update_response)
             print(f"Mount requested [name: {mount_name}]. Waiting for completion ...")
             while True:
-                compute = self._compute_operation.get(self._resource_group_name, self._workspace_name, ci_name)
-                mounts = compute.properties.properties.data_mounts
+                get_request = HttpRequest(
+                    method="GET",
+                    url=compute_url,
+                    params={"api-version": "2024-01-01-preview"},
+                    headers={"Accept": "application/json"},
+                )
+                get_response = self._service_client.send_request(get_request)
+                if get_response.status_code != 200:
+                    raise HttpResponseError(response=get_response)
+                mounts = ((get_response.json().get("properties") or {}).get("properties") or {}).get("dataMounts") or []
                 try:
-                    mount = [mount for mount in mounts if mount.mount_name == mount_name][0]
-                    if mount.mount_state == "Mounted":
+                    mount = [mount for mount in mounts if mount.get("mountName") == mount_name][0]
+                    mount_state = mount.get("mountState")
+                    if mount_state == "Mounted":
                         print(f"Mounted [name: {mount_name}].")
                         break
-                    if mount.mount_state == "MountRequested":
+                    if mount_state == "MountRequested":
                         pass
-                    elif mount.mount_state == "MountFailed":
-                        msg = f"Mount failed [name: {mount_name}]: {mount.error}"
+                    elif mount_state == "MountFailed":
+                        msg = f"Mount failed [name: {mount_name}]: {mount.get('error')}"
                         raise MlException(message=msg, no_personal_data_message=msg)
                     else:
-                        msg = f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}"
+                        msg = f"Got unexpected mount state [name: {mount_name}]: {mount_state}"
                         raise MlException(message=msg, no_personal_data_message=msg)
                 except IndexError:
                     pass
@@ -850,16 +948,18 @@ class DataOperations(_ScopeDependentOperations):
         sub_ = self._operation_scope._subscription_id
         registry_ = self._operation_scope.registry_name
         client_ = self._service_client
+        registry_service_client_ = self._registry_service_client
         data_versions_operation_ = self._operation
 
         try:
-            _client, _rg, _sub, _model_client = get_registry_client(
+            _client, _rg, _sub, _model_client, _arm_client = get_registry_client(
                 self._service_client._config.credential, registry_name
             )
             self._operation_scope.registry_name = registry_name
             self._operation_scope._resource_group_name = _rg
             self._operation_scope._subscription_id = _sub
             self._service_client = _client
+            self._registry_service_client = _arm_client
             self._operation = _client.data_versions
             yield
         finally:
@@ -867,6 +967,7 @@ class DataOperations(_ScopeDependentOperations):
             self._operation_scope._resource_group_name = rg_
             self._operation_scope._subscription_id = sub_
             self._service_client = client_
+            self._registry_service_client = registry_service_client_
             self._operation = data_versions_operation_
 
 

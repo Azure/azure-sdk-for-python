@@ -16,10 +16,16 @@
         "azure.mgmt.edgezones.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
         "azure.mgmt.edgezones.models.ProvisioningState": "Microsoft.EdgeZones.ProvisioningState",
         "azure.mgmt.edgezones.models.RegistrationState": "Microsoft.EdgeZones.RegistrationState",
-        "azure.mgmt.edgezones.EdgeZonesMgmtClient.operations.list": "Azure.ResourceManager.Operations.list",
-        "azure.mgmt.edgezones.EdgeZonesMgmtClient.extended_zones.get": "Microsoft.EdgeZones.ExtendedZones.get",
-        "azure.mgmt.edgezones.EdgeZonesMgmtClient.extended_zones.list_by_subscription": "Microsoft.EdgeZones.ExtendedZones.listBySubscription",
-        "azure.mgmt.edgezones.EdgeZonesMgmtClient.extended_zones.register": "Microsoft.EdgeZones.ExtendedZones.register",
-        "azure.mgmt.edgezones.EdgeZonesMgmtClient.extended_zones.unregister": "Microsoft.EdgeZones.ExtendedZones.unregister"
-    }
+        "azure.mgmt.edgezones.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.edgezones.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.edgezones.operations.ExtendedZonesOperations.get": "Microsoft.EdgeZones.ExtendedZones.get",
+        "azure.mgmt.edgezones.aio.operations.ExtendedZonesOperations.get": "Microsoft.EdgeZones.ExtendedZones.get",
+        "azure.mgmt.edgezones.operations.ExtendedZonesOperations.list_by_subscription": "Microsoft.EdgeZones.ExtendedZones.listBySubscription",
+        "azure.mgmt.edgezones.aio.operations.ExtendedZonesOperations.list_by_subscription": "Microsoft.EdgeZones.ExtendedZones.listBySubscription",
+        "azure.mgmt.edgezones.operations.ExtendedZonesOperations.register": "Microsoft.EdgeZones.ExtendedZones.register",
+        "azure.mgmt.edgezones.aio.operations.ExtendedZonesOperations.register": "Microsoft.EdgeZones.ExtendedZones.register",
+        "azure.mgmt.edgezones.operations.ExtendedZonesOperations.unregister": "Microsoft.EdgeZones.ExtendedZones.unregister",
+        "azure.mgmt.edgezones.aio.operations.ExtendedZonesOperations.unregister": "Microsoft.EdgeZones.ExtendedZones.unregister"
+    },
+    "CrossLanguageVersion": "cebec8fdf5a4"
 }

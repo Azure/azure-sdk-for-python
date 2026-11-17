@@ -7,7 +7,7 @@ from itertools import starmap
 from typing import Any, Dict, List, TypedDict, Tuple, Optional, Union
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
-from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from typing_extensions import override, overload
 
 RetrievalGroundTruthDocument = TypedDict(
@@ -69,16 +69,29 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         self.k = 3
         self.xdcg_discount_factor = 0.6
 
-        if ground_truth_label_min >= ground_truth_label_max:
+        if not isinstance(ground_truth_label_min, int):
             raise EvaluationException(
-                "The ground truth label maximum must be strictly greater than the ground truth label minimum."
+                message="The ground truth label minimum must be an integer value.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.DOCUMENT_RETRIEVAL_EVALUATOR,
             )
 
-        if not isinstance(ground_truth_label_min, int):
-            raise EvaluationException("The ground truth label minimum must be an integer value.")
-
         if not isinstance(ground_truth_label_max, int):
-            raise EvaluationException("The ground truth label maximum must be an integer value.")
+            raise EvaluationException(
+                message="The ground truth label maximum must be an integer value.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.DOCUMENT_RETRIEVAL_EVALUATOR,
+            )
+
+        if ground_truth_label_min >= ground_truth_label_max:
+            raise EvaluationException(
+                message="The ground truth label maximum must be strictly greater than the ground truth label minimum.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.DOCUMENT_RETRIEVAL_EVALUATOR,
+            )
 
         self.ground_truth_label_min = ground_truth_label_min
         self.ground_truth_label_max = ground_truth_label_max
@@ -229,7 +242,12 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
                 result[f"{metric_name}_higher_is_better"] = False
 
             else:
-                raise ValueError(f"No threshold set for metric '{metric_name}'")
+                raise EvaluationException(
+                    message=f"No threshold set for metric '{metric_name}'",
+                    blame=ErrorBlame.SYSTEM_ERROR,
+                    category=ErrorCategory.FAILED_EXECUTION,
+                    target=ErrorTarget.DOCUMENT_RETRIEVAL_EVALUATOR,
+                )
 
         return result
 
@@ -249,10 +267,13 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         # if the qrels are empty, no meaningful evaluation is possible
         if not retrieval_ground_truth:
             raise EvaluationException(
-                (
+                message=(
                     "'retrieval_ground_truth' parameter must contain at least one item. "
                     "Check your data input to be sure that each input record has ground truth defined."
-                )
+                ),
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.DOCUMENT_RETRIEVAL_EVALUATOR,
             )
 
         qrels = []
@@ -264,32 +285,46 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
 
             if document_id is None or query_relevance_label is None:
                 raise EvaluationException(
-                    (
+                    message=(
                         "Invalid input data was found in the retrieval ground truth. "
                         "Ensure that all items in the 'retrieval_ground_truth' array contain "
                         "'document_id' and 'query_relevance_label' properties."
-                    )
+                    ),
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.MISSING_FIELD,
+                    target=ErrorTarget.DOCUMENT_RETRIEVAL_EVALUATOR,
                 )
 
             if not isinstance(query_relevance_label, int):
-                raise EvaluationException("Query relevance labels must be integer values.")
+                raise EvaluationException(
+                    message="Query relevance labels must be integer values.",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.DOCUMENT_RETRIEVAL_EVALUATOR,
+                )
 
             if query_relevance_label < self.ground_truth_label_min:
                 raise EvaluationException(
-                    (
+                    message=(
                         "A query relevance label less than the configured minimum value was detected in the evaluation input data. "
                         "Check the range of ground truth label values in the input data and set the value of ground_truth_label_min to "
                         "the appropriate value for your data."
-                    )
+                    ),
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.DOCUMENT_RETRIEVAL_EVALUATOR,
                 )
 
             if query_relevance_label > self.ground_truth_label_max:
                 raise EvaluationException(
-                    (
+                    message=(
                         "A query relevance label greater than the configured maximum value was detected in the evaluation input data. "
                         "Check the range of ground truth label values in the input data and set the value of ground_truth_label_max to "
                         "the appropriate value for your data."
-                    )
+                    ),
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.DOCUMENT_RETRIEVAL_EVALUATOR,
                 )
 
             qrels.append(qrel)
@@ -304,21 +339,32 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
 
                 if document_id is None or relevance_score is None:
                     raise EvaluationException(
-                        (
+                        message=(
                             "Invalid input data was found in the retrieved documents. "
                             "Ensure that all items in the 'retrieved_documents' array contain "
                             "'document_id' and 'relevance_score' properties."
-                        )
+                        ),
+                        blame=ErrorBlame.USER_ERROR,
+                        category=ErrorCategory.MISSING_FIELD,
+                        target=ErrorTarget.DOCUMENT_RETRIEVAL_EVALUATOR,
                     )
 
                 if not isinstance(relevance_score, float) and not isinstance(relevance_score, int):
-                    raise EvaluationException("Retrieved document relevance score must be a numerical value.")
+                    raise EvaluationException(
+                        message="Retrieved document relevance score must be a numerical value.",
+                        blame=ErrorBlame.USER_ERROR,
+                        category=ErrorCategory.INVALID_VALUE,
+                        target=ErrorTarget.DOCUMENT_RETRIEVAL_EVALUATOR,
+                    )
 
                 results.append(result)
 
         if len(qrels) > 10000 or len(results) > 10000:
             raise EvaluationException(
-                "'retrieval_ground_truth' and 'retrieved_documents' inputs should contain no more than 10000 items."
+                message="'retrieval_ground_truth' and 'retrieved_documents' inputs should contain no more than 10000 items.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.DOCUMENT_RETRIEVAL_EVALUATOR,
             )
 
         return qrels, results

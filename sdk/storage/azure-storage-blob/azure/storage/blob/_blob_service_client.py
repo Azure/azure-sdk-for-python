@@ -78,18 +78,31 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         Defaults to 4*1024*1024, or 4MB.
     :keyword int max_single_put_size: If the blob size is less than or equal max_single_put_size, then the blob will be
         uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
-        the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+        the blob will be uploaded in chunks. Defaults to 4*1024*1024, or 4MB.
     :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
         algorithm when uploading a block blob. Defaults to 4*1024*1024+1.
     :keyword bool use_byte_buffer: Use a byte buffer for block blob uploads. Defaults to False.
     :keyword int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
     :keyword int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
-        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 4*1024*1024, or 4MB.
     :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
         authentication. Only has an effect when credential is of type TokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+    :keyword bool use_session: If True, enable session-based authentication for this container.
+        When enabled, eligible GET requests issued by this client will be authenticated using
+        a short-lived session credential obtained from the service instead
+        of the provided TokenCredential. Only supported with a TokenCredential;
+        ValueError is raised otherwise. Defaults to False.
+    :keyword session_provider: Creates, caches, and invalidates the session credentials used for
+        session-based authentication. Supply a shared instance to reuse the session cache across
+        multiple clients; when omitted, one is created and scoped to this client. Only has an
+        effect when `use_session` is True.
+    :paramtype session_provider: ~azure.storage.blob.SessionProvider
+    :keyword str session_account_name: The storage account name used to sign session-authenticated
+        requests. If omitted, it is derived from the account URL. Required when using a custom
+        endpoint, where the account name cannot be determined from the URL.
 
     .. admonition:: Example:
 
@@ -120,7 +133,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, get_api_version(kwargs), base_url=self.url, pipeline=self._pipeline)
+        self._client = AzureBlobStorage(self.url, version=get_api_version(kwargs), pipeline=self._pipeline)
         self._configure_encryption(kwargs)
 
     def __enter__(self) -> Self:
@@ -189,13 +202,13 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             Defaults to 4*1024*1024, or 4MB.
         :keyword int max_single_put_size: If the blob size is less than or equal max_single_put_size, then the blob will
             be uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
-            the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+            the blob will be uploaded in chunks. Defaults to 4*1024*1024, or 4MB.
         :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
             algorithm when uploading a block blob. Defaults to 4*1024*1024+1.
         :keyword bool use_byte_buffer: Use a byte buffer for block blob uploads. Defaults to False.
         :keyword int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
         :keyword int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
-            the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+            the exceeded part will be downloaded in chunks (could be parallel). Defaults to 4*1024*1024, or 4MB.
         :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
             or 4MB.
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
@@ -363,7 +376,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def set_service_properties(
+    def set_service_properties(  # pylint: disable=protected-access
         self,
         analytics_logging: Optional["BlobAnalyticsLogging"] = None,
         hour_metrics: Optional["Metrics"] = None,
@@ -440,13 +453,23 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             raise ValueError("set_service_properties should be called with at least one parameter")
 
         props = StorageServiceProperties(
-            logging=analytics_logging,
-            hour_metrics=hour_metrics,
-            minute_metrics=minute_metrics,
+            logging=(
+                analytics_logging._to_generated() if analytics_logging else None
+            ),  # pylint: disable=protected-access
+            hour_metrics=hour_metrics._to_generated() if hour_metrics else None,  # pylint: disable=protected-access
+            minute_metrics=(
+                minute_metrics._to_generated() if minute_metrics else None  # pylint: disable=protected-access
+            ),
             cors=CorsRule._to_generated(cors),  # pylint: disable=protected-access
             default_service_version=target_version,
-            delete_retention_policy=delete_retention_policy,
-            static_website=static_website,
+            delete_retention_policy=(
+                delete_retention_policy._to_generated()  # pylint: disable=protected-access
+                if delete_retention_policy
+                else None
+            ),
+            static_website=(
+                static_website._to_generated() if static_website else None
+            ),  # pylint: disable=protected-access
         )
         timeout = kwargs.pop("timeout", None)
         try:
@@ -616,6 +639,16 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         The container and any blobs contained within it are later deleted during garbage collection.
         If the container is not found, a ResourceNotFoundError will be raised.
 
+        When a container is deleted, a container with the same name can't be created
+        for at least 30 seconds.  The container might not be available for more than
+        30 seconds if the service is still processing the request.  While the container
+        is being deleted, attempts to create a container of the same name fail with
+        status code 409 (Conflict).  The service indicates that the container is being
+        deleted.  Operations on blobs within the container, including reads and writes,
+        may continue to succeed for up to 30 seconds after the delete request is
+        accepted.  After this period, all operations on the container and its blobs
+        fail with status code 404 (Not Found).
+
         :param container:
             The container to delete. This can either be the name of the container,
             or an instance of ContainerProperties.
@@ -695,7 +728,9 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         except AttributeError:
             kwargs["source_lease_id"] = lease
         try:
-            renamed_container._client.container.rename(name, **kwargs)  # pylint: disable = protected-access
+            renamed_container._client.container.rename(  # pylint: disable=protected-access
+                source_container_name=name, **kwargs
+            )
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)

@@ -25,7 +25,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
         response = self.client.virtual_network_taps.get(
             resource_group_name=resource_group.name,
             tap_name="str",
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -48,6 +48,8 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                         "id": "str",
                         "name": "str",
                         "properties": {
+                            "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                            "enableConnectionTracking": bool,
                             "gatewayLoadBalancer": {"id": "str"},
                             "inboundNatPools": [{"id": "str"}],
                             "inboundNatRules": [{"id": "str"}],
@@ -64,7 +66,11 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                 "location": "str",
                                 "name": "str",
                                 "properties": {
-                                    "ddosSettings": {"ddosProtectionPlan": {"id": "str"}, "protectionMode": "str"},
+                                    "ddosSettings": {
+                                        "ddosCustomPolicy": {"id": "str"},
+                                        "ddosProtectionPlan": {"id": "str"},
+                                        "protectionMode": "str",
+                                    },
                                     "deleteOption": "str",
                                     "dnsSettings": {
                                         "domainNameLabel": "str",
@@ -442,6 +448,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -468,6 +475,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -488,6 +498,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -578,6 +591,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                                             "type": "str",
                                                                                                         }
                                                                                                     ],
+                                                                                                    "billingSku": "str",
                                                                                                     "customDnsConfigs": [
                                                                                                         {
                                                                                                             "fqdn": "str",
@@ -606,6 +620,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -630,6 +647,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -774,6 +794,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "billingSku": "str",
                                                                 "customDnsConfigs": [
                                                                     {"fqdn": "str", "ipAddresses": ["str"]}
                                                                 ],
@@ -797,6 +818,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -1279,6 +1303,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -1322,6 +1349,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                         "name": "str",
                                                         "properties": {
                                                             "disableBgpRoutePropagation": bool,
+                                                            "disablePeeringRoute": "str",
                                                             "provisioningState": "str",
                                                             "resourceGuid": "str",
                                                             "routes": [
@@ -1333,6 +1361,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                         "nextHopType": "str",
                                                                         "addressPrefix": "str",
                                                                         "hasBgpOverride": bool,
+                                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                         "nextHopIpAddress": "str",
                                                                         "provisioningState": "str",
                                                                     },
@@ -1406,7 +1435,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                             },
                                         },
                                     },
-                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                    "ipTags": [{"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}],
                                     "linkedPublicIPAddress": ...,
                                     "migrationPhase": "str",
                                     "natGateway": {
@@ -1416,6 +1445,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                         "name": "str",
                                         "properties": {
                                             "idleTimeoutInMinutes": 0,
+                                            "nat64": "str",
                                             "provisioningState": "str",
                                             "publicIpAddresses": [{"id": "str"}],
                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -1437,6 +1467,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                     "publicIPPrefix": {"id": "str"},
                                     "resourceGuid": "str",
                                     "servicePublicIPAddress": ...,
+                                    "upgradedToV2": bool,
                                 },
                                 "sku": {"name": "str", "tier": "str"},
                                 "tags": {"str": "str"},
@@ -1501,6 +1532,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                     "name": "str",
                                                     "properties": {
                                                         "ddosSettings": {
+                                                            "ddosCustomPolicy": {"id": "str"},
                                                             "ddosProtectionPlan": {"id": "str"},
                                                             "protectionMode": "str",
                                                         },
@@ -1514,7 +1546,13 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                         "idleTimeoutInMinutes": 0,
                                                         "ipAddress": "str",
                                                         "ipConfiguration": ...,
-                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                        "ipTags": [
+                                                            {
+                                                                "firstPartyServiceTagId": "str",
+                                                                "ipTagType": "str",
+                                                                "tag": "str",
+                                                            }
+                                                        ],
                                                         "linkedPublicIPAddress": ...,
                                                         "migrationPhase": "str",
                                                         "natGateway": {
@@ -1524,6 +1562,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                             "name": "str",
                                                             "properties": {
                                                                 "idleTimeoutInMinutes": 0,
+                                                                "nat64": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -1545,6 +1584,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                         "publicIPPrefix": {"id": "str"},
                                                         "resourceGuid": "str",
                                                         "servicePublicIPAddress": ...,
+                                                        "upgradedToV2": bool,
                                                     },
                                                     "sku": {"name": "str", "tier": "str"},
                                                     "tags": {"str": "str"},
@@ -1819,6 +1859,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -1844,7 +1885,11 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -1855,6 +1900,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -1884,6 +1930,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -1922,6 +1969,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "billingSku": "str",
                                                                 "customDnsConfigs": [
                                                                     {"fqdn": "str", "ipAddresses": ["str"]}
                                                                 ],
@@ -1945,6 +1993,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -1965,6 +2016,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -2046,6 +2100,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -2072,6 +2127,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -2092,6 +2150,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -2232,6 +2293,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                         "type": "str",
                                                     }
                                                 ],
+                                                "billingSku": "str",
                                                 "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                 "customNetworkInterfaceName": "str",
                                                 "ipConfigurations": [
@@ -2253,6 +2315,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "approvalReference": {"privateEndpointId": "str"},
                                                             "groupIds": ["str"],
                                                             "privateLinkServiceConnectionState": {
                                                                 "actionsRequired": "str",
@@ -2430,6 +2493,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -2455,7 +2519,11 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -2466,6 +2534,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -2497,6 +2566,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -2761,6 +2831,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "approvalReference": {"privateEndpointId": "str"},
                                                             "groupIds": ["str"],
                                                             "privateLinkServiceConnectionState": {
                                                                 "actionsRequired": "str",
@@ -2804,6 +2875,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                         "name": "str",
                                         "properties": {
                                             "disableBgpRoutePropagation": bool,
+                                            "disablePeeringRoute": "str",
                                             "provisioningState": "str",
                                             "resourceGuid": "str",
                                             "routes": [
@@ -2815,6 +2887,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                         "nextHopType": "str",
                                                         "addressPrefix": "str",
                                                         "hasBgpOverride": bool,
+                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                         "nextHopIpAddress": "str",
                                                         "provisioningState": "str",
                                                     },
@@ -3003,7 +3076,11 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                 "location": "str",
                                 "name": "str",
                                 "properties": {
-                                    "ddosSettings": {"ddosProtectionPlan": {"id": "str"}, "protectionMode": "str"},
+                                    "ddosSettings": {
+                                        "ddosCustomPolicy": {"id": "str"},
+                                        "ddosProtectionPlan": {"id": "str"},
+                                        "protectionMode": "str",
+                                    },
                                     "deleteOption": "str",
                                     "dnsSettings": {
                                         "domainNameLabel": "str",
@@ -3227,6 +3304,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -3253,6 +3331,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -3273,6 +3354,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -3332,6 +3416,12 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
+                                                                                            "enableConnectionTracking": bool,
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -3395,6 +3485,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                                             "type": "str",
                                                                                                         }
                                                                                                     ],
+                                                                                                    "billingSku": "str",
                                                                                                     "customDnsConfigs": [
                                                                                                         {
                                                                                                             "fqdn": "str",
@@ -3423,6 +3514,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -3447,6 +3541,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -3591,6 +3688,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "billingSku": "str",
                                                                 "customDnsConfigs": [
                                                                     {"fqdn": "str", "ipAddresses": ["str"]}
                                                                 ],
@@ -3614,6 +3712,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -3889,6 +3990,12 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    }
+                                                                                                },
+                                                                                                "enableConnectionTracking": bool,
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -3974,6 +4081,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -4017,6 +4127,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                         "name": "str",
                                                         "properties": {
                                                             "disableBgpRoutePropagation": bool,
+                                                            "disablePeeringRoute": "str",
                                                             "provisioningState": "str",
                                                             "resourceGuid": "str",
                                                             "routes": [
@@ -4028,6 +4139,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                         "nextHopType": "str",
                                                                         "addressPrefix": "str",
                                                                         "hasBgpOverride": bool,
+                                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                         "nextHopIpAddress": "str",
                                                                         "provisioningState": "str",
                                                                     },
@@ -4101,7 +4213,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                             },
                                         },
                                     },
-                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                    "ipTags": [{"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}],
                                     "linkedPublicIPAddress": ...,
                                     "migrationPhase": "str",
                                     "natGateway": {
@@ -4111,6 +4223,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                         "name": "str",
                                         "properties": {
                                             "idleTimeoutInMinutes": 0,
+                                            "nat64": "str",
                                             "provisioningState": "str",
                                             "publicIpAddresses": [{"id": "str"}],
                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -4132,6 +4245,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                     "publicIPPrefix": {"id": "str"},
                                     "resourceGuid": "str",
                                     "servicePublicIPAddress": ...,
+                                    "upgradedToV2": bool,
                                 },
                                 "sku": {"name": "str", "tier": "str"},
                                 "tags": {"str": "str"},
@@ -4195,6 +4309,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                     "name": "str",
                                                     "properties": {
                                                         "ddosSettings": {
+                                                            "ddosCustomPolicy": {"id": "str"},
                                                             "ddosProtectionPlan": {"id": "str"},
                                                             "protectionMode": "str",
                                                         },
@@ -4208,7 +4323,13 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                         "idleTimeoutInMinutes": 0,
                                                         "ipAddress": "str",
                                                         "ipConfiguration": ...,
-                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                        "ipTags": [
+                                                            {
+                                                                "firstPartyServiceTagId": "str",
+                                                                "ipTagType": "str",
+                                                                "tag": "str",
+                                                            }
+                                                        ],
                                                         "linkedPublicIPAddress": ...,
                                                         "migrationPhase": "str",
                                                         "natGateway": {
@@ -4218,6 +4339,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                             "name": "str",
                                                             "properties": {
                                                                 "idleTimeoutInMinutes": 0,
+                                                                "nat64": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -4239,6 +4361,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                         "publicIPPrefix": {"id": "str"},
                                                         "resourceGuid": "str",
                                                         "servicePublicIPAddress": ...,
+                                                        "upgradedToV2": bool,
                                                     },
                                                     "sku": {"name": "str", "tier": "str"},
                                                     "tags": {"str": "str"},
@@ -4404,6 +4527,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "billingSku": "str",
                                                                 "customDnsConfigs": [
                                                                     {"fqdn": "str", "ipAddresses": ["str"]}
                                                                 ],
@@ -4427,6 +4551,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -4447,6 +4574,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -4501,6 +4631,10 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"}
+                                                                            },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -4521,6 +4655,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -4549,6 +4686,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -4562,6 +4700,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -4595,6 +4734,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -4640,6 +4780,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -4666,6 +4807,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -4686,6 +4830,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -4826,6 +4973,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                         "type": "str",
                                                     }
                                                 ],
+                                                "billingSku": "str",
                                                 "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                 "customNetworkInterfaceName": "str",
                                                 "ipConfigurations": [
@@ -4847,6 +4995,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "approvalReference": {"privateEndpointId": "str"},
                                                             "groupIds": ["str"],
                                                             "privateLinkServiceConnectionState": {
                                                                 "actionsRequired": "str",
@@ -5087,6 +5236,10 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"}
+                                                                                },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -5107,6 +5260,9 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -5135,6 +5291,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -5148,6 +5305,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -5183,6 +5341,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -5253,6 +5412,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "approvalReference": {"privateEndpointId": "str"},
                                                             "groupIds": ["str"],
                                                             "privateLinkServiceConnectionState": {
                                                                 "actionsRequired": "str",
@@ -5296,6 +5456,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                         "name": "str",
                                         "properties": {
                                             "disableBgpRoutePropagation": bool,
+                                            "disablePeeringRoute": "str",
                                             "provisioningState": "str",
                                             "resourceGuid": "str",
                                             "routes": [
@@ -5307,6 +5468,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                                                         "nextHopType": "str",
                                                         "addressPrefix": "str",
                                                         "hasBgpOverride": bool,
+                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                         "nextHopIpAddress": "str",
                                                         "provisioningState": "str",
                                                     },
@@ -5398,7 +5560,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5411,7 +5573,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             tap_name="str",
             tap_parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5423,7 +5585,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
         response = self.client.virtual_network_taps.begin_delete(
             resource_group_name=resource_group.name,
             tap_name="str",
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5434,7 +5596,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
     def test_virtual_network_taps_list_by_resource_group(self, resource_group):
         response = self.client.virtual_network_taps.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -5444,7 +5606,7 @@ class TestNetworkManagementVirtualNetworkTapsOperations(AzureMgmtRecordedTestCas
     @recorded_by_proxy
     def test_virtual_network_taps_list_all(self, resource_group):
         response = self.client.virtual_network_taps.list_all(
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

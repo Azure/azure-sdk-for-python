@@ -138,6 +138,7 @@ def main():
                                                     }
                                                 ],
                                                 "primary": True,
+                                                "privateIPAddressPrefixLength": 28,
                                                 "privateIPAddressVersion": "IPv4",
                                                 "publicIPAddressConfiguration": {
                                                     "name": "a",
@@ -266,6 +267,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-04-01/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

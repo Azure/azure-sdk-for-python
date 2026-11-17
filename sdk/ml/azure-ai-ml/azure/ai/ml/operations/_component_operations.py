@@ -14,11 +14,8 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union, cast
 
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
-)
-from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024
-from azure.ai.ml._restclient.v2024_01_01_preview.models import ComponentVersion, ListViewType
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient012024
+from azure.ai.ml._restclient.arm_ml_service.models import ComponentContainer, ComponentVersion, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -26,6 +23,11 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
+from azure.ai.ml._utils._registry_utils import (
+    begin_create_or_update_registry_versioned_asset,
+    get_registry_versioned_asset,
+    list_registry_assets,
+)
 from azure.ai.ml._utils._asset_utils import (
     IgnoreFile,
     _archive_or_restore,
@@ -85,9 +87,8 @@ class ComponentOperations(_ScopeDependentOperations):
     :param operation_config: The operation configuration.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: The service client for API operations.
-    :type service_client: Union[
-        ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient,
-        ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview.AzureMachineLearningWorkspaces]
+    :type service_client:
+        ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient
     :param all_operations: The container for all available operations.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     :param preflight_operation: The preflight operation for deployments.
@@ -100,7 +101,7 @@ class ComponentOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient012024, ServiceClient102021Dataplane],
+        service_client: ServiceClient012024,
         all_operations: OperationsContainer,
         preflight_operation: Optional[DeploymentsOperations] = None,
         **kwargs: Dict,
@@ -110,6 +111,7 @@ class ComponentOperations(_ScopeDependentOperations):
         self._version_operation = service_client.component_versions
         self._preflight_operation = preflight_operation
         self._container_operation = service_client.component_containers
+        self._registry_service_client = kwargs.pop("registry_service_client", None)
         self._all_operations = all_operations
         self._init_args = kwargs
         # Maps a label to a function which given an asset name,
@@ -167,7 +169,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :type name: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived components.
             Default: ACTIVE_ONLY.
-        :type list_view_type: Optional[ListViewType]
+        :paramtype list_view_type: Optional[ListViewType]
         :return: An iterator like instance of component objects
         :rtype: ~azure.core.paging.ItemPaged[Component]
 
@@ -185,12 +187,14 @@ class ComponentOperations(_ScopeDependentOperations):
             return cast(
                 Iterable[Component],
                 (
-                    self._version_operation.list(
-                        name=name,
-                        resource_group_name=self._resource_group_name,
-                        registry_name=self._registry_name,
-                        **self._init_args,
-                        cls=lambda objs: [Component._from_rest_object(obj) for obj in objs],
+                    list_registry_assets(
+                        self._registry_service_client,
+                        "components",
+                        name,
+                        self._resource_group_name,
+                        self._registry_name,
+                        ComponentVersion,
+                        Component._from_rest_object,
                     )
                     if self._registry_name
                     else self._version_operation.list(
@@ -206,11 +210,14 @@ class ComponentOperations(_ScopeDependentOperations):
         return cast(
             Iterable[Component],
             (
-                self._container_operation.list(
-                    resource_group_name=self._resource_group_name,
-                    registry_name=self._registry_name,
-                    **self._init_args,
-                    cls=lambda objs: [Component._from_container_rest_object(obj) for obj in objs],
+                list_registry_assets(
+                    self._registry_service_client,
+                    "components",
+                    None,
+                    self._resource_group_name,
+                    self._registry_name,
+                    ComponentContainer,
+                    Component._from_container_rest_object,
                 )
                 if self._registry_name
                 else self._container_operation.list(
@@ -235,12 +242,16 @@ class ComponentOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.ComponentVersion
         """
         result = (
-            self._version_operation.get(
-                name=name,
-                version=version,
-                resource_group_name=self._resource_group_name,
-                registry_name=self._registry_name,
-                **self._init_args,
+            ComponentVersion._deserialize(
+                get_registry_versioned_asset(
+                    self._registry_service_client,
+                    "components",
+                    name,
+                    version,
+                    self._resource_group_name,
+                    self._registry_name,
+                ),
+                [],
             )
             if self._registry_name
             else self._version_operation.get(
@@ -518,21 +529,17 @@ class ComponentOperations(_ScopeDependentOperations):
         try:
             if self._registry_name:
                 start_time = time.time()
-                path_format_arguments = {
-                    "componentName": component.name,
-                    "resourceGroupName": self._resource_group_name,
-                    "registryName": self._registry_name,
-                }
-                poller = self._version_operation.begin_create_or_update(
-                    name=name,
-                    version=version,
-                    resource_group_name=self._operation_scope.resource_group_name,
-                    registry_name=self._registry_name,
-                    body=rest_component_resource,
-                    polling=AzureMLPolling(
-                        LROConfigurations.POLL_INTERVAL,
-                        path_format_arguments=path_format_arguments,
-                    ),
+                poller = begin_create_or_update_registry_versioned_asset(
+                    self._registry_service_client,
+                    "components",
+                    name,
+                    version,
+                    self._operation_scope.resource_group_name,
+                    self._registry_name,
+                    rest_component_resource,
+                    polling_cls=AzureMLPolling,
+                    polling_interval=LROConfigurations.POLL_INTERVAL,
+                    wait=False,
                 )
                 message = f"Creating/updating registry component {component.name} with version {component.version} "
                 polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
@@ -626,6 +633,8 @@ class ComponentOperations(_ScopeDependentOperations):
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
                 registry_name=self._registry_name,
+                registry_service_client=self._registry_service_client,
+                asset_plural="components",
                 **self._init_args,
             )
 
@@ -731,6 +740,9 @@ class ComponentOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             label=label,
+            asset_plural="components",
+            version_arm_cls=ComponentVersion,
+            container_arm_cls=ComponentContainer,
         )
 
     @monitor_with_telemetry_mixin(ops_logger, "Component.Restore", ActivityType.PUBLICAPI)
@@ -768,6 +780,9 @@ class ComponentOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             label=label,
+            asset_plural="components",
+            version_arm_cls=ComponentVersion,
+            container_arm_cls=ComponentContainer,
         )
 
     def _get_latest_version(self, component_name: str) -> Component:
@@ -789,6 +804,9 @@ class ComponentOperations(_ScopeDependentOperations):
                 self._resource_group_name,
                 workspace_name=None,
                 registry_name=self._registry_name,
+                registry_service_client=self._registry_service_client,
+                asset_plural="components",
+                arm_cls=ComponentVersion,
             )
             if self._registry_name
             else _get_latest(

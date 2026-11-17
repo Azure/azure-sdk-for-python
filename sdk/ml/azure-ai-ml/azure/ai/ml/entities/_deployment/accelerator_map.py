@@ -12,12 +12,12 @@ class AcceleratorMap:
     """Accelerator map for a deployment template, describing the accelerator type
     and how many accelerators are needed per model instance.
 
-    :param accelerator_type: The type of accelerator (e.g. "H100_80GB", "H200_141GB", "A100_80GB").
-    :type accelerator_type: str
-    :param number_of_accelerators_per_model_instance: Number of accelerators per model instance.
-    :type number_of_accelerators_per_model_instance: int
-    :param default: Whether this is the default accelerator map for the deployment template.
-    :type default: bool
+    :keyword accelerator_type: The type of accelerator (e.g. "H100_80GB", "H200_141GB", "A100_80GB").
+    :paramtype accelerator_type: str
+    :keyword number_of_accelerators_per_model_instance: Number of accelerators per model instance.
+    :paramtype number_of_accelerators_per_model_instance: int
+    :keyword default: Whether this is the default accelerator map for the deployment template.
+    :paramtype default: bool
     """
 
     def __init__(  # pylint: disable=name-too-long

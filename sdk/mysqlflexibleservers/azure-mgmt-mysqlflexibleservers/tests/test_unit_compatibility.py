@@ -74,9 +74,7 @@ def test_azure_ad_administrators_begin_delete(mocker):
     mock_response.http_response.status_code = 200
     mock_response.http_response.headers = {}
 
-    mocker.patch.object(
-        client.azure_ad_administrators, "_delete_initial", return_value=mock_response
-    )
+    mocker.patch.object(client.azure_ad_administrators, "_delete_initial", return_value=mock_response)
 
     poller = client.azure_ad_administrators.begin_delete(
         resource_group_name="test-rg",
@@ -99,9 +97,7 @@ def test_backup_and_export_begin_create(mocker):
     mock_response.http_response.status_code = 200
     mock_response.http_response.headers = {}
 
-    mocker.patch.object(
-        client.backup_and_export, "_create_initial", return_value=mock_response
-    )
+    mocker.patch.object(client.backup_and_export, "_create_initial", return_value=mock_response)
 
     poller = client.backup_and_export.begin_create(
         resource_group_name="test-rg",
@@ -124,9 +120,7 @@ def test_configurations_begin_batch_update(mocker):
     mock_response.http_response.status_code = 200
     mock_response.http_response.headers = {}
 
-    mocker.patch.object(
-        client.configurations, "_batch_update_initial", return_value=mock_response
-    )
+    mocker.patch.object(client.configurations, "_batch_update_initial", return_value=mock_response)
 
     poller = client.configurations.begin_batch_update(
         resource_group_name="test-rg",
@@ -134,9 +128,7 @@ def test_configurations_begin_batch_update(mocker):
         parameters={},
     )
 
-    assert poller._polling_method._lro_options == {
-        "final-state-via": "azure-async-operation"
-    }
+    assert poller._polling_method._lro_options == {"final-state-via": "azure-async-operation"}
 
 
 def test_long_running_backup_begin_create(mocker):
@@ -151,9 +143,7 @@ def test_long_running_backup_begin_create(mocker):
     mock_response.http_response.status_code = 200
     mock_response.http_response.headers = {}
 
-    mocker.patch.object(
-        client.long_running_backup, "_create_initial", return_value=mock_response
-    )
+    mocker.patch.object(client.long_running_backup, "_create_initial", return_value=mock_response)
 
     poller = client.long_running_backup.begin_create(
         resource_group_name="test-rg",
@@ -162,9 +152,7 @@ def test_long_running_backup_begin_create(mocker):
         parameters={},
     )
 
-    assert poller._polling_method._lro_options == {
-        "final-state-via": "azure-async-operation"
-    }
+    assert poller._polling_method._lro_options == {"final-state-via": "azure-async-operation"}
 
 
 def test_servers_migration_begin_cutover_migration(mocker):
@@ -191,9 +179,7 @@ def test_servers_migration_begin_cutover_migration(mocker):
         parameters={},
     )
 
-    assert poller._polling_method._lro_options == {
-        "final-state-via": "azure-async-operation"
-    }
+    assert poller._polling_method._lro_options == {"final-state-via": "azure-async-operation"}
 
 
 def test_servers_begin_delete(mocker):
@@ -215,9 +201,7 @@ def test_servers_begin_delete(mocker):
         server_name="test-server",
     )
 
-    assert poller._polling_method._lro_options == {
-        "final-state-via": "azure-async-operation"
-    }
+    assert poller._polling_method._lro_options == {"final-state-via": "azure-async-operation"}
 
 
 def test_servers_begin_detach_v_net(mocker):
@@ -232,9 +216,7 @@ def test_servers_begin_detach_v_net(mocker):
     mock_response.http_response.status_code = 200
     mock_response.http_response.headers = {}
 
-    mocker.patch.object(
-        client.servers, "_detach_v_net_initial", return_value=mock_response
-    )
+    mocker.patch.object(client.servers, "_detach_v_net_initial", return_value=mock_response)
 
     poller = client.servers.begin_detach_v_net(
         resource_group_name="test-rg",
@@ -242,9 +224,7 @@ def test_servers_begin_detach_v_net(mocker):
         parameters={},
     )
 
-    assert poller._polling_method._lro_options == {
-        "final-state-via": "azure-async-operation"
-    }
+    assert poller._polling_method._lro_options == {"final-state-via": "azure-async-operation"}
 
 
 def test_servers_begin_reset_gtid(mocker):
@@ -259,9 +239,7 @@ def test_servers_begin_reset_gtid(mocker):
     mock_response.http_response.status_code = 200
     mock_response.http_response.headers = {}
 
-    mocker.patch.object(
-        client.servers, "_reset_gtid_initial", return_value=mock_response
-    )
+    mocker.patch.object(client.servers, "_reset_gtid_initial", return_value=mock_response)
 
     poller = client.servers.begin_reset_gtid(
         resource_group_name="test-rg",
@@ -269,9 +247,7 @@ def test_servers_begin_reset_gtid(mocker):
         parameters={},
     )
 
-    assert poller._polling_method._lro_options == {
-        "final-state-via": "azure-async-operation"
-    }
+    assert poller._polling_method._lro_options == {"final-state-via": "azure-async-operation"}
 
 
 def test_azure_ad_administrators_begin_create_or_update(mocker):
@@ -314,9 +290,7 @@ def test_configurations_begin_create_or_update(mocker):
     mock_response.http_response.status_code = 200
     mock_response.http_response.headers = {}
 
-    mocker.patch.object(
-        client.configurations, "_create_or_update_initial", return_value=mock_response
-    )
+    mocker.patch.object(client.configurations, "_create_or_update_initial", return_value=mock_response)
 
     poller = client.configurations.begin_create_or_update(
         resource_group_name="test-rg",
@@ -340,9 +314,7 @@ def test_configurations_begin_update(mocker):
     mock_response.http_response.status_code = 200
     mock_response.http_response.headers = {}
 
-    mocker.patch.object(
-        client.configurations, "_update_initial", return_value=mock_response
-    )
+    mocker.patch.object(client.configurations, "_update_initial", return_value=mock_response)
 
     poller = client.configurations.begin_update(
         resource_group_name="test-rg",
@@ -366,9 +338,7 @@ def test_databases_begin_create_or_update(mocker):
     mock_response.http_response.status_code = 200
     mock_response.http_response.headers = {}
 
-    mocker.patch.object(
-        client.databases, "_create_or_update_initial", return_value=mock_response
-    )
+    mocker.patch.object(client.databases, "_create_or_update_initial", return_value=mock_response)
 
     poller = client.databases.begin_create_or_update(
         resource_group_name="test-rg",
@@ -415,9 +385,7 @@ def test_firewall_rules_begin_create_or_update(mocker):
     mock_response.http_response.status_code = 200
     mock_response.http_response.headers = {}
 
-    mocker.patch.object(
-        client.firewall_rules, "_create_or_update_initial", return_value=mock_response
-    )
+    mocker.patch.object(client.firewall_rules, "_create_or_update_initial", return_value=mock_response)
 
     poller = client.firewall_rules.begin_create_or_update(
         resource_group_name="test-rg",
@@ -441,9 +409,7 @@ def test_firewall_rules_begin_delete(mocker):
     mock_response.http_response.status_code = 200
     mock_response.http_response.headers = {}
 
-    mocker.patch.object(
-        client.firewall_rules, "_delete_initial", return_value=mock_response
-    )
+    mocker.patch.object(client.firewall_rules, "_delete_initial", return_value=mock_response)
 
     poller = client.firewall_rules.begin_delete(
         resource_group_name="test-rg",
@@ -466,9 +432,7 @@ def test_maintenances_begin_update(mocker):
     mock_response.http_response.status_code = 200
     mock_response.http_response.headers = {}
 
-    mocker.patch.object(
-        client.maintenances, "_update_initial", return_value=mock_response
-    )
+    mocker.patch.object(client.maintenances, "_update_initial", return_value=mock_response)
 
     poller = client.maintenances.begin_update(
         resource_group_name="test-rg",

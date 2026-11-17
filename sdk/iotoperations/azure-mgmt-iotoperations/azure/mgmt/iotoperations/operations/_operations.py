@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import IoTOperationsMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,7 +40,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -51,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +71,7 @@ def build_instance_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +100,7 @@ def build_instance_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -132,7 +131,7 @@ def build_instance_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -161,7 +160,7 @@ def build_instance_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}"
     path_format_arguments = {
@@ -184,7 +183,7 @@ def build_instance_list_by_resource_group_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -213,7 +212,7 @@ def build_instance_list_by_subscription_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -239,7 +238,7 @@ def build_broker_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -269,7 +268,7 @@ def build_broker_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -299,7 +298,7 @@ def build_broker_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/brokers/{brokerName}"
     path_format_arguments = {
@@ -323,7 +322,7 @@ def build_broker_list_by_resource_group_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -356,7 +355,7 @@ def build_broker_listener_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -392,7 +391,7 @@ def build_broker_listener_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -428,7 +427,7 @@ def build_broker_listener_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/brokers/{brokerName}/listeners/{listenerName}"
     path_format_arguments = {
@@ -453,7 +452,7 @@ def build_broker_listener_list_by_resource_group_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -487,7 +486,7 @@ def build_broker_authentication_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -523,7 +522,7 @@ def build_broker_authentication_create_or_update_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -559,7 +558,7 @@ def build_broker_authentication_delete_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/brokers/{brokerName}/authentications/{authenticationName}"
     path_format_arguments = {
@@ -584,7 +583,7 @@ def build_broker_authentication_list_by_resource_group_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -618,7 +617,7 @@ def build_broker_authorization_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -654,7 +653,7 @@ def build_broker_authorization_create_or_update_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -690,7 +689,7 @@ def build_broker_authorization_delete_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/brokers/{brokerName}/authorizations/{authorizationName}"
     path_format_arguments = {
@@ -715,7 +714,7 @@ def build_broker_authorization_list_by_resource_group_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -744,7 +743,7 @@ def build_dataflow_profile_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -774,7 +773,7 @@ def build_dataflow_profile_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -804,7 +803,7 @@ def build_dataflow_profile_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/dataflowProfiles/{dataflowProfileName}"
     path_format_arguments = {
@@ -828,7 +827,7 @@ def build_dataflow_profile_list_by_resource_group_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -861,7 +860,7 @@ def build_dataflow_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -897,7 +896,7 @@ def build_dataflow_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -933,7 +932,7 @@ def build_dataflow_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/dataflowProfiles/{dataflowProfileName}/dataflows/{dataflowName}"
     path_format_arguments = {
@@ -958,7 +957,7 @@ def build_dataflow_list_by_resource_group_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -987,7 +986,7 @@ def build_dataflow_endpoint_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1017,7 +1016,7 @@ def build_dataflow_endpoint_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1047,7 +1046,7 @@ def build_dataflow_endpoint_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/dataflowEndpoints/{dataflowEndpointName}"
     path_format_arguments = {
@@ -1071,7 +1070,7 @@ def build_dataflow_endpoint_list_by_resource_group_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1104,7 +1103,7 @@ def build_dataflow_graph_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1140,7 +1139,7 @@ def build_dataflow_graph_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1176,7 +1175,7 @@ def build_dataflow_graph_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/dataflowProfiles/{dataflowProfileName}/dataflowGraphs/{dataflowGraphName}"
     path_format_arguments = {
@@ -1201,7 +1200,7 @@ def build_dataflow_graph_list_by_dataflow_profile_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1230,7 +1229,7 @@ def build_registry_endpoint_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1260,7 +1259,7 @@ def build_registry_endpoint_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1290,7 +1289,7 @@ def build_registry_endpoint_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/registryEndpoints/{registryEndpointName}"
     path_format_arguments = {
@@ -1314,7 +1313,7 @@ def build_registry_endpoint_list_by_instance_resource_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1342,7 +1341,7 @@ def build_akri_connector_template_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1374,7 +1373,7 @@ def build_akri_connector_template_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1406,7 +1405,7 @@ def build_akri_connector_template_delete_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/akriConnectorTemplates/{akriConnectorTemplateName}"
     path_format_arguments = {
@@ -1432,7 +1431,7 @@ def build_akri_connector_template_list_by_instance_resource_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1465,7 +1464,7 @@ def build_akri_connector_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1503,7 +1502,7 @@ def build_akri_connector_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1541,7 +1540,7 @@ def build_akri_connector_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/akriConnectorTemplates/{akriConnectorTemplateName}/connectors/{connectorName}"
     path_format_arguments = {
@@ -1568,7 +1567,7 @@ def build_akri_connector_list_by_template_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1599,7 +1598,7 @@ def build_akri_service_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1629,7 +1628,7 @@ def build_akri_service_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1659,7 +1658,7 @@ def build_akri_service_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.IoTOperations/instances/{instanceName}/akriServices/{akriServiceName}"
     path_format_arguments = {
@@ -1683,7 +1682,7 @@ def build_akri_service_list_by_instance_resource_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1769,7 +1768,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1903,7 +1905,7 @@ class InstanceOperations:
         self,
         resource_group_name: str,
         instance_name: str,
-        resource: Union[_models.InstanceResource, JSON, IO[bytes]],
+        resource: Union[_models.InstanceResource, _types.InstanceResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2009,7 +2011,7 @@ class InstanceOperations:
         self,
         resource_group_name: str,
         instance_name: str,
-        resource: JSON,
+        resource: _types.InstanceResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2022,7 +2024,7 @@ class InstanceOperations:
         :param instance_name: Name of instance. Required.
         :type instance_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.iotoperations.types.InstanceResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2065,7 +2067,7 @@ class InstanceOperations:
         self,
         resource_group_name: str,
         instance_name: str,
-        resource: Union[_models.InstanceResource, JSON, IO[bytes]],
+        resource: Union[_models.InstanceResource, _types.InstanceResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.InstanceResource]:
         """Create a InstanceResource.
@@ -2075,9 +2077,10 @@ class InstanceOperations:
         :type resource_group_name: str
         :param instance_name: Name of instance. Required.
         :type instance_name: str
-        :param resource: Resource create parameters. Is one of the following types: InstanceResource,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.iotoperations.models.InstanceResource or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a InstanceResource type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.iotoperations.models.InstanceResource or
+         ~azure.mgmt.iotoperations.types.InstanceResource or IO[bytes]
         :return: An instance of LROPoller that returns InstanceResource. The InstanceResource is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iotoperations.models.InstanceResource]
@@ -2167,7 +2170,7 @@ class InstanceOperations:
         self,
         resource_group_name: str,
         instance_name: str,
-        properties: JSON,
+        properties: _types.InstancePatchModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2180,7 +2183,7 @@ class InstanceOperations:
         :param instance_name: Name of instance. Required.
         :type instance_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.iotoperations.types.InstancePatchModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2221,7 +2224,7 @@ class InstanceOperations:
         self,
         resource_group_name: str,
         instance_name: str,
-        properties: Union[_models.InstancePatchModel, JSON, IO[bytes]],
+        properties: Union[_models.InstancePatchModel, _types.InstancePatchModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.InstanceResource:
         """Update a InstanceResource.
@@ -2231,9 +2234,10 @@ class InstanceOperations:
         :type resource_group_name: str
         :param instance_name: Name of instance. Required.
         :type instance_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         InstancePatchModel, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.iotoperations.models.InstancePatchModel or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a InstancePatchModel type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.iotoperations.models.InstancePatchModel or
+         ~azure.mgmt.iotoperations.types.InstancePatchModel or IO[bytes]
         :return: InstanceResource. The InstanceResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.iotoperations.models.InstanceResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2473,7 +2477,10 @@ class InstanceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2563,7 +2570,10 @@ class InstanceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2703,7 +2713,7 @@ class BrokerOperations:
         resource_group_name: str,
         instance_name: str,
         broker_name: str,
-        resource: Union[_models.BrokerResource, JSON, IO[bytes]],
+        resource: Union[_models.BrokerResource, _types.BrokerResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2814,7 +2824,7 @@ class BrokerOperations:
         resource_group_name: str,
         instance_name: str,
         broker_name: str,
-        resource: JSON,
+        resource: _types.BrokerResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2829,7 +2839,7 @@ class BrokerOperations:
         :param broker_name: Name of broker. Required.
         :type broker_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.iotoperations.types.BrokerResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2876,7 +2886,7 @@ class BrokerOperations:
         resource_group_name: str,
         instance_name: str,
         broker_name: str,
-        resource: Union[_models.BrokerResource, JSON, IO[bytes]],
+        resource: Union[_models.BrokerResource, _types.BrokerResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.BrokerResource]:
         """Create a BrokerResource.
@@ -2888,9 +2898,10 @@ class BrokerOperations:
         :type instance_name: str
         :param broker_name: Name of broker. Required.
         :type broker_name: str
-        :param resource: Resource create parameters. Is one of the following types: BrokerResource,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.iotoperations.models.BrokerResource or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a BrokerResource type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.iotoperations.models.BrokerResource or
+         ~azure.mgmt.iotoperations.types.BrokerResource or IO[bytes]
         :return: An instance of LROPoller that returns BrokerResource. The BrokerResource is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iotoperations.models.BrokerResource]
@@ -3130,7 +3141,10 @@ class BrokerOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3274,7 +3288,7 @@ class BrokerListenerOperations:
         instance_name: str,
         broker_name: str,
         listener_name: str,
-        resource: Union[_models.BrokerListenerResource, JSON, IO[bytes]],
+        resource: Union[_models.BrokerListenerResource, _types.BrokerListenerResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3390,7 +3404,7 @@ class BrokerListenerOperations:
         instance_name: str,
         broker_name: str,
         listener_name: str,
-        resource: JSON,
+        resource: _types.BrokerListenerResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3407,7 +3421,7 @@ class BrokerListenerOperations:
         :param listener_name: Name of Instance broker listener resource. Required.
         :type listener_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.iotoperations.types.BrokerListenerResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3458,7 +3472,7 @@ class BrokerListenerOperations:
         instance_name: str,
         broker_name: str,
         listener_name: str,
-        resource: Union[_models.BrokerListenerResource, JSON, IO[bytes]],
+        resource: Union[_models.BrokerListenerResource, _types.BrokerListenerResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.BrokerListenerResource]:
         """Create a BrokerListenerResource.
@@ -3472,9 +3486,10 @@ class BrokerListenerOperations:
         :type broker_name: str
         :param listener_name: Name of Instance broker listener resource. Required.
         :type listener_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         BrokerListenerResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.iotoperations.models.BrokerListenerResource or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a BrokerListenerResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.iotoperations.models.BrokerListenerResource or
+         ~azure.mgmt.iotoperations.types.BrokerListenerResource or IO[bytes]
         :return: An instance of LROPoller that returns BrokerListenerResource. The
          BrokerListenerResource is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iotoperations.models.BrokerListenerResource]
@@ -3722,7 +3737,10 @@ class BrokerListenerOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3867,7 +3885,7 @@ class BrokerAuthenticationOperations:
         instance_name: str,
         broker_name: str,
         authentication_name: str,
-        resource: Union[_models.BrokerAuthenticationResource, JSON, IO[bytes]],
+        resource: Union[_models.BrokerAuthenticationResource, _types.BrokerAuthenticationResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3984,7 +4002,7 @@ class BrokerAuthenticationOperations:
         instance_name: str,
         broker_name: str,
         authentication_name: str,
-        resource: JSON,
+        resource: _types.BrokerAuthenticationResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4001,7 +4019,7 @@ class BrokerAuthenticationOperations:
         :param authentication_name: Name of Instance broker authentication resource. Required.
         :type authentication_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.iotoperations.types.BrokerAuthenticationResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4054,7 +4072,7 @@ class BrokerAuthenticationOperations:
         instance_name: str,
         broker_name: str,
         authentication_name: str,
-        resource: Union[_models.BrokerAuthenticationResource, JSON, IO[bytes]],
+        resource: Union[_models.BrokerAuthenticationResource, _types.BrokerAuthenticationResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.BrokerAuthenticationResource]:
         """Create a BrokerAuthenticationResource.
@@ -4068,10 +4086,10 @@ class BrokerAuthenticationOperations:
         :type broker_name: str
         :param authentication_name: Name of Instance broker authentication resource. Required.
         :type authentication_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         BrokerAuthenticationResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.iotoperations.models.BrokerAuthenticationResource or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a BrokerAuthenticationResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.iotoperations.models.BrokerAuthenticationResource or
+         ~azure.mgmt.iotoperations.types.BrokerAuthenticationResource or IO[bytes]
         :return: An instance of LROPoller that returns BrokerAuthenticationResource. The
          BrokerAuthenticationResource is compatible with MutableMapping
         :rtype:
@@ -4321,7 +4339,10 @@ class BrokerAuthenticationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4466,7 +4487,7 @@ class BrokerAuthorizationOperations:
         instance_name: str,
         broker_name: str,
         authorization_name: str,
-        resource: Union[_models.BrokerAuthorizationResource, JSON, IO[bytes]],
+        resource: Union[_models.BrokerAuthorizationResource, _types.BrokerAuthorizationResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4583,7 +4604,7 @@ class BrokerAuthorizationOperations:
         instance_name: str,
         broker_name: str,
         authorization_name: str,
-        resource: JSON,
+        resource: _types.BrokerAuthorizationResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4600,7 +4621,7 @@ class BrokerAuthorizationOperations:
         :param authorization_name: Name of Instance broker authorization resource. Required.
         :type authorization_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.iotoperations.types.BrokerAuthorizationResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4653,7 +4674,7 @@ class BrokerAuthorizationOperations:
         instance_name: str,
         broker_name: str,
         authorization_name: str,
-        resource: Union[_models.BrokerAuthorizationResource, JSON, IO[bytes]],
+        resource: Union[_models.BrokerAuthorizationResource, _types.BrokerAuthorizationResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.BrokerAuthorizationResource]:
         """Create a BrokerAuthorizationResource.
@@ -4667,10 +4688,10 @@ class BrokerAuthorizationOperations:
         :type broker_name: str
         :param authorization_name: Name of Instance broker authorization resource. Required.
         :type authorization_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         BrokerAuthorizationResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.iotoperations.models.BrokerAuthorizationResource or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a BrokerAuthorizationResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.iotoperations.models.BrokerAuthorizationResource or
+         ~azure.mgmt.iotoperations.types.BrokerAuthorizationResource or IO[bytes]
         :return: An instance of LROPoller that returns BrokerAuthorizationResource. The
          BrokerAuthorizationResource is compatible with MutableMapping
         :rtype:
@@ -4920,7 +4941,10 @@ class BrokerAuthorizationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5060,7 +5084,7 @@ class DataflowProfileOperations:
         resource_group_name: str,
         instance_name: str,
         dataflow_profile_name: str,
-        resource: Union[_models.DataflowProfileResource, JSON, IO[bytes]],
+        resource: Union[_models.DataflowProfileResource, _types.DataflowProfileResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5171,7 +5195,7 @@ class DataflowProfileOperations:
         resource_group_name: str,
         instance_name: str,
         dataflow_profile_name: str,
-        resource: JSON,
+        resource: _types.DataflowProfileResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5186,7 +5210,7 @@ class DataflowProfileOperations:
         :param dataflow_profile_name: Name of Instance dataflowProfile resource. Required.
         :type dataflow_profile_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.iotoperations.types.DataflowProfileResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5233,7 +5257,7 @@ class DataflowProfileOperations:
         resource_group_name: str,
         instance_name: str,
         dataflow_profile_name: str,
-        resource: Union[_models.DataflowProfileResource, JSON, IO[bytes]],
+        resource: Union[_models.DataflowProfileResource, _types.DataflowProfileResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DataflowProfileResource]:
         """Create a DataflowProfileResource.
@@ -5245,9 +5269,10 @@ class DataflowProfileOperations:
         :type instance_name: str
         :param dataflow_profile_name: Name of Instance dataflowProfile resource. Required.
         :type dataflow_profile_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         DataflowProfileResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.iotoperations.models.DataflowProfileResource or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a DataflowProfileResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.iotoperations.models.DataflowProfileResource or
+         ~azure.mgmt.iotoperations.types.DataflowProfileResource or IO[bytes]
         :return: An instance of LROPoller that returns DataflowProfileResource. The
          DataflowProfileResource is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iotoperations.models.DataflowProfileResource]
@@ -5487,7 +5512,10 @@ class DataflowProfileOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5636,7 +5664,7 @@ class DataflowOperations:
         instance_name: str,
         dataflow_profile_name: str,
         dataflow_name: str,
-        resource: Union[_models.DataflowResource, JSON, IO[bytes]],
+        resource: Union[_models.DataflowResource, _types.DataflowResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5752,7 +5780,7 @@ class DataflowOperations:
         instance_name: str,
         dataflow_profile_name: str,
         dataflow_name: str,
-        resource: JSON,
+        resource: _types.DataflowResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5769,7 +5797,7 @@ class DataflowOperations:
         :param dataflow_name: Name of Instance dataflowProfile dataflow resource. Required.
         :type dataflow_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.iotoperations.types.DataflowResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5820,7 +5848,7 @@ class DataflowOperations:
         instance_name: str,
         dataflow_profile_name: str,
         dataflow_name: str,
-        resource: Union[_models.DataflowResource, JSON, IO[bytes]],
+        resource: Union[_models.DataflowResource, _types.DataflowResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DataflowResource]:
         """Create a DataflowResource.
@@ -5834,9 +5862,10 @@ class DataflowOperations:
         :type dataflow_profile_name: str
         :param dataflow_name: Name of Instance dataflowProfile dataflow resource. Required.
         :type dataflow_name: str
-        :param resource: Resource create parameters. Is one of the following types: DataflowResource,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.iotoperations.models.DataflowResource or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a DataflowResource type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.iotoperations.models.DataflowResource or
+         ~azure.mgmt.iotoperations.types.DataflowResource or IO[bytes]
         :return: An instance of LROPoller that returns DataflowResource. The DataflowResource is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iotoperations.models.DataflowResource]
@@ -6094,7 +6123,10 @@ class DataflowOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6235,7 +6267,7 @@ class DataflowEndpointOperations:
         resource_group_name: str,
         instance_name: str,
         dataflow_endpoint_name: str,
-        resource: Union[_models.DataflowEndpointResource, JSON, IO[bytes]],
+        resource: Union[_models.DataflowEndpointResource, _types.DataflowEndpointResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6347,7 +6379,7 @@ class DataflowEndpointOperations:
         resource_group_name: str,
         instance_name: str,
         dataflow_endpoint_name: str,
-        resource: JSON,
+        resource: _types.DataflowEndpointResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6362,7 +6394,7 @@ class DataflowEndpointOperations:
         :param dataflow_endpoint_name: Name of Instance dataflowEndpoint resource. Required.
         :type dataflow_endpoint_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.iotoperations.types.DataflowEndpointResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6411,7 +6443,7 @@ class DataflowEndpointOperations:
         resource_group_name: str,
         instance_name: str,
         dataflow_endpoint_name: str,
-        resource: Union[_models.DataflowEndpointResource, JSON, IO[bytes]],
+        resource: Union[_models.DataflowEndpointResource, _types.DataflowEndpointResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DataflowEndpointResource]:
         """Create a DataflowEndpointResource.
@@ -6423,9 +6455,10 @@ class DataflowEndpointOperations:
         :type instance_name: str
         :param dataflow_endpoint_name: Name of Instance dataflowEndpoint resource. Required.
         :type dataflow_endpoint_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         DataflowEndpointResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.iotoperations.models.DataflowEndpointResource or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a DataflowEndpointResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.iotoperations.models.DataflowEndpointResource or
+         ~azure.mgmt.iotoperations.types.DataflowEndpointResource or IO[bytes]
         :return: An instance of LROPoller that returns DataflowEndpointResource. The
          DataflowEndpointResource is compatible with MutableMapping
         :rtype:
@@ -6666,7 +6699,10 @@ class DataflowEndpointOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6740,7 +6776,7 @@ class DataflowGraphOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def get(
         self,
@@ -6838,7 +6874,7 @@ class DataflowGraphOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def _create_or_update_initial(
         self,
@@ -6846,7 +6882,7 @@ class DataflowGraphOperations:
         instance_name: str,
         dataflow_profile_name: str,
         dataflow_graph_name: str,
-        resource: Union[_models.DataflowGraphResource, JSON, IO[bytes]],
+        resource: Union[_models.DataflowGraphResource, _types.DataflowGraphResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6962,7 +6998,7 @@ class DataflowGraphOperations:
         instance_name: str,
         dataflow_profile_name: str,
         dataflow_graph_name: str,
-        resource: JSON,
+        resource: _types.DataflowGraphResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6979,7 +7015,7 @@ class DataflowGraphOperations:
         :param dataflow_graph_name: Name of Instance dataflowEndpoint resource. Required.
         :type dataflow_graph_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.iotoperations.types.DataflowGraphResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7038,7 +7074,7 @@ class DataflowGraphOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def begin_create_or_update(
         self,
@@ -7046,7 +7082,7 @@ class DataflowGraphOperations:
         instance_name: str,
         dataflow_profile_name: str,
         dataflow_graph_name: str,
-        resource: Union[_models.DataflowGraphResource, JSON, IO[bytes]],
+        resource: Union[_models.DataflowGraphResource, _types.DataflowGraphResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DataflowGraphResource]:
         """Create a DataflowGraphResource.
@@ -7060,9 +7096,10 @@ class DataflowGraphOperations:
         :type dataflow_profile_name: str
         :param dataflow_graph_name: Name of Instance dataflowEndpoint resource. Required.
         :type dataflow_graph_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         DataflowGraphResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.iotoperations.models.DataflowGraphResource or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a DataflowGraphResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.iotoperations.models.DataflowGraphResource or
+         ~azure.mgmt.iotoperations.types.DataflowGraphResource or IO[bytes]
         :return: An instance of LROPoller that returns DataflowGraphResource. The DataflowGraphResource
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iotoperations.models.DataflowGraphResource]
@@ -7134,7 +7171,7 @@ class DataflowGraphOperations:
                 "dataflow_graph_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def _delete_initial(
         self,
@@ -7217,7 +7254,7 @@ class DataflowGraphOperations:
                 "dataflow_graph_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def begin_delete(
         self,
@@ -7301,7 +7338,7 @@ class DataflowGraphOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def list_by_dataflow_profile(
         self, resource_group_name: str, instance_name: str, dataflow_profile_name: str, **kwargs: Any
@@ -7362,7 +7399,10 @@ class DataflowGraphOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7435,7 +7475,7 @@ class RegistryEndpointOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def get(
         self, resource_group_name: str, instance_name: str, registry_endpoint_name: str, **kwargs: Any
@@ -7525,14 +7565,14 @@ class RegistryEndpointOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         instance_name: str,
         registry_endpoint_name: str,
-        resource: Union[_models.RegistryEndpointResource, JSON, IO[bytes]],
+        resource: Union[_models.RegistryEndpointResource, _types.RegistryEndpointResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7644,7 +7684,7 @@ class RegistryEndpointOperations:
         resource_group_name: str,
         instance_name: str,
         registry_endpoint_name: str,
-        resource: JSON,
+        resource: _types.RegistryEndpointResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7659,7 +7699,7 @@ class RegistryEndpointOperations:
         :param registry_endpoint_name: Name of RegistryEndpoint resource. Required.
         :type registry_endpoint_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.iotoperations.types.RegistryEndpointResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7716,14 +7756,14 @@ class RegistryEndpointOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def begin_create_or_update(
         self,
         resource_group_name: str,
         instance_name: str,
         registry_endpoint_name: str,
-        resource: Union[_models.RegistryEndpointResource, JSON, IO[bytes]],
+        resource: Union[_models.RegistryEndpointResource, _types.RegistryEndpointResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.RegistryEndpointResource]:
         """Create a RegistryEndpointResource.
@@ -7735,9 +7775,10 @@ class RegistryEndpointOperations:
         :type instance_name: str
         :param registry_endpoint_name: Name of RegistryEndpoint resource. Required.
         :type registry_endpoint_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         RegistryEndpointResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.iotoperations.models.RegistryEndpointResource or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a RegistryEndpointResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.iotoperations.models.RegistryEndpointResource or
+         ~azure.mgmt.iotoperations.types.RegistryEndpointResource or IO[bytes]
         :return: An instance of LROPoller that returns RegistryEndpointResource. The
          RegistryEndpointResource is compatible with MutableMapping
         :rtype:
@@ -7808,7 +7849,7 @@ class RegistryEndpointOperations:
                 "registry_endpoint_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def _delete_initial(
         self, resource_group_name: str, instance_name: str, registry_endpoint_name: str, **kwargs: Any
@@ -7884,7 +7925,7 @@ class RegistryEndpointOperations:
                 "registry_endpoint_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def begin_delete(
         self, resource_group_name: str, instance_name: str, registry_endpoint_name: str, **kwargs: Any
@@ -7953,7 +7994,7 @@ class RegistryEndpointOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "instance_name", "accept"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def list_by_instance_resource(
         self, resource_group_name: str, instance_name: str, **kwargs: Any
@@ -8011,7 +8052,10 @@ class RegistryEndpointOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8084,7 +8128,7 @@ class AkriConnectorTemplateOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def get(
         self, resource_group_name: str, instance_name: str, akri_connector_template_name: str, **kwargs: Any
@@ -8174,14 +8218,14 @@ class AkriConnectorTemplateOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         instance_name: str,
         akri_connector_template_name: str,
-        resource: Union[_models.AkriConnectorTemplateResource, JSON, IO[bytes]],
+        resource: Union[_models.AkriConnectorTemplateResource, _types.AkriConnectorTemplateResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8293,7 +8337,7 @@ class AkriConnectorTemplateOperations:
         resource_group_name: str,
         instance_name: str,
         akri_connector_template_name: str,
-        resource: JSON,
+        resource: _types.AkriConnectorTemplateResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8308,7 +8352,7 @@ class AkriConnectorTemplateOperations:
         :param akri_connector_template_name: Name of AkriConnectorTemplate resource. Required.
         :type akri_connector_template_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.iotoperations.types.AkriConnectorTemplateResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8365,14 +8409,14 @@ class AkriConnectorTemplateOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def begin_create_or_update(
         self,
         resource_group_name: str,
         instance_name: str,
         akri_connector_template_name: str,
-        resource: Union[_models.AkriConnectorTemplateResource, JSON, IO[bytes]],
+        resource: Union[_models.AkriConnectorTemplateResource, _types.AkriConnectorTemplateResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AkriConnectorTemplateResource]:
         """Create a AkriConnectorTemplateResource.
@@ -8384,10 +8428,10 @@ class AkriConnectorTemplateOperations:
         :type instance_name: str
         :param akri_connector_template_name: Name of AkriConnectorTemplate resource. Required.
         :type akri_connector_template_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         AkriConnectorTemplateResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.iotoperations.models.AkriConnectorTemplateResource or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a AkriConnectorTemplateResource type or
+         a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.iotoperations.models.AkriConnectorTemplateResource or
+         ~azure.mgmt.iotoperations.types.AkriConnectorTemplateResource or IO[bytes]
         :return: An instance of LROPoller that returns AkriConnectorTemplateResource. The
          AkriConnectorTemplateResource is compatible with MutableMapping
         :rtype:
@@ -8458,7 +8502,7 @@ class AkriConnectorTemplateOperations:
                 "akri_connector_template_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def _delete_initial(
         self, resource_group_name: str, instance_name: str, akri_connector_template_name: str, **kwargs: Any
@@ -8534,7 +8578,7 @@ class AkriConnectorTemplateOperations:
                 "akri_connector_template_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def begin_delete(
         self, resource_group_name: str, instance_name: str, akri_connector_template_name: str, **kwargs: Any
@@ -8603,7 +8647,7 @@ class AkriConnectorTemplateOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "instance_name", "accept"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def list_by_instance_resource(
         self, resource_group_name: str, instance_name: str, **kwargs: Any
@@ -8662,7 +8706,10 @@ class AkriConnectorTemplateOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8736,7 +8783,7 @@ class AkriConnectorOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def get(
         self,
@@ -8834,7 +8881,7 @@ class AkriConnectorOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def _create_or_update_initial(
         self,
@@ -8842,7 +8889,7 @@ class AkriConnectorOperations:
         instance_name: str,
         akri_connector_template_name: str,
         connector_name: str,
-        resource: Union[_models.AkriConnectorResource, JSON, IO[bytes]],
+        resource: Union[_models.AkriConnectorResource, _types.AkriConnectorResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8958,7 +9005,7 @@ class AkriConnectorOperations:
         instance_name: str,
         akri_connector_template_name: str,
         connector_name: str,
-        resource: JSON,
+        resource: _types.AkriConnectorResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8975,7 +9022,7 @@ class AkriConnectorOperations:
         :param connector_name: Name of AkriConnector resource. Required.
         :type connector_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.iotoperations.types.AkriConnectorResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9034,7 +9081,7 @@ class AkriConnectorOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def begin_create_or_update(
         self,
@@ -9042,7 +9089,7 @@ class AkriConnectorOperations:
         instance_name: str,
         akri_connector_template_name: str,
         connector_name: str,
-        resource: Union[_models.AkriConnectorResource, JSON, IO[bytes]],
+        resource: Union[_models.AkriConnectorResource, _types.AkriConnectorResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AkriConnectorResource]:
         """Create a AkriConnectorResource.
@@ -9056,9 +9103,10 @@ class AkriConnectorOperations:
         :type akri_connector_template_name: str
         :param connector_name: Name of AkriConnector resource. Required.
         :type connector_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         AkriConnectorResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.iotoperations.models.AkriConnectorResource or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a AkriConnectorResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.iotoperations.models.AkriConnectorResource or
+         ~azure.mgmt.iotoperations.types.AkriConnectorResource or IO[bytes]
         :return: An instance of LROPoller that returns AkriConnectorResource. The AkriConnectorResource
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iotoperations.models.AkriConnectorResource]
@@ -9130,7 +9178,7 @@ class AkriConnectorOperations:
                 "connector_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def _delete_initial(
         self,
@@ -9213,7 +9261,7 @@ class AkriConnectorOperations:
                 "connector_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def begin_delete(
         self,
@@ -9297,7 +9345,7 @@ class AkriConnectorOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
     )
     def list_by_template(
         self, resource_group_name: str, instance_name: str, akri_connector_template_name: str, **kwargs: Any
@@ -9358,7 +9406,10 @@ class AkriConnectorOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9431,7 +9482,7 @@ class AkriServiceOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01"],
+        api_versions_list=["2026-03-01", "2026-07-01"],
     )
     def get(
         self, resource_group_name: str, instance_name: str, akri_service_name: str, **kwargs: Any
@@ -9520,14 +9571,14 @@ class AkriServiceOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01"],
+        api_versions_list=["2026-03-01", "2026-07-01"],
     )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         instance_name: str,
         akri_service_name: str,
-        resource: Union[_models.AkriServiceResource, JSON, IO[bytes]],
+        resource: Union[_models.AkriServiceResource, _types.AkriServiceResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -9638,7 +9689,7 @@ class AkriServiceOperations:
         resource_group_name: str,
         instance_name: str,
         akri_service_name: str,
-        resource: JSON,
+        resource: _types.AkriServiceResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9653,7 +9704,7 @@ class AkriServiceOperations:
         :param akri_service_name: Name of AkriService resource. Required.
         :type akri_service_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.iotoperations.types.AkriServiceResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9708,14 +9759,14 @@ class AkriServiceOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01"],
+        api_versions_list=["2026-03-01", "2026-07-01"],
     )
     def begin_create_or_update(
         self,
         resource_group_name: str,
         instance_name: str,
         akri_service_name: str,
-        resource: Union[_models.AkriServiceResource, JSON, IO[bytes]],
+        resource: Union[_models.AkriServiceResource, _types.AkriServiceResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AkriServiceResource]:
         """Create a AkriServiceResource.
@@ -9727,9 +9778,10 @@ class AkriServiceOperations:
         :type instance_name: str
         :param akri_service_name: Name of AkriService resource. Required.
         :type akri_service_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         AkriServiceResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.iotoperations.models.AkriServiceResource or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a AkriServiceResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.iotoperations.models.AkriServiceResource or
+         ~azure.mgmt.iotoperations.types.AkriServiceResource or IO[bytes]
         :return: An instance of LROPoller that returns AkriServiceResource. The AkriServiceResource is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.iotoperations.models.AkriServiceResource]
@@ -9799,7 +9851,7 @@ class AkriServiceOperations:
                 "akri_service_name",
             ]
         },
-        api_versions_list=["2026-03-01"],
+        api_versions_list=["2026-03-01", "2026-07-01"],
     )
     def _delete_initial(
         self, resource_group_name: str, instance_name: str, akri_service_name: str, **kwargs: Any
@@ -9875,7 +9927,7 @@ class AkriServiceOperations:
                 "akri_service_name",
             ]
         },
-        api_versions_list=["2026-03-01"],
+        api_versions_list=["2026-03-01", "2026-07-01"],
     )
     def begin_delete(
         self, resource_group_name: str, instance_name: str, akri_service_name: str, **kwargs: Any
@@ -9944,7 +9996,7 @@ class AkriServiceOperations:
         params_added_on={
             "2026-03-01": ["api_version", "subscription_id", "resource_group_name", "instance_name", "accept"]
         },
-        api_versions_list=["2026-03-01"],
+        api_versions_list=["2026-03-01", "2026-07-01"],
     )
     def list_by_instance_resource(
         self, resource_group_name: str, instance_name: str, **kwargs: Any
@@ -10002,7 +10054,10 @@ class AkriServiceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

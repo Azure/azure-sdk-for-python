@@ -30,6 +30,24 @@ DESCRIPTION:
     prebuilt-videoSearch can return multiple segments, so iterate over all contents rather than just
     the first.
 
+
+    ## begin_analyze vs analyze_inline
+
+    By default, analysis is a long-running operation (LRO) via ``begin_analyze``. In
+    ``2026-06-01-preview``, you can also use ``analyze_inline`` for a single call without
+    polling. For when to use each path, limits, and billing differences, see
+    https://aka.ms/cu-doc-limits and ``sample_analyze_inline_async.py``.
+
+    ## Restrict analysis with content_range
+
+    Pass ``content_range`` on ``AnalysisInput`` to analyze only part of the input:
+
+    - Documents: 1-based page numbers (``"1"``, ``"1-3"``, ``"9-"``, ``"1-3,5,9-"``)
+    - Audio/video: millisecond offsets (``"0-5000"``, ``"10000-"``, ``"0-3000,30000-"``)
+
+    ``prebuilt-videoSearch`` can return multiple segments, so iterate over all contents
+    rather than only the first item.
+
 USAGE:
     python sample_analyze_url_async.py
 
@@ -64,9 +82,7 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # [START analyze_document_from_url]
         print("=" * 60)
         print("DOCUMENT ANALYSIS FROM URL")
@@ -92,9 +108,7 @@ async def main() -> None:
         # DocumentContent derives from AnalysisContent and provides additional properties
         # to access full information about document, including Pages, Tables and many others
         document_content = cast(DocumentContent, content)
-        print(
-            f"\nPages: {document_content.start_page_number} - {document_content.end_page_number}"
-        )
+        print(f"\nPages: {document_content.start_page_number} - {document_content.end_page_number}")
 
         # Check for pages
         if document_content.pages and len(document_content.pages) > 0:
@@ -164,15 +178,11 @@ async def main() -> None:
             print("Markdown:")
             print(video_content.markdown)
 
-            summary = (
-                video_content.fields.get("Summary") if video_content.fields else None
-            )
+            summary = video_content.fields.get("Summary") if video_content.fields else None
             if summary and hasattr(summary, "value"):
                 print(f"Summary: {summary.value}")
 
-            print(
-                f"Start: {video_content.start_time_ms} ms, End: {video_content.end_time_ms} ms"
-            )
+            print(f"Start: {video_content.start_time_ms} ms, End: {video_content.end_time_ms} ms")
             print(f"Frame size: {video_content.width} x {video_content.height}")
 
             print("---------------------")
@@ -219,10 +229,7 @@ async def main() -> None:
         video_from_result = await video_from_poller.result()
         for from_media in video_from_result.contents:
             from_video = cast(AudioVisualContent, from_media)
-            print(
-                "'10000-' segment:"
-                f" {from_video.start_time_ms} ms - {from_video.end_time_ms} ms"
-            )
+            print("'10000-' segment:" f" {from_video.start_time_ms} ms - {from_video.end_time_ms} ms")
 
         # "1200-3651" — sub-second precision (1.2s to 3.651s)
         print("\nAnalyzing video with sub-second precision (1.2s to 3.651s) with content range '1200-3651'...")
@@ -238,10 +245,7 @@ async def main() -> None:
         video_subsec_result = await video_subsec_poller.result()
         for subsec_media in video_subsec_result.contents:
             subsec_video = cast(AudioVisualContent, subsec_media)
-            print(
-                "'1200-3651' segment:"
-                f" {subsec_video.start_time_ms} ms - {subsec_video.end_time_ms} ms"
-            )
+            print("'1200-3651' segment:" f" {subsec_video.start_time_ms} ms - {subsec_video.end_time_ms} ms")
 
         # "0-3000,30000-" — multiple disjoint time ranges (0-3s and 30s onward)
         print("\nAnalyzing video with combined time ranges (0-3s and 30s onward) with content range '0-3000,30000-'...")
@@ -257,10 +261,7 @@ async def main() -> None:
         video_combine_result = await video_combine_poller.result()
         for combine_media in video_combine_result.contents:
             combine_video = cast(AudioVisualContent, combine_media)
-            print(
-                "'0-3000,30000-' segment:"
-                f" {combine_video.start_time_ms} ms - {combine_video.end_time_ms} ms"
-            )
+            print("'0-3000,30000-' segment:" f" {combine_video.start_time_ms} ms - {combine_video.end_time_ms} ms")
         # [END analyze_video_url_with_additional_content_ranges]
 
         # [START analyze_audio_from_url]
@@ -290,10 +291,7 @@ async def main() -> None:
             print(f"Summary: {summary.value}")
 
         # Example: Access an additional field in AudioVisualContent (transcript phrases)
-        if (
-            audio_content.transcript_phrases
-            and len(audio_content.transcript_phrases) > 0
-        ):
+        if audio_content.transcript_phrases and len(audio_content.transcript_phrases) > 0:
             print("Transcript (first two phrases):")
             for phrase in audio_content.transcript_phrases[:2]:
                 print(f"  [{phrase.speaker}] {phrase.start_time_ms} ms: {phrase.text}")
@@ -337,10 +335,7 @@ async def main() -> None:
         )
         audio_from_result = await audio_from_poller.result()
         audio_from_content = cast(AudioVisualContent, audio_from_result.contents[0])
-        print(
-            "'10000-':"
-            f" {audio_from_content.start_time_ms} ms - {audio_from_content.end_time_ms} ms"
-        )
+        print("'10000-':" f" {audio_from_content.start_time_ms} ms - {audio_from_content.end_time_ms} ms")
 
         # "1200-3651" — sub-second precision (1.2s to 3.651s)
         print("\nAnalyzing audio with sub-second precision (1.2s to 3.651s) with content range '1200-3651'...")
@@ -355,10 +350,7 @@ async def main() -> None:
         )
         audio_subsec_result = await audio_subsec_poller.result()
         audio_subsec_content = cast(AudioVisualContent, audio_subsec_result.contents[0])
-        print(
-            "'1200-3651':"
-            f" {audio_subsec_content.start_time_ms} ms - {audio_subsec_content.end_time_ms} ms"
-        )
+        print("'1200-3651':" f" {audio_subsec_content.start_time_ms} ms - {audio_subsec_content.end_time_ms} ms")
 
         # "0-3000,30000-" — multiple disjoint time ranges (0-3s and 30s onward)
         print("\nAnalyzing audio with combined time ranges (0-3s and 30s onward) with content range '0-3000,30000-'...")
@@ -373,10 +365,7 @@ async def main() -> None:
         )
         audio_combine_result = await audio_combine_poller.result()
         audio_combine_content = cast(AudioVisualContent, audio_combine_result.contents[0])
-        print(
-            "'0-3000,30000-':"
-            f" {audio_combine_content.start_time_ms} ms - {audio_combine_content.end_time_ms} ms"
-        )
+        print("'0-3000,30000-':" f" {audio_combine_content.start_time_ms} ms - {audio_combine_content.end_time_ms} ms")
         # [END analyze_audio_url_with_additional_content_ranges]
 
         # [START analyze_image_from_url]

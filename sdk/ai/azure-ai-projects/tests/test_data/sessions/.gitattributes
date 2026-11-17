@@ -1,0 +1,8 @@
+# Force LF line endings for session file test text files to ensure consistent binary representation
+# across Windows and Linux platforms.
+#
+# These files are uploaded as binary request payloads in session file tests.
+# Without consistent line endings, payload bytes differ between platforms,
+# causing test-proxy playback body mismatches.
+
+*.txt text eol=lf

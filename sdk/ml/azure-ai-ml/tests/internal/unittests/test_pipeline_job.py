@@ -44,6 +44,8 @@ from azure.ai.ml.entities import (
 )
 from test_utilities.utils import parse_local_path
 
+from azure.core.serialization import as_attribute_dict
+
 from .._utils import (
     DATA_VERSION,
     PARAMETERS_TO_TEST,
@@ -110,7 +112,8 @@ class TestPipelineJob:
             if value != expected_value:
                 mismatched_runsettings[dot_key] = (value, expected_value)
         assert not mismatched_runsettings, "Current value:\n{}\nMismatched fields:\n{}".format(
-            json.dumps(node_rest_dict, indent=2), json.dumps(mismatched_runsettings, indent=2)
+            json.dumps(node_rest_dict, indent=2),
+            json.dumps(mismatched_runsettings, indent=2),
         )
 
         pipeline_dict = dsl_pipeline._to_dict()
@@ -149,7 +152,11 @@ class TestPipelineJob:
         node_rest_dict = dsl_pipeline._to_rest_object().properties.jobs["node"]
         for input_name, dataset_name in input_data_names.items():
             if "spark" in yaml_path:
-                expected_rest_obj = {"job_input_type": AssetTypes.MLTABLE, "uri": dataset_name.path, "mode": "Direct"}
+                expected_rest_obj = {
+                    "job_input_type": AssetTypes.MLTABLE,
+                    "uri": dataset_name.path,
+                    "mode": "Direct",
+                }
             else:
                 expected_rest_obj = {
                     "job_input_type": AssetTypes.MLTABLE,
@@ -197,7 +204,7 @@ class TestPipelineJob:
             "job_input_type": AssetTypes.MLTABLE,
             "uri": input_path,
         }
-        assert pipeline_rest_dict.inputs["pipeline_input"].as_dict() == expected_rest_obj
+        assert as_attribute_dict(pipeline_rest_dict.inputs["pipeline_input"]) == expected_rest_obj
 
         expected_rest_obj = {
             "job_input_type": "literal",
@@ -220,7 +227,7 @@ class TestPipelineJob:
             node.outputs.data_any_file.mode = "mount"
 
         pipeline_job = pipeline_func()
-        rest_pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
+        rest_pipeline_job_dict = as_attribute_dict(pipeline_job._to_rest_object())
         assert rest_pipeline_job_dict["properties"]["jobs"]["node"]["outputs"] == {
             "data_any_file": {"mode": "ReadWriteMount", "job_output_type": "uri_file"}
         }
@@ -428,6 +435,30 @@ class TestPipelineJob:
             }
         }
 
+    def test_interactive_services_in_internal_command_node(self):
+        # regression test for ICM 822596251 / Bug 5466757: internal Command node dropped
+        # node-level interactive services (ssh/jupyterlab/etc.) during serialization.
+        from azure.ai.ml.entities import JupyterLabJobService, SshJobService
+
+        yaml_path = "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"
+        node_func: CommandComponent = load_component(yaml_path)
+        node = node_func()
+        node.services = {
+            "my_ssh": SshJobService(),
+            "my_jupyter": JupyterLabJobService(),
+        }
+
+        rest_obj = node._to_rest_object()
+        assert rest_obj["services"] == {
+            "my_ssh": {"job_service_type": "SSH"},
+            "my_jupyter": {"job_service_type": "JupyterLab"},
+        }
+
+        # services should round-trip back into typed JobService objects
+        init_params = Command._from_rest_object_to_init_params(dict(rest_obj))
+        assert isinstance(init_params["services"]["my_ssh"], SshJobService)
+        assert isinstance(init_params["services"]["my_jupyter"], JupyterLabJobService)
+
     def test_load_pipeline_job_with_internal_components_as_node(self):
         yaml_path = Path("./tests/test_configs/internal/helloworld/helloworld_component_scope.yml")
         scope_internal_func = load_component(source=yaml_path)
@@ -482,7 +513,10 @@ class TestPipelineJob:
             "custom_job_name_suffix": "component_sdk_test",
             "scope_param": "-tokens 50",
             "inputs": {
-                "ExtractionClause": {"job_input_type": "literal", "value": "column1:string, column2:int"},
+                "ExtractionClause": {
+                    "job_input_type": "literal",
+                    "value": "column1:string, column2:int",
+                },
                 "TextData": {"job_input_type": "mltable", "uri": "azureml:scope_tsv:1"},
             },
             "type": "ScopeComponent",
@@ -494,7 +528,10 @@ class TestPipelineJob:
         assert pydash.omit(dsl_pipeline._to_dict(), *omit_fields) == pydash.omit(
             {
                 "display_name": "pipeline_func",
-                "jobs": {"node": dsl_pipeline.jobs["node"]._to_dict(), "node_internal": scope_node._to_dict()},
+                "jobs": {
+                    "node": dsl_pipeline.jobs["node"]._to_dict(),
+                    "node_internal": scope_node._to_dict(),
+                },
                 "type": "pipeline",
             },
             *omit_fields,
@@ -580,7 +617,10 @@ class TestPipelineJob:
         }
         for key in inputs:
             if key.startswith("data_"):
-                expected_inputs[key] = {"job_input_type": "mltable", "uri": "azureml:scope_tsv:1"}
+                expected_inputs[key] = {
+                    "job_input_type": "mltable",
+                    "uri": "azureml:scope_tsv:1",
+                }
         assert rest_obj.properties.jobs["node"]["inputs"] == expected_inputs
 
     def test_data_binding_on_node_runsettings(self):
@@ -589,7 +629,8 @@ class TestPipelineJob:
 
         @pipeline()
         def pipeline_func(
-            compute_name: str = "cpu-cluster", environment_name: str = "AzureML-ACPT-pytorch-1.12-py39-cuda11.6-gpu:8"
+            compute_name: str = "cpu-cluster",
+            environment_name: str = "AzureML-ACPT-pytorch-1.12-py39-cuda11.6-gpu:8",
         ):
             node = component(
                 training_data=Input(path="./tests/test_configs/data"),
@@ -661,15 +702,26 @@ class TestPipelineJob:
                     "resources.runtime_version": SparkResourceConfiguration(runtime_version="2.4"),
                 },
                 {
-                    "file_input1": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest", mode="direct"),
-                    "file_input2": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest", mode="direct"),
+                    "file_input1": Input(
+                        type=AssetTypes.MLTABLE,
+                        path="mltable_mnist@latest",
+                        mode="direct",
+                    ),
+                    "file_input2": Input(
+                        type=AssetTypes.MLTABLE,
+                        path="mltable_mnist@latest",
+                        mode="direct",
+                    ),
                 },
                 id="spark",
             ),
         ],
     )
     def test_data_binding_expression_on_node_runsettings(
-        self, component_path: str, fields_to_test: Dict[str, Any], fake_inputs: Dict[str, Input]
+        self,
+        component_path: str,
+        fields_to_test: Dict[str, Any],
+        fake_inputs: Dict[str, Input],
     ):
         component = load_component(component_path)
 
@@ -712,7 +764,7 @@ class TestPipelineJob:
             return node.outputs
 
         pipeline_job = pipeline_func()
-        pipeline_dict = pipeline_job._to_rest_object().as_dict()
+        pipeline_dict = as_attribute_dict(pipeline_job._to_rest_object())
         # type will be preserved & mode will be promoted to pipeline level
         assert pipeline_dict["properties"]["outputs"]["model_output"] == {
             "job_output_type": "uri_folder",

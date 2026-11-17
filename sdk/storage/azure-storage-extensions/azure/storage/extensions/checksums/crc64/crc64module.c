@@ -7,13 +7,22 @@
 #include "helpers.h"
 
 PyObject* compute(PyObject* self, PyObject* args) {
-    const unsigned char* src;
-    Py_ssize_t length;
+    PyObject* data;
     uint64_t uCrc;
 
-    // Parse the bytes input, length, and initial CRC
-    if (!PyArg_ParseTuple(args, "y#K", &src, &length, &uCrc))
+    // Parse as object + unsigned long long. We use "OK" instead of "y#K"
+    // because y# requires _PyArg_ParseTuple_SizeT symbol which is not
+    // reliably available in the stable/limited ABI on all platforms.
+    if (!PyArg_ParseTuple(args, "OK", &data, &uCrc))
         return NULL;
+
+    if (!PyBytes_Check(data)) {
+        PyErr_SetString(PyExc_TypeError, "a bytes-like object is required, not '...'");
+        return NULL;
+    }
+
+    const unsigned char* src = (const unsigned char*)PyBytes_AsString(data);
+    Py_ssize_t length = PyBytes_Size(data);
 
     uint64_t pData = 0;
     uint64_t uSize = (uint64_t)length;

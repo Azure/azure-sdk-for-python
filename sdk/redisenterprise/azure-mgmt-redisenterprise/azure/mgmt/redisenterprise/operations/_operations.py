@@ -32,14 +32,14 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import RedisEnterpriseManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
+from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -65,13 +65,35 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_clusters_unlink_migrated_endpoint_request(  # pylint: disable=name-too-long
+    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/unlinkMigratedEndpoint"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
+
+
 def build_databases_get_request(
     resource_group_name: str, cluster_name: str, database_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +123,7 @@ def build_databases_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +155,7 @@ def build_databases_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -163,7 +185,7 @@ def build_databases_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}"
     path_format_arguments = {
@@ -187,7 +209,7 @@ def build_databases_list_by_cluster_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -215,7 +237,7 @@ def build_databases_list_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -245,7 +267,7 @@ def build_databases_regenerate_key_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -277,7 +299,7 @@ def build_databases_import_method_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/import"
     path_format_arguments = {
@@ -306,7 +328,7 @@ def build_databases_export_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/export"
     path_format_arguments = {
@@ -335,7 +357,7 @@ def build_databases_force_unlink_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/forceUnlink"
     path_format_arguments = {
@@ -364,7 +386,7 @@ def build_databases_force_link_to_replication_group_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/forceLinkToReplicationGroup"
     path_format_arguments = {
@@ -393,7 +415,7 @@ def build_databases_flush_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/flush"
     path_format_arguments = {
@@ -420,7 +442,7 @@ def build_databases_upgrade_db_redis_version_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/upgradeDBRedisVersion"
     path_format_arguments = {
@@ -448,7 +470,7 @@ def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -484,7 +506,7 @@ def build_private_endpoint_connections_put_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -520,7 +542,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -546,7 +568,7 @@ def build_private_endpoint_connections_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -568,6 +590,143 @@ def build_private_endpoint_connections_list_request(  # pylint: disable=name-too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_migrations_get_request(
+    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/migrations/default"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_migrations_start_request(
+    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/migrations/default"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_migrations_list_request(
+    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/migrations"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_migrations_undo_request(
+    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/migrations/default/cancel"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_migrations_unlink_migrated_endpoint_request(  # pylint: disable=name-too-long
+    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/migrations/default/unlinkMigratedEndpoint"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
+
+
 def build_migrations_validate_request(
     resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
@@ -575,7 +734,7 @@ def build_migrations_validate_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -605,7 +764,7 @@ def build_redis_enterprise_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -634,7 +793,7 @@ def build_redis_enterprise_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -665,7 +824,7 @@ def build_redis_enterprise_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -694,7 +853,7 @@ def build_redis_enterprise_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}"
     path_format_arguments = {
@@ -717,7 +876,7 @@ def build_redis_enterprise_list_by_resource_group_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -744,7 +903,7 @@ def build_redis_enterprise_list_request(subscription_id: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -770,7 +929,7 @@ def build_redis_enterprise_list_skus_for_scaling_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -798,7 +957,7 @@ def build_private_link_resources_list_by_cluster_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -831,7 +990,7 @@ def build_access_policy_assignment_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -869,7 +1028,7 @@ def build_access_policy_assignment_create_update_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -907,7 +1066,7 @@ def build_access_policy_assignment_delete_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/databases/{databaseName}/accessPolicyAssignments/{accessPolicyAssignmentName}"
     path_format_arguments = {
@@ -934,7 +1093,7 @@ def build_access_policy_assignment_list_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -957,122 +1116,13 @@ def build_access_policy_assignment_list_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_migration_get_request(
-    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/migrations/default"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_migration_start_request(
-    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/migrations/default"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_migration_list_request(
-    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/migrations"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_migration_cancel_request(
-    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redisEnterprise/{clusterName}/migrations/default/cancel"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
-
-
 def build_operations_status_get_request(
     location: str, operation_id: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1096,7 +1146,7 @@ def build_operations_status_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1208,7 +1258,162 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class DatabasesOperations:  # pylint: disable=too-many-public-methods
+class ClustersOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.redisenterprise.RedisEnterpriseManagementClient`'s
+        :attr:`clusters` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: RedisEnterpriseManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={"2026-09-01": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]},
+        api_versions_list=["2026-09-01", "2026-10-01-preview"],
+    )
+    def _unlink_migrated_endpoint_initial(
+        self, resource_group_name: str, cluster_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_clusters_unlink_migrated_endpoint_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={"2026-09-01": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]},
+        api_versions_list=["2026-09-01", "2026-10-01-preview"],
+    )
+    def begin_unlink_migrated_endpoint(
+        self, resource_group_name: str, cluster_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Unlinks the migrated endpoint from an Azure Managed Redis cluster that was migrated from Azure
+        Cache for Redis Enterprise, removing the source cache endpoint that was redirected to this
+        cluster during migration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._unlink_migrated_endpoint_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class DatabasesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1307,7 +1512,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Union[_models.Database, JSON, IO[bytes]],
+        parameters: Union[_models.Database, _types.Database, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1420,7 +1625,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.Database,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1437,7 +1642,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the Redis Enterprise database. Required.
         :type database_name: str
         :param parameters: Parameters supplied to the create or update database operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.redisenterprise.types.Database
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1486,7 +1691,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Union[_models.Database, JSON, IO[bytes]],
+        parameters: Union[_models.Database, _types.Database, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Database]:
         """Creates a database.
@@ -1500,9 +1705,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param database_name: The name of the Redis Enterprise database. Required.
         :type database_name: str
-        :param parameters: Parameters supplied to the create or update database operation. Is one of
-         the following types: Database, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.redisenterprise.models.Database or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the create or update database operation. Is either a
+         Database type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.models.Database or
+         ~azure.mgmt.redisenterprise.types.Database or IO[bytes]
         :return: An instance of LROPoller that returns Database. The Database is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.Database]
@@ -1566,7 +1772,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Union[_models.DatabaseUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.DatabaseUpdate, _types.DatabaseUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1680,7 +1886,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.DatabaseUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1697,7 +1903,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the Redis Enterprise database. Required.
         :type database_name: str
         :param parameters: Parameters supplied to the create or update database operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.redisenterprise.types.DatabaseUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1746,7 +1952,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Union[_models.DatabaseUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.DatabaseUpdate, _types.DatabaseUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Database]:
         """Updates a database.
@@ -1760,9 +1966,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param database_name: The name of the Redis Enterprise database. Required.
         :type database_name: str
-        :param parameters: Parameters supplied to the create or update database operation. Is one of
-         the following types: DatabaseUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.redisenterprise.models.DatabaseUpdate or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the create or update database operation. Is either a
+         DatabaseUpdate type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.models.DatabaseUpdate or
+         ~azure.mgmt.redisenterprise.types.DatabaseUpdate or IO[bytes]
         :return: An instance of LROPoller that returns Database. The Database is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.Database]
@@ -2136,7 +2343,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Union[_models.RegenerateKeyParameters, JSON, IO[bytes]],
+        parameters: Union[_models.RegenerateKeyParameters, _types.RegenerateKeyParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2250,7 +2457,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.RegenerateKeyParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2267,7 +2474,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the Redis Enterprise database. Required.
         :type database_name: str
         :param parameters: Specifies which key to regenerate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.redisenterprise.types.RegenerateKeyParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2316,7 +2523,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Union[_models.RegenerateKeyParameters, JSON, IO[bytes]],
+        parameters: Union[_models.RegenerateKeyParameters, _types.RegenerateKeyParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AccessKeys]:
         """Regenerates the Redis Enterprise database's access keys.
@@ -2330,10 +2537,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param database_name: The name of the Redis Enterprise database. Required.
         :type database_name: str
-        :param parameters: Specifies which key to regenerate. Is one of the following types:
-         RegenerateKeyParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.redisenterprise.models.RegenerateKeyParameters or JSON or
-         IO[bytes]
+        :param parameters: Specifies which key to regenerate. Is either a RegenerateKeyParameters type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.models.RegenerateKeyParameters or
+         ~azure.mgmt.redisenterprise.types.RegenerateKeyParameters or IO[bytes]
         :return: An instance of LROPoller that returns AccessKeys. The AccessKeys is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.AccessKeys]
@@ -2404,7 +2611,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Union[_models.ImportClusterParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ImportClusterParameters, _types.ImportClusterParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2517,7 +2724,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.ImportClusterParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2534,7 +2741,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the Redis Enterprise database. Required.
         :type database_name: str
         :param parameters: Storage information for importing into the cluster. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.redisenterprise.types.ImportClusterParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2581,7 +2788,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Union[_models.ImportClusterParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ImportClusterParameters, _types.ImportClusterParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Imports database files to target database.
@@ -2595,10 +2802,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param database_name: The name of the Redis Enterprise database. Required.
         :type database_name: str
-        :param parameters: Storage information for importing into the cluster. Is one of the following
-         types: ImportClusterParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.redisenterprise.models.ImportClusterParameters or JSON or
-         IO[bytes]
+        :param parameters: Storage information for importing into the cluster. Is either a
+         ImportClusterParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.models.ImportClusterParameters or
+         ~azure.mgmt.redisenterprise.types.ImportClusterParameters or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2656,7 +2863,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Union[_models.ExportClusterParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ExportClusterParameters, _types.ExportClusterParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2769,7 +2976,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.ExportClusterParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2786,7 +2993,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the Redis Enterprise database. Required.
         :type database_name: str
         :param parameters: Storage information for exporting into the cluster. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.redisenterprise.types.ExportClusterParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2833,7 +3040,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Union[_models.ExportClusterParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ExportClusterParameters, _types.ExportClusterParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Exports a database file from target database.
@@ -2847,10 +3054,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param database_name: The name of the Redis Enterprise database. Required.
         :type database_name: str
-        :param parameters: Storage information for exporting into the cluster. Is one of the following
-         types: ExportClusterParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.redisenterprise.models.ExportClusterParameters or JSON or
-         IO[bytes]
+        :param parameters: Storage information for exporting into the cluster. Is either a
+         ExportClusterParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.models.ExportClusterParameters or
+         ~azure.mgmt.redisenterprise.types.ExportClusterParameters or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2908,7 +3115,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Union[_models.ForceUnlinkParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ForceUnlinkParameters, _types.ForceUnlinkParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3021,7 +3228,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.ForceUnlinkParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3038,7 +3245,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the Redis Enterprise database. Required.
         :type database_name: str
         :param parameters: Information identifying the database to be unlinked. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.redisenterprise.types.ForceUnlinkParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3085,7 +3292,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Union[_models.ForceUnlinkParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ForceUnlinkParameters, _types.ForceUnlinkParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Forcibly removes the link to the specified database resource.
@@ -3099,9 +3306,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param database_name: The name of the Redis Enterprise database. Required.
         :type database_name: str
-        :param parameters: Information identifying the database to be unlinked. Is one of the following
-         types: ForceUnlinkParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.redisenterprise.models.ForceUnlinkParameters or JSON or IO[bytes]
+        :param parameters: Information identifying the database to be unlinked. Is either a
+         ForceUnlinkParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.models.ForceUnlinkParameters or
+         ~azure.mgmt.redisenterprise.types.ForceUnlinkParameters or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3159,7 +3367,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Union[_models.ForceLinkParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ForceLinkParameters, _types.ForceLinkParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3273,7 +3481,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: JSON,
+        parameters: _types.ForceLinkParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3292,7 +3500,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the Redis Enterprise database. Required.
         :type database_name: str
         :param parameters: Information identifying the database to be unlinked. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.redisenterprise.types.ForceLinkParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3341,7 +3549,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Union[_models.ForceLinkParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ForceLinkParameters, _types.ForceLinkParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Forcibly recreates an existing database on the specified cluster, and rejoins it to an existing
@@ -3357,9 +3565,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param database_name: The name of the Redis Enterprise database. Required.
         :type database_name: str
-        :param parameters: Information identifying the database to be unlinked. Is one of the following
-         types: ForceLinkParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.redisenterprise.models.ForceLinkParameters or JSON or IO[bytes]
+        :param parameters: Information identifying the database to be unlinked. Is either a
+         ForceLinkParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.models.ForceLinkParameters or
+         ~azure.mgmt.redisenterprise.types.ForceLinkParameters or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3417,7 +3626,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Optional[Union[_models.FlushParameters, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.FlushParameters, _types.FlushParameters, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3534,7 +3743,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.FlushParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3551,7 +3760,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: The name of the Redis Enterprise database. Required.
         :type database_name: str
         :param parameters: Information identifying the databases to be flushed. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.redisenterprise.types.FlushParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3598,7 +3807,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         database_name: str,
-        parameters: Optional[Union[_models.FlushParameters, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.FlushParameters, _types.FlushParameters, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Flushes all the keys in this database and also from its linked databases.
@@ -3612,9 +3821,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param database_name: The name of the Redis Enterprise database. Required.
         :type database_name: str
-        :param parameters: Information identifying the databases to be flushed. Is one of the following
-         types: FlushParameters, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.redisenterprise.models.FlushParameters or JSON or IO[bytes]
+        :param parameters: Information identifying the databases to be flushed. Is either a
+         FlushParameters type or a IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.redisenterprise.models.FlushParameters or
+         ~azure.mgmt.redisenterprise.types.FlushParameters or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3797,7 +4007,7 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3900,7 +4110,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         cluster_name: str,
         private_endpoint_connection_name: str,
-        properties: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        properties: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4013,7 +4223,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         cluster_name: str,
         private_endpoint_connection_name: str,
-        properties: JSON,
+        properties: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4032,7 +4242,7 @@ class PrivateEndpointConnectionsOperations:
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
         :param properties: The private endpoint connection properties. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.redisenterprise.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4085,7 +4295,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         cluster_name: str,
         private_endpoint_connection_name: str,
-        properties: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        properties: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnection]:
         """Updates the state of the specified private endpoint connection associated with the Redis
@@ -4101,10 +4311,10 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
-        :param properties: The private endpoint connection properties. Is one of the following types:
-         PrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.redisenterprise.models.PrivateEndpointConnection or JSON or
-         IO[bytes]
+        :param properties: The private endpoint connection properties. Is either a
+         PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.redisenterprise.models.PrivateEndpointConnection or
+         ~azure.mgmt.redisenterprise.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of LROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -4403,7 +4613,7 @@ class PrivateEndpointConnectionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MigrationsOperations:
+class MigrationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4421,6 +4631,835 @@ class MigrationsOperations:
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def get(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> _models.Migration:
+        """Gets information about a migration in a Redis Enterprise cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :return: Migration. The Migration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.redisenterprise.models.Migration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Migration] = kwargs.pop("cls", None)
+
+        _request = build_migrations_get_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Migration, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    def _start_initial(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: Union[_models.Migration, _types.Migration, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_migrations_start_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 200:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        if response.status_code == 201:
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_start(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: _models.Migration,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Migration]:
+        """Starts a new migration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :param parameters: Parameters supplied to start a migration operation. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.models.Migration
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Migration. The Migration is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.Migration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_start(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: _types.Migration,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Migration]:
+        """Starts a new migration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :param parameters: Parameters supplied to start a migration operation. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.types.Migration
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Migration. The Migration is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.Migration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_start(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Migration]:
+        """Starts a new migration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :param parameters: Parameters supplied to start a migration operation. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Migration. The Migration is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.Migration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_start(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        parameters: Union[_models.Migration, _types.Migration, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.Migration]:
+        """Starts a new migration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :param parameters: Parameters supplied to start a migration operation. Is either a Migration
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.models.Migration or
+         ~azure.mgmt.redisenterprise.types.Migration or IO[bytes]
+        :return: An instance of LROPoller that returns Migration. The Migration is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.Migration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Migration] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._start_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                parameters=parameters,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = _deserialize(_models.Migration, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.Migration].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.Migration](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    def list(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> ItemPaged["_models.Migration"]:
+        """Gets information about all migrations attempts in a Redis Enterprise cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :return: An iterator like instance of Migration
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.redisenterprise.models.Migration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Migration]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_migrations_list_request(
+                    resource_group_name=resource_group_name,
+                    cluster_name=cluster_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Migration],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        params_added_on={"2026-09-01": ["content_type"]},
+        api_versions_list=[
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01-preview",
+            "2026-09-01",
+            "2026-10-01-preview",
+        ],
+    )
+    def _undo_initial(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: Optional[Union[_models.MigrationUndoRequest, _types.MigrationUndoRequest, IO[bytes]]] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json" if body else None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            if body is not None:
+                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
+
+        _request = build_migrations_undo_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_undo(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: Optional[_models.MigrationUndoRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Cancel or rollback the migration operation in a Redis Enterprise cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :param body: Parameters supplied to undo a migration operation. Default value is None.
+        :type body: ~azure.mgmt.redisenterprise.models.MigrationUndoRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_undo(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: Optional[_types.MigrationUndoRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Cancel or rollback the migration operation in a Redis Enterprise cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :param body: Parameters supplied to undo a migration operation. Default value is None.
+        :type body: ~azure.mgmt.redisenterprise.types.MigrationUndoRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_undo(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Cancel or rollback the migration operation in a Redis Enterprise cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :param body: Parameters supplied to undo a migration operation. Default value is None.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        params_added_on={"2026-09-01": ["content_type"]},
+        api_versions_list=[
+            "2025-08-01-preview",
+            "2026-02-01-preview",
+            "2026-05-01-preview",
+            "2026-06-01-preview",
+            "2026-09-01",
+            "2026-10-01-preview",
+        ],
+    )
+    def begin_undo(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: Optional[Union[_models.MigrationUndoRequest, _types.MigrationUndoRequest, IO[bytes]]] = None,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Cancel or rollback the migration operation in a Redis Enterprise cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :param body: Parameters supplied to undo a migration operation. Is either a
+         MigrationUndoRequest type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.redisenterprise.models.MigrationUndoRequest or
+         ~azure.mgmt.redisenterprise.types.MigrationUndoRequest or IO[bytes]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._undo_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={"2026-09-01": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]},
+        api_versions_list=["2026-09-01", "2026-10-01-preview"],
+    )
+    def _unlink_migrated_endpoint_initial(
+        self, resource_group_name: str, cluster_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_migrations_unlink_migrated_endpoint_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={"2026-09-01": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]},
+        api_versions_list=["2026-09-01", "2026-10-01-preview"],
+    )
+    def begin_unlink_migrated_endpoint(
+        self, resource_group_name: str, cluster_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Unlinks the migrated endpoint from the Azure Managed Redis cluster that was migrated from Azure
+        Cache for Redis, removing the source cache endpoint that was redirected to this cluster during
+        migration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
+         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
+         consecutive hyphens. Required.
+        :type cluster_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._unlink_migrated_endpoint_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @overload
     def validate(
@@ -4458,7 +5497,7 @@ class MigrationsOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: JSON,
+        body: _types.MigrationValidationRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4474,7 +5513,7 @@ class MigrationsOperations:
          consecutive hyphens. Required.
         :type cluster_name: str
         :param body: Parameters supplied to validate a migration operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.redisenterprise.types.MigrationValidationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4520,7 +5559,7 @@ class MigrationsOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: Union[_models.MigrationValidationRequest, JSON, IO[bytes]],
+        body: Union[_models.MigrationValidationRequest, _types.MigrationValidationRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.MigrationValidationResponse:
         """Validates if a source Azure Cache for Redis resource can be migrated to a target Azure Managed
@@ -4533,9 +5572,10 @@ class MigrationsOperations:
          long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
          consecutive hyphens. Required.
         :type cluster_name: str
-        :param body: Parameters supplied to validate a migration operation. Is one of the following
-         types: MigrationValidationRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.redisenterprise.models.MigrationValidationRequest or JSON or IO[bytes]
+        :param body: Parameters supplied to validate a migration operation. Is either a
+         MigrationValidationRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.redisenterprise.models.MigrationValidationRequest or
+         ~azure.mgmt.redisenterprise.types.MigrationValidationRequest or IO[bytes]
         :return: MigrationValidationResponse. The MigrationValidationResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.redisenterprise.models.MigrationValidationResponse
@@ -4609,7 +5649,7 @@ class MigrationsOperations:
         return deserialized  # type: ignore
 
 
-class RedisEnterpriseOperations:
+class RedisEnterpriseOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4704,7 +5744,7 @@ class RedisEnterpriseOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.Cluster, JSON, IO[bytes]],
+        parameters: Union[_models.Cluster, _types.Cluster, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4812,7 +5852,7 @@ class RedisEnterpriseOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: JSON,
+        parameters: _types.Cluster,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4827,7 +5867,7 @@ class RedisEnterpriseOperations:
          consecutive hyphens. Required.
         :type cluster_name: str
         :param parameters: Parameters supplied to the Create Redis Enterprise operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.redisenterprise.types.Cluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4872,7 +5912,7 @@ class RedisEnterpriseOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.Cluster, JSON, IO[bytes]],
+        parameters: Union[_models.Cluster, _types.Cluster, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Cluster]:
         """Creates or updates an existing (overwrite/recreate, with potential downtime) cache cluster.
@@ -4884,9 +5924,10 @@ class RedisEnterpriseOperations:
          long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
          consecutive hyphens. Required.
         :type cluster_name: str
-        :param parameters: Parameters supplied to the Create Redis Enterprise operation. Is one of the
-         following types: Cluster, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.redisenterprise.models.Cluster or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the Create Redis Enterprise operation. Is either a
+         Cluster type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.models.Cluster or
+         ~azure.mgmt.redisenterprise.types.Cluster or IO[bytes]
         :return: An instance of LROPoller that returns Cluster. The Cluster is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.Cluster]
@@ -4948,7 +5989,7 @@ class RedisEnterpriseOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.ClusterUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ClusterUpdate, _types.ClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5057,7 +6098,7 @@ class RedisEnterpriseOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: JSON,
+        parameters: _types.ClusterUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5072,7 +6113,7 @@ class RedisEnterpriseOperations:
          consecutive hyphens. Required.
         :type cluster_name: str
         :param parameters: Parameters supplied to the Update Redis Enterprise operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.redisenterprise.types.ClusterUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5117,7 +6158,7 @@ class RedisEnterpriseOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        parameters: Union[_models.ClusterUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ClusterUpdate, _types.ClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Cluster]:
         """Updates an existing Redis Enterprise cluster.
@@ -5129,9 +6170,10 @@ class RedisEnterpriseOperations:
          long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
          consecutive hyphens. Required.
         :type cluster_name: str
-        :param parameters: Parameters supplied to the Update Redis Enterprise operation. Is one of the
-         following types: ClusterUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.redisenterprise.models.ClusterUpdate or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the Update Redis Enterprise operation. Is either a
+         ClusterUpdate type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.models.ClusterUpdate or
+         ~azure.mgmt.redisenterprise.types.ClusterUpdate or IO[bytes]
         :return: An instance of LROPoller that returns Cluster. The Cluster is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.Cluster]
@@ -5575,7 +6617,7 @@ class RedisEnterpriseOperations:
         return deserialized  # type: ignore
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5699,7 +6741,7 @@ class PrivateLinkResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AccessPolicyAssignmentOperations:
+class AccessPolicyAssignmentOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5810,7 +6852,7 @@ class AccessPolicyAssignmentOperations:
         cluster_name: str,
         database_name: str,
         access_policy_assignment_name: str,
-        parameters: Union[_models.AccessPolicyAssignment, JSON, IO[bytes]],
+        parameters: Union[_models.AccessPolicyAssignment, _types.AccessPolicyAssignment, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5931,7 +6973,7 @@ class AccessPolicyAssignmentOperations:
         cluster_name: str,
         database_name: str,
         access_policy_assignment_name: str,
-        parameters: JSON,
+        parameters: _types.AccessPolicyAssignment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5952,7 +6994,7 @@ class AccessPolicyAssignmentOperations:
         :type access_policy_assignment_name: str
         :param parameters: Parameters supplied to the create access policy assignment for database.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.redisenterprise.types.AccessPolicyAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6009,7 +7051,7 @@ class AccessPolicyAssignmentOperations:
         cluster_name: str,
         database_name: str,
         access_policy_assignment_name: str,
-        parameters: Union[_models.AccessPolicyAssignment, JSON, IO[bytes]],
+        parameters: Union[_models.AccessPolicyAssignment, _types.AccessPolicyAssignment, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AccessPolicyAssignment]:
         """Creates/Updates a particular access policy assignment for a database.
@@ -6027,9 +7069,9 @@ class AccessPolicyAssignmentOperations:
          assignment. Required.
         :type access_policy_assignment_name: str
         :param parameters: Parameters supplied to the create access policy assignment for database. Is
-         one of the following types: AccessPolicyAssignment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.redisenterprise.models.AccessPolicyAssignment or JSON or
-         IO[bytes]
+         either a AccessPolicyAssignment type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.redisenterprise.models.AccessPolicyAssignment or
+         ~azure.mgmt.redisenterprise.types.AccessPolicyAssignment or IO[bytes]
         :return: An instance of LROPoller that returns AccessPolicyAssignment. The
          AccessPolicyAssignment is compatible with MutableMapping
         :rtype:
@@ -6342,577 +7384,7 @@ class AccessPolicyAssignmentOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MigrationOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.redisenterprise.RedisEnterpriseManagementClient`'s
-        :attr:`migration` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: RedisEnterpriseManagementClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> _models.Migration:
-        """Gets information about a migration in a Redis Enterprise cluster.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
-         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
-         consecutive hyphens. Required.
-        :type cluster_name: str
-        :return: Migration. The Migration is compatible with MutableMapping
-        :rtype: ~azure.mgmt.redisenterprise.models.Migration
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.Migration] = kwargs.pop("cls", None)
-
-        _request = build_migration_get_request(
-            resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.Migration, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    def _start_initial(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        parameters: Union[_models.Migration, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_migration_start_request(
-            resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 200:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        if response.status_code == 201:
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_start(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        parameters: _models.Migration,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.Migration]:
-        """Starts a new migration.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
-         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
-         consecutive hyphens. Required.
-        :type cluster_name: str
-        :param parameters: Parameters supplied to start a migration operation. Required.
-        :type parameters: ~azure.mgmt.redisenterprise.models.Migration
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns Migration. The Migration is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.Migration]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_start(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        parameters: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.Migration]:
-        """Starts a new migration.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
-         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
-         consecutive hyphens. Required.
-        :type cluster_name: str
-        :param parameters: Parameters supplied to start a migration operation. Required.
-        :type parameters: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns Migration. The Migration is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.Migration]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_start(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.Migration]:
-        """Starts a new migration.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
-         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
-         consecutive hyphens. Required.
-        :type cluster_name: str
-        :param parameters: Parameters supplied to start a migration operation. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns Migration. The Migration is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.Migration]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_start(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        parameters: Union[_models.Migration, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[_models.Migration]:
-        """Starts a new migration.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
-         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
-         consecutive hyphens. Required.
-        :type cluster_name: str
-        :param parameters: Parameters supplied to start a migration operation. Is one of the following
-         types: Migration, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.redisenterprise.models.Migration or JSON or IO[bytes]
-        :return: An instance of LROPoller that returns Migration. The Migration is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.redisenterprise.models.Migration]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Migration] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._start_initial(
-                resource_group_name=resource_group_name,
-                cluster_name=cluster_name,
-                parameters=parameters,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-            deserialized = _deserialize(_models.Migration, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.Migration].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.Migration](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @distributed_trace
-    def list(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> ItemPaged["_models.Migration"]:
-        """Gets information about all migrations attempts in a Redis Enterprise cluster.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
-         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
-         consecutive hyphens. Required.
-        :type cluster_name: str
-        :return: An iterator like instance of Migration
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.redisenterprise.models.Migration]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.Migration]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_migration_list_request(
-                    resource_group_name=resource_group_name,
-                    cluster_name=cluster_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.Migration],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    def _cancel_initial(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_migration_cancel_request(
-            resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["Azure-AsyncOperation"] = self._deserialize(
-            "str", response.headers.get("Azure-AsyncOperation")
-        )
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_cancel(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> LROPoller[None]:
-        """Cancel or rollback the migration operation in a Redis Enterprise cluster.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_name: The name of the Redis Enterprise cluster. Name must be 1-60 characters
-         long. Allowed characters(A-Z, a-z, 0-9) and hyphen(-). There can be no leading nor trailing nor
-         consecutive hyphens. Required.
-        :type cluster_name: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._cancel_initial(
-                resource_group_name=resource_group_name,
-                cluster_name=cluster_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-
-class OperationsStatusOperations:
+class OperationsStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -1,0 +1,272 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+"""Unit tests for Agent Insights run poller configuration and terminal states."""
+
+import asyncio
+import io
+import json
+from typing import Any
+from unittest.mock import AsyncMock, MagicMock
+
+import pytest
+import requests
+from urllib3.response import HTTPResponse
+from azure.core.credentials import AccessToken
+from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline import PipelineContext, PipelineResponse, transport
+from azure.core.rest import HttpRequest
+
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
+from azure.ai.projects.aio.operations import AgentInsightMonitorsOperations as AsyncAgentInsightMonitorsOperations
+from azure.ai.projects.models import AgentInsightRunLROPoller, AsyncAgentInsightRunLROPoller
+from azure.ai.projects.operations import AgentInsightMonitorsOperations
+
+
+class _RunResponse:
+    """A buffered, picklable response for both supported Core token formats."""
+
+    def __init__(self, request, status_code, headers, payload):
+        self.request = request
+        self.status_code = status_code
+        self.headers = headers
+        self.content = json.dumps(payload).encode()
+        self.reason = "Test response"
+
+    def text(self):
+        return self.content.decode()
+
+    def json(self):
+        return json.loads(self.content)
+
+
+class _SyncRunResponse(_RunResponse):
+    def read(self):
+        return self.content
+
+
+class _AsyncRunResponse(_RunResponse):
+    async def read(self):
+        return self.content
+
+
+def _run_response(
+    status: str, *, initial: bool = False, initial_status_code: int = 201, is_async: bool = False
+) -> PipelineResponse:
+    request = HttpRequest(
+        "POST" if initial else "GET",
+        "https://example.test/runs/run-test",
+        headers={"x-ms-client-request-id": "request-test"},
+    )
+    payload: dict[str, Any] = {"id": "run-test", "status": status}
+    if status == "succeeded":
+        payload["result"] = {
+            "traces_in_window": 10,
+            "traces_analyzed": 10,
+            "insights_created": 1,
+            "insights_updated": 0,
+            "insights_reopened": 0,
+            "token_usage": {"input_tokens": 10, "output_tokens": 5, "total_tokens": 15},
+        }
+    headers = (
+        {
+            "operation-location": "https://example.test/operations/run-test",
+            "location": "https://example.test/runs/run-test",
+        }
+        if initial
+        else {}
+    )
+    response_type = _AsyncRunResponse if is_async else _SyncRunResponse
+    response = response_type(request, initial_status_code if initial else 200, headers, payload)
+    return PipelineResponse(request, response, PipelineContext(None))
+
+
+def _transport_run_responses(*, is_async: bool) -> list[Any]:
+    responses = []
+    for index, status in enumerate(["queued", "in_progress", "succeeded", "succeeded"]):
+        response = _run_response(status, initial=index == 0).http_response
+        response.headers["content-type"] = "application/json"
+        response.headers["location"] = "https://example.test/runs/run-test"
+        if is_async:
+            raw_response = MagicMock(status=response.status_code, headers=response.headers, reason="OK")
+            raw_response.read = AsyncMock(return_value=response.content)
+        else:
+            raw_response = requests.Response()
+            raw_response.status_code = response.status_code
+            raw_response.headers.update(response.headers)
+            raw_response.raw = HTTPResponse(body=io.BytesIO(response.content), preload_content=False)
+            raw_response._content = response.content
+            raw_response._content_consumed = True
+        responses.append(raw_response)
+    return responses
+
+
+def _operation_for_status(terminal_status: str, *, is_async: bool = False, initial_status_code: int = 201):
+    operation_type = AsyncAgentInsightMonitorsOperations if is_async else AgentInsightMonitorsOperations
+    operation = operation_type.__new__(operation_type)
+    operation._client = MagicMock()
+    operation._config = MagicMock(polling_interval=0)
+    operation._serialize = MagicMock()
+    operation._serialize.url.return_value = "https://example.test"
+    operation._deserialize = MagicMock()
+    initial = _run_response("queued", initial=True, initial_status_code=initial_status_code, is_async=is_async)
+    responses = [_run_response("in_progress"), _run_response(terminal_status)]
+    if terminal_status == "succeeded":
+        responses.append(_run_response("succeeded"))
+    if is_async:
+        operation._create_run_initial = AsyncMock(return_value=initial)
+        operation._client.send_request = AsyncMock(side_effect=responses)
+        operation._client._pipeline._transport.sleep = AsyncMock()
+    else:
+        operation._create_run_initial = MagicMock(return_value=initial)
+        operation._client.send_request = MagicMock(side_effect=responses)
+    return operation
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True])
+async def test_ga_monitors_are_wired_to_public_clients(is_async: bool) -> None:
+    client_type = AsyncAIProjectClient if is_async else AIProjectClient
+    operation_type = AsyncAgentInsightMonitorsOperations if is_async else AgentInsightMonitorsOperations
+    client = client_type(endpoint="https://example.test", credential=MagicMock())
+    try:
+        assert isinstance(client.agent_insight_monitors, operation_type)
+        assert not hasattr(client.beta, "agent_insight_monitors")
+    finally:
+        if is_async:
+            await client.close()
+        else:
+            client.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True])
+@pytest.mark.parametrize("allow_preview", [False, True])
+@pytest.mark.parametrize("custom_headers", [False, True])
+@pytest.mark.parametrize("request_kind", ["defaults", "keywords", "json", "stream"])
+async def test_run_poller_sends_headers_on_every_request(
+    is_async: bool, allow_preview: bool, custom_headers: bool, request_kind: str
+) -> None:
+    headers = {"foundry-features": "custom-preview", "x-custom-header": "custom-value"} if custom_headers else {}
+    original_headers = headers.copy()
+    request_arguments: dict[str, Any] = {}
+    expected_body = {} if request_kind == "defaults" else {"lookback_hours": 3}
+    if request_kind == "keywords":
+        request_arguments["lookback_hours"] = 3
+    elif request_kind == "json":
+        request_arguments["body"] = expected_body
+    elif request_kind == "stream":
+        request_arguments["body"] = io.BytesIO(json.dumps(expected_body).encode())
+    responses = _transport_run_responses(is_async=is_async)
+    session = MagicMock()
+    credential = MagicMock(spec=["get_token"])
+    token = AccessToken("test-token", 4102444800)
+    if is_async:
+        session.request = AsyncMock(side_effect=responses)
+        credential.get_token = AsyncMock(return_value=token)
+        async with AsyncAIProjectClient(
+            endpoint="https://example.test",
+            credential=credential,
+            allow_preview=allow_preview,
+            transport=transport.AioHttpTransport(session=session, session_owner=False),
+        ) as client:
+            poller = await client.agent_insight_monitors.begin_create_run(
+                "monitor-test", polling_interval=0, headers=headers, **request_arguments
+            )
+            assert isinstance(poller, AsyncAgentInsightRunLROPoller)
+            result = await asyncio.wait_for(poller.result(), timeout=5)
+    else:
+        session.request.side_effect = responses
+        credential.get_token.return_value = token
+        with AIProjectClient(
+            endpoint="https://example.test",
+            credential=credential,
+            allow_preview=allow_preview,
+            transport=transport.RequestsTransport(session=session),
+        ) as client:
+            poller = client.agent_insight_monitors.begin_create_run(
+                "monitor-test", polling_interval=0, headers=headers, **request_arguments
+            )
+            assert isinstance(poller, AgentInsightRunLROPoller)
+            result = poller.result(timeout=5)
+
+    assert poller.details == {"run_id": "run-test"}
+    assert result.traces_analyzed == 10
+    calls = session.request.call_args_list
+    request_body = calls[0].kwargs["data"]
+    if isinstance(request_body, io.BytesIO):
+        request_body = request_body.getvalue()
+    assert json.loads(request_body) == expected_body
+    assert [call.args[0] if call.args else call.kwargs["method"] for call in calls] == ["POST", "GET", "GET", "GET"]
+    final_url = calls[-1].args[1] if len(calls[-1].args) > 1 else calls[-1].kwargs["url"]
+    assert final_url == "https://example.test/runs/run-test"
+    for call in calls:
+        sent_headers = {key.lower(): value for key, value in call.kwargs["headers"].items()}
+        if custom_headers:
+            assert sent_headers["foundry-features"] == "custom-preview"
+            assert sent_headers["x-custom-header"] == "custom-value"
+        else:
+            assert "foundry-features" not in sent_headers
+    assert headers == original_headers
+
+
+@pytest.mark.parametrize("initial_status_code", [201, 202])
+def test_run_poller_stops_after_cancellation(initial_status_code: int) -> None:
+    operation = _operation_for_status("cancelled", initial_status_code=initial_status_code)
+    poller = operation.begin_create_run("monitor-test")
+    with pytest.raises(HttpResponseError):
+        poller.result(timeout=5)
+    assert poller.done()
+    assert poller.status() == "cancelled"
+    assert operation._client.send_request.call_count == 2
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("initial_status_code", [201, 202])
+async def test_async_run_poller_stops_after_cancellation(initial_status_code: int) -> None:
+    operation = _operation_for_status("cancelled", is_async=True, initial_status_code=initial_status_code)
+    poller = await operation.begin_create_run("monitor-test")
+    with pytest.raises(HttpResponseError):
+        await asyncio.wait_for(poller.result(), timeout=5)
+    assert poller.polling_method().finished()
+    assert poller.status() == "cancelled"
+    assert operation._client.send_request.call_count == 2
+
+
+@pytest.mark.parametrize("is_async", [False, True])
+def test_begin_create_run_preserves_custom_polling_method(is_async):
+    operation = _operation_for_status("succeeded", is_async=is_async)
+    polling_method = MagicMock()
+    polling_method.finished.return_value = True
+    if is_async:
+        poller = asyncio.run(operation.begin_create_run("monitor-test", polling=polling_method))
+    else:
+        poller = operation.begin_create_run("monitor-test", polling=polling_method)
+    assert poller.polling_method() is polling_method
+    polling_method.initialize.assert_called_once()
+    operation._client.send_request.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True])
+async def test_begin_create_run_resumes_without_creating_another_run(is_async):
+    original_operation = _operation_for_status("succeeded", is_async=is_async)
+    if is_async:
+        original = await original_operation.begin_create_run("monitor-test")
+        await asyncio.wait_for(original.result(), timeout=5)
+    else:
+        original = original_operation.begin_create_run("monitor-test")
+        original.result(timeout=5)
+
+    operation = _operation_for_status("succeeded", is_async=is_async)
+    kwargs = {"body": {}, "continuation_token": original.continuation_token()}
+    if is_async:
+        poller = await operation.begin_create_run("monitor-test", **kwargs)
+        result = await asyncio.wait_for(poller.result(), timeout=5)
+    else:
+        poller = operation.begin_create_run("monitor-test", **kwargs)
+        result = poller.result(timeout=5)
+    operation._create_run_initial.assert_not_called()
+    assert result.traces_analyzed == 10
+    assert operation._client.send_request.call_count == 3

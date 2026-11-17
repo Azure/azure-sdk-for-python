@@ -8,8 +8,7 @@ from typing import Any, Dict, Optional, Union
 
 from typing_extensions import Literal
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import AzMonMonitoringAlertNotificationSettings
-from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitorDefinition as RestMonitorDefinition
+from azure.ai.ml._restclient.arm_ml_service.models import MonitorDefinition as RestMonitorDefinition
 from azure.ai.ml.constants._monitoring import (
     AZMONITORING,
     DEFAULT_DATA_DRIFT_SIGNAL_NAME,
@@ -94,7 +93,9 @@ class MonitorDefinition(RestTranslatableMixin):
         rest_alert_notification = None
         if self.alert_notification:
             if isinstance(self.alert_notification, str) and self.alert_notification.lower() == AZMONITORING:
-                rest_alert_notification = AzMonMonitoringAlertNotificationSettings()
+                # ``AzMonMonitoringAlertNotificationSettings`` does not exist in the shared arm_ml_service model;
+                # build the 2023-06-01-preview polymorphic envelope directly.
+                rest_alert_notification = {"alertNotificationType": "AzureMonitor"}
             else:
                 if not isinstance(self.alert_notification, str):
                     rest_alert_notification = self.alert_notification._to_rest_object()
@@ -107,14 +108,16 @@ class MonitorDefinition(RestTranslatableMixin):
                 )
                 for signal_name, signal in self.monitoring_signals.items()
             }
-        return RestMonitorDefinition(
+        rest_definition = RestMonitorDefinition(
             compute_configuration=self.compute._to_rest_object(),
             monitoring_target=self.monitoring_target._to_rest_object() if self.monitoring_target else None,
             signals=_signals,  # pylint: disable=possibly-used-before-assignment
-            # TypeSpec model uses alert_notification_settings (plural), old autorest uses singular
-            alert_notification_settings=rest_alert_notification,
-            alert_notification_setting=rest_alert_notification,
         )
+        # The arm_ml_service ``MonitorDefinition`` field serializes to ``alertNotificationSettings`` (plural), but
+        # the 2023-06-01-preview wire expects the singular ``alertNotificationSetting``. Set the wire key directly.
+        if rest_alert_notification is not None:
+            rest_definition["alertNotificationSetting"] = rest_alert_notification
+        return rest_definition
 
     @classmethod
     def _from_rest_object(
@@ -123,12 +126,22 @@ class MonitorDefinition(RestTranslatableMixin):
         **kwargs: Any,
     ) -> "MonitorDefinition":
         from_rest_alert_notification: Any = None
-        # TypeSpec model uses alert_notification_settings (plural), old autorest uses alert_notification_setting
-        _alert_setting = getattr(obj, "alert_notification_settings", None) or getattr(
-            obj, "alert_notification_setting", None
-        )
+        # The 2023-06-01-preview wire uses the singular ``alertNotificationSetting``; read it via mapping access
+        # (arm-hybrid backing store) with attribute fallbacks for older shapes.
+        _alert_setting = None
+        if hasattr(obj, "__contains__") and "alertNotificationSetting" in obj:
+            _alert_setting = obj["alertNotificationSetting"]
+        else:
+            _alert_setting = getattr(obj, "alert_notification_settings", None) or getattr(
+                obj, "alert_notification_setting", None
+            )
         if _alert_setting:
-            if isinstance(_alert_setting, AzMonMonitoringAlertNotificationSettings):
+            _alert_type = (
+                _alert_setting.get("alertNotificationType")
+                if hasattr(_alert_setting, "get")
+                else getattr(_alert_setting, "alert_notification_type", None)
+            )
+            if _alert_type == "AzureMonitor":
                 from_rest_alert_notification = AZMONITORING
             else:
                 from_rest_alert_notification = AlertNotification._from_rest_object(_alert_setting)

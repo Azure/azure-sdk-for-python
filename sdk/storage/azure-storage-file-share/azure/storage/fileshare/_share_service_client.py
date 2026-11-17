@@ -14,12 +14,14 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from ._generated import AzureFileStorage
+from ._generated import FileClient as AzureFileStorage
 from ._generated.models import KeyInfo, StorageServiceProperties
 from ._models import (
     CorsRule,
+    Metrics,
     ShareProperties,
     SharePropertiesPaged,
+    ShareProtocolSettings,
     service_properties_deserialize,
 )
 from ._serialize import get_api_version
@@ -37,7 +39,6 @@ else:
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
-    from ._models import Metrics, ShareProtocolSettings
     from ._shared.models import UserDelegationKey
 
 
@@ -126,13 +127,9 @@ class ShareServiceClient(StorageAccountHostsMixin):
         self.allow_source_trailing_dot = kwargs.pop("allow_source_trailing_dot", None)
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
-            version=get_api_version(kwargs),
             url=self.url,
-            base_url=self.url,
+            version=get_api_version(kwargs),
             pipeline=self._pipeline,
-            allow_trailing_dot=self.allow_trailing_dot,
-            allow_source_trailing_dot=self.allow_source_trailing_dot,
-            file_request_intent=self.file_request_intent,
         )
 
     def __enter__(self) -> Self:
@@ -273,7 +270,9 @@ class ShareServiceClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop("timeout", None)
         try:
-            service_props = self._client.service.get_properties(timeout=timeout, **kwargs)
+            service_props = self._client.service.get_properties(
+                timeout=timeout, file_request_intent=self.file_request_intent, **kwargs
+            )
             return service_properties_deserialize(service_props)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -326,13 +325,18 @@ class ShareServiceClient(StorageAccountHostsMixin):
         """
         timeout = kwargs.pop("timeout", None)
         props = StorageServiceProperties(
-            hour_metrics=hour_metrics,
-            minute_metrics=minute_metrics,
+            hour_metrics=Metrics._to_generated(hour_metrics),  # pylint: disable=protected-access
+            minute_metrics=Metrics._to_generated(minute_metrics),  # pylint: disable=protected-access
             cors=CorsRule._to_generated(cors),  # pylint: disable=protected-access
-            protocol=protocol,
+            protocol=ShareProtocolSettings._to_generated(protocol),  # pylint: disable=protected-access
         )
         try:
-            self._client.service.set_properties(storage_service_properties=props, timeout=timeout, **kwargs)
+            self._client.service.set_properties(
+                storage_service_properties=props,
+                timeout=timeout,
+                file_request_intent=self.file_request_intent,
+                **kwargs,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -388,7 +392,11 @@ class ShareServiceClient(StorageAccountHostsMixin):
 
         results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
-            self._client.service.list_shares_segment, include=include, timeout=timeout, **kwargs
+            self._client.service.list_shares_segment,
+            include=include,
+            timeout=timeout,
+            file_request_intent=self.file_request_intent,
+            **kwargs,
         )
         return ItemPaged(
             command,

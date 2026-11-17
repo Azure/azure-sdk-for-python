@@ -53,7 +53,7 @@ Normally, the folder structure would be something like:
   - `/tests`: folder of test files
   - `/samples`: folder of sample files
   - `azure-{service_name}-{module_name}`: package name. Usually, package name is same with part of **${PROJECT_ROOT} folder**. After release, you can find it in pypi. For example: you can find [azure-messaging-webpubsubservice](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubservice) in [pypi](https://pypi.org/project/azure-messaging-webpubsubservice/).
-  - there are also some other files (like setup.py, README.md, etc.) which are necessary for a complete package.
+  - there are also some other files (like `pyproject.toml` (or the legacy `setup.py`), README.md, etc.) which are necessary for a complete package.
 
 More details on the structure of Azure SDK repos is available in the [Azure SDK common repo](https://github.com/Azure/azure-sdk/blob/main/docs/policies/repostructure.md#sdk-directory-layout).
 

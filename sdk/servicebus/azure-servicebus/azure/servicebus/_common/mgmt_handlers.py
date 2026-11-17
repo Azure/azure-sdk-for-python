@@ -7,7 +7,11 @@
 import logging
 
 from .message import ServiceBusReceivedMessage
-from .constants import ServiceBusReceiveMode, MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
+from .constants import (
+    ServiceBusReceiveMode,
+    MGMT_RESPONSE_MESSAGE_ERROR_CONDITION,
+    ERROR_CODE_MESSAGE_NOT_FOUND,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -75,6 +79,14 @@ def list_sessions_op(  # pylint: disable=inconsistent-return-statements
             parsed.append(m.decode("UTF-8"))
         return parsed
     if status_code in [202, 204]:
+        return []
+    # The service returns 204 NoContent (with com.microsoft:session-not-found)
+    # when no sessions match the query, which the status_code check above handles.
+    # The 404 + message-not-found catch below is a cross-SDK safety net that .NET
+    # also carries. The service does not currently send this combination for
+    # get-message-sessions, but keeping it avoids a breaking behavior change if
+    # the service ever starts returning 404 for empty results.
+    if status_code == 404 and condition == ERROR_CODE_MESSAGE_NOT_FOUND:
         return []
 
     amqp_transport.handle_amqp_mgmt_error(_LOGGER, "List sessions failed.", condition, description, status_code)

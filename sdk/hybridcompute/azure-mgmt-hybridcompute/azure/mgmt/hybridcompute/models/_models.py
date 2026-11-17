@@ -14,7 +14,7 @@ from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
-    from .. import _types, models as _models
+    from .. import _unions, models as _models
 
 
 class AccessRule(_Model):
@@ -102,7 +102,7 @@ class AgentConfiguration(_Model):
      \"full\" and \"monitor\"."""
 
 
-class AgentUpgrade(_Model):
+class AgentUpgrade(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The info w.r.t Agent Upgrade.
 
     :ivar desired_version: Specifies the version info w.r.t AgentUpgrade for the machine.
@@ -263,7 +263,7 @@ class ConnectionDetail(_Model):
     """The private endpoint connection member name."""
 
 
-class Disk(_Model):
+class Disk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a disk on the machine.
 
     :ivar path: The path of the disk.
@@ -371,7 +371,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -399,7 +399,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EsuKey(_Model):
+class EsuKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ESU key.
 
     :ivar sku: SKU number.
@@ -436,7 +436,7 @@ class EsuKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EsuProfileUpdateProperties(_Model):
+class EsuProfileUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the Update properties of a ESU License Profile.
 
     :ivar assigned_license: The resource id of the license.
@@ -466,7 +466,7 @@ class EsuProfileUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtensionPublisher(_Model):
+class ExtensionPublisher(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an Extension Publisher.
 
     :ivar id: The ID of the extension publisher.
@@ -499,7 +499,7 @@ class ExtensionPublisher(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtensionsResourceStatus(_Model):
+class ExtensionsResourceStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instance view status.
 
     :ivar code: The status code.
@@ -553,7 +553,7 @@ class ExtensionsResourceStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtensionTargetProperties(_Model):
+class ExtensionTargetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the Machine Extension Target Version Properties.
 
     :ivar target_version: Properties for the specified Extension to Upgrade.
@@ -583,7 +583,7 @@ class ExtensionTargetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtensionType(_Model):
+class ExtensionType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an Extension Type.
 
     :ivar id: The ID of the extension type.
@@ -661,7 +661,7 @@ class ProxyResource(Resource):
     """
 
 
-class ExtensionValue(ProxyResource):
+class ExtensionValue(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Extension Metadata.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -741,7 +741,7 @@ class ExtensionValueProperties(_Model):
     """The publisher of the Extension being received."""
 
 
-class ExtensionValueV2(ProxyResource):
+class ExtensionValueV2(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an Extension Metadata.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -854,7 +854,7 @@ class FirmwareProfile(_Model):
     """The type of the firmware."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -898,7 +898,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Gateway(TrackedResource):
+class Gateway(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an Arc Gateway.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -925,7 +925,14 @@ class Gateway(TrackedResource):
     )
     """Hybrid Compute Gateway properties."""
 
-    __flattened_items = ["provisioning_state", "gateway_id", "gateway_type", "gateway_endpoint", "allowed_features"]
+    __flattened_items = [
+        "provisioning_state",
+        "gateway_id",
+        "gateway_type",
+        "gateway_endpoint",
+        "allowed_features",
+        "gateway_bypass",
+    ]
 
     @overload
     def __init__(
@@ -965,7 +972,7 @@ class Gateway(TrackedResource):
             super().__setattr__(key, value)
 
 
-class GatewayProperties(_Model):
+class GatewayProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Gateway Profile.
 
     :ivar provisioning_state: The provisioning state, which only appears in the response. Known
@@ -980,6 +987,9 @@ class GatewayProperties(_Model):
     :vartype gateway_endpoint: str
     :ivar allowed_features: Specifies the list of features that are enabled for this Gateway.
     :vartype allowed_features: list[str]
+    :ivar gateway_bypass: Specifies the list of domain names that should bypass the gateway. Each
+     entry must be a valid DNS hostname.
+    :vartype gateway_bypass: list[str]
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -1000,6 +1010,11 @@ class GatewayProperties(_Model):
         name="allowedFeatures", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the list of features that are enabled for this Gateway."""
+    gateway_bypass: Optional[list[str]] = rest_field(
+        name="gatewayBypass", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the list of domain names that should bypass the gateway. Each entry must be a valid
+     DNS hostname."""
 
     @overload
     def __init__(
@@ -1007,6 +1022,7 @@ class GatewayProperties(_Model):
         *,
         gateway_type: Optional[Union[str, "_models.GatewayType"]] = None,
         allowed_features: Optional[list[str]] = None,
+        gateway_bypass: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1020,7 +1036,7 @@ class GatewayProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceUpdate(_Model):
+class ResourceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Update Resource model definition.
 
     :ivar tags: Resource tags.
@@ -1048,8 +1064,8 @@ class ResourceUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GatewayUpdate(ResourceUpdate):
-    """Describes a License Update.
+class GatewayUpdate(ResourceUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Describes a Gateway Update.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -1062,7 +1078,7 @@ class GatewayUpdate(ResourceUpdate):
     )
     """Gateway Update properties."""
 
-    __flattened_items = ["allowed_features"]
+    __flattened_items = ["allowed_features", "gateway_bypass"]
 
     @overload
     def __init__(
@@ -1101,23 +1117,32 @@ class GatewayUpdate(ResourceUpdate):
             super().__setattr__(key, value)
 
 
-class GatewayUpdateProperties(_Model):
+class GatewayUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the Update properties of a Gateway Profile.
 
     :ivar allowed_features: Specifies the list of features that are enabled for this Gateway.
     :vartype allowed_features: list[str]
+    :ivar gateway_bypass: Specifies the list of domain names that should bypass the gateway. Each
+     entry must be a valid DNS hostname.
+    :vartype gateway_bypass: list[str]
     """
 
     allowed_features: Optional[list[str]] = rest_field(
         name="allowedFeatures", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the list of features that are enabled for this Gateway."""
+    gateway_bypass: Optional[list[str]] = rest_field(
+        name="gatewayBypass", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the list of domain names that should bypass the gateway. Each entry must be a valid
+     DNS hostname."""
 
     @overload
     def __init__(
         self,
         *,
         allowed_features: Optional[list[str]] = None,
+        gateway_bypass: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1150,7 +1175,7 @@ class HardwareProfile(_Model):
     """The physical processors of the machine."""
 
 
-class HybridComputePrivateLinkScope(TrackedResource):
+class HybridComputePrivateLinkScope(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Arc PrivateLinkScope definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1197,7 +1222,7 @@ class HybridComputePrivateLinkScope(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class HybridComputePrivateLinkScopeProperties(_Model):
+class HybridComputePrivateLinkScopeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties that define a Azure Arc PrivateLinkScope resource.
 
     :ivar public_network_access: Indicates whether machines associated with the private link scope
@@ -1256,45 +1281,7 @@ class HybridComputePrivateLinkScopeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Identity(_Model):
-    """Identity for the resource.
-
-    :ivar principal_id: The principal ID of resource identity. The value must be an UUID.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource. The value must be an UUID.
-    :vartype tenant_id: str
-    :ivar type: The identity type. "SystemAssigned"
-    :vartype type: str or ~azure.mgmt.hybridcompute.models.ResourceIdentityType
-    """
-
-    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
-    """The principal ID of resource identity. The value must be an UUID."""
-    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
-    """The tenant ID of resource. The value must be an UUID."""
-    type: Optional[Union[str, "_models.ResourceIdentityType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The identity type. \"SystemAssigned\""""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class IpAddress(_Model):
+class IpAddress(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes properties of the IP address.
 
     :ivar address: Represents the IP Address.
@@ -1333,7 +1320,7 @@ class IpAddress(_Model):
         super().__init__(*args, **kwargs)
 
 
-class License(TrackedResource):
+class License(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a license in a hybrid machine.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1400,14 +1387,14 @@ class License(TrackedResource):
             super().__setattr__(key, value)
 
 
-class LicenseDetails(_Model):
+class LicenseDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a License.
 
     :ivar state: Describes the state of the license. Known values are: "Activated" and
      "Deactivated".
     :vartype state: str or ~azure.mgmt.hybridcompute.models.LicenseState
-    :ivar target: Describes the license target server. Known values are: "Windows Server 2012" and
-     "Windows Server 2012 R2".
+    :ivar target: Describes the license target server. Known values are: "Windows Server 2012",
+     "Windows Server 2012 R2", and "Windows Server 2016".
     :vartype target: str or ~azure.mgmt.hybridcompute.models.LicenseTarget
     :ivar edition: Describes the edition of the license. The values are either Standard or
      Datacenter. Known values are: "Standard" and "Datacenter".
@@ -1432,8 +1419,8 @@ class LicenseDetails(_Model):
     target: Optional[Union[str, "_models.LicenseTarget"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Describes the license target server. Known values are: \"Windows Server 2012\" and \"Windows
-     Server 2012 R2\"."""
+    """Describes the license target server. Known values are: \"Windows Server 2012\", \"Windows
+     Server 2012 R2\", and \"Windows Server 2016\"."""
     edition: Optional[Union[str, "_models.LicenseEdition"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1477,7 +1464,7 @@ class LicenseDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LicenseProfile(TrackedResource):
+class LicenseProfile(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a license profile in a hybrid machine.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1570,7 +1557,9 @@ class LicenseProfileArmEsuPropertiesWithoutAssignedLicense(
      \"Inactive\" and \"Active\"."""
 
 
-class LicenseProfileArmEsuProperties(LicenseProfileArmEsuPropertiesWithoutAssignedLicense):
+class LicenseProfileArmEsuProperties(
+    LicenseProfileArmEsuPropertiesWithoutAssignedLicense
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a License Profile ARM model.
 
     :ivar assigned_license_immutable_id: The guid id of the license.
@@ -1612,7 +1601,9 @@ class LicenseProfileArmEsuProperties(LicenseProfileArmEsuPropertiesWithoutAssign
         super().__init__(*args, **kwargs)
 
 
-class LicenseProfileArmProductProfileProperties(_Model):  # pylint: disable=name-too-long
+class LicenseProfileArmProductProfileProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes the properties of a Product License Profile ARM model.
 
     :ivar subscription_status: Indicates the subscription status of the product. Known values are:
@@ -1689,7 +1680,7 @@ class LicenseProfileArmProductProfileProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class LicenseProfileMachineInstanceView(_Model):
+class LicenseProfileMachineInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """License Profile Instance View in Machine Properties.
 
     :ivar license_status: Indicates the license status of the OS. Known values are: "Unlicensed",
@@ -1777,7 +1768,7 @@ class LicenseProfileMachineInstanceView(_Model):
 
 class LicenseProfileMachineInstanceViewEsuProperties(
     LicenseProfileArmEsuPropertiesWithoutAssignedLicense
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties for the Machine ESU profile.
 
     :ivar assigned_license_immutable_id: The guid id of the license.
@@ -1829,7 +1820,9 @@ class LicenseProfileMachineInstanceViewEsuProperties(
         super().__init__(*args, **kwargs)
 
 
-class LicenseProfileMachineInstanceViewSoftwareAssurance(_Model):  # pylint: disable=name-too-long
+class LicenseProfileMachineInstanceViewSoftwareAssurance(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """LicenseProfileMachineInstanceViewSoftwareAssurance.
 
     :ivar software_assurance_customer: Specifies if this machine is licensed as part of a Software
@@ -1860,7 +1853,7 @@ class LicenseProfileMachineInstanceViewSoftwareAssurance(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class LicenseProfileProperties(_Model):
+class LicenseProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describe the properties of a license profile.
 
     :ivar software_assurance:
@@ -1951,7 +1944,9 @@ class LicenseProfileProperties(_Model):
             super().__setattr__(key, value)
 
 
-class LicenseProfilePropertiesSoftwareAssurance(_Model):  # pylint: disable=name-too-long
+class LicenseProfilePropertiesSoftwareAssurance(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """LicenseProfilePropertiesSoftwareAssurance.
 
     :ivar software_assurance_customer: Specifies if this machine is licensed as part of a Software
@@ -1982,7 +1977,7 @@ class LicenseProfilePropertiesSoftwareAssurance(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class LicenseProfileUpdate(ResourceUpdate):
+class LicenseProfileUpdate(ResourceUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a License Profile Update.
 
     :ivar tags: Resource tags.
@@ -2015,7 +2010,7 @@ class LicenseProfileUpdate(ResourceUpdate):
         super().__init__(*args, **kwargs)
 
 
-class LicenseProfileUpdateProperties(_Model):
+class LicenseProfileUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describe the Update properties of a license profile.
 
     :ivar software_assurance:
@@ -2085,7 +2080,9 @@ class LicenseProfileUpdateProperties(_Model):
             super().__setattr__(key, value)
 
 
-class LicenseProfileUpdatePropertiesSoftwareAssurance(_Model):  # pylint: disable=name-too-long
+class LicenseProfileUpdatePropertiesSoftwareAssurance(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """LicenseProfileUpdatePropertiesSoftwareAssurance.
 
     :ivar software_assurance_customer: Specifies if this machine is licensed as part of a Software
@@ -2116,7 +2113,7 @@ class LicenseProfileUpdatePropertiesSoftwareAssurance(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class LicenseProperties(_Model):
+class LicenseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a License Profile.
 
     :ivar provisioning_state: The provisioning state, which only appears in the response. Known
@@ -2168,7 +2165,7 @@ class LicenseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LicenseUpdate(ResourceUpdate):
+class LicenseUpdate(ResourceUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a License Update.
 
     :ivar tags: Resource tags.
@@ -2201,7 +2198,7 @@ class LicenseUpdate(ResourceUpdate):
         super().__init__(*args, **kwargs)
 
 
-class LicenseUpdateProperties(_Model):
+class LicenseUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the Update properties of a License Profile.
 
     :ivar license_type: The type of the license resource. "ESU"
@@ -2258,14 +2255,14 @@ class LicenseUpdateProperties(_Model):
             super().__setattr__(key, value)
 
 
-class LicenseUpdatePropertiesLicenseDetails(_Model):
+class LicenseUpdatePropertiesLicenseDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LicenseUpdatePropertiesLicenseDetails.
 
     :ivar state: Describes the state of the license. Known values are: "Activated" and
      "Deactivated".
     :vartype state: str or ~azure.mgmt.hybridcompute.models.LicenseState
-    :ivar target: Describes the license target server. Known values are: "Windows Server 2012" and
-     "Windows Server 2012 R2".
+    :ivar target: Describes the license target server. Known values are: "Windows Server 2012",
+     "Windows Server 2012 R2", and "Windows Server 2016".
     :vartype target: str or ~azure.mgmt.hybridcompute.models.LicenseTarget
     :ivar edition: Describes the edition of the license. The values are either Standard or
      Datacenter. Known values are: "Standard" and "Datacenter".
@@ -2284,8 +2281,8 @@ class LicenseUpdatePropertiesLicenseDetails(_Model):
     target: Optional[Union[str, "_models.LicenseTarget"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Describes the license target server. Known values are: \"Windows Server 2012\" and \"Windows
-     Server 2012 R2\"."""
+    """Describes the license target server. Known values are: \"Windows Server 2012\", \"Windows
+     Server 2012 R2\", and \"Windows Server 2016\"."""
     edition: Optional[Union[str, "_models.LicenseEdition"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2320,7 +2317,7 @@ class LicenseUpdatePropertiesLicenseDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinuxParameters(_Model):
+class LinuxParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input for InstallPatches on a Linux VM, as directly received by the API.
 
     :ivar classifications_to_include: The update classifications to select when installing patches
@@ -2368,7 +2365,7 @@ class LinuxParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocationData(_Model):
+class LocationData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to the geographic location of the resource.
 
     :ivar name: A canonical name for the geographic or physical location. Required.
@@ -2413,7 +2410,7 @@ class LocationData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Machine(TrackedResource):
+class Machine(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a hybrid machine.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2436,7 +2433,7 @@ class Machine(TrackedResource):
     :ivar resources: The list of extensions affiliated to the machine.
     :vartype resources: list[~azure.mgmt.hybridcompute.models.MachineExtension]
     :ivar identity: Identity for the resource.
-    :vartype identity: ~azure.mgmt.hybridcompute.models.Identity
+    :vartype identity: ~azure.mgmt.hybridcompute.models.ManagedServiceIdentity
     :ivar kind: Indicates which kind of Arc machine placement on-premises, such as HCI, SCVMM or
      VMware etc. Known values are: "AVS", "HCI", "SCVMM", "VMware", "EPS", "GCP", and "AWS".
     :vartype kind: str or ~azure.mgmt.hybridcompute.models.ArcKindEnum
@@ -2448,7 +2445,9 @@ class Machine(TrackedResource):
     """Hybrid Compute Machine properties."""
     resources: Optional[list["_models.MachineExtension"]] = rest_field(visibility=["read"])
     """The list of extensions affiliated to the machine."""
-    identity: Optional["_models.Identity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Identity for the resource."""
     kind: Optional[Union[str, "_models.ArcKindEnum"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -2467,6 +2466,7 @@ class Machine(TrackedResource):
         "agent_upgrade",
         "os_profile",
         "license_profile",
+        "status_reason",
         "provisioning_state",
         "status",
         "last_status_change",
@@ -2503,7 +2503,7 @@ class Machine(TrackedResource):
         location: str,
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.MachineProperties"] = None,
-        identity: Optional["_models.Identity"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         kind: Optional[Union[str, "_models.ArcKindEnum"]] = None,
     ) -> None: ...
 
@@ -2536,7 +2536,7 @@ class Machine(TrackedResource):
             super().__setattr__(key, value)
 
 
-class MachineAssessPatchesResult(_Model):
+class MachineAssessPatchesResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of an AssessPatches result.
 
     :ivar status: The overall success or failure status of the operation. It remains "InProgress"
@@ -2628,7 +2628,7 @@ class MachineAssessPatchesResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineExtension(TrackedResource):
+class MachineExtension(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Machine Extension.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2675,7 +2675,7 @@ class MachineExtension(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class MachineExtensionInstanceView(_Model):
+class MachineExtensionInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the Machine Extension Instance View.
 
     :ivar name: The machine extension name.
@@ -2722,7 +2722,7 @@ class MachineExtensionInstanceView(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineExtensionInstanceViewStatus(_Model):
+class MachineExtensionInstanceViewStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instance view status.
 
     :ivar code: The status code.
@@ -2776,7 +2776,7 @@ class MachineExtensionInstanceViewStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineExtensionProperties(_Model):
+class MachineExtensionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Machine Extension.
 
     :ivar force_update_tag: How the extension handler should be forced to update even if the
@@ -2870,7 +2870,7 @@ class MachineExtensionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineExtensionUpdate(ResourceUpdate):
+class MachineExtensionUpdate(ResourceUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Machine Extension Update.
 
     :ivar tags: Resource tags.
@@ -2932,7 +2932,7 @@ class MachineExtensionUpdate(ResourceUpdate):
             super().__setattr__(key, value)
 
 
-class MachineExtensionUpdateProperties(_Model):
+class MachineExtensionUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Machine Extension.
 
     :ivar force_update_tag: How the extension handler should be forced to update even if the
@@ -3015,7 +3015,7 @@ class MachineExtensionUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineExtensionUpgrade(_Model):
+class MachineExtensionUpgrade(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the Machine Extension Upgrade Properties.
 
     :ivar extension_targets: Describes the Extension Target Properties.
@@ -3046,7 +3046,7 @@ class MachineExtensionUpgrade(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineInstallPatchesParameters(_Model):
+class MachineInstallPatchesParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input for InstallPatches as directly received by the API.
 
     :ivar maximum_duration: Specifies the maximum amount of time that the operation will run. It
@@ -3203,7 +3203,7 @@ class MachineInstallPatchesResult(_Model):
      the list of them."""
 
 
-class MachineProperties(_Model):
+class MachineProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a hybrid machine.
 
     :ivar location_data: Metadata pertaining to the geographic location of the resource.
@@ -3227,6 +3227,9 @@ class MachineProperties(_Model):
     :vartype os_profile: ~azure.mgmt.hybridcompute.models.OSProfile
     :ivar license_profile: Specifies the License related properties for a machine.
     :vartype license_profile: ~azure.mgmt.hybridcompute.models.LicenseProfileMachineInstanceView
+    :ivar status_reason: Indicates whether the service has detected that this Arc machine is a
+     clone of another onboarded machine. Service-computed; not settable by the user. "Cloned"
+    :vartype status_reason: str or ~azure.mgmt.hybridcompute.models.MachineStatusReason
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar status: The status of the hybrid machine agent. Known values are: "Connected",
@@ -3248,7 +3251,7 @@ class MachineProperties(_Model):
      onboarding.
     :vartype client_public_key: str
     :ivar identity_key_store: Specifies the identity key store a machine is using. Known values
-     are: "TPM" and "Default".
+     are: "TPM", "Default", and "TpmTransition".
     :vartype identity_key_store: str or ~azure.mgmt.hybridcompute.models.IdentityKeyStore
     :ivar tpm_ek_certificate: Endorsement Key Certificate of the Trusted Platform Module (TPM) that
      the client provides to be used during initial resource onboarding.
@@ -3325,6 +3328,11 @@ class MachineProperties(_Model):
         name="licenseProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the License related properties for a machine."""
+    status_reason: Optional[Union[str, "_models.MachineStatusReason"]] = rest_field(
+        name="statusReason", visibility=["read"]
+    )
+    """Indicates whether the service has detected that this Arc machine is a clone of another
+     onboarded machine. Service-computed; not settable by the user. \"Cloned\""""
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
     """The provisioning state, which only appears in the response."""
     status: Optional[Union[str, "_models.StatusTypes"]] = rest_field(visibility=["read"])
@@ -3351,7 +3359,8 @@ class MachineProperties(_Model):
     identity_key_store: Optional[Union[str, "_models.IdentityKeyStore"]] = rest_field(
         name="identityKeyStore", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the identity key store a machine is using. Known values are: \"TPM\" and \"Default\"."""
+    """Specifies the identity key store a machine is using. Known values are: \"TPM\", \"Default\",
+     and \"TpmTransition\"."""
     tpm_ek_certificate: Optional[str] = rest_field(
         name="tpmEkCertificate", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3433,7 +3442,7 @@ class MachineProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineRunCommand(TrackedResource):
+class MachineRunCommand(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Run Command.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3514,7 +3523,7 @@ class MachineRunCommand(TrackedResource):
             super().__setattr__(key, value)
 
 
-class MachineRunCommandInstanceView(_Model):
+class MachineRunCommandInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of a machine run command.
 
     :ivar execution_state: Script execution status. Known values are: "Unknown", "Pending",
@@ -3589,7 +3598,7 @@ class MachineRunCommandInstanceView(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineRunCommandProperties(_Model):
+class MachineRunCommandProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a run command.
 
     :ivar source: The source of the run command script.
@@ -3734,7 +3743,7 @@ class MachineRunCommandProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineRunCommandScriptSource(_Model):
+class MachineRunCommandScriptSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the script sources for run command. Use only one of script, scriptUri, commandId.
 
     :ivar script: Specifies the script content to be executed on the machine.
@@ -3794,13 +3803,13 @@ class MachineRunCommandScriptSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineUpdate(ResourceUpdate):
+class MachineUpdate(ResourceUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a hybrid machine Update.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
-    :vartype identity: ~azure.mgmt.hybridcompute.models.Identity
+    :vartype identity: ~azure.mgmt.hybridcompute.models.ManagedServiceIdentity
     :ivar kind: Indicates which kind of Arc machine placement on-premises, such as HCI, SCVMM or
      VMware etc. Known values are: "AVS", "HCI", "SCVMM", "VMware", "EPS", "GCP", and "AWS".
     :vartype kind: str or ~azure.mgmt.hybridcompute.models.ArcKindEnum
@@ -3808,7 +3817,9 @@ class MachineUpdate(ResourceUpdate):
     :vartype properties: ~azure.mgmt.hybridcompute.models.MachineUpdateProperties
     """
 
-    identity: Optional["_models.Identity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Identity for the resource."""
     kind: Optional[Union[str, "_models.ArcKindEnum"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -3829,6 +3840,7 @@ class MachineUpdate(ResourceUpdate):
         "private_link_scope_resource_id",
         "identity_key_store",
         "tpm_ek_certificate",
+        "client_public_key",
     ]
 
     @overload
@@ -3836,7 +3848,7 @@ class MachineUpdate(ResourceUpdate):
         self,
         *,
         tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.Identity"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         kind: Optional[Union[str, "_models.ArcKindEnum"]] = None,
         properties: Optional["_models.MachineUpdateProperties"] = None,
     ) -> None: ...
@@ -3870,7 +3882,7 @@ class MachineUpdate(ResourceUpdate):
             super().__setattr__(key, value)
 
 
-class MachineUpdateProperties(_Model):
+class MachineUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the ARM updatable properties of a hybrid machine.
 
     :ivar location_data: Metadata pertaining to the geographic location of the resource.
@@ -3892,6 +3904,9 @@ class MachineUpdateProperties(_Model):
     :ivar tpm_ek_certificate: Endorsement Key Certificate of the Trusted Platform Module (TPM) that
      the client provides to be used during initial resource onboarding.
     :vartype tpm_ek_certificate: str
+    :ivar client_public_key: Public Key that the client provides to be used during initial resource
+     onboarding.
+    :vartype client_public_key: str
     """
 
     location_data: Optional["_models.LocationData"] = rest_field(
@@ -3927,6 +3942,10 @@ class MachineUpdateProperties(_Model):
     )
     """Endorsement Key Certificate of the Trusted Platform Module (TPM) that the client provides to be
      used during initial resource onboarding."""
+    client_public_key: Optional[str] = rest_field(
+        name="clientPublicKey", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Public Key that the client provides to be used during initial resource onboarding."""
 
     @overload
     def __init__(
@@ -3940,6 +3959,7 @@ class MachineUpdateProperties(_Model):
         private_link_scope_resource_id: Optional[str] = None,
         identity_key_store: Optional[str] = None,
         tpm_ek_certificate: Optional[str] = None,
+        client_public_key: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3953,7 +3973,59 @@ class MachineUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkInterface(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
+     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.hybridcompute.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The identities assigned to this resource by the user.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.hybridcompute.models.UserAssignedIdentity]
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The service principal ID of the system assigned identity. This property will only be provided
+     for a system assigned identity."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of the system assigned identity. This property will only be provided for a system
+     assigned identity."""
+    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
+     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identities assigned to this resource by the user."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NetworkInterface(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a network interface.
 
     :ivar mac_address: Represents MAC address of the network interface.
@@ -4029,7 +4101,9 @@ class NetworkSecurityPerimeter(_Model):
     """Regional location of the perimeter."""
 
 
-class NetworkSecurityPerimeterConfiguration(ProxyResource):
+class NetworkSecurityPerimeterConfiguration(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties that define a Network Security Perimeter resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4097,7 +4171,9 @@ class NetworkSecurityPerimeterConfiguration(ProxyResource):
             super().__setattr__(key, value)
 
 
-class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties that define a Network Security Perimeter resource.
 
     :ivar provisioning_state: Current state of this NetworkSecurityPerimeter: whether or not is has
@@ -4194,7 +4270,7 @@ class NetworkSecurityPerimeterProfile(_Model):
     """Collection of enabled log categories for the profile."""
 
 
-class OperationValue(_Model):
+class OperationValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Compute Operation value.
 
     :ivar origin: The origin of the compute operation.
@@ -4259,7 +4335,7 @@ class OperationValueDisplay(_Model):
     """The resource provider for the operation."""
 
 
-class OSProfile(_Model):
+class OSProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the operating system settings for the hybrid machine.
 
     :ivar computer_name: Specifies the host OS name of the hybrid machine.
@@ -4300,7 +4376,7 @@ class OSProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OSProfileLinuxConfiguration(_Model):
+class OSProfileLinuxConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the linux configuration for update management.
 
     :ivar patch_settings: Specifies the patch settings.
@@ -4350,7 +4426,7 @@ class OSProfileLinuxConfiguration(_Model):
             super().__setattr__(key, value)
 
 
-class OSProfileWindowsConfiguration(_Model):
+class OSProfileWindowsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the windows configuration for update management.
 
     :ivar patch_settings: Specifies the patch settings.
@@ -4400,7 +4476,7 @@ class OSProfileWindowsConfiguration(_Model):
             super().__setattr__(key, value)
 
 
-class PatchSettings(_Model):
+class PatchSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the patch settings.
 
     :ivar assessment_mode: Specifies the assessment mode. Known values are: "ImageDefault" and
@@ -4453,7 +4529,7 @@ class PatchSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PatchSettingsStatus(_Model):
+class PatchSettingsStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Status of the hotpatch capability enrollment or disenrollment.
 
     :ivar hotpatch_enablement_status: Indicates the current status of the hotpatch being enabled or
@@ -4492,7 +4568,7 @@ class PatchSettingsStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private endpoint connection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4533,7 +4609,7 @@ class PrivateEndpointConnection(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionDataModel(_Model):
+class PrivateEndpointConnectionDataModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Data Model for a Private Endpoint Connection associated with a Private Link Scope.
 
     :ivar id: The ARM Resource Id of the Private Endpoint.
@@ -4575,7 +4651,7 @@ class PrivateEndpointConnectionDataModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private endpoint connection.
 
     :ivar private_endpoint: Private endpoint which the connection belongs to.
@@ -4622,7 +4698,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointProperty(_Model):
+class PrivateEndpointProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private endpoint which the connection belongs to.
 
     :ivar id: Resource id of the private endpoint.
@@ -4650,7 +4726,7 @@ class PrivateEndpointProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(ProxyResource):
+class PrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4710,7 +4786,7 @@ class PrivateLinkResourceProperties(_Model):
     """Required DNS zone names of the the private link resource."""
 
 
-class PrivateLinkScopeValidationDetails(_Model):
+class PrivateLinkScopeValidationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PrivateLinkScopeValidationDetails.
 
     :ivar id: Azure resource Id.
@@ -4754,7 +4830,9 @@ class PrivateLinkScopeValidationDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionStateProperty(_Model):  # pylint: disable=name-too-long
+class PrivateLinkServiceConnectionStateProperty(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """State of the private endpoint connection.
 
     :ivar status: The private link service connection status. Required.
@@ -4806,7 +4884,7 @@ class Processor(_Model):
     """The total number of physical cores on the processor."""
 
 
-class ProductFeature(_Model):
+class ProductFeature(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Product Feature.
 
     :ivar name: Product feature name.
@@ -4872,7 +4950,7 @@ class ProductFeature(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProductFeatureUpdate(_Model):
+class ProductFeatureUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Product Feature.
 
     :ivar name: Product feature name.
@@ -4909,7 +4987,7 @@ class ProductFeatureUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProductProfileUpdateProperties(_Model):
+class ProductProfileUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the Update properties of a Product Profile.
 
     :ivar subscription_status: Indicates the subscription status of the product. Known values are:
@@ -5024,7 +5102,7 @@ class ResourceAssociation(_Model):
     """The access mode. Known values are: \"enforced\", \"audit\", and \"learning\"."""
 
 
-class RunCommandInputParameter(_Model):
+class RunCommandInputParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a run command parameter.
 
     :ivar name: The run command parameter name. Required.
@@ -5057,7 +5135,7 @@ class RunCommandInputParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunCommandManagedIdentity(_Model):
+class RunCommandManagedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains clientId or objectId (use only one, not both) of a user-assigned managed identity that
     has access to storage blob used in Run Command. Use an empty RunCommandManagedIdentity object
     in case of system-assigned identity. Make sure the Azure storage blob exists in case of
@@ -5102,7 +5180,7 @@ class RunCommandManagedIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceExtension(_Model):
+class ServiceExtension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enable private link validation for an Azure Arc Extension.
 
     :ivar service_extension_type: The name of the Azure Arc Extension. Is one of the following
@@ -5115,7 +5193,7 @@ class ServiceExtension(_Model):
      ~azure.mgmt.hybridcompute.models.ServiceExtensionPublicNetworkAccess
     """
 
-    service_extension_type: Optional["_types.ServiceExtensionType"] = rest_field(
+    service_extension_type: Optional["_unions.ServiceExtensionType"] = rest_field(
         name="serviceExtensionType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the Azure Arc Extension. Is one of the following types: str"""
@@ -5131,7 +5209,7 @@ class ServiceExtension(_Model):
     def __init__(
         self,
         *,
-        service_extension_type: Optional["_types.ServiceExtensionType"] = None,
+        service_extension_type: Optional["_unions.ServiceExtensionType"] = None,
         service_extension_public_network_access: Optional[
             Union[str, "_models.ServiceExtensionPublicNetworkAccess"]
         ] = None,
@@ -5148,7 +5226,7 @@ class ServiceExtension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceStatus(_Model):
+class ServiceStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the status and behavior of a service.
 
     :ivar status: The current status of the service.
@@ -5183,7 +5261,7 @@ class ServiceStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceStatuses(_Model):
+class ServiceStatuses(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reports the state and behavior of dependent services.
 
     :ivar extension_service: The state of the extension service on the Arc-enabled machine.
@@ -5221,7 +5299,7 @@ class ServiceStatuses(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Settings(ProxyResource):
+class Settings(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -5263,7 +5341,7 @@ class Settings(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SettingsGatewayProperties(_Model):
+class SettingsGatewayProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings Gateway properties.
 
     :ivar gateway_resource_id: Associated Gateway Resource Id.
@@ -5293,7 +5371,7 @@ class SettingsGatewayProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SettingsProperties(_Model):
+class SettingsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings properties.
 
     :ivar tenant_id: Azure resource tenant Id.
@@ -5347,7 +5425,7 @@ class SettingsProperties(_Model):
             super().__setattr__(key, value)
 
 
-class SetupExtensionRequest(_Model):
+class SetupExtensionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SetupExtensionRequest.
 
     :ivar extensions: The list of extensions.
@@ -5388,7 +5466,7 @@ class StorageProfile(_Model):
     """The disks on the machine."""
 
 
-class Subnet(_Model):
+class Subnet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the subnet.
 
     :ivar address_prefix: Represents address prefix.
@@ -5418,7 +5496,7 @@ class Subnet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -5485,7 +5563,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagsResource(_Model):
+class TagsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A container holding only the Tags for a resource, allowing the user to update the tags on a
     PrivateLinkScope instance.
 
@@ -5514,7 +5592,363 @@ class TagsResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeLicenseDetails(_Model):
+class UserAssignedIdentity(_Model):
+    """User assigned identity properties.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID of the assigned identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the assigned identity."""
+
+
+class VmApplication(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A VM application installed on a hybrid machine.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridcompute.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The VM application properties.
+    :vartype properties: ~azure.mgmt.hybridcompute.models.VmApplicationProperties
+    """
+
+    properties: Optional["_models.VmApplicationProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The VM application properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.VmApplicationProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VmApplicationInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The instance view of a VM application.
+
+    :ivar name: The application name.
+    :vartype name: str
+    :ivar version: The application version.
+    :vartype version: str
+    :ivar result: The current installation result.
+    :vartype result: str
+    :ivar actions_performed: The recent actions performed for the application.
+    :vartype actions_performed:
+     list[~azure.mgmt.hybridcompute.models.VmApplicationInstanceViewAction]
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The application name."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The application version."""
+    result: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The current installation result."""
+    actions_performed: Optional[list["_models.VmApplicationInstanceViewAction"]] = rest_field(
+        name="actionsPerformed", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The recent actions performed for the application."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        result: Optional[str] = None,
+        actions_performed: Optional[list["_models.VmApplicationInstanceViewAction"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VmApplicationInstanceViewAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An action recently performed for a VM application.
+
+    :ivar operation: The operation that was performed.
+    :vartype operation: str
+    :ivar result: The result of the operation.
+    :vartype result: str
+    """
+
+    operation: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The operation that was performed."""
+    result: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The result of the operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation: Optional[str] = None,
+        result: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VmApplicationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of a VM application. Exactly one gallery application reference must be specified
+    when creating or replacing the resource.
+
+    :ivar order: The order in which the application is installed.
+    :vartype order: int
+    :ivar package_reference_id: The resource ID of the gallery application version. The version
+     name can be ``latest`` or a specific version. This property is mutually exclusive with
+     sharedGalleryApplicationId and communityGalleryApplicationId.
+    :vartype package_reference_id: str
+    :ivar shared_gallery_application_id: The identifier of a direct shared gallery application
+     version. Use
+     ``/sharedGalleries/{sharedGalleryUniqueName}/applications/{applicationName}/versions/{versionName}``,
+     where the version name can be ``latest`` or a specific version. This property is mutually
+     exclusive with packageReferenceId and communityGalleryApplicationId.
+    :vartype shared_gallery_application_id: str
+    :ivar community_gallery_application_id: The identifier of a community gallery application
+     version. Use
+     ``/communityGalleries/{communityGalleryPublicName}/applications/{applicationName}/versions/{versionName}``,
+     where the version name can be ``latest`` or a specific version. This property is mutually
+     exclusive with packageReferenceId and sharedGalleryApplicationId.
+    :vartype community_gallery_application_id: str
+    :ivar configuration_reference: The URI of configuration data that replaces the package's
+     default configuration.
+    :vartype configuration_reference: str
+    :ivar treat_failure_as_deployment_failure: Indicates whether an application operation failure
+     causes the deployment to fail.
+    :vartype treat_failure_as_deployment_failure: bool
+    :ivar provisioning_state: The provisioning state of the VM application. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Accepted", "Canceled", and
+     "Deleted".
+    :vartype provisioning_state: str or ~azure.mgmt.hybridcompute.models.ProvisioningState
+    :ivar instance_view: The instance view of the VM application.
+    :vartype instance_view: ~azure.mgmt.hybridcompute.models.VmApplicationInstanceView
+    """
+
+    order: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The order in which the application is installed."""
+    package_reference_id: Optional[str] = rest_field(
+        name="packageReferenceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the gallery application version. The version name can be ``latest`` or a
+     specific version. This property is mutually exclusive with sharedGalleryApplicationId and
+     communityGalleryApplicationId."""
+    shared_gallery_application_id: Optional[str] = rest_field(
+        name="sharedGalleryApplicationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identifier of a direct shared gallery application version. Use
+     ``/sharedGalleries/{sharedGalleryUniqueName}/applications/{applicationName}/versions/{versionName}``,
+     where the version name can be ``latest`` or a specific version. This property is mutually
+     exclusive with packageReferenceId and communityGalleryApplicationId."""
+    community_gallery_application_id: Optional[str] = rest_field(
+        name="communityGalleryApplicationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identifier of a community gallery application version. Use
+     ``/communityGalleries/{communityGalleryPublicName}/applications/{applicationName}/versions/{versionName}``,
+     where the version name can be ``latest`` or a specific version. This property is mutually
+     exclusive with packageReferenceId and sharedGalleryApplicationId."""
+    configuration_reference: Optional[str] = rest_field(
+        name="configurationReference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of configuration data that replaces the package's default configuration."""
+    treat_failure_as_deployment_failure: Optional[bool] = rest_field(
+        name="treatFailureAsDeploymentFailure", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether an application operation failure causes the deployment to fail."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the VM application. Known values are: \"Creating\", \"Updating\",
+     \"Deleting\", \"Succeeded\", \"Failed\", \"Accepted\", \"Canceled\", and \"Deleted\"."""
+    instance_view: Optional["_models.VmApplicationInstanceView"] = rest_field(name="instanceView", visibility=["read"])
+    """The instance view of the VM application."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        order: Optional[int] = None,
+        package_reference_id: Optional[str] = None,
+        shared_gallery_application_id: Optional[str] = None,
+        community_gallery_application_id: Optional[str] = None,
+        configuration_reference: Optional[str] = None,
+        treat_failure_as_deployment_failure: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VmApplicationUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The update request for a VM application.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.hybridcompute.models.VmApplicationUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.VmApplicationUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.VmApplicationUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VmApplicationUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the VmApplication.
+
+    :ivar order: The order in which the application is installed.
+    :vartype order: int
+    :ivar package_reference_id: The resource ID of the gallery application version. The version
+     name can be ``latest`` or a specific version. This property is mutually exclusive with
+     sharedGalleryApplicationId and communityGalleryApplicationId.
+    :vartype package_reference_id: str
+    :ivar shared_gallery_application_id: The identifier of a direct shared gallery application
+     version. Use
+     ``/sharedGalleries/{sharedGalleryUniqueName}/applications/{applicationName}/versions/{versionName}``,
+     where the version name can be ``latest`` or a specific version. This property is mutually
+     exclusive with packageReferenceId and communityGalleryApplicationId.
+    :vartype shared_gallery_application_id: str
+    :ivar community_gallery_application_id: The identifier of a community gallery application
+     version. Use
+     ``/communityGalleries/{communityGalleryPublicName}/applications/{applicationName}/versions/{versionName}``,
+     where the version name can be ``latest`` or a specific version. This property is mutually
+     exclusive with packageReferenceId and sharedGalleryApplicationId.
+    :vartype community_gallery_application_id: str
+    :ivar configuration_reference: The URI of configuration data that replaces the package's
+     default configuration.
+    :vartype configuration_reference: str
+    :ivar treat_failure_as_deployment_failure: Indicates whether an application operation failure
+     causes the deployment to fail.
+    :vartype treat_failure_as_deployment_failure: bool
+    """
+
+    order: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The order in which the application is installed."""
+    package_reference_id: Optional[str] = rest_field(
+        name="packageReferenceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the gallery application version. The version name can be ``latest`` or a
+     specific version. This property is mutually exclusive with sharedGalleryApplicationId and
+     communityGalleryApplicationId."""
+    shared_gallery_application_id: Optional[str] = rest_field(
+        name="sharedGalleryApplicationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identifier of a direct shared gallery application version. Use
+     ``/sharedGalleries/{sharedGalleryUniqueName}/applications/{applicationName}/versions/{versionName}``,
+     where the version name can be ``latest`` or a specific version. This property is mutually
+     exclusive with packageReferenceId and communityGalleryApplicationId."""
+    community_gallery_application_id: Optional[str] = rest_field(
+        name="communityGalleryApplicationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identifier of a community gallery application version. Use
+     ``/communityGalleries/{communityGalleryPublicName}/applications/{applicationName}/versions/{versionName}``,
+     where the version name can be ``latest`` or a specific version. This property is mutually
+     exclusive with packageReferenceId and sharedGalleryApplicationId."""
+    configuration_reference: Optional[str] = rest_field(
+        name="configurationReference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of configuration data that replaces the package's default configuration."""
+    treat_failure_as_deployment_failure: Optional[bool] = rest_field(
+        name="treatFailureAsDeploymentFailure", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether an application operation failure causes the deployment to fail."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        order: Optional[int] = None,
+        package_reference_id: Optional[str] = None,
+        shared_gallery_application_id: Optional[str] = None,
+        community_gallery_application_id: Optional[str] = None,
+        configuration_reference: Optional[str] = None,
+        treat_failure_as_deployment_failure: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VolumeLicenseDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VolumeLicenseDetails.
 
     :ivar program_year: Describes the program year the volume license is for. Known values are:
@@ -5551,7 +5985,7 @@ class VolumeLicenseDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsParameters(_Model):
+class WindowsParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input for InstallPatches on a Windows VM, as directly received by the API.
 
     :ivar classifications_to_include: The update classifications to select when installing patches

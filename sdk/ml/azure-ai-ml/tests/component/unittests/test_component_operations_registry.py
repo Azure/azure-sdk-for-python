@@ -29,6 +29,7 @@ def mock_component_operation(
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2021_10_01_dataplanepreview,
         all_operations=mock_machinelearning_registry_client._operation_container,
+        registry_service_client=mock_aml_services_2021_10_01_dataplanepreview,
     )
 
 
@@ -44,11 +45,15 @@ class TestComponentOperation:
         with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(
             "azure.ai.ml.operations._component_operations.Component._from_rest_object",
             return_value=CommandComponent(),
+        ), patch(
+            "azure.ai.ml.operations._component_operations.begin_create_or_update_registry_versioned_asset"
+        ) as mock_create, patch(
+            "azure.ai.ml.operations._component_operations.polling_wait"
         ):
             mock_component_operation.create_or_update(component)
             mock_thing.assert_called_once()
 
-        mock_component_operation._version_operation.begin_create_or_update.assert_called_once()
+        mock_create.assert_called_once()
 
     @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_create_in_ipp_registry(self, mock_component_operation: ComponentOperations) -> None:
@@ -63,79 +68,69 @@ class TestComponentOperation:
         with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(
             "azure.ai.ml.operations._component_operations.Component._from_rest_object",
             return_value=CommandComponent(),
+        ), patch(
+            "azure.ai.ml.operations._component_operations.begin_create_or_update_registry_versioned_asset"
+        ) as mock_create, patch(
+            "azure.ai.ml.operations._component_operations.polling_wait"
         ):
             mock_component_operation.create_or_update(component)
             # for IPP components, we need to make sure _resolve_arm_id_or_upload_dependencies is not called
             mock_thing.assert_not_called()
 
+        mock_create.assert_called_once()
+
     def test_list(self, mock_component_operation: ComponentOperations) -> None:
-        mock_component_operation.list(name="mock")
-        mock_component_operation._version_operation.list.assert_called_once()
-        mock_component_operation.list()
-        mock_component_operation._container_operation.list.assert_called_once()
+        with patch("azure.ai.ml.operations._component_operations.list_registry_assets") as mock_list:
+            mock_component_operation.list(name="mock")
+            mock_component_operation.list()
+        assert mock_list.call_count == 2
 
     def test_get(self, mock_component_operation: ComponentOperations) -> None:
-        with patch("azure.ai.ml.operations._component_operations.Component") as mock_component_entity:
+        with patch("azure.ai.ml.operations._component_operations.get_registry_versioned_asset") as mock_get, patch(
+            "azure.ai.ml.operations._component_operations.Component"
+        ) as mock_component_entity, patch.object(ComponentVersionData, "_deserialize", return_value=Mock()):
             mock_component_operation.get("mock_component", "1")
 
-        mock_component_operation._version_operation.get.assert_called_once()
-        create_call_args_str = str(mock_component_operation._version_operation.get.call_args)
-        assert "name='mock_component'" in create_call_args_str
-        assert "version='1'" in create_call_args_str
+        mock_get.assert_called_once()
+        create_call_args_str = str(mock_get.call_args)
+        assert "mock_component" in create_call_args_str
+        assert "'1'" in create_call_args_str
         mock_component_entity._from_rest_object.assert_called_once()
 
     def test_archive_version(self, mock_component_operation: ComponentOperations):
         name = "random_name"
-        component = Mock(ComponentVersionData(properties=Mock(ComponentVersionDetails())))
         version = "1"
-        mock_component_operation._version_operation.get.return_value = component
-        mock_component_operation.archive(name=name, version=version)
+        with patch("azure.ai.ml._utils._registry_utils.get_registry_versioned_asset"), patch(
+            "azure.ai.ml._utils._registry_utils.begin_create_or_update_registry_versioned_asset"
+        ) as mock_create, patch.object(ComponentVersionData, "_deserialize", return_value=Mock()):
+            mock_component_operation.archive(name=name, version=version)
 
-        mock_component_operation._version_operation.begin_create_or_update.assert_called_with(
-            name=name,
-            version=version,
-            registry_name=mock_component_operation._registry_name,
-            body=component,
-            resource_group_name=mock_component_operation._resource_group_name,
-        )
+        mock_create.assert_called_once()
 
     def test_restore_version(self, mock_component_operation: ComponentOperations):
         name = "random_name"
-        component = Mock(ComponentVersionData(properties=Mock(ComponentVersionDetails())))
         version = "1"
-        mock_component_operation._version_operation.get.return_value = component
-        mock_component_operation.restore(name=name, version=version)
+        with patch("azure.ai.ml._utils._registry_utils.get_registry_versioned_asset"), patch(
+            "azure.ai.ml._utils._registry_utils.begin_create_or_update_registry_versioned_asset"
+        ) as mock_create, patch.object(ComponentVersionData, "_deserialize", return_value=Mock()):
+            mock_component_operation.restore(name=name, version=version)
 
-        mock_component_operation._version_operation.begin_create_or_update.assert_called_with(
-            name=name,
-            version=version,
-            registry_name=mock_component_operation._registry_name,
-            body=component,
-            resource_group_name=mock_component_operation._resource_group_name,
-        )
+        mock_create.assert_called_once()
 
     def test_archive_container(self, mock_component_operation: ComponentOperations):
         name = "random_name"
-        component = Mock(ComponentContainerData(properties=Mock(ComponentContainerDetails())))
-        mock_component_operation._container_operation.get.return_value = component
-        mock_component_operation.archive(name=name)
+        with patch("azure.ai.ml._utils._registry_utils.get_registry_container_asset"), patch(
+            "azure.ai.ml._utils._registry_utils.begin_create_or_update_registry_container"
+        ) as mock_create, patch.object(ComponentContainerData, "_deserialize", return_value=Mock()):
+            mock_component_operation.archive(name=name)
 
-        mock_component_operation._container_operation.begin_create_or_update.assert_called_with(
-            name=name,
-            registry_name=mock_component_operation._registry_name,
-            body=component,
-            resource_group_name=mock_component_operation._resource_group_name,
-        )
+        mock_create.assert_called_once()
 
     def test_restore_container(self, mock_component_operation: ComponentOperations):
         name = "random_name"
-        component = Mock(ComponentContainerData(properties=Mock(ComponentContainerDetails())))
-        mock_component_operation._container_operation.get.return_value = component
-        mock_component_operation.restore(name=name)
+        with patch("azure.ai.ml._utils._registry_utils.get_registry_container_asset"), patch(
+            "azure.ai.ml._utils._registry_utils.begin_create_or_update_registry_container"
+        ) as mock_create, patch.object(ComponentContainerData, "_deserialize", return_value=Mock()):
+            mock_component_operation.restore(name=name)
 
-        mock_component_operation._container_operation.begin_create_or_update.assert_called_with(
-            name=name,
-            registry_name=mock_component_operation._registry_name,
-            body=component,
-            resource_group_name=mock_component_operation._resource_group_name,
-        )
+        mock_create.assert_called_once()

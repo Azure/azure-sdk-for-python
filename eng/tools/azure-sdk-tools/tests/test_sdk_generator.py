@@ -3,7 +3,7 @@ import json
 import tempfile
 import shutil
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import call, patch
 
 
 MODULE = "packaging_tools.sdk_generator"
@@ -52,40 +52,100 @@ def _common_patches():
     }
 
 
+def _run_main(
+    input_path,
+    output_path,
+    input_data,
+    package_names,
+    judge_return=False,
+    expected_create_package_calls=None,
+    changelog_side_effect=None,
+):
+    """Helper that wires up all the mocks and calls main()."""
+    _write_input(input_path, input_data)
+
+    patches = _common_patches()
+    mocks = {name: p.start() for name, p in patches.items()}
+
+    # get_package_names returns our controlled list
+    mocks["get_package_names"].return_value = package_names
+    mocks["judge_tag_preview"].return_value = judge_return
+    mocks["sdk_changelog_generate"].side_effect = changelog_side_effect
+
+    # create_package needs a dist folder with a .whl
+    def fake_create_package(folder, pkg):
+        # Use a temporary base directory to avoid polluting the repo workspace
+        base_dir = Path(tempfile.mkdtemp())
+        dist = base_dir / folder / pkg / "dist"
+        dist.mkdir(parents=True, exist_ok=True)
+        (dist / f"{pkg}-0.0.0-py3-none-any.whl").touch()
+
+    mocks["create_package"].side_effect = fake_create_package
+
+    try:
+        from packaging_tools.sdk_generator import main
+
+        main(input_path, output_path)
+        if expected_create_package_calls is not None:
+            mocks["create_package"].assert_has_calls(expected_create_package_calls, any_order=True)
+    finally:
+        for p in patches.values():
+            p.stop()
+
+    return _read_output(output_path)
+
+
+@pytest.mark.parametrize("sdk_release_type", ["preview", "stable"])
+@pytest.mark.parametrize(
+    "releases, expected_breaking",
+    [
+        pytest.param({"1.0.0b1": [{}]}, False, id="preview-only"),
+        pytest.param({}, False, id="unpublished"),
+        pytest.param({"1.0.0": [{}], "2.0.0b1": [{}]}, True, id="prior-ga"),
+    ],
+)
+def test_generation_output_uses_published_ga_history(io_paths, tmp_path, sdk_release_type, releases, expected_breaking):
+    from packaging_tools.sdk_changelog import main as changelog_main
+
+    input_path, output_path = io_paths
+    package_path = tmp_path / "azure-mgmt-test"
+    package_path.mkdir()
+    changelog_path = package_path / "CHANGELOG.md"
+    changelog_path.write_text("# Release History\n\n")
+    md_output = "### Breaking Changes\n\n  - dropped bar\n"
+
+    with (
+        patch("packaging_tools.sdk_changelog.get_changelog_content", return_value=(md_output, "1.0.0b1")),
+        patch("pypi_tools.pypi.PyPIClient.project", return_value={"releases": releases}),
+    ):
+        result = _run_main(
+            input_path,
+            output_path,
+            {
+                "specFolder": "spec",
+                "headSha": "abc123",
+                "repoHttpsUrl": "https://github.com/test/repo",
+                "relatedTypeSpecProjectFolder": ["Microsoft.Test/Test.Management"],
+                "sdkReleaseType": sdk_release_type,
+                "runMode": "spec-pull-request",
+            },
+            package_names=[(str(tmp_path), package_path.name)],
+            changelog_side_effect=changelog_main,
+        )
+
+    package = result["packages"][0]
+    assert package["tagIsStable"] is (sdk_release_type == "stable")
+    assert package["changelog"] == {
+        "content": md_output,
+        "hasBreakingChange": expected_breaking,
+        "breakingChangeItems": ["dropped bar"],
+    }
+    assert md_output in changelog_path.read_text()
+
+
 class TestTagIsStableForTypeSpec:
     """Tests for the tagIsStable logic change: TypeSpec projects use sdkReleaseType,
     while Swagger projects still use judge_tag_preview."""
-
-    def _run_main(self, input_path, output_path, input_data, package_names, judge_return=False):
-        """Helper that wires up all the mocks and calls main()."""
-        _write_input(input_path, input_data)
-
-        patches = _common_patches()
-        mocks = {name: p.start() for name, p in patches.items()}
-
-        # get_package_names returns our controlled list
-        mocks["get_package_names"].return_value = package_names
-        mocks["judge_tag_preview"].return_value = judge_return
-
-        # create_package needs a dist folder with a .whl
-        def fake_create_package(folder, pkg):
-            # Use a temporary base directory to avoid polluting the repo workspace
-            base_dir = Path(tempfile.mkdtemp())
-            dist = base_dir / folder / pkg / "dist"
-            dist.mkdir(parents=True, exist_ok=True)
-            (dist / f"{pkg}-0.0.0-py3-none-any.whl").touch()
-
-        mocks["create_package"].side_effect = fake_create_package
-
-        try:
-            from packaging_tools.sdk_generator import main
-
-            main(input_path, output_path)
-        finally:
-            for p in patches.values():
-                p.stop()
-
-        return _read_output(output_path)
 
     # ── TypeSpec: sdkReleaseType == "stable" → tagIsStable = True ────
 
@@ -98,7 +158,7 @@ class TestTagIsStableForTypeSpec:
             "relatedTypeSpecProjectFolder": ["Microsoft.Test/stable"],
             "sdkReleaseType": "stable",
         }
-        result = self._run_main(
+        result = _run_main(
             input_path,
             output_path,
             input_data,
@@ -118,7 +178,7 @@ class TestTagIsStableForTypeSpec:
             "relatedTypeSpecProjectFolder": ["Microsoft.Test/preview"],
             "sdkReleaseType": "preview",
         }
-        result = self._run_main(
+        result = _run_main(
             input_path,
             output_path,
             input_data,
@@ -138,7 +198,7 @@ class TestTagIsStableForTypeSpec:
             "relatedTypeSpecProjectFolder": ["Microsoft.Test/preview"],
             # no sdkReleaseType key
         }
-        result = self._run_main(
+        result = _run_main(
             input_path,
             output_path,
             input_data,
@@ -158,7 +218,7 @@ class TestTagIsStableForTypeSpec:
             "relatedReadmeMdFiles": ["specification/test/resource-manager/readme.md"],
             "sdkReleaseType": "stable",
         }
-        result = self._run_main(
+        result = _run_main(
             input_path,
             output_path,
             input_data,
@@ -175,7 +235,7 @@ class TestTagIsStableForTypeSpec:
             "relatedReadmeMdFiles": ["specification/test/resource-manager/readme.md"],
             "sdkReleaseType": "stable",
         }
-        result = self._run_main(
+        result = _run_main(
             input_path,
             output_path,
             input_data,
@@ -184,6 +244,52 @@ class TestTagIsStableForTypeSpec:
         )
         pkg = result["packages"][0]
         assert pkg["tagIsStable"] is True
+
+
+class TestPackagePaths:
+    def test_reports_package_source_root(self, io_paths):
+        input_path, output_path = io_paths
+        result = _run_main(
+            input_path,
+            output_path,
+            {
+                "specFolder": "spec",
+                "headSha": "abc123",
+                "repoHttpsUrl": "https://github.com/test/repo",
+                "relatedTypeSpecProjectFolder": ["Microsoft.DevTestLab/DevTestLab.Management"],
+            },
+            package_names=[("sdk/devtestlabs", "azure-mgmt-devtestlabs")],
+            expected_create_package_calls=[call("sdk/devtestlabs", "azure-mgmt-devtestlabs")],
+        )
+
+        assert result["packages"][0]["path"] == ["sdk/devtestlabs/azure-mgmt-devtestlabs"]
+
+    def test_reports_distinct_roots_for_packages_in_same_service(self, io_paths):
+        input_path, output_path = io_paths
+        result = _run_main(
+            input_path,
+            output_path,
+            {
+                "specFolder": "spec",
+                "headSha": "abc123",
+                "repoHttpsUrl": "https://github.com/test/repo",
+                "relatedTypeSpecProjectFolder": ["Microsoft.ServiceFabric/ServiceFabric.Management"],
+            },
+            package_names=[
+                ("sdk/servicefabric", "azure-servicefabric"),
+                ("sdk/servicefabric", "azure-mgmt-servicefabric"),
+            ],
+            expected_create_package_calls=[
+                call("sdk/servicefabric", "azure-servicefabric"),
+                call("sdk/servicefabric", "azure-mgmt-servicefabric"),
+            ],
+        )
+
+        package_paths = {package["packageName"]: package["path"] for package in result["packages"]}
+        assert package_paths == {
+            "azure-servicefabric": ["sdk/servicefabric/azure-servicefabric"],
+            "azure-mgmt-servicefabric": ["sdk/servicefabric/azure-mgmt-servicefabric"],
+        }
 
 
 class TestExtractSdkFolder:

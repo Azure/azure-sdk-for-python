@@ -8,6 +8,7 @@ from typing_extensions import overload, override
 from azure.ai.evaluation._evaluators._common import MultiEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 from ._hate_unfairness import HateUnfairnessEvaluator
 from ._self_harm import SelfHarmEvaluator
@@ -91,7 +92,12 @@ class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
             ("hate_unfairness_threshold", hate_unfairness_threshold),
         ]:
             if not isinstance(value, int):
-                raise TypeError(f"{name} must be an int, got {type(value)}")
+                raise EvaluationException(
+                    message=f"{name} must be an int, got {type(value)}",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
+                )
 
         # Extract evaluate_query from kwargs if present
         evaluate_query_kwargs = {}

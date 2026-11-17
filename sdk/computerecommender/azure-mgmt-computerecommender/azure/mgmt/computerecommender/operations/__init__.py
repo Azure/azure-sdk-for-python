@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 from ._operations import Operations  # type: ignore
 from ._operations import SpotPlacementScoresOperations  # type: ignore
+from ._operations import ComputePlacementScoresOperations  # type: ignore
+from ._operations import SkuMixPlacementScoresOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -22,6 +24,8 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "SpotPlacementScoresOperations",
+    "ComputePlacementScoresOperations",
+    "SkuMixPlacementScoresOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

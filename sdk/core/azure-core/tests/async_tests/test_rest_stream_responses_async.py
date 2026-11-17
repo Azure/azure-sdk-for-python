@@ -3,10 +3,13 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
 import pytest
+
+from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import StreamClosedError, StreamConsumedError, ResponseNotReadError
+from rest_client_async import AsyncMockRestClient
 
 
 @pytest.mark.asyncio
@@ -31,7 +34,7 @@ async def test_iter_raw_on_iterable(client):
 
 
 @pytest.mark.asyncio
-async def test_iter_with_error(client):
+async def test_iter_with_error(client, port):
     request = HttpRequest("GET", "/errors/403")
 
     async with client.send_request(request, stream=True) as response:
@@ -49,10 +52,13 @@ async def test_iter_with_error(client):
 
     assert response.is_closed
 
+    # Ignore environment proxies so that an unresolvable host fails with a DNS error
+    # instead of an HTTP error returned by a network proxy.
     request = HttpRequest("GET", "http://doesNotExist")
-    with pytest.raises(ServiceRequestError):
-        async with await client.send_request(request, stream=True):
-            raise ValueError("Should error before entering")
+    async with AsyncMockRestClient(port, transport=AioHttpTransport(use_env_settings=False)) as no_proxy_client:
+        with pytest.raises(ServiceRequestError):
+            async with await no_proxy_client.send_request(request, stream=True):
+                raise ValueError("Should error before entering")
     assert response.is_closed
 
 
@@ -77,9 +83,7 @@ async def test_iter_text(client):
     request = HttpRequest("GET", "/basic/string")
 
     async with client.send_request(request, stream=True) as response:
-        content = ""
-        async for part in response.iter_text():
-            content += part
+        content = "".join([part async for part in response.iter_text()])
         assert content == "Hello, world!"
 
 

@@ -13,6 +13,22 @@ extends:
           Path: sdk/cosmos/live-platform-matrix.json
           Selection: all
           GenerateVMJobs: true
+      FixedAccountMatrixConfigs:
+        - Name: Cosmos_fixed_account_test
+          Path: sdk/cosmos/fixed-account-platform-matrix.json
+          Selection: all
+          GenerateVMJobs: true
       MaxParallel: 8
       BuildTargetingString: azure-cosmos
       ServiceDirectory: cosmos
+      VariableGroups:
+        - 'Test Secrets for Cosmos Live Tests - user administered'
+      # Fixed-account jobs omit provisioning, its Azure login, and cleanup at template expansion.
+      # AAD and GSI remain in the provisioned matrix with their existing resource lifecycle.
+      FixedAccountPreSteps:
+        - template: /sdk/cosmos/pipeline/resolve-test-account-steps.yml
+          parameters:
+            AccountSelector: $(AccountSelector)
+      EnvVars:
+        GSI_ACCOUNT_HOST: $(gsi-pipeline-uri)
+        GSI_ACCOUNT_KEY: $(gsi-pipeline-key)

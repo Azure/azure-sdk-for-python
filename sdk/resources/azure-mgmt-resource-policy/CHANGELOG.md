@@ -1,5 +1,48 @@
 # Release History
 
+## 1.0.0 (2026-09-16)
+
+### Features Added
+
+  - Model `Selector` added property `progress`
+  - Enum `SelectorKind` added member `RESOURCE_ROLLOUT_PERCENTAGE`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `PolicyClient.policy_enrollments`
+  - Deleted or renamed client operation group `PolicyClient.policy_exemptions`
+  - Deleted or renamed client operation group `PolicyClient.variable_values`
+  - Deleted or renamed client operation group `PolicyClient.variables`
+  - Deleted or renamed model `AssignmentScopeValidation`
+  - Deleted or renamed model `ExemptionCategory`
+  - Deleted or renamed model `ExemptionManagementMode`
+  - Deleted or renamed model `PolicyEnrollment`
+  - Deleted or renamed model `PolicyEnrollmentProperties`
+  - Deleted or renamed model `PolicyEnrollmentUpdate`
+  - Deleted or renamed model `PolicyEnrollmentUpdateProperties`
+  - Deleted or renamed model `PolicyExemption`
+  - Deleted or renamed model `PolicyExemptionProperties`
+  - Deleted or renamed model `PolicyExemptionUpdate`
+  - Deleted or renamed model `PolicyExemptionUpdateProperties`
+  - Deleted or renamed model `PolicyVariableColumn`
+  - Deleted or renamed model `PolicyVariableProperties`
+  - Deleted or renamed model `PolicyVariableValueColumnValue`
+  - Deleted or renamed model `PolicyVariableValueProperties`
+  - Deleted or renamed model `Variable`
+  - Deleted or renamed model `VariableValue`
+  - Deleted or renamed operation group `PolicyEnrollmentsOperations`
+  - Deleted or renamed operation group `PolicyExemptionsOperations`
+  - Deleted or renamed operation group `VariableValuesOperations`
+  - Deleted or renamed operation group `VariablesOperations`
+
+## 1.0.0b4 (2026-08-31)
+
+### Features Added
+
+  - Model `PolicyExemptionProperties` added property `exemption_management_mode`
+  - Model `PolicyExemptionUpdateProperties` added property `exemption_management_mode`
+  - Added enum `ExemptionManagementMode`
+
 ## 1.0.0b3 (2026-05-26)
 
 ### Features Added

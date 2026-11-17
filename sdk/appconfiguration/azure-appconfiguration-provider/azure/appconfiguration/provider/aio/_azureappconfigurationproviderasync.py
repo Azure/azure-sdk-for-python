@@ -41,7 +41,6 @@ from ._async_client_manager import (
 from .._user_agent import USER_AGENT
 from .._utils import get_startup_backoff
 
-JSON = Mapping[str, Any]
 logger = logging.getLogger(__name__)
 
 
@@ -110,6 +109,16 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
     async def _attempt_refresh(
         self, client: ConfigurationClient, replica_count: int, is_failover_request: bool, **kwargs
     ):
+        """
+        Attempts to refresh configuration settings and feature flags using a single client.
+
+        :param client: The configuration client to attempt the refresh against.
+        :type client: ~azure.appconfiguration.provider.aio.ConfigurationClient
+        :param replica_count: The number of replica clients available, used for correlation telemetry.
+        :type replica_count: int
+        :param is_failover_request: Whether this attempt is a failover from a previously failed client.
+        :type is_failover_request: bool
+        """
         settings_refreshed = False
         headers = self._update_correlation_context_header(
             kwargs.pop("headers", {}),
@@ -182,7 +191,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._refresh_timer.reset()
             if self._feature_flag_refresh_enabled and feature_flag_refresh_attempted:
                 self._feature_flag_refresh_timer.reset()
-            if (settings_refreshed or feature_flags) and self._on_refresh_success:
+            feature_flags_refreshed = feature_flags is not None and bool(self._feature_flag_selectors)
+            if (settings_refreshed or feature_flags_refreshed) and self._on_refresh_success:
                 self._on_refresh_success()
         except AzureError as e:
             logger.warning("Failed to refresh configurations from endpoint %s", client.endpoint)
@@ -208,7 +218,12 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._secret_provider.secret_refresh_timer
                 and self._secret_provider.secret_refresh_timer.needs_refresh()
             ):
-                self._dict.update(await self._secret_provider.refresh_secrets())
+                # Publish a new dict rather than mutating in place. Readers may hold a live view or
+                # iterator over self._dict, and an in-place update could raise "dictionary changed
+                # size during iteration". Every write to self._dict must rebind to a new object.
+                updated_settings = dict(self._dict)
+                updated_settings.update(await self._secret_provider.refresh_secrets())
+                self._dict = updated_settings
             await self._replica_client_manager.refresh_clients()
             self._replica_client_manager.find_active_clients()
             replica_count = self._replica_client_manager.get_client_count() - 1

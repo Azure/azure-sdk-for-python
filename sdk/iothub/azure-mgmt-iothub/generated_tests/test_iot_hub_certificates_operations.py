@@ -43,10 +43,10 @@ class TestIotHubCertificatesOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "properties": {
                     "certificate": "str",
+                    "certificateAuthorityResourceId": "str",
                     "created": "2020-02-20 00:00:00",
                     "expiry": "2020-02-20 00:00:00",
                     "isVerified": bool,
-                    "policyResourceId": "str",
                     "subject": "str",
                     "thumbprint": "str",
                     "updated": "2020-02-20 00:00:00",

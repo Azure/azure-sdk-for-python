@@ -205,13 +205,15 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         src_md5 = calculate_content_md5(self.source_blob_data)
 
         # Act part 1: put block from url with md5 validation
-        dest_blob.stage_block_from_url(
+        resp = dest_blob.stage_block_from_url(
             block_id=1,
             source_url=self.source_blob_url,
             source_content_md5=src_md5,
             source_offset=0,
             source_length=8 * 1024,
         )
+        assert resp.get("content_md5") is not None
+        assert resp.get("content_crc64") is not None
 
         # Assert block was staged
         committed, uncommitted = dest_blob.get_block_list("all")

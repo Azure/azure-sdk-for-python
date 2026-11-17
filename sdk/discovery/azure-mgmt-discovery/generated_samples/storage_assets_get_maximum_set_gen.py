@@ -32,12 +32,12 @@ def main():
 
     response = client.storage_assets.get(
         resource_group_name="rgdiscovery",
-        storage_container_name="edde0a4a016d7d6b2b",
-        storage_asset_name="5ea4bb40f40e2ef5e2",
+        storage_container_name="880d16db0ce8a7a846",
+        storage_asset_name="c2e4ac21c9ead37737",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/StorageAssets_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/StorageAssets_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

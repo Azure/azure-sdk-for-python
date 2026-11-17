@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Affinity(_Model):
+class Affinity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Affinity is a group of cluster affinity scheduling rules. More to be added.
 
     :ivar cluster_affinity: ClusterAffinity contains cluster affinity scheduling rules for the
@@ -48,7 +48,37 @@ class Affinity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentProfile(_Model):
+class AffinityPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The affinity settings that can be patched.
+
+    :ivar cluster_affinity: The cluster affinity settings that can be patched.
+    :vartype cluster_affinity: ~azure.mgmt.containerservicefleet.models.ClusterAffinityPatch
+    """
+
+    cluster_affinity: Optional["_models.ClusterAffinityPatch"] = rest_field(
+        name="clusterAffinity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The cluster affinity settings that can be patched."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cluster_affinity: Optional["_models.ClusterAffinityPatch"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Agent profile for the Fleet hub.
 
     :ivar subnet_id: The ID of the subnet which the Fleet hub node will join on startup. If this is
@@ -83,7 +113,59 @@ class AgentProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class APIServerAccessProfile(_Model):
+class AllowedSubject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A subject authorized to use the identity binding for token exchange. The namespace selector is
+    required and must be non-empty. The service account selector is optional; when omitted, all
+    service accounts in matching namespaces are authorized. Selectors within a single
+    AllowedSubject are AND'd; multiple AllowedSubjects on an identity binding profile are OR'd.
+
+    :ivar namespace_selector: Label selector matching the namespaces in which this identity may be
+     used. Must be non-empty: an empty selector would match every namespace and is rejected to
+     prevent overly permissive bindings. Use the built-in ``kubernetes.io/metadata.name`` label to
+     target specific namespaces by name. Required.
+    :vartype namespace_selector:
+     ~azure.mgmt.containerservicefleet.models.IdentityBindingLabelSelector
+    :ivar service_account_selector: Optional label selector matching the service accounts (within
+     the namespaces matched by ``namespaceSelector``) that may use this identity. When omitted, all
+     service accounts in matching namespaces are authorized. When provided, it must be non-empty.
+    :vartype service_account_selector:
+     ~azure.mgmt.containerservicefleet.models.IdentityBindingLabelSelector
+    """
+
+    namespace_selector: "_models.IdentityBindingLabelSelector" = rest_field(
+        name="namespaceSelector", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Label selector matching the namespaces in which this identity may be used. Must be non-empty:
+     an empty selector would match every namespace and is rejected to prevent overly permissive
+     bindings. Use the built-in ``kubernetes.io/metadata.name`` label to target specific namespaces
+     by name. Required."""
+    service_account_selector: Optional["_models.IdentityBindingLabelSelector"] = rest_field(
+        name="serviceAccountSelector", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional label selector matching the service accounts (within the namespaces matched by
+     ``namespaceSelector``) that may use this identity. When omitted, all service accounts in
+     matching namespaces are authorized. When provided, it must be non-empty."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        namespace_selector: "_models.IdentityBindingLabelSelector",
+        service_account_selector: Optional["_models.IdentityBindingLabelSelector"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class APIServerAccessProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access profile for the Fleet hub API server.
 
     :ivar enable_private_cluster: Whether to create the Fleet hub as a private cluster or not.
@@ -124,7 +206,7 @@ class APIServerAccessProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoUpgradeNodeImageSelection(_Model):
+class AutoUpgradeNodeImageSelection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The node image upgrade to be applied to the target clusters in auto upgrade.
 
     :ivar type: The node image upgrade type. Required. Known values are: "Latest" and "Consistent".
@@ -198,7 +280,7 @@ class ProxyResource(Resource):
     """
 
 
-class AutoUpgradeProfile(ProxyResource):
+class AutoUpgradeProfile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The AutoUpgradeProfile resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -278,7 +360,7 @@ class AutoUpgradeProfile(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AutoUpgradeProfileProperties(_Model):
+class AutoUpgradeProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the AutoUpgradeProfile.
 
     :ivar provisioning_state: The provisioning state of the AutoUpgradeProfile resource. Known
@@ -289,7 +371,7 @@ class AutoUpgradeProfileProperties(_Model):
      specified, the auto upgrade will run on all clusters which are members of the fleet.
     :vartype update_strategy_id: str
     :ivar channel: Configures how auto-upgrade will be run. Required. Known values are: "Stable",
-     "Rapid", "NodeImage", and "TargetKubernetesVersion".
+     "Rapid", "NodeImage", "TargetKubernetesVersion", and "SecurityPatch".
     :vartype channel: str or ~azure.mgmt.containerservicefleet.models.UpgradeChannel
     :ivar node_image_selection: The node image upgrade to be applied to the target clusters in auto
      upgrade.
@@ -306,7 +388,7 @@ class AutoUpgradeProfileProperties(_Model):
     :ivar target_kubernetes_version:   This is the target Kubernetes version for auto-upgrade. The
      format must be ``{major version}.{minor version}``. For example, "1.30". By default, this is
      empty. If upgrade channel is set to TargetKubernetesVersion, this field must not be empty. If
-     upgrade channel is Rapid, Stable or NodeImage, this field must be empty.
+     upgrade channel is not TargetKubernetesVersion, this field must be empty.
     :vartype target_kubernetes_version: str
     :ivar long_term_support:   If upgrade channel is not TargetKubernetesVersion, this field must
      be False. If set to True: Fleet auto upgrade will continue generate update runs for patches of
@@ -330,7 +412,7 @@ class AutoUpgradeProfileProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Configures how auto-upgrade will be run. Required. Known values are: \"Stable\", \"Rapid\",
-     \"NodeImage\", and \"TargetKubernetesVersion\"."""
+     \"NodeImage\", \"TargetKubernetesVersion\", and \"SecurityPatch\"."""
     node_image_selection: Optional["_models.AutoUpgradeNodeImageSelection"] = rest_field(
         name="nodeImageSelection", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -350,7 +432,7 @@ class AutoUpgradeProfileProperties(_Model):
     """This is the target Kubernetes version for auto-upgrade. The format must be ``{major
      version}.{minor version}``. For example, \"1.30\". By default, this is empty. If upgrade
      channel is set to TargetKubernetesVersion, this field must not be empty. If upgrade channel is
-     Rapid, Stable or NodeImage, this field must be empty."""
+     not TargetKubernetesVersion, this field must be empty."""
     long_term_support: Optional[bool] = rest_field(
         name="longTermSupport", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -400,6 +482,8 @@ class AutoUpgradeProfileStatus(_Model):
     :ivar last_trigger_upgrade_versions: The target Kubernetes version or node image versions of
      the last trigger.
     :vartype last_trigger_upgrade_versions: list[str]
+    :ivar last_trigger_message: Additional information about the last trigger attempt.
+    :vartype last_trigger_message: str
     """
 
     last_triggered_at: Optional[datetime.datetime] = rest_field(
@@ -417,6 +501,8 @@ class AutoUpgradeProfileStatus(_Model):
         name="lastTriggerUpgradeVersions", visibility=["read"]
     )
     """The target Kubernetes version or node image versions of the last trigger."""
+    last_trigger_message: Optional[str] = rest_field(name="lastTriggerMessage", visibility=["read"])
+    """Additional information about the last trigger attempt."""
 
 
 class CiliumProperties(_Model):
@@ -438,7 +524,7 @@ class CiliumProperties(_Model):
      by Fleet, based on the Fleet Member name, and cannot be set by the user. Required."""
 
 
-class ClusterAffinity(_Model):
+class ClusterAffinity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterAffinity contains cluster affinity scheduling rules for the selected resources.
 
     :ivar required_during_scheduling_ignored_during_execution: If the affinity requirements
@@ -477,7 +563,40 @@ class ClusterAffinity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterMeshProfile(ProxyResource):
+class ClusterAffinityPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The cluster affinity rules that can be patched.
+
+    :ivar required_during_scheduling_ignored_during_execution: The required cluster selector that
+     can be patched.
+    :vartype required_during_scheduling_ignored_during_execution:
+     ~azure.mgmt.containerservicefleet.models.ClusterSelectorPatch
+    """
+
+    required_during_scheduling_ignored_during_execution: Optional["_models.ClusterSelectorPatch"] = rest_field(
+        name="requiredDuringSchedulingIgnoredDuringExecution",
+        visibility=["read", "create", "update", "delete", "query"],
+    )
+    """The required cluster selector that can be patched."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        required_during_scheduling_ignored_during_execution: Optional["_models.ClusterSelectorPatch"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterMeshProfile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A cluster mesh profile stores the general information about the mesh.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -548,7 +667,7 @@ class ClusterMeshProfile(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ClusterMeshProfileProperties(_Model):
+class ClusterMeshProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A cluster mesh profile stores the general information about the mesh.
 
     :ivar provisioning_state: The provisioning state of the cluster mesh profile. Known values are:
@@ -625,23 +744,30 @@ class ClusterMeshProfileStatus(_Model):
     """The last operation error of the cluster mesh profile."""
 
 
-class ClusterResourcePlacementSpec(_Model):
+class ClusterResourcePlacementSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterResourcePlacementSpec defines the desired state of ClusterResourcePlacement.
 
     :ivar policy: Policy defines how to select member clusters to place the selected resources. If
      unspecified, all the joined member clusters are selected.
     :vartype policy: ~azure.mgmt.containerservicefleet.models.PlacementPolicy
+    :ivar rollout_strategy: The rollout strategy configuration for the cluster resource placement.
+    :vartype rollout_strategy: ~azure.mgmt.containerservicefleet.models.RolloutStrategy
     """
 
     policy: Optional["_models.PlacementPolicy"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Policy defines how to select member clusters to place the selected resources. If unspecified,
      all the joined member clusters are selected."""
+    rollout_strategy: Optional["_models.RolloutStrategy"] = rest_field(
+        name="rolloutStrategy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The rollout strategy configuration for the cluster resource placement."""
 
     @overload
     def __init__(
         self,
         *,
         policy: Optional["_models.PlacementPolicy"] = None,
+        rollout_strategy: Optional["_models.RolloutStrategy"] = None,
     ) -> None: ...
 
     @overload
@@ -655,7 +781,44 @@ class ClusterResourcePlacementSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterSelector(_Model):
+class ClusterResourcePlacementSpecPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The ClusterResourcePlacement settings that can be patched.
+
+    :ivar policy: The placement policy that can be patched.
+    :vartype policy: ~azure.mgmt.containerservicefleet.models.PlacementPolicyPatch
+    :ivar rollout_strategy: The rollout strategy configuration that can be patched.
+    :vartype rollout_strategy: ~azure.mgmt.containerservicefleet.models.RolloutStrategy
+    """
+
+    policy: Optional["_models.PlacementPolicyPatch"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The placement policy that can be patched."""
+    rollout_strategy: Optional["_models.RolloutStrategy"] = rest_field(
+        name="rolloutStrategy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The rollout strategy configuration that can be patched."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policy: Optional["_models.PlacementPolicyPatch"] = None,
+        rollout_strategy: Optional["_models.RolloutStrategy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterSelector.
 
     :ivar cluster_selector_terms: ClusterSelectorTerms is a list of cluster selector terms. The
@@ -687,7 +850,38 @@ class ClusterSelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterSelectorTerm(_Model):
+class ClusterSelectorPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The cluster selector settings that can be patched.
+
+    :ivar cluster_selector_terms: The cluster selector terms that can be patched.
+    :vartype cluster_selector_terms:
+     list[~azure.mgmt.containerservicefleet.models.ClusterSelectorTermPatch]
+    """
+
+    cluster_selector_terms: Optional[list["_models.ClusterSelectorTermPatch"]] = rest_field(
+        name="clusterSelectorTerms", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The cluster selector terms that can be patched."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cluster_selector_terms: Optional[list["_models.ClusterSelectorTermPatch"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterSelectorTerm(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClusterSelectorTerm.
 
     :ivar label_selector: LabelSelector is a label query over all the joined member clusters.
@@ -725,6 +919,71 @@ class ClusterSelectorTerm(_Model):
         *,
         label_selector: Optional["_models.LabelSelector"] = None,
         property_selector: Optional["_models.PropertySelector"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterSelectorTermPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A cluster selector term that can be patched.
+
+    :ivar label_selector: The label selector that can be patched.
+    :vartype label_selector: ~azure.mgmt.containerservicefleet.models.LabelSelectorPatch
+    :ivar property_selector: The property selector that can be patched.
+    :vartype property_selector: ~azure.mgmt.containerservicefleet.models.PropertySelectorPatch
+    """
+
+    label_selector: Optional["_models.LabelSelectorPatch"] = rest_field(
+        name="labelSelector", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The label selector that can be patched."""
+    property_selector: Optional["_models.PropertySelectorPatch"] = rest_field(
+        name="propertySelector", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The property selector that can be patched."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        label_selector: Optional["_models.LabelSelectorPatch"] = None,
+        property_selector: Optional["_models.PropertySelectorPatch"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterUpdateStrategyReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A reference to an existing cluster staged update strategy.
+
+    :ivar name: The name of an existing cluster staged update strategy.
+    :vartype name: str
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of an existing cluster staged update strategy."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -782,7 +1041,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -810,7 +1069,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -854,7 +1113,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Fleet(TrackedResource):
+class Fleet(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Fleet resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -964,7 +1223,7 @@ class FleetCredentialResults(_Model):
     """Array of base64-encoded Kubernetes configuration files."""
 
 
-class FleetHubProfile(_Model):
+class FleetHubProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The FleetHubProfile configures the fleet hub.
 
     :ivar dns_prefix: DNS prefix used to create the FQDN for the Fleet hub.
@@ -1017,7 +1276,7 @@ class FleetHubProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FleetManagedNamespace(TrackedResource):
+class FleetManagedNamespace(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A fleet managed namespace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1102,21 +1361,29 @@ class FleetManagedNamespace(TrackedResource):
             super().__setattr__(key, value)
 
 
-class FleetManagedNamespacePatch(_Model):
+class FleetManagedNamespacePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a fleet managed namespace that can be patched.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar properties: The updatable properties of the fleet managed namespace.
+    :vartype properties:
+     ~azure.mgmt.containerservicefleet.models.FleetManagedNamespacePropertiesPatch
     """
 
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
+    properties: Optional["_models.FleetManagedNamespacePropertiesPatch"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The updatable properties of the fleet managed namespace."""
 
     @overload
     def __init__(
         self,
         *,
         tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.FleetManagedNamespacePropertiesPatch"] = None,
     ) -> None: ...
 
     @overload
@@ -1130,7 +1397,7 @@ class FleetManagedNamespacePatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FleetManagedNamespaceProperties(_Model):
+class FleetManagedNamespaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a fleet managed namespace.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -1203,6 +1470,61 @@ class FleetManagedNamespaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class FleetManagedNamespacePropertiesPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of a fleet managed namespace that can be patched.
+
+    :ivar managed_namespace_properties: The namespace properties for the fleet managed namespace.
+    :vartype managed_namespace_properties:
+     ~azure.mgmt.containerservicefleet.models.ManagedNamespaceProperties
+    :ivar adoption_policy: Action if the managed namespace with the same name already exists. Known
+     values are: "Never", "IfIdentical", and "Always".
+    :vartype adoption_policy: str or ~azure.mgmt.containerservicefleet.models.AdoptionPolicy
+    :ivar delete_policy: Delete options of a fleet managed namespace. Known values are: "Keep" and
+     "Delete".
+    :vartype delete_policy: str or ~azure.mgmt.containerservicefleet.models.DeletePolicy
+    :ivar propagation_policy: The profile of the propagation to create the namespace.
+    :vartype propagation_policy: ~azure.mgmt.containerservicefleet.models.PropagationPolicyPatch
+    """
+
+    managed_namespace_properties: Optional["_models.ManagedNamespaceProperties"] = rest_field(
+        name="managedNamespaceProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The namespace properties for the fleet managed namespace."""
+    adoption_policy: Optional[Union[str, "_models.AdoptionPolicy"]] = rest_field(
+        name="adoptionPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Action if the managed namespace with the same name already exists. Known values are: \"Never\",
+     \"IfIdentical\", and \"Always\"."""
+    delete_policy: Optional[Union[str, "_models.DeletePolicy"]] = rest_field(
+        name="deletePolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Delete options of a fleet managed namespace. Known values are: \"Keep\" and \"Delete\"."""
+    propagation_policy: Optional["_models.PropagationPolicyPatch"] = rest_field(
+        name="propagationPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The profile of the propagation to create the namespace."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        managed_namespace_properties: Optional["_models.ManagedNamespaceProperties"] = None,
+        adoption_policy: Optional[Union[str, "_models.AdoptionPolicy"]] = None,
+        delete_policy: Optional[Union[str, "_models.DeletePolicy"]] = None,
+        propagation_policy: Optional["_models.PropagationPolicyPatch"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class FleetManagedNamespaceStatus(_Model):
     """Status information for the fleet managed namespace.
 
@@ -1218,7 +1540,7 @@ class FleetManagedNamespaceStatus(_Model):
     """The last operation error of the fleet managed namespace."""
 
 
-class FleetMember(ProxyResource):
+class FleetMember(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A member of the Fleet. It contains a reference to an existing Kubernetes cluster on Azure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1289,7 +1611,7 @@ class FleetMember(ProxyResource):
             super().__setattr__(key, value)
 
 
-class FleetMemberProperties(_Model):
+class FleetMemberProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A member of the Fleet. It contains a reference to an existing Kubernetes cluster on Azure.
 
     :ivar cluster_resource_id: The ARM resource id of the cluster that joins the Fleet. Must be a
@@ -1365,7 +1687,7 @@ class FleetMemberStatus(_Model):
     """The last operation error of the fleet member."""
 
 
-class FleetMemberUpdate(_Model):
+class FleetMemberUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the FleetMember.
 
     :ivar properties: The resource-specific properties for this resource.
@@ -1415,7 +1737,7 @@ class FleetMemberUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class FleetMemberUpdateProperties(_Model):
+class FleetMemberUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the FleetMember.
 
     :ivar group: The group this member belongs to for multi-cluster update management.
@@ -1448,7 +1770,7 @@ class FleetMemberUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FleetPatch(_Model):
+class FleetPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a Fleet that can be patched.
 
     :ivar tags: Resource tags.
@@ -1483,7 +1805,7 @@ class FleetPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FleetProperties(_Model):
+class FleetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fleet properties.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -1541,7 +1863,7 @@ class FleetStatus(_Model):
     """The last operation error for the fleet."""
 
 
-class FleetUpdateStrategy(ProxyResource):
+class FleetUpdateStrategy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a multi-stage process to perform update operations across members of a Fleet.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1612,7 +1934,7 @@ class FleetUpdateStrategy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class FleetUpdateStrategyProperties(_Model):
+class FleetUpdateStrategyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the UpdateStrategy.
 
     :ivar provisioning_state: The provisioning state of the UpdateStrategy resource. Known values
@@ -1649,7 +1971,7 @@ class FleetUpdateStrategyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Gate(ProxyResource):
+class Gate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Gate controls the progression during a staged rollout, e.g. in an Update Run.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1682,7 +2004,14 @@ class Gate(ProxyResource):
      requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
      14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
 
-    __flattened_items = ["provisioning_state", "display_name", "gate_type", "target", "state"]
+    __flattened_items = [
+        "provisioning_state",
+        "display_name",
+        "gate_type",
+        "scheduled_start_properties",
+        "target",
+        "state",
+    ]
 
     @overload
     def __init__(
@@ -1720,13 +2049,18 @@ class Gate(ProxyResource):
             super().__setattr__(key, value)
 
 
-class GateConfiguration(_Model):
+class GateConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GateConfiguration is used to define where Gates should be placed within the Update Run.
 
     :ivar display_name: The human-readable display name of the Gate.
     :vartype display_name: str
-    :ivar type: The type of the Gate determines how it is completed. Required. "Approval"
+    :ivar type: The type of the Gate determines how it is completed. Required. Known values are:
+     "Approval" and "ScheduledStart".
     :vartype type: str or ~azure.mgmt.containerservicefleet.models.GateType
+    :ivar scheduled_start_configuration: Scheduled start configuration for gates of type
+     ScheduledStart.
+    :vartype scheduled_start_configuration:
+     ~azure.mgmt.containerservicefleet.models.ScheduledStartConfiguration
     """
 
     display_name: Optional[str] = rest_field(
@@ -1734,7 +2068,12 @@ class GateConfiguration(_Model):
     )
     """The human-readable display name of the Gate."""
     type: Union[str, "_models.GateType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The type of the Gate determines how it is completed. Required. \"Approval\""""
+    """The type of the Gate determines how it is completed. Required. Known values are: \"Approval\"
+     and \"ScheduledStart\"."""
+    scheduled_start_configuration: Optional["_models.ScheduledStartConfiguration"] = rest_field(
+        name="scheduledStartConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Scheduled start configuration for gates of type ScheduledStart."""
 
     @overload
     def __init__(
@@ -1742,6 +2081,7 @@ class GateConfiguration(_Model):
         *,
         type: Union[str, "_models.GateType"],
         display_name: Optional[str] = None,
+        scheduled_start_configuration: Optional["_models.ScheduledStartConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -1755,7 +2095,7 @@ class GateConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GatePatch(_Model):
+class GatePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Patch a Gate resource.
 
     :ivar properties: Properties of a Gate that can be patched. Required.
@@ -1783,7 +2123,7 @@ class GatePatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GatePatchProperties(_Model):
+class GatePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a Gate that can be patched.
 
     :ivar state: The state of the Gate. Required. Known values are: "Pending", "Skipped", and
@@ -1812,7 +2152,7 @@ class GatePatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GateProperties(_Model):
+class GateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Gate controls the progression during a staged rollout, e.g. in an Update Run.
 
     :ivar provisioning_state: The provisioning state of the Gate resource. Known values are:
@@ -1821,8 +2161,12 @@ class GateProperties(_Model):
      ~azure.mgmt.containerservicefleet.models.GateProvisioningState
     :ivar display_name: The human-readable display name of the Gate.
     :vartype display_name: str
-    :ivar gate_type: The type of the Gate determines how it is completed. Required. "Approval"
+    :ivar gate_type: The type of the Gate determines how it is completed. Required. Known values
+     are: "Approval" and "ScheduledStart".
     :vartype gate_type: str or ~azure.mgmt.containerservicefleet.models.GateType
+    :ivar scheduled_start_properties: Details for ScheduledStart gate.
+    :vartype scheduled_start_properties:
+     ~azure.mgmt.containerservicefleet.models.ScheduledStartProperties
     :ivar target: The target that the Gate is controlling, e.g. an Update Run. Required.
     :vartype target: ~azure.mgmt.containerservicefleet.models.GateTarget
     :ivar state: The state of the Gate. Required. Known values are: "Pending", "Skipped", and
@@ -1838,7 +2182,12 @@ class GateProperties(_Model):
     display_name: Optional[str] = rest_field(name="displayName", visibility=["read", "create"])
     """The human-readable display name of the Gate."""
     gate_type: Union[str, "_models.GateType"] = rest_field(name="gateType", visibility=["read", "create"])
-    """The type of the Gate determines how it is completed. Required. \"Approval\""""
+    """The type of the Gate determines how it is completed. Required. Known values are: \"Approval\"
+     and \"ScheduledStart\"."""
+    scheduled_start_properties: Optional["_models.ScheduledStartProperties"] = rest_field(
+        name="scheduledStartProperties", visibility=["read", "create"]
+    )
+    """Details for ScheduledStart gate."""
     target: "_models.GateTarget" = rest_field(visibility=["read", "create"])
     """The target that the Gate is controlling, e.g. an Update Run. Required."""
     state: Union[str, "_models.GateState"] = rest_field(visibility=["read", "create", "update"])
@@ -1852,6 +2201,7 @@ class GateProperties(_Model):
         target: "_models.GateTarget",
         state: Union[str, "_models.GateState"],
         display_name: Optional[str] = None,
+        scheduled_start_properties: Optional["_models.ScheduledStartProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -1865,7 +2215,7 @@ class GateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GateTarget(_Model):
+class GateTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The target that the Gate is controlling, e.g. an Update Run. Exactly one of the properties
     objects will be set.
 
@@ -1917,7 +2267,350 @@ class GenerateResponse(_Model):
      Required."""
 
 
-class LabelSelector(_Model):
+class IdentityBindingLabelSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A label selector is a label query over a set of resources. The result of matchLabels and
+    matchExpressions are ANDed. An empty label selector matches all objects. A null label selector
+    matches no objects.
+
+    :ivar match_labels: matchLabels is an array of {key=value} pairs. A single {key=value} in the
+     matchLabels map is equivalent to an element of matchExpressions, whose key field is ``key``,
+     the operator is ``In``, and the values array contains only ``value``. The requirements are
+     ANDed.
+    :vartype match_labels: list[str]
+    :ivar match_expressions: matchExpressions is a list of label selector requirements. The
+     requirements are ANDed.
+    :vartype match_expressions:
+     list[~azure.mgmt.containerservicefleet.models.IdentityBindingLabelSelectorRequirement]
+    """
+
+    match_labels: Optional[list[str]] = rest_field(
+        name="matchLabels", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """matchLabels is an array of {key=value} pairs. A single {key=value} in the matchLabels map is
+     equivalent to an element of matchExpressions, whose key field is ``key``, the operator is
+     ``In``, and the values array contains only ``value``. The requirements are ANDed."""
+    match_expressions: Optional[list["_models.IdentityBindingLabelSelectorRequirement"]] = rest_field(
+        name="matchExpressions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """matchExpressions is a list of label selector requirements. The requirements are ANDed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        match_labels: Optional[list[str]] = None,
+        match_expressions: Optional[list["_models.IdentityBindingLabelSelectorRequirement"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IdentityBindingLabelSelectorRequirement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A label selector requirement is a selector that contains values, a key, and an operator that
+    relates the key and values.
+
+    :ivar key: key is the label key that the selector applies to.
+    :vartype key: str
+    :ivar operator: operator represents a key's relationship to a set of values. Valid operators
+     are In, NotIn, Exists and DoesNotExist. Known values are: "In", "NotIn", "Exists", and
+     "DoesNotExist".
+    :vartype operator: str or
+     ~azure.mgmt.containerservicefleet.models.IdentityBindingLabelSelectorOperator
+    :ivar values_property: values is an array of string values. For In or NotIn, the array must be
+     non-empty. For Exists or DoesNotExist, the array must be empty or omitted.
+    :vartype values_property: list[str]
+    """
+
+    key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """key is the label key that the selector applies to."""
+    operator: Optional[Union[str, "_models.IdentityBindingLabelSelectorOperator"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """operator represents a key's relationship to a set of values. Valid operators are In, NotIn,
+     Exists and DoesNotExist. Known values are: \"In\", \"NotIn\", \"Exists\", and \"DoesNotExist\"."""
+    values_property: Optional[list[str]] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
+    )
+    """values is an array of string values. For In or NotIn, the array must be non-empty. For Exists
+     or DoesNotExist, the array must be empty or omitted."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key: Optional[str] = None,
+        operator: Optional[Union[str, "_models.IdentityBindingLabelSelectorOperator"]] = None,
+        values_property: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IdentityBindingManagedIdentityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Managed identity profile for the identity binding.
+
+    :ivar resource_id: The resource ID of the user-assigned managed identity. Required.
+    :vartype resource_id: str
+    :ivar object_id: The object ID of the managed identity.
+    :vartype object_id: str
+    :ivar client_id: The client ID of the managed identity.
+    :vartype client_id: str
+    :ivar tenant_id: The tenant ID of the managed identity.
+    :vartype tenant_id: str
+    """
+
+    resource_id: str = rest_field(name="resourceId", visibility=["read", "create"])
+    """The resource ID of the user-assigned managed identity. Required."""
+    object_id: Optional[str] = rest_field(name="objectId", visibility=["read"])
+    """The object ID of the managed identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the managed identity."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of the managed identity."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IdentityBindingOidcIssuerProfile(_Model):
+    """The OIDC issuer profile of the identity binding profile.
+
+    :ivar oidc_issuer_url: The OIDC issuer URL of the identity binding profile.
+    :vartype oidc_issuer_url: str
+    """
+
+    oidc_issuer_url: Optional[str] = rest_field(name="oidcIssuerUrl", visibility=["read"])
+    """The OIDC issuer URL of the identity binding profile."""
+
+
+class IdentityBindingProfile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A fleet identity binding profile.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerservicefleet.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.containerservicefleet.models.IdentityBindingProfileProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.IdentityBindingProfileProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    __flattened_items = ["provisioning_state", "member_selector", "identity_binding_properties", "status"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.IdentityBindingProfileProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class IdentityBindingProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of an identity binding profile.
+
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Applying".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservicefleet.models.IdentityBindingProfileProvisioningState
+    :ivar member_selector: Select the fleet members that this identity binding profile is applied
+     to.
+
+     * Only key/value pairs with the `=` operator are accepted in the label selector.
+     * If empty or not specified, no fleet members will be selected.
+    :vartype member_selector: ~azure.mgmt.containerservicefleet.models.MemberSelector
+    :ivar identity_binding_properties: The identity binding properties applied to each selected
+     fleet member. Required.
+    :vartype identity_binding_properties:
+     ~azure.mgmt.containerservicefleet.models.IdentityBindingProperties
+    :ivar status: The identity binding profile status.
+    :vartype status: ~azure.mgmt.containerservicefleet.models.IdentityBindingProfileStatus
+    """
+
+    provisioning_state: Optional[Union[str, "_models.IdentityBindingProfileProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     and \"Applying\"."""
+    member_selector: Optional["_models.MemberSelector"] = rest_field(
+        name="memberSelector", visibility=["read", "create"]
+    )
+    """Select the fleet members that this identity binding profile is applied to.
+ 
+      * Only key/value pairs with the `=` operator are accepted in the label selector.
+      * If empty or not specified, no fleet members will be selected."""
+    identity_binding_properties: "_models.IdentityBindingProperties" = rest_field(
+        name="identityBindingProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identity binding properties applied to each selected fleet member. Required."""
+    status: Optional["_models.IdentityBindingProfileStatus"] = rest_field(visibility=["read"])
+    """The identity binding profile status."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity_binding_properties: "_models.IdentityBindingProperties",
+        member_selector: Optional["_models.MemberSelector"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IdentityBindingProfileStatus(_Model):
+    """Status of the identity binding profile.
+
+    :ivar last_operation_id: The last operation ID for the identity binding profile.
+    :vartype last_operation_id: str
+    :ivar last_operation_error: The last operation error of the identity binding profile.
+    :vartype last_operation_error: ~azure.mgmt.containerservicefleet.models.ErrorDetail
+    """
+
+    last_operation_id: Optional[str] = rest_field(name="lastOperationId", visibility=["read"])
+    """The last operation ID for the identity binding profile."""
+    last_operation_error: Optional["_models.ErrorDetail"] = rest_field(name="lastOperationError", visibility=["read"])
+    """The last operation error of the identity binding profile."""
+
+
+class IdentityBindingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of the identity bindings created on each selected fleet member.
+
+    :ivar managed_identity: Managed identity profile for the identity binding. Required.
+    :vartype managed_identity:
+     ~azure.mgmt.containerservicefleet.models.IdentityBindingManagedIdentityProfile
+    :ivar allowed_subjects: Optional list of subjects authorized to use this identity binding for
+     token exchange. Each entry pairs a required namespace label selector with an optional service
+     account label selector; selectors within an entry are AND'd, and multiple entries are OR'd.
+     When omitted or empty, authorization falls back exclusively to ClusterRole/ClusterRoleBinding
+     evaluation. Maximum 100 entries.
+    :vartype allowed_subjects: list[~azure.mgmt.containerservicefleet.models.AllowedSubject]
+    :ivar oidc_issuer: The OIDC issuer profile of the identity binding profile.
+    :vartype oidc_issuer: ~azure.mgmt.containerservicefleet.models.IdentityBindingOidcIssuerProfile
+    """
+
+    managed_identity: "_models.IdentityBindingManagedIdentityProfile" = rest_field(
+        name="managedIdentity", visibility=["read", "create"]
+    )
+    """Managed identity profile for the identity binding. Required."""
+    allowed_subjects: Optional[list["_models.AllowedSubject"]] = rest_field(
+        name="allowedSubjects", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional list of subjects authorized to use this identity binding for token exchange. Each
+     entry pairs a required namespace label selector with an optional service account label
+     selector; selectors within an entry are AND'd, and multiple entries are OR'd. When omitted or
+     empty, authorization falls back exclusively to ClusterRole/ClusterRoleBinding evaluation.
+     Maximum 100 entries."""
+    oidc_issuer: Optional["_models.IdentityBindingOidcIssuerProfile"] = rest_field(
+        name="oidcIssuer", visibility=["read"]
+    )
+    """The OIDC issuer profile of the identity binding profile."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        managed_identity: "_models.IdentityBindingManagedIdentityProfile",
+        allowed_subjects: Optional[list["_models.AllowedSubject"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LabelSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A label selector is a label query over a set of resources. The result of matchLabels and
     matchExpressions are ANDed. An empty label selector matches all objects. A null label selector
     matches no objects.
@@ -1962,7 +2655,49 @@ class LabelSelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LabelSelectorRequirement(_Model):
+class LabelSelectorPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The label selector settings that can be patched.
+
+    :ivar match_labels: matchLabels is a map of {key,value} pairs. A single {key,value} in the
+     matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the
+     operator is "In", and the values array contains only "value". The requirements are ANDed.
+    :vartype match_labels: dict[str, str]
+    :ivar match_expressions: The label selector requirements that can be patched.
+    :vartype match_expressions:
+     list[~azure.mgmt.containerservicefleet.models.LabelSelectorRequirementPatch]
+    """
+
+    match_labels: Optional[dict[str, str]] = rest_field(
+        name="matchLabels", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is
+     equivalent to an element of matchExpressions, whose key field is \"key\", the operator is
+     \"In\", and the values array contains only \"value\". The requirements are ANDed."""
+    match_expressions: Optional[list["_models.LabelSelectorRequirementPatch"]] = rest_field(
+        name="matchExpressions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The label selector requirements that can be patched."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        match_labels: Optional[dict[str, str]] = None,
+        match_expressions: Optional[list["_models.LabelSelectorRequirementPatch"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LabelSelectorRequirement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A label selector requirement is a selector that contains values, a key, and an operator that
     relates the key and values.
 
@@ -2013,7 +2748,56 @@ class LabelSelectorRequirement(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterUpdate(_Model):
+class LabelSelectorRequirementPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A label selector requirement that can be patched.
+
+    :ivar key: key is the label key that the selector applies to.
+    :vartype key: str
+    :ivar operator: operator represents a key's relationship to a set of values. Valid operators
+     are In, NotIn, Exists and DoesNotExist. Known values are: "In", "NotIn", "Exists", and
+     "DoesNotExist".
+    :vartype operator: str or ~azure.mgmt.containerservicefleet.models.LabelSelectorOperator
+    :ivar values_property: values is an array of string values. If the operator is In or NotIn, the
+     values array must be non-empty. If the operator is Exists or DoesNotExist, the values array
+     must be empty. This array is replaced during a strategic merge patch.
+    :vartype values_property: list[str]
+    """
+
+    key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """key is the label key that the selector applies to."""
+    operator: Optional[Union[str, "_models.LabelSelectorOperator"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """operator represents a key's relationship to a set of values. Valid operators are In, NotIn,
+     Exists and DoesNotExist. Known values are: \"In\", \"NotIn\", \"Exists\", and \"DoesNotExist\"."""
+    values_property: Optional[list[str]] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
+    )
+    """values is an array of string values. If the operator is In or NotIn, the values array must be
+     non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This
+     array is replaced during a strategic merge patch."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key: Optional[str] = None,
+        operator: Optional[Union[str, "_models.LabelSelectorOperator"]] = None,
+        values_property: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedClusterUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The update to be applied to the ManagedClusters.
 
     :ivar upgrade: The upgrade to apply to the ManagedClusters. Required.
@@ -2051,7 +2835,7 @@ class ManagedClusterUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterUpgradeSpec(_Model):
+class ManagedClusterUpgradeSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The upgrade to apply to a ManagedCluster.
 
     :ivar type: ManagedClusterUpgradeType is the type of upgrade to be applied. Required. Known
@@ -2090,7 +2874,7 @@ class ManagedClusterUpgradeSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedNamespaceProperties(_Model):
+class ManagedNamespaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The namespace properties for the fleet managed namespace.
 
     :ivar labels: The labels for the fleet managed namespace.
@@ -2137,7 +2921,7 @@ class ManagedNamespaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -2189,7 +2973,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MemberSelector(_Model):
+class MemberSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Select members of a fleet.
 
     :ivar by_label: Kubernetes-style label selector for selecting Fleet members, e.g.
@@ -2293,7 +3077,7 @@ class MeshProperties(_Model):
     """Resource id of the cluster mesh profile associated with this mesh member. Required."""
 
 
-class NetworkPolicy(_Model):
+class NetworkPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The network policy for the managed namespace.
 
     :ivar ingress: The ingress policy for the managed namespace. Known values are: "AllowAll",
@@ -2334,7 +3118,7 @@ class NetworkPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NodeImageSelection(_Model):
+class NodeImageSelection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The node image upgrade to be applied to the target nodes in update run.
 
     :ivar type: The node image upgrade type. Required. Known values are: "Latest", "Consistent",
@@ -2408,7 +3192,7 @@ class NodeImageVersion(_Model):
     """The image version to upgrade the nodes to (e.g., 'AKSUbuntu-1804gen2containerd-2022.12.13')."""
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -2496,7 +3280,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PlacementPolicy(_Model):
+class PlacementPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PlacementPolicy contains the rules to select target member clusters to place the selected
     resources. Note that only clusters that are both joined and satisfying the rules will be
     selected. You can only specify at most one of the two fields: ClusterNames and Affinity. If
@@ -2557,7 +3341,57 @@ class PlacementPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlacementProfile(_Model):
+class PlacementPolicyPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The placement policy settings that can be patched.
+
+    :ivar placement_type: The placement type that can be patched. Known values are: "PickAll" and
+     "PickFixed".
+    :vartype placement_type: str or ~azure.mgmt.containerservicefleet.models.PlacementType
+    :ivar cluster_names: The member cluster names that can be patched.
+    :vartype cluster_names: list[str]
+    :ivar affinity: The cluster affinity settings that can be patched.
+    :vartype affinity: ~azure.mgmt.containerservicefleet.models.AffinityPatch
+    :ivar tolerations: The tolerations that can be patched.
+    :vartype tolerations: list[~azure.mgmt.containerservicefleet.models.Toleration]
+    """
+
+    placement_type: Optional[Union[str, "_models.PlacementType"]] = rest_field(
+        name="placementType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The placement type that can be patched. Known values are: \"PickAll\" and \"PickFixed\"."""
+    cluster_names: Optional[list[str]] = rest_field(
+        name="clusterNames", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The member cluster names that can be patched."""
+    affinity: Optional["_models.AffinityPatch"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The cluster affinity settings that can be patched."""
+    tolerations: Optional[list["_models.Toleration"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The tolerations that can be patched."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        placement_type: Optional[Union[str, "_models.PlacementType"]] = None,
+        cluster_names: Optional[list[str]] = None,
+        affinity: Optional["_models.AffinityPatch"] = None,
+        tolerations: Optional[list["_models.Toleration"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PlacementProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration profile for default ClusterResourcePlacement for placement.
 
     :ivar default_cluster_resource_placement: The default ClusterResourcePlacement policy
@@ -2589,7 +3423,39 @@ class PlacementProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PropagationPolicy(_Model):
+class PlacementProfilePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The placement profile settings that can be patched.
+
+    :ivar default_cluster_resource_placement: The default ClusterResourcePlacement policy
+     configuration that can be patched.
+    :vartype default_cluster_resource_placement:
+     ~azure.mgmt.containerservicefleet.models.ClusterResourcePlacementSpecPatch
+    """
+
+    default_cluster_resource_placement: Optional["_models.ClusterResourcePlacementSpecPatch"] = rest_field(
+        name="defaultClusterResourcePlacement", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default ClusterResourcePlacement policy configuration that can be patched."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        default_cluster_resource_placement: Optional["_models.ClusterResourcePlacementSpecPatch"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PropagationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The propagation to be used for provisioning the namespace among the fleet.
 
     :ivar type: The type of the policy to be used. Default is Placement. Required. "Placement"
@@ -2624,7 +3490,44 @@ class PropagationPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PropertySelector(_Model):
+class PropagationPolicyPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The propagation settings that can be patched.
+
+    :ivar type: The type of the policy to be used. "Placement"
+    :vartype type: str or ~azure.mgmt.containerservicefleet.models.PropagationType
+    :ivar placement_profile: The placement profile that can be patched.
+    :vartype placement_profile: ~azure.mgmt.containerservicefleet.models.PlacementProfilePatch
+    """
+
+    type: Optional[Union[str, "_models.PropagationType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the policy to be used. \"Placement\""""
+    placement_profile: Optional["_models.PlacementProfilePatch"] = rest_field(
+        name="placementProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The placement profile that can be patched."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.PropagationType"]] = None,
+        placement_profile: Optional["_models.PlacementProfilePatch"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PropertySelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PropertySelector helps user specify property requirements when picking clusters for resource
     placement.
 
@@ -2658,7 +3561,38 @@ class PropertySelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PropertySelectorRequirement(_Model):
+class PropertySelectorPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The property selector settings that can be patched.
+
+    :ivar match_expressions: The property selector requirements that can be patched.
+    :vartype match_expressions:
+     list[~azure.mgmt.containerservicefleet.models.PropertySelectorRequirementPatch]
+    """
+
+    match_expressions: Optional[list["_models.PropertySelectorRequirementPatch"]] = rest_field(
+        name="matchExpressions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The property selector requirements that can be patched."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        match_expressions: Optional[list["_models.PropertySelectorRequirementPatch"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PropertySelectorRequirement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PropertySelectorRequirement is a specific property requirement when picking clusters for
     resource placement.
 
@@ -2717,7 +3651,51 @@ class PropertySelectorRequirement(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceQuota(_Model):
+class PropertySelectorRequirementPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A property selector requirement that can be patched.
+
+    :ivar name: The property name that can be patched.
+    :vartype name: str
+    :ivar operator: The property selector operator that can be patched. Known values are: "Gt",
+     "Ge", "Eq", "Ne", "Lt", and "Le".
+    :vartype operator: str or ~azure.mgmt.containerservicefleet.models.PropertySelectorOperator
+    :ivar values_property: The property values that can be patched.
+    :vartype values_property: list[str]
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The property name that can be patched."""
+    operator: Optional[Union[str, "_models.PropertySelectorOperator"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The property selector operator that can be patched. Known values are: \"Gt\", \"Ge\", \"Eq\",
+     \"Ne\", \"Lt\", and \"Le\"."""
+    values_property: Optional[list[str]] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
+    )
+    """The property values that can be patched."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        operator: Optional[Union[str, "_models.PropertySelectorOperator"]] = None,
+        values_property: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceQuota(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource quota for the managed namespace.
 
     :ivar cpu_request: The CPU request for the managed namespace. See more at
@@ -2782,7 +3760,139 @@ class ResourceQuota(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkipProperties(_Model):
+class RolloutStrategy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The rollout strategy configuration.
+
+    :ivar type: The type of rollout strategy. Default is RollingUpdate. Known values are:
+     "RollingUpdate" and "External".
+    :vartype type: str or ~azure.mgmt.containerservicefleet.models.RolloutStrategyType
+    :ivar cluster_update_strategy: Reference to an existing cluster update strategy. Required when
+     type is External.
+    :vartype cluster_update_strategy:
+     ~azure.mgmt.containerservicefleet.models.ClusterUpdateStrategyReference
+    """
+
+    type: Optional[Union[str, "_models.RolloutStrategyType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of rollout strategy. Default is RollingUpdate. Known values are: \"RollingUpdate\" and
+     \"External\"."""
+    cluster_update_strategy: Optional["_models.ClusterUpdateStrategyReference"] = rest_field(
+        name="clusterUpdateStrategy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reference to an existing cluster update strategy. Required when type is External."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.RolloutStrategyType"]] = None,
+        cluster_update_strategy: Optional["_models.ClusterUpdateStrategyReference"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledStartConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration for ScheduledStart gate.
+
+    :ivar start_day: The day of the week when the scheduled start occurs. Required. Known values
+     are: "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", and "Sunday".
+    :vartype start_day: str or ~azure.mgmt.containerservicefleet.models.DayOfWeek
+    :ivar start_time: The local time of day when the scheduled start occurs in 24-hour (HH:mm)
+     format. Required.
+    :vartype start_time: str
+    :ivar utc_offset: The UTC offset for the scheduled time in HH:mm format, -14:00 to +14:00.
+     Required.
+    :vartype utc_offset: str
+    """
+
+    start_day: Union[str, "_models.DayOfWeek"] = rest_field(name="startDay", visibility=["read", "create"])
+    """The day of the week when the scheduled start occurs. Required. Known values are: \"Monday\",
+     \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\", and \"Sunday\"."""
+    start_time: str = rest_field(name="startTime", visibility=["read", "create"])
+    """The local time of day when the scheduled start occurs in 24-hour (HH:mm) format. Required."""
+    utc_offset: str = rest_field(name="utcOffset", visibility=["read", "create"])
+    """The UTC offset for the scheduled time in HH:mm format, -14:00 to +14:00. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        start_day: Union[str, "_models.DayOfWeek"],
+        start_time: str,
+        utc_offset: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScheduledStartProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for ScheduledStart gate.
+
+    :ivar start_day: The day of the week when the scheduled start occurs. Required. Known values
+     are: "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", and "Sunday".
+    :vartype start_day: str or ~azure.mgmt.containerservicefleet.models.DayOfWeek
+    :ivar start_time: The local time of day when the scheduled start occurs in 24-hour (HH:mm)
+     format. Required.
+    :vartype start_time: str
+    :ivar utc_offset: The UTC offset for the scheduled time in HH:mm format, -14:00 to +14:00.
+     Required.
+    :vartype utc_offset: str
+    :ivar absolute_start_time: The absolute UTC time when the gate will complete. Set when the gate
+     is created.
+    :vartype absolute_start_time: ~datetime.datetime
+    """
+
+    start_day: Union[str, "_models.DayOfWeek"] = rest_field(name="startDay", visibility=["read", "create"])
+    """The day of the week when the scheduled start occurs. Required. Known values are: \"Monday\",
+     \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\", and \"Sunday\"."""
+    start_time: str = rest_field(name="startTime", visibility=["read", "create"])
+    """The local time of day when the scheduled start occurs in 24-hour (HH:mm) format. Required."""
+    utc_offset: str = rest_field(name="utcOffset", visibility=["read", "create"])
+    """The UTC offset for the scheduled time in HH:mm format, -14:00 to +14:00. Required."""
+    absolute_start_time: Optional[datetime.datetime] = rest_field(
+        name="absoluteStartTime", visibility=["read"], format="rfc3339"
+    )
+    """The absolute UTC time when the gate will complete. Set when the gate is created."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        start_day: Union[str, "_models.DayOfWeek"],
+        start_time: str,
+        utc_offset: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkipProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a skip operation containing multiple skip requests.
 
     :ivar targets: The targets to skip. Required.
@@ -2810,7 +3920,7 @@ class SkipProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkipTarget(_Model):
+class SkipTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of a single skip request.
 
     :ivar type: The skip target type. Required. Known values are: "Member", "Group", "Stage", and
@@ -2847,7 +3957,7 @@ class SkipTarget(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -2914,7 +4024,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Toleration(_Model):
+class Toleration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Toleration allows ClusterResourcePlacement to tolerate any taint that matches the triple
     <key,value,effect> using the matching operator <operator>.
 
@@ -2975,12 +4085,21 @@ class Toleration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateGroup(_Model):
+class UpdateGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A group to be updated.
 
     :ivar name: Name of the group. It must match a group name of an existing fleet member.
      Required.
     :vartype name: str
+    :ivar max_allowed_failures: Limits the number of member (cluster) upgrade failures tolerated
+     within this group. Failures are evaluated over members within this group only. Accepts either:
+     • A fixed count n, where n >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at
+     stage start using: resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and
+     N is the number of members in this group at scope start. Examples: • "3"   --> up to 3 member
+     upgrade failures are tolerated within this group. The 4th failure causes the group to fail. •
+     "25%" --> up to 25% of the members in this group can fail their upgrade before the group is
+     considered failed.
+    :vartype max_allowed_failures: str
     :ivar max_concurrency: The max number of upgrades that can run concurrently in this specific
      group. Acts as a ceiling (and not a quota) for the number of concurrent upgrades within the
      group you want to tolerate at a time. Actual concurrency may be lower depending on stage-level
@@ -2993,6 +4112,13 @@ class UpdateGroup(_Model):
      group upgrade at the same time. • "25%" --> up to 25% of the members in the group will be
      upgraded at the same time.
     :vartype max_concurrency: str
+    :ivar member_selector: Select the members of the group.
+
+     * If specified, label-based selection will override group name based selection,
+     and Name is only used as an identifier.
+     * If not specified, group name based selection will be used, and Name must match a
+     group name of an existing fleet member.
+    :vartype member_selector: ~azure.mgmt.containerservicefleet.models.MemberSelector
     :ivar before_gates: A list of Gates that will be created before this Group is executed.
     :vartype before_gates: list[~azure.mgmt.containerservicefleet.models.GateConfiguration]
     :ivar after_gates: A list of Gates that will be created after this Group is executed.
@@ -3001,6 +4127,16 @@ class UpdateGroup(_Model):
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the group. It must match a group name of an existing fleet member. Required."""
+    max_allowed_failures: Optional[str] = rest_field(
+        name="maxAllowedFailures", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Limits the number of member (cluster) upgrade failures tolerated within this group. Failures
+     are evaluated over members within this group only. Accepts either: • A fixed count n, where n
+     >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at stage start using:
+     resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and N is the number of
+     members in this group at scope start. Examples: • \"3\"   --> up to 3 member upgrade failures
+     are tolerated within this group. The 4th failure causes the group to fail. • \"25%\" --> up to
+     25% of the members in this group can fail their upgrade before the group is considered failed."""
     max_concurrency: Optional[str] = rest_field(
         name="maxConcurrency", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3015,6 +4151,15 @@ class UpdateGroup(_Model):
      upgrade at once. • \"100%\" --> “all at once”, up to all members for this group upgrade at the
      same time. • \"25%\" --> up to 25% of the members in the group will be upgraded at the same
      time."""
+    member_selector: Optional["_models.MemberSelector"] = rest_field(
+        name="memberSelector", visibility=["read", "create"]
+    )
+    """Select the members of the group.
+ 
+      * If specified, label-based selection will override group name based selection,
+      and Name is only used as an identifier.
+      * If not specified, group name based selection will be used, and Name must match a
+      group name of an existing fleet member."""
     before_gates: Optional[list["_models.GateConfiguration"]] = rest_field(
         name="beforeGates", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3029,7 +4174,9 @@ class UpdateGroup(_Model):
         self,
         *,
         name: str,
+        max_allowed_failures: Optional[str] = None,
         max_concurrency: Optional[str] = None,
+        member_selector: Optional["_models.MemberSelector"] = None,
         before_gates: Optional[list["_models.GateConfiguration"]] = None,
         after_gates: Optional[list["_models.GateConfiguration"]] = None,
     ) -> None: ...
@@ -3052,6 +4199,11 @@ class UpdateGroupStatus(_Model):
     :vartype status: ~azure.mgmt.containerservicefleet.models.UpdateStatus
     :ivar name: The name of the UpdateGroup.
     :vartype name: str
+    :ivar failure_count: The total member upgrade failures within the group.
+    :vartype failure_count: int
+    :ivar max_allowed_failures: The max number of member upgrade failures allowed within this
+     group, resolved from the UpdateStrategy.UpdateGroup.maxAllowedFailures value.
+    :vartype max_allowed_failures: int
     :ivar max_concurrency:   The max number of upgrades that can run concurrently in this group,
      resolved from the UpdateStrategy.UpdateGroup.maxConcurrency value. If no value was provided,
      this value defaults to "1".
@@ -3068,6 +4220,11 @@ class UpdateGroupStatus(_Model):
     """The status of the UpdateGroup."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the UpdateGroup."""
+    failure_count: Optional[int] = rest_field(name="failureCount", visibility=["read"])
+    """The total member upgrade failures within the group."""
+    max_allowed_failures: Optional[int] = rest_field(name="maxAllowedFailures", visibility=["read"])
+    """The max number of member upgrade failures allowed within this group, resolved from the
+     UpdateStrategy.UpdateGroup.maxAllowedFailures value."""
     max_concurrency: Optional[int] = rest_field(name="maxConcurrency", visibility=["read"])
     """The max number of upgrades that can run concurrently in this group, resolved from the
      UpdateStrategy.UpdateGroup.maxConcurrency value. If no value was provided, this value defaults
@@ -3080,7 +4237,7 @@ class UpdateGroupStatus(_Model):
     """The list of Gates that will run after this UpdateGroup."""
 
 
-class UpdateRun(ProxyResource):
+class UpdateRun(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A multi-stage process to perform update operations across members of a Fleet.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3177,7 +4334,7 @@ class UpdateRunGateStatus(_Model):
     """The status of the Gate."""
 
 
-class UpdateRunGateTargetProperties(_Model):
+class UpdateRunGateTargetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the Update Run that the Gate is targeting.
 
     :ivar name: The name of the Update Run. Required.
@@ -3219,7 +4376,7 @@ class UpdateRunGateTargetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateRunProperties(_Model):
+class UpdateRunProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the UpdateRun.
 
     :ivar provisioning_state: The provisioning state of the UpdateRun resource. Known values are:
@@ -3331,6 +4488,8 @@ class UpdateRunStatus(_Model):
      update run when ``NodeImageSelection.type`` is ``Consistent``.
     :vartype node_image_selection:
      ~azure.mgmt.containerservicefleet.models.NodeImageSelectionStatus
+    :ivar failure_count: Total member upgrade failures across the entire UpdateRun.
+    :vartype failure_count: int
     """
 
     status: Optional["_models.UpdateStatus"] = rest_field(visibility=["read"])
@@ -3342,9 +4501,11 @@ class UpdateRunStatus(_Model):
     )
     """The node image upgrade specs for the update run. It is only set in update run when
      ``NodeImageSelection.type`` is ``Consistent``."""
+    failure_count: Optional[int] = rest_field(name="failureCount", visibility=["read"])
+    """Total member upgrade failures across the entire UpdateRun."""
 
 
-class UpdateRunStrategy(_Model):
+class UpdateRunStrategy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the update sequence of the clusters via stages and groups.
 
     Stages within a run are executed sequentially one after another.
@@ -3378,7 +4539,7 @@ class UpdateRunStrategy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateStage(_Model):
+class UpdateStage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a stage which contains the groups to update and the steps to take (e.g., wait for a
     time period) before starting the next stage.
 
@@ -3387,9 +4548,26 @@ class UpdateStage(_Model):
     :ivar groups: Defines the groups to be executed in parallel in this stage. Duplicate groups are
      not allowed. Min size: 1.
     :vartype groups: list[~azure.mgmt.containerservicefleet.models.UpdateGroup]
+    :ivar member_selector: Select the members of the stage.
+
+     * If specified without UpdateGroup, one implicit group containing the selected members
+       will be created.
+     * If specified with UpdateGroup, members will be pre-filtered before group-level selection
+       logic is applied.
+     * If not specified, group-level selection logic will be used.
+    :vartype member_selector: ~azure.mgmt.containerservicefleet.models.MemberSelector
     :ivar after_stage_wait_in_seconds: The time in seconds to wait at the end of this stage before
      starting the next one. Defaults to 0 seconds if unspecified.
     :vartype after_stage_wait_in_seconds: int
+    :ivar max_allowed_failures: Limits the number of member (cluster) upgrade failures tolerated
+     within this stage. Failures are evaluated over all members within all groups within this stage.
+     Accepts either: • A fixed count n, where n >= 0 • A percentage p%, where 0 <= p <= 100
+     Percentage resolves at stage start using: resolvedThreshold = ceil(p * N), where p is the
+     percentage as a decimal and N is the number of members in this stage at scope start. Examples:
+     • "3"   --> up to 3 member upgrade failures are tolerated within this stage. The 4th failure
+     would cause the entire stage to fail. • "25%" --> up to 25% of the members in this stage can
+     fail their upgrade before the stage is considered failed.
+    :vartype max_allowed_failures: str
     :ivar max_concurrency: The max number of upgrades that can run concurrently across all groups
      in this stage. Acts as a ceiling (and not a quota) for the number of concurrent upgrades within
      the stage you want to tolerate at a time. Actual concurrency may be lower depending on
@@ -3414,11 +4592,32 @@ class UpdateStage(_Model):
     )
     """Defines the groups to be executed in parallel in this stage. Duplicate groups are not allowed.
      Min size: 1."""
+    member_selector: Optional["_models.MemberSelector"] = rest_field(
+        name="memberSelector", visibility=["read", "create"]
+    )
+    """Select the members of the stage.
+ 
+      * If specified without UpdateGroup, one implicit group containing the selected members
+        will be created.
+      * If specified with UpdateGroup, members will be pre-filtered before group-level selection
+        logic is applied.
+      * If not specified, group-level selection logic will be used."""
     after_stage_wait_in_seconds: Optional[int] = rest_field(
         name="afterStageWaitInSeconds", visibility=["read", "create", "update", "delete", "query"]
     )
     """The time in seconds to wait at the end of this stage before starting the next one. Defaults to
      0 seconds if unspecified."""
+    max_allowed_failures: Optional[str] = rest_field(
+        name="maxAllowedFailures", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Limits the number of member (cluster) upgrade failures tolerated within this stage. Failures
+     are evaluated over all members within all groups within this stage. Accepts either: • A fixed
+     count n, where n >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at stage start
+     using: resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and N is the
+     number of members in this stage at scope start. Examples: • \"3\"   --> up to 3 member upgrade
+     failures are tolerated within this stage. The 4th failure would cause the entire stage to fail.
+     • \"25%\" --> up to 25% of the members in this stage can fail their upgrade before the stage is
+     considered failed."""
     max_concurrency: Optional[str] = rest_field(
         name="maxConcurrency", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3447,7 +4646,9 @@ class UpdateStage(_Model):
         *,
         name: str,
         groups: Optional[list["_models.UpdateGroup"]] = None,
+        member_selector: Optional["_models.MemberSelector"] = None,
         after_stage_wait_in_seconds: Optional[int] = None,
+        max_allowed_failures: Optional[str] = None,
         max_concurrency: Optional[str] = None,
         before_gates: Optional[list["_models.GateConfiguration"]] = None,
         after_gates: Optional[list["_models.GateConfiguration"]] = None,
@@ -3471,6 +4672,11 @@ class UpdateStageStatus(_Model):
     :vartype status: ~azure.mgmt.containerservicefleet.models.UpdateStatus
     :ivar name: The name of the UpdateStage.
     :vartype name: str
+    :ivar failure_count: The total member upgrade failures within the stage.
+    :vartype failure_count: int
+    :ivar max_allowed_failures: The max number of member upgrade failures allowed within this
+     stage, resolved from the UpdateStrategy.UpdateStage.maxAllowedFailures value.
+    :vartype max_allowed_failures: int
     :ivar max_concurrency: The max number of upgrades that can run concurrently across all groups
      in this stage, resolved from the UpdateStrategy.UpdateStage.maxConcurrency value.
     :vartype max_concurrency: int
@@ -3488,6 +4694,11 @@ class UpdateStageStatus(_Model):
     """The status of the UpdateStage."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the UpdateStage."""
+    failure_count: Optional[int] = rest_field(name="failureCount", visibility=["read"])
+    """The total member upgrade failures within the stage."""
+    max_allowed_failures: Optional[int] = rest_field(name="maxAllowedFailures", visibility=["read"])
+    """The max number of member upgrade failures allowed within this stage, resolved from the
+     UpdateStrategy.UpdateStage.maxAllowedFailures value."""
     max_concurrency: Optional[int] = rest_field(name="maxConcurrency", visibility=["read"])
     """The max number of upgrades that can run concurrently across all groups in this stage, resolved
      from the UpdateStrategy.UpdateStage.maxConcurrency value."""

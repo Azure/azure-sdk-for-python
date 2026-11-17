@@ -52,8 +52,8 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
     You should not instantiate this class directly. Instead, you should
     create from builder function: parallel.
 
-    :param component: Id or instance of the parallel component/job to be run for the step
-    :type component: ~azure.ai.ml.entities._component.parallel_component.parallelComponent
+    :keyword component: Id or instance of the parallel component/job to be run for the step
+    :paramtype component: ~azure.ai.ml.entities._component.parallel_component.parallelComponent
     :param name: Name of the parallel
     :type name: str
     :param description: Description of the commad
@@ -64,27 +64,27 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
     :type properties: dict[str, str]
     :param display_name: Display name of the job
     :type display_name: str
-    :param retry_settings: Parallel job run failed retry
-    :type retry_settings: BatchRetrySettings
-    :param logging_level: A string of the logging level name
-    :type logging_level: str
-    :param max_concurrency_per_instance: The max parallellism that each compute instance has
-    :type max_concurrency_per_instance: int
-    :param error_threshold: The number of item processing failures should be ignored
-    :type error_threshold: int
-    :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored
-    :type mini_batch_error_threshold: int
-    :param task: The parallel task
-    :type task: ParallelTask
-    :param mini_batch_size: For FileDataset input, this field is the number of files
+    :keyword retry_settings: Parallel job run failed retry
+    :paramtype retry_settings: BatchRetrySettings
+    :keyword logging_level: A string of the logging level name
+    :paramtype logging_level: str
+    :keyword max_concurrency_per_instance: The max parallelism that each compute instance has
+    :paramtype max_concurrency_per_instance: int
+    :keyword error_threshold: The number of item processing failures should be ignored
+    :paramtype error_threshold: int
+    :keyword mini_batch_error_threshold: The number of mini batch processing failures should be ignored
+    :paramtype mini_batch_error_threshold: int
+    :keyword task: The parallel task
+    :paramtype task: ParallelTask
+    :keyword mini_batch_size: For FileDataset input, this field is the number of files
                             a user script can process in one run() call.
                             For TabularDataset input, this field is the approximate size of data
                             the user script can process in one run() call.
                             Example values are 1024, 1024KB, 10MB, and 1GB. (optional, default value is 10 files
                             for FileDataset and 1MB for TabularDataset.)
                             This value could be set through PipelineParameter
-    :type mini_batch_size: str
-    :param partition_keys: The keys used to partition dataset into mini-batches. If specified,
+    :paramtype mini_batch_size: str
+    :keyword partition_keys: The keys used to partition dataset into mini-batches. If specified,
                            the data with the same key will be partitioned into the same mini-batch.
                            If both partition_keys and mini_batch_size are specified,
                            the partition keys will take effect.
@@ -96,13 +96,13 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
         ~azure.ai.ml.entities.ManagedIdentityConfiguration,
         ~azure.ai.ml.entities.AmlTokenConfiguration,
         ~azure.ai.ml.entities.UserIdentityConfiguration]]
-    :type partition_keys: List
-    :param input_data: The input data
-    :type input_data: str
-    :param inputs: Inputs of the component/job
-    :type inputs: dict
-    :param outputs: Outputs of the component/job
-    :type outputs: dict
+    :paramtype partition_keys: List
+    :keyword input_data: The input data
+    :paramtype input_data: str
+    :keyword inputs: Inputs of the component/job
+    :paramtype inputs: dict
+    :keyword outputs: Outputs of the component/job
+    :paramtype outputs: dict
     """
 
     # pylint: disable=too-many-statements

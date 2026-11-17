@@ -9,11 +9,11 @@ DESCRIPTION:
     Generates an evaluation dataset from an agent's conversation traces.
 
       1. Creates an agent and seeds spans with a sample conversation.
-      2. Waits for ingestion, then submits a `DataGenerationJob`
-         (scenario=EVALUATION, source=traces) that extracts and formats the
-         trace data into an evaluation dataset.
+      2. Waits for ingestion, then submits an `EvaluationDataGenerationJobInputs`
+         job (scenario `evaluation`, generation type `traces`) that extracts and
+         formats the trace data into an evaluation dataset.
       3. Polls the job and fetches the resulting `DatasetVersion`.
-      4. Cleans up the dataset, job, seeded conversations, and agent.
+      4. Cleans up the dataset, seeded conversations, and agent.
 
     Prerequisite: the project must have an Application Insights resource
     connected so the agent emits server-side traces. The Foundry project's
@@ -28,7 +28,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.8.0" azure-identity openai python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as
@@ -48,15 +48,12 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    DataGenerationJob,
-    DataGenerationJobInputs,
-    DataGenerationJobOutputOptions,
-    DataGenerationJobScenario,
     DatasetDataGenerationJobOutput,
     DatasetVersion,
-    JobStatus,
+    EvaluationDataGenerationJobInputs,
+    EvaluationDataGenerationJobOutputConfiguration,
     PromptAgentDefinition,
-    TracesDataGenerationJobOptions,
+    TracesDataGenerationJobConfiguration,
     TracesDataGenerationJobSource,
 )
 
@@ -93,9 +90,6 @@ run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4(
 output_dataset_name = f"{DATASET_NAME}-{run_id}"
 agent_name = f"{DATASET_NAME}-{run_id}"
 
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
-
-
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
@@ -125,18 +119,23 @@ with (
             openai_client.responses.create(
                 conversation=conversation.id,
                 input=prompt,
-                extra_body={"agent_reference": {"name": created_agent.name, "type": "agent_reference"}},
+                extra_body={
+                    "agent_reference": {
+                        "name": created_agent.name,
+                        "type": "agent_reference",
+                    }
+                },
             )
 
-        print(f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
+        print(
+            f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.",
+            flush=True,
+        )
         time.sleep(INITIAL_INGEST_WAIT_SECONDS)
 
-        # 2. Submit a data generation job that reads the agent's traces (retry
-        # in case ingestion is still in flight). Small backoff so the seeded
-        # spans fall inside the queried window.
         start_time = seed_start - timedelta(minutes=5)
 
-        job = None
+        job_result = None
         for attempt in range(1, MAX_JOB_ATTEMPTS + 1):
             end_time = datetime.now(tz=timezone.utc)
             print(
@@ -144,11 +143,11 @@ with (
                 f"(attempt {attempt}/{MAX_JOB_ATTEMPTS}, "
                 f"window: {start_time.isoformat()} .. {end_time.isoformat()})."
             )
-            job = project_client.beta.datasets.create_generation_job(
-                job=DataGenerationJob(
-                    inputs=DataGenerationJobInputs(
+            try:
+                print("Begin creating a dataset generation job.")
+                poller = project_client.datasets.begin_create_generation_job(
+                    job=EvaluationDataGenerationJobInputs(
                         name=f"traces-eval-{run_id}-a{attempt}",
-                        scenario=DataGenerationJobScenario.EVALUATION,
                         sources=[
                             TracesDataGenerationJobSource(
                                 description="Application Insights conversation traces for the agent.",
@@ -157,50 +156,51 @@ with (
                                 end_time=end_time,
                             ),
                         ],
-                        # max_samples must be in [15, 1000]; caps output dataset size.
-                        options=TracesDataGenerationJobOptions(max_samples=15),
-                        output_options=DataGenerationJobOutputOptions(name=output_dataset_name),
+                        # max_samples is optional and caps the output dataset size. If omitted,
+                        # sampling is turned off. Private content is redacted by default.
+                        generation_configuration=TracesDataGenerationJobConfiguration(max_samples=15),
+                        output_configuration=EvaluationDataGenerationJobOutputConfiguration(name=output_dataset_name),
                     ),
-                ),
-            )
-            submitted_job_ids.append(job.id)
-            print(f"Created data generation job `{job.id}` (status: `{job.status}`).")
+                    polling_interval=POLL_INTERVAL_SECONDS,
+                )
 
-            print(f"Poll job `{job.id}` until it reaches a terminal state.", end="", flush=True)
-            while job.status not in TERMINAL_STATUSES:
-                time.sleep(POLL_INTERVAL_SECONDS)
-                print(".", end="", flush=True)
-                job = project_client.beta.datasets.get_generation_job(job_id=job.id)
-            print()
-            print(f"Final job status: `{job.status}`.")
+                # Optional: While SDK is polling, periodically print the job status until the job is complete
+                print("Periodically check job status:")
+                while not poller.done():
+                    print(f"\tstatus=`{poller.status()}`")
+                    time.sleep(POLL_INTERVAL_SECONDS)
 
-            if job.status == JobStatus.SUCCEEDED:
+                # Since done() is true, result() returns the final deserialized job result without
+                # waiting further. It also propagates any LRO polling exception.
+                job_result = poller.result()
+                print(f"Final LRO status: `{poller.status()}`.")
+                print(f"Data generation result: {job_result}")
                 break
-
-            message = job.error.message if job.error is not None else "<no error message>"
-            if attempt == MAX_JOB_ATTEMPTS:
-                raise RuntimeError(f"Job `{job.id}` failed after {MAX_JOB_ATTEMPTS} attempts: {message}")
-            print(f"  Attempt {attempt} failed ({message}); wait {RETRY_WAIT_SECONDS}s and retry.")
-            time.sleep(RETRY_WAIT_SECONDS)
-
-        assert job is not None  # for type-checker; loop guarantees success path sets job
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                if attempt == MAX_JOB_ATTEMPTS:
+                    raise RuntimeError(f"Job failed after {MAX_JOB_ATTEMPTS} attempts: {e}") from e
+                print(f"  Attempt {attempt} failed ({e}); wait {RETRY_WAIT_SECONDS}s and retry.")
+                time.sleep(RETRY_WAIT_SECONDS)
 
         # 3. Resolve the generated dataset.
-        outputs = (job.result.outputs if job.result is not None else None) or []
+        if job_result is None:
+            raise RuntimeError("The data generation job did not return a result.")
+        outputs = job_result.outputs or []
         dataset_output = next((o for o in outputs if isinstance(o, DatasetDataGenerationJobOutput)), None)
         if dataset_output is None or not dataset_output.name or not dataset_output.version:
-            raise RuntimeError(f"Job `{job.id}` did not produce a dataset output.")
+            raise RuntimeError("The data generation job did not produce a dataset output.")
 
         created_dataset = project_client.datasets.get(name=dataset_output.name, version=dataset_output.version)
         print(
             f"Generated dataset: name=`{created_dataset.name}` "
             f"version=`{created_dataset.version}` id=`{created_dataset.id}`"
         )
-        if job.result is not None and job.result.generated_samples is not None:
-            print(f"Generated samples: {job.result.generated_samples}")
+        if job_result.generated_samples is not None:
+            print(f"Generated samples: {job_result.generated_samples}")
 
     finally:
-        # Best-effort cleanup, outputs -> producers (dataset, job, conversations, agent).
+        # Best-effort cleanup, outputs -> producers (dataset, conversations, agent).
+        # Delete the generated dataset.
         if created_dataset is not None:
             try:
                 project_client.datasets.delete(
@@ -210,13 +210,6 @@ with (
                 print(f"Deleted dataset `{created_dataset.name}` v{created_dataset.version}.")
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 print(f"  (warning) could not delete dataset: {exc}")
-
-        for jid in submitted_job_ids:
-            try:
-                project_client.beta.datasets.delete_generation_job(job_id=jid)
-                print(f"Deleted data generation job `{jid}`.")
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                print(f"  (warning) could not delete job `{jid}`: {exc}")
 
         if created_conversation_ids:
             for cid in created_conversation_ids:

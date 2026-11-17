@@ -8,7 +8,7 @@
 
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -124,8 +124,8 @@ class ErrorResponse(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorResponse"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorResponse"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class LinkedTemplateArtifact(_serialization.Model):
@@ -288,7 +288,7 @@ class TemplateSpec(AzureResourceBase):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         display_name: Optional[str] = None,
         metadata: Optional[JSON] = None,
@@ -314,7 +314,7 @@ class TemplateSpec(AzureResourceBase):
         self.description = description
         self.display_name = display_name
         self.metadata = metadata
-        self.versions: Optional[Dict[str, "_models.TemplateSpecVersionInfo"]] = None
+        self.versions: Optional[dict[str, "_models.TemplateSpecVersionInfo"]] = None
 
 
 class TemplateSpecsError(_serialization.Model):
@@ -359,7 +359,7 @@ class TemplateSpecsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.TemplateSpec"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.TemplateSpec"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of Template Specs.
         :paramtype value: list[~azure.mgmt.resource.templatespecs.models.TemplateSpec]
@@ -402,7 +402,7 @@ class TemplateSpecUpdateModel(AzureResourceBase):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -473,9 +473,9 @@ class TemplateSpecVersion(AzureResourceBase):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
-        linked_templates: Optional[List["_models.LinkedTemplateArtifact"]] = None,
+        linked_templates: Optional[list["_models.LinkedTemplateArtifact"]] = None,
         metadata: Optional[JSON] = None,
         main_template: Optional[JSON] = None,
         ui_form_definition: Optional[JSON] = None,
@@ -563,7 +563,7 @@ class TemplateSpecVersionsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.TemplateSpecVersion"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.TemplateSpecVersion"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of Template Spec versions.
         :paramtype value: list[~azure.mgmt.resource.templatespecs.models.TemplateSpecVersion]
@@ -606,7 +606,7 @@ class TemplateSpecVersionUpdateModel(AzureResourceBase):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]

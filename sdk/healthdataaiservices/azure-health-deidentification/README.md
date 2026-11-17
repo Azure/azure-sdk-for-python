@@ -22,7 +22,7 @@ Use the client library for the de-identification service to:
 
 ### Prequisites
 
-- Python 3.9 or later is required to use this package.
+- Python 3.10 or later is required to use this package.
 - Install [pip][pip].
 - You need an [Azure subscription][azure_sub] to use this package.
 - [Deploy the de-identification service][deid_quickstart].
@@ -152,6 +152,7 @@ The client exposes a `begin_deidentify_documents` method that returns a [LROPoll
 <!-- SNIPPET: deidentify_documents.sample -->
 
 ```python
+from azure.core.exceptions import HttpResponseError
 from azure.health.deidentification import DeidentificationClient
 from azure.health.deidentification.models import (
     DeidentificationJob,
@@ -183,7 +184,17 @@ job = DeidentificationJob(
     target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix, overwrite=True),
 )
 
-finished_job: DeidentificationJob = client.begin_deidentify_documents(jobname, job).result(timeout=120)
+try:
+    finished_job: DeidentificationJob = client.begin_deidentify_documents(jobname, job).result(timeout=120)
+except HttpResponseError:
+    # A failed or canceled job surfaces as a generic polling error; the job's own error explains why.
+    # The lookup is best-effort so the original error is always re-raised.
+    try:
+        failed_job = client.get_job(jobname)
+        print(f"Job {jobname} ended with status {failed_job.status}: {failed_job.error}")
+    except Exception as lookup_error:
+        print(f"Could not retrieve job {jobname} for diagnostics: {lookup_error}")
+    raise
 
 print(f"Job Name:   {finished_job.job_name}")
 print(f"Job Status: {finished_job.status}")

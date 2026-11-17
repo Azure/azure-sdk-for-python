@@ -32,11 +32,11 @@ def main():
 
     response = client.scheduled_actions.trigger_manual_occurrence(
         resource_group_name="rgcomputeschedule",
-        scheduled_action_name="myScheduledAction",
+        scheduled_action_name="my-scheduled-action",
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-15-preview/ScheduledActions_TriggerManualOccurrence_MaximumSet_Gen.json
+# x-ms-original-file: 2026-04-15-preview/ScheduledActions_TriggerManualOccurrence_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

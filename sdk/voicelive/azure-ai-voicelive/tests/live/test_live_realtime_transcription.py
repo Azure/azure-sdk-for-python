@@ -106,7 +106,7 @@ class TestRealtimeServiceTranscription(AzureRecordedTestCase):
             "filler_word_24kHz.wav",
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service_with_filler_word_removal(
         self,
         test_data_dir: Path,
@@ -142,7 +142,7 @@ class TestRealtimeServiceTranscription(AzureRecordedTestCase):
             "filler_word_24kHz.wav",
         ],
     )
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service_with_filler_word_removal_multilingual(
         self, test_data_dir: Path, test_audio_file: str, api_version: str, **kwargs
     ):

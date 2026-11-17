@@ -523,10 +523,16 @@ class TestCallMediaClient(unittest.TestCase):
     def test_start_continuous_dtmf_recognition(self):
         mock_start_continuous_dtmf_recognition = Mock()
         self.call_media_operations.start_continuous_dtmf_recognition = mock_start_continuous_dtmf_recognition
-        self.call_connection_client.start_continuous_dtmf_recognition(target_participant=self.target_user)
+        self.call_connection_client.start_continuous_dtmf_recognition(
+            target_participant=self.target_user,
+            operation_context=self.operation_context,
+            operation_callback_url=self.operation_callback_url,
+        )
 
         expected_continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
-            target_participant=serialize_identifier(self.target_user)
+            target_participant=serialize_identifier(self.target_user),
+            operation_context=self.operation_context,
+            operation_callback_uri=self.operation_callback_url,
         )
 
         mock_start_continuous_dtmf_recognition.assert_called_once()
@@ -541,6 +547,10 @@ class TestCallMediaClient(unittest.TestCase):
         self.assertEqual(
             expected_continuous_dtmf_recognition_request.operation_context,
             actual_start_continuous_dtmf_recognition.operation_context,
+        )
+        self.assertEqual(
+            expected_continuous_dtmf_recognition_request.operation_callback_uri,
+            actual_start_continuous_dtmf_recognition.operation_callback_uri,
         )
 
     def test_stop_continuous_dtmf_recognition(self):

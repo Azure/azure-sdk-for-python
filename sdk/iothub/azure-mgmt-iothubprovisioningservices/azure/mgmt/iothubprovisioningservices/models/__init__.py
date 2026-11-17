@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
 from ._models import (  # type: ignore
     AsyncOperationResult,
+    CertificateListDescription,
     CertificateProperties,
     CertificateResponse,
     DeviceRegistryNamespaceDescription,
@@ -38,6 +39,7 @@ from ._models import (  # type: ignore
     PrivateEndpoint,
     PrivateEndpointConnection,
     PrivateEndpointConnectionProperties,
+    PrivateLinkResources,
     PrivateLinkServiceConnectionState,
     ProvisioningServiceDescription,
     ProxyResource,
@@ -59,8 +61,10 @@ from ._enums import (  # type: ignore
     CreatedByType,
     DeviceRegistryNamespaceAuthenticationType,
     IotDpsSku,
+    IotHubAuthenticationType,
     IpFilterActionType,
     IpFilterTargetType,
+    LinkingState,
     ManagedServiceIdentityType,
     NameUnavailabilityReason,
     PrivateLinkServiceConnectionStatus,
@@ -73,6 +77,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AsyncOperationResult",
+    "CertificateListDescription",
     "CertificateProperties",
     "CertificateResponse",
     "DeviceRegistryNamespaceDescription",
@@ -96,6 +101,7 @@ __all__ = [
     "PrivateEndpoint",
     "PrivateEndpointConnection",
     "PrivateEndpointConnectionProperties",
+    "PrivateLinkResources",
     "PrivateLinkServiceConnectionState",
     "ProvisioningServiceDescription",
     "ProxyResource",
@@ -114,8 +120,10 @@ __all__ = [
     "CreatedByType",
     "DeviceRegistryNamespaceAuthenticationType",
     "IotDpsSku",
+    "IotHubAuthenticationType",
     "IpFilterActionType",
     "IpFilterTargetType",
+    "LinkingState",
     "ManagedServiceIdentityType",
     "NameUnavailabilityReason",
     "PrivateLinkServiceConnectionStatus",

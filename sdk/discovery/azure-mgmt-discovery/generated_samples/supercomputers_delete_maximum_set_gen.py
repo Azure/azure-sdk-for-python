@@ -32,10 +32,10 @@ def main():
 
     client.supercomputers.begin_delete(
         resource_group_name="rgdiscovery",
-        supercomputer_name="44f7621cf75873fb53",
+        supercomputer_name="7d52dbbe848ddb02a1",
     ).result()
 
 
-# x-ms-original-file: 2026-02-01-preview/Supercomputers_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/Supercomputers_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

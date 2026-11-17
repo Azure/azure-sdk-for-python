@@ -11,6 +11,18 @@ parameters:
 - name: TestProxy
   type: boolean
   default: false
+- name: InstallMsRustToolchain
+  type: boolean
+  default: false
+- name: MsRustWorkingDirectory
+  type: string
+  default: ''
+- name: MsRustToolchainFeed
+  type: string
+  default: ''
+- name: MsRustAdditionalTargets
+  type: string
+  default: ''
 
 extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
@@ -18,6 +30,10 @@ extends:
     # Run only emulator tests in Emulator CI
     TestMarkArgument: cosmosEmulator
     ServiceDirectory: cosmos
+    InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+    MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+    MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+    MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
     BeforeTestSteps:
       - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
         parameters:

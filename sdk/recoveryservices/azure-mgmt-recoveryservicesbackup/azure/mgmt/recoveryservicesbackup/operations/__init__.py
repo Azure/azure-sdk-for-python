@@ -19,6 +19,7 @@ from ._operations import BackupResourceVaultConfigsOperations  # type: ignore
 from ._operations import BackupResourceEncryptionConfigsOperations  # type: ignore
 from ._operations import ProtectedItemsOperations  # type: ignore
 from ._operations import BackupsOperations  # type: ignore
+from ._operations import ConfigureSourceScanOperations  # type: ignore
 from ._operations import RecoveryPointsRecommendedForMoveOperations  # type: ignore
 from ._operations import ProtectedItemOperationStatusesOperations  # type: ignore
 from ._operations import ProtectedItemOperationResultsOperations  # type: ignore
@@ -60,6 +61,7 @@ from ._operations import SecurityPINsOperations  # type: ignore
 from ._operations import FetchTieringCostOperations  # type: ignore
 from ._operations import GetTieringCostOperationResultOperations  # type: ignore
 from ._operations import TieringCostOperationStatusOperations  # type: ignore
+from ._operations import ProtectionContainerRefreshOperationStatusesOperations  # type: ignore
 from ._operations import ProtectionIntentOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionOperations  # type: ignore
 from ._operations import PrivateEndpointOperations  # type: ignore
@@ -78,6 +80,7 @@ __all__ = [
     "BackupResourceEncryptionConfigsOperations",
     "ProtectedItemsOperations",
     "BackupsOperations",
+    "ConfigureSourceScanOperations",
     "RecoveryPointsRecommendedForMoveOperations",
     "ProtectedItemOperationStatusesOperations",
     "ProtectedItemOperationResultsOperations",
@@ -119,6 +122,7 @@ __all__ = [
     "FetchTieringCostOperations",
     "GetTieringCostOperationResultOperations",
     "TieringCostOperationStatusOperations",
+    "ProtectionContainerRefreshOperationStatusesOperations",
     "ProtectionIntentOperations",
     "PrivateEndpointConnectionOperations",
     "PrivateEndpointOperations",

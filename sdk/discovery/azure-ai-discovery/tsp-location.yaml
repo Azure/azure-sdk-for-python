@@ -1,4 +1,9 @@
-batch:
-  - ./azure/ai/discovery/_workspace
-  - ./azure/ai/discovery/_bookshelf
-directory: specification/discovery
+# Pinned to the GA merge commit of Azure/azure-rest-api-specs PR #42884
+# ("[Microsoft Discovery] Add data-plane Discovery new GA version 2026-06-01").
+directory: specification/discovery/Discovery.Combined
+commit: fbe3c49c541a2932f4a4cb348fb0798988f4aca4
+repo: Azure/azure-rest-api-specs
+additionalDirectories:
+  - specification/discovery/Discovery.Common
+  - specification/discovery/Discovery.Workspace
+  - specification/discovery/Discovery.Bookshelf

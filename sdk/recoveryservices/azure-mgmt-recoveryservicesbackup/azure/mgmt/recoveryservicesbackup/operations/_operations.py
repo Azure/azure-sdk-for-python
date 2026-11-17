@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import RecoveryServicesBackupClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -41,7 +41,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -52,7 +51,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -73,7 +72,7 @@ def build_backup_resource_storage_configs_non_crr_get_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -102,7 +101,7 @@ def build_backup_resource_storage_configs_non_crr_update_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +132,7 @@ def build_backup_resource_storage_configs_non_crr_patch_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupstorageconfig/vaultstorageconfig"
     path_format_arguments = {
@@ -160,7 +159,7 @@ def build_bms_prepare_data_move_operation_result_get_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -189,7 +188,7 @@ def build_backup_resource_vault_configs_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -223,7 +222,7 @@ def build_backup_resource_vault_configs_put_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -263,7 +262,7 @@ def build_backup_resource_vault_configs_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -297,7 +296,7 @@ def build_backup_resource_encryption_configs_get_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -326,7 +325,7 @@ def build_backup_resource_encryption_configs_update_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupEncryptionConfigs/backupResourceEncryptionConfig"
     path_format_arguments = {
@@ -361,7 +360,7 @@ def build_protected_items_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -403,7 +402,7 @@ def build_protected_items_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -445,7 +444,7 @@ def build_protected_items_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}"
     path_format_arguments = {
@@ -478,7 +477,7 @@ def build_backups_trigger_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/backup"
     path_format_arguments = {
@@ -502,6 +501,46 @@ def build_backups_trigger_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_configure_source_scan_execute_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    vault_name: str,
+    fabric_name: str,
+    container_name: str,
+    protected_item_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/configureSourceScan"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
+        "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
+        "containerName": _SERIALIZER.url("container_name", container_name, "str"),
+        "protectedItemName": _SERIALIZER.url("protected_item_name", protected_item_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_recovery_points_recommended_for_move_list_request(  # pylint: disable=name-too-long
     vault_name: str,
     resource_group_name: str,
@@ -515,7 +554,7 @@ def build_recovery_points_recommended_for_move_list_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -555,7 +594,7 @@ def build_protected_item_operation_statuses_get_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -594,7 +633,7 @@ def build_protected_item_operation_results_get_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -631,7 +670,7 @@ def build_protection_containers_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -667,7 +706,7 @@ def build_protection_containers_register_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -703,7 +742,7 @@ def build_protection_containers_unregister_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}"
     path_format_arguments = {
@@ -734,7 +773,7 @@ def build_protection_containers_inquire_request(  # pylint: disable=name-too-lon
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/inquire"
     path_format_arguments = {
@@ -766,7 +805,7 @@ def build_protection_containers_refresh_request(  # pylint: disable=name-too-lon
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/refreshContainers"
     path_format_arguments = {
@@ -800,7 +839,7 @@ def build_backup_workload_items_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -840,7 +879,7 @@ def build_protection_container_operation_results_get_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -878,7 +917,7 @@ def build_recovery_points_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -918,7 +957,7 @@ def build_recovery_points_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -945,33 +984,23 @@ def build_recovery_points_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_recovery_points_update_request(
-    resource_group_name: str,
-    vault_name: str,
-    fabric_name: str,
-    container_name: str,
-    protected_item_name: str,
-    recovery_point_id: str,
-    subscription_id: str,
-    **kwargs: Any
+def build_recovery_points_get_rp_extended_info_request(  # pylint: disable=name-too-long
+    resource_group_name: str, vault_name: str, fabric_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/getRPExtendedInfo"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
-        "containerName": _SERIALIZER.url("container_name", container_name, "str"),
-        "protectedItemName": _SERIALIZER.url("protected_item_name", protected_item_name, "str"),
-        "recoveryPointId": _SERIALIZER.url("recovery_point_id", recovery_point_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -984,7 +1013,37 @@ def build_recovery_points_update_request(
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_recovery_points_get_rp_extended_info_operation_result_request(  # pylint: disable=name-too-long
+    resource_group_name: str, vault_name: str, fabric_name: str, operation_id: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/getRPExtendedInfoOperationResult/{operationId}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
+        "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
+        "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_restores_trigger_request(
@@ -1003,7 +1062,7 @@ def build_restores_trigger_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}/restore"
     path_format_arguments = {
@@ -1046,7 +1105,7 @@ def build_item_level_recovery_connections_provision_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}/provisionInstantItemRecovery"
     path_format_arguments = {
@@ -1083,7 +1142,7 @@ def build_item_level_recovery_connections_revoke_request(  # pylint: disable=nam
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}/revokeInstantItemRecovery"
     path_format_arguments = {
@@ -1104,13 +1163,55 @@ def build_item_level_recovery_connections_revoke_request(  # pylint: disable=nam
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
+def build_item_level_recovery_connections_list_instant_item_recovery_operation_result_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    vault_name: str,
+    fabric_name: str,
+    container_name: str,
+    protected_item_name: str,
+    recovery_point_id: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}/listInstantItemRecoveryOperationResult"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
+        "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
+        "containerName": _SERIALIZER.url("container_name", container_name, "str"),
+        "protectedItemName": _SERIALIZER.url("protected_item_name", protected_item_name, "str"),
+        "recoveryPointId": _SERIALIZER.url("recovery_point_id", recovery_point_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_protection_policies_get_request(
     vault_name: str, resource_group_name: str, policy_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1146,7 +1247,7 @@ def build_protection_policies_create_or_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1180,7 +1281,7 @@ def build_protection_policies_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}"
     path_format_arguments = {
@@ -1204,7 +1305,7 @@ def build_backup_policies_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1234,7 +1335,7 @@ def build_protection_policy_operation_results_get_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1264,7 +1365,7 @@ def build_protection_policy_operation_statuses_get_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1294,7 +1395,7 @@ def build_job_details_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1329,7 +1430,7 @@ def build_backup_jobs_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1360,7 +1461,7 @@ def build_job_cancellations_trigger_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupJobs/{jobName}/cancel"
     path_format_arguments = {
@@ -1383,7 +1484,7 @@ def build_job_operation_results_get_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupJobs/{jobName}/operationResults/{operationId}"
     path_format_arguments = {
@@ -1408,7 +1509,7 @@ def build_export_jobs_operation_results_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1444,7 +1545,7 @@ def build_backup_engines_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1483,7 +1584,7 @@ def build_backup_engines_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1515,7 +1616,7 @@ def build_resource_guard_proxy_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1545,7 +1646,7 @@ def build_resource_guard_proxy_put_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1575,7 +1676,7 @@ def build_resource_guard_proxy_delete_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupResourceGuardProxies/{resourceGuardProxyName}"
     path_format_arguments = {
@@ -1600,7 +1701,7 @@ def build_resource_guard_proxy_unlock_delete_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1631,7 +1732,7 @@ def build_resource_guard_proxies_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1658,7 +1759,7 @@ def build_backup_status_get_request(azure_region: str, subscription_id: str, **k
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1686,7 +1787,7 @@ def build_feature_support_validate_request(azure_region: str, subscription_id: s
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1721,7 +1822,7 @@ def build_backup_protection_intent_list_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1759,7 +1860,7 @@ def build_backup_usage_summaries_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1790,7 +1891,7 @@ def build_jobs_export_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupJobsExport"
     path_format_arguments = {
@@ -1821,7 +1922,7 @@ def build_backup_protected_items_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1854,7 +1955,7 @@ def build_validate_operation_trigger_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupTriggerValidateOperation"
     path_format_arguments = {
@@ -1881,7 +1982,7 @@ def build_validate_operation_results_get_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1910,7 +2011,7 @@ def build_validate_operation_statuses_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1938,7 +2039,7 @@ def build_protection_container_refresh_operation_results_get_request(  # pylint:
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/operationResults/{operationId}"
     path_format_arguments = {
@@ -1969,7 +2070,7 @@ def build_protectable_containers_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1999,7 +2100,7 @@ def build_backup_operation_results_get_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupOperationResults/{operationId}"
     path_format_arguments = {
@@ -2023,7 +2124,7 @@ def build_backup_operation_statuses_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2058,7 +2159,7 @@ def build_backup_protectable_items_list_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2090,7 +2191,7 @@ def build_backup_protection_containers_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2120,7 +2221,7 @@ def build_deleted_protection_containers_list_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2156,7 +2257,7 @@ def build_security_pins_get_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2191,7 +2292,7 @@ def build_fetch_tiering_cost_post_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2221,7 +2322,7 @@ def build_get_tiering_cost_operation_result_get_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2250,7 +2351,7 @@ def build_tiering_cost_operation_status_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2259,6 +2360,36 @@ def build_tiering_cost_operation_status_get_request(  # pylint: disable=name-too
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
+        "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_protection_container_refresh_operation_statuses_get_request(  # pylint: disable=name-too-long
+    resource_group_name: str, vault_name: str, fabric_name: str, operation_id: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/operationsStatus/{operationId}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
+        "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
     }
 
@@ -2284,7 +2415,7 @@ def build_protection_intent_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2320,7 +2451,7 @@ def build_protection_intent_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2356,7 +2487,7 @@ def build_protection_intent_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/backupProtectionIntent/{intentObjectName}"
     path_format_arguments = {
@@ -2380,7 +2511,7 @@ def build_protection_intent_validate_request(azure_region: str, subscription_id:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2413,7 +2544,7 @@ def build_private_endpoint_connection_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2449,7 +2580,7 @@ def build_private_endpoint_connection_put_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2485,7 +2616,7 @@ def build_private_endpoint_connection_delete_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -2516,7 +2647,7 @@ def build_private_endpoint_get_operation_status_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2549,7 +2680,7 @@ def build_operation_validate_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2580,7 +2711,7 @@ def build_recovery_services_backup_bms_prepare_data_move_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupstorageconfig/vaultstorageconfig/prepareDataMove"
     path_format_arguments = {
@@ -2608,7 +2739,7 @@ def build_recovery_services_backup_bms_trigger_data_move_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupstorageconfig/vaultstorageconfig/triggerDataMove"
     path_format_arguments = {
@@ -2635,7 +2766,7 @@ def build_recovery_services_backup_get_operation_status_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2672,7 +2803,7 @@ def build_recovery_services_backup_move_recovery_point_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-31-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}/move"
     path_format_arguments = {
@@ -2697,7 +2828,7 @@ def build_recovery_services_backup_move_recovery_point_request(  # pylint: disab
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2764,7 +2895,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2807,7 +2941,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class BackupResourceStorageConfigsNonCRROperations:  # pylint: disable=name-too-long
+class BackupResourceStorageConfigsNonCRROperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2930,7 +3064,7 @@ class BackupResourceStorageConfigsNonCRROperations:  # pylint: disable=name-too-
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: JSON,
+        parameters: _types.BackupResourceConfigResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2943,7 +3077,7 @@ class BackupResourceStorageConfigsNonCRROperations:  # pylint: disable=name-too-
          Required.
         :type resource_group_name: str
         :param parameters: Vault storage config request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.BackupResourceConfigResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2986,7 +3120,7 @@ class BackupResourceStorageConfigsNonCRROperations:  # pylint: disable=name-too-
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.BackupResourceConfigResource, JSON, IO[bytes]],
+        parameters: Union[_models.BackupResourceConfigResource, _types.BackupResourceConfigResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.BackupResourceConfigResource:
         """Updates vault storage model type.
@@ -2996,10 +3130,10 @@ class BackupResourceStorageConfigsNonCRROperations:  # pylint: disable=name-too-
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: Vault storage config request. Is one of the following types:
-         BackupResourceConfigResource, JSON, IO[bytes] Required.
+        :param parameters: Vault storage config request. Is either a BackupResourceConfigResource type
+         or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceConfigResource or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicesbackup.types.BackupResourceConfigResource or IO[bytes]
         :return: BackupResourceConfigResource. The BackupResourceConfigResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceConfigResource
@@ -3104,7 +3238,7 @@ class BackupResourceStorageConfigsNonCRROperations:  # pylint: disable=name-too-
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: JSON,
+        parameters: _types.BackupResourceConfigResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3117,7 +3251,7 @@ class BackupResourceStorageConfigsNonCRROperations:  # pylint: disable=name-too-
          Required.
         :type resource_group_name: str
         :param parameters: Vault storage config request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.BackupResourceConfigResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3158,7 +3292,7 @@ class BackupResourceStorageConfigsNonCRROperations:  # pylint: disable=name-too-
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.BackupResourceConfigResource, JSON, IO[bytes]],
+        parameters: Union[_models.BackupResourceConfigResource, _types.BackupResourceConfigResource, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Updates vault storage model type.
@@ -3168,10 +3302,10 @@ class BackupResourceStorageConfigsNonCRROperations:  # pylint: disable=name-too-
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: Vault storage config request. Is one of the following types:
-         BackupResourceConfigResource, JSON, IO[bytes] Required.
+        :param parameters: Vault storage config request. Is either a BackupResourceConfigResource type
+         or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceConfigResource or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicesbackup.types.BackupResourceConfigResource or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3231,7 +3365,7 @@ class BackupResourceStorageConfigsNonCRROperations:  # pylint: disable=name-too-
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BMSPrepareDataMoveOperationResultOperations:  # pylint: disable=name-too-long
+class BMSPrepareDataMoveOperationResultOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3330,7 +3464,7 @@ class BMSPrepareDataMoveOperationResultOperations:  # pylint: disable=name-too-l
         return deserialized  # type: ignore
 
 
-class BackupResourceVaultConfigsOperations:
+class BackupResourceVaultConfigsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3458,7 +3592,7 @@ class BackupResourceVaultConfigsOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: JSON,
+        parameters: _types.BackupResourceVaultConfigResource,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -3472,7 +3606,7 @@ class BackupResourceVaultConfigsOperations:
          Required.
         :type resource_group_name: str
         :param parameters: resource config request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.BackupResourceVaultConfigResource
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -3520,7 +3654,9 @@ class BackupResourceVaultConfigsOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.BackupResourceVaultConfigResource, JSON, IO[bytes]],
+        parameters: Union[
+            _models.BackupResourceVaultConfigResource, _types.BackupResourceVaultConfigResource, IO[bytes]
+        ],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -3532,10 +3668,10 @@ class BackupResourceVaultConfigsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: resource config request. Is one of the following types:
-         BackupResourceVaultConfigResource, JSON, IO[bytes] Required.
+        :param parameters: resource config request. Is either a BackupResourceVaultConfigResource type
+         or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceVaultConfigResource
-         or JSON or IO[bytes]
+         or ~azure.mgmt.recoveryservicesbackup.types.BackupResourceVaultConfigResource or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: BackupResourceVaultConfigResource. The BackupResourceVaultConfigResource is compatible
@@ -3647,7 +3783,7 @@ class BackupResourceVaultConfigsOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: JSON,
+        parameters: _types.BackupResourceVaultConfigResource,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -3661,7 +3797,7 @@ class BackupResourceVaultConfigsOperations:
          Required.
         :type resource_group_name: str
         :param parameters: resource config request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.BackupResourceVaultConfigResource
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -3709,7 +3845,9 @@ class BackupResourceVaultConfigsOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.BackupResourceVaultConfigResource, JSON, IO[bytes]],
+        parameters: Union[
+            _models.BackupResourceVaultConfigResource, _types.BackupResourceVaultConfigResource, IO[bytes]
+        ],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -3721,10 +3859,10 @@ class BackupResourceVaultConfigsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: resource config request. Is one of the following types:
-         BackupResourceVaultConfigResource, JSON, IO[bytes] Required.
+        :param parameters: resource config request. Is either a BackupResourceVaultConfigResource type
+         or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.models.BackupResourceVaultConfigResource
-         or JSON or IO[bytes]
+         or ~azure.mgmt.recoveryservicesbackup.types.BackupResourceVaultConfigResource or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: BackupResourceVaultConfigResource. The BackupResourceVaultConfigResource is compatible
@@ -3801,7 +3939,7 @@ class BackupResourceVaultConfigsOperations:
         return deserialized  # type: ignore
 
 
-class BackupResourceEncryptionConfigsOperations:  # pylint: disable=name-too-long
+class BackupResourceEncryptionConfigsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3927,7 +4065,7 @@ class BackupResourceEncryptionConfigsOperations:  # pylint: disable=name-too-lon
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: JSON,
+        parameters: _types.BackupResourceEncryptionConfigResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3940,7 +4078,8 @@ class BackupResourceEncryptionConfigsOperations:  # pylint: disable=name-too-lon
          Required.
         :type resource_group_name: str
         :param parameters: Vault encryption input config request. Required.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.mgmt.recoveryservicesbackup.types.BackupResourceEncryptionConfigResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3981,7 +4120,9 @@ class BackupResourceEncryptionConfigsOperations:  # pylint: disable=name-too-lon
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.BackupResourceEncryptionConfigResource, JSON, IO[bytes]],
+        parameters: Union[
+            _models.BackupResourceEncryptionConfigResource, _types.BackupResourceEncryptionConfigResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> None:
         """Updates Vault encryption config.
@@ -3991,11 +4132,11 @@ class BackupResourceEncryptionConfigsOperations:  # pylint: disable=name-too-lon
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: Vault encryption input config request. Is one of the following types:
-         BackupResourceEncryptionConfigResource, JSON, IO[bytes] Required.
+        :param parameters: Vault encryption input config request. Is either a
+         BackupResourceEncryptionConfigResource type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.recoveryservicesbackup.models.BackupResourceEncryptionConfigResource or JSON or
-         IO[bytes]
+         ~azure.mgmt.recoveryservicesbackup.models.BackupResourceEncryptionConfigResource or
+         ~azure.mgmt.recoveryservicesbackup.types.BackupResourceEncryptionConfigResource or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4055,7 +4196,7 @@ class BackupResourceEncryptionConfigsOperations:  # pylint: disable=name-too-lon
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ProtectedItemsOperations:
+class ProtectedItemsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4174,7 +4315,7 @@ class ProtectedItemsOperations:
         fabric_name: str,
         container_name: str,
         protected_item_name: str,
-        parameters: Union[_models.ProtectedItemResource, JSON, IO[bytes]],
+        parameters: Union[_models.ProtectedItemResource, _types.ProtectedItemResource, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -4302,7 +4443,7 @@ class ProtectedItemsOperations:
         fabric_name: str,
         container_name: str,
         protected_item_name: str,
-        parameters: JSON,
+        parameters: _types.ProtectedItemResource,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -4324,7 +4465,7 @@ class ProtectedItemsOperations:
         :param protected_item_name: Backed up item name whose details are to be fetched. Required.
         :type protected_item_name: str
         :param parameters: resource backed up item. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.ProtectedItemResource
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -4388,7 +4529,7 @@ class ProtectedItemsOperations:
         fabric_name: str,
         container_name: str,
         protected_item_name: str,
-        parameters: Union[_models.ProtectedItemResource, JSON, IO[bytes]],
+        parameters: Union[_models.ProtectedItemResource, _types.ProtectedItemResource, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -4408,10 +4549,10 @@ class ProtectedItemsOperations:
         :type container_name: str
         :param protected_item_name: Backed up item name whose details are to be fetched. Required.
         :type protected_item_name: str
-        :param parameters: resource backed up item. Is one of the following types:
-         ProtectedItemResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemResource or JSON or
-         IO[bytes]
+        :param parameters: resource backed up item. Is either a ProtectedItemResource type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemResource or
+         ~azure.mgmt.recoveryservicesbackup.types.ProtectedItemResource or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: An instance of LROPoller that returns ProtectedItemResource. The ProtectedItemResource
@@ -4552,7 +4693,7 @@ class ProtectedItemsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BackupsOperations:
+class BackupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4616,7 +4757,7 @@ class BackupsOperations:
         fabric_name: str,
         container_name: str,
         protected_item_name: str,
-        parameters: JSON,
+        parameters: _types.BackupRequestResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4636,7 +4777,7 @@ class BackupsOperations:
         :param protected_item_name: Backed up item name whose details are to be fetched. Required.
         :type protected_item_name: str
         :param parameters: resource backup request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.BackupRequestResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4690,7 +4831,7 @@ class BackupsOperations:
         fabric_name: str,
         container_name: str,
         protected_item_name: str,
-        parameters: Union[_models.BackupRequestResource, JSON, IO[bytes]],
+        parameters: Union[_models.BackupRequestResource, _types.BackupRequestResource, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Triggers backup for specified backed up item. This is an asynchronous operation. To know the
@@ -4707,10 +4848,10 @@ class BackupsOperations:
         :type container_name: str
         :param protected_item_name: Backed up item name whose details are to be fetched. Required.
         :type protected_item_name: str
-        :param parameters: resource backup request. Is one of the following types:
-         BackupRequestResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.BackupRequestResource or JSON or
-         IO[bytes]
+        :param parameters: resource backup request. Is either a BackupRequestResource type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.BackupRequestResource or
+         ~azure.mgmt.recoveryservicesbackup.types.BackupRequestResource or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4773,7 +4914,344 @@ class BackupsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class RecoveryPointsRecommendedForMoveOperations:  # pylint: disable=name-too-long
+class ConfigureSourceScanOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.recoveryservicesbackup.RecoveryServicesBackupClient`'s
+        :attr:`configure_source_scan` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: RecoveryServicesBackupClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "fabric_name",
+                "container_name",
+                "protected_item_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01", "2026-08-01", "2026-08-31-preview", "2026-10-01"],
+    )
+    def _execute_initial(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        container_name: str,
+        protected_item_name: str,
+        body: Union[
+            _models.ProtectedItemConfigureSourceScanRequest, _types.ProtectedItemConfigureSourceScanRequest, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_configure_source_scan_execute_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            fabric_name=fabric_name,
+            container_name=container_name,
+            protected_item_name=protected_item_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_execute(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        container_name: str,
+        protected_item_name: str,
+        body: _models.ProtectedItemConfigureSourceScanRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Configures source scan for a protected item. This is an asynchronous operation. To know the
+        status of the operation, call GetProtectedItemOperationResult API.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the VaultResource. Required.
+        :type vault_name: str
+        :param fabric_name: The name of the BackupFabricResource. Required.
+        :type fabric_name: str
+        :param container_name: Name of the container whose details need to be fetched. Required.
+        :type container_name: str
+        :param protected_item_name: Backed up item name whose details are to be fetched. Required.
+        :type protected_item_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemConfigureSourceScanRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_execute(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        container_name: str,
+        protected_item_name: str,
+        body: _types.ProtectedItemConfigureSourceScanRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Configures source scan for a protected item. This is an asynchronous operation. To know the
+        status of the operation, call GetProtectedItemOperationResult API.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the VaultResource. Required.
+        :type vault_name: str
+        :param fabric_name: The name of the BackupFabricResource. Required.
+        :type fabric_name: str
+        :param container_name: Name of the container whose details need to be fetched. Required.
+        :type container_name: str
+        :param protected_item_name: Backed up item name whose details are to be fetched. Required.
+        :type protected_item_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.recoveryservicesbackup.types.ProtectedItemConfigureSourceScanRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_execute(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        container_name: str,
+        protected_item_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Configures source scan for a protected item. This is an asynchronous operation. To know the
+        status of the operation, call GetProtectedItemOperationResult API.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the VaultResource. Required.
+        :type vault_name: str
+        :param fabric_name: The name of the BackupFabricResource. Required.
+        :type fabric_name: str
+        :param container_name: Name of the container whose details need to be fetched. Required.
+        :type container_name: str
+        :param protected_item_name: Backed up item name whose details are to be fetched. Required.
+        :type protected_item_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01",
+        params_added_on={
+            "2026-07-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "fabric_name",
+                "container_name",
+                "protected_item_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01", "2026-08-01", "2026-08-31-preview", "2026-10-01"],
+    )
+    def begin_execute(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        container_name: str,
+        protected_item_name: str,
+        body: Union[
+            _models.ProtectedItemConfigureSourceScanRequest, _types.ProtectedItemConfigureSourceScanRequest, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Configures source scan for a protected item. This is an asynchronous operation. To know the
+        status of the operation, call GetProtectedItemOperationResult API.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the VaultResource. Required.
+        :type vault_name: str
+        :param fabric_name: The name of the BackupFabricResource. Required.
+        :type fabric_name: str
+        :param container_name: Name of the container whose details need to be fetched. Required.
+        :type container_name: str
+        :param protected_item_name: Backed up item name whose details are to be fetched. Required.
+        :type protected_item_name: str
+        :param body: The content of the action request. Is either a
+         ProtectedItemConfigureSourceScanRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemConfigureSourceScanRequest
+         or ~azure.mgmt.recoveryservicesbackup.types.ProtectedItemConfigureSourceScanRequest or
+         IO[bytes]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._execute_initial(
+                resource_group_name=resource_group_name,
+                vault_name=vault_name,
+                fabric_name=fabric_name,
+                container_name=container_name,
+                protected_item_name=protected_item_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class RecoveryPointsRecommendedForMoveOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4838,7 +5316,7 @@ class RecoveryPointsRecommendedForMoveOperations:  # pylint: disable=name-too-lo
         fabric_name: str,
         container_name: str,
         protected_item_name: str,
-        parameters: JSON,
+        parameters: _types.ListRecoveryPointsRecommendedForMoveRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4857,7 +5335,8 @@ class RecoveryPointsRecommendedForMoveOperations:  # pylint: disable=name-too-lo
         :param protected_item_name: Backed up item name whose details are to be fetched. Required.
         :type protected_item_name: str
         :param parameters: List Recovery points Recommended for Move Request. Required.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.mgmt.recoveryservicesbackup.types.ListRecoveryPointsRecommendedForMoveRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4912,7 +5391,11 @@ class RecoveryPointsRecommendedForMoveOperations:  # pylint: disable=name-too-lo
         fabric_name: str,
         container_name: str,
         protected_item_name: str,
-        parameters: Union[_models.ListRecoveryPointsRecommendedForMoveRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ListRecoveryPointsRecommendedForMoveRequest,
+            _types.ListRecoveryPointsRecommendedForMoveRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> ItemPaged["_models.RecoveryPointResource"]:
         """Lists the recovery points recommended for move to another tier.
@@ -4928,11 +5411,12 @@ class RecoveryPointsRecommendedForMoveOperations:  # pylint: disable=name-too-lo
         :type container_name: str
         :param protected_item_name: Backed up item name whose details are to be fetched. Required.
         :type protected_item_name: str
-        :param parameters: List Recovery points Recommended for Move Request. Is one of the following
-         types: ListRecoveryPointsRecommendedForMoveRequest, JSON, IO[bytes] Required.
+        :param parameters: List Recovery points Recommended for Move Request. Is either a
+         ListRecoveryPointsRecommendedForMoveRequest type or a IO[bytes] type. Required.
         :type parameters:
-         ~azure.mgmt.recoveryservicesbackup.models.ListRecoveryPointsRecommendedForMoveRequest or JSON
-         or IO[bytes]
+         ~azure.mgmt.recoveryservicesbackup.models.ListRecoveryPointsRecommendedForMoveRequest or
+         ~azure.mgmt.recoveryservicesbackup.types.ListRecoveryPointsRecommendedForMoveRequest or
+         IO[bytes]
         :return: An iterator like instance of RecoveryPointResource
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.recoveryservicesbackup.models.RecoveryPointResource]
@@ -4992,7 +5476,10 @@ class RecoveryPointsRecommendedForMoveOperations:  # pylint: disable=name-too-lo
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5035,7 +5522,7 @@ class RecoveryPointsRecommendedForMoveOperations:  # pylint: disable=name-too-lo
         return ItemPaged(get_next, extract_data)
 
 
-class ProtectedItemOperationStatusesOperations:
+class ProtectedItemOperationStatusesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5149,7 +5636,7 @@ class ProtectedItemOperationStatusesOperations:
         return deserialized  # type: ignore
 
 
-class ProtectedItemOperationResultsOperations:
+class ProtectedItemOperationResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5263,7 +5750,7 @@ class ProtectedItemOperationResultsOperations:
         return deserialized  # type: ignore
 
 
-class ProtectionContainersOperations:
+class ProtectionContainersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5367,7 +5854,7 @@ class ProtectionContainersOperations:
         resource_group_name: str,
         fabric_name: str,
         container_name: str,
-        parameters: Union[_models.ProtectionContainerResource, JSON, IO[bytes]],
+        parameters: Union[_models.ProtectionContainerResource, _types.ProtectionContainerResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5483,7 +5970,7 @@ class ProtectionContainersOperations:
         resource_group_name: str,
         fabric_name: str,
         container_name: str,
-        parameters: JSON,
+        parameters: _types.ProtectionContainerResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5501,7 +5988,7 @@ class ProtectionContainersOperations:
         :param container_name: Name of the container whose details need to be fetched. Required.
         :type container_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.ProtectionContainerResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5555,7 +6042,7 @@ class ProtectionContainersOperations:
         resource_group_name: str,
         fabric_name: str,
         container_name: str,
-        parameters: Union[_models.ProtectionContainerResource, JSON, IO[bytes]],
+        parameters: Union[_models.ProtectionContainerResource, _types.ProtectionContainerResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ProtectionContainerResource]:
         """Registers the container with Recovery Services vault. This is an asynchronous operation. To
@@ -5570,10 +6057,10 @@ class ProtectionContainersOperations:
         :type fabric_name: str
         :param container_name: Name of the container whose details need to be fetched. Required.
         :type container_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         ProtectionContainerResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.ProtectionContainerResource or JSON
-         or IO[bytes]
+        :param parameters: Request body for operation. Is either a ProtectionContainerResource type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.ProtectionContainerResource or
+         ~azure.mgmt.recoveryservicesbackup.types.ProtectionContainerResource or IO[bytes]
         :return: An instance of LROPoller that returns ProtectionContainerResource. The
          ProtectionContainerResource is compatible with MutableMapping
         :rtype:
@@ -5851,7 +6338,7 @@ class ProtectionContainersOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BackupWorkloadItemsOperations:
+class BackupWorkloadItemsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5949,7 +6436,10 @@ class BackupWorkloadItemsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5992,7 +6482,7 @@ class BackupWorkloadItemsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ProtectionContainerOperationResultsOperations:  # pylint: disable=name-too-long
+class ProtectionContainerOperationResultsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6102,7 +6592,7 @@ class ProtectionContainerOperationResultsOperations:  # pylint: disable=name-too
         return deserialized  # type: ignore
 
 
-class RecoveryPointsOperations:
+class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6293,7 +6783,10 @@ class RecoveryPointsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6335,180 +6828,14 @@ class RecoveryPointsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    @overload
-    def update(
+    def _get_rp_extended_info_initial(
         self,
         resource_group_name: str,
         vault_name: str,
         fabric_name: str,
-        container_name: str,
-        protected_item_name: str,
-        recovery_point_id: str,
-        parameters: _models.UpdateRecoveryPointRequest,
-        *,
-        content_type: str = "application/json",
+        parameters: Union[_models.GetRPExtendedInfoRequestResource, _types.GetRPExtendedInfoRequestResource, IO[bytes]],
         **kwargs: Any
-    ) -> _models.RecoveryPointResource:
-        """UpdateRecoveryPoint to update recovery point for given RecoveryPointID.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The name of the VaultResource. Required.
-        :type vault_name: str
-        :param fabric_name: The name of the BackupFabricResource. Required.
-        :type fabric_name: str
-        :param container_name: Name of the container whose details need to be fetched. Required.
-        :type container_name: str
-        :param protected_item_name: Backed up item name whose details are to be fetched. Required.
-        :type protected_item_name: str
-        :param recovery_point_id: RecoveryPointID represents the backed up data to be fetched.
-         Required.
-        :type recovery_point_id: str
-        :param parameters: Request body for operation. Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.UpdateRecoveryPointRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RecoveryPointResource. The RecoveryPointResource is compatible with MutableMapping
-        :rtype: ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointResource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self,
-        resource_group_name: str,
-        vault_name: str,
-        fabric_name: str,
-        container_name: str,
-        protected_item_name: str,
-        recovery_point_id: str,
-        parameters: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.RecoveryPointResource:
-        """UpdateRecoveryPoint to update recovery point for given RecoveryPointID.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The name of the VaultResource. Required.
-        :type vault_name: str
-        :param fabric_name: The name of the BackupFabricResource. Required.
-        :type fabric_name: str
-        :param container_name: Name of the container whose details need to be fetched. Required.
-        :type container_name: str
-        :param protected_item_name: Backed up item name whose details are to be fetched. Required.
-        :type protected_item_name: str
-        :param recovery_point_id: RecoveryPointID represents the backed up data to be fetched.
-         Required.
-        :type recovery_point_id: str
-        :param parameters: Request body for operation. Required.
-        :type parameters: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RecoveryPointResource. The RecoveryPointResource is compatible with MutableMapping
-        :rtype: ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointResource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self,
-        resource_group_name: str,
-        vault_name: str,
-        fabric_name: str,
-        container_name: str,
-        protected_item_name: str,
-        recovery_point_id: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.RecoveryPointResource:
-        """UpdateRecoveryPoint to update recovery point for given RecoveryPointID.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The name of the VaultResource. Required.
-        :type vault_name: str
-        :param fabric_name: The name of the BackupFabricResource. Required.
-        :type fabric_name: str
-        :param container_name: Name of the container whose details need to be fetched. Required.
-        :type container_name: str
-        :param protected_item_name: Backed up item name whose details are to be fetched. Required.
-        :type protected_item_name: str
-        :param recovery_point_id: RecoveryPointID represents the backed up data to be fetched.
-         Required.
-        :type recovery_point_id: str
-        :param parameters: Request body for operation. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RecoveryPointResource. The RecoveryPointResource is compatible with MutableMapping
-        :rtype: ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointResource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-01-31-preview",
-        params_added_on={
-            "2026-01-31-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "vault_name",
-                "fabric_name",
-                "container_name",
-                "protected_item_name",
-                "recovery_point_id",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-01-31-preview"],
-    )
-    def update(
-        self,
-        resource_group_name: str,
-        vault_name: str,
-        fabric_name: str,
-        container_name: str,
-        protected_item_name: str,
-        recovery_point_id: str,
-        parameters: Union[_models.UpdateRecoveryPointRequest, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.RecoveryPointResource:
-        """UpdateRecoveryPoint to update recovery point for given RecoveryPointID.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The name of the VaultResource. Required.
-        :type vault_name: str
-        :param fabric_name: The name of the BackupFabricResource. Required.
-        :type fabric_name: str
-        :param container_name: Name of the container whose details need to be fetched. Required.
-        :type container_name: str
-        :param protected_item_name: Backed up item name whose details are to be fetched. Required.
-        :type protected_item_name: str
-        :param recovery_point_id: RecoveryPointID represents the backed up data to be fetched.
-         Required.
-        :type recovery_point_id: str
-        :param parameters: Request body for operation. Is one of the following types:
-         UpdateRecoveryPointRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.UpdateRecoveryPointRequest or JSON
-         or IO[bytes]
-        :return: RecoveryPointResource. The RecoveryPointResource is compatible with MutableMapping
-        :rtype: ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointResource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6521,7 +6848,7 @@ class RecoveryPointsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RecoveryPointResource] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -6530,17 +6857,288 @@ class RecoveryPointsOperations:
         else:
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_recovery_points_update_request(
+        _request = build_recovery_points_get_rp_extended_info_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             fabric_name=fabric_name,
-            container_name=container_name,
-            protected_item_name=protected_item_name,
-            recovery_point_id=recovery_point_id,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_get_rp_extended_info(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        parameters: _models.GetRPExtendedInfoRequestResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.RPExtendedInfoResourceList]:
+        """Triggers fetching the additional details of a recovery point, which are not returned by the
+        recovery point GET API. This is an asynchronous operation. Returns tracking headers which can
+        be tracked using the GetRPExtendedInfoOperationResult API.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the recovery services vault. Required.
+        :type vault_name: str
+        :param fabric_name: Fabric name associated with the backed up items. Required.
+        :type fabric_name: str
+        :param parameters: Request payload containing the ARM id of the recovery point whose additional
+         details are to be fetched. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.GetRPExtendedInfoRequestResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns RPExtendedInfoResourceList. The
+         RPExtendedInfoResourceList is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicesbackup.models.RPExtendedInfoResourceList]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_get_rp_extended_info(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        parameters: _types.GetRPExtendedInfoRequestResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.RPExtendedInfoResourceList]:
+        """Triggers fetching the additional details of a recovery point, which are not returned by the
+        recovery point GET API. This is an asynchronous operation. Returns tracking headers which can
+        be tracked using the GetRPExtendedInfoOperationResult API.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the recovery services vault. Required.
+        :type vault_name: str
+        :param fabric_name: Fabric name associated with the backed up items. Required.
+        :type fabric_name: str
+        :param parameters: Request payload containing the ARM id of the recovery point whose additional
+         details are to be fetched. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.GetRPExtendedInfoRequestResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns RPExtendedInfoResourceList. The
+         RPExtendedInfoResourceList is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicesbackup.models.RPExtendedInfoResourceList]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_get_rp_extended_info(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.RPExtendedInfoResourceList]:
+        """Triggers fetching the additional details of a recovery point, which are not returned by the
+        recovery point GET API. This is an asynchronous operation. Returns tracking headers which can
+        be tracked using the GetRPExtendedInfoOperationResult API.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the recovery services vault. Required.
+        :type vault_name: str
+        :param fabric_name: Fabric name associated with the backed up items. Required.
+        :type fabric_name: str
+        :param parameters: Request payload containing the ARM id of the recovery point whose additional
+         details are to be fetched. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns RPExtendedInfoResourceList. The
+         RPExtendedInfoResourceList is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicesbackup.models.RPExtendedInfoResourceList]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_get_rp_extended_info(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        parameters: Union[_models.GetRPExtendedInfoRequestResource, _types.GetRPExtendedInfoRequestResource, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.RPExtendedInfoResourceList]:
+        """Triggers fetching the additional details of a recovery point, which are not returned by the
+        recovery point GET API. This is an asynchronous operation. Returns tracking headers which can
+        be tracked using the GetRPExtendedInfoOperationResult API.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the recovery services vault. Required.
+        :type vault_name: str
+        :param fabric_name: Fabric name associated with the backed up items. Required.
+        :type fabric_name: str
+        :param parameters: Request payload containing the ARM id of the recovery point whose additional
+         details are to be fetched. Is either a GetRPExtendedInfoRequestResource type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.GetRPExtendedInfoRequestResource or
+         ~azure.mgmt.recoveryservicesbackup.types.GetRPExtendedInfoRequestResource or IO[bytes]
+        :return: An instance of LROPoller that returns RPExtendedInfoResourceList. The
+         RPExtendedInfoResourceList is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicesbackup.models.RPExtendedInfoResourceList]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RPExtendedInfoResourceList] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._get_rp_extended_info_initial(
+                resource_group_name=resource_group_name,
+                vault_name=vault_name,
+                fabric_name=fabric_name,
+                parameters=parameters,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.RPExtendedInfoResourceList, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.RPExtendedInfoResourceList].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.RPExtendedInfoResourceList](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    def get_rp_extended_info_operation_result(
+        self, resource_group_name: str, vault_name: str, fabric_name: str, operation_id: str, **kwargs: Any
+    ) -> Optional[_models.RPExtendedInfoResourceList]:
+        """Returns the additional details of the recovery points fetched by a prior getRPExtendedInfo
+        operation. Returns 202 Accepted while the operation is still running.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the recovery services vault. Required.
+        :type vault_name: str
+        :param fabric_name: Fabric name associated with the backed up items. Required.
+        :type fabric_name: str
+        :param operation_id: OperationID which represents the prior getRPExtendedInfo operation whose
+         result needs to be fetched. Required.
+        :type operation_id: str
+        :return: RPExtendedInfoResourceList or None. The RPExtendedInfoResourceList is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.recoveryservicesbackup.models.RPExtendedInfoResourceList or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Optional[_models.RPExtendedInfoResourceList]] = kwargs.pop("cls", None)
+
+        _request = build_recovery_points_get_rp_extended_info_operation_result_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            fabric_name=fabric_name,
+            operation_id=operation_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -6557,7 +7155,7 @@ class RecoveryPointsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -6570,18 +7168,28 @@ class RecoveryPointsOperations:
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.RecoveryPointResource, response.json())
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            if _stream:
+                deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+            else:
+                deserialized = _deserialize(_models.RPExtendedInfoResourceList, response.json())
+
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
 
-class RestoresOperations:
+class RestoresOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6608,7 +7216,7 @@ class RestoresOperations:
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: Union[_models.RestoreRequestResource, JSON, IO[bytes]],
+        parameters: Union[_models.RestoreRequestResource, _types.RestoreRequestResource, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -6738,7 +7346,7 @@ class RestoresOperations:
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: JSON,
+        parameters: _types.RestoreRequestResource,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -6762,7 +7370,7 @@ class RestoresOperations:
          Required.
         :type recovery_point_id: str
         :param parameters: resource restore request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.RestoreRequestResource
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -6826,7 +7434,7 @@ class RestoresOperations:
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: Union[_models.RestoreRequestResource, JSON, IO[bytes]],
+        parameters: Union[_models.RestoreRequestResource, _types.RestoreRequestResource, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -6848,10 +7456,10 @@ class RestoresOperations:
         :param recovery_point_id: RecoveryPointID represents the backed up data to be fetched.
          Required.
         :type recovery_point_id: str
-        :param parameters: resource restore request. Is one of the following types:
-         RestoreRequestResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.RestoreRequestResource or JSON or
-         IO[bytes]
+        :param parameters: resource restore request. Is either a RestoreRequestResource type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.RestoreRequestResource or
+         ~azure.mgmt.recoveryservicesbackup.types.RestoreRequestResource or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: An instance of LROPoller that returns None
@@ -6911,7 +7519,7 @@ class RestoresOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ItemLevelRecoveryConnectionsOperations:
+class ItemLevelRecoveryConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6981,7 +7589,7 @@ class ItemLevelRecoveryConnectionsOperations:
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: JSON,
+        parameters: _types.ILRRequestResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7005,7 +7613,7 @@ class ItemLevelRecoveryConnectionsOperations:
          Required.
         :type recovery_point_id: str
         :param parameters: resource ILR request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.ILRRequestResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7065,7 +7673,7 @@ class ItemLevelRecoveryConnectionsOperations:
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: Union[_models.ILRRequestResource, JSON, IO[bytes]],
+        parameters: Union[_models.ILRRequestResource, _types.ILRRequestResource, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Provisions a script which invokes an iSCSI connection to the backup data. Executing this script
@@ -7086,10 +7694,10 @@ class ItemLevelRecoveryConnectionsOperations:
         :param recovery_point_id: RecoveryPointID represents the backed up data to be fetched.
          Required.
         :type recovery_point_id: str
-        :param parameters: resource ILR request. Is one of the following types: ILRRequestResource,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.ILRRequestResource or JSON or
-         IO[bytes]
+        :param parameters: resource ILR request. Is either a ILRRequestResource type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.ILRRequestResource or
+         ~azure.mgmt.recoveryservicesbackup.types.ILRRequestResource or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7233,8 +7841,270 @@ class ItemLevelRecoveryConnectionsOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
+    @overload
+    def list_instant_item_recovery_operation_result(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        container_name: str,
+        protected_item_name: str,
+        recovery_point_id: str,
+        body: _models.InstantItemRecoveryOperationResultRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.InstantItemRecoveryTarget:
+        """Fetches the mount scripts (iSCSI connection details) for an active Instant Item Recovery (ILR)
+        session on the recovery point. Required from API version 2026-08-01 onwards; replaces the
+        scripts previously returned inline in the operationsStatus (ILR provision) response.
 
-class ProtectionPoliciesOperations:
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the VaultResource. Required.
+        :type vault_name: str
+        :param fabric_name: The name of the BackupFabricResource. Required.
+        :type fabric_name: str
+        :param container_name: Name of the container whose details need to be fetched. Required.
+        :type container_name: str
+        :param protected_item_name: Backed up item name whose details are to be fetched. Required.
+        :type protected_item_name: str
+        :param recovery_point_id: RecoveryPointID represents the backed up data to be fetched.
+         Required.
+        :type recovery_point_id: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.recoveryservicesbackup.models.InstantItemRecoveryOperationResultRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: InstantItemRecoveryTarget. The InstantItemRecoveryTarget is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.recoveryservicesbackup.models.InstantItemRecoveryTarget
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def list_instant_item_recovery_operation_result(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        container_name: str,
+        protected_item_name: str,
+        recovery_point_id: str,
+        body: _types.InstantItemRecoveryOperationResultRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.InstantItemRecoveryTarget:
+        """Fetches the mount scripts (iSCSI connection details) for an active Instant Item Recovery (ILR)
+        session on the recovery point. Required from API version 2026-08-01 onwards; replaces the
+        scripts previously returned inline in the operationsStatus (ILR provision) response.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the VaultResource. Required.
+        :type vault_name: str
+        :param fabric_name: The name of the BackupFabricResource. Required.
+        :type fabric_name: str
+        :param container_name: Name of the container whose details need to be fetched. Required.
+        :type container_name: str
+        :param protected_item_name: Backed up item name whose details are to be fetched. Required.
+        :type protected_item_name: str
+        :param recovery_point_id: RecoveryPointID represents the backed up data to be fetched.
+         Required.
+        :type recovery_point_id: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.recoveryservicesbackup.types.InstantItemRecoveryOperationResultRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: InstantItemRecoveryTarget. The InstantItemRecoveryTarget is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.recoveryservicesbackup.models.InstantItemRecoveryTarget
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def list_instant_item_recovery_operation_result(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        container_name: str,
+        protected_item_name: str,
+        recovery_point_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.InstantItemRecoveryTarget:
+        """Fetches the mount scripts (iSCSI connection details) for an active Instant Item Recovery (ILR)
+        session on the recovery point. Required from API version 2026-08-01 onwards; replaces the
+        scripts previously returned inline in the operationsStatus (ILR provision) response.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the VaultResource. Required.
+        :type vault_name: str
+        :param fabric_name: The name of the BackupFabricResource. Required.
+        :type fabric_name: str
+        :param container_name: Name of the container whose details need to be fetched. Required.
+        :type container_name: str
+        :param protected_item_name: Backed up item name whose details are to be fetched. Required.
+        :type protected_item_name: str
+        :param recovery_point_id: RecoveryPointID represents the backed up data to be fetched.
+         Required.
+        :type recovery_point_id: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: InstantItemRecoveryTarget. The InstantItemRecoveryTarget is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.recoveryservicesbackup.models.InstantItemRecoveryTarget
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01",
+        params_added_on={
+            "2026-08-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "fabric_name",
+                "container_name",
+                "protected_item_name",
+                "recovery_point_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-01", "2026-08-31-preview", "2026-10-01"],
+    )
+    def list_instant_item_recovery_operation_result(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        fabric_name: str,
+        container_name: str,
+        protected_item_name: str,
+        recovery_point_id: str,
+        body: Union[
+            _models.InstantItemRecoveryOperationResultRequest,
+            _types.InstantItemRecoveryOperationResultRequest,
+            IO[bytes],
+        ],
+        **kwargs: Any
+    ) -> _models.InstantItemRecoveryTarget:
+        """Fetches the mount scripts (iSCSI connection details) for an active Instant Item Recovery (ILR)
+        session on the recovery point. Required from API version 2026-08-01 onwards; replaces the
+        scripts previously returned inline in the operationsStatus (ILR provision) response.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the VaultResource. Required.
+        :type vault_name: str
+        :param fabric_name: The name of the BackupFabricResource. Required.
+        :type fabric_name: str
+        :param container_name: Name of the container whose details need to be fetched. Required.
+        :type container_name: str
+        :param protected_item_name: Backed up item name whose details are to be fetched. Required.
+        :type protected_item_name: str
+        :param recovery_point_id: RecoveryPointID represents the backed up data to be fetched.
+         Required.
+        :type recovery_point_id: str
+        :param body: The content of the action request. Is either a
+         InstantItemRecoveryOperationResultRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.recoveryservicesbackup.models.InstantItemRecoveryOperationResultRequest
+         or ~azure.mgmt.recoveryservicesbackup.types.InstantItemRecoveryOperationResultRequest or
+         IO[bytes]
+        :return: InstantItemRecoveryTarget. The InstantItemRecoveryTarget is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.recoveryservicesbackup.models.InstantItemRecoveryTarget
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.InstantItemRecoveryTarget] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_item_level_recovery_connections_list_instant_item_recovery_operation_result_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            fabric_name=fabric_name,
+            container_name=container_name,
+            protected_item_name=protected_item_name,
+            recovery_point_id=recovery_point_id,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.InstantItemRecoveryTarget, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ProtectionPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7372,7 +8242,7 @@ class ProtectionPoliciesOperations:
         vault_name: str,
         resource_group_name: str,
         policy_name: str,
-        parameters: JSON,
+        parameters: _types.ProtectionPolicyResource,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -7389,7 +8259,7 @@ class ProtectionPoliciesOperations:
         :param policy_name: Backup policy information to be fetched. Required.
         :type policy_name: str
         :param parameters: resource backup policy. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.ProtectionPolicyResource
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -7442,7 +8312,7 @@ class ProtectionPoliciesOperations:
         vault_name: str,
         resource_group_name: str,
         policy_name: str,
-        parameters: Union[_models.ProtectionPolicyResource, JSON, IO[bytes]],
+        parameters: Union[_models.ProtectionPolicyResource, _types.ProtectionPolicyResource, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -7457,10 +8327,10 @@ class ProtectionPoliciesOperations:
         :type resource_group_name: str
         :param policy_name: Backup policy information to be fetched. Required.
         :type policy_name: str
-        :param parameters: resource backup policy. Is one of the following types:
-         ProtectionPolicyResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResource or JSON or
-         IO[bytes]
+        :param parameters: resource backup policy. Is either a ProtectionPolicyResource type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.ProtectionPolicyResource or
+         ~azure.mgmt.recoveryservicesbackup.types.ProtectionPolicyResource or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: ProtectionPolicyResource or None. The ProtectionPolicyResource is compatible with
@@ -7665,7 +8535,7 @@ class ProtectionPoliciesOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class BackupPoliciesOperations:
+class BackupPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7746,7 +8616,10 @@ class BackupPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7789,7 +8662,7 @@ class BackupPoliciesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ProtectionPolicyOperationResultsOperations:  # pylint: disable=name-too-long
+class ProtectionPolicyOperationResultsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7888,7 +8761,7 @@ class ProtectionPolicyOperationResultsOperations:  # pylint: disable=name-too-lo
         return deserialized  # type: ignore
 
 
-class ProtectionPolicyOperationStatusesOperations:  # pylint: disable=name-too-long
+class ProtectionPolicyOperationStatusesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7989,7 +8862,7 @@ class ProtectionPolicyOperationStatusesOperations:  # pylint: disable=name-too-l
         return deserialized  # type: ignore
 
 
-class JobDetailsOperations:
+class JobDetailsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8082,7 +8955,7 @@ class JobDetailsOperations:
         return deserialized  # type: ignore
 
 
-class BackupJobsOperations:
+class BackupJobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8170,7 +9043,10 @@ class BackupJobsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8213,7 +9089,7 @@ class BackupJobsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class JobCancellationsOperations:
+class JobCancellationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8296,7 +9172,7 @@ class JobCancellationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class JobOperationResultsOperations:
+class JobOperationResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8381,7 +9257,7 @@ class JobOperationResultsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ExportJobsOperationResultsOperations:
+class ExportJobsOperationResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8479,7 +9355,7 @@ class ExportJobsOperationResultsOperations:
         return deserialized  # type: ignore
 
 
-class BackupEnginesOperations:
+class BackupEnginesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8658,7 +9534,10 @@ class BackupEnginesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8701,7 +9580,7 @@ class BackupEnginesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ResourceGuardProxyOperations:
+class ResourceGuardProxyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8833,7 +9712,7 @@ class ResourceGuardProxyOperations:
         vault_name: str,
         resource_group_name: str,
         resource_guard_proxy_name: str,
-        parameters: JSON,
+        parameters: _types.ResourceGuardProxyBaseResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8848,7 +9727,7 @@ class ResourceGuardProxyOperations:
         :param resource_guard_proxy_name: Required.
         :type resource_guard_proxy_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.ResourceGuardProxyBaseResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8895,7 +9774,7 @@ class ResourceGuardProxyOperations:
         vault_name: str,
         resource_group_name: str,
         resource_guard_proxy_name: str,
-        parameters: Union[_models.ResourceGuardProxyBaseResource, JSON, IO[bytes]],
+        parameters: Union[_models.ResourceGuardProxyBaseResource, _types.ResourceGuardProxyBaseResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ResourceGuardProxyBaseResource:
         """Add or Update ResourceGuardProxy under vault Secures vault critical operations.
@@ -8907,10 +9786,10 @@ class ResourceGuardProxyOperations:
         :type resource_group_name: str
         :param resource_guard_proxy_name: Required.
         :type resource_guard_proxy_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         ResourceGuardProxyBaseResource, JSON, IO[bytes] Required.
+        :param parameters: Request body for operation. Is either a ResourceGuardProxyBaseResource type
+         or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.models.ResourceGuardProxyBaseResource or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicesbackup.types.ResourceGuardProxyBaseResource or IO[bytes]
         :return: ResourceGuardProxyBaseResource. The ResourceGuardProxyBaseResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.recoveryservicesbackup.models.ResourceGuardProxyBaseResource
@@ -9082,7 +9961,7 @@ class ResourceGuardProxyOperations:
         vault_name: str,
         resource_group_name: str,
         resource_guard_proxy_name: str,
-        parameters: JSON,
+        parameters: _types.UnlockDeleteRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9097,7 +9976,7 @@ class ResourceGuardProxyOperations:
         :param resource_guard_proxy_name: Required.
         :type resource_guard_proxy_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.UnlockDeleteRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9142,7 +10021,7 @@ class ResourceGuardProxyOperations:
         vault_name: str,
         resource_group_name: str,
         resource_guard_proxy_name: str,
-        parameters: Union[_models.UnlockDeleteRequest, JSON, IO[bytes]],
+        parameters: Union[_models.UnlockDeleteRequest, _types.UnlockDeleteRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.UnlockDeleteResponse:
         """Secures delete ResourceGuardProxy operations.
@@ -9154,10 +10033,10 @@ class ResourceGuardProxyOperations:
         :type resource_group_name: str
         :param resource_guard_proxy_name: Required.
         :type resource_guard_proxy_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         UnlockDeleteRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.UnlockDeleteRequest or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a UnlockDeleteRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.UnlockDeleteRequest or
+         ~azure.mgmt.recoveryservicesbackup.types.UnlockDeleteRequest or IO[bytes]
         :return: UnlockDeleteResponse. The UnlockDeleteResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.recoveryservicesbackup.models.UnlockDeleteResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9231,7 +10110,7 @@ class ResourceGuardProxyOperations:
         return deserialized  # type: ignore
 
 
-class ResourceGuardProxiesOperations:
+class ResourceGuardProxiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9308,7 +10187,10 @@ class ResourceGuardProxiesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9351,7 +10233,7 @@ class ResourceGuardProxiesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BackupStatusOperations:
+class BackupStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9397,7 +10279,12 @@ class BackupStatusOperations:
 
     @overload
     def get(
-        self, azure_region: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        azure_region: str,
+        parameters: _types.BackupStatusRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.BackupStatusResponse:
         """Get the container backup status.
 
@@ -9406,7 +10293,7 @@ class BackupStatusOperations:
         :param azure_region: Azure region to hit Api. Required.
         :type azure_region: str
         :param parameters: Container Backup Status Request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.BackupStatusRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9437,7 +10324,10 @@ class BackupStatusOperations:
 
     @distributed_trace
     def get(
-        self, azure_region: str, parameters: Union[_models.BackupStatusRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        azure_region: str,
+        parameters: Union[_models.BackupStatusRequest, _types.BackupStatusRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.BackupStatusResponse:
         """Get the container backup status.
 
@@ -9445,10 +10335,10 @@ class BackupStatusOperations:
 
         :param azure_region: Azure region to hit Api. Required.
         :type azure_region: str
-        :param parameters: Container Backup Status Request. Is one of the following types:
-         BackupStatusRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.BackupStatusRequest or JSON or
-         IO[bytes]
+        :param parameters: Container Backup Status Request. Is either a BackupStatusRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.BackupStatusRequest or
+         ~azure.mgmt.recoveryservicesbackup.types.BackupStatusRequest or IO[bytes]
         :return: BackupStatusResponse. The BackupStatusResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.recoveryservicesbackup.models.BackupStatusResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9520,7 +10410,7 @@ class BackupStatusOperations:
         return deserialized  # type: ignore
 
 
-class FeatureSupportOperations:
+class FeatureSupportOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9567,7 +10457,12 @@ class FeatureSupportOperations:
 
     @overload
     def validate(
-        self, azure_region: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        azure_region: str,
+        parameters: _types.FeatureSupportRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AzureVMResourceFeatureSupportResponse:
         """It will validate if given feature with resource properties is supported in service.
 
@@ -9576,7 +10471,7 @@ class FeatureSupportOperations:
         :param azure_region: Azure region to hit Api. Required.
         :type azure_region: str
         :param parameters: Feature support request object. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.FeatureSupportRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9609,7 +10504,10 @@ class FeatureSupportOperations:
 
     @distributed_trace
     def validate(
-        self, azure_region: str, parameters: Union[_models.FeatureSupportRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        azure_region: str,
+        parameters: Union[_models.FeatureSupportRequest, _types.FeatureSupportRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.AzureVMResourceFeatureSupportResponse:
         """It will validate if given feature with resource properties is supported in service.
 
@@ -9617,10 +10515,10 @@ class FeatureSupportOperations:
 
         :param azure_region: Azure region to hit Api. Required.
         :type azure_region: str
-        :param parameters: Feature support request object. Is one of the following types:
-         FeatureSupportRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.FeatureSupportRequest or JSON or
-         IO[bytes]
+        :param parameters: Feature support request object. Is either a FeatureSupportRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.FeatureSupportRequest or
+         ~azure.mgmt.recoveryservicesbackup.types.FeatureSupportRequest or IO[bytes]
         :return: AzureVMResourceFeatureSupportResponse. The AzureVMResourceFeatureSupportResponse is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.recoveryservicesbackup.models.AzureVMResourceFeatureSupportResponse
@@ -9693,7 +10591,7 @@ class FeatureSupportOperations:
         return deserialized  # type: ignore
 
 
-class BackupProtectionIntentOperations:
+class BackupProtectionIntentOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9782,7 +10680,10 @@ class BackupProtectionIntentOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9825,7 +10726,7 @@ class BackupProtectionIntentOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BackupUsageSummariesOperations:
+class BackupUsageSummariesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9914,7 +10815,10 @@ class BackupUsageSummariesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9957,7 +10861,7 @@ class BackupUsageSummariesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class JobsOperations:
+class JobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10039,7 +10943,7 @@ class JobsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BackupProtectedItemsOperations:
+class BackupProtectedItemsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10128,7 +11032,10 @@ class BackupProtectedItemsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10171,7 +11078,7 @@ class BackupProtectedItemsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ValidateOperationOperations:
+class ValidateOperationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10194,7 +11101,7 @@ class ValidateOperationOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.ValidateOperationRequestResource, JSON, IO[bytes]],
+        parameters: Union[_models.ValidateOperationRequestResource, _types.ValidateOperationRequestResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10297,7 +11204,7 @@ class ValidateOperationOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: JSON,
+        parameters: _types.ValidateOperationRequestResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10311,7 +11218,7 @@ class ValidateOperationOperations:
          Required.
         :type resource_group_name: str
         :param parameters: resource validate operation request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.ValidateOperationRequestResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10353,7 +11260,7 @@ class ValidateOperationOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.ValidateOperationRequestResource, JSON, IO[bytes]],
+        parameters: Union[_models.ValidateOperationRequestResource, _types.ValidateOperationRequestResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Validate operation for specified backed up item in the form of an asynchronous operation.
@@ -10364,10 +11271,10 @@ class ValidateOperationOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: resource validate operation request. Is one of the following types:
-         ValidateOperationRequestResource, JSON, IO[bytes] Required.
+        :param parameters: resource validate operation request. Is either a
+         ValidateOperationRequestResource type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.models.ValidateOperationRequestResource or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicesbackup.types.ValidateOperationRequestResource or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10420,7 +11327,7 @@ class ValidateOperationOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ValidateOperationResultsOperations:
+class ValidateOperationResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10519,7 +11426,7 @@ class ValidateOperationResultsOperations:
         return deserialized  # type: ignore
 
 
-class ValidateOperationStatusesOperations:
+class ValidateOperationStatusesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10618,7 +11525,7 @@ class ValidateOperationStatusesOperations:
         return deserialized  # type: ignore
 
 
-class ProtectionContainerRefreshOperationResultsOperations:  # pylint: disable=name-too-long
+class ProtectionContainerRefreshOperationResultsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10704,7 +11611,7 @@ class ProtectionContainerRefreshOperationResultsOperations:  # pylint: disable=n
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ProtectableContainersOperations:
+class ProtectableContainersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10793,7 +11700,10 @@ class ProtectableContainersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10836,7 +11746,7 @@ class ProtectableContainersOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BackupOperationResultsOperations:
+class BackupOperationResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10922,7 +11832,7 @@ class BackupOperationResultsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BackupOperationStatusesOperations:
+class BackupOperationStatusesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11020,7 +11930,7 @@ class BackupOperationStatusesOperations:
         return deserialized  # type: ignore
 
 
-class BackupProtectableItemsOperations:
+class BackupProtectableItemsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11110,7 +12020,10 @@ class BackupProtectableItemsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11153,7 +12066,7 @@ class BackupProtectableItemsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BackupProtectionContainersOperations:
+class BackupProtectionContainersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11233,7 +12146,10 @@ class BackupProtectionContainersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11276,7 +12192,7 @@ class BackupProtectionContainersOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DeletedProtectionContainersOperations:
+class DeletedProtectionContainersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11356,7 +12272,10 @@ class DeletedProtectionContainersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11399,7 +12318,7 @@ class DeletedProtectionContainersOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SecurityPINsOperations:
+class SecurityPINsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11453,7 +12372,7 @@ class SecurityPINsOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.SecurityPinBase] = None,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -11467,7 +12386,7 @@ class SecurityPINsOperations:
          Required.
         :type resource_group_name: str
         :param parameters: security pin request. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.SecurityPinBase
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -11513,7 +12432,7 @@ class SecurityPINsOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Optional[Union[_models.SecurityPinBase, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.SecurityPinBase, _types.SecurityPinBase, IO[bytes]]] = None,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -11525,10 +12444,10 @@ class SecurityPINsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: security pin request. Is one of the following types: SecurityPinBase, JSON,
-         IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.SecurityPinBase or JSON or
-         IO[bytes]
+        :param parameters: security pin request. Is either a SecurityPinBase type or a IO[bytes] type.
+         Default value is None.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.SecurityPinBase or
+         ~azure.mgmt.recoveryservicesbackup.types.SecurityPinBase or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: TokenInformation. The TokenInformation is compatible with MutableMapping
@@ -11608,7 +12527,7 @@ class SecurityPINsOperations:
         return deserialized  # type: ignore
 
 
-class FetchTieringCostOperations:
+class FetchTieringCostOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11631,7 +12550,7 @@ class FetchTieringCostOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.FetchTieringCostInfoRequest, JSON, IO[bytes]],
+        parameters: Union[_models.FetchTieringCostInfoRequest, _types.FetchTieringCostInfoRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -11738,7 +12657,7 @@ class FetchTieringCostOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: JSON,
+        parameters: _types.FetchTieringCostInfoRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11753,7 +12672,7 @@ class FetchTieringCostOperations:
         :param vault_name: The name of the recovery services vault. Required.
         :type vault_name: str
         :param parameters: Fetch Tiering Cost Request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.FetchTieringCostInfoRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11800,7 +12719,7 @@ class FetchTieringCostOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.FetchTieringCostInfoRequest, JSON, IO[bytes]],
+        parameters: Union[_models.FetchTieringCostInfoRequest, _types.FetchTieringCostInfoRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.TieringCostInfo]:
         """Provides the details of the tiering related sizes and cost. Status of the operation can be
@@ -11812,10 +12731,10 @@ class FetchTieringCostOperations:
         :type resource_group_name: str
         :param vault_name: The name of the recovery services vault. Required.
         :type vault_name: str
-        :param parameters: Fetch Tiering Cost Request. Is one of the following types:
-         FetchTieringCostInfoRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.FetchTieringCostInfoRequest or JSON
-         or IO[bytes]
+        :param parameters: Fetch Tiering Cost Request. Is either a FetchTieringCostInfoRequest type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.FetchTieringCostInfoRequest or
+         ~azure.mgmt.recoveryservicesbackup.types.FetchTieringCostInfoRequest or IO[bytes]
         :return: An instance of LROPoller that returns TieringCostInfo. The TieringCostInfo is
          compatible with MutableMapping
         :rtype:
@@ -11875,7 +12794,7 @@ class FetchTieringCostOperations:
         )
 
 
-class GetTieringCostOperationResultOperations:
+class GetTieringCostOperationResultOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11970,7 +12889,7 @@ class GetTieringCostOperationResultOperations:
         return deserialized  # type: ignore
 
 
-class TieringCostOperationStatusOperations:
+class TieringCostOperationStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12065,7 +12984,125 @@ class TieringCostOperationStatusOperations:
         return deserialized  # type: ignore
 
 
-class ProtectionIntentOperations:
+class ProtectionContainerRefreshOperationStatusesOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.recoveryservicesbackup.RecoveryServicesBackupClient`'s
+        :attr:`protection_container_refresh_operation_statuses` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: RecoveryServicesBackupClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "fabric_name",
+                "operation_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    def get(
+        self, resource_group_name: str, vault_name: str, fabric_name: str, operation_id: str, **kwargs: Any
+    ) -> _models.OperationStatus:
+        """Fetches the status of the fabric level asynchronous operation identified by the given operation
+        id. The status can be in progress, completed or failed. You can refer to the OperationStatus
+        enum for all the possible states of an operation. This is the endpoint reported in the
+        Azure-AsyncOperation header of the fabric level operations that start one, such as
+        RefreshContainers and GetRPExtendedInfo.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the recovery services vault. Required.
+        :type vault_name: str
+        :param fabric_name: Fabric name associated with the operation. Required.
+        :type fabric_name: str
+        :param operation_id: OperationID which represents the operation whose status needs to be
+         fetched. Required.
+        :type operation_id: str
+        :return: OperationStatus. The OperationStatus is compatible with MutableMapping
+        :rtype: ~azure.mgmt.recoveryservicesbackup.models.OperationStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.OperationStatus] = kwargs.pop("cls", None)
+
+        _request = build_protection_container_refresh_operation_statuses_get_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            fabric_name=fabric_name,
+            operation_id=operation_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.OperationStatus, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ProtectionIntentOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12205,7 +13242,7 @@ class ProtectionIntentOperations:
         resource_group_name: str,
         fabric_name: str,
         intent_object_name: str,
-        parameters: JSON,
+        parameters: _types.ProtectionIntentResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12222,7 +13259,7 @@ class ProtectionIntentOperations:
         :param intent_object_name: Backed up item name whose details are to be fetched. Required.
         :type intent_object_name: str
         :param parameters: resource backed up item. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.ProtectionIntentResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12273,7 +13310,7 @@ class ProtectionIntentOperations:
         resource_group_name: str,
         fabric_name: str,
         intent_object_name: str,
-        parameters: Union[_models.ProtectionIntentResource, JSON, IO[bytes]],
+        parameters: Union[_models.ProtectionIntentResource, _types.ProtectionIntentResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ProtectionIntentResource:
         """Create Intent for Enabling backup of an item. This is a synchronous operation.
@@ -12287,10 +13324,10 @@ class ProtectionIntentOperations:
         :type fabric_name: str
         :param intent_object_name: Backed up item name whose details are to be fetched. Required.
         :type intent_object_name: str
-        :param parameters: resource backed up item. Is one of the following types:
-         ProtectionIntentResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.ProtectionIntentResource or JSON or
-         IO[bytes]
+        :param parameters: resource backed up item. Is either a ProtectionIntentResource type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.ProtectionIntentResource or
+         ~azure.mgmt.recoveryservicesbackup.types.ProtectionIntentResource or IO[bytes]
         :return: ProtectionIntentResource. The ProtectionIntentResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.recoveryservicesbackup.models.ProtectionIntentResource
@@ -12466,7 +13503,12 @@ class ProtectionIntentOperations:
 
     @overload
     def validate(
-        self, azure_region: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        azure_region: str,
+        parameters: _types.PreValidateEnableBackupRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PreValidateEnableBackupResponse:
         """It will validate followings
 
@@ -12483,7 +13525,7 @@ class ProtectionIntentOperations:
         :param azure_region: Azure region to hit Api. Required.
         :type azure_region: str
         :param parameters: Enable backup validation request on Virtual Machine. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.PreValidateEnableBackupRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12526,7 +13568,7 @@ class ProtectionIntentOperations:
     def validate(
         self,
         azure_region: str,
-        parameters: Union[_models.PreValidateEnableBackupRequest, JSON, IO[bytes]],
+        parameters: Union[_models.PreValidateEnableBackupRequest, _types.PreValidateEnableBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.PreValidateEnableBackupResponse:
         """It will validate followings
@@ -12543,10 +13585,10 @@ class ProtectionIntentOperations:
 
         :param azure_region: Azure region to hit Api. Required.
         :type azure_region: str
-        :param parameters: Enable backup validation request on Virtual Machine. Is one of the following
-         types: PreValidateEnableBackupRequest, JSON, IO[bytes] Required.
+        :param parameters: Enable backup validation request on Virtual Machine. Is either a
+         PreValidateEnableBackupRequest type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.models.PreValidateEnableBackupRequest or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicesbackup.types.PreValidateEnableBackupRequest or IO[bytes]
         :return: PreValidateEnableBackupResponse. The PreValidateEnableBackupResponse is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.recoveryservicesbackup.models.PreValidateEnableBackupResponse
@@ -12619,7 +13661,7 @@ class ProtectionIntentOperations:
         return deserialized  # type: ignore
 
 
-class PrivateEndpointConnectionOperations:
+class PrivateEndpointConnectionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12719,7 +13761,9 @@ class PrivateEndpointConnectionOperations:
         vault_name: str,
         resource_group_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnectionResource, JSON, IO[bytes]],
+        parameters: Union[
+            _models.PrivateEndpointConnectionResource, _types.PrivateEndpointConnectionResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -12829,7 +13873,7 @@ class PrivateEndpointConnectionOperations:
         vault_name: str,
         resource_group_name: str,
         private_endpoint_connection_name: str,
-        parameters: JSON,
+        parameters: _types.PrivateEndpointConnectionResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12844,7 +13888,7 @@ class PrivateEndpointConnectionOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.PrivateEndpointConnectionResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12893,7 +13937,9 @@ class PrivateEndpointConnectionOperations:
         vault_name: str,
         resource_group_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnectionResource, JSON, IO[bytes]],
+        parameters: Union[
+            _models.PrivateEndpointConnectionResource, _types.PrivateEndpointConnectionResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnectionResource]:
         """Approve or Reject Private Endpoint requests. This call is made by Backup Admin.
@@ -12905,10 +13951,10 @@ class PrivateEndpointConnectionOperations:
         :type resource_group_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         PrivateEndpointConnectionResource, JSON, IO[bytes] Required.
+        :param parameters: Request body for operation. Is either a PrivateEndpointConnectionResource
+         type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.models.PrivateEndpointConnectionResource
-         or JSON or IO[bytes]
+         or ~azure.mgmt.recoveryservicesbackup.types.PrivateEndpointConnectionResource or IO[bytes]
         :return: An instance of LROPoller that returns PrivateEndpointConnectionResource. The
          PrivateEndpointConnectionResource is compatible with MutableMapping
         :rtype:
@@ -13093,7 +14139,7 @@ class PrivateEndpointConnectionOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class PrivateEndpointOperations:
+class PrivateEndpointOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13197,7 +14243,7 @@ class PrivateEndpointOperations:
         return deserialized  # type: ignore
 
 
-class OperationOperations:
+class OperationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13249,7 +14295,7 @@ class OperationOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: JSON,
+        parameters: _types.ValidateOperationRequestResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13262,7 +14308,7 @@ class OperationOperations:
          Required.
         :type resource_group_name: str
         :param parameters: resource validate operation request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.ValidateOperationRequestResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13305,7 +14351,7 @@ class OperationOperations:
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.ValidateOperationRequestResource, JSON, IO[bytes]],
+        parameters: Union[_models.ValidateOperationRequestResource, _types.ValidateOperationRequestResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ValidateOperationsResponse:
         """Validate operation for specified backed up item. This is a synchronous operation.
@@ -13315,10 +14361,10 @@ class OperationOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: resource validate operation request. Is one of the following types:
-         ValidateOperationRequestResource, JSON, IO[bytes] Required.
+        :param parameters: resource validate operation request. Is either a
+         ValidateOperationRequestResource type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.models.ValidateOperationRequestResource or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicesbackup.types.ValidateOperationRequestResource or IO[bytes]
         :return: ValidateOperationsResponse. The ValidateOperationsResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.recoveryservicesbackup.models.ValidateOperationsResponse
@@ -13400,7 +14446,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.PrepareDataMoveRequest, JSON, IO[bytes]],
+        parameters: Union[_models.PrepareDataMoveRequest, _types.PrepareDataMoveRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -13503,7 +14549,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: JSON,
+        parameters: _types.PrepareDataMoveRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13516,7 +14562,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
          Required.
         :type resource_group_name: str
         :param parameters: Prepare data move request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.PrepareDataMoveRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13557,7 +14603,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.PrepareDataMoveRequest, JSON, IO[bytes]],
+        parameters: Union[_models.PrepareDataMoveRequest, _types.PrepareDataMoveRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Prepares source vault for Data Move operation.
@@ -13567,10 +14613,10 @@ class _RecoveryServicesBackupClientOperationsMixin(
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: Prepare data move request. Is one of the following types:
-         PrepareDataMoveRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.PrepareDataMoveRequest or JSON or
-         IO[bytes]
+        :param parameters: Prepare data move request. Is either a PrepareDataMoveRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.PrepareDataMoveRequest or
+         ~azure.mgmt.recoveryservicesbackup.types.PrepareDataMoveRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13626,7 +14672,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.TriggerDataMoveRequest, JSON, IO[bytes]],
+        parameters: Union[_models.TriggerDataMoveRequest, _types.TriggerDataMoveRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -13729,7 +14775,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: JSON,
+        parameters: _types.TriggerDataMoveRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13742,7 +14788,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
          Required.
         :type resource_group_name: str
         :param parameters: Trigger data move request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.TriggerDataMoveRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13783,7 +14829,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         self,
         vault_name: str,
         resource_group_name: str,
-        parameters: Union[_models.TriggerDataMoveRequest, JSON, IO[bytes]],
+        parameters: Union[_models.TriggerDataMoveRequest, _types.TriggerDataMoveRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Triggers Data Move Operation on target vault.
@@ -13793,10 +14839,10 @@ class _RecoveryServicesBackupClientOperationsMixin(
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: Trigger data move request. Is one of the following types:
-         TriggerDataMoveRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.TriggerDataMoveRequest or JSON or
-         IO[bytes]
+        :param parameters: Trigger data move request. Is either a TriggerDataMoveRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.TriggerDataMoveRequest or
+         ~azure.mgmt.recoveryservicesbackup.types.TriggerDataMoveRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13931,7 +14977,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: Union[_models.MoveRPAcrossTiersRequest, JSON, IO[bytes]],
+        parameters: Union[_models.MoveRPAcrossTiersRequest, _types.MoveRPAcrossTiersRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -14054,7 +15100,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: JSON,
+        parameters: _types.MoveRPAcrossTiersRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14076,7 +15122,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
          Required.
         :type recovery_point_id: str
         :param parameters: Move Resource Across Tiers Request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.types.MoveRPAcrossTiersRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14134,7 +15180,7 @@ class _RecoveryServicesBackupClientOperationsMixin(
         container_name: str,
         protected_item_name: str,
         recovery_point_id: str,
-        parameters: Union[_models.MoveRPAcrossTiersRequest, JSON, IO[bytes]],
+        parameters: Union[_models.MoveRPAcrossTiersRequest, _types.MoveRPAcrossTiersRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Move recovery point from one datastore to another store.
@@ -14153,10 +15199,10 @@ class _RecoveryServicesBackupClientOperationsMixin(
         :param recovery_point_id: RecoveryPointID represents the backed up data to be fetched.
          Required.
         :type recovery_point_id: str
-        :param parameters: Move Resource Across Tiers Request. Is one of the following types:
-         MoveRPAcrossTiersRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.MoveRPAcrossTiersRequest or JSON or
-         IO[bytes]
+        :param parameters: Move Resource Across Tiers Request. Is either a MoveRPAcrossTiersRequest
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.recoveryservicesbackup.models.MoveRPAcrossTiersRequest or
+         ~azure.mgmt.recoveryservicesbackup.types.MoveRPAcrossTiersRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:

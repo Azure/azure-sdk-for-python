@@ -22,7 +22,6 @@ USAGE:
 import os
 import asyncio
 
-
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
 key = os.environ["AZURE_SEARCH_API_KEY"]
@@ -40,7 +39,7 @@ async def autocomplete_query_async():
 
         print("Results: autocomplete for 'bo'")
         for result in results:
-            print(f"  Completion: {result['text']}")
+            print(f"  Completion: {result.text}")
     # [END autocomplete_query_async]
 
 

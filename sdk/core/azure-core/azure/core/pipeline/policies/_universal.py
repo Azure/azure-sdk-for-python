@@ -438,6 +438,7 @@ class HttpLoggingPolicy(
             "WWW-Authenticate",  # OAuth Challenge header.
             "x-vss-e2eid",  # Needed by Azure DevOps pipelines.
             "x-msedge-ref",  # Needed by Azure DevOps pipelines.
+            "azure-deprecating",  # Deprecation notification header.
         ]
     )
     REDACTED_PLACEHOLDER: str = "REDACTED"

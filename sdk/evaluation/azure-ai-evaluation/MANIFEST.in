@@ -4,5 +4,6 @@ include azure/__init__.py
 include azure/ai/__init__.py
 include azure/ai/evaluation/py.typed
 recursive-include azure/ai/evaluation *.prompty
+recursive-include azure/ai/evaluation *.decision.yaml
 include azure/ai/evaluation/simulator/_data_sources/grounding.json
 recursive-include samples *

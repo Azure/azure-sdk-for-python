@@ -6,7 +6,7 @@ import unittest
 from unittest import mock
 from datetime import datetime
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
 from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
@@ -64,6 +64,13 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
             "azure.monitor.opentelemetry.exporter.statsbeat.customer.collect_customer_sdkstats"
         )
         cls._collect_customer_sdkstats_patch.start()
+
+        # Keep internal Statsbeat exports out of customer SDK-stat tracking assertions.
+        cls._collect_statsbeat_patch = mock.patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics"
+        )
+        cls._collect_statsbeat_patch.start()
+        cls.addClassCleanup(cls._collect_statsbeat_patch.stop)
 
         # Create reusable test data structure for TelemetryItem
         base_data = TelemetryEventData(name="test_event", properties={"test_property": "test_value"})
@@ -215,6 +222,16 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         track_retry_mock.assert_called_once()
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_retry_items")
+    def test_transmit_service_response_error_customer_sdkstats_track_retry_items(self, track_retry_mock):
+        """Test that _track_retry_items is called on ServiceResponseError (e.g. read timeout)"""
+        exporter = self._create_exporter_with_customer_sdkstats_enabled()
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=ServiceResponseError("Read timed out")):
+            result = exporter._transmit(self._envelopes_to_export)
+
+        track_retry_mock.assert_called_once()
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_dropped_items")
     def test_transmit_general_exception_customer_sdkstats_track_dropped_items(self, track_dropped_mock):
         """Test that _track_dropped_items is called on general exceptions"""
@@ -311,8 +328,7 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         """Test that track_dropped_items is called on circular redirect errors"""
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
 
-        # Mock the consecutive redirects counter to simulate exceeding max redirects
-        exporter._consecutive_redirects = 10  # Set to a high value to simulate circular redirects
+        exporter.client._config.redirect_policy.max_redirects = 1
 
         # Simulate redirect responses that would cause circular redirects
         with mock.patch.object(AzureMonitorClient, "track") as track_mock:

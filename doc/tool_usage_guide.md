@@ -24,7 +24,7 @@ The following checks are available via the `azpysdk` entrypoint.
 |`apistub`| Generates `api.md`, API metadata, or APIView token files for the package. | `azpysdk apistub .` |
 |`bandit`| Runs `bandit` checks, which detect common security issues. | `azpysdk bandit .` |
 |`verifywhl`| Verifies that the root directory in whl is azure, and verifies manifest so that all directories in source are included in sdist. | `azpysdk verifywhl .` |
-|`verifysdist`| Verify directories included in sdist and contents in manifest file. Also ensures that py.typed configuration is correct within the setup.py. | `azpysdk verifysdist .` |
+|`verifysdist`| Verify directories included in sdist and contents in manifest file. Also ensures that py.typed configuration is correct within `pyproject.toml` (or `setup.py` for legacy packages). | `azpysdk verifysdist .` |
 |`verify_keywords`| Verify that the keyword 'azure sdk' is present in the targeted package's keywords. | `azpysdk verify_keywords .` |
 |`import_all`| Installs the package w/ default dependencies, then attempts to `import *` from the base namespace. Ensures that all imports will resolve after a base install and import. | `azpysdk import_all .` |
 |`generate`| Regenerates the code. | `azpysdk generate .` |
@@ -33,6 +33,9 @@ The following checks are available via the `azpysdk` entrypoint.
 |`optional`| Invokes 'optional' requirements for a given package. | `azpysdk optional .` |
 |`devtest`| Tests a package against dependencies installed from a dev index. | `azpysdk devtest .` |
 |`update_snippet`| Updates README code snippets from sample files. | `azpysdk update_snippet .` |
+|`mindependency`| Runs the test suite against the oldest published version of each declared Azure SDK dependency that satisfies the requirement range. | `azpysdk mindependency .` |
+|`latestdependency`| Runs the test suite against the latest published version of each declared Azure SDK dependency that satisfies the requirement range. | `azpysdk latestdependency .` |
+|`changelog`| Manages changelogs with Chronus (`add`, `verify`, `create`, `status` subcommands). | `azpysdk changelog add <package>` |
 
 ## Common arguments
 

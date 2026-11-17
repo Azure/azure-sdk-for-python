@@ -40,13 +40,13 @@ def main():
             "properties": {
                 "executionFilterIdentifierHeaderName": "header-key",
                 "executionFilterIdentifierHeaderValue": "header-value",
-                "versionId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/testrg/providers/Microsoft.Cdn/EdgeActions/edgeAction1/versions/version1",
+                "versionId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testrg/providers/Microsoft.Cdn/edgeActions/edgeAction1/versions/version1",
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-12-01-preview/EdgeActionExecutionFilters_Create.json
+# x-ms-original-file: 2026-10-01/EdgeActionExecutionFilters_Create.json
 if __name__ == "__main__":
     main()

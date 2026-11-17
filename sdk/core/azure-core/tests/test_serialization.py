@@ -10,6 +10,17 @@ import sys
 import typing
 from typing import Any, Dict, List, Optional, Union, Type
 from io import BytesIO
+from types import MappingProxyType
+
+import pytest
+from modeltypes._utils.model_base import (
+    Model as HybridModel,
+    SdkJSONEncoder,
+    rest_field,
+    TYPE_HANDLER_REGISTRY,
+    _deserialize,
+)
+from modeltypes import models
 
 from azure.core.serialization import (
     AzureJSONEncoder,
@@ -19,17 +30,8 @@ from azure.core.serialization import (
     is_generated_model,
     attribute_list,
 )
-from azure.core.exceptions import DeserializationError
-import pytest
-from modeltypes._utils.model_base import (
-    Model as HybridModel,
-    SdkJSONEncoder,
-    rest_field,
-    TYPE_HANDLER_REGISTRY,
-    _deserialize,
-)
-from modeltypes._utils.serialization import Model as MsrestModel
-from modeltypes import models
+
+from azure.core.exceptions import ODataV4Format
 
 
 def _expand_value(obj):
@@ -40,12 +42,11 @@ def _expand_value(obj):
         except AttributeError:
             if isinstance(obj, Enum):
                 return obj.value
-            elif isinstance(obj, list):
+            if isinstance(obj, list):
                 return [_expand_value(item) for item in obj]
-            elif isinstance(obj, dict):
+            if isinstance(obj, dict):
                 return _expand_dict(obj)
-            else:
-                return _expand_dict(vars(obj))
+            return _expand_dict(vars(obj))
 
     except TypeError:
         return obj
@@ -149,6 +150,145 @@ def test_dictionary_basic(json_dumps_with_encoder):
     complex_serialized = json_dumps_with_encoder(test_obj)
     assert json.dumps(test_obj) == complex_serialized
     assert json.loads(complex_serialized) == test_obj
+
+
+def test_generated_model_as_dict_with_odata_v4_format():
+    class TestModel(HybridModel):
+        name: str = rest_field()
+        count: int = rest_field()
+        enabled: bool = rest_field()
+        optional: Optional[str] = rest_field()
+        InnerError: List[ODataV4Format] = rest_field()
+        readonly: List[ODataV4Format] = rest_field(visibility=["read"])
+
+    wire_error = {
+        "code": "BadRequest",
+        "message": "Invalid request",
+        "details": [{"code": "InvalidValue", "message": "Invalid name"}],
+        "innererror": {"trace": {"id": "123", "optional": None}},
+    }
+    minimal_error = {"message": "Missing value", "innererror": None}
+    model = TestModel(
+        {
+            "name": "test",
+            "count": 0,
+            "enabled": False,
+            "optional": None,
+            "InnerError": [wire_error, minimal_error],
+            "readonly": [wire_error],
+        }
+    )
+    assert all(isinstance(error, ODataV4Format) for error in model.InnerError)
+    assert isinstance(model.readonly[0], ODataV4Format)
+    serialized_error = {
+        **wire_error,
+        "target": None,
+        "details": [
+            {"code": "InvalidValue", "message": "Invalid name", "target": None, "details": [], "innererror": {}}
+        ],
+    }
+    expected = {
+        "name": "test",
+        "count": 0,
+        "enabled": False,
+        "optional": None,
+        "InnerError": [
+            serialized_error,
+            {"code": None, "message": "Missing value", "target": None, "details": [], "innererror": None},
+        ],
+        "readonly": [serialized_error],
+    }
+
+    assert json.loads(json.dumps(model.as_dict())) == expected
+
+
+def test_odata_v4_format_as_dict_with_model_innererror():
+    class ContextModel(HybridModel):
+        message: str = rest_field(name="wireMessage")
+        readonly: str = rest_field(visibility=["read"])
+
+    context = ContextModel({"wireMessage": "Context", "readonly": "Diagnostic"})
+    nested_error = ODataV4Format({"message": "Nested error", "innererror": None})
+    innererror = {
+        "direct": context,
+        "nested": MappingProxyType({"items": [context, nested_error, None, {}, []]}),
+        "optional": None,
+        "empty": {},
+    }
+    error = ODataV4Format({"code": "BadRequest", "innererror": innererror})
+    expected = {
+        "code": "BadRequest",
+        "message": None,
+        "target": None,
+        "details": [],
+        "innererror": {
+            "direct": {"wireMessage": "Context", "readonly": "Diagnostic"},
+            "nested": {
+                "items": [
+                    {"wireMessage": "Context", "readonly": "Diagnostic"},
+                    {"code": None, "message": "Nested error", "target": None, "details": [], "innererror": None},
+                    None,
+                    {},
+                    [],
+                ]
+            },
+            "optional": None,
+            "empty": {},
+        },
+    }
+
+    result = error.as_dict()
+    assert result == expected
+    assert json.loads(json.dumps(result)) == expected
+    assert error.innererror is innererror
+    assert innererror["direct"] is context
+    assert innererror["nested"]["items"][1] is nested_error
+
+    expected["innererror"]["direct"].pop("readonly")
+    expected["innererror"]["nested"]["items"][0].pop("readonly")
+    assert json.loads(json.dumps(error.as_dict(exclude_readonly=True))) == expected
+    assert context["readonly"] == "Diagnostic"
+
+
+def test_odata_v4_format_as_dict_with_unsupported_innererror_value():
+    value = object()
+    error = ODataV4Format({"code": "BadRequest", "innererror": {"value": value}})
+
+    result = error.as_dict()
+
+    assert result["innererror"]["value"] is value
+    with pytest.raises(TypeError):
+        json.dumps(result)
+
+
+def test_odata_v4_format_subclass_as_dict_with_mapping_details():
+    class ErrorFormat(ODataV4Format):
+        def __init__(self, json_object):
+            super().__init__(json_object["error"]["innererror"])
+            self.details = json_object["error"].get("details", [])
+
+    message = {
+        "error": {
+            "code": "OuterError",
+            "innererror": {"code": "BadRequest", "message": "Invalid request"},
+            "details": [
+                {"code": "InvalidValue", "message": "Invalid name", "target": None},
+                {"message": "Missing value", "parameters": [], "innererror": None},
+            ],
+        }
+    }
+    error = ErrorFormat(message)
+    expected = {
+        "code": "BadRequest",
+        "message": "Invalid request",
+        "target": None,
+        "details": message["error"]["details"],
+        "innererror": {},
+    }
+
+    assert isinstance(error.details[0], dict)
+    assert json.loads(json.dumps(error.as_dict())) == expected
+    assert error.details is message["error"]["details"]
 
 
 def test_dictionary_set():
@@ -696,7 +836,7 @@ def test_cache_model_equality():
 
 def test_dictionary_set_datetime():
     """Test that dictionary with datetime values properly serializes/deserializes."""
-    from datetime import datetime, timezone
+    from datetime import timezone
 
     class MyModel(HybridModel):
         my_dict: Dict[str, datetime] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1238,7 +1378,7 @@ def test_readonly():
     model = models.ReadonlyModel({"id": 1})
     assert model.id == 1
     assert model.as_dict() == {"id": 1}
-    assert model.as_dict(exclude_readonly=True) == {}
+    assert not model.as_dict(exclude_readonly=True)
 
 
 def test_as_attribute_dict_scratch():
@@ -1725,7 +1865,7 @@ class TestTypeHandlerRegistry:
         deserialized = _deserialize(TestTypeHandlerRegistry.FooModel, json_dict)
         # If no deserializer is registered, the input should be returned as-is
         assert deserialized == json_dict
-        assert type(deserialized) is dict
+        assert isinstance(deserialized, dict)
 
     def test_serialize_external_model(self):
 
@@ -2097,10 +2237,9 @@ class TestTypeHandlerRegistry:
         def ext_deserializer(cls: Type, data: Dict[str, Any]) -> Union[ExternalModelA, ExternalModelB]:
             if "foo" in data:
                 return ExternalModelA(foo=data["foo"], bar=data.get("bar"))
-            elif "biz" in data:
+            if "biz" in data:
                 return ExternalModelB(biz=data["biz"], baz=data.get("baz"))
-            else:
-                raise ValueError("Invalid data for deserialization")
+            raise ValueError("Invalid data for deserialization")
 
         TYPE_HANDLER_REGISTRY.register_deserializer(lambda t: t in (ExternalModelA, ExternalModelB))(ext_deserializer)
 
@@ -2139,10 +2278,9 @@ class TestTypeHandlerRegistry:
         def ext_deserializer(cls: Type, data: Dict[str, Any]) -> Union[ExternalModelA, ExternalModelB]:
             if "baz" in data:
                 return ExternalModelB(foo=data["foo"], bar=data.get("bar"), baz=data.get("baz"))
-            elif "foo" in data:
+            if "foo" in data:
                 return ExternalModelA(foo=data["foo"], bar=data.get("bar"))
-            else:
-                raise ValueError("Invalid data for deserialization")
+            raise ValueError("Invalid data for deserialization")
 
         TYPE_HANDLER_REGISTRY.register_deserializer(lambda t: t in (ExternalModelA, ExternalModelB))(ext_deserializer)
 
@@ -2421,7 +2559,7 @@ class TestBackcompatPropertyMatrix:
         # Should use attr_name, but excluded when exclude_readonly=True
         assert attribute_list(model) == ["field_name"]
         assert as_attribute_dict(model) == {"field_name": "value"}
-        assert as_attribute_dict(model, exclude_readonly=True) == {}
+        assert not as_attribute_dict(model, exclude_readonly=True)
         assert getattr(model, "field_name") == "value"
         assert get_backcompat_attr_name(model, "field_name") == "field_name"
 
@@ -2452,7 +2590,7 @@ class TestBackcompatPropertyMatrix:
         # Should use attr_name, excluded when exclude_readonly=True
         assert attribute_list(model) == ["client_field"]
         assert as_attribute_dict(model) == {"client_field": "value"}
-        assert as_attribute_dict(model, exclude_readonly=True) == {}
+        assert not as_attribute_dict(model, exclude_readonly=True)
         assert getattr(model, "client_field") == "value"
         assert get_backcompat_attr_name(model, "client_field") == "client_field"
 
@@ -2481,7 +2619,7 @@ class TestBackcompatPropertyMatrix:
 
         assert attribute_list(model) == ["keys_property"]
         assert as_attribute_dict(model) == {"keys_property": "value"}
-        assert as_attribute_dict(model, exclude_readonly=True) == {}
+        assert not as_attribute_dict(model, exclude_readonly=True)
         assert get_backcompat_attr_name(model, "keys_property") == "keys"
         assert getattr(model, "keys_property") == "value"
         assert set(model.keys()) == {"keys_property"}
@@ -2511,7 +2649,7 @@ class TestBackcompatPropertyMatrix:
 
         assert attribute_list(model) == ["pop_property"]
         assert as_attribute_dict(model) == {"pop_property": "value"}
-        assert as_attribute_dict(model, exclude_readonly=True) == {}
+        assert not as_attribute_dict(model, exclude_readonly=True)
         assert getattr(model, "pop_property") == "value"
         assert set(model.keys()) == {"popWire"}
 

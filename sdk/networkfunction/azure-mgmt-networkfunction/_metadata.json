@@ -3,8 +3,9 @@
   "apiVersions": {
     "Microsoft.NetworkFunction": "2022-11-01"
   },
-  "commit": "63cb8f987d0d5fb94e781d000c7f7fc7a4a69842",
+  "commit": "1523f9e8e89437d84d69a6651f09d74a7ae65ed3",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/networkfunction/NetworkFunction.Management",
-  "emitterVersion": "0.60.2"
+  "typespec_src": "specification/networkfunction/resource-manager/Microsoft.NetworkFunction/TrafficCollector",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.33.0"
 }

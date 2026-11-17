@@ -6,6 +6,7 @@ pytest-asyncio
 pytest-cov
 pytest-mock
 pytest-xdist
+jsonschema>=4,<5
 azure-ai-inference>=1.0.0b4
 azure-ai-projects<=1.0.0b10
 aiohttp

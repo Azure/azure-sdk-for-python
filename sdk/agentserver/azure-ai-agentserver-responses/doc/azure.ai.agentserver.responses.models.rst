@@ -9,14 +9,6 @@ azure.ai.agentserver.responses.models package
 Submodules
 ----------
 
-azure.ai.agentserver.responses.models.errors module
----------------------------------------------------
-
-.. automodule:: azure.ai.agentserver.responses.models.errors
-   :inherited-members:
-   :members:
-   :undoc-members:
-
 azure.ai.agentserver.responses.models.runtime module
 ----------------------------------------------------
 

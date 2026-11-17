@@ -15,10 +15,23 @@ from test_utilities.utils import (
     verify_entity_load_and_dump,
 )
 
-from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
+from azure.ai.ml import (
+    Input,
+    MpiDistribution,
+    Output,
+    TensorFlowDistribution,
+    command,
+    load_component,
+)
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AzureMLResourceType
-from azure.ai.ml.entities import CommandComponent, CommandJobLimits, Component, JobResourceConfiguration
+from azure.core.serialization import as_attribute_dict
+from azure.ai.ml.entities import (
+    CommandComponent,
+    CommandJobLimits,
+    Component,
+    JobResourceConfiguration,
+)
 from azure.ai.ml.entities._assets import Code, Environment
 from azure.ai.ml.entities._builders import Command, Sweep
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
@@ -93,7 +106,7 @@ class TestCommandComponentEntity:
             code=code,
             environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
-        component_dict = component._to_rest_object().as_dict()
+        component_dict = as_attribute_dict(component._to_rest_object())
         omits = [
             "properties.component_spec.$schema",
             "properties.component_spec._source",
@@ -103,7 +116,7 @@ class TestCommandComponentEntity:
 
         yaml_path = "./tests/test_configs/components/basic_component_code_arm_id.yml"
         yaml_component = load_component(source=yaml_path)
-        yaml_component_dict = yaml_component._to_rest_object().as_dict()
+        yaml_component_dict = as_attribute_dict(yaml_component._to_rest_object())
         yaml_component_dict = pydash.omit(yaml_component_dict, *omits)
 
         assert component_dict == yaml_component_dict
@@ -175,7 +188,7 @@ class TestCommandComponentEntity:
             command="""echo Hello World""",
             environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
-        component_dict = component._to_rest_object().as_dict()
+        component_dict = as_attribute_dict(component._to_rest_object())
         inputs = component_dict["properties"]["component_spec"]["inputs"]
         outputs = component_dict["properties"]["component_spec"]["outputs"]
         source = component_dict["properties"]["component_spec"]["_source"]
@@ -183,13 +196,27 @@ class TestCommandComponentEntity:
         assert inputs == {
             "data_0": {"mode": "ro_mount", "type": "uri_folder"},
             "data_1": {"type": "uri_file", "optional": True},
-            "param_float0": {"type": "number", "default": "1.1", "max": "5.0", "min": "0.0"},
+            "param_float0": {
+                "type": "number",
+                "default": "1.1",
+                "max": "5.0",
+                "min": "0.0",
+            },
             "param_float1": {"type": "number"},
-            "param_integer": {"type": "integer", "optional": True, "default": "2", "max": "4", "min": "-1"},
+            "param_integer": {
+                "type": "integer",
+                "optional": True,
+                "default": "2",
+                "max": "4",
+                "min": "-1",
+            },
             "param_string": {"type": "string", "default": "default_str"},
             "param_boolean": {"type": "boolean", "default": "False"},
         }
-        assert outputs == {"train_data_x": {"type": "uri_file"}, "test_data_x": {"type": "uri_folder"}}
+        assert outputs == {
+            "train_data_x": {"type": "uri_file"},
+            "test_data_x": {"type": "uri_folder"},
+        }
         assert source == "CLASS"
 
     def test_command_component_instance_count(self):
@@ -199,7 +226,11 @@ class TestCommandComponentEntity:
             description="This is the TensorFlow command component",
             tags={"tag": "tagvalue", "owner": "sdkteam"},
             inputs={
-                "component_in_number": {"description": "A number", "type": "number", "default": 10.99},
+                "component_in_number": {
+                    "description": "A number",
+                    "type": "number",
+                    "default": 10.99,
+                },
                 "component_in_path": {"description": "A path", "type": "uri_folder"},
             },
             outputs={"component_out_path": {"type": "uri_folder"}},
@@ -214,11 +245,11 @@ class TestCommandComponentEntity:
             ),
             instance_count=2,
         )
-        component_dict = component._to_rest_object().as_dict()
+        component_dict = as_attribute_dict(component._to_rest_object())
 
         yaml_path = "./tests/test_configs/components/helloworld_component_tensorflow.yml"
         yaml_component = load_component(source=yaml_path)
-        yaml_component_dict = yaml_component._to_rest_object().as_dict()
+        yaml_component_dict = as_attribute_dict(yaml_component._to_rest_object())
 
         component_dict = pydash.omit(
             component_dict,
@@ -267,7 +298,9 @@ class TestCommandComponentEntity:
             os.chdir(old_cwd)
 
     def test_command_component_code_git_path(self):
-        from azure.ai.ml.operations._component_operations import _try_resolve_code_for_component
+        from azure.ai.ml.operations._component_operations import (
+            _try_resolve_code_for_component,
+        )
 
         yaml_path = "./tests/test_configs/components/component_git_path.yml"
         yaml_dict = load_yaml(yaml_path)
@@ -317,7 +350,10 @@ class TestCommandComponentEntity:
             "componentId": "fake_component",
             "inputs": {
                 "component_in_number": {"job_input_type": "literal", "value": "10"},
-                "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.pipeline_input}}"},
+                "component_in_path": {
+                    "job_input_type": "literal",
+                    "value": "${{parent.inputs.pipeline_input}}",
+                },
             },
             "type": "command",
             "_source": "YAML.COMPONENT",
@@ -397,8 +433,16 @@ class TestCommandComponentEntity:
                 "integer": 1,
                 "string": "str",
                 "boolean": False,
-                "uri_folder": Input(type="uri_folder", path="https://my-blob/path/to/data", mode="ro_mount"),
-                "uri_file": dict(type="uri_file", path="https://my-blob/path/to/data", mode="download"),
+                "uri_folder": Input(
+                    type="uri_folder",
+                    path="https://my-blob/path/to/data",
+                    mode="ro_mount",
+                ),
+                "uri_file": dict(
+                    type="uri_file",
+                    path="https://my-blob/path/to/data",
+                    mode="download",
+                ),
             },
             outputs={"my_model": Output(type="mlflow_model", mode="rw_mount")},
         )
@@ -419,7 +463,8 @@ class TestCommandComponentEntity:
 
         component_to_sweep: CommandComponent = load_component(source=yaml_file)
         cmd_node1: Command = component_to_sweep(
-            component_in_number=Choice([2, 3, 4, 5]), component_in_path=Input(path="/a/path/on/ds")
+            component_in_number=Choice([2, 3, 4, 5]),
+            component_in_path=Input(path="/a/path/on/ds"),
         )
 
         sweep_job1: Sweep = cmd_node1.sweep(
@@ -440,7 +485,8 @@ class TestCommandComponentEntity:
 
         component_to_sweep: CommandComponent = load_component(source=yaml_file)
         cmd_node1: Command = component_to_sweep(
-            component_in_number=Choice([2, 3, 4, 5]), component_in_path=Input(path="/a/path/on/ds")
+            component_in_number=Choice([2, 3, 4, 5]),
+            component_in_path=Input(path="/a/path/on/ds"),
         )
 
         sweep_job1: Sweep = cmd_node1.sweep(
@@ -454,7 +500,9 @@ class TestCommandComponentEntity:
             "delay_evaluation": 200,
             "slack_factor": 40.0,
         }
-        from azure.ai.ml.entities._job.sweep.early_termination_policy import BanditPolicy
+        from azure.ai.ml.entities._job.sweep.early_termination_policy import (
+            BanditPolicy,
+        )
 
         assert isinstance(sweep_job1.early_termination, BanditPolicy)
         assert [
@@ -493,9 +541,18 @@ class TestCommandComponentEntity:
             "is_deterministic": True,
             "name": "sample_command_component_basic",
             "outputs": {
-                "component_out_boolean": {"description": "A boolean", "type": "boolean"},
-                "component_out_integer": {"description": "A integer", "type": "integer"},
-                "component_out_number": {"description": "A ranged number", "type": "number"},
+                "component_out_boolean": {
+                    "description": "A boolean",
+                    "type": "boolean",
+                },
+                "component_out_integer": {
+                    "description": "A integer",
+                    "type": "integer",
+                },
+                "component_out_number": {
+                    "description": "A ranged number",
+                    "type": "number",
+                },
                 "component_out_string": {"description": "A string", "type": "string"},
                 "component_out_early_available_string": {
                     "description": "A early available string",
@@ -513,7 +570,8 @@ class TestCommandComponentEntity:
         yaml_path = "./tests/test_configs/components/helloworld_component_primitive_outputs.yml"
         component1 = load_component(yaml_path)
         actual_component_dict1 = pydash.omit(
-            component1._to_rest_object().as_dict()["properties"]["component_spec"], *omits
+            as_attribute_dict(component1._to_rest_object())["properties"]["component_spec"],
+            *omits,
         )
         assert actual_component_dict1 == expected_rest_component
 
@@ -525,9 +583,20 @@ class TestCommandComponentEntity:
             version="1",
             tags={"tag": "tagvalue", "owner": "sdkteam"},
             outputs={
-                "component_out_boolean": {"description": "A boolean", "type": "boolean", "is_control": True},
-                "component_out_integer": {"description": "A integer", "type": "integer", "is_control": True},
-                "component_out_number": {"description": "A ranged number", "type": "number"},
+                "component_out_boolean": {
+                    "description": "A boolean",
+                    "type": "boolean",
+                    "is_control": True,
+                },
+                "component_out_integer": {
+                    "description": "A integer",
+                    "type": "integer",
+                    "is_control": True,
+                },
+                "component_out_number": {
+                    "description": "A ranged number",
+                    "type": "number",
+                },
                 "component_out_string": {"description": "A string", "type": "string"},
                 "component_out_early_available_string": {
                     "description": "A early available string",
@@ -541,7 +610,8 @@ class TestCommandComponentEntity:
             code="./helloworld_components_with_env",
         )
         actual_component_dict2 = pydash.omit(
-            component2._to_rest_object().as_dict()["properties"]["component_spec"], *omits
+            as_attribute_dict(component2._to_rest_object())["properties"]["component_spec"],
+            *omits,
         )
         assert actual_component_dict2 == expected_rest_component
 
@@ -667,7 +737,11 @@ class TestCommandComponentEntity:
             assert code_path.is_dir()
             assert (code_path / "LICENSE").is_file()
             assert (code_path / "library.zip").is_file()
-            assert ZipFile(code_path / "library.zip").namelist() == ["library/", "library/hello.py", "library/world.py"]
+            assert ZipFile(code_path / "library.zip").namelist() == [
+                "library/",
+                "library/hello.py",
+                "library/world.py",
+            ]
             assert (code_path / "library1" / "hello.py").is_file()
             assert (code_path / "library1" / "world.py").is_file()
 
@@ -687,15 +761,27 @@ class TestCommandComponentEntity:
                         AdditionalIncludesCheckFunc.NO_PARENT,
                     ),
                     # will be saved to library1/ignore.py, should be ignored
-                    ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                    (
+                        "additional_includes/library1/ignore.py",
+                        None,
+                        AdditionalIncludesCheckFunc.NOT_EXISTS,
+                    ),
                     # will be saved to library1/test_ignore, should be kept
-                    ("additional_includes/library1/test_ignore/a.py", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    (
+                        "additional_includes/library1/test_ignore/a.py",
+                        None,
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                    ),
                 ],
                 id="amlignore",
             ),
             pytest.param(
                 [
-                    ("component_with_additional_includes/hello.py", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    (
+                        "component_with_additional_includes/hello.py",
+                        None,
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                    ),
                     (
                         "component_with_additional_includes/test_code/.amlignore",
                         "hello.py",
@@ -723,9 +809,17 @@ class TestCommandComponentEntity:
                         AdditionalIncludesCheckFunc.SELF_IS_FILE,
                     ),
                     # will be saved to library1/ignore.py, should be ignored
-                    ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                    (
+                        "additional_includes/library1/ignore.py",
+                        None,
+                        AdditionalIncludesCheckFunc.NOT_EXISTS,
+                    ),
                     # will be saved to library1/test_ignore, should be kept
-                    ("additional_includes/library1/test_ignore/a.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                    (
+                        "additional_includes/library1/test_ignore/a.py",
+                        None,
+                        AdditionalIncludesCheckFunc.NOT_EXISTS,
+                    ),
                 ],
                 id="amlignore_in_additional_includes_folder",
             ),
@@ -757,7 +851,11 @@ class TestCommandComponentEntity:
                         None,
                         AdditionalIncludesCheckFunc.NO_PARENT,
                     ),
-                    ("additional_includes/library1/__pycache__/a.pyc", None, AdditionalIncludesCheckFunc.NO_PARENT),
+                    (
+                        "additional_includes/library1/__pycache__/a.pyc",
+                        None,
+                        AdditionalIncludesCheckFunc.NO_PARENT,
+                    ),
                     (
                         "additional_includes/library1/test/__pycache__/a.pyc",
                         None,
@@ -771,7 +869,10 @@ class TestCommandComponentEntity:
     def test_additional_includes_with_ignore_file(self, test_files) -> None:
         with build_temp_folder(
             source_base_dir="./tests/test_configs/components/",
-            relative_dirs_to_copy=["component_with_additional_includes", "additional_includes"],
+            relative_dirs_to_copy=[
+                "component_with_additional_includes",
+                "additional_includes",
+            ],
             extra_files_to_create={file: content for file, content, _ in test_files},
         ) as test_configs_dir:
             yaml_path = (
@@ -828,7 +929,10 @@ class TestCommandComponentEntity:
         ],
     )
     def test_additional_includes_with_code_specified(self, yaml_path: str, has_additional_includes: bool) -> None:
-        yaml_path = os.path.join("./tests/test_configs/components/component_with_additional_includes/", yaml_path)
+        yaml_path = os.path.join(
+            "./tests/test_configs/components/component_with_additional_includes/",
+            yaml_path,
+        )
         component = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
         # resolve
@@ -910,7 +1014,10 @@ class TestCommandComponentEntity:
     )
     def test_invalid_additional_includes(self, yaml_path: str, expected_error_msg_prefix: str) -> None:
         component = load_component(
-            os.path.join("./tests/test_configs/components/component_with_additional_includes", yaml_path)
+            os.path.join(
+                "./tests/test_configs/components/component_with_additional_includes",
+                yaml_path,
+            )
         )
         validation_result = component._validate()
         assert validation_result.passed is False

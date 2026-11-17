@@ -658,10 +658,6 @@ def main():
                     "vmCategories": ["GpuAccelerated"],
                 },
                 "vmSizesProfile": [{"name": "Standard_D1_v2", "rank": 0}, {"name": "Standard_D2_v2", "rank": 1}],
-                "zoneAllocationPolicy": {
-                    "distributionStrategy": "Prioritized",
-                    "zonePreferences": [{"rank": 0, "zone": "1"}, {"rank": 1, "zone": "2"}],
-                },
             },
             "tags": {},
             "zones": ["1", "2"],
@@ -670,6 +666,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/Fleets_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-08-01/Fleets_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

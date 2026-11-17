@@ -172,6 +172,8 @@ class IdentityKeyStore(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TPM."""
     DEFAULT = "Default"
     """Default."""
+    TPM_TRANSITION = "TpmTransition"
+    """The machine is transitioning its identity key store to TPM."""
 
 
 class InstanceViewTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -287,6 +289,8 @@ class LicenseTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Windows Server 2012."""
     WINDOWS_SERVER2012_R2 = "Windows Server 2012 R2"
     """Windows Server 2012 R2."""
+    WINDOWS_SERVER2016 = "Windows Server 2016"
+    """Windows Server 2016 license target."""
 
 
 class LicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -294,6 +298,29 @@ class LicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ESU = "ESU"
     """ESU."""
+
+
+class MachineStatusReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason describing why the service set the machine status to a particular value."""
+
+    CLONED = "Cloned"
+    """Indicates the service has detected that this Arc machine is a clone of another onboarded
+    machine."""
+
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    """No managed identity."""
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned managed identity."""
+    USER_ASSIGNED = "UserAssigned"
+    """User assigned managed identity."""
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+    """System and user assigned managed identity."""
 
 
 class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -328,9 +355,9 @@ class PatchOperationStartedBy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PatchOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The overall success or failure status of the operation. It remains "InProgress" until the
-    operation completes. At that point it will become "Unknown", "Failed", "Succeeded", or
-    "CompletedWithWarnings.".
+    """The overall success or failure status of the operation. It remains \"InProgress\" until the
+    operation completes. At that point it will become \"Unknown\", \"Failed\", \"Succeeded\", or
+    \"CompletedWithWarnings.\".
     """
 
     UNKNOWN = "Unknown"
@@ -430,13 +457,6 @@ class PublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SECURED_BY_PERIMETER = "SecuredByPerimeter"
     """Azure Arc agent communication with Azure Arc services over public (internet) is enforced by
     Network Security Perimeter (NSP)."""
-
-
-class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ResourceIdentityType."""
-
-    SYSTEM_ASSIGNED = "SystemAssigned"
-    """SYSTEM_ASSIGNED."""
 
 
 class ServiceExtensionPublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):

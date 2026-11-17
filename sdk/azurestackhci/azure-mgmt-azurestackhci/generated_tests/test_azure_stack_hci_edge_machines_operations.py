@@ -55,6 +55,33 @@ class TestAzureStackHCIEdgeMachinesOperations(AzureMgmtRecordedTestCase):
                     "devicePoolResourceId": "str",
                     "edgeMachineKind": "str",
                     "lastSyncTimestamp": "2020-02-20 00:00:00",
+                    "lifecycleDetails": {
+                        "lifecycleStages": [
+                            {
+                                "description": "str",
+                                "name": "str",
+                                "status": "str",
+                                "endTimeUtc": "2020-02-20 00:00:00",
+                                "error": {
+                                    "additionalInfo": [{"info": {}, "type": "str"}],
+                                    "code": "str",
+                                    "details": [...],
+                                    "message": "str",
+                                    "target": "str",
+                                },
+                                "lastUpdatedUtc": "2020-02-20 00:00:00",
+                                "startTimeUtc": "2020-02-20 00:00:00",
+                                "subStages": [...],
+                            }
+                        ],
+                        "lifecycleStatus": {
+                            "lastUpdatedUtc": "2020-02-20 00:00:00",
+                            "status": "str",
+                            "message": "str",
+                            "recommendedSteps": ["str"],
+                            "stage": "str",
+                        },
+                    },
                     "machineState": "str",
                     "operationDetails": [
                         {
@@ -77,6 +104,7 @@ class TestAzureStackHCIEdgeMachinesOperations(AzureMgmtRecordedTestCase):
                         "ownerKeyType": "str",
                         "ownershipVoucher": "str",
                         "validationDetails": {
+                            "architecture": "str",
                             "azureMachineId": "str",
                             "error": {
                                 "additionalInfo": [{"info": {}, "type": "str"}],
@@ -123,6 +151,7 @@ class TestAzureStackHCIEdgeMachinesOperations(AzureMgmtRecordedTestCase):
                             ]
                         },
                         "hardwareProfile": {
+                            "architecture": "str",
                             "cpuCores": 0,
                             "cpuSockets": 0,
                             "manufacturer": "str",
@@ -133,6 +162,52 @@ class TestAzureStackHCIEdgeMachinesOperations(AzureMgmtRecordedTestCase):
                         },
                         "lastUpdated": "2020-02-20 00:00:00",
                         "networkProfile": {
+                            "hostNetwork": {
+                                "enableStorageAutoIp": bool,
+                                "intents": [
+                                    {
+                                        "adapterPropertyOverrides": {
+                                            "jumboPacket": "str",
+                                            "networkDirect": "str",
+                                            "networkDirectTechnology": "str",
+                                        },
+                                        "intentAdapters": ["str"],
+                                        "intentName": "str",
+                                        "intentType": 0,
+                                        "isComputeIntentSet": bool,
+                                        "isManagementIntentSet": bool,
+                                        "isNetworkIntentType": bool,
+                                        "isOnlyStorage": bool,
+                                        "isOnlyStretch": bool,
+                                        "isStorageIntentSet": bool,
+                                        "isStretchIntentSet": bool,
+                                        "overrideAdapterProperty": bool,
+                                        "overrideQosPolicy": bool,
+                                        "overrideVirtualSwitchConfiguration": bool,
+                                        "qosPolicyOverrides": {
+                                            "bandwidthPercentage_SMB": "str",
+                                            "priorityValue8021Action_Cluster": "str",
+                                            "priorityValue8021Action_SMB": "str",
+                                        },
+                                        "scope": 0,
+                                        "virtualSwitchConfigurationOverrides": {
+                                            "enableIov": "str",
+                                            "loadBalancingAlgorithm": "str",
+                                        },
+                                    }
+                                ],
+                                "storageConnectivitySwitchless": bool,
+                                "storageNetworks": [
+                                    {
+                                        "name": "str",
+                                        "networkAdapterName": "str",
+                                        "storageAdapterIPInfo": [
+                                            {"ipv4Address": "str", "physicalNode": "str", "subnetMask": "str"}
+                                        ],
+                                        "storageVlanId": "str",
+                                    }
+                                ],
+                            },
                             "nicDetails": [
                                 {
                                     "adapterName": "str",
@@ -153,6 +228,7 @@ class TestAzureStackHCIEdgeMachinesOperations(AzureMgmtRecordedTestCase):
                                     "vlanId": "str",
                                 }
                             ],
+                            "sdnProperties": {"sdnApiAddress": "str", "sdnDomainName": "str", "sdnStatus": "str"},
                             "switchDetails": [
                                 {
                                     "extensions": [
@@ -174,7 +250,29 @@ class TestAzureStackHCIEdgeMachinesOperations(AzureMgmtRecordedTestCase):
                             "osVersion": "str",
                         },
                         "sbeDeploymentPackageInfo": {"code": "str", "message": "str", "sbeManifest": "str"},
+                        "storageInitiators": [
+                            {
+                                "initiatorIdentifier": "str",
+                                "initiatorType": "str",
+                                "ethernetAdapterMacAddress": "str",
+                                "ethernetAdapterName": "str",
+                                "operationalStatus": "str",
+                                "portWorldWideName": "str",
+                            }
+                        ],
                         "storageProfile": {"poolableDisksCount": 0},
+                        "workloadInventory": [
+                            {
+                                "memoryInBytes": "str",
+                                "name": "str",
+                                "resourceId": "str",
+                                "state": "str",
+                                "virtualProcessorCount": "str",
+                                "workloadId": "str",
+                                "workloadType": "str",
+                            }
+                        ],
+                        "workloadInventoryLastUpdated": "2020-02-20 00:00:00",
                     },
                     "siteDetails": {
                         "siteResourceId": "str",
@@ -263,5 +361,39 @@ class TestAzureStackHCIEdgeMachinesOperations(AzureMgmtRecordedTestCase):
     def test_edge_machines_list_by_subscription(self, resource_group):
         response = self.client.edge_machines.list_by_subscription()
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_edge_machines_begin_validate(self, resource_group):
+        response = self.client.edge_machines.begin_validate(
+            resource_group_name=resource_group.name,
+            edge_machine_name="str",
+            body={"edgeMachineIds": ["str"], "additionalInfo": "str"},
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_edge_machines_begin_refresh_security_settings(self, resource_group):
+        response = self.client.edge_machines.begin_refresh_security_settings(
+            resource_group_name=resource_group.name,
+            edge_machine_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_edge_machines_begin_refresh_applicable_updates(self, resource_group):
+        response = self.client.edge_machines.begin_refresh_applicable_updates(
+            resource_group_name=resource_group.name,
+            edge_machine_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...

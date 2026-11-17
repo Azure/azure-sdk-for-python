@@ -66,6 +66,14 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
                 "as they have been deleted, providing an AutoLockRenewer in this mode is invalid."
             )
 
+        # rcv-settle-mode Second, which PEEK_LOCK negotiates, means settling only once the service
+        # confirms the outcome. Excluded where there is no outcome to observe: RECEIVE_AND_DELETE is
+        # settled by the service on delivery, and uamqp cannot report dispositions.
+        self._await_settlement_outcome = (
+            self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
+            and self._amqp_transport.KIND == "pyamqp"
+        )
+
     def _get_source(self):
         if self._session:
             session_filter = None if self._session_id == NEXT_AVAILABLE_SESSION else self._session_id

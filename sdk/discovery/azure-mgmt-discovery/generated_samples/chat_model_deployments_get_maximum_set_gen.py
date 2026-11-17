@@ -32,12 +32,12 @@ def main():
 
     response = client.chat_model_deployments.get(
         resource_group_name="rgdiscovery",
-        workspace_name="715bd6631a63225578",
-        chat_model_deployment_name="7938c93c6f61d31f7e",
+        workspace_name="052733d158d50faa23",
+        chat_model_deployment_name="4a572f228b6fe04e2a",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/ChatModelDeployments_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/ChatModelDeployments_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -21,7 +21,9 @@ from azure.ai.ml.entities._credentials import (
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
-from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
+from azure.ai.ml.entities._job.job_resource_configuration import (
+    JobResourceConfiguration,
+)
 from azure.ai.ml.entities._job.pipeline._io import NodeInput
 from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
@@ -46,12 +48,20 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     SweepDistribution,
     Uniform,
 )
-from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorTarget,
+    UserErrorException,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml.sweep import SweepJob
+from azure.core.serialization import as_attribute_dict
 
 from ..._restclient.arm_ml_service.models import ComponentVersion
 from ..._schema import PathAwareSchema
-from ..._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
+from ..._schema._utils.data_binding_expression import (
+    support_data_binding_expression_for_fields,
+)
 from ..._utils.utils import camel_to_snake
 from .base_node import BaseNode
 
@@ -63,18 +73,18 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     This class should not be instantiated directly. Instead, it should be created via the builder function: sweep.
 
-    :param trial: The ID or instance of the command component or job to be run for the step.
-    :type trial: Union[~azure.ai.ml.entities.CommandComponent, str]
-    :param compute: The compute definition containing the compute information for the step.
-    :type compute: str
-    :param limits: The limits for the sweep node.
-    :type limits: ~azure.ai.ml.sweep.SweepJobLimits
-    :param sampling_algorithm: The sampling algorithm to use to sample inside the search space.
+    :keyword trial: The ID or instance of the command component or job to be run for the step.
+    :paramtype trial: Union[~azure.ai.ml.entities.CommandComponent, str]
+    :keyword compute: The compute definition containing the compute information for the step.
+    :paramtype compute: str
+    :keyword limits: The limits for the sweep node.
+    :paramtype limits: ~azure.ai.ml.sweep.SweepJobLimits
+    :keyword sampling_algorithm: The sampling algorithm to use to sample inside the search space.
         Accepted values are: "random", "grid", or "bayesian".
-    :type sampling_algorithm: str
-    :param objective: The objective used to determine the target run with the local optimal
+    :paramtype sampling_algorithm: str
+    :keyword objective: The objective used to determine the target run with the local optimal
         hyperparameter in search space.
-    :type objective: ~azure.ai.ml.sweep.Objective
+    :paramtype objective: ~azure.ai.ml.sweep.Objective
     :param early_termination_policy: The early termination policy of the sweep node.
     :type early_termination_policy: Union[
 
@@ -84,8 +94,8 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     ]
 
-    :param search_space: The hyperparameter search space to run trials in.
-    :type search_space: Dict[str, Union[
+    :keyword search_space: The hyperparameter search space to run trials in.
+    :paramtype search_space: Dict[str, Union[
 
         ~azure.ai.ml.entities.Choice,
         ~azure.ai.ml.entities.LogNormal,
@@ -100,8 +110,8 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     ]]
 
-    :param inputs: Mapping of input data bindings used in the job.
-    :type inputs: Dict[str, Union[
+    :keyword inputs: Mapping of input data bindings used in the job.
+    :paramtype inputs: Dict[str, Union[
 
         ~azure.ai.ml.Input,
 
@@ -112,10 +122,10 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     ]]
 
-    :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: Dict[str, Union[str, ~azure.ai.ml.Output]]
-    :param identity: The identity that the training job will use while running on compute.
-    :type identity: Union[
+    :keyword outputs: Mapping of output data bindings used in the job.
+    :paramtype outputs: Dict[str, Union[str, ~azure.ai.ml.Output]]
+    :keyword identity: The identity that the training job will use while running on compute.
+    :paramtype identity: Union[
 
         ~azure.ai.ml.ManagedIdentityConfiguration,
         ~azure.ai.ml.AmlTokenConfiguration,
@@ -123,10 +133,10 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     ]
 
-    :param queue_settings: The queue settings for the job.
-    :type queue_settings: ~azure.ai.ml.entities.QueueSettings
-    :param resources: Compute Resource configuration for the job.
-    :type resources: Optional[Union[dict, ~azure.ai.ml.entities.ResourceConfiguration]]
+    :keyword queue_settings: The queue settings for the job.
+    :paramtype queue_settings: ~azure.ai.ml.entities.QueueSettings
+    :keyword resources: Compute Resource configuration for the job.
+    :paramtype resources: Optional[Union[dict, ~azure.ai.ml.entities.ResourceConfiguration]]
     """
 
     def __init__(
@@ -138,20 +148,40 @@ class Sweep(ParameterizedSweep, BaseNode):
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
         objective: Optional[Objective] = None,
         early_termination: Optional[
-            Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy, EarlyTerminationPolicy, str]
+            Union[
+                BanditPolicy,
+                MedianStoppingPolicy,
+                TruncationSelectionPolicy,
+                EarlyTerminationPolicy,
+                str,
+            ]
         ] = None,
         search_space: Optional[
             Dict[
                 str,
                 Union[
-                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                    Choice,
+                    LogNormal,
+                    LogUniform,
+                    Normal,
+                    QLogNormal,
+                    QLogUniform,
+                    QNormal,
+                    QUniform,
+                    Randint,
+                    Uniform,
                 ],
             ]
         ] = None,
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
         identity: Optional[
-            Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[
+                Dict,
+                ManagedIdentityConfiguration,
+                AmlTokenConfiguration,
+                UserIdentityConfiguration,
+            ]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
         resources: Optional[Union[dict, JobResourceConfiguration]] = None,
@@ -201,7 +231,18 @@ class Sweep(ParameterizedSweep, BaseNode):
     ) -> Optional[
         Dict[
             str,
-            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
+            Union[
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ],
         ]
     ]:
         """Dictionary of the hyperparameter search space.
@@ -285,7 +326,10 @@ class Sweep(ParameterizedSweep, BaseNode):
         # the change
         if "early_termination" in rest_obj:
             _early_termination: EarlyTerminationPolicy = self.early_termination  # type: ignore
-            rest_obj["early_termination"] = _early_termination._to_rest_object().as_dict()
+            # ``as_attribute_dict`` yields the snake_case field view (``policy_type``/``delay_evaluation``)
+            # that the round-trip reader and schema expect; the arm_ml_service hybrid ``as_dict`` would emit
+            # camelCase and break the node dict.
+            rest_obj["early_termination"] = as_attribute_dict(_early_termination._to_rest_object())
 
         rest_obj.update(
             {
@@ -306,7 +350,9 @@ class Sweep(ParameterizedSweep, BaseNode):
             obj["early_termination"]["type"] = camel_to_snake(obj["early_termination"].pop("policy_type"))
 
         # TODO: use cls._get_schema() to load from rest object
-        from azure.ai.ml._schema._sweep.parameterized_sweep import ParameterizedSweepSchema
+        from azure.ai.ml._schema._sweep.parameterized_sweep import (
+            ParameterizedSweepSchema,
+        )
 
         schema = ParameterizedSweepSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
         support_data_binding_expression_for_fields(schema, ["type", "component", "trial"])

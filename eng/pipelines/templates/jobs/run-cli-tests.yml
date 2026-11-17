@@ -19,7 +19,7 @@ parameters:
     default: []
   - name: PythonVersion
     type: string
-    default: "3.10"
+    default: "3.11"
   - name: TargetModules
     type: string
     default: "appservice botservice cloud network azure-cli-core azure-cli-telemetry"

@@ -120,8 +120,8 @@ class PersistentLocalsFunction(object):
     ):
         """
         :param _func: The function to be wrapped.
-        :param _self: If original func is a method, _self should be provided, which is the instance of the method.
-        :param skip_locals: A list of local variables to skip when saving the locals.
+        :keyword _self: If original func is a method, _self should be provided, which is the instance of the method.
+        :keyword skip_locals: A list of local variables to skip when saving the locals.
         """
         self._locals = {}
         self._self = _self

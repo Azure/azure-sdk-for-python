@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -20,7 +21,9 @@ try:
     instance = os.environ["DEVICEUPDATE_INSTANCE_ID"]
     group = os.environ["DEVICEUPDATE_DEVICE_GROUP"]
 except KeyError:
-    print("Missing one of environment variables: DEVICEUPDATE_ENDPOINT, DEVICEUPDATE_INSTANCE_ID, DEVICEUPDATE_DEVICE_GROUP")
+    print(
+        "Missing one of environment variables: DEVICEUPDATE_ENDPOINT, DEVICEUPDATE_INSTANCE_ID, DEVICEUPDATE_DEVICE_GROUP"
+    )
     exit()
 
 # Build a client through AAD
@@ -30,26 +33,26 @@ try:
     print("Get various device management information from Device Update for IoT Hub...")
 
     print("\nDevices:")
-    response = client.device_management.list_devices()
-    for item in response:
-        print(f"  {item['deviceId']}")
+    devices = client.device_management.list_devices()
+    for device in devices:
+        print(f"  {device['deviceId']}")
 
     print("\nDevice groups:")
-    response = client.device_management.list_groups()
-    for item in response:
-        print(f"  {item['groupId']}")
+    groups = client.device_management.list_groups()
+    for group_item in groups:
+        print(f"  {group_item['groupId']}")
 
     print("\nDevice classes:")
-    response = client.device_management.list_device_classes()
-    for item in response:
-        print(f"  {item['deviceClassId']}")
+    device_classes = client.device_management.list_device_classes()
+    for device_class in device_classes:
+        print(f"  {device_class['deviceClassId']}")
 
     print(f"\nFor group '{group}', best updates are:")
-    response = client.device_management.list_best_updates_for_group(group)
-    for item in response:
-        print(f" Device class '{item['deviceClassId']}':")
-        print(f"  {item['update']['updateId']['provider']}")
-        print(f"  {item['update']['updateId']['name']}")
-        print(f"  {item['update']['updateId']['version']}")
+    best_updates = client.device_management.list_best_updates_for_group(group)
+    for best_update in best_updates:
+        print(f" Device class '{best_update['deviceClassId']}':")
+        print(f"  {best_update['update']['updateId']['provider']}")
+        print(f"  {best_update['update']['updateId']['name']}")
+        print(f"  {best_update['update']['updateId']['version']}")
 except HttpResponseError as e:
-    print('Failed to get device message: {}'.format(e))
+    print("Failed to get device message: {}".format(e))

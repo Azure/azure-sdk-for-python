@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -417,9 +418,11 @@ class TestStoragePageBlob(StorageRecordedTestCase):
 
         # Act
         data = self.get_random_bytes(512)
-        blob.upload_page(data, offset=0, length=512, validate_content=True)
+        resp = blob.upload_page(data, offset=0, length=512, validate_content=True)
 
         # Assert
+        assert resp.get("content_md5") is not None
+        assert resp.get("content_crc64") is not None
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -752,6 +755,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         )
         assert resp.get("etag") is not None
         assert resp.get("last_modified") is not None
+        assert resp.get("content_md5") is not None
+        assert resp.get("content_crc64") is not None
 
         # Assert the destination blob is constructed correctly
         blob_properties = destination_blob_client.get_blob_properties()
@@ -2395,7 +2400,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
             assert blob_ref.blob_tier_inferred
 
             pcontainer = pbs.get_container_client(container_name)
-            blobs = list(pcontainer.list_blobs())
+            blobs = list(pcontainer.list_blobs(response_format="xml"))
 
             # Assert
             assert blobs is not None
@@ -2409,7 +2414,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
             assert PremiumPageBlobTier.P50 == blob_ref2.blob_tier
             assert not blob_ref2.blob_tier_inferred
 
-            blobs = list(pcontainer.list_blobs())
+            blobs = list(pcontainer.list_blobs(response_format="xml"))
 
             # Assert
             assert blobs is not None

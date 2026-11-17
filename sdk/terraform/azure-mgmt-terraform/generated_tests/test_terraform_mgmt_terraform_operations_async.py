@@ -27,10 +27,18 @@ class TestTerraformMgmtTerraformOperationsAsync(AzureMgmtRecordedTestCase):
                 body={
                     "query": "str",
                     "type": "ExportQuery",
+                    "authorizationScopeFilter": "str",
+                    "excludeAzureResource": ["str"],
+                    "excludeTerraformResource": ["str"],
                     "fullProperties": bool,
+                    "includeExtensions": ["str"],
+                    "includeManagedResource": bool,
+                    "includeResourceGroup": bool,
+                    "includeRoleAssignment": bool,
                     "maskSensitive": bool,
                     "namePattern": "str",
                     "recursive": bool,
+                    "table": "str",
                     "targetProvider": "str",
                 },
             )

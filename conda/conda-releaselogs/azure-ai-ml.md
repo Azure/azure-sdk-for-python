@@ -1,5 +1,11 @@
 # Azure ML Package client library for Python (conda)
 
+## 2026.09.01
+
+### Packages included
+
+- azure-ai-ml-1.34.1
+
 ## 2026.06.01
 
 ### Packages included

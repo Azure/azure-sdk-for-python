@@ -30,3 +30,7 @@ extends:
     Artifacts:
     - name: azure-mgmt-alertsmanagement
       safeName: azuremgmtalertsmanagement
+    - name: azure-mgmt-prometheusrulegroups
+      safeName: azuremgmtprometheusrulegroups
+    - name: azure-mgmt-alertprocessingrules
+      safeName: azuremgmtalertprocessingrules

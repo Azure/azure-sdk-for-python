@@ -35,6 +35,7 @@ def main():
         resource_name="testHub",
         iot_hub_description={
             "etag": "AAAAAAFD6M4=",
+            "identity": {"type": "SystemAssigned"},
             "location": "centraluseuap",
             "properties": {
                 "cloudToDevice": {
@@ -47,7 +48,6 @@ def main():
                 "eventHubEndpoints": {"events": {"partitionCount": 2, "retentionTimeInDays": 1}},
                 "features": "None",
                 "ipFilterRules": [],
-                "ipVersion": "ipv4ipv6",
                 "messagingEndpoints": {
                     "fileNotifications": {
                         "lockDurationAsIso8601": "PT1M",
@@ -64,10 +64,20 @@ def main():
                         {"action": "Allow", "filterName": "rule2", "ipMask": "157.55.59.128/25"},
                     ],
                 },
-                "rootCertificate": {"enableRootCertificateV2": True},
                 "routing": {
                     "endpoints": {
                         "eventHubs": [],
+                        "eventStreams": [
+                            {
+                                "authenticationType": "identityBased",
+                                "endpointUri": "sb://eventstreamcustomsourceehns.azure.servicebus.net",
+                                "entityPath": "eventstreamcustomsourceeh",
+                                "eventStreamId": "22222222-2222-2222-2222-222222222222",
+                                "name": "eventstreamendpoint1",
+                                "sourceId": "33333333-3333-3333-3333-333333333333",
+                                "workspaceId": "11111111-1111-1111-1111-111111111111",
+                            }
+                        ],
                         "serviceBusQueues": [],
                         "serviceBusTopics": [],
                         "storageContainers": [],
@@ -92,6 +102,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01-preview/iothub_createOrUpdate.json
+# x-ms-original-file: 2026-11-01/iothub_createOrUpdate.json
 if __name__ == "__main__":
     main()

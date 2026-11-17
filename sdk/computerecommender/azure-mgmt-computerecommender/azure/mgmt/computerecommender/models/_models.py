@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -62,8 +62,8 @@ class ProxyResource(Resource):
     """
 
 
-class ComputeDiagnosticBase(ProxyResource):
-    """Contains metadata of a diagnostic type.
+class ComputePlacementScoresBase(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Contains metadata of the compute placement scoring resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -76,20 +76,20 @@ class ComputeDiagnosticBase(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.computerecommender.models.SystemData
-    :ivar properties: Contains additional properties of a diagnostic.
-    :vartype properties: ~azure.mgmt.computerecommender.models.DiagnosticProperties
+    :ivar properties: Contains additional properties of a placement scores resource.
+    :vartype properties: ~azure.mgmt.computerecommender.models.PlacementScoresProperties
     """
 
-    properties: Optional["_models.DiagnosticProperties"] = rest_field(
+    properties: Optional["_models.PlacementScoresProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Contains additional properties of a diagnostic."""
+    """Contains additional properties of a placement scores resource."""
 
     @overload
     def __init__(
         self,
         *,
-        properties: Optional["_models.DiagnosticProperties"] = None,
+        properties: Optional["_models.PlacementScoresProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -103,24 +103,107 @@ class ComputeDiagnosticBase(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticProperties(_Model):
-    """Contains additional properties of a diagnostic.
+class ComputePlacementScoresInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ComputePlacementScores API Input.
 
-    :ivar supported_resource_types: Describes what are the supported resource types for a
-     diagnostic.
-    :vartype supported_resource_types: list[str]
+    :ivar desired_locations: The desired regions. If not set, the location from the request URI is
+     used as the desired location. Each location in this list must be a valid Azure region.
+    :vartype desired_locations: list[str]
+    :ivar desired_sizes: The desired virtual machine SKU sizes. Required.
+    :vartype desired_sizes: list[~azure.mgmt.computerecommender.models.ResourceSize]
+    :ivar desired_count: Desired instance count per region/zone based on the scope. If not set,
+     defaults to 1.
+    :vartype desired_count: int
+    :ivar availability_zones: Defines if the scope is zonal or regional.
+    :vartype availability_zones: bool
     """
 
-    supported_resource_types: Optional[list[str]] = rest_field(
-        name="supportedResourceTypes", visibility=["read", "create", "update", "delete", "query"]
+    desired_locations: Optional[list[str]] = rest_field(
+        name="desiredLocations", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Describes what are the supported resource types for a diagnostic."""
+    """The desired regions. If not set, the location from the request URI is used as the desired
+     location. Each location in this list must be a valid Azure region."""
+    desired_sizes: list["_models.ResourceSize"] = rest_field(
+        name="desiredSizes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The desired virtual machine SKU sizes. Required."""
+    desired_count: Optional[int] = rest_field(
+        name="desiredCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Desired instance count per region/zone based on the scope. If not set, defaults to 1."""
+    availability_zones: Optional[bool] = rest_field(
+        name="availabilityZones", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines if the scope is zonal or regional."""
 
     @overload
     def __init__(
         self,
         *,
-        supported_resource_types: Optional[list[str]] = None,
+        desired_sizes: list["_models.ResourceSize"],
+        desired_locations: Optional[list[str]] = None,
+        desired_count: Optional[int] = None,
+        availability_zones: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ComputePlacementScoresResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ComputePlacementScores API response.
+
+    :ivar desired_locations: The desired regions.
+    :vartype desired_locations: list[str]
+    :ivar desired_sizes: The desired virtual machine SKU sizes.
+    :vartype desired_sizes: list[~azure.mgmt.computerecommender.models.ResourceSize]
+    :ivar desired_count: Desired instance count per region/zone based on the scope.
+    :vartype desired_count: int
+    :ivar availability_zones: Defines if the scope is zonal or regional.
+    :vartype availability_zones: bool
+    :ivar placement_scores: A placement score indicating the likelihood of successfully allocating
+     the specified Spot VM(s), as well as the expected lifetimes of the Spot VM(s) after allocation.
+    :vartype placement_scores: list[~azure.mgmt.computerecommender.models.PlacementScore]
+    """
+
+    desired_locations: Optional[list[str]] = rest_field(
+        name="desiredLocations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The desired regions."""
+    desired_sizes: Optional[list["_models.ResourceSize"]] = rest_field(
+        name="desiredSizes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The desired virtual machine SKU sizes."""
+    desired_count: Optional[int] = rest_field(
+        name="desiredCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Desired instance count per region/zone based on the scope."""
+    availability_zones: Optional[bool] = rest_field(
+        name="availabilityZones", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines if the scope is zonal or regional."""
+    placement_scores: Optional[list["_models.PlacementScore"]] = rest_field(
+        name="placementScores", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A placement score indicating the likelihood of successfully allocating the specified Spot
+     VM(s), as well as the expected lifetimes of the Spot VM(s) after allocation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        desired_locations: Optional[list[str]] = None,
+        desired_sizes: Optional[list["_models.ResourceSize"]] = None,
+        desired_count: Optional[int] = None,
+        availability_zones: Optional[bool] = None,
+        placement_scores: Optional[list["_models.PlacementScore"]] = None,
     ) -> None: ...
 
     @overload
@@ -178,7 +261,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -206,7 +289,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -264,7 +347,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -294,7 +377,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PlacementScore(_Model):
+class PlacementScore(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The spot placement score for sku/region/zone combination.
 
     :ivar sku: The resource's CRP virtual machine SKU size.
@@ -305,9 +388,11 @@ class PlacementScore(_Model):
     :vartype availability_zone: str
     :ivar score: A placement score indicating the likelihood of successfully allocating the
      specified Spot VM(s), as well as the expected lifetimes of the Spot VM(s) after allocation.
-    :vartype score: str
-    :ivar is_quota_available: Whether the desired quota is available.
-    :vartype is_quota_available: bool
+     Known values are: "High", "Medium", "Low", "RestrictedSkuNotAvailable", "InsufficientQuota",
+     and "DataNotFoundOrStale".
+    :vartype score: str or ~azure.mgmt.computerecommender.models.PlacementScoreValue
+    :ivar placement_preference: Placement preference from 0 to 10 (inclusive). Higher is better.
+    :vartype placement_preference: int
     """
 
     sku: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -318,13 +403,17 @@ class PlacementScore(_Model):
         name="availabilityZone", visibility=["read", "create", "update", "delete", "query"]
     )
     """The availability zone."""
-    score: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A placement score indicating the likelihood of successfully allocating the specified Spot
-     VM(s), as well as the expected lifetimes of the Spot VM(s) after allocation."""
-    is_quota_available: Optional[bool] = rest_field(
-        name="isQuotaAvailable", visibility=["read", "create", "update", "delete", "query"]
+    score: Optional[Union[str, "_models.PlacementScoreValue"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
-    """Whether the desired quota is available."""
+    """A placement score indicating the likelihood of successfully allocating the specified Spot
+     VM(s), as well as the expected lifetimes of the Spot VM(s) after allocation. Known values are:
+     \"High\", \"Medium\", \"Low\", \"RestrictedSkuNotAvailable\", \"InsufficientQuota\", and
+     \"DataNotFoundOrStale\"."""
+    placement_preference: Optional[int] = rest_field(
+        name="placementPreference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Placement preference from 0 to 10 (inclusive). Higher is better."""
 
     @overload
     def __init__(
@@ -333,8 +422,8 @@ class PlacementScore(_Model):
         sku: Optional[str] = None,
         region: Optional[str] = None,
         availability_zone: Optional[str] = None,
-        score: Optional[str] = None,
-        is_quota_available: Optional[bool] = None,
+        score: Optional[Union[str, "_models.PlacementScoreValue"]] = None,
+        placement_preference: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -348,7 +437,37 @@ class PlacementScore(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceSize(_Model):
+class PlacementScoresProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Contains additional properties of a placement scores resource.
+
+    :ivar supported_resource_types: Describes the supported resource types for placement scoring.
+    :vartype supported_resource_types: list[str]
+    """
+
+    supported_resource_types: Optional[list[str]] = rest_field(
+        name="supportedResourceTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Describes the supported resource types for placement scoring."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        supported_resource_types: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceSize(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SpotPlacementRecommender API response.
 
     :ivar sku: The resource's CRP virtual machine SKU size.
@@ -376,14 +495,655 @@ class ResourceSize(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpotPlacementScoresInput(_Model):
+class SkuMixPlacementBase(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Contains metadata of the SkuMixPlacement scoring resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.computerecommender.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.computerecommender.models.SkuMixPlacementProperties
+    """
+
+    properties: Optional["_models.SkuMixPlacementProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SkuMixPlacementProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkuMixPlacementCapacityLimit(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Capacity availability for a single requested (VM size, zone) combination, independent of the
+    recommended placement.
+
+    :ivar name: VM size name (e.g. Standard_D2s_v3). Required.
+    :vartype name: str
+    :ivar priority: Priority of this entry (Regular or Spot). Required. Known values are: "Regular"
+     and "Spot".
+    :vartype priority: str or ~azure.mgmt.computerecommender.models.SkuMixPlacementPriority
+    :ivar zone: Logical zone (e.g. "1", "2", "3"). Omitted or empty for regional requests.
+    :vartype zone: str
+    :ivar limit: Upper bound, in VMs, on how much capacity can be allocated for this (VM size,
+     zone): the smallest of the requested capacity, the available capacity, and the available quota,
+     but never below the capacity already recommended for the slot. 0 when nothing is available.
+     Required.
+    :vartype limit: int
+    :ivar reason: Why the limit is below the requested capacity, or None when the request is fully
+     available. Required. Known values are: "None", "InsufficientCapacity", "InsufficientQuota", and
+     "SkuNotAvailable".
+    :vartype reason: str or
+     ~azure.mgmt.computerecommender.models.SkuMixPlacementCapacityLimitReason
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """VM size name (e.g. Standard_D2s_v3). Required."""
+    priority: Union[str, "_models.SkuMixPlacementPriority"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Priority of this entry (Regular or Spot). Required. Known values are: \"Regular\" and \"Spot\"."""
+    zone: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Logical zone (e.g. \"1\", \"2\", \"3\"). Omitted or empty for regional requests."""
+    limit: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Upper bound, in VMs, on how much capacity can be allocated for this (VM size, zone): the
+     smallest of the requested capacity, the available capacity, and the available quota, but never
+     below the capacity already recommended for the slot. 0 when nothing is available. Required."""
+    reason: Union[str, "_models.SkuMixPlacementCapacityLimitReason"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Why the limit is below the requested capacity, or None when the request is fully available.
+     Required. Known values are: \"None\", \"InsufficientCapacity\", \"InsufficientQuota\", and
+     \"SkuNotAvailable\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        priority: Union[str, "_models.SkuMixPlacementPriority"],
+        limit: int,
+        reason: Union[str, "_models.SkuMixPlacementCapacityLimitReason"],
+        zone: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkuMixPlacementCapacityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Capacity-related properties for the placement request.
+
+    :ivar capacity: The capacity to run the workload. For VMs: [1..10,000]. For vCPUs:
+     [1..100,000]. Required.
+    :vartype capacity: int
+    :ivar capacity_type: The unit type for the capacity value. Required. Known values are: "VM" and
+     "VCpu".
+    :vartype capacity_type: str or
+     ~azure.mgmt.computerecommender.models.SkuMixPlacementCapacityType
+    :ivar priority: The priority of the VMs to allocate. Required. Known values are: "Regular" and
+     "Spot".
+    :vartype priority: str or ~azure.mgmt.computerecommender.models.SkuMixPlacementPriority
+    :ivar spot_priority_profile: Contains spot-specific configuration.
+    :vartype spot_priority_profile:
+     ~azure.mgmt.computerecommender.models.SkuMixPlacementSpotPriorityProfile
+    :ivar allocation_strategy: The allocation strategy for determining the optimal SKU split. Known
+     values are: "LowestPrice", "Prioritized", and "EvictionOptimized".
+    :vartype allocation_strategy: str or
+     ~azure.mgmt.computerecommender.models.SkuMixPlacementAllocationStrategy
+    :ivar os_type: The OS type. Required when allocationStrategy is LowestPrice because pricing
+     varies by OS. Known values are: "Windows" and "Linux".
+    :vartype os_type: str or ~azure.mgmt.computerecommender.models.SkuMixPlacementOSType
+    :ivar zone_allocation_policy: Zone allocation policy. Default: BestEffortBalanced.
+    :vartype zone_allocation_policy:
+     ~azure.mgmt.computerecommender.models.SkuMixPlacementZoneAllocationPolicy
+    """
+
+    capacity: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The capacity to run the workload. For VMs: [1..10,000]. For vCPUs: [1..100,000]. Required."""
+    capacity_type: Union[str, "_models.SkuMixPlacementCapacityType"] = rest_field(
+        name="capacityType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The unit type for the capacity value. Required. Known values are: \"VM\" and \"VCpu\"."""
+    priority: Union[str, "_models.SkuMixPlacementPriority"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The priority of the VMs to allocate. Required. Known values are: \"Regular\" and \"Spot\"."""
+    spot_priority_profile: Optional["_models.SkuMixPlacementSpotPriorityProfile"] = rest_field(
+        name="spotPriorityProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Contains spot-specific configuration."""
+    allocation_strategy: Optional[Union[str, "_models.SkuMixPlacementAllocationStrategy"]] = rest_field(
+        name="allocationStrategy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The allocation strategy for determining the optimal SKU split. Known values are:
+     \"LowestPrice\", \"Prioritized\", and \"EvictionOptimized\"."""
+    os_type: Optional[Union[str, "_models.SkuMixPlacementOSType"]] = rest_field(
+        name="osType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The OS type. Required when allocationStrategy is LowestPrice because pricing varies by OS.
+     Known values are: \"Windows\" and \"Linux\"."""
+    zone_allocation_policy: Optional["_models.SkuMixPlacementZoneAllocationPolicy"] = rest_field(
+        name="zoneAllocationPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Zone allocation policy. Default: BestEffortBalanced."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        capacity: int,
+        capacity_type: Union[str, "_models.SkuMixPlacementCapacityType"],
+        priority: Union[str, "_models.SkuMixPlacementPriority"],
+        spot_priority_profile: Optional["_models.SkuMixPlacementSpotPriorityProfile"] = None,
+        allocation_strategy: Optional[Union[str, "_models.SkuMixPlacementAllocationStrategy"]] = None,
+        os_type: Optional[Union[str, "_models.SkuMixPlacementOSType"]] = None,
+        zone_allocation_policy: Optional["_models.SkuMixPlacementZoneAllocationPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkuMixPlacementDeploymentChoice(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A single deployment choice recommendation.
+
+    :ivar score: Placement score from 0 to 9 (inclusive). Higher is better. Required.
+    :vartype score: int
+    :ivar sku_split: The list of VM size / zone allocations that make up this deployment choice.
+     Required.
+    :vartype sku_split: list[~azure.mgmt.computerecommender.models.SkuMixPlacementItem]
+    """
+
+    score: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Placement score from 0 to 9 (inclusive). Higher is better. Required."""
+    sku_split: list["_models.SkuMixPlacementItem"] = rest_field(
+        name="skuSplit", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of VM size / zone allocations that make up this deployment choice. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        score: int,
+        sku_split: list["_models.SkuMixPlacementItem"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkuMixPlacementInstanceDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Describes which VM sizes to consider.
+
+    :ivar vm_sizes: The list of VM sizes to consider for placement. Required.
+    :vartype vm_sizes: list[~azure.mgmt.computerecommender.models.SkuMixPlacementVMSize]
+    """
+
+    vm_sizes: list["_models.SkuMixPlacementVMSize"] = rest_field(
+        name="vmSizes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of VM sizes to consider for placement. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        vm_sizes: list["_models.SkuMixPlacementVMSize"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkuMixPlacementItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A single VM size allocation within a deployment choice.
+
+    :ivar name: VM size name (e.g. Standard_D2s_v3). Required.
+    :vartype name: str
+    :ivar priority: Priority of this allocation (Regular or Spot). Required. Known values are:
+     "Regular" and "Spot".
+    :vartype priority: str or ~azure.mgmt.computerecommender.models.SkuMixPlacementPriority
+    :ivar capacity: Lower range of recommended allocation capacity. Required.
+    :vartype capacity: int
+    :ivar zone: Logical zone (e.g. "1", "2", "3"). Omitted or empty for regional deployments.
+    :vartype zone: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """VM size name (e.g. Standard_D2s_v3). Required."""
+    priority: Union[str, "_models.SkuMixPlacementPriority"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Priority of this allocation (Regular or Spot). Required. Known values are: \"Regular\" and
+     \"Spot\"."""
+    capacity: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Lower range of recommended allocation capacity. Required."""
+    zone: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Logical zone (e.g. \"1\", \"2\", \"3\"). Omitted or empty for regional deployments."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        priority: Union[str, "_models.SkuMixPlacementPriority"],
+        capacity: int,
+        zone: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkuMixPlacementProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Contains properties of the SkuMixPlacement resource.
+
+    :ivar supported_resource_types: Describes what resource types are supported by the mix
+     placement scoring service.
+    :vartype supported_resource_types: list[str]
+    """
+
+    supported_resource_types: Optional[list[str]] = rest_field(
+        name="supportedResourceTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Describes what resource types are supported by the mix placement scoring service."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        supported_resource_types: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkuMixPlacementRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Sku Mix Placement API request.
+
+    :ivar zones: Optional logical zones to consider (e.g. ["1","2","3"]). Omitted or empty implies
+     regional deployment.
+    :vartype zones: list[str]
+    :ivar capacity_profile: All capacity-related properties. Required.
+    :vartype capacity_profile: ~azure.mgmt.computerecommender.models.SkuMixPlacementCapacityProfile
+    :ivar instance_description: Describes how the service should choose candidate VM sizes.
+     Required.
+    :vartype instance_description:
+     ~azure.mgmt.computerecommender.models.SkuMixPlacementInstanceDescription
+    """
+
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional logical zones to consider (e.g. [\"1\",\"2\",\"3\"]). Omitted or empty implies
+     regional deployment."""
+    capacity_profile: "_models.SkuMixPlacementCapacityProfile" = rest_field(
+        name="capacityProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """All capacity-related properties. Required."""
+    instance_description: "_models.SkuMixPlacementInstanceDescription" = rest_field(
+        name="instanceDescription", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Describes how the service should choose candidate VM sizes. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        capacity_profile: "_models.SkuMixPlacementCapacityProfile",
+        instance_description: "_models.SkuMixPlacementInstanceDescription",
+        zones: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkuMixPlacementResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Sku Mix Placement API response.
+
+    :ivar id: Unique identifier for this placement response, including responses that contain no
+     placement choices. Replaces the per-choice id that was present on placementChoices in earlier
+     API versions. Required.
+    :vartype id: str
+    :ivar placement_choices: List of placement choice recommendations. Required.
+    :vartype placement_choices:
+     list[~azure.mgmt.computerecommender.models.SkuMixPlacementDeploymentChoice]
+    :ivar valid_until: Date/time until which the recommendations are valid. Callers should request
+     fresh recommendations after this time.
+    :vartype valid_until: ~datetime.datetime
+    :ivar partial_fulfillment_reason: Indicates whether the response is a complete or partial
+     fulfillment. Required. Known values are: "None", "InsufficientCapacity", and
+     "InsufficientQuota".
+    :vartype partial_fulfillment_reason: str or
+     ~azure.mgmt.computerecommender.models.SkuMixPlacementPartialFulfillmentReason
+    :ivar capacity_limits: Capacity availability for each requested (VM size, zone) combination,
+     independent of the recommended placement. An entry is present for every requested combination,
+     including those excluded by capacity or quota. Only returned for requests that describe
+     instances by VM sizes.
+    :vartype capacity_limits:
+     list[~azure.mgmt.computerecommender.models.SkuMixPlacementCapacityLimit]
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Unique identifier for this placement response, including responses that contain no placement
+     choices. Replaces the per-choice id that was present on placementChoices in earlier API
+     versions. Required."""
+    placement_choices: list["_models.SkuMixPlacementDeploymentChoice"] = rest_field(
+        name="placementChoices", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of placement choice recommendations. Required."""
+    valid_until: Optional[datetime.datetime] = rest_field(
+        name="validUntil", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Date/time until which the recommendations are valid. Callers should request fresh
+     recommendations after this time."""
+    partial_fulfillment_reason: Union[str, "_models.SkuMixPlacementPartialFulfillmentReason"] = rest_field(
+        name="partialFulfillmentReason", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether the response is a complete or partial fulfillment. Required. Known values
+     are: \"None\", \"InsufficientCapacity\", and \"InsufficientQuota\"."""
+    capacity_limits: Optional[list["_models.SkuMixPlacementCapacityLimit"]] = rest_field(
+        name="capacityLimits", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Capacity availability for each requested (VM size, zone) combination, independent of the
+     recommended placement. An entry is present for every requested combination, including those
+     excluded by capacity or quota. Only returned for requests that describe instances by VM sizes."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        placement_choices: list["_models.SkuMixPlacementDeploymentChoice"],
+        partial_fulfillment_reason: Union[str, "_models.SkuMixPlacementPartialFulfillmentReason"],
+        valid_until: Optional[datetime.datetime] = None,
+        capacity_limits: Optional[list["_models.SkuMixPlacementCapacityLimit"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkuMixPlacementSpotPriorityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Spot priority configuration.
+
+    :ivar max_price_per_vm: Maximum price per VM the customer is willing to pay. Default: -1 (no
+     price restriction).
+    :vartype max_price_per_vm: float
+    """
+
+    max_price_per_vm: Optional[float] = rest_field(
+        name="maxPricePerVm", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum price per VM the customer is willing to pay. Default: -1 (no price restriction)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_price_per_vm: Optional[float] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkuMixPlacementVMSize(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A VM size with optional rank for prioritization.
+
+    :ivar name: SKU name (e.g. Standard_D2s_v3). Required.
+    :vartype name: str
+    :ivar rank: Rank of the VM size. Lower = higher priority (starting at 0). Only valid with
+     Prioritized strategy.
+    :vartype rank: int
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """SKU name (e.g. Standard_D2s_v3). Required."""
+    rank: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Rank of the VM size. Lower = higher priority (starting at 0). Only valid with Prioritized
+     strategy."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        rank: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkuMixPlacementZoneAllocationPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Zone allocation policy for the placement request.
+
+    :ivar distribution_strategy: Distribution strategy for allocating capacity across zones. Known
+     values are: "BestEffortBalanced", "Prioritized", and "BestEffortSingleZone".
+    :vartype distribution_strategy: str or
+     ~azure.mgmt.computerecommender.models.SkuMixPlacementZonalDistributionStrategy
+    :ivar zone_preferences: Per-zone allocation preferences. Used with the Prioritized strategy.
+    :vartype zone_preferences:
+     list[~azure.mgmt.computerecommender.models.SkuMixPlacementZonePreference]
+    """
+
+    distribution_strategy: Optional[Union[str, "_models.SkuMixPlacementZonalDistributionStrategy"]] = rest_field(
+        name="distributionStrategy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Distribution strategy for allocating capacity across zones. Known values are:
+     \"BestEffortBalanced\", \"Prioritized\", and \"BestEffortSingleZone\"."""
+    zone_preferences: Optional[list["_models.SkuMixPlacementZonePreference"]] = rest_field(
+        name="zonePreferences", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Per-zone allocation preferences. Used with the Prioritized strategy."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        distribution_strategy: Optional[Union[str, "_models.SkuMixPlacementZonalDistributionStrategy"]] = None,
+        zone_preferences: Optional[list["_models.SkuMixPlacementZonePreference"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkuMixPlacementZonePreference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Per-zone allocation preference.
+
+    :ivar zone: Logical zone (e.g. "1", "2", "3"). Required.
+    :vartype zone: str
+    :ivar rank: Rank of the zone. Lower values = higher priority (0 is highest).
+    :vartype rank: int
+    :ivar target_max_capacity: Best-effort limit to avoid allocating more than this count within
+     the zone. Used with the Prioritized strategy.
+    :vartype target_max_capacity: int
+    """
+
+    zone: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Logical zone (e.g. \"1\", \"2\", \"3\"). Required."""
+    rank: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Rank of the zone. Lower values = higher priority (0 is highest)."""
+    target_max_capacity: Optional[int] = rest_field(
+        name="targetMaxCapacity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Best-effort limit to avoid allocating more than this count within the zone. Used with the
+     Prioritized strategy."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        zone: str,
+        rank: Optional[int] = None,
+        target_max_capacity: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SpotPlacementScoresBase(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Contains metadata of the Spot Placement Scores resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.computerecommender.models.SystemData
+    :ivar properties: Contains additional properties of a placement scores resource.
+    :vartype properties: ~azure.mgmt.computerecommender.models.PlacementScoresProperties
+    """
+
+    properties: Optional["_models.PlacementScoresProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Contains additional properties of a placement scores resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PlacementScoresProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SpotPlacementScoresInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SpotPlacementScores API Input.
 
-    :ivar desired_locations: The desired regions.
+    :ivar desired_locations: The desired regions. If not set, the location from the request URI is
+     used as the desired location. Each location in this list must be a valid Azure region.
     :vartype desired_locations: list[str]
-    :ivar desired_sizes: The desired virtual machine SKU sizes.
+    :ivar desired_sizes: The desired virtual machine SKU sizes. Required.
     :vartype desired_sizes: list[~azure.mgmt.computerecommender.models.ResourceSize]
-    :ivar desired_count: Desired instance count per region/zone based on the scope.
+    :ivar desired_count: Desired instance count per region/zone based on the scope. If not set,
+     defaults to 1.
     :vartype desired_count: int
     :ivar availability_zones: Defines if the scope is zonal or regional.
     :vartype availability_zones: bool
@@ -392,15 +1152,16 @@ class SpotPlacementScoresInput(_Model):
     desired_locations: Optional[list[str]] = rest_field(
         name="desiredLocations", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The desired regions."""
-    desired_sizes: Optional[list["_models.ResourceSize"]] = rest_field(
+    """The desired regions. If not set, the location from the request URI is used as the desired
+     location. Each location in this list must be a valid Azure region."""
+    desired_sizes: list["_models.ResourceSize"] = rest_field(
         name="desiredSizes", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The desired virtual machine SKU sizes."""
+    """The desired virtual machine SKU sizes. Required."""
     desired_count: Optional[int] = rest_field(
         name="desiredCount", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Desired instance count per region/zone based on the scope."""
+    """Desired instance count per region/zone based on the scope. If not set, defaults to 1."""
     availability_zones: Optional[bool] = rest_field(
         name="availabilityZones", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -410,8 +1171,8 @@ class SpotPlacementScoresInput(_Model):
     def __init__(
         self,
         *,
+        desired_sizes: list["_models.ResourceSize"],
         desired_locations: Optional[list[str]] = None,
-        desired_sizes: Optional[list["_models.ResourceSize"]] = None,
         desired_count: Optional[int] = None,
         availability_zones: Optional[bool] = None,
     ) -> None: ...
@@ -427,7 +1188,7 @@ class SpotPlacementScoresInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpotPlacementScoresResponse(_Model):
+class SpotPlacementScoresResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SpotPlacementScores API response.
 
     :ivar desired_locations: The desired regions.
@@ -487,7 +1248,7 @@ class SpotPlacementScoresResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.

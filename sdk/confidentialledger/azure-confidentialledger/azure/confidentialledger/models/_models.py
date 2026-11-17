@@ -108,8 +108,8 @@ class ClaimDigest(_Model):
     protocol: Union[str, "_models.ApplicationClaimProtocol"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Represents the protocol to be used to compute the digest of a claim from the
-     given claim data. Required. \"LedgerEntryV1\""""
+    """Represents the protocol to be used to compute the digest of a claim from the given claim data.
+     Required. \"LedgerEntryV1\""""
 
     @overload
     def __init__(
@@ -511,18 +511,16 @@ class LedgerEntry(_Model):
     collection_id: Optional[str] = rest_field(name="collectionId", visibility=["read"])
     """The collection identifier for this ledger entry."""
     transaction_id: Optional[str] = rest_field(name="transactionId", visibility=["read"])
-    """A unique identifier for the state of the ledger. If returned as part of a
-     LedgerEntry, it indicates the state from which the entry was read."""
+    """A unique identifier for the state of the ledger. If returned as part of a LedgerEntry, it
+     indicates the state from which the entry was read."""
     pre_hooks: Optional[list["_models.UserDefinedFunctionHook"]] = rest_field(
         name="preHooks", visibility=["read", "create", "update", "delete", "query"]
     )
-    """List of user defined function hooks to be executed before the ledger entry is
-     written."""
+    """List of user defined function hooks to be executed before the ledger entry is written."""
     post_hooks: Optional[list["_models.UserDefinedFunctionHook"]] = rest_field(
         name="postHooks", visibility=["read", "create", "update", "delete", "query"]
     )
-    """List of user defined function hooks to be executed after the ledger entry is
-     written."""
+    """List of user defined function hooks to be executed after the ledger entry is written."""
 
     @overload
     def __init__(
@@ -569,8 +567,8 @@ class LedgerEntryClaim(_Model):
     protocol: Union[str, "_models.ApplicationClaimProtocol"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Represents the protocol to be used to compute the digest of a claim from the
-     given claim data. Required. \"LedgerEntryV1\""""
+    """Represents the protocol to be used to compute the digest of a claim from the given claim data.
+     Required. \"LedgerEntryV1\""""
 
     @overload
     def __init__(
@@ -594,8 +592,8 @@ class LedgerEntryClaim(_Model):
 
 
 class LedgerQueryResult(_Model):
-    """The result of querying for a ledger entry from an older transaction id. The
-    ledger entry is available in the response only if the returned state is Ready.
+    """The result of querying for a ledger entry from an older transaction id. The ledger entry is
+    available in the response only if the returned state is Ready.
 
     :ivar state: State of a ledger query. Required. Known values are: "Loading" and "Ready".
     :vartype state: str or ~azure.confidentialledger.models.ConfidentialLedgerQueryState
@@ -609,8 +607,8 @@ class LedgerQueryResult(_Model):
     )
     """State of a ledger query. Required. Known values are: \"Loading\" and \"Ready\"."""
     entry: Optional["_models.LedgerEntry"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ledger entry found as a result of the query. This is only available if the
-     query is in Ready state."""
+    """The ledger entry found as a result of the query. This is only available if the query is in
+     Ready state."""
 
     @overload
     def __init__(
@@ -648,8 +646,7 @@ class LedgerUser(_Model):
     """Represents an assignable role. Required. Known values are: \"Administrator\", \"Contributor\",
      and \"Reader\"."""
     user_id: Optional[str] = rest_field(name="userId", visibility=["read"])
-    """Identifier for the user. This must either be an AAD object id or a certificate
-     fingerprint."""
+    """Identifier for the user. This must either be an AAD object id or a certificate fingerprint."""
 
     @overload
     def __init__(
@@ -685,8 +682,7 @@ class LedgerUserMultipleRoles(_Model):
     )
     """Represents an assignable role. Required."""
     user_id: Optional[str] = rest_field(name="userId", visibility=["read"])
-    """Identifier for the user. This must either be an AAD object id or a certificate
-     fingerprint."""
+    """Identifier for the user. This must either be an AAD object id or a certificate fingerprint."""
 
     @overload
     def __init__(
@@ -707,8 +703,8 @@ class LedgerUserMultipleRoles(_Model):
 
 
 class LedgerWriteResult(_Model):
-    """Returned as a result of a write to the Confidential Ledger, the transaction id
-    in the response indicates when the write will become durable.
+    """Returned as a result of a write to the Confidential Ledger, the transaction id in the response
+    indicates when the write will become durable.
 
     :ivar collection_id: The collection identifier of the ledger entry. Required.
     :vartype collection_id: str
@@ -779,7 +775,7 @@ class MethodToEndpointProperties(_Model):
     """
 
     get_property: Optional["_models.EndpointProperties"] = rest_field(
-        name="get", visibility=["read", "create", "update", "delete", "query"]
+        name="get", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="get"
     )
     """Properties for GET method endpoint."""
     put: Optional["_models.EndpointProperties"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -954,7 +950,7 @@ class ReceiptLeafComponents(_Model):
     :vartype claims_digest: str
     :ivar commit_evidence: Commit evidence.
     :vartype commit_evidence: str
-    :ivar write_set_digest: TWrite set digest.
+    :ivar write_set_digest: Write set digest.
     :vartype write_set_digest: str
     """
 
@@ -969,7 +965,7 @@ class ReceiptLeafComponents(_Model):
     write_set_digest: Optional[str] = rest_field(
         name="writeSetDigest", visibility=["read", "create", "update", "delete", "query"]
     )
-    """TWrite set digest."""
+    """Write set digest."""
 
     @overload
     def __init__(
@@ -1026,34 +1022,6 @@ class Role(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Roles(_Model):
-    """Roles.
-
-    :ivar roles: Roles. Required.
-    :vartype roles: list[~azure.confidentialledger.models.Role]
-    """
-
-    roles: list["_models.Role"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Roles. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        roles: list["_models.Role"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class TransactionReceipt(_Model):
     """A receipt certifying the transaction at the specified id.
 
@@ -1081,8 +1049,8 @@ class TransactionReceipt(_Model):
     )
     """State of a ledger query. Required. Known values are: \"Loading\" and \"Ready\"."""
     transaction_id: str = rest_field(name="transactionId", visibility=["read", "create", "update", "delete", "query"])
-    """A unique identifier for the state of the ledger. If returned as part of a
-     LedgerEntry, it indicates the state from which the entry was read. Required."""
+    """A unique identifier for the state of the ledger. If returned as part of a LedgerEntry, it
+     indicates the state from which the entry was read. Required."""
 
     @overload
     def __init__(
@@ -1122,8 +1090,8 @@ class TransactionStatus(_Model):
     """Represents the state of the transaction. Required. Known values are: \"Committed\" and
      \"Pending\"."""
     transaction_id: str = rest_field(name="transactionId", visibility=["read", "create", "update", "delete", "query"])
-    """A unique identifier for the state of the ledger. If returned as part of a
-     LedgerEntry, it indicates the state from which the entry was read. Required."""
+    """A unique identifier for the state of the ledger. If returned as part of a LedgerEntry, it
+     indicates the state from which the entry was read. Required."""
 
     @overload
     def __init__(
@@ -1177,8 +1145,8 @@ class UserDefinedFunction(_Model):
 
 
 class UserDefinedFunctionExecutionError(_Model):
-    """The error object of a user defined function execution. This is returned only
-    when the user defined function execution throws an exception.
+    """The error object of a user defined function execution. This is returned only when the user
+    defined function execution throws an exception.
 
     :ivar message: Message indicating the error thrown when executing the function.
     :vartype message: str
@@ -1211,8 +1179,7 @@ class UserDefinedFunctionExecutionProperties(_Model):
     :ivar arguments: Runtime arguments of the user defined function. Defaults to an empty list.
     :vartype arguments: list[str]
     :ivar exported_function_name: Name of the exported function to execute in the code of the user
-     defined
-     function. Defaults to main.
+     defined function. Defaults to main.
     :vartype exported_function_name: str
     :ivar runtime_options: JS runtime options for user defined endpoints and functions.
     :vartype runtime_options: ~azure.confidentialledger.models.JsRuntimeOptions
@@ -1223,8 +1190,8 @@ class UserDefinedFunctionExecutionProperties(_Model):
     exported_function_name: Optional[str] = rest_field(
         name="exportedFunctionName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Name of the exported function to execute in the code of the user defined
-     function. Defaults to main."""
+    """Name of the exported function to execute in the code of the user defined function. Defaults to
+     main."""
     runtime_options: Optional["_models.JsRuntimeOptions"] = rest_field(
         name="runtimeOptions", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1253,8 +1220,8 @@ class UserDefinedFunctionExecutionProperties(_Model):
 class UserDefinedFunctionExecutionResponse(_Model):
     """The result of a user defined function execution.
 
-    :ivar error: The error object of a user defined function execution. This is returned only
-     when the user defined function execution throws an exception.
+    :ivar error: The error object of a user defined function execution. This is returned only when
+     the user defined function execution throws an exception.
     :vartype error: ~azure.confidentialledger.models.UserDefinedFunctionExecutionError
     :ivar result: The result object of a user defined function execution. This is returned only
      when the user defined function executes successfully.
@@ -1267,13 +1234,13 @@ class UserDefinedFunctionExecutionResponse(_Model):
     error: Optional["_models.UserDefinedFunctionExecutionError"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The error object of a user defined function execution. This is returned only
-     when the user defined function execution throws an exception."""
+    """The error object of a user defined function execution. This is returned only when the user
+     defined function execution throws an exception."""
     result: Optional["_models.UserDefinedFunctionExecutionResult"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The result object of a user defined function execution. This is returned only
-     when the user defined function executes successfully."""
+    """The result object of a user defined function execution. This is returned only when the user
+     defined function executes successfully."""
     status: Union[str, "_models.UserDefinedFunctionExecutionStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1301,20 +1268,19 @@ class UserDefinedFunctionExecutionResponse(_Model):
 
 
 class UserDefinedFunctionExecutionResult(_Model):
-    """The result object of a user defined function execution. This is returned only
-    when the user defined function executes successfully.
+    """The result object of a user defined function execution. This is returned only when the user
+    defined function executes successfully.
 
     :ivar return_value: String-encoded value returned by the user defined function execution. If
-     the
-     function does not return any value, this is set to an empty string.
+     the function does not return any value, this is set to an empty string.
     :vartype return_value: str
     """
 
     return_value: Optional[str] = rest_field(
         name="returnValue", visibility=["read", "create", "update", "delete", "query"]
     )
-    """String-encoded value returned by the user defined function execution. If the
-     function does not return any value, this is set to an empty string."""
+    """String-encoded value returned by the user defined function execution. If the function does not
+     return any value, this is set to an empty string."""
 
     @overload
     def __init__(
@@ -1356,6 +1322,62 @@ class UserDefinedFunctionHook(_Model):
         *,
         function_id: str,
         properties: Optional["_models.UserDefinedFunctionExecutionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UserDefinedRole(_Model):
+    """User defined role.
+
+    :ivar role: User defined role. Required.
+    :vartype role: list[~azure.confidentialledger.models.Role]
+    """
+
+    role: list["_models.Role"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """User defined role. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        role: list["_models.Role"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UserDefinedRoles(_Model):
+    """Roles.
+
+    :ivar roles: Roles. Required.
+    :vartype roles: list[~azure.confidentialledger.models.Role]
+    """
+
+    roles: list["_models.Role"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Roles. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        roles: list["_models.Role"],
     ) -> None: ...
 
     @overload

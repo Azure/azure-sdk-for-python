@@ -57,10 +57,6 @@ class TestAzureStackHCIEdgeDevicesOperations(AzureMgmtRecordedTestCase):
                     },
                     "provisioningState": "str",
                     "reportedProperties": {
-                        "confidentialVmProfile": {
-                            "igvmStatus": "str",
-                            "statusDetails": [{"code": "str", "message": "str"}],
-                        },
                         "deviceState": "str",
                         "extensionProfile": {
                             "extensions": [
@@ -157,7 +153,16 @@ class TestAzureStackHCIEdgeDevicesOperations(AzureMgmtRecordedTestCase):
                         "osProfile": {"assemblyVersion": "str", "bootType": "str"},
                         "sbeDeploymentPackageInfo": {"code": "str", "message": "str", "sbeManifest": "str"},
                         "storageProfile": {
-                            "disks": [{"id": "str", "sizeInBytes": "str", "type": "str"}],
+                            "disks": [
+                                {
+                                    "id": "str",
+                                    "isSupported": bool,
+                                    "manufacturer": "str",
+                                    "model": "str",
+                                    "sizeInBytes": "str",
+                                    "type": "str",
+                                }
+                            ],
                             "poolableDisksCount": 0,
                         },
                     },

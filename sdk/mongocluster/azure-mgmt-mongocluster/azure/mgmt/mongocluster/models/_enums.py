@@ -216,6 +216,9 @@ class PromoteOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Promote option forces the promotion without waiting for the replica to be caught up to the
     primary. This can result in data-loss so should only be used during disaster recovery
     scenarios."""
+    PLANNED = "Planned"
+    """Promote option waits for the replica to be caught up to the primary before promoting,
+    guaranteeing no data loss during the promotion."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

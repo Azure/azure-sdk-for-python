@@ -115,12 +115,14 @@ class TestBatchDeploymentOperations:
             return_value="https://somebatch-url.com",
         )
         mockresponse = Mock()
-        mockresponse.text = '{"key": "value"}'
+        mockresponse.text = Mock(return_value='{"value": [], "nextLink": null}')
         mockresponse.status_code = 200
-        mocker.patch("requests.request", return_value=mockresponse)
+        # The v2020_09 dataplane list-jobs op has no arm equivalent; the migrated code pages the MFE
+        # endpoint via the raw requests pipeline, so mock that instead of the old client method.
+        mocker.patch.object(mock_batch_deployment_operations._requests_pipeline, "get", return_value=mockresponse)
 
         mock_batch_deployment_operations.list_jobs(endpoint_name="batch-ept", name="testdeployment")
-        mock_batch_deployment_operations._batch_job_deployment.list.assert_called_once()
+        mock_batch_deployment_operations._requests_pipeline.get.assert_called_once()
 
     def test_delete_batch_endpoint(
         self,

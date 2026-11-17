@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/EdgeMachines_CreateOrUpdate.json
+# x-ms-original-file: 2026-10-01/EdgeMachines_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

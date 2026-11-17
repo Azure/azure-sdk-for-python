@@ -24,7 +24,7 @@ class TestComputeManagementInterconnectBlocksOperations(AzureMgmtRecordedTestCas
         response = self.client.interconnect_blocks.get(
             resource_group_name=resource_group.name,
             interconnect_block_name="str",
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
 
         # please add some check logic here by yourself
@@ -74,7 +74,7 @@ class TestComputeManagementInterconnectBlocksOperations(AzureMgmtRecordedTestCas
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -87,7 +87,7 @@ class TestComputeManagementInterconnectBlocksOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             interconnect_block_name="str",
             properties={"sku": {"capacity": 0, "name": "str", "tier": "str"}, "tags": {"str": "str"}},
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -99,7 +99,7 @@ class TestComputeManagementInterconnectBlocksOperations(AzureMgmtRecordedTestCas
         response = self.client.interconnect_blocks.begin_delete(
             resource_group_name=resource_group.name,
             interconnect_block_name="str",
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -110,7 +110,7 @@ class TestComputeManagementInterconnectBlocksOperations(AzureMgmtRecordedTestCas
     def test_interconnect_blocks_list_by_resource_group(self, resource_group):
         response = self.client.interconnect_blocks.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -120,7 +120,7 @@ class TestComputeManagementInterconnectBlocksOperations(AzureMgmtRecordedTestCas
     @recorded_by_proxy
     def test_interconnect_blocks_list_by_subscription(self, resource_group):
         response = self.client.interconnect_blocks.list_by_subscription(
-            api_version="2026-03-01",
+            api_version="2026-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

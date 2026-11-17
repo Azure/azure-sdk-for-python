@@ -20,6 +20,8 @@ _STATSBEAT_STATE = {
     "LIVE_METRICS_FEATURE_SET": False,
     "CUSTOMER_SDKSTATS_FEATURE_SET": False,
     "BROWSER_SDK_LOADER_FEATURE_SET": False,
+    "GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE_FEATURE_SET": False,
+    "MULTI_ENDPOINT_ROUTING_FEATURE_SET": False,
     "FEATURE_ATTRIBUTE_BITS": 0,
 }
 _STATSBEAT_STATE_LOCK = threading.Lock()
@@ -116,6 +118,24 @@ def get_statsbeat_browser_sdk_loader_feature_set():  # pylint: disable=name-too-
 def set_statsbeat_browser_sdk_loader_feature_set():  # pylint: disable=name-too-long
     with _STATSBEAT_STATE_LOCK:
         _STATSBEAT_STATE["BROWSER_SDK_LOADER_FEATURE_SET"] = True
+
+
+def get_statsbeat_gen_ai_input_output_limit_increase_feature_set() -> bool:  # pylint: disable=name-too-long
+    return bool(_STATSBEAT_STATE["GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE_FEATURE_SET"])
+
+
+def set_statsbeat_gen_ai_input_output_limit_increase_feature_set() -> None:  # pylint: disable=name-too-long
+    with _STATSBEAT_STATE_LOCK:
+        _STATSBEAT_STATE["GEN_AI_INPUT_OUTPUT_LIMIT_INCREASE_FEATURE_SET"] = True
+
+
+def get_statsbeat_multi_endpoint_routing_feature_set() -> bool:  # pylint: disable=name-too-long
+    return bool(_STATSBEAT_STATE["MULTI_ENDPOINT_ROUTING_FEATURE_SET"])
+
+
+def set_statsbeat_multi_endpoint_routing_feature_set() -> None:  # pylint: disable=name-too-long
+    with _STATSBEAT_STATE_LOCK:
+        _STATSBEAT_STATE["MULTI_ENDPOINT_ROUTING_FEATURE_SET"] = True
 
 
 def get_statsbeat_feature_attribute_bits() -> int:

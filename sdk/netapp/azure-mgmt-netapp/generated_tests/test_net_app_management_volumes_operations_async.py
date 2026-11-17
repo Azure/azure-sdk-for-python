@@ -52,6 +52,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                         "avsDataStore": "str",
                         "backupId": "str",
                         "baremetalTenantId": "str",
+                        "breakthroughMode": "str",
                         "capacityPoolResourceId": "str",
                         "cloneProgress": 0,
                         "coolAccess": bool,
@@ -87,7 +88,6 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                         "defaultUserQuotaInKiBs": 0,
                         "deleteBaseSnapshot": bool,
                         "effectiveNetworkFeatures": "str",
-                        "enableSubvolumes": "str",
                         "encrypted": bool,
                         "encryptionKeySource": "str",
                         "exportPolicy": {
@@ -120,6 +120,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                         "kerberosEnabled": bool,
                         "keyVaultPrivateEndpointResourceId": "str",
                         "ldapEnabled": bool,
+                        "ldapServerType": "str",
                         "maximumNumberOfFiles": 0,
                         "mountTargets": [
                             {"fileSystemId": "str", "ipAddress": "str", "mountTargetId": "str", "smbServerFqdn": "str"}
@@ -138,6 +139,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                         "smbContinuouslyAvailable": bool,
                         "smbEncryption": bool,
                         "smbNonBrowsable": "str",
+                        "smbOplocks": "str",
                         "snapshotDirectoryVisible": bool,
                         "snapshotId": "str",
                         "storageToNetworkProximity": "str",
@@ -220,6 +222,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                         "serviceLevel": "str",
                         "smbAccessBasedEnumeration": "str",
                         "smbNonBrowsable": "str",
+                        "smbOplocks": "str",
                         "snapshotDirectoryVisible": bool,
                         "throughputMibps": 0.0,
                         "unixPermissions": "str",

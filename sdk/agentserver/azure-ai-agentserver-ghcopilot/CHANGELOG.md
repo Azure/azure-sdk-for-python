@@ -1,5 +1,14 @@
 # Release History
 
+## 1.0.0b3 (2026-06-23)
+
+### Breaking Changes
+
+- **This package has been deprecated.** It will no longer receive updates or bug fixes.
+- All dependencies have been removed. This package is now an empty placeholder to reserve the name on PyPI.
+- The integration test agent has been removed.
+- Users should migrate to `azure-ai-agentserver-core` and `azure-ai-agentserver-responses` directly.
+
 ## 1.0.0b2 (2026-04-24)
 
 ### Breaking Changes

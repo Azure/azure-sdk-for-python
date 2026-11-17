@@ -42,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/ValidateOwnershipVouchers_ByResourceGroup.json
+# x-ms-original-file: 2026-10-01/ValidateOwnershipVouchers_ByResourceGroup.json
 if __name__ == "__main__":
     main()

@@ -18,6 +18,7 @@ from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.spark import Spark
 from azure.ai.ml.exceptions import JobException
 from azure.core.exceptions import HttpResponseError
+from azure.core.serialization import as_attribute_dict
 
 from .._util import (
     _PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND,
@@ -513,7 +514,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert on the number of converted jobs to make sure we didn't drop the command job
         assert len(created_job.jobs.items()) == converted_jobs
 
-        pipeline_dict = created_job._to_rest_object().as_dict()
+        pipeline_dict = as_attribute_dict(created_job._to_rest_object())
         actual_dict = pydash.omit(pipeline_dict["properties"], *fields_to_omit)
         assert actual_dict == expected_dict
 
@@ -525,7 +526,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "tabular_input_e2e.yml",
         ],
     )
-    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_job_with_parallel_job(
         self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
     ) -> None:
@@ -550,7 +550,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "file_component_literal_input_e2e.yml",
         ],
     )
-    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_job_with_parallel_component_job_bind_to_literal_input(
         self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
     ) -> None:
@@ -569,7 +568,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert on the number of converted jobs to make sure we didn't drop the parallel job
         assert len(created_job.jobs.items()) == 1
 
-    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_job_with_parallel_job_with_input_bindings(self, client: MLClient, randstr: Callable[[str], str]):
         yaml_path = "tests/test_configs/pipeline_jobs/pipeline_job_with_parallel_job_with_input_bindings.yml"
 
@@ -620,7 +618,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert on the number of converted jobs to make sure we didn't drop the parallel job
         assert len(created_job.jobs.items()) == 3
 
-    @pytest.mark.skip("Will renable when parallel e2e recording issue is fixed")
     def test_pipeline_job_with_command_job_with_dataset_short_uri(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
@@ -1352,7 +1349,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         test_path = "./tests/test_configs/pipeline_jobs/pipeline_component_job.yml"
         job: PipelineJob = load_job(source=test_path)
         rest_job = assert_job_cancel(job, client)
-        pipeline_dict = rest_job._to_rest_object().as_dict()["properties"]
+        pipeline_dict = as_attribute_dict(rest_job._to_rest_object())["properties"]
         assert pipeline_dict["component_id"]
         assert pipeline_dict["inputs"] == {
             "component_in_number": {"job_input_type": "literal", "value": "10"},
@@ -1376,7 +1373,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
         pipeline_node.settings.default_compute = "cpu-cluster"
         rest_job = assert_job_cancel(pipeline_node, client)
-        pipeline_dict = rest_job._to_rest_object().as_dict()["properties"]
+        pipeline_dict = as_attribute_dict(rest_job._to_rest_object())["properties"]
         assert pipeline_dict["component_id"]
         assert pipeline_dict["inputs"] == {
             "component_in_number": {"job_input_type": "literal", "value": "10"},

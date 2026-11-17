@@ -23,14 +23,14 @@ class ConfidentialLedgerClientConfiguration:  # pylint: disable=too-many-instanc
      `https://contoso.confidentialledger.azure.com <https://contoso.confidentialledger.azure.com>`_.
      Required.
     :type ledger_endpoint: str
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2024-12-09-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-02-23"
+     and None. Default value is "2026-02-23". If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, ledger_endpoint: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-12-09-preview")
+        api_version: str = kwargs.pop("api_version", "2026-02-23")
 
         if ledger_endpoint is None:
             raise ValueError("Parameter 'ledger_endpoint' must not be None.")

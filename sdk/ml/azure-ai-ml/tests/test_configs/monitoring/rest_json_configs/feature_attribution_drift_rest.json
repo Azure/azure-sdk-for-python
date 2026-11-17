@@ -19,7 +19,6 @@
             "testSignal": {
               "signalType": "FeatureAttributionDrift",
               "mode": "Enabled",
-              "modelType": "classification",
               "productionData": [
                 {
                   "inputDataType": "Trailing",

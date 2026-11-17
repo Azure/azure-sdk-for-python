@@ -26,7 +26,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
         response = await self.client.private_endpoints.get(
             resource_group_name=resource_group.name,
             private_endpoint_name="str",
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -57,6 +57,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                 "type": "str",
                             }
                         ],
+                        "billingSku": "str",
                         "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                         "customNetworkInterfaceName": "str",
                         "ipConfigurations": [
@@ -74,6 +75,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                 "id": "str",
                                 "name": "str",
                                 "properties": {
+                                    "approvalReference": {"privateEndpointId": "str"},
                                     "groupIds": ["str"],
                                     "privateLinkServiceConnectionState": {
                                         "actionsRequired": "str",
@@ -237,6 +239,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     "name": "str",
                                                     "properties": {
                                                         "ddosSettings": {
+                                                            "ddosCustomPolicy": {"id": "str"},
                                                             "ddosProtectionPlan": {"id": "str"},
                                                             "protectionMode": "str",
                                                         },
@@ -524,6 +527,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                "disablePeeringRoute": "str",
                                                                                 "provisioningState": "str",
                                                                                 "resourceGuid": "str",
                                                                                 "routes": [
@@ -535,6 +539,11 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                             "nextHopType": "str",
                                                                                             "addressPrefix": "str",
                                                                                             "hasBgpOverride": bool,
+                                                                                            "nextHop": {
+                                                                                                "nextHopIpAddresses": [
+                                                                                                    "str"
+                                                                                                ]
+                                                                                            },
                                                                                             "nextHopIpAddress": "str",
                                                                                             "provisioningState": "str",
                                                                                         },
@@ -612,7 +621,13 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                 },
                                                             },
                                                         },
-                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                        "ipTags": [
+                                                            {
+                                                                "firstPartyServiceTagId": "str",
+                                                                "ipTagType": "str",
+                                                                "tag": "str",
+                                                            }
+                                                        ],
                                                         "linkedPublicIPAddress": ...,
                                                         "migrationPhase": "str",
                                                         "natGateway": {
@@ -622,6 +637,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             "name": "str",
                                                             "properties": {
                                                                 "idleTimeoutInMinutes": 0,
+                                                                "nat64": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -643,6 +659,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                         "publicIPPrefix": {"id": "str"},
                                                         "resourceGuid": "str",
                                                         "servicePublicIPAddress": ...,
+                                                        "upgradedToV2": bool,
                                                     },
                                                     "sku": {"name": "str", "tier": "str"},
                                                     "tags": {"str": "str"},
@@ -715,6 +732,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -729,7 +747,11 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                             "ipAddress": "str",
                                                                             "ipConfiguration": ...,
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -740,6 +762,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -769,6 +792,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -975,6 +999,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             "name": "str",
                                                             "properties": {
                                                                 "disableBgpRoutePropagation": bool,
+                                                                "disablePeeringRoute": "str",
                                                                 "provisioningState": "str",
                                                                 "resourceGuid": "str",
                                                                 "routes": [
@@ -986,6 +1011,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                             "nextHopType": "str",
                                                                             "addressPrefix": "str",
                                                                             "hasBgpOverride": bool,
+                                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                             "nextHopIpAddress": "str",
                                                                             "provisioningState": "str",
                                                                         },
@@ -1069,6 +1095,8 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                                    "enableConnectionTracking": bool,
                                                                     "gatewayLoadBalancer": {"id": "str"},
                                                                     "inboundNatPools": [{"id": "str"}],
                                                                     "inboundNatRules": [{"id": "str"}],
@@ -1089,6 +1117,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -1394,6 +1423,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                                    "disablePeeringRoute": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "resourceGuid": "str",
                                                                                                     "routes": [
@@ -1405,6 +1435,11 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                                                 "nextHopType": "str",
                                                                                                                 "addressPrefix": "str",
                                                                                                                 "hasBgpOverride": bool,
+                                                                                                                "nextHop": {
+                                                                                                                    "nextHopIpAddresses": [
+                                                                                                                        "str"
+                                                                                                                    ]
+                                                                                                                },
                                                                                                                 "nextHopIpAddress": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                             },
@@ -1495,7 +1530,11 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -1506,6 +1545,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -1535,6 +1575,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -1608,6 +1649,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -1625,6 +1669,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                                 "ipConfiguration": ...,
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -1638,6 +1683,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -1689,6 +1735,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -1925,6 +1972,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                    "disablePeeringRoute": "str",
                                                                                     "provisioningState": "str",
                                                                                     "resourceGuid": "str",
                                                                                     "routes": [
@@ -1936,6 +1984,11 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                                 "nextHopType": "str",
                                                                                                 "addressPrefix": "str",
                                                                                                 "hasBgpOverride": bool,
+                                                                                                "nextHop": {
+                                                                                                    "nextHopIpAddresses": [
+                                                                                                        "str"
+                                                                                                    ]
+                                                                                                },
                                                                                                 "nextHopIpAddress": "str",
                                                                                                 "provisioningState": "str",
                                                                                             },
@@ -2261,6 +2314,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -2275,7 +2329,11 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                             "ipAddress": "str",
                                                                             "ipConfiguration": ...,
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -2286,6 +2344,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -2315,6 +2374,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -2359,6 +2419,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             "name": "str",
                                                             "properties": {
                                                                 "disableBgpRoutePropagation": bool,
+                                                                "disablePeeringRoute": "str",
                                                                 "provisioningState": "str",
                                                                 "resourceGuid": "str",
                                                                 "routes": [
@@ -2370,6 +2431,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                             "nextHopType": "str",
                                                                             "addressPrefix": "str",
                                                                             "hasBgpOverride": bool,
+                                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                             "nextHopIpAddress": "str",
                                                                             "provisioningState": "str",
                                                                         },
@@ -2539,6 +2601,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -2556,6 +2621,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                     "ipConfiguration": ...,
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -2569,6 +2635,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -2602,6 +2669,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -2815,6 +2883,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "disableBgpRoutePropagation": bool,
+                                                                        "disablePeeringRoute": "str",
                                                                         "provisioningState": "str",
                                                                         "resourceGuid": "str",
                                                                         "routes": [
@@ -2826,6 +2895,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                     "nextHopType": "str",
                                                                                     "addressPrefix": "str",
                                                                                     "hasBgpOverride": bool,
+                                                                                    "nextHop": {
+                                                                                        "nextHopIpAddresses": ["str"]
+                                                                                    },
                                                                                     "nextHopIpAddress": "str",
                                                                                     "provisioningState": "str",
                                                                                 },
@@ -2909,6 +2981,8 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     "id": "str",
                                                     "name": "str",
                                                     "properties": {
+                                                        "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                        "enableConnectionTracking": bool,
                                                         "gatewayLoadBalancer": {"id": "str"},
                                                         "inboundNatPools": [{"id": "str"}],
                                                         "inboundNatRules": [{"id": "str"}],
@@ -2926,6 +3000,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             "name": "str",
                                                             "properties": {
                                                                 "ddosSettings": {
+                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                     "protectionMode": "str",
                                                                 },
@@ -3219,6 +3294,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "disableBgpRoutePropagation": bool,
+                                                                                        "disablePeeringRoute": "str",
                                                                                         "provisioningState": "str",
                                                                                         "resourceGuid": "str",
                                                                                         "routes": [
@@ -3230,6 +3306,11 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                                     "nextHopType": "str",
                                                                                                     "addressPrefix": "str",
                                                                                                     "hasBgpOverride": bool,
+                                                                                                    "nextHop": {
+                                                                                                        "nextHopIpAddresses": [
+                                                                                                            "str"
+                                                                                                        ]
+                                                                                                    },
                                                                                                     "nextHopIpAddress": "str",
                                                                                                     "provisioningState": "str",
                                                                                                 },
@@ -3309,7 +3390,13 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                         },
                                                                     },
                                                                 },
-                                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                "ipTags": [
+                                                                    {
+                                                                        "firstPartyServiceTagId": "str",
+                                                                        "ipTagType": "str",
+                                                                        "tag": "str",
+                                                                    }
+                                                                ],
                                                                 "linkedPublicIPAddress": ...,
                                                                 "migrationPhase": "str",
                                                                 "natGateway": {
@@ -3319,6 +3406,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "idleTimeoutInMinutes": 0,
+                                                                        "nat64": "str",
                                                                         "provisioningState": "str",
                                                                         "publicIpAddresses": [{"id": "str"}],
                                                                         "publicIpAddressesV6": [{"id": "str"}],
@@ -3340,6 +3428,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                 "publicIPPrefix": {"id": "str"},
                                                                 "resourceGuid": "str",
                                                                 "servicePublicIPAddress": ...,
+                                                                "upgradedToV2": bool,
                                                             },
                                                             "sku": {"name": "str", "tier": "str"},
                                                             "tags": {"str": "str"},
@@ -3413,6 +3502,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -3430,6 +3522,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                     "ipConfiguration": ...,
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -3443,6 +3536,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -3476,6 +3570,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -3689,6 +3784,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "disableBgpRoutePropagation": bool,
+                                                                        "disablePeeringRoute": "str",
                                                                         "provisioningState": "str",
                                                                         "resourceGuid": "str",
                                                                         "routes": [
@@ -3700,6 +3796,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                     "nextHopType": "str",
                                                                                     "addressPrefix": "str",
                                                                                     "hasBgpOverride": bool,
+                                                                                    "nextHop": {
+                                                                                        "nextHopIpAddresses": ["str"]
+                                                                                    },
                                                                                     "nextHopIpAddress": "str",
                                                                                     "provisioningState": "str",
                                                                                 },
@@ -3824,6 +3923,8 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                                "enableConnectionTracking": bool,
                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                 "inboundNatPools": [{"id": "str"}],
                                                                 "inboundNatRules": [{"id": "str"}],
@@ -3841,6 +3942,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -4142,6 +4244,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                                "disablePeeringRoute": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "resourceGuid": "str",
                                                                                                 "routes": [
@@ -4153,6 +4256,11 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                                             "nextHopType": "str",
                                                                                                             "addressPrefix": "str",
                                                                                                             "hasBgpOverride": bool,
+                                                                                                            "nextHop": {
+                                                                                                                "nextHopIpAddresses": [
+                                                                                                                    "str"
+                                                                                                                ]
+                                                                                                            },
                                                                                                             "nextHopIpAddress": "str",
                                                                                                             "provisioningState": "str",
                                                                                                         },
@@ -4234,7 +4342,13 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                 },
                                                                             },
                                                                         },
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -4244,6 +4358,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -4265,6 +4380,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -4338,6 +4454,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -4355,6 +4474,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                             "ipConfiguration": ...,
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -4368,6 +4488,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -4405,6 +4526,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -4637,6 +4759,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                "disablePeeringRoute": "str",
                                                                                 "provisioningState": "str",
                                                                                 "resourceGuid": "str",
                                                                                 "routes": [
@@ -4648,6 +4771,11 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                             "nextHopType": "str",
                                                                                             "addressPrefix": "str",
                                                                                             "hasBgpOverride": bool,
+                                                                                            "nextHop": {
+                                                                                                "nextHopIpAddresses": [
+                                                                                                    "str"
+                                                                                                ]
+                                                                                            },
                                                                                             "nextHopIpAddress": "str",
                                                                                             "provisioningState": "str",
                                                                                         },
@@ -4855,6 +4983,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -5156,6 +5285,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                                "disablePeeringRoute": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "resourceGuid": "str",
                                                                                                 "routes": [
@@ -5167,6 +5297,11 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                                             "nextHopType": "str",
                                                                                                             "addressPrefix": "str",
                                                                                                             "hasBgpOverride": bool,
+                                                                                                            "nextHop": {
+                                                                                                                "nextHopIpAddresses": [
+                                                                                                                    "str"
+                                                                                                                ]
+                                                                                                            },
                                                                                                             "nextHopIpAddress": "str",
                                                                                                             "provisioningState": "str",
                                                                                                         },
@@ -5248,7 +5383,13 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                 },
                                                                             },
                                                                         },
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -5258,6 +5399,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -5279,6 +5421,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -5351,6 +5494,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -5368,6 +5514,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                             "ipConfiguration": ...,
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -5381,6 +5528,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -5418,6 +5566,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -5650,6 +5799,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                "disablePeeringRoute": "str",
                                                                                 "provisioningState": "str",
                                                                                 "resourceGuid": "str",
                                                                                 "routes": [
@@ -5661,6 +5811,11 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                             "nextHopType": "str",
                                                                                             "addressPrefix": "str",
                                                                                             "hasBgpOverride": bool,
+                                                                                            "nextHop": {
+                                                                                                "nextHopIpAddresses": [
+                                                                                                    "str"
+                                                                                                ]
+                                                                                            },
                                                                                             "nextHopIpAddress": "str",
                                                                                             "provisioningState": "str",
                                                                                         },
@@ -5766,6 +5921,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                 "id": "str",
                                 "name": "str",
                                 "properties": {
+                                    "approvalReference": {"privateEndpointId": "str"},
                                     "groupIds": ["str"],
                                     "privateLinkServiceConnectionState": {
                                         "actionsRequired": "str",
@@ -5837,6 +5993,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                 "name": "str",
                                                 "properties": {
                                                     "ddosSettings": {
+                                                        "ddosCustomPolicy": {"id": "str"},
                                                         "ddosProtectionPlan": {"id": "str"},
                                                         "protectionMode": "str",
                                                     },
@@ -5850,7 +6007,13 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     "idleTimeoutInMinutes": 0,
                                                     "ipAddress": "str",
                                                     "ipConfiguration": ...,
-                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                    "ipTags": [
+                                                        {
+                                                            "firstPartyServiceTagId": "str",
+                                                            "ipTagType": "str",
+                                                            "tag": "str",
+                                                        }
+                                                    ],
                                                     "linkedPublicIPAddress": ...,
                                                     "migrationPhase": "str",
                                                     "natGateway": {
@@ -5860,6 +6023,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                         "name": "str",
                                                         "properties": {
                                                             "idleTimeoutInMinutes": 0,
+                                                            "nat64": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -5881,6 +6045,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     "publicIPPrefix": {"id": "str"},
                                                     "resourceGuid": "str",
                                                     "servicePublicIPAddress": ...,
+                                                    "upgradedToV2": bool,
                                                 },
                                                 "sku": {"name": "str", "tier": "str"},
                                                 "tags": {"str": "str"},
@@ -6148,6 +6313,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -6172,7 +6338,13 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                 "subnet": ...,
                                                                             },
                                                                         },
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -6182,6 +6354,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -6203,6 +6376,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -6222,6 +6396,12 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -6246,6 +6426,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -6274,6 +6457,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -6287,6 +6471,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -6324,6 +6509,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -6405,6 +6591,10 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"}
+                                                                        },
+                                                                        "enableConnectionTracking": bool,
                                                                         "gatewayLoadBalancer": {"id": "str"},
                                                                         "inboundNatPools": [{"id": "str"}],
                                                                         "inboundNatRules": [{"id": "str"}],
@@ -6425,6 +6615,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -6450,7 +6641,11 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -6461,6 +6656,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -6492,6 +6688,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -6551,6 +6748,10 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"}
+                                                                                },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -6571,6 +6772,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -6599,6 +6803,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -6612,6 +6817,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -6647,6 +6853,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -6818,6 +7025,9 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -6846,6 +7056,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -6859,6 +7070,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -6894,6 +7106,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -7012,6 +7225,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                     "name": "str",
                                     "properties": {
                                         "disableBgpRoutePropagation": bool,
+                                        "disablePeeringRoute": "str",
                                         "provisioningState": "str",
                                         "resourceGuid": "str",
                                         "routes": [
@@ -7023,6 +7237,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                                                     "nextHopType": "str",
                                                     "addressPrefix": "str",
                                                     "hasBgpOverride": bool,
+                                                    "nextHop": {"nextHopIpAddresses": ["str"]},
                                                     "nextHopIpAddress": "str",
                                                     "provisioningState": "str",
                                                 },
@@ -7098,7 +7313,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-05-01",
+                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -7112,7 +7327,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
             await self.client.private_endpoints.begin_delete(
                 resource_group_name=resource_group.name,
                 private_endpoint_name="str",
-                api_version="2025-05-01",
+                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -7124,7 +7339,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
     async def test_private_endpoints_list(self, resource_group):
         response = self.client.private_endpoints.list(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -7134,7 +7349,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
     @recorded_by_proxy_async
     async def test_private_endpoints_list_by_subscription(self, resource_group):
         response = self.client.private_endpoints.list_by_subscription(
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

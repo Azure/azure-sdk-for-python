@@ -4,10 +4,10 @@
 import re
 from typing import Dict, List, Tuple, Type, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Mpi, PyTorch, Ray, TensorFlow
+from azure.ai.ml._restclient.arm_ml_service.models import InputDeliveryMode
+from azure.ai.ml._restclient.arm_ml_service.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.arm_ml_service.models import JobOutput as RestJobOutput
+from azure.ai.ml._utils.utils import snake_to_camel
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
@@ -150,7 +150,15 @@ def from_dict_to_rest_io(
                         val["asset_name"] = val.pop("name")
                     if "version" in val.keys():
                         val["asset_version"] = val.pop("version")
-                rest_obj = rest_object_class.from_dict(val)
+                if hasattr(rest_object_class, "from_dict"):
+                    # msrest model: ``from_dict`` accepts the snake_case ``val`` directly.
+                    rest_obj = rest_object_class.from_dict(val)
+                else:
+                    # arm_ml_service hybrid model: it has no ``from_dict`` and ``_deserialize`` needs
+                    # camelCase wire keys, so convert the snake_case ``val`` first. This rebuilds the
+                    # correct discriminated subtype (e.g. UriFileJobInput) just like msrest did.
+                    camel_val = {snake_to_camel(k): v for k, v in val.items()}
+                    rest_obj = rest_object_class._deserialize(camel_val, [])  # pylint: disable=protected-access
                 rest_io_objects[key] = rest_obj
         else:
             msg = "Got unsupported type of input/output: {}:" + f"{type(val)}"
@@ -161,22 +169,3 @@ def from_dict_to_rest_io(
                 error_category=ErrorCategory.USER_ERROR,
             )
     return io_bindings, rest_io_objects
-
-
-def from_dict_to_rest_distribution(distribution_dict: Dict) -> Union[PyTorch, Mpi, TensorFlow, Ray]:
-    target_type = distribution_dict["distribution_type"].lower()
-    if target_type == "pytorch":
-        return PyTorch(**distribution_dict)
-    if target_type == "mpi":
-        return Mpi(**distribution_dict)
-    if target_type == "tensorflow":
-        return TensorFlow(**distribution_dict)
-    if target_type == "ray":
-        return Ray(**distribution_dict)
-    msg = "Distribution type must be pytorch, mpi, tensorflow or ray: {}".format(target_type)
-    raise ValidationException(
-        message=msg,
-        no_personal_data_message=msg,
-        target=ErrorTarget.PIPELINE,
-        error_category=ErrorCategory.USER_ERROR,
-    )

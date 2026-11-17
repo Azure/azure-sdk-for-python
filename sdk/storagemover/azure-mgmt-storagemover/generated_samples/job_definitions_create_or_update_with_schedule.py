@@ -51,7 +51,7 @@ def main():
                     "executionTime": {"hour": 9, "minute": 0},
                     "frequency": "Weekly",
                     "isActive": True,
-                    "startDate": "2025-12-01T00:00:00Z",
+                    "startDate": "2026-05-01T00:00:00Z",
                 },
                 "sourceName": "examples-sourceEndpointName",
                 "sourceSubpath": "/",
@@ -63,6 +63,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-12-01/JobDefinitions_CreateOrUpdate_With_Schedule.json
+# x-ms-original-file: 2026-05-01/JobDefinitions_CreateOrUpdate_With_Schedule.json
 if __name__ == "__main__":
     main()

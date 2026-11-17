@@ -33,7 +33,6 @@ from sample_utils import (
     print_retrieval_summary,
 )
 
-
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 key = os.environ["AZURE_SEARCH_API_KEY"]
 run_tag = get_sample_run_tag()

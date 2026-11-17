@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-09-01-preview",
+  "apiVersions": {
+    "Microsoft.Fabric": "2026-09-01-preview"
+  },
+  "commit": "a5f26c6c3fb4ee06fdfaf038cb10af909ace7551",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/fabric/resource-manager/Microsoft.Fabric/Fabric",
+  "emitterVersion": "0.63.7",
+  "httpClientPythonVersion": "^0.37.2"
+}

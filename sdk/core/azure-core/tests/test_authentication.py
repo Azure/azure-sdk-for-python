@@ -7,7 +7,12 @@ from collections import namedtuple
 import base64
 import time
 from itertools import product
+from unittest.mock import Mock, patch
+
 from requests import Response
+from utils import HTTP_REQUESTS
+import pytest
+
 import azure.core
 from azure.core.credentials import (
     AccessToken,
@@ -33,11 +38,6 @@ from azure.core.pipeline.policies._authentication import (
     MAX_REFRESH_JITTER_SECONDS,
     _should_refresh_token,
 )
-from utils import HTTP_REQUESTS
-
-import pytest
-
-from unittest.mock import Mock, patch
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -699,7 +699,7 @@ combinations = [
 ]
 
 
-@pytest.mark.parametrize("combinations,http_request", product(combinations, HTTP_REQUESTS))
+@pytest.mark.parametrize("combinations,http_request", list(product(combinations, HTTP_REQUESTS)))
 def test_azure_sas_credential_policy(combinations, http_request):
     """Tests to see if we can create an AzureSasCredentialPolicy"""
     sas, url, expected_url = combinations

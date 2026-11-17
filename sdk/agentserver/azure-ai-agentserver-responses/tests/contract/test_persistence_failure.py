@@ -63,25 +63,25 @@ class _FailingProvider:
         input_items: Iterable[Any] | None,
         history_item_ids: Iterable[str] | None,
         *,
-        isolation: Any = None,
+        context: Any = None,
     ) -> None:
         self.create_called = True
         if self.fail_on_create:
             raise RuntimeError("Simulated storage failure")
-        return await self._inner.create_response(response, input_items, history_item_ids, isolation=isolation)
+        return await self._inner.create_response(response, input_items, history_item_ids, context=context)
 
-    async def update_response(self, response: Any, *, isolation: Any = None) -> None:
+    async def update_response(self, response: Any, *, context: Any = None) -> None:
         self.update_called = True
         if self.fail_on_update:
             raise RuntimeError("Simulated storage failure")
-        return await self._inner.update_response(response, isolation=isolation)
+        return await self._inner.update_response(response, context=context)
 
-    async def get_response(self, response_id: str, *, isolation: Any = None) -> Any:
-        return await self._inner.get_response(response_id, isolation=isolation)
+    async def get_response(self, response_id: str, *, context: Any = None) -> Any:
+        return await self._inner.get_response(response_id, context=context)
 
-    async def delete_response(self, response_id: str, *, isolation: Any = None) -> None:
+    async def delete_response(self, response_id: str, *, context: Any = None) -> None:
         self.delete_called = True
-        return await self._inner.delete_response(response_id, isolation=isolation)
+        return await self._inner.delete_response(response_id, context=context)
 
     async def get_history_item_ids(
         self,
@@ -89,9 +89,9 @@ class _FailingProvider:
         before: str | None,
         limit: int,
         *,
-        isolation: Any = None,
+        context: Any = None,
     ) -> list[str] | None:
-        return await self._inner.get_history_item_ids(response_id, before, limit, isolation=isolation)
+        return await self._inner.get_history_item_ids(response_id, before, limit, context=context)
 
     async def get_input_items(
         self,
@@ -99,23 +99,23 @@ class _FailingProvider:
         *,
         limit: int = 100,
         ascending: bool = True,
-        isolation: Any = None,
+        context: Any = None,
     ) -> list[Any]:
-        return await self._inner.get_input_items(response_id, limit=limit, ascending=ascending, isolation=isolation)
+        return await self._inner.get_input_items(response_id, limit=limit, ascending=ascending, context=context)
 
     # ResponseStreamProviderProtocol delegation
-    async def save_stream_events(self, response_id: str, events: Any, *, isolation: Any = None) -> None:
+    async def save_stream_events(self, response_id: str, events: Any, *, context: Any = None) -> None:
         if hasattr(self._inner, "save_stream_events"):
-            return await self._inner.save_stream_events(response_id, events, isolation=isolation)
+            return await self._inner.save_stream_events(response_id, events, context=context)
 
-    async def get_stream_events(self, response_id: str, *, isolation: Any = None) -> Any:
+    async def get_stream_events(self, response_id: str, *, context: Any = None) -> Any:
         if hasattr(self._inner, "get_stream_events"):
-            return await self._inner.get_stream_events(response_id, isolation=isolation)
+            return await self._inner.get_stream_events(response_id, context=context)
         return None
 
-    async def delete_stream_events(self, response_id: str, *, isolation: Any = None) -> None:
+    async def delete_stream_events(self, response_id: str, *, context: Any = None) -> None:
         if hasattr(self._inner, "delete_stream_events"):
-            return await self._inner.delete_stream_events(response_id, isolation=isolation)
+            return await self._inner.delete_stream_events(response_id, context=context)
 
 
 def _make_app_with_failing_provider(
@@ -278,7 +278,7 @@ class _AsyncAsgiClient:
 # ── Handlers ─────────────────────────────────────────────────────────────────
 
 
-def _simple_completed_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _simple_completed_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits created + output + completed."""
 
     async def _events():
@@ -439,11 +439,23 @@ class TestBgStreamPhase1CreateFails:
 
 
 class TestBgStreamPhase2UpdateFails:
-    """§3.4: Phase 2 UpdateResponse failure → replace terminal with response.failed."""
+    """§3.4 (in-process fallback, async terminal persist): the terminal
+    ``response.completed`` is emitted to the client BEFORE the terminal
+    provider write, so a Phase-2 update failure no longer replaces the wire
+    terminal. The client sees ``response.completed`` and the storage failure
+    surfaces on a subsequent GET (covered by
+    ``test_async_terminal_persist.TestAsyncTerminalPersist.test_deferred_update_failure_surfaces_via_get``).
+
+    This is the deliberate warm-latency optimization for the non-resilient
+    in-process streaming path: the ~storage-write round-trip is moved off the
+    client's last-byte path. The resilient path (buffer-then-persist-then-yield)
+    is unchanged and still replaces the terminal on failure.
+    """
 
     @pytest.mark.asyncio
     async def test_bg_stream_phase2_update_fails(self) -> None:
-        """SSE stream ends with response.failed + storage_error after Phase 2 failure."""
+        """SSE stream ends with response.completed; the Phase-2 update failure
+        does NOT alter the wire terminal (deferred off the last-byte path)."""
         app, provider = _make_app_with_failing_provider(
             _simple_completed_handler,
             fail_on_update=True,  # Phase 1 create succeeds, Phase 2 update fails
@@ -468,20 +480,18 @@ class TestBgStreamPhase2UpdateFails:
         # response.created SHOULD be present (Phase 1 succeeded)
         assert "response.created" in event_types, f"Missing response.created in {event_types}"
 
-        # Should NOT contain response.completed (replaced by response.failed)
-        assert "response.completed" not in event_types, f"Unexpected response.completed in {event_types}"
+        # The wire terminal is now the success terminal — the deferred terminal
+        # write happens AFTER the stream is closed, so a Phase-2 update failure
+        # cannot replace it on the wire.
+        assert "response.completed" in event_types, f"Missing response.completed in {event_types}"
+        assert "response.failed" not in event_types, f"Unexpected response.failed in {event_types}"
 
-        # Last event should be response.failed with storage_error
+        # Output is present on the success terminal.
         last_event = events[-1]
-        assert last_event["type"] == "response.failed", f"Last event type: {last_event['type']}"
-
+        assert last_event["type"] == "response.completed", f"Last event type: {last_event['type']}"
         resp_data = last_event["data"].get("response", last_event["data"])
-        assert resp_data.get("status") == "failed"
-        error = resp_data.get("error", {})
-        assert error.get("code") == "storage_error"
-
-        # Output should be cleared
-        assert resp_data.get("output") == [] or resp_data.get("output") is None
+        output_items = resp_data.get("output") or []
+        assert any("Hello, world!" in str(item) for item in output_items), f"Output not preserved: {output_items}"
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -531,7 +541,11 @@ class TestBgNonStreamPhase2UpdateFails:
         assert terminal_reached, f"Response did not reach terminal state, last: {terminal_body}"
         assert terminal_body["status"] == "failed"
         assert terminal_body.get("error", {}).get("code") == "storage_error"
-        assert terminal_body.get("output") == [] or terminal_body.get("output") is None
+        # Output is PRESERVED (SOT: a ``failed`` response's output "may be
+        # partial"); the storage-error terminal overlays onto the handler's
+        # snapshot rather than discarding its produced output.
+        output_items = terminal_body.get("output") or []
+        assert any("Hello, world!" in str(item) for item in output_items), f"Output not preserved: {output_items}"
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

@@ -1,8 +1,62 @@
 # Release History
 
-## 12.27.0b1 (Unreleased)
+## 12.29.0b1 (Unreleased)
 
 ### Features Added
+
+## 12.28.0b1 (2026-11-05)
+
+### Breaking Changes
+- Changed the default `max_single_get_size` from 32 MiB to 4 MiB. This means the initial download request will now be 4 MiB rather than 32 MiB which may result in more requests than previous versions depending on file size. This also means some file downloads may use parallel requests when they were not previously, if `max_concurrency` is set greater than 1. To restore the previous behavior, pass `max_single_get_size = 32 * 1024 * 1024` when constructing the client.
+
+### Features Added
+- Added support for service versions 2026-12-06 and 2027-03-07.
+- Added support for FileId-based clients via `ShareClient`'s `get_file_client_by_file_id` and
+`get_directory_client_by_file_id` APIs, and a new `get_file_links` API to `ShareFileClient` that returns the hard links
+to a file (FileId-based clients only).
+- Added `creation_time` property to `ShareProperties`, which returns the time the share was created.
+
+### Bugs Fixed
+- Fixed an issue where a SAS generated for a file path containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
+
+## 12.27.1 (2026-10-29)
+
+### Bugs Fixed
+- Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_share_sas`,
+  `generate_file_sas`, and `ShareServiceClient.get_user_delegation_key` (sync and async).
+  Datetimes without timezone information continue to be treated as UTC.
+- Fixed an issue where certain headers were not being properly redacted when DEBUG logging was enabled.
+
+## 12.27.0 (2026-09-30)
+
+This version and all future versions will require Python 3.10+. Python 3.9 is no longer supported.
+
+### Breaking Changes
+- Custom transports that use legacy `azure-core` Request/Response types will no longer be supported and may now cause errors if used. Please ensure custom transports are utilizing types from `azure.core.rest`.
+
+### Features Added
+- Stable release of features from 12.27.0b1
+
+## 12.27.0b1 (2026-08-10)
+
+### Features Added
+- Added support for service version 2026-10-06.
+- Added `list_ranges` and `list_ranges_diff` APIs to `ShareFileClient` which return an auto-paging iterable of
+`FileRange` and support continuation tokens and `results_per_page` for enumerating file ranges across multiple
+service responses.
+
+### Other Changes
+- Deprecated `ShareFileClient`'s `get_ranges` and `get_ranges_diff` APIs in favor of `list_ranges` and
+`list_ranges_diff`.
+- Migrated generated code to use the new TypeSpec generator.
+
+### Bugs Fixed
+- Return type of get_share_access_policies is now the publicly exposed SignedIdentifier model containing the publicly exposed AccessPolicy model. Previously we were leaking the internal generated SignedIdentifier model without exposing it in the api.
+
+
+### Other Changes
+- Custom transports that use legacy azure-core Request/Response types will not be supported moving forward
+- Removed support for Python 3.9, Python 3.10 or later is required to use this package
 
 ## 12.26.0 (2026-06-08)
 

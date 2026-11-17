@@ -26,11 +26,10 @@ from starlette.testclient import TestClient
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
 
-
 # ─── Handlers ─────────────────────────────────────────────
 
 
-def _fast_sync_handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
+async def _fast_sync_handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
     """Handler that completes instantly with NO awaits between yields.
 
     This is the typical pattern when using ResponseEventStream — all
@@ -60,7 +59,7 @@ def _fast_sync_handler(request: Any, context: Any, cancellation_signal: Any) -> 
     return _events()
 
 
-def _minimal_sync_handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
+async def _minimal_sync_handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
     """Minimal handler: just created → completed, zero awaits."""
 
     async def _events():
@@ -99,9 +98,7 @@ class TestBgNonStreamPostStatus:
         )
         assert r.status_code == 200
         body = r.json()
-        assert body["status"] in ("in_progress", "queued"), (
-            f"Expected in_progress or queued but got {body['status']!r}"
-        )
+        assert body["status"] in ("in_progress", "queued"), f"Expected in_progress or queued but got {body['status']!r}"
 
     def test_post_returns_in_progress_with_minimal_handler(self) -> None:
         """Minimal created → completed handler must still return in_progress."""
@@ -121,9 +118,7 @@ class TestBgNonStreamPostStatus:
         )
         assert r.status_code == 200
         body = r.json()
-        assert body["status"] in ("in_progress", "queued"), (
-            f"Expected in_progress or queued but got {body['status']!r}"
-        )
+        assert body["status"] in ("in_progress", "queued"), f"Expected in_progress or queued but got {body['status']!r}"
 
     def test_post_returns_in_progress_not_completed_after_handler_finishes(self) -> None:
         """Even after the handler fully completes, the POST snapshot must

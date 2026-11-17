@@ -49,6 +49,9 @@ def main():
                                 {
                                     "diskId": "/subscriptions/7c943c1b-5122-4097-90c8-861411bdd574/resourcegroups/clustertestrg-19-01/providers/microsoft.compute/disks/sdgql0-osdisk",
                                     "primaryStagingAzureStorageAccountId": "/subscriptions/7c943c1b-5122-4097-90c8-861411bdd574/resourceGroups/clustertestrg-19-01/providers/Microsoft.Storage/storageAccounts/ix701lvaasrcache",
+                                    "recoveryDiskAccessId": "/subscriptions/7c943c1b-5122-4097-90c8-861411bdd574/resourceGroups/ClusterTestRG-19-01-asr/providers/Microsoft.Compute/diskAccesses/clusterDiskAccess",
+                                    "recoveryNetworkAccessPolicy": "AllowPrivate",
+                                    "recoveryPublicNetworkAccess": "Disabled",
                                     "recoveryResourceGroupId": "/subscriptions/7c943c1b-5122-4097-90c8-861411bdd574/resourceGroups/ClusterTestRG-19-01-asr",
                                 }
                             ],
@@ -60,6 +63,9 @@ def main():
                                 {
                                     "diskId": "/subscriptions/7c943c1b-5122-4097-90c8-861411bdd574/resourcegroups/clustertestrg-19-01/providers/microsoft.compute/disks/sdgql1-osdisk",
                                     "primaryStagingAzureStorageAccountId": "/subscriptions/7c943c1b-5122-4097-90c8-861411bdd574/resourceGroups/clustertestrg-19-01/providers/Microsoft.Storage/storageAccounts/ix701lvaasrcache",
+                                    "recoveryDiskAccessId": "/subscriptions/7c943c1b-5122-4097-90c8-861411bdd574/resourceGroups/ClusterTestRG-19-01-asr/providers/Microsoft.Compute/diskAccesses/clusterDiskAccess",
+                                    "recoveryNetworkAccessPolicy": "AllowPrivate",
+                                    "recoveryPublicNetworkAccess": "Disabled",
                                     "recoveryResourceGroupId": "/subscriptions/7c943c1b-5122-4097-90c8-861411bdd574/resourceGroups/ClusterTestRG-19-01-asr",
                                 }
                             ],
@@ -74,6 +80,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-01/ReplicationProtectionContainers_SwitchClusterProtection.json
+# x-ms-original-file: 2026-11-01/ReplicationProtectionContainers_SwitchClusterProtection.json
 if __name__ == "__main__":
     main()

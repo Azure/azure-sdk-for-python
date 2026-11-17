@@ -1,10 +1,11 @@
 {
-  "apiVersion": "2026-02-01-preview",
+  "apiVersion": "2026-06-01",
   "apiVersions": {
-    "Microsoft.Discovery": "2026-02-01-preview"
+    "Microsoft.Discovery": "2026-06-01"
   },
-  "commit": "52f2a91499f8a39cfcb50453a9b36b8c3a681ed8",
+  "commit": "801a60cdad2669e8f824fedfbabbfe7f7093b940",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/discovery/Discovery.Management",
-  "emitterVersion": "0.60.2"
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.34.2"
 }

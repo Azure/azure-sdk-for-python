@@ -15,11 +15,14 @@ if TYPE_CHECKING:
 from ._operations import Operations  # type: ignore
 from ._operations import CloudHsmClustersOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
+from ._operations import PaymentHsmClustersOperations  # type: ignore
+from ._operations import PaymentHsmClusterPrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import CloudHsmClusterPrivateLinkResourcesOperations  # type: ignore
 from ._operations import CloudHsmClusterBackupStatusOperations  # type: ignore
 from ._operations import CloudHsmClusterRestoreStatusOperations  # type: ignore
 from ._operations import CloudHsmClusterPrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import DedicatedHsmOperations  # type: ignore
+from ._operations import PaymentHsmClusterPrivateLinkResourcesOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -29,11 +32,14 @@ __all__ = [
     "Operations",
     "CloudHsmClustersOperations",
     "PrivateEndpointConnectionsOperations",
+    "PaymentHsmClustersOperations",
+    "PaymentHsmClusterPrivateEndpointConnectionsOperations",
     "CloudHsmClusterPrivateLinkResourcesOperations",
     "CloudHsmClusterBackupStatusOperations",
     "CloudHsmClusterRestoreStatusOperations",
     "CloudHsmClusterPrivateEndpointConnectionsOperations",
     "DedicatedHsmOperations",
+    "PaymentHsmClusterPrivateLinkResourcesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

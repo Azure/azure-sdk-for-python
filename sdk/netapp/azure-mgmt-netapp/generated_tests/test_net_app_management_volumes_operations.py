@@ -50,6 +50,7 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                     "avsDataStore": "str",
                     "backupId": "str",
                     "baremetalTenantId": "str",
+                    "breakthroughMode": "str",
                     "capacityPoolResourceId": "str",
                     "cloneProgress": 0,
                     "coolAccess": bool,
@@ -85,7 +86,6 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                     "defaultUserQuotaInKiBs": 0,
                     "deleteBaseSnapshot": bool,
                     "effectiveNetworkFeatures": "str",
-                    "enableSubvolumes": "str",
                     "encrypted": bool,
                     "encryptionKeySource": "str",
                     "exportPolicy": {
@@ -118,6 +118,7 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                     "kerberosEnabled": bool,
                     "keyVaultPrivateEndpointResourceId": "str",
                     "ldapEnabled": bool,
+                    "ldapServerType": "str",
                     "maximumNumberOfFiles": 0,
                     "mountTargets": [
                         {"fileSystemId": "str", "ipAddress": "str", "mountTargetId": "str", "smbServerFqdn": "str"}
@@ -136,6 +137,7 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                     "smbContinuouslyAvailable": bool,
                     "smbEncryption": bool,
                     "smbNonBrowsable": "str",
+                    "smbOplocks": "str",
                     "snapshotDirectoryVisible": bool,
                     "snapshotId": "str",
                     "storageToNetworkProximity": "str",
@@ -216,6 +218,7 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                     "serviceLevel": "str",
                     "smbAccessBasedEnumeration": "str",
                     "smbNonBrowsable": "str",
+                    "smbOplocks": "str",
                     "snapshotDirectoryVisible": bool,
                     "throughputMibps": 0.0,
                     "unixPermissions": "str",

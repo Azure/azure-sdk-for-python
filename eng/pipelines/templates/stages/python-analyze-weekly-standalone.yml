@@ -13,9 +13,10 @@ extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
     stages:
-      - ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
-        - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
-          parameters:
-            ServiceDirectory: ${{ parameters.ServiceDirectory }}
-            BuildTargetingString: ${{ parameters.BuildTargetingString }}
-            JobName: ${{ parameters.JobName }}
+      # The shared template checks whether the scheduled run started on a weekend (UTC).
+      - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          JobName: ${{ parameters.JobName }}
+          Condition: and(succeeded(), eq(variables['Build.Reason'], 'Schedule'))

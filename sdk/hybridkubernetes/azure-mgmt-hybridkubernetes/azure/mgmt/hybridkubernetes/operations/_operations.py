@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import ConnectedKubernetesClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,7 +40,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -465,7 +464,7 @@ class ConnectedClusterOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        connected_cluster: Union[_models.ConnectedCluster, JSON, IO[bytes]],
+        connected_cluster: Union[_models.ConnectedCluster, _types.ConnectedCluster, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -574,7 +573,7 @@ class ConnectedClusterOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        connected_cluster: JSON,
+        connected_cluster: _types.ConnectedCluster,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -590,7 +589,7 @@ class ConnectedClusterOperations:
         :param cluster_name: The name of the Kubernetes cluster on which get is called. Required.
         :type cluster_name: str
         :param connected_cluster: Parameters supplied to Create a Connected Cluster. Required.
-        :type connected_cluster: JSON
+        :type connected_cluster: ~azure.mgmt.hybridkubernetes.types.ConnectedCluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -636,7 +635,7 @@ class ConnectedClusterOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        connected_cluster: Union[_models.ConnectedCluster, JSON, IO[bytes]],
+        connected_cluster: Union[_models.ConnectedCluster, _types.ConnectedCluster, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ConnectedCluster]:
         """Register a new Kubernetes cluster with Azure Resource Manager.
@@ -649,10 +648,10 @@ class ConnectedClusterOperations:
         :type resource_group_name: str
         :param cluster_name: The name of the Kubernetes cluster on which get is called. Required.
         :type cluster_name: str
-        :param connected_cluster: Parameters supplied to Create a Connected Cluster. Is one of the
-         following types: ConnectedCluster, JSON, IO[bytes] Required.
-        :type connected_cluster: ~azure.mgmt.hybridkubernetes.models.ConnectedCluster or JSON or
-         IO[bytes]
+        :param connected_cluster: Parameters supplied to Create a Connected Cluster. Is either a
+         ConnectedCluster type or a IO[bytes] type. Required.
+        :type connected_cluster: ~azure.mgmt.hybridkubernetes.models.ConnectedCluster or
+         ~azure.mgmt.hybridkubernetes.types.ConnectedCluster or IO[bytes]
         :return: An instance of LROPoller that returns ConnectedCluster. The ConnectedCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.hybridkubernetes.models.ConnectedCluster]
@@ -728,7 +727,7 @@ class ConnectedClusterOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        connected_cluster_patch: Union[_models.ConnectedClusterPatch, JSON, IO[bytes]],
+        connected_cluster_patch: Union[_models.ConnectedClusterPatch, _types.ConnectedClusterPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -834,7 +833,7 @@ class ConnectedClusterOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        connected_cluster_patch: JSON,
+        connected_cluster_patch: _types.ConnectedClusterPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -849,7 +848,7 @@ class ConnectedClusterOperations:
         :param cluster_name: The name of the Kubernetes cluster on which get is called. Required.
         :type cluster_name: str
         :param connected_cluster_patch: Parameters supplied to update Connected Cluster. Required.
-        :type connected_cluster_patch: JSON
+        :type connected_cluster_patch: ~azure.mgmt.hybridkubernetes.types.ConnectedClusterPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -908,7 +907,7 @@ class ConnectedClusterOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        connected_cluster_patch: Union[_models.ConnectedClusterPatch, JSON, IO[bytes]],
+        connected_cluster_patch: Union[_models.ConnectedClusterPatch, _types.ConnectedClusterPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ConnectedCluster]:
         """Updates a connected cluster.
@@ -920,10 +919,10 @@ class ConnectedClusterOperations:
         :type resource_group_name: str
         :param cluster_name: The name of the Kubernetes cluster on which get is called. Required.
         :type cluster_name: str
-        :param connected_cluster_patch: Parameters supplied to update Connected Cluster. Is one of the
-         following types: ConnectedClusterPatch, JSON, IO[bytes] Required.
+        :param connected_cluster_patch: Parameters supplied to update Connected Cluster. Is either a
+         ConnectedClusterPatch type or a IO[bytes] type. Required.
         :type connected_cluster_patch: ~azure.mgmt.hybridkubernetes.models.ConnectedClusterPatch or
-         JSON or IO[bytes]
+         ~azure.mgmt.hybridkubernetes.types.ConnectedClusterPatch or IO[bytes]
         :return: An instance of LROPoller that returns ConnectedCluster. The ConnectedCluster is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.hybridkubernetes.models.ConnectedCluster]
@@ -1328,7 +1327,7 @@ class ConnectedClusterOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        properties: JSON,
+        properties: _types.ListClusterUserCredentialProperties,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1344,7 +1343,7 @@ class ConnectedClusterOperations:
         :param cluster_name: The name of the Kubernetes cluster on which get is called. Required.
         :type cluster_name: str
         :param properties: ListClusterUserCredential properties. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.hybridkubernetes.types.ListClusterUserCredentialProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1388,7 +1387,9 @@ class ConnectedClusterOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        properties: Union[_models.ListClusterUserCredentialProperties, JSON, IO[bytes]],
+        properties: Union[
+            _models.ListClusterUserCredentialProperties, _types.ListClusterUserCredentialProperties, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CredentialResults:
         """Gets cluster user credentials of a connected cluster.
@@ -1401,10 +1402,10 @@ class ConnectedClusterOperations:
         :type resource_group_name: str
         :param cluster_name: The name of the Kubernetes cluster on which get is called. Required.
         :type cluster_name: str
-        :param properties: ListClusterUserCredential properties. Is one of the following types:
-         ListClusterUserCredentialProperties, JSON, IO[bytes] Required.
+        :param properties: ListClusterUserCredential properties. Is either a
+         ListClusterUserCredentialProperties type or a IO[bytes] type. Required.
         :type properties: ~azure.mgmt.hybridkubernetes.models.ListClusterUserCredentialProperties or
-         JSON or IO[bytes]
+         ~azure.mgmt.hybridkubernetes.types.ListClusterUserCredentialProperties or IO[bytes]
         :return: CredentialResults. The CredentialResults is compatible with MutableMapping
         :rtype: ~azure.mgmt.hybridkubernetes.models.CredentialResults
         :raises ~azure.core.exceptions.HttpResponseError:

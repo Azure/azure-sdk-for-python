@@ -180,9 +180,7 @@ def main() -> None:
 
     # Option B: upload local label files and auto-generate a SAS URL
     if not training_data_sas_url:
-        storage_account = os.getenv(
-            "CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT"
-        )
+        storage_account = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT")
         container = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_CONTAINER")
         if storage_account and container:
             from azure.core.exceptions import ResourceExistsError
@@ -205,24 +203,14 @@ def main() -> None:
             except ResourceExistsError:
                 pass  # Container already exists
 
-            local_label_dir = Path(
-                os.path.join(
-                    os.path.dirname(__file__), "sample_files", "training_samples"
-                )
-            )
+            local_label_dir = Path(os.path.join(os.path.dirname(__file__), "sample_files", "training_samples"))
             prefix = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX")
             for file_path in local_label_dir.iterdir():
                 if file_path.is_file() and file_path.name != "README.md":
-                    blob_name = (
-                        file_path.name
-                        if not prefix
-                        else prefix.rstrip("/") + "/" + file_path.name
-                    )
+                    blob_name = file_path.name if not prefix else prefix.rstrip("/") + "/" + file_path.name
                     print(f"Uploading {file_path.name} -> {blob_name}")
                     with open(file_path, "rb") as data:
-                        container_client.upload_blob(
-                            name=blob_name, data=data, overwrite=True
-                        )
+                        container_client.upload_blob(name=blob_name, data=data, overwrite=True)
 
             # Generate a User Delegation SAS URL (Read + List) for the container
             blob_service_client = BlobServiceClient(
@@ -257,18 +245,12 @@ def main() -> None:
         if training_data_prefix:
             print(f"Training data prefix: {training_data_prefix}")
     else:
-        print(
-            "DEMO MODE: no training data configured. The analyzer will be created without labeled data."
-        )
-        print(
-            "  Set CONTENTUNDERSTANDING_TRAINING_DATA_SAS_URL (Option A), or both"
-        )
+        print("DEMO MODE: no training data configured. The analyzer will be created without labeled data.")
+        print("  Set CONTENTUNDERSTANDING_TRAINING_DATA_SAS_URL (Option A), or both")
         print(
             "  CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT and CONTENTUNDERSTANDING_TRAINING_DATA_CONTAINER (Option B),"
         )
-        print(
-            "  to fully exercise the labeled-data API path."
-        )
+        print("  to fully exercise the labeled-data API path.")
 
     # Step 4: Create the analyzer (with or without labeled data)
     custom_analyzer = ContentAnalyzer(
@@ -277,7 +259,7 @@ def main() -> None:
         config=ContentAnalyzerConfig(enable_layout=True, enable_ocr=True),
         field_schema=field_schema,
         models={
-            "completion": "gpt-4.1",
+            "completion": "gpt-5.2",
             "embedding": "text-embedding-3-large",
         },
         knowledge_sources=knowledge_sources or None,
@@ -297,9 +279,7 @@ def main() -> None:
         print(
             f"  Fields: {len(result.field_schema.fields) if result.field_schema and result.field_schema.fields else 0}"
         )
-        print(
-            f"  Knowledge sources: {len(result.knowledge_sources) if result.knowledge_sources else 0}"
-        )
+        print(f"  Knowledge sources: {len(result.knowledge_sources) if result.knowledge_sources else 0}")
         # [END create_analyzer_with_labels]
 
         # Verify analyzer creation
@@ -318,9 +298,7 @@ def main() -> None:
             if items_field_result and items_field_result.item_definition:
                 print("Items field verified:")
                 print(f"  Type: {items_field_result.type}")
-                print(
-                    f"  Item properties: {len(items_field_result.item_definition.properties or {})}"
-                )
+                print(f"  Item properties: {len(items_field_result.item_definition.properties or {})}")
 
         # If training data was provided, test the analyzer with a sample document.
         if training_data_sas_url:
@@ -340,9 +318,7 @@ def main() -> None:
                 content = analyze_result.contents[0]
                 if isinstance(content, DocumentContent):
                     doc_content = cast(DocumentContent, content)
-                    print(
-                        f"Extracted fields: {len(doc_content.fields or {})}"
-                    )
+                    print(f"Extracted fields: {len(doc_content.fields or {})}")
                     if doc_content.fields:
                         merchant_field = doc_content.fields.get("MerchantName")
                         if isinstance(merchant_field, StringField) and merchant_field.value_string:
@@ -365,12 +341,8 @@ def main() -> None:
         print("\nCreateAnalyzerWithLabels pattern demonstration completed")
         if not training_data_sas_url:
             print("   Note: This sample demonstrates the API pattern.")
-            print(
-                "   For actual training, provide CONTENTUNDERSTANDING_TRAINING_DATA_SAS_URL (Option A)"
-            )
-            print(
-                "   or CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT + ..._CONTAINER (Option B)."
-            )
+            print("   For actual training, provide CONTENTUNDERSTANDING_TRAINING_DATA_SAS_URL (Option A)")
+            print("   or CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT + ..._CONTAINER (Option B).")
 
     finally:
         # Clean up - delete the analyzer

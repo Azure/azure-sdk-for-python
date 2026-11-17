@@ -17,6 +17,7 @@ from typing import Any, Mapping
 import pytest
 
 PREVIEW = "2026-05-01-preview"
+PREVIEW_2026_08_01 = "2026-08-01-preview"
 
 
 def _surface(owner: str, kwargs: tuple = (), available_from: str = PREVIEW) -> Mapping[str, Any]:
@@ -57,7 +58,12 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
         # File
         f"{_IM}.FileKnowledgeSource",
         f"{_IM}.FileKnowledgeSourceParameters",
+        f"{_IM}.KnowledgeSourceFile",
+        f"{_IM}.FileUploadMetadata",
+        f"{_IM}.UpdateKnowledgeSourceFileRequest",
+        f"{_IM}.UploadKnowledgeSourceFileMultipartRequest",
         f"{_KBM}.FileKnowledgeSourceParams",
+        f"{_KBM}.KnowledgeSourceAzureOpenAIVectorizer",
         # MCP server
         f"{_IM}.McpServerKnowledgeSource",
         f"{_IM}.McpServerKnowledgeSourceParameters",
@@ -106,14 +112,16 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
         f"{_KBM}.KnowledgeBaseRetrievalResponse",
         f"{_KBM}.KnowledgeRetrievalSemanticIntent",
         f"{_KBM}.KnowledgeSourceIngestionParameters",
+        f"{_KBM}.KnowledgeRetrievalMinimalReasoningEffort",
         f"{_KBM}.KnowledgeRetrievalLowReasoningEffort",
         f"{_KBM}.KnowledgeRetrievalMediumReasoningEffort",
+        f"{_KBM}.KnowledgeBaseSearchIndexActivityRecord",
+        f"{_KBM}.KnowledgeBaseSearchIndexReference",
         f"{_KBM}.KnowledgeRetrievalOutputMode",
         f"{_KBM}.KnowledgeBaseModelQueryPlanningActivityRecord",
         f"{_KBM}.KnowledgeBaseModelAnswerSynthesisActivityRecord",
         f"{_KBM}.KnowledgeBaseModelWebSummarizationActivityRecord",
         f"{_KBM}.KnowledgeBaseWorkIQReference",
-        f"{_KBM}.WorkIQAttribution",
         f"{_KBM}.PurviewSensitivityLabelInfo",
         # Permission filter and option types
         f"{_IM}.SearchIndexPermissionFilterOption",
@@ -127,6 +135,15 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
     ]
     for dotted in new_classes:
         entries[dotted] = _surface(dotted)
+
+    for dotted in [
+        f"{_KBM}.KnowledgeBaseRetrievalStartedEvent",
+        f"{_KBM}.KnowledgeBaseActivityStartedEvent",
+        f"{_KBM}.KnowledgeBaseAnswerCompletedEvent",
+        f"{_KBM}.KnowledgeBaseResponseCompletedEvent",
+        f"{_KBM}.KnowledgeBaseStreamErrorEvent",
+    ]:
+        entries[dotted] = _surface(dotted, available_from=PREVIEW_2026_08_01)
 
     # New fields on existing models. Key = "<dotted-class>.<field>", owner = dotted-class, kwargs = (field,).
     field_additions = [
@@ -147,7 +164,6 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
         (f"{_IM}.IndexerExecutionResult", "status_detail"),
         (f"{_IM}.IndexerExecutionResult", "mode"),
         (f"{_IM}.SearchIndexerKnowledgeStore", "parameters"),
-        (f"{_IM}.McpServerTool", "inclusion_mode"),
         (f"{_IM}.McpServerTool", "max_output_tokens"),
         (f"{_IM}.SearchResourceEncryptionKey", "is_service_level_key"),
         (f"{_IM}.SearchIndexerDataUserAssignedIdentity", "federated_identity_client_id"),
@@ -180,6 +196,7 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
         (f"{_KBM}.KnowledgeBaseIndexedSharePointReference", "search_sensitivity_label_info"),
         (f"{_KBM}.KnowledgeBaseRemoteSharePointReference", "search_sensitivity_label_info"),
         (f"{_KBM}.KnowledgeBaseSearchIndexReference", "search_sensitivity_label_info"),
+        (f"{_KBM}.KnowledgeBaseWorkIQReference", "search_sensitivity_label_info"),
         (f"{_KBM}.KnowledgeSourceParams", "always_query_source"),
         (f"{_KBM}.KnowledgeSourceParams", "fail_on_error"),
         (f"{_KBM}.KnowledgeSourceParams", "max_output_documents"),
@@ -237,8 +254,6 @@ def _model_capabilities() -> Mapping[str, Mapping[str, Any]]:
         (f"{_IM}.KnowledgeSourceKind", "FABRIC_ONTOLOGY"),
         (f"{_IM}.McpServerAuthenticationKind", "FOUNDRY_CONNECTION"),
         (f"{_IM}.McpServerAuthenticationKind", "STORED_HEADERS"),
-        (f"{_IM}.McpServerToolInclusionMode", "RERANKED"),
-        (f"{_IM}.McpServerToolInclusionMode", "ALWAYS"),
         (f"{_KBM}.KnowledgeBaseActivityRecordType", "WORK_IQ"),
         (f"{_KBM}.KnowledgeBaseActivityRecordType", "FABRIC_DATA_AGENT"),
         (f"{_KBM}.KnowledgeBaseActivityRecordType", "FABRIC_ONTOLOGY"),
@@ -275,6 +290,8 @@ def _client_capabilities() -> Mapping[str, Mapping[str, Any]]:
         f"{_IDX}.SearchIndexClient.get_knowledge_source",
         f"{_IDX}.SearchIndexClient.get_knowledge_source_status",
         f"{_IDX}.SearchIndexClient.upload_knowledge_source_file",
+        f"{_IDX}.SearchIndexClient.upload_knowledge_source_file_multipart",
+        f"{_IDX}.SearchIndexClient.update_knowledge_source_file",
         f"{_IDX}.SearchIndexClient.list_knowledge_source_files",
         f"{_IDX}.SearchIndexClient.delete_knowledge_source_file",
         f"{_IDX}.SearchIndexClient.list_knowledge_bases",
@@ -293,6 +310,8 @@ def _client_capabilities() -> Mapping[str, Mapping[str, Any]]:
         f"{_IDX}.aio.SearchIndexClient.get_knowledge_source",
         f"{_IDX}.aio.SearchIndexClient.get_knowledge_source_status",
         f"{_IDX}.aio.SearchIndexClient.upload_knowledge_source_file",
+        f"{_IDX}.aio.SearchIndexClient.upload_knowledge_source_file_multipart",
+        f"{_IDX}.aio.SearchIndexClient.update_knowledge_source_file",
         f"{_IDX}.aio.SearchIndexClient.list_knowledge_source_files",
         f"{_IDX}.aio.SearchIndexClient.delete_knowledge_source_file",
         f"{_IDX}.aio.SearchIndexClient.list_knowledge_bases",
@@ -304,6 +323,12 @@ def _client_capabilities() -> Mapping[str, Mapping[str, Any]]:
     ]
     for dotted in method_existence:
         entries[dotted] = _surface(dotted)
+
+    for dotted in [
+        f"{_KB}.KnowledgeBaseRetrievalClient.retrieve_stream",
+        f"{_KB}.aio.KnowledgeBaseRetrievalClient.retrieve_stream",
+    ]:
+        entries[dotted] = _surface(dotted, available_from=PREVIEW_2026_08_01)
 
     method_kwargs = [
         (
@@ -318,8 +343,20 @@ def _client_capabilities() -> Mapping[str, Mapping[str, Any]]:
             f"{_IDX}.SearchIndexerClient.create_or_update_skillset",
             ("skip_indexer_reset_requirement_for_cache", "disable_cache_reprocessing_change_detection"),
         ),
-        (f"{_IDX}.SearchIndexClient.list_indexes", ("top", "skip", "count")),
-        (f"{_IDX}.SearchIndexClient.list_index_names", ("top", "skip", "count")),
+        (f"{_IDX}.SearchIndexClient.list_indexes", ("search", "page_size", "search_type")),
+        (f"{_IDX}.SearchIndexClient.list_index_names", ("search", "page_size", "search_type")),
+        (f"{_IDX}.SearchIndexClient.list_aliases", ("search", "page_size", "search_type")),
+        (f"{_IDX}.SearchIndexClient.list_index_stats_summary", ("search", "page_size", "search_type")),
+        (f"{_IDX}.SearchIndexClient.list_knowledge_bases", ("search", "page_size", "search_type")),
+        (f"{_IDX}.SearchIndexClient.list_knowledge_sources", ("search", "page_size", "search_type")),
+        (
+            f"{_IDX}.SearchIndexClient.list_knowledge_source_files",
+            ("prefix", "search", "page_size", "search_type"),
+        ),
+        (f"{_IDX}.SearchIndexClient.get_synonym_maps", ("search", "page_size", "search_type")),
+        (f"{_IDX}.SearchIndexerClient.get_data_source_connections", ("search", "page_size", "search_type")),
+        (f"{_IDX}.SearchIndexerClient.get_indexers", ("search", "page_size", "search_type")),
+        (f"{_IDX}.SearchIndexerClient.get_skillsets", ("search", "page_size", "search_type")),
         (
             f"{_IDX}.aio.SearchIndexerClient.create_or_update_data_source_connection",
             ("skip_indexer_reset_requirement_for_cache",),
@@ -332,8 +369,31 @@ def _client_capabilities() -> Mapping[str, Mapping[str, Any]]:
             f"{_IDX}.aio.SearchIndexerClient.create_or_update_skillset",
             ("skip_indexer_reset_requirement_for_cache", "disable_cache_reprocessing_change_detection"),
         ),
-        (f"{_IDX}.aio.SearchIndexClient.list_indexes", ("top", "skip", "count")),
-        (f"{_IDX}.aio.SearchIndexClient.list_index_names", ("top", "skip", "count")),
+        (f"{_IDX}.aio.SearchIndexClient.list_indexes", ("search", "page_size", "search_type")),
+        (f"{_IDX}.aio.SearchIndexClient.list_index_names", ("search", "page_size", "search_type")),
+        (f"{_IDX}.aio.SearchIndexClient.list_aliases", ("search", "page_size", "search_type")),
+        (f"{_IDX}.aio.SearchIndexClient.list_index_stats_summary", ("search", "page_size", "search_type")),
+        (f"{_IDX}.aio.SearchIndexClient.list_knowledge_bases", ("search", "page_size", "search_type")),
+        (f"{_IDX}.aio.SearchIndexClient.list_knowledge_sources", ("search", "page_size", "search_type")),
+        (
+            f"{_IDX}.aio.SearchIndexClient.list_knowledge_source_files",
+            ("prefix", "search", "page_size", "search_type"),
+        ),
+        (f"{_IDX}.aio.SearchIndexClient.get_synonym_maps", ("search", "page_size", "search_type")),
+        (
+            f"{_IDX}.aio.SearchIndexerClient.get_data_source_connections",
+            ("search", "page_size", "search_type"),
+        ),
+        (f"{_IDX}.aio.SearchIndexerClient.get_indexers", ("search", "page_size", "search_type")),
+        (f"{_IDX}.aio.SearchIndexerClient.get_skillsets", ("search", "page_size", "search_type")),
+        (
+            f"{_KB}.KnowledgeBaseRetrievalClient.retrieve_stream",
+            ("query_source_authorization", "query_work_iq_source_authorization"),
+        ),
+        (
+            f"{_KB}.aio.KnowledgeBaseRetrievalClient.retrieve_stream",
+            ("query_source_authorization", "query_work_iq_source_authorization"),
+        ),
     ]
     for dotted, kwargs in method_kwargs:
         for kw in kwargs:
@@ -378,9 +438,79 @@ _CAPS: dict = {
     "KnowledgeBaseRetrievalClient.aio": _surface(
         "azure.search.documents.knowledgebases.aio.KnowledgeBaseRetrievalClient"
     ),
+    "KnowledgeBaseRetrievalEvent": _surface(
+        "azure.search.documents.knowledgebases.KnowledgeBaseRetrievalEvent",
+        available_from=PREVIEW_2026_08_01,
+    ),
+    "KnowledgeBaseRetrievalStream": _surface(
+        "azure.search.documents.knowledgebases.KnowledgeBaseRetrievalStream",
+        available_from=PREVIEW_2026_08_01,
+    ),
+    "AsyncKnowledgeBaseRetrievalStream": _surface(
+        "azure.search.documents.knowledgebases.aio.AsyncKnowledgeBaseRetrievalStream",
+        available_from=PREVIEW_2026_08_01,
+    ),
 }
 _CAPS.update(_model_capabilities())
 _CAPS.update(_client_capabilities())
+for _owner, _kwargs in (
+    ("azure.search.documents.SearchClient.search", ("agentic_options", "more_like_this")),
+    ("azure.search.documents.aio.SearchClient.search", ("agentic_options", "more_like_this")),
+    ("azure.search.documents.models.VectorizedQuery", ("topic_graph",)),
+    ("azure.search.documents.models.DiverseVectorQueryTopicGraph", ("diversity_factor", "min_diversity_pool_size")),
+    ("azure.search.documents.models.BalancedVectorQueryTopicGraph", ("min_diversity_pool_size",)),
+    ("azure.search.documents.models.AgenticSearchOptions", ("max_runtime_in_seconds",)),
+    ("azure.search.documents.models.DebugInfo", ("agentic",)),
+    ("azure.search.documents.models.AgenticSearchDebugInfo", ()),
+    ("azure.search.documents.models.AgenticSearchUsage", ()),
+    ("azure.search.documents.models.AgenticSearchSubQuery", ()),
+    ("azure.search.documents.indexes.models.SearchIndex", ("graph_profile",)),
+    ("azure.search.documents.indexes.models.SearchIndex", ("one_lake_security_source",)),
+    ("azure.search.documents.indexes.models.SearchField", ("topic_graph_profile",)),
+    ("azure.search.documents.indexes.models.VectorSearch", ("topic_graph_profiles",)),
+    ("azure.search.documents.indexes.models.GraphProfile", ("provenance_index_name",)),
+    ("azure.search.documents.indexes.models.SearchIndexKnowledgeSourceFilterHint", ("auto_configuration",)),
+    ("azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters", ("cache",)),
+    ("azure.search.documents.indexes.SearchIndexClient.begin_ingest_knowledge_source_file_multipart", ()),
+    ("azure.search.documents.indexes.SearchIndexClient.begin_ingest_knowledge_source_file_replacement", ()),
+    ("azure.search.documents.indexes.aio.SearchIndexClient.begin_ingest_knowledge_source_file_multipart", ()),
+    ("azure.search.documents.indexes.aio.SearchIndexClient.begin_ingest_knowledge_source_file_replacement", ()),
+    ("azure.search.documents.indexes.models.RandomScoringFunction", ()),
+    ("azure.search.documents.indexes.models.RandomScoringParameters", ()),
+    ("azure.search.documents.indexes.types.RandomScoringFunction", ()),
+    ("azure.search.documents.indexes.types.RandomScoringParameters", ()),
+    ("azure.search.documents.indexes.types.ScoringFunctionInput", ()),
+    ("azure.search.documents.indexes.types.ScoringProfileInput", ()),
+    ("azure.search.documents.indexes.types.SearchIndexInput", ()),
+    ("azure.search.documents.indexes.models.SearchIndexKnowledgeSourceFilterHintAutoConfiguration", ()),
+    ("azure.search.documents.indexes.models.OpenAICompatibleVectorizer", ()),
+    ("azure.search.documents.indexes.models.OpenAICompatibleVectorizerParameters", ()),
+    ("azure.search.documents.indexes.models.KnowledgeBase", ("tools",)),
+    ("azure.search.documents.indexes.types.KnowledgeBaseInput", ()),
+    ("azure.search.documents.indexes.types.KnowledgeBaseModelInput", ()),
+    ("azure.search.documents.indexes.types.KnowledgeBaseMicrosoftRetriever1Model", ()),
+    ("azure.search.documents.indexes.types.KnowledgeBaseOpenAICompatibleModel", ()),
+    ("azure.search.documents.knowledgebases.types.AzureBlobKnowledgeSourceParams", ()),
+    ("azure.search.documents.knowledgebases.types.FileKnowledgeSourceParams", ()),
+    ("azure.search.documents.knowledgebases.types.IndexedOneLakeKnowledgeSourceParams", ()),
+    ("azure.search.documents.knowledgebases.types.IndexedSharePointKnowledgeSourceParams", ()),
+    ("azure.search.documents.knowledgebases.types.IndexedSqlKnowledgeSourceParams", ()),
+    ("azure.search.documents.knowledgebases.types.SearchIndexKnowledgeSourceParams", ()),
+    ("azure.search.documents.indexes.models.KnowledgeBaseTool", ()),
+    ("azure.search.documents.indexes.models.KnowledgeBaseToolKnowledgeSourceReference", ()),
+    ("azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest", ("tool_name",)),
+    ("azure.search.documents.indexes.models.GraphProfile", ()),
+    ("azure.search.documents.indexes.models.GraphFieldMappings", ()),
+    ("azure.search.documents.models.GraphQueryResult", ()),
+    ("azure.search.documents.models.GraphQueryProvenanceParameters", ()),
+    ("azure.search.documents.SearchClient.graph", ()),
+    ("azure.search.documents.aio.SearchClient.graph", ()),
+):
+    if _kwargs:
+        for _kwarg in _kwargs:
+            _CAPS[f"{_owner}.{_kwarg}"] = _surface(_owner, (_kwarg,), available_from="2026-11-01-preview")
+    else:
+        _CAPS[_owner] = _surface(_owner, available_from="2026-11-01-preview")
 
 CAPABILITIES: Mapping[str, Mapping[str, Any]] = _CAPS
 
@@ -423,6 +553,7 @@ def _has_capability_attr(owner: Any, name: str) -> bool:
 
 def require_capability(*names: str) -> None:
     for name in names:
+        owner: Any = None
         try:
             cap = CAPABILITIES[name]
         except KeyError:  # pragma: no cover - misuse
@@ -431,6 +562,7 @@ def require_capability(*names: str) -> None:
             owner = _resolve(cap["owner"])
         except (ImportError, AttributeError) as exc:
             pytest.skip(f"{name} unavailable: owner {cap['owner']!r} cannot be resolved ({exc})")
+        assert owner is not None
         if not cap["kwargs"]:
             # Existence of owner is the capability.
             continue

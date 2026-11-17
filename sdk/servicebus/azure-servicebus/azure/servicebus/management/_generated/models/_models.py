@@ -2674,6 +2674,11 @@ class TopicDescription(_serialization.Model):  # pylint: disable=too-many-instan
      ~azure.servicebus.management._generated.models.MessageCountDetails
     :ivar subscription_count: The number of subscriptions in the topic.
     :vartype subscription_count: int
+    :ivar sql_filter_count: The total number of SQL filters across all subscriptions of the topic.
+    :vartype sql_filter_count: int
+    :ivar correlation_filter_count: The total number of correlation filters across all subscriptions
+     of the topic.
+    :vartype correlation_filter_count: int
     :ivar auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the topic is
      automatically deleted. The minimum duration is 5 minutes.
     :vartype auto_delete_on_idle: ~datetime.timedelta
@@ -2807,6 +2812,22 @@ class TopicDescription(_serialization.Model):  # pylint: disable=too-many-instan
                 "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect",
             },
         },
+        "sql_filter_count": {
+            "key": "sqlFilterCount",
+            "type": "int",
+            "xml": {
+                "name": "SqlFilterCount",
+                "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect",
+            },
+        },
+        "correlation_filter_count": {
+            "key": "correlationFilterCount",
+            "type": "int",
+            "xml": {
+                "name": "CorrelationFilterCount",
+                "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect",
+            },
+        },
         "auto_delete_on_idle": {
             "key": "autoDeleteOnIdle",
             "type": "duration",
@@ -2885,6 +2906,8 @@ class TopicDescription(_serialization.Model):  # pylint: disable=too-many-instan
         support_ordering: Optional[bool] = None,
         message_count_details: Optional["_models.MessageCountDetails"] = None,
         subscription_count: Optional[int] = None,
+        sql_filter_count: Optional[int] = None,
+        correlation_filter_count: Optional[int] = None,
         auto_delete_on_idle: Optional[datetime.timedelta] = None,
         enable_partitioning: Optional[bool] = None,
         entity_availability_status: Optional[Union[str, "_models.EntityAvailabilityStatus"]] = None,
@@ -2942,6 +2965,12 @@ class TopicDescription(_serialization.Model):  # pylint: disable=too-many-instan
          ~azure.servicebus.management._generated.models.MessageCountDetails
         :keyword subscription_count: The number of subscriptions in the topic.
         :paramtype subscription_count: int
+        :keyword sql_filter_count: The total number of SQL filters across all subscriptions of the
+         topic.
+        :paramtype sql_filter_count: int
+        :keyword correlation_filter_count: The total number of correlation filters across all
+         subscriptions of the topic.
+        :paramtype correlation_filter_count: int
         :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the topic is
          automatically deleted. The minimum duration is 5 minutes.
         :paramtype auto_delete_on_idle: ~datetime.timedelta
@@ -2981,6 +3010,8 @@ class TopicDescription(_serialization.Model):  # pylint: disable=too-many-instan
         self.support_ordering = support_ordering
         self.message_count_details = message_count_details
         self.subscription_count = subscription_count
+        self.sql_filter_count = sql_filter_count
+        self.correlation_filter_count = correlation_filter_count
         self.auto_delete_on_idle = auto_delete_on_idle
         self.enable_partitioning = enable_partitioning
         self.entity_availability_status = entity_availability_status

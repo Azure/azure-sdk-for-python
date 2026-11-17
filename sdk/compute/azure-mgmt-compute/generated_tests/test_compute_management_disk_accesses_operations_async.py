@@ -25,7 +25,7 @@ class TestComputeManagementDiskAccessesOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.disk_accesses.get(
             resource_group_name=resource_group.name,
             disk_access_name="str",
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         )
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestComputeManagementDiskAccessesOperationsAsync(AzureMgmtRecordedTestCase
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-01-02",
+                api_version="2026-03-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -97,7 +97,7 @@ class TestComputeManagementDiskAccessesOperationsAsync(AzureMgmtRecordedTestCase
                 resource_group_name=resource_group.name,
                 disk_access_name="str",
                 disk_access={"tags": {"str": "str"}},
-                api_version="2025-01-02",
+                api_version="2026-03-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -111,7 +111,7 @@ class TestComputeManagementDiskAccessesOperationsAsync(AzureMgmtRecordedTestCase
             await self.client.disk_accesses.begin_delete(
                 resource_group_name=resource_group.name,
                 disk_access_name="str",
-                api_version="2025-01-02",
+                api_version="2026-03-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -123,7 +123,7 @@ class TestComputeManagementDiskAccessesOperationsAsync(AzureMgmtRecordedTestCase
     async def test_disk_accesses_list_by_resource_group(self, resource_group):
         response = self.client.disk_accesses.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -133,7 +133,7 @@ class TestComputeManagementDiskAccessesOperationsAsync(AzureMgmtRecordedTestCase
     @recorded_by_proxy_async
     async def test_disk_accesses_list(self, resource_group):
         response = self.client.disk_accesses.list(
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -145,7 +145,7 @@ class TestComputeManagementDiskAccessesOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.disk_accesses.get_private_link_resources(
             resource_group_name=resource_group.name,
             disk_access_name="str",
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         )
 
         # please add some check logic here by yourself
@@ -158,7 +158,7 @@ class TestComputeManagementDiskAccessesOperationsAsync(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             disk_access_name="str",
             private_endpoint_connection_name="str",
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         )
 
         # please add some check logic here by yourself
@@ -194,7 +194,7 @@ class TestComputeManagementDiskAccessesOperationsAsync(AzureMgmtRecordedTestCase
                     },
                     "type": "str",
                 },
-                api_version="2025-01-02",
+                api_version="2026-03-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -209,7 +209,7 @@ class TestComputeManagementDiskAccessesOperationsAsync(AzureMgmtRecordedTestCase
                 resource_group_name=resource_group.name,
                 disk_access_name="str",
                 private_endpoint_connection_name="str",
-                api_version="2025-01-02",
+                api_version="2026-03-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -222,7 +222,7 @@ class TestComputeManagementDiskAccessesOperationsAsync(AzureMgmtRecordedTestCase
         response = self.client.disk_accesses.list_private_endpoint_connections(
             resource_group_name=resource_group.name,
             disk_access_name="str",
-            api_version="2025-01-02",
+            api_version="2026-03-02",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

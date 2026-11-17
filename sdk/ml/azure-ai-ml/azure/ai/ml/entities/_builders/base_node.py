@@ -82,12 +82,12 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
     You should not instantiate this class directly. Instead, you should
     create from a builder function.
 
-    :param type: Type of pipeline node. Defaults to JobType.COMPONENT.
-    :type type: str
-    :param component: Id or instance of the component version to be run for the step
-    :type component: Component
-    :param inputs: The inputs for the node.
-    :type inputs: Optional[Dict[str, Union[
+    :keyword type: Type of pipeline node. Defaults to JobType.COMPONENT.
+    :paramtype type: str
+    :keyword component: Id or instance of the component version to be run for the step
+    :paramtype component: Component
+    :keyword inputs: The inputs for the node.
+    :paramtype inputs: Optional[Dict[str, Union[
         ~azure.ai.ml.entities._job.pipeline._io.PipelineInput,
         ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
         ~azure.ai.ml.entities.Input,
@@ -97,26 +97,26 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         float,
         Enum,
         'Input']]]
-    :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: Optional[Dict[str, Union[str, ~azure.ai.ml.entities.Output, 'Output']]]
-    :param name: The name of the node.
-    :type name: Optional[str]
-    :param display_name: The display name of the node.
-    :type display_name: Optional[str]
-    :param description: The description of the node.
-    :type description: Optional[str]
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: Optional[Dict]
-    :param properties: The properties of the job.
-    :type properties: Optional[Dict]
-    :param comment: Comment of the pipeline node, which will be shown in designer canvas.
-    :type comment: Optional[str]
-    :param compute: Compute definition containing the compute information for the step.
-    :type compute: Optional[str]
-    :param experiment_name: Name of the experiment the job will be created under,
+    :keyword outputs: Mapping of output data bindings used in the job.
+    :paramtype outputs: Optional[Dict[str, Union[str, ~azure.ai.ml.entities.Output, 'Output']]]
+    :keyword name: The name of the node.
+    :paramtype name: Optional[str]
+    :keyword display_name: The display name of the node.
+    :paramtype display_name: Optional[str]
+    :keyword description: The description of the node.
+    :paramtype description: Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: Optional[Dict]
+    :keyword properties: The properties of the job.
+    :paramtype properties: Optional[Dict]
+    :keyword comment: Comment of the pipeline node, which will be shown in designer canvas.
+    :paramtype comment: Optional[str]
+    :keyword compute: Compute definition containing the compute information for the step.
+    :paramtype compute: Optional[str]
+    :keyword experiment_name: Name of the experiment the job will be created under,
         if None is provided, default will be set to current directory name.
         Will be ignored as a pipeline step.
-    :type experiment_name: Optional[str]
+    :paramtype experiment_name: Optional[str]
     :param kwargs: Additional keyword arguments for future compatibility.
     """
 
@@ -452,6 +452,13 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
             if key in base_dict:
                 rest_obj[key] = base_dict.get(key)
 
+        # Resolve any embedded data-binding objects (PipelineInput/NodeInput/PipelineExpression) in arbitrary
+        # user-set attributes to their binding strings. The legacy msrest encoder tolerated raw objects here, but
+        # the shared arm_ml_service ``SdkJSONEncoder`` raises on them (e.g. ``node.unknown_field = pipeline_input``).
+        from azure.ai.ml.entities._util import get_rest_dict_for_node_attrs
+
+        arbitrary_attrs = {key: get_rest_dict_for_node_attrs(value) for key, value in self._get_attrs().items()}
+
         rest_obj.update(
             dict(  # pylint: disable=use-dict-literal
                 name=self.name,
@@ -464,7 +471,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
                 properties=self.properties,
                 _source=self._source,
                 # add all arbitrary attributes to support setting unknown attributes
-                **self._get_attrs(),
+                **arbitrary_attrs,
             )
         )
         # only add comment in REST object when it is set

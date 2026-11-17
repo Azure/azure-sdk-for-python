@@ -4,7 +4,7 @@
 
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Collection as RestCollection
+from azure.ai.ml._restclient.arm_ml_service.models import Collection as RestCollection
 from azure.ai.ml._schema._deployment.online.deployment_collection_schema import DeploymentCollectionSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -15,12 +15,12 @@ from .data_asset import DataAsset
 class DeploymentCollection:
     """Collection entity
 
-    :param enabled: Is logging for this collection enabled. Possible values include: 'true', 'false'.
-    :type enabled: str
-    :param data: Data asset id associated with collection logging.
-    :type data: str
-    :param client_id: Client ID associated with collection logging.
-    :type client_id: str
+    :keyword enabled: Is logging for this collection enabled. Possible values include: 'true', 'false'.
+    :paramtype enabled: str
+    :keyword data: Data asset id associated with collection logging.
+    :paramtype data: str
+    :keyword client_id: Client ID associated with collection logging.
+    :paramtype client_id: str
 
     """
 

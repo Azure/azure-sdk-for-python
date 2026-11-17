@@ -40,7 +40,7 @@ class TestRealtimeServiceAvatar(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4.1"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service_with_audio_timestamp_viseme(
         self,
         test_data_dir: Path,
@@ -98,7 +98,7 @@ class TestRealtimeServiceAvatar(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4.1", "phi4-mm-realtime"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service_with_voice_properties(
         self,
         test_data_dir: Path,

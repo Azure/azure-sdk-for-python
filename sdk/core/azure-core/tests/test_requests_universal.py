@@ -24,10 +24,13 @@
 #
 # --------------------------------------------------------------------------
 import concurrent.futures
+
 import requests.utils
 import pytest
-from azure.core.pipeline.transport import RequestsTransport
 from utils import HTTP_REQUESTS, REQUESTS_TRANSPORT_RESPONSES, create_transport_response
+
+# pylint: disable=no-name-in-module
+from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline._tools import is_rest
 
 

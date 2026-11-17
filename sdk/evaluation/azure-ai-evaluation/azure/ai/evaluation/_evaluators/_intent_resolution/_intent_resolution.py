@@ -1,19 +1,26 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import os
-import math
 import logging
-from typing import Dict, Union, List, Optional
+import math
+import os
+from typing import Dict, List, Optional, Union
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
-from azure.ai.evaluation._model_configurations import Conversation, Message
-from ..._common.utils import check_score_is_valid, reformat_conversation_history, reformat_agent_response
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy
+from azure.ai.evaluation._evaluators._common._prompty_strategy import (
+    NO_VALID_SCORE,
+    judge_output_diagnostic,
+    log_judge_output_diagnostic,
+)
+from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._model_configurations import Conversation, Message
+
+from ..._common.utils import check_score_is_valid, reformat_agent_response, reformat_conversation_history
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +32,8 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     The intent resolution evaluator assesses whether the user intent was correctly identified and resolved.
 
-    :param model_config: Configuration for the Azure OpenAI model.
+    :param model_config: Configuration for the Azure OpenAI model, or a decision model configuration with
+        ``type="decision"``, ``azure_endpoint`` and ``azure_deployment``.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
 
@@ -51,8 +59,10 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "intent_resolution.prompty"
+    _DECISION_FILE = "intent_resolution.decision.yaml"
     _RESULT_KEY = "intent_resolution"
     _OPTIONAL_PARAMS = ["tool_definitions"]
+    _supports_decision_models = True
 
     _MIN_INTENT_RESOLUTION_SCORE = 1
     _MAX_INTENT_RESOLUTION_SCORE = 5
@@ -80,6 +90,13 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             credential=credential,
             _higher_is_better=True,
             **kwargs,
+        )
+        self._decision = (
+            rubric_strategy(
+                self, os.path.join(current_dir, self._DECISION_FILE), ErrorTarget.INTENT_RESOLUTION_EVALUATOR
+            )
+            if self._uses_decision_model
+            else None
         )
 
     @overload
@@ -188,6 +205,10 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input["query"] = reformat_conversation_history(eval_input["query"], logger)
         eval_input["response"] = reformat_agent_response(eval_input["response"], logger)
 
+        if self._uses_decision_model:
+            state = {key: eval_input[key] for key in ("query", "response") if eval_input.get(key) is not None}
+            return await self._decision.evaluate(state)
+
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
         score = math.nan
@@ -204,8 +225,10 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 IntentResolutionEvaluator._MIN_INTENT_RESOLUTION_SCORE,
                 IntentResolutionEvaluator._MAX_INTENT_RESOLUTION_SCORE,
             ):
+                diagnostic = judge_output_diagnostic(prompty_output_dict, NO_VALID_SCORE)
+                log_judge_output_diagnostic(diagnostic)
                 raise EvaluationException(
-                    message=f"Invalid score value: {score}. Expected a number in range [{IntentResolutionEvaluator._MIN_INTENT_RESOLUTION_SCORE}, {IntentResolutionEvaluator._MAX_INTENT_RESOLUTION_SCORE}].",
+                    message=f"Invalid score value: {score}. Expected a number in range [{IntentResolutionEvaluator._MIN_INTENT_RESOLUTION_SCORE}, {IntentResolutionEvaluator._MAX_INTENT_RESOLUTION_SCORE}]. {diagnostic}",
                     internal_message="Invalid score value.",
                     category=ErrorCategory.FAILED_EXECUTION,
                     blame=ErrorBlame.SYSTEM_ERROR,
@@ -228,8 +251,10 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             }
             return response_dict
         # If llm_output is not a dictionary, raise exception
+        diagnostic = judge_output_diagnostic(prompty_output_dict)
+        log_judge_output_diagnostic(diagnostic)
         raise EvaluationException(
-            message="Evaluator returned invalid output.",
+            message=f"Evaluator returned invalid output. {diagnostic}",
             blame=ErrorBlame.SYSTEM_ERROR,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.EVALUATE,
