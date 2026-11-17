@@ -5,10 +5,12 @@ import copy
 import errno
 import hashlib
 import logging
+import ntpath
 import os
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import time
 import zipfile
@@ -181,7 +183,11 @@ class ArtifactCache:
             raise ValueError(error_message)
         # Version selectors are valid CLI arguments, but not Windows filenames.
         cache_component = value.replace("%", "%25").replace("*", "%2A")
-        if PureWindowsPath(cache_component).is_reserved():
+        if sys.version_info >= (3, 13):
+            reserved = ntpath.isreserved(cache_component)
+        else:
+            reserved = PureWindowsPath(cache_component).is_reserved()
+        if reserved:
             raise ValueError(error_message)
         return cache_component
 

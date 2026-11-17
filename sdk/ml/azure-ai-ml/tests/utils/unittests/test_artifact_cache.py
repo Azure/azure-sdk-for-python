@@ -5,6 +5,7 @@
 import errno
 import os
 import subprocess
+import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import PureWindowsPath
 from threading import Event
@@ -90,6 +91,20 @@ def test_invalid_cache_components_rejected_before_access(artifact_cache, tmp_pat
     check.assert_not_called()
     run.assert_not_called()
     staging.assert_not_called()
+
+
+def test_cache_components_do_not_require_deprecated_pathlib_api(mocker):
+    if sys.version_info >= (3, 13):
+        mocker.patch.object(
+            PureWindowsPath,
+            "is_reserved",
+            side_effect=AssertionError("Deprecated pathlib API must not be used"),
+            create=True,
+        )
+    assert ArtifactCache._cache_path_component("package", "name") == "package"
+    assert ArtifactCache._cache_path_component("1.*", "version") == "1.%2A"
+    with pytest.raises(ValueError, match="Artifact"):
+        ArtifactCache._cache_path_component("NUL", "name")
 
 
 @pytest.mark.parametrize("field", ["feed", "name", "version"])
