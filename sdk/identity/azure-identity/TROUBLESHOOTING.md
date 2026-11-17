@@ -328,7 +328,7 @@ The workflow must grant `id-token: write` permission. GitHub supplies `ACTIONS_I
 Configure a federated identity credential on the application's registration or user-assigned managed identity.
 Its issuer, subject, and audience must match the GitHub workflow's token. See the
 [GitHub Actions federation setup guide](https://learn.microsoft.com/azure/developer/github/connect-from-azure-openid-connect).
-Azure resource permissions must also be granted to the identity.
+To access an Azure resource, the identity must also have the required permissions.
 
 | Error | Mitigation |
 | --- | --- |
@@ -337,6 +337,7 @@ Azure resource permissions must also be granted to the identity.
 | `ValueError`: Unsupported authority | Use Azure Public, China, or US Government. Set `authority` or `AZURE_AUTHORITY_HOST`; the GitHub audience is selected automatically. Custom authorities are not supported. |
 | `ClientAuthenticationError`: Unexpected response from OIDC token endpoint | Check the HTTP status and the job's OIDC permission. Use the runner-provided request token, not an Azure access token or a personal access token. |
 | `ClientAuthenticationError`: OIDC token not found in response | The GitHub endpoint must return a JSON response with a string `value` field. Verify that the runner-provided URL has not been replaced by another endpoint. |
+| `AADSTS700238`: GitHub issuer not permitted in the tenant | Ask the tenant administrator whether GitHub OIDC federation is allowed, or use an approved tenant that permits it. |
 | Entra rejects the assertion | Verify the tenant, client ID, and federated identity credential. The issuer, workflow subject, and cloud-specific audience must match. |
 
 Supported authority/audience pairs:
@@ -347,8 +348,6 @@ Supported authority/audience pairs:
 | `login.chinacloudapi.cn` | `api://AzureADTokenExchangeChina` |
 | `login.microsoftonline.us` | `api://AzureADTokenExchangeUSGov` |
 
-The asynchronous credential is available from `azure.identity.aio`. Like `AzurePipelinesCredential`, it uses a synchronous
-callback to obtain the provider assertion and an asynchronous client for the Entra token exchange.
 `GitHubActionsCredential` is not part of `DefaultAzureCredential`.
 
 ## Troubleshoot multi-tenant authentication issues
