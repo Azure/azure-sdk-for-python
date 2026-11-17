@@ -10,7 +10,6 @@ afterwards.
 """
 
 import pytest
-import os
 from types import SimpleNamespace
 import unittest
 import uuid
@@ -18,9 +17,9 @@ import uuid
 from azure.core import MatchConditions
 
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos.aio import CosmosClient
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
+from config.clients import create_data_client_async, create_setup_client_async
 
 
 @pytest.mark.cosmosCircuitBreaker
@@ -42,26 +41,22 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             assert inst.status_code == status_code
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) runs the tested operations.
+        self.key_client = create_setup_client_async()
+        await self.key_client.__aenter__()
+        self.addAsyncCleanup(self.key_client.close)
+        self.client = create_data_client_async(_backend="rust")
         await self.client.__aenter__()
+        self.addAsyncCleanup(self.client.close)
         self._db_id = "replace_item_crud_async_" + uuid.uuid4().hex
-        self.database_for_test = None
-        try:
-            self.database_for_test = await self.client.create_database(self._db_id)
-            self.configs = SimpleNamespace(
-                TEST_MULTI_PARTITION_CONTAINER_ID="multi_partition_" + uuid.uuid4().hex[:8])
-            await self.database_for_test.create_container(
-                id=self.configs.TEST_MULTI_PARTITION_CONTAINER_ID, partition_key=PartitionKey(path="/pk"))
-        except BaseException:
-            await self.asyncTearDown()
-            raise
-
-    async def asyncTearDown(self):
-        try:
-            if self.database_for_test is not None:
-                await self.client.delete_database(self._db_id)
-        finally:
-            await self.client.close()
+        self.key_database_for_test = await self.key_client.create_database(self._db_id)
+        self.addAsyncCleanup(self.key_client.delete_database, self._db_id)
+        self.database_for_test = self.client.get_database_client(self._db_id)
+        self.configs = SimpleNamespace(
+            TEST_MULTI_PARTITION_CONTAINER_ID="multi_partition_" + uuid.uuid4().hex[:8])
+        await self.key_database_for_test.create_container(
+            id=self.configs.TEST_MULTI_PARTITION_CONTAINER_ID, partition_key=PartitionKey(path="/pk"))
 
     async def test_document_crud_async_rust(self):
         # Source: tests/test_crud_async.py::TestCRUDOperationsAsync.test_document_crud_async

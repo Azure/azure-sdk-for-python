@@ -142,10 +142,16 @@ def test_sidecars_are_staged_and_cleaned_rust(monkeypatch, tmp_path):
         assert not (libs_directory / "ignored.txt").exists()
         assert manifest_file.is_file()
         assert lock_file.is_file()
+        # build.rs checks exactly this list, so it must match what was copied.
+        assert os.environ["AZURE_COSMOS_QUERYPLANINTEROP_STAGED_FILES"].split("\n") == [
+            "Cosmos.QueryPlanInterop.dll",
+            "dependency.dll",
+        ]
 
     assert not libs_directory.exists()
     assert not manifest_file.exists()
     assert lock_file.exists()
+    assert "AZURE_COSMOS_QUERYPLANINTEROP_STAGED_FILES" not in os.environ
 
 
 def test_preexisting_package_files_are_preserved_rust(monkeypatch, tmp_path):

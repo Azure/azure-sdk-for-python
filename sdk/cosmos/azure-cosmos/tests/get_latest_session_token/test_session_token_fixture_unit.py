@@ -40,11 +40,11 @@ METHOD_BODIES = {
     },
     "sync/test_latest_session_token_real_split.py": {
         "test_change_feed_session_token_and_read_items_after_split":
-            "192adbbda150de45aacdb368987068a80baa1bf23afe8dd45a49fa7dae2a014d",
+            "74f4116ae518f90be4da47e6c4ac4b2b73af3fa9562d1d99b47d6e86fa5a39c3",
     },
     "aio/test_latest_session_token_real_split_async.py": {
         "test_change_feed_session_token_and_read_items_after_split_async":
-            "12dab49471b7f4611f39707b2d261f01fa781de9d26376ab69fd11323a4bf5dd",
+            "40b6f378ccfa6f72749cacf4f64f394f2de9e63f680eae7f56217e71bf38096a",
     },
 }
 HELPER_BODIES = {
@@ -57,13 +57,44 @@ HELPER_BODIES = {
 }
 
 
+# Markers on the original legacy tests. Copies must keep them as they are, so
+# each copy runs in the same pipeline lane as its original. Hard-coded because
+# this check must not read legacy sources.
+LEGACY_MARKERS = {
+    "sync/test_session_token_helpers_owned.py": {"cosmosEmulator", "unittest"},
+    "sync/test_latest_session_token.py": {"cosmosSplit", "cosmosAADSplit"},
+    "aio/test_latest_session_token_async.py": {"cosmosSplit", "cosmosAADSplit"},
+    "sync/test_latest_session_token_real_split.py": {"cosmosSplit", "cosmosAADSplit", "timeout"},
+    "aio/test_latest_session_token_real_split_async.py": {"cosmosSplit", "cosmosAADSplit", "timeout"},
+}
+# These only shape how a test runs, not which lane picks it up.
+_NON_LANE_MARKERS = {"parametrize", "skipif", "usefixtures"}
+
+
 def _body_hash(node):
     return hashlib.sha256(ast.dump(ast.Module(body=node.body, type_ignores=[])).encode()).hexdigest()
 
 
+def _lane_markers(tree):
+    """Return names used as @pytest.mark.<name> or @pytest.mark.<name>(...)."""
+    names = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        for decorator in node.decorator_list:
+            target = decorator.func if isinstance(decorator, ast.Call) else decorator
+            if (
+                isinstance(target, ast.Attribute)
+                and isinstance(target.value, ast.Attribute)
+                and target.value.attr == "mark"
+            ):
+                names.add(target.attr)
+    return names - _NON_LANE_MARKERS
+
+
 def test_retained_manifest_covers_every_copied_file_and_case_rust():
     paths = {path.relative_to(ROOT).as_posix() for path in ROOT.glob("*/test_*.py")}
-    assert paths == set(METHOD_BODIES)
+    assert paths == set(METHOD_BODIES) == set(LEGACY_MARKERS)
     assert sum(len(methods) for methods in METHOD_BODIES.values()) == 11
     assert len(create_split_ranges()) == 13
     assert 11 - 1 + len(create_split_ranges()) == 23
@@ -88,11 +119,9 @@ def test_copied_method_bodies_match_retained_manifest_rust(name):
             line.strip().startswith("# Source: tests/")
             for line in source.splitlines()[method.lineno:method.end_lineno]
         )
+    assert all(method_name.endswith("_rust") for method_name in methods)
     assert source.count('_backend="rust"') == 1
-    assert any(
-        isinstance(node, ast.Attribute) and node.attr == "cosmosEmulator"
-        for node in ast.walk(copied)
-    )
+    assert _lane_markers(copied) == LEGACY_MARKERS[name]
     if "real_split" not in name:
         assert not any(
             isinstance(node, ast.Name) and node.id in ("trigger_split", "trigger_split_async")

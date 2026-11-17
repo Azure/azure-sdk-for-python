@@ -26,7 +26,4 @@ Some migration helpers still use the legacy connection. LegacyItemHelper is
 selected explicitly for migration comparisons. Unsupported Rust requests fail
 before execution. Preflight, execution, parsing, and callback failures never
 authorize legacy replay.
-
-Use docs/V5/VOCABULARY.md for terminology rather than maintaining another
-glossary in this package.
 """

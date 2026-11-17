@@ -11,46 +11,46 @@ source ``TestNoneOptions`` class cover ``create_item``, ``read_item``,
 ``upsert_item``, ``replace_item``, etc.; they belong to their own
 operations' ``legacy/`` folders.
 
-Self-contained: builds its own database + container in ``setUp`` and
-registers cleanup after acquisition, including on setup failure.
-Reads ``ACCOUNT_HOST`` and ``ACCOUNT_KEY``
-from the environment, defaulting to the local emulator when unset.
+Self-contained: builds its own database + container through a key client in
+``setUp`` and registers cleanup after acquisition, including on setup
+failure. The tested operations run on the data client (AAD in the
+cosmosAAD* lanes).
 
 Run with::
 
     pytest --noconftest tests/delete_item/sync/test_none_options.py -v
 """
-import os
 import unittest
 import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey
+from config.clients import create_data_client, create_setup_client
+
+from azure.cosmos import PartitionKey
 from azure.cosmos.exceptions import CosmosHttpResponseError
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
 
 
 @pytest.mark.cosmosEmulator
 class TestNoneOptions(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) runs the tested operations.
+        self.key_client = create_setup_client()
+        self.addCleanup(self.key_client.close)
+        self.client = create_data_client(_backend="rust")
         self.addCleanup(self.client.close)
         self._db_id = "legacy_delete_none_opts_" + uuid.uuid4().hex
         self._container_id = "c_" + uuid.uuid4().hex[:8]
-        self.database = self.client.create_database(self._db_id)
-        self.addCleanup(self.client.delete_database, self._db_id)
-        self.container = self.database.create_container(
+        self.key_database = self.key_client.create_database(self._db_id)
+        self.addCleanup(self.key_client.delete_database, self._db_id)
+        self.key_container = self.key_database.create_container(
             id=self._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
+        self.database = self.client.get_database_client(self._db_id)
+        self.container = self.database.get_container_client(self._container_id)
 
     def _create_sample_item(self):
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}

@@ -82,7 +82,6 @@ def test_factory_copy_replaces_only_approved_original_rust(surface, original_fil
         assert classification is not None
         assert classification.startswith("accepted-vnext-change:")
         assert "Gap 33, Bite 14" in classification
-        assert "RUST_PARITY_PUSHBACKS.md#client-bite-14" in classification
         assert "not legacy header parity" in classification
         expected_assertion = 'self.assertRaisesRegex(TypeError, "user_agent is not supported by Rust-backed APIs")'
     assert [ast.dump(node) for node in assertions] == [

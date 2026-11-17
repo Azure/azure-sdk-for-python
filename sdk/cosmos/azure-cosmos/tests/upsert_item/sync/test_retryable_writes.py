@@ -188,8 +188,8 @@ class TestRetryableWrites:
 
             # Test without retry_write for upsert_item
             test_item = {"id": "1", "pk": "test", "data": "retryable write test"}
-            # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Rust retries the injected 408 itself, so the write may succeed instead of raising.
-            pytest.skip("driver-gap: Rust retries the injected 408 itself and owns automatic write retries, so the expected exception is not raised (known gap 13, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13).")
+            # Known gap 13: Closed: Rust owns automatic write retries. Rust retries the injected 408 itself, so the write may succeed instead of raising.
+            pytest.skip("driver-gap: Rust retries the injected 408 itself and owns automatic write retries, so the expected exception is not raised (known gap 13).")
             try:
                 me.container.upsert_item(test_item)
                 pytest.fail("Expected an exception without retry_write")
@@ -198,7 +198,7 @@ class TestRetryableWrites:
 
             # Test with retry_write for upsert_item
             me.counter = 0  # Reset counter
-            # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Per-call retry_write raises NotImplementedError on the Rust item backend before any request is sent.
+            # Known gap 13: Closed: Rust owns automatic write retries. Per-call retry_write raises NotImplementedError on the Rust item backend before any request is sent.
             pytest.skip("accepted-vnext-change: per-call retry_write is not supported on the Rust backend (known gap 13).")
             try:
                 me.container.upsert_item(test_item, retry_write=2)
@@ -360,8 +360,8 @@ class TestRetryableWrites:
             test_patch_operations = [
                 {"op": "add", "path": "/data", "value": "patched retryable write test"}
             ]
-            # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Rust retries the injected 408 on the replace leg of its client-side patch, so patch may succeed instead of raising.
-            pytest.skip("driver-gap: Rust retries the injected 408 itself and owns automatic write retries, so the expected exception is not raised (known gap 13, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13).")
+            # Known gap 13: Closed: Rust owns automatic write retries. Rust retries the injected 408 on the replace leg of its client-side patch, so patch may succeed instead of raising.
+            pytest.skip("driver-gap: Rust retries the injected 408 itself and owns automatic write retries, so the expected exception is not raised (known gap 13).")
             try:
                 me.container.patch_item(item=test_item['id'], partition_key=test_item['pk'],
                                         patch_operations=test_patch_operations)
@@ -435,8 +435,8 @@ class TestRetryableWrites:
 
             # Test without retry_write for upsert_item
             test_item = {"id": "1", "state": "CA", "city": "San Francisco", "data": "retryable write test"}
-            # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Rust retries the injected 408 itself, so the write may succeed instead of raising.
-            pytest.skip("driver-gap: Rust retries the injected 408 itself and owns automatic write retries, so the expected exception is not raised (known gap 13, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13).")
+            # Known gap 13: Closed: Rust owns automatic write retries. Rust retries the injected 408 itself, so the write may succeed instead of raising.
+            pytest.skip("driver-gap: Rust retries the injected 408 itself and owns automatic write retries, so the expected exception is not raised (known gap 13).")
             try:
                 me.container.upsert_item(test_item)
                 pytest.fail("Expected an exception without retry_write")
@@ -445,7 +445,7 @@ class TestRetryableWrites:
 
             # Test with retry_write for upsert_item
             me.counter = 0  # Reset counter
-            # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Per-call retry_write raises NotImplementedError on the Rust item backend before any request is sent.
+            # Known gap 13: Closed: Rust owns automatic write retries. Per-call retry_write raises NotImplementedError on the Rust item backend before any request is sent.
             pytest.skip("accepted-vnext-change: per-call retry_write is not supported on the Rust backend (known gap 13).")
             try:
                 me.container.upsert_item(test_item, retry_write=2)
@@ -610,8 +610,8 @@ class TestRetryableWrites:
             test_patch_operations_hpk = [
                 {"op": "add", "path": "/data", "value": "patched retryable write test"}
             ]
-            # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Rust retries the injected 408 on the replace leg of its client-side patch, so patch may succeed instead of raising.
-            pytest.skip("driver-gap: Rust retries the injected 408 itself and owns automatic write retries, so the expected exception is not raised (known gap 13, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13).")
+            # Known gap 13: Closed: Rust owns automatic write retries. Rust retries the injected 408 on the replace leg of its client-side patch, so patch may succeed instead of raising.
+            pytest.skip("driver-gap: Rust retries the injected 408 itself and owns automatic write retries, so the expected exception is not raised (known gap 13).")
             try:
                 me.container.patch_item(item=test_item['id'], partition_key=[test_item['state'], test_item['city']],
                                         patch_operations=test_patch_operations_hpk)
@@ -702,9 +702,9 @@ class TestRetryableWrites:
                                'name': 'sample document',
                                'key': 'value'}
 
-        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). The Rust client cannot take the custom transport that fakes the multi-write topology and fails the first region, so the client cannot be built.
-        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). The Rust-sent request is not exposed as get_response_headers()["_request"], so the region URL checks cannot run.
-        # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Per-call retry_write raises NotImplementedError on the Rust item backend.
+        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. The Rust client cannot take the custom transport that fakes the multi-write topology and fails the first region, so the client cannot be built.
+        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. The Rust-sent request is not exposed as get_response_headers()["_request"], so the region URL checks cannot run.
+        # Known gap 13: Closed: Rust owns automatic write retries. Per-call retry_write raises NotImplementedError on the Rust item backend.
         pytest.skip("accepted-vnext-change: custom transport (multi-write topology and regional fault injection) "
                     "is not accepted by the Rust client (known gap 10); the request URL is not observable "
                     "(known gap 6); per-call retry_write is not supported (known gap 13).")
@@ -771,8 +771,8 @@ class TestRetryableWrites:
                                'name': 'sample document',
                                'key': 'value'}
 
-        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). The Rust client cannot take the custom transport that fakes the multi-write topology and fails the first region, so the client cannot be built.
-        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). The Rust-sent request is not exposed as get_response_headers()["_request"], so the region URL checks cannot run.
+        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. The Rust client cannot take the custom transport that fakes the multi-write topology and fails the first region, so the client cannot be built.
+        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. The Rust-sent request is not exposed as get_response_headers()["_request"], so the region URL checks cannot run.
         pytest.skip("accepted-vnext-change: custom transport (multi-write topology and regional fault injection) "
                     "is not accepted by the Rust client (known gap 10); the request URL is not observable "
                     "(known gap 6).")

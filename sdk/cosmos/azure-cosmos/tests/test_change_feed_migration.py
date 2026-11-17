@@ -32,6 +32,90 @@ def _assert_ids(rows, expected):
 @pytest.mark.cosmosAADLong
 @pytest.mark.parametrize("backend", ["core-python", "rust"])
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("conflicting_scope", [False, True], ids=["matching-scope", "conflicting-scope"])
+def test_change_feed_custom_header_precedence_comparison(backend, asynchronous, conflicting_scope):
+    """Adapt the original empty/checkpoint/write/resume scenario with header conflicts."""
+    database_id = unique_database_id("ChangeFeedHeaders")
+    headers = {
+        "x-app-check": "alpha-bank",
+        "If-None-Match": "*",
+        "A-IM": "customer-mode",
+        "x-ms-max-item-count": "99",
+    }
+    if conflicting_scope:
+        headers["x-ms-documentdb-partitionkey"] = '["other"]'
+    original = deepcopy(headers)
+    with create_data_client(_backend="core-python", timeout=30) as setup:
+        database = setup.create_database(database_id)
+        try:
+            writer = database.create_container("orders", PartitionKey(path="/pk"), offer_throughput=400)
+
+            async def exercise(target):
+                async def collect(pages):
+                    rows = []
+                    if asynchronous:
+                        async for page in pages:
+                            batch = [row async for row in page]
+                            assert len(batch) <= 1
+                            rows.extend(batch)
+                    else:
+                        for page in pages:
+                            batch = list(page)
+                            assert len(batch) <= 1
+                            rows.extend(batch)
+                    return rows
+
+                def pages(**kwargs):
+                    return target.query_items_change_feed(
+                        partition_key="customer", max_item_count=1,
+                        initial_headers=kwargs.pop("initial_headers", headers), timeout=30, **kwargs,
+                    ).by_page()
+
+                initial = pages()
+                assert await collect(initial) == []
+                checkpoint = initial.continuation_token
+                assert checkpoint
+                for item_id in ("one", "two"):
+                    writer.create_item({"id": item_id, "pk": "customer"})
+                writer.create_item({"id": "outside", "pk": "other"})
+                resumed = pages(continuation=checkpoint)
+                rows = await collect(resumed)
+                if backend == "core-python" and conflicting_scope:
+                    _assert_ids(rows, set())
+                    # Legacy retains the conflicting raw key; retry the original
+                    # checkpoint without that header to recover the selected scope.
+                    resumed = pages(
+                        continuation=checkpoint,
+                        initial_headers={
+                            name: value for name, value in headers.items()
+                            if name != "x-ms-documentdb-partitionkey"
+                        },
+                    )
+                    rows = await collect(resumed)
+                _assert_ids(rows, {"one", "two"})
+                assert resumed.continuation_token
+                assert await collect(pages(continuation=resumed.continuation_token)) == []
+                assert headers == original
+
+            if asynchronous:
+                async def run():
+                    async with create_data_client_async(_backend=backend) as client:
+                        await asyncio.wait_for(
+                            exercise(client.get_database_client(database_id).get_container_client("orders")),
+                            timeout=90,
+                        )
+                asyncio.run(run())
+            else:
+                with create_data_client(_backend=backend) as client:
+                    asyncio.run(exercise(client.get_database_client(database_id).get_container_client("orders")))
+        finally:
+            setup.delete_database(database_id)
+
+
+@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAADLong
+@pytest.mark.parametrize("backend", ["core-python", "rust"])
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("partition_count", [1, 2], ids=["single-range", "multiple-ranges"])
 def test_change_feed_continuation_sample_parity(backend, asynchronous, partition_count, monkeypatch):
     """Run the shipped sample's create/checkpoint/resume scenario on both backends."""

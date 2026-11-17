@@ -126,7 +126,7 @@ CAPABILITIES: dict[str, OpCapability] = {
         frozenset({ops.OP_GET_THROUGHPUT}),
         unsupported_message=(
             "The container throughput read cannot honor this input on the Rust path: "
-            "a per-call timeout, availability strategy, request-header override, or "
+            "an availability strategy, request-header override, or "
             "additional keyword is unsupported. The Python wrapper will not send "
             "the request through the legacy Python path."
         ),
@@ -135,7 +135,7 @@ CAPABILITIES: dict[str, OpCapability] = {
         frozenset({ops.OP_GET_THROUGHPUT}),
         unsupported_message=(
             "The database throughput read cannot honor this input on the Rust path: "
-            "a per-call timeout, availability strategy, request-header override, or "
+            "an availability strategy, request-header override, or "
             "additional keyword is unsupported. The Python wrapper will not send "
             "the request through the legacy Python path."
         ),
@@ -144,7 +144,7 @@ CAPABILITIES: dict[str, OpCapability] = {
         frozenset({ops.OP_GET_THROUGHPUT, ops.OP_REPLACE_THROUGHPUT}),
         unsupported_message=(
             "The throughput replacement cannot honor this input on the Rust path: "
-            "the timeout, availability strategy, request-header override, or additional "
+            "the availability strategy, request-header override, or additional "
             "keyword is unsupported. The request will not be sent through legacy Python."
         ),
     ),
@@ -288,8 +288,8 @@ CAPABILITIES: dict[str, OpCapability] = {
         frozenset({ops.OP_CREATE_DATABASE, ops.OP_READ_DATABASE}),
         unsupported_message=(
             "create_database_if_not_exists cannot run on the Rust backend for this call: it was given "
-            "a per-call option the Rust path cannot honor (a timeout the driver would "
-            "interpret differently, an overridden standard request header, or a transport keyword "
+            "a per-call option the Rust path cannot honor (an overridden standard request "
+            "header, or a transport keyword "
             "such as connection_timeout). Remove the unsupported per-call option; configure "
             "connection and HTTP-request limits through CosmosRuntime."
         ),

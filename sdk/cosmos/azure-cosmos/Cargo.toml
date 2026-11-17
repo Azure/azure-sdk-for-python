@@ -3,10 +3,10 @@
 # One member crate lives under this root:
 #   - azure_cosmos_rust/   the PyO3 binding compiled into _rust.pyd
 #
-# The driver crate (azure_data_cosmos_driver) is no longer in-tree. It is
-# built from the neighboring azure-sdk-for-rust checkout. `maturin develop`
-# (run from this directory) compiles the binding plus the external driver
-# into one cdylib that gets dropped into azure/cosmos/ next to the .py files.
+# The driver crate (azure_data_cosmos_driver) is not in this repo. Cargo
+# downloads it from GitHub at the commit pinned below. `maturin develop`
+# (run from this directory) compiles the binding plus the driver into one
+# cdylib that gets dropped into azure/cosmos/ next to the .py files.
 
 [workspace]
 members = [
@@ -22,7 +22,8 @@ authors      = ["Microsoft <azpysdkhelp@microsoft.com>"]
 edition      = "2021"
 license      = "MIT"
 repository   = "https://github.com/Azure/azure-sdk-for-python"
-rust-version = "1.75"
+# Same version as the rust-toolchain.toml channel: the only compiler CI tests.
+rust-version = "1.97"
 
 [workspace.lints.rust]
 # The binding has no `unsafe` code. Block it so memory-safety bugs can't be added later.
@@ -48,19 +49,21 @@ uninlined_format_args = "allow"
 # --- azure-sdk-for-rust crates ---
 # azure_core aligned with the driver's published version so the two unify.
 azure_core     = "1.1.0"
-# Local development: every rebuild uses this checkout, including uncommitted changes.
-# Release builds must restore an approved portable dependency source.
-azure_data_cosmos_driver = { path = '..\..\..\..\azure-sdk-for-rust\sdk\cosmos\azure_data_cosmos_driver' }
+# Pinned to one commit of Azure/azure-sdk-for-rust so CI, which does not check
+# out that repo, builds the same driver. To build against a local driver
+# checkout instead, see docs/build_and_release.md section 7.
+azure_data_cosmos_driver = { git = "https://github.com/Azure/azure-sdk-for-rust", rev = "b485409baf6e24ce198b028fb6d1c5a54a0e6d4c" }
 
 # --- crates.io deps the binding uses ---
-async-lock   = "3"
-async-trait  = "0.1"
-base64       = "0.22"
-futures      = "0.3"
-reqwest      = { version = "0.13", default-features = false }
-serde        = { version = "1", features = ["derive"] }
-serde_json   = "1"
-tracing      = "0.1"
-url          = "2"
-uuid         = "1"
-tokio        = "1"
+# List only crates the binding declares. Cargo ignores entries no member
+# inherits. The binding adds the features it needs.
+async-trait         = "0.1"
+getrandom           = "0.4"
+parking_lot         = "0.12"
+pyo3                = "0.22"
+pyo3-async-runtimes = "0.22"
+serde               = { version = "1", features = ["derive"] }
+serde_json          = "1"
+sha2                = "0.10"
+tokio               = "1"
+url                 = "2"

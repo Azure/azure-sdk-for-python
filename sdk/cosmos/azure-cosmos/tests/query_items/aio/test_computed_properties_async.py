@@ -5,13 +5,13 @@
 Source: tests/test_computed_properties_async.py. The original method, its query
 helpers, markers, queries and assertions are unchanged; only the setup differs.
 Instead of the shared ``test_config`` database each test owns a fresh database
-created through an async key-auth client pinned to ``_backend="rust"``, so
-container creation, item writes and every ``query_items`` call run on the Rust
-driver. The owned database is deleted in async cleanup.
+created through an async key-auth setup client; as in the original, containers
+are created/replaced/deleted through that key client while item writes and
+every ``query_items`` call go through the data client pinned to
+``_backend="rust"``. The owned database is deleted in async cleanup.
 """
 
 import asyncio
-import os
 import unittest
 import uuid
 
@@ -20,6 +20,7 @@ import pytest
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
 from azure.cosmos.partition_key import PartitionKey
+from config.clients import create_data_client_async, create_setup_client_async
 
 
 @pytest.mark.cosmosQuery
@@ -34,13 +35,18 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
     key_client: CosmosClient = None
 
     async def asyncSetUp(self):
-        self.client = self.key_client = CosmosClient(
-            os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
+        # Same split as the original: key client provisions, data client (AAD in
+        # the cosmosAAD* lanes) runs the tested item and query operations.
+        self.key_client = create_setup_client_async()
+        await self.key_client.__aenter__()
+        self.addAsyncCleanup(self.key_client.close)
+        self.client = create_data_client_async(_backend="rust")
         await self.client.__aenter__()
         self.addAsyncCleanup(self.client.close)
         self.database_id = "query_items_computed_properties_async_" + uuid.uuid4().hex
-        self.key_db = self.created_db = await self.client.create_database(self.database_id)
+        self.key_db = await self.key_client.create_database(self.database_id)
         self.addAsyncCleanup(self._delete_owned_database)
+        self.created_db = self.client.get_database_client(self.database_id)
         self.items = [
             {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5, 'stringProperty': 'prefixOne', 'db_group': 'GroUp1'},
             {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5, 'stringProperty': 'prefixTwo', 'db_group': 'GrOUp1'},
@@ -59,7 +65,7 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def _delete_owned_database(self):
         try:
-            await self.client.delete_database(self.database_id)
+            await self.key_client.delete_database(self.database_id)
         except exceptions.CosmosResourceNotFoundError:
             pass
 

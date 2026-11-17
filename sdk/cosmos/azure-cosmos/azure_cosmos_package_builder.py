@@ -47,7 +47,9 @@ else:
     import fcntl  # pylint: disable=import-error
 
 _SOURCE_DIRECTORY_ENV = "AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR"
-_STAGING_ACTIVE_ENV = "AZURE_COSMOS_QUERYPLANINTEROP_STAGING_ACTIVE"
+# Newline-separated names of the files copied into .libs. build.rs checks
+# exactly these, so the rule for which files are native libraries lives only here.
+_STAGED_FILES_ENV = "AZURE_COSMOS_QUERYPLANINTEROP_STAGED_FILES"
 _PACKAGE_LIBS_DIRECTORY = Path(__file__).parent / "azure" / "cosmos" / ".libs"
 _PROJECT_LOCK_KEY = hashlib.sha256(
     str(Path(__file__).resolve().parent).casefold().encode("utf-8")
@@ -210,7 +212,7 @@ def _staged_query_plan_interop() -> Iterator[None]:
         if path.is_file() and _is_native_library(path, primary_library)
     ]
     with _staging_lock():
-        previous_staging_value = os.environ.get(_STAGING_ACTIVE_ENV)
+        previous_staging_value = os.environ.get(_STAGED_FILES_ENV)
         copied_files = []
         created_directory = False
         manifest_path = None
@@ -221,7 +223,9 @@ def _staged_query_plan_interop() -> Iterator[None]:
                 created_directory,
                 [path.name for path in native_files],
             )
-            os.environ[_STAGING_ACTIVE_ENV] = "1"
+            os.environ[_STAGED_FILES_ENV] = "\n".join(
+                sorted(path.name for path in native_files)
+            )
             for source in native_files:
                 destination = _PACKAGE_LIBS_DIRECTORY / source.name
                 copied_files.append(destination)
@@ -229,9 +233,9 @@ def _staged_query_plan_interop() -> Iterator[None]:
             yield
         finally:
             if previous_staging_value is None:
-                os.environ.pop(_STAGING_ACTIVE_ENV, None)
+                os.environ.pop(_STAGED_FILES_ENV, None)
             else:
-                os.environ[_STAGING_ACTIVE_ENV] = previous_staging_value
+                os.environ[_STAGED_FILES_ENV] = previous_staging_value
             for copied_file in copied_files:
                 copied_file.unlink(missing_ok=True)
             _STAGING_MANIFEST_TEMP_FILE.unlink(missing_ok=True)

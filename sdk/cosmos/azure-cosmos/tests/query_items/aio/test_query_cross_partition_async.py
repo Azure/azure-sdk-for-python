@@ -50,7 +50,7 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.TEST_DATABASE_ID = unique_database_id("query-xp-async")
         # Closed decision: Rust owns endpoint discovery and multi-write routing
-        # (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#client-init-routing). Rust-backed clients reject the
+        #. Rust-backed clients reject the
         # original's multiple_write_locations argument (even False), so it is omitted.
         self.key_client = CosmosClient(self.host, self.masterKey, _backend="rust")
         await self.key_client.__aenter__()
@@ -105,8 +105,8 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
 
         if http_constants.HttpHeaders.QueryMetrics not in query_iterable.get_response_headers():
             pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                        "query metrics header is missing (known gap 36, "
-                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
+                        "query metrics header is missing (known gap 36)"
+                        ". The query ran.")
         metrics_header_name = 'x-ms-documentdb-query-metrics'
         assert metrics_header_name in self.created_container.client_connection.last_response_headers
         metrics_header = self.created_container.client_connection.last_response_headers[metrics_header_name]
@@ -115,12 +115,12 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         assert len(metrics) > 1
         assert all(['=' in x for x in metrics])
 
-    # Known gap 36: query advice is dropped by the driver's response headers on both transports (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-advice-response-header).
+    # Known gap 36: query advice is dropped by the driver's response headers on both transports.
     @pytest.mark.skip(
         reason=(
             "driver-gap: the x-ms-cosmos-query-advice response header never reaches Python, with "
-            "Gateway V2 on or off (known gap 36, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-advice-response-header). "
+            "Gateway V2 on or off (known gap 36)"
+            ". "
             "The original skip cites the emulator; the legacy test passes on a live account."
         )
     )
@@ -280,10 +280,10 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         query_results = self.created_container.query_items(query, parameters=[
             {"name": "@lookupVersion", "value": "console_version"}
         ])
-        # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-unscoped-max).
+        # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates.
         pytest.skip("driver-gap: Rust rejects cross-partition MAX without a partition key with 400/20113 "
-                    "(ClientUnsupportedQueryFeature) (known gap 30 item 1, "
-                    "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-unscoped-max). The items were created.")
+                    "(ClientUnsupportedQueryFeature) (known gap 30 item 1)"
+                    ". The items were created.")
         item_list = [item async for item in query_results]
         assert len(item_list) == 1
         assert item_list[0] == 3

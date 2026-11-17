@@ -12,40 +12,40 @@ Run with::
 
     pytest --noconftest tests/query_items/sync/test_none_options.py -v
 """
-import os
 import unittest
 import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from azure.cosmos import PartitionKey
+from config.clients import create_data_client, create_setup_client
 
 
 @pytest.mark.cosmosEmulator
 class TestNoneOptions(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) backs self.container.
+        self.key_client = create_setup_client()
+        self.client = create_data_client(_backend="rust")
         self._db_id = "legacy_query_none_options_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
-        self.database = self.client.create_database(self._db_id)
-        self.container = self.database.create_container(
+        self.key_database = self.key_client.create_database(self._db_id)
+        self.key_container = self.key_database.create_container(
             id=self._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
+        self.database = self.client.get_database_client(self._db_id)
+        self.container = self.database.get_container_client(self._container_id)
 
     def tearDown(self) -> None:
         try:
-            self.client.delete_database(self._db_id)
+            self.key_client.delete_database(self._db_id)
         except Exception:  # pylint: disable=broad-except
             pass
+        self.client.close()
+        self.key_client.close()
 
     def test_container_query_items_none_options_partition_rust(self):
         """query_items accepts None for every optional argument.
@@ -99,8 +99,8 @@ class TestNoneOptions(unittest.TestCase):
                 retry_write=None,
                 throughput_bucket=None,
             )
-        # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-19). No Rust driver path; the call reaches the service, which rejects it when the account feature is disabled.
-        pytest.skip("environment-gap: the test account has the partition key delete feature disabled, so the service rejects delete_all_items_by_partition_key with 400; Rust has no driver path for it either (known gap 19, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-19). The items were created.")
+        # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed. No Rust driver path; the call reaches the service, which rejects it when the account feature is disabled.
+        pytest.skip("environment-gap: the test account has the partition key delete feature disabled, so the service rejects delete_all_items_by_partition_key with 400; Rust has no driver path for it either (known gap 19). The items were created.")
         self.container.delete_all_items_by_partition_key(pk_value, session_token=None, throughput_bucket=None)
         pager = self.container.query_items("SELECT * FROM c WHERE c.pk = @pk", parameters=[{"name": "@pk", "value": pk_value}],
                                            partition_key=None, continuation_token_limit=None, enable_scan_in_query=None,

@@ -18,7 +18,6 @@ Run with::
     pytest --noconftest tests/query_items/aio/test_query_async.py -v
 """
 import asyncio
-import os
 import unittest
 import uuid
 from asyncio import gather
@@ -26,6 +25,7 @@ from unittest.mock import patch
 
 import pytest
 
+from config.clients import create_data_client_async, create_setup_client_async
 from config.settings import TestSettings
 
 import azure.cosmos.aio._asynchronous_request as _asynchronous_request
@@ -34,16 +34,8 @@ import azure.cosmos.exceptions as exceptions
 from azure.cosmos import PartitionKey, http_constants, _endpoint_discovery_retry_policy
 from azure.cosmos._retry_options import RetryOptions
 from azure.cosmos._routing.feed_range_continuation import _decode_token
-from azure.cosmos.aio import CosmosClient
 from query_items._distinct_helpers import DistinctConfig, distinct_query_diagnostics
 from query_items._feed_range_helpers import create_feed_range_in_dict, create_range
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
 
 
 class _QueryConfig(DistinctConfig):
@@ -58,26 +50,49 @@ class _QueryTestCase(unittest.IsolatedAsyncioTestCase):
     config = _QueryConfig
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
-        self.addAsyncCleanup(self.client.close)
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) runs the tested operations.
+        self.key_client = create_setup_client_async()
+        await self.key_client.__aenter__()
+        self.addAsyncCleanup(self.key_client.close)
+        self.client = create_data_client_async(_backend="rust")
         await self.client.__aenter__()
+        self.addAsyncCleanup(self.client.close)
         self._db_id = "legacy_query_paging_async_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
-        self.database = await self.client.create_database(self._db_id)
+        self.key_db = await self.key_client.create_database(self._db_id)
         self.addAsyncCleanup(self._delete_owned_database)
         print(f"\nOwned async query database: {self._db_id}")
-        self.container = await self.database.create_container(
-            id=self._container_id,
-            partition_key=PartitionKey(path="/pk"),
+        self.database = self.client.get_database_client(self._db_id)
+        self.container = await self._create_container_for_test(
+            self._container_id,
+            PartitionKey(path="/pk"),
         )
 
     async def _delete_owned_database(self):
-        await self.client.delete_database(self._db_id)
+        await self.key_client.delete_database(self._db_id)
         print(f"\nDeleted owned async query database: {self._db_id}")
 
+    # The original's sync key-auth setup client is replaced by awaited calls on
+    # an async key-auth Rust client.
+    async def _create_container_for_test(self, container_id, partition_key, **kwargs):
+        # Source helper: tests/test_query_async.py::TestQueryAsync._create_container_for_test
+        await self.key_db.create_container(id=container_id, partition_key=partition_key, **kwargs)
+        return self.database.get_container_client(container_id)
+
+    async def _create_container_if_not_exists_for_test(self, container_id, partition_key, **kwargs):
+        # Source helper: tests/test_query_async.py::TestQueryAsync._create_container_if_not_exists_for_test
+        await self.key_db.create_container_if_not_exists(
+            id=container_id, partition_key=partition_key, **kwargs)
+        return self.database.get_container_client(container_id)
+
+    async def _delete_container_for_test(self, container_id):
+        # Source helper: tests/test_query_async.py::TestQueryAsync._delete_container_for_test
+        await self.key_db.delete_container(container_id)
+
     async def _create_multi_partition_container(self):
-        return await self.database.create_container(
-            id="multi_partition_" + uuid.uuid4().hex[:8], partition_key=PartitionKey(path="/pk"),
+        return await self._create_container_for_test(
+            "multi_partition_" + uuid.uuid4().hex[:8], PartitionKey(path="/pk"),
             offer_throughput=11000)
 
 
@@ -107,8 +122,8 @@ class TestQueryAsync(_QueryTestCase):
 
         if http_constants.HttpHeaders.QueryMetrics not in query_iterable.get_response_headers():
             pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                        "metrics header is missing (known gap 36, "
-                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
+                        "metrics header is missing (known gap 36)"
+                        ". The query ran.")
         metrics_header_name = 'x-ms-documentdb-query-metrics'
         assert metrics_header_name in created_collection.client_connection.last_response_headers
         metrics_header = created_collection.client_connection.last_response_headers[metrics_header_name]
@@ -117,7 +132,7 @@ class TestQueryAsync(_QueryTestCase):
         assert len(metrics) > 1
         assert all(['=' in x for x in metrics])
 
-        await self.database.delete_container(container_id)
+        await self._delete_container_for_test(container_id)
 
     async def test_populate_index_metrics_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_populate_index_metrics_async
@@ -140,8 +155,8 @@ class TestQueryAsync(_QueryTestCase):
 
         if http_constants.HttpHeaders.IndexUtilization not in query_iterable.get_response_headers():
             pytest.skip("driver-gap: Rust does not send populate_index_metrics over Gateway V2, so the "
-                        "index-utilization header is missing (known gap 36, "
-                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
+                        "index-utilization header is missing (known gap 36)"
+                        ". The query ran.")
         index_header_name = http_constants.HttpHeaders.IndexUtilization
         assert index_header_name in created_collection.client_connection.last_response_headers
         index_metrics = created_collection.client_connection.last_response_headers[index_header_name]
@@ -161,14 +176,14 @@ class TestQueryAsync(_QueryTestCase):
             for idx in candidate_indexes
         )
 
-        await self.database.delete_container(container_id)
+        await self._delete_container_for_test(container_id)
 
-    # Known gap 36: query advice is dropped by the driver's response headers on both transports (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-advice-response-header).
+    # Known gap 36: query advice is dropped by the driver's response headers on both transports.
     @pytest.mark.skip(
         reason=(
             "driver-gap: the x-ms-cosmos-query-advice response header never reaches Python, with "
-            "Gateway V2 on or off (known gap 36, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-advice-response-header). "
+            "Gateway V2 on or off (known gap 36)"
+            ". "
             "The original skip cites the emulator; the legacy test passes on a live account."
         )
     )
@@ -257,7 +272,7 @@ class TestQueryAsync(_QueryTestCase):
         assert query_advice is not None
         assert "QA1009" in query_advice
 
-        await self.database.delete_container(container_id)
+        await self._delete_container_for_test(container_id)
 
     @pytest.mark.skip(
         reason="driver-gap: Gap 30 - Rust rejects MAX queries without a partition key "
@@ -319,7 +334,7 @@ class TestQueryAsync(_QueryTestCase):
                                                  query='SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1',
                                                  results=[])
 
-        await self.database.delete_container(container_id)
+        await self._delete_container_for_test(container_id)
 
     async def test_distinct_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_distinct_async
@@ -328,8 +343,8 @@ class TestQueryAsync(_QueryTestCase):
         different_field = "different_field"
 
         container_id = 'collection with composite index ' + str(uuid.uuid4())
-        created_collection = await self.database.create_container(
-            id=container_id,
+        created_collection = await self._create_container_for_test(
+            container_id,
             partition_key=PartitionKey(path="/pk", kind="Hash"),
             indexing_policy={
                 "compositeIndexes": [
@@ -354,10 +369,10 @@ class TestQueryAsync(_QueryTestCase):
 
         padded_docs = self.config._pad_with_none(documents, distinct_field)
 
-        # Known gap 30: query_items() remaining query, paging, and continuation-token gaps, item 2 (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30).
+        # Known gap 30: query_items() remaining query, paging, and continuation-token gaps, item 2.
         pytest.skip("driver-gap: Rust rejects cross-partition unordered DISTINCT without TOP or LIMIT "
-                    "(400/20125 ClientBufferedQueryRequiresFiniteWindow) (known gap 30 item 2, "
-                    "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30). The documents were created.")
+                    "(400/20125 ClientBufferedQueryRequiresFiniteWindow) (known gap 30 item 2)"
+                    ". The documents were created.")
         await self.config._validate_distinct(created_collection=created_collection,
                                              query='SELECT distinct c.%s from c' % distinct_field,  # nosec
                                              results=self.config._get_distinct_docs(padded_docs, distinct_field, None, False),
@@ -383,7 +398,7 @@ class TestQueryAsync(_QueryTestCase):
                                              is_select=True,
                                              fields=[different_field])
 
-        await self.database.delete_container(container_id)
+        await self._delete_container_for_test(container_id)
 
     async def test_partition_scoped_count_is_index_only_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_partition_scoped_count_is_index_only_async
@@ -420,8 +435,8 @@ class TestQueryAsync(_QueryTestCase):
 
             if http_constants.HttpHeaders.QueryMetrics not in query_iterable.get_response_headers():
                 pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                            "metrics header is missing (known gap 36, "
-                            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The COUNT query ran.")
+                            "metrics header is missing (known gap 36)"
+                            ". The COUNT query ran.")
             response_headers = query_iterable.get_response_headers()
             metrics_header = response_headers[http_constants.HttpHeaders.QueryMetrics]
             metrics = dict(
@@ -516,21 +531,6 @@ class TestQueryAsync(_QueryTestCase):
     # Copies below use owned containers in this test's database. The shared
     # TEST_MULTI_PARTITION_CONTAINER_ID (``/pk``) becomes an owned ``/pk``
     # container with 11000 RU so it still spans more than one physical partition.
-    # The original's sync key-auth setup client is replaced by awaited calls on
-    # this test's Rust-backed async client.
-
-    async def _create_container_for_test(self, container_id, partition_key, **kwargs):
-        # Source helper: tests/test_query_async.py::TestQueryAsync._create_container_for_test
-        return await self.database.create_container(id=container_id, partition_key=partition_key, **kwargs)
-
-    async def _create_container_if_not_exists_for_test(self, container_id, partition_key, **kwargs):
-        # Source helper: tests/test_query_async.py::TestQueryAsync._create_container_if_not_exists_for_test
-        return await self.database.create_container_if_not_exists(
-            id=container_id, partition_key=partition_key, **kwargs)
-
-    async def _delete_container_for_test(self, container_id):
-        # Source helper: tests/test_query_async.py::TestQueryAsync._delete_container_for_test
-        await self.database.delete_container(container_id)
 
     async def test_first_and_last_slashes_trimmed_for_query_string_async_rust(self):
         # pylint: disable-next=line-too-long
@@ -711,7 +711,7 @@ class TestQueryAsync(_QueryTestCase):
                 await created_collection.upsert_item(item)
             except exceptions.CosmosHttpResponseError as e:
                 pytest.fail(e)
-        # Known gap 11: Closed: driver-owned throttle retry waiting (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-11). Throttle retries are owned by the Rust driver.
+        # Known gap 11: Closed: driver-owned throttle retry waiting. Throttle retries are owned by the Rust driver.
         pytest.skip("internals-only: the 429 is forced by replacing the legacy "
                     "client_connection.connection_policy.RetryOptions object, which the Rust driver does not "
                     "read; it owns throttle retries (known gap 11). The items were upserted.")
@@ -742,7 +742,7 @@ class TestQueryAsync(_QueryTestCase):
         for item in items:
             await created_collection.create_item(body=item)
 
-        # Known gap 11: Closed: driver-owned throttle retry waiting (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-11). Retry policies are owned by the Rust driver.
+        # Known gap 11: Closed: driver-owned throttle retry waiting. Retry policies are owned by the Rust driver.
         pytest.skip("internals-only: the errors are injected by patching legacy "
                     "_retry_utility_async.ExecuteFunctionAsync and the legacy endpoint-discovery retry policy; "
                     "Rust never calls them and owns its retries (known gap 11). The items were created.")
@@ -1008,8 +1008,8 @@ class TestQueryAsync(_QueryTestCase):
 
         if http_constants.HttpHeaders.QueryMetrics not in query_iterable.get_response_headers():
             pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                        "metrics header is missing (known gap 36, "
-                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). Paging and the query ran.")
+                        "metrics header is missing (known gap 36)"
+                        ". Paging and the query ran.")
         # Verify query metrics were populated
         metrics_header_name = 'x-ms-documentdb-query-metrics'
         assert metrics_header_name in created_collection.client_connection.last_response_headers
@@ -1052,7 +1052,7 @@ class TestQueryAsync(_QueryTestCase):
                 ).by_page()
                 async for page in pages:
                     [item async for item in page]
-            # Known gap 5: Closed: runtime and operation timeout scopes (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-5). The driver applies the operation budget; Rust never calls legacy _asynchronous_request.
+            # Known gap 5: Closed: runtime and operation timeout scopes. The driver applies the operation budget; Rust never calls legacy _asynchronous_request.
             pytest.skip("internals-only: per-request timeout values were captured by patching legacy "
                         "_asynchronous_request._PipelineRunFunction, which Rust never calls; the driver owns "
                         "the operation budget (known gap 5). The paged query with timeout ran.")
@@ -1079,10 +1079,10 @@ class TestQueryAsync(_QueryTestCase):
                 )
 
             connection_timeout = 27
-            # Known gap 5: Closed: runtime and operation timeout scopes (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-5). Rust-served operations reject per-call connection_timeout.
+            # Known gap 5: Closed: runtime and operation timeout scopes. Rust-served operations reject per-call connection_timeout.
             pytest.skip("accepted-vnext-change: Rust query_items rejects per-call connection_timeout with "
-                        "NotImplementedError; connection limits belong to the runtime (known gap 5, "
-                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-5). The items were created.")
+                        "NotImplementedError; connection limits belong to the runtime (known gap 5)"
+                        ". The items were created.")
             captured, ctx = self._capture_pipeline_kwarg_async("connection_timeout")
             with ctx:
                 pages = container.query_items(
@@ -1121,10 +1121,10 @@ class TestQueryAsync(_QueryTestCase):
             )
             feed_range = create_feed_range_in_dict(full_range)
 
-            # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-full-range-sum).
+            # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates.
             pytest.skip("driver-gap: Rust rejects full-range aggregates with 400/20113 "
-                        "(ClientUnsupportedQueryFeature) instead of the legacy AVG ValueError (known gap 30 item 1, "
-                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-full-range-sum). The items were created.")
+                        "(ClientUnsupportedQueryFeature) instead of the legacy AVG ValueError (known gap 30 item 1)"
+                        ". The items were created.")
             with self.assertRaises(ValueError) as cm:
                 pages = container.query_items(
                     query="SELECT VALUE AVG(c.amount) FROM c",
@@ -1158,7 +1158,7 @@ class TestQueryAsync(_QueryTestCase):
         # pylint: disable-next=line-too-long
         # Source: tests/test_query_async.py::TestQueryAsync.test_distinct_on_different_types_and_field_orders_async
         container_id = "test-distinct-container-" + str(uuid.uuid4())
-        created_collection = await self.database.create_container(
+        created_collection = await self._create_container_for_test(
             container_id,
             partition_key=PartitionKey("/pk"),
             offer_throughput=TestSettings.THROUGHPUT_FOR_5_PARTITIONS)
@@ -1223,7 +1223,7 @@ class TestQueryAsync(_QueryTestCase):
                               {'f1': 1.0, 'f2': '\'value', 'f3': 100000000000000000.00}]
         )
 
-        await self.database.delete_container(container_id)
+        await self._delete_container_for_test(container_id)
 
 
 @pytest.mark.cosmosEmulator

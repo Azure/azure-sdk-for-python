@@ -5,7 +5,8 @@
 
 Copied from ``tests/test_headers_async.py``; the class and method names match
 the source (apart from the method's ``_rust`` suffix). Builds its own database
-+ container and reads ``ACCOUNT_HOST`` / ``ACCOUNT_KEY`` from the environment.
++ container with a key client and runs the tested operations through the data
+client from ``config.clients``.
 
 The legacy test captured outgoing HTTP requests, which the Rust transport does
 not expose (known gap 6). This copy instead checks the request the SDK hands to
@@ -15,7 +16,6 @@ the header on the wire (known gap 36).
 Run: ``pytest --noconftest tests/query_items/aio/test_headers_async.py -v``
 """
 import importlib
-import os
 import unittest
 import uuid
 from unittest.mock import patch
@@ -23,14 +23,7 @@ from unittest.mock import patch
 import pytest
 
 from azure.cosmos import PartitionKey
-from azure.cosmos.aio import CosmosClient
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from config.clients import create_data_client_async, create_setup_client_async
 
 
 # Same value as the source, so the wire bytes match the legacy path.
@@ -42,21 +35,28 @@ request_throughput_bucket_number = 3
 class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) backs data_container.
+        self.key_client = create_setup_client_async()
+        await self.key_client.__aenter__()
+        self.client = create_data_client_async(_backend="rust")
         await self.client.__aenter__()
         self._db_id = "legacy_query_headers_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
-        self.database = await self.client.create_database(self._db_id)
-        self.data_container = await self.database.create_container(
+        self.database = await self.key_client.create_database(self._db_id)
+        self.container = await self.database.create_container(
             id=self._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
+        self.data_database = self.client.get_database_client(self._db_id)
+        self.data_container = self.data_database.get_container_client(self._container_id)
 
     async def asyncTearDown(self):
         try:
-            await self.client.delete_database(self._db_id)
+            await self.key_client.delete_database(self._db_id)
         except Exception:  # pylint: disable=broad-except
             pass
+        await self.key_client.close()
         await self.client.close()
 
     async def test_container_query_items_throughput_bucket_async_rust(self):

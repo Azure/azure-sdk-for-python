@@ -69,7 +69,7 @@ class _RustFaultInjection(object):
     """Rust stand-in for the emulator FaultInjectionTransport.
 
     Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport
-    options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). The original rewrites the emulator's
+    options are excluded. The original rewrites the emulator's
     account topology (multi-write or single-write multi-read) and fails collection-level Delete requests sent by
     delete_all_items_by_partition_key; Rust ``_fault_injection_rules`` have no response transformation and no
     operation type for that request, so there is nothing to translate.
@@ -146,7 +146,7 @@ def validate_unhealthy_partitions_sm_mrr(global_endpoint_manager,
     assert unhealthy_partitions == expected_unhealthy_partitions
 
 def validate_response_uri(response, expected_uri):
-    # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). Rust responses carry no outgoing `_request`, so the contacted region URL cannot be checked.
+    # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. Rust responses carry no outgoing `_request`, so the contacted region URL cannot be checked.
     request = response.get_response_headers()["_request"]
     assert request.url.startswith(expected_uri)
 
@@ -244,13 +244,13 @@ class TestCircuitBreakerEmulator:
     def setup_info(self, error=None, mm=False):
         expected_uri = self.host
         uri_down = self.host.replace("localhost", "127.0.0.1")
-        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). The topology rewrite and the collection-Delete fault in uri_down have no Rust fault-rule equivalent.
+        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. The topology rewrite and the collection-Delete fault in uri_down have no Rust fault-rule equivalent.
         custom_transport = _RustFaultInjection(error, mm)
         # two documents targeted to same partition, one will always fail and the other will succeed
         doc = create_doc()
         predicate = None
         # Closed decision: Rust owns endpoint discovery and multi-write routing
-        # (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#client-init-routing). multiple_write_locations=mm is
+        #. multiple_write_locations=mm is
         # rejected on Rust clients, so it is omitted; the driver uses the account's multi-write capability.
         custom_setup = self.setup_method_with_custom_transport(custom_transport, default_endpoint=self.host)
         setup = self.setup_method_with_custom_transport(None, default_endpoint=self.host)
@@ -260,8 +260,7 @@ class TestCircuitBreakerEmulator:
                               "(client_connection._global_endpoint_manager partition_health_tracker, "
                               "_partition_health_tracker thresholds) and the identity of the transport-injected "
                               "exception; "
-                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired "
-                              "(LEGACY_CODE_RETIREMENT.md#lr-23-python-per-partition-circuit-breaker). "
+                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired. "
                               "Also needs "
                               "an emulator topology rewrite and collection-Delete fault (known gap 10) and Rust "
                               "delete_all_items_by_partition_key support (known gap 19).")
@@ -285,13 +284,13 @@ class TestCircuitBreakerEmulator:
                 if i == 4 or i == 8:
                     # perform some successful creates to reset consecutive counter
                     # remove faults and perform a write
-                    # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). Rust fault rules are fixed at client build and cannot be cleared or re-added.
+                    # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. Rust fault rules are fixed at client build and cannot be cleared or re-added.
                     custom_transport.faults = []
                     fault_injection_container.upsert_item(body=doc)
                     custom_transport.add_fault(predicate, error)
                 else:
                     with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
-                        # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-19). The Rust path cannot run the partition delete that these tests fail.
+                        # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed. The Rust path cannot run the partition delete that these tests fail.
                         perform_write_operation(DELETE_ALL_ITEMS_BY_PARTITION_KEY,
                                                 container,
                                                 fault_injection_container,
@@ -311,8 +310,7 @@ class TestCircuitBreakerEmulator:
                               "(client_connection._global_endpoint_manager partition_health_tracker, "
                               "_partition_health_tracker thresholds) and the identity of the transport-injected "
                               "exception; "
-                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired "
-                              "(LEGACY_CODE_RETIREMENT.md#lr-23-python-per-partition-circuit-breaker). "
+                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired. "
                               "Also needs "
                               "an emulator topology rewrite and collection-Delete fault (known gap 10) and Rust "
                               "delete_all_items_by_partition_key support (known gap 19).")
@@ -334,13 +332,13 @@ class TestCircuitBreakerEmulator:
                 if i == 4 or i == 8:
                     # perform some successful creates to reset consecutive counter
                     # remove faults and perform a write
-                    # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). Rust fault rules are fixed at client build and cannot be cleared or re-added.
+                    # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. Rust fault rules are fixed at client build and cannot be cleared or re-added.
                     custom_transport.faults = []
                     fault_injection_container.upsert_item(body=doc)
                     custom_transport.add_fault(predicate, error)
                 else:
                     with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
-                        # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-19). The Rust path cannot run the partition delete that these tests fail.
+                        # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed. The Rust path cannot run the partition delete that these tests fail.
                         perform_write_operation(DELETE_ALL_ITEMS_BY_PARTITION_KEY,
                                                 container,
                                                 fault_injection_container,

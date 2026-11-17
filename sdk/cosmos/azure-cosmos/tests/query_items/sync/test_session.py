@@ -11,12 +11,13 @@ be observed. Every operation and every response-side assertion still runs in ord
 each test then skips, naming the outgoing-request checks it could not verify.
 """
 
-import os
 import unittest
 import uuid
 from contextlib import contextmanager
 
 import pytest
+
+from config.clients import create_data_client, create_setup_client
 
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos import DatabaseProxy, PartitionKey
@@ -42,8 +43,6 @@ class TestSession(unittest.TestCase):
 
     created_db: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
-    host = os.environ.get("ACCOUNT_HOST")
-    masterKey = os.environ.get("ACCOUNT_KEY")
 
     @classmethod
     def setUpClass(cls):
@@ -51,8 +50,8 @@ class TestSession(unittest.TestCase):
         cls.TEST_COLLECTION_ID = "multi_partition_" + uuid.uuid4().hex[:8]
         # key-auth client for control-plane operations, and a separate data-plane client,
         # like the original create_test_clients pair.
-        cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey, _backend="rust")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, _backend="rust")
+        cls.key_client = create_setup_client()
+        cls.client = create_data_client(_backend="rust")
         cls.key_db = cls.key_client.create_database(cls.TEST_DATABASE_ID)
         cls.key_db.create_container(cls.TEST_COLLECTION_ID, PartitionKey(path="/pk"))
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
@@ -81,7 +80,7 @@ class TestSession(unittest.TestCase):
         self._unverified_request_checks.append(description)
 
     def _skip_unverified_request_checks(self):
-        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). The Rust-prepared outgoing request is not observable, so the request session-token header checks cannot run.
+        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. The Rust-prepared outgoing request is not observable, so the request session-token header checks cannot run.
         pytest.skip("accepted-vnext-change: outgoing request session-token header checks cannot be observed on the Rust path "
                     "(known gap 6); all response-side assertions ran. Unverified request checks: "
                     + "; ".join(self._unverified_request_checks))
@@ -120,7 +119,7 @@ class TestSession(unittest.TestCase):
                 captured_session_token['token'] = request.headers.get(HttpHeaders.SessionToken)
 
             # Query with single feed range
-            # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). The capture below cannot see the outgoing request headers on the Rust path.
+            # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. The capture below cannot see the outgoing request headers on the Rust path.
             with self._capture_requests("feed-range query: single-partition session token sent") as requests:
                 list(test_container.query_items(
                     query="SELECT * FROM c",
@@ -182,7 +181,7 @@ class TestSession(unittest.TestCase):
                     captured_tokens.append(token)
 
             # Query with full range feed range (spans all partitions)
-            # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). The capture below cannot see the outgoing request headers on the Rust path.
+            # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. The capture below cannot see the outgoing request headers on the Rust path.
             with self._capture_requests("full-range feed-range query: single-partition token per request") as requests:
                 list(test_container.query_items(
                     query="SELECT * FROM c",
@@ -228,7 +227,7 @@ class TestSession(unittest.TestCase):
             def capture(request):
                 captured["token"] = request.headers.get(HttpHeaders.SessionToken)
 
-            # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). The capture below cannot see the outgoing request headers on the Rust path.
+            # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. The capture below cannot see the outgoing request headers on the Rust path.
             with self._capture_requests("feed-range query: per-partition 'rangeId:vector' token sent") as requests:
                 list(test_container.query_items(
                     query="SELECT * FROM c",
@@ -291,7 +290,7 @@ class TestSession(unittest.TestCase):
                 if token:
                     captured_tokens.append(token)
 
-            # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). The capture below cannot see the outgoing request headers on the Rust path.
+            # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. The capture below cannot see the outgoing request headers on the Rust path.
             with self._capture_requests("paged feed-range query: single-partition token on every page") as requests:
                 pager = test_container.query_items(
                     query="SELECT * FROM c",
@@ -348,7 +347,7 @@ class TestSession(unittest.TestCase):
                 if token:
                     captured_tokens.append(token)
 
-            # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). The capture below cannot see the outgoing request headers on the Rust path.
+            # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. The capture below cannot see the outgoing request headers on the Rust path.
             with self._capture_requests("partition_key query: single-partition token sent") as requests:
                 list(test_container.query_items(
                     query="SELECT * FROM c WHERE c.pk = @pk",
@@ -375,7 +374,7 @@ class TestSession(unittest.TestCase):
 
         # Session token should not be sent for control plane operations
         # control-plane container creation
-        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). Each capture below cannot see the outgoing request headers on the Rust path.
+        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. Each capture below cannot see the outgoing request headers on the Rust path.
         with self._capture_requests("create_container: no session token") as requests:
             test_container_ref = self.key_db.create_container(
                 "Container with space" + str(uuid.uuid4()),

@@ -6,13 +6,13 @@ Both parity columns preserve the original data and container configurations.
 Owned key-auth fixtures replace shared provisioning, not the test body.
 """
 
-import os
 import uuid
 from typing import List, Mapping, Set
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos import PartitionKey
+from config.clients import create_data_client, create_setup_client
 
 TEST_CONTAINERS_IDS = ["single", "multi"]
 TEST_OFFER_THROUGHPUTS = [400, 30000]
@@ -32,22 +32,26 @@ def add_all_pk_values_to_set(items: List[Mapping[str, str]], pk_value_set: Set[s
 
 @pytest.fixture
 def setup(container_id):
-    with CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust") as client:
+    # Same split as the original: key client provisions, data client (AAD in
+    # the cosmosAAD* lanes) seeds and queries.
+    with create_setup_client() as client, create_data_client(_backend="rust") as data_client:
         database_id = "legacy_query_ranges_" + uuid.uuid4().hex
         database = client.create_database(database_id)
         print(f"\nOwned feed-range query database: {database_id}")
         try:
-            container = database.create_container(
+            container_ref = database.create_container(
                 id=container_id,
                 partition_key=PartitionKey(path="/" + PARTITION_KEY, kind="Hash"),
                 offer_throughput=TEST_OFFER_THROUGHPUTS[TEST_CONTAINERS_IDS.index(container_id)],
             )
+            data_db = data_client.get_database_client(database_id)
+            container = data_db.get_container_client(container_ref.id)
             for pk in PK_VALUES:
                 container.upsert_item({
                     PARTITION_KEY: pk, "id": str(uuid.uuid4()), "value": 100,
                     RUN_MARKER_FIELD: RUN_MARKER_VALUE,
                 })
-            yield {"data_db": database}
+            yield {"data_db": data_db}
         finally:
             client.delete_database(database_id)
             print(f"\nDeleted owned feed-range query database: {database_id}")

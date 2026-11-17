@@ -191,8 +191,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
             metrics_header_name = "x-ms-documentdb-query-metrics"
             # Known gap 36: Query diagnostics and other request options are not sent over Gateway V2.
             pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                        "metrics header is missing (known gap 36, "
-                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36).")
+                        "metrics header is missing (known gap 36).")
             self.assertIn(metrics_header_name, response_headers)
 
             # Validate metrics header is well-formed

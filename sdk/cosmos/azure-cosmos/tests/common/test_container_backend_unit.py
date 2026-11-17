@@ -517,7 +517,9 @@ def test_container_create_unsupported_calls_never_fall_back_rust(container_creat
     hooks, an unknown keyword, four driver-owned headers, and two raw
     request-options dictionaries.
 
-    Each raises ``NotImplementedError`` pointing at the legacy Python client.
+    Each raises ``NotImplementedError`` pointing at the legacy Python client,
+    except bad ``timeout`` values, which raise ``ValueError`` because they are
+    wrong values rather than something Rust cannot do.
     Nothing is created on either route, the hook does not run, and the fallback
     counter does not move -- a refusal is not a fallback, and counting it as one
     would make the metric useless for judging how much traffic the Rust engine
@@ -526,7 +528,11 @@ def test_container_create_unsupported_calls_never_fall_back_rust(container_creat
     case = container_create_case
     before = rust_compatibility_fallback_count()
     hook = MagicMock()
-    with pytest.raises(NotImplementedError, match="create_container.*legacy Python"):
+    error, message = (
+        (ValueError, "timeout must be") if "timeout" in kwargs
+        else (NotImplementedError, "create_container.*legacy Python")
+    )
+    with pytest.raises(error, match=message):
         _call_container_create(case, "c1", PartitionKey(path="/pk"), response_hook=hook, **kwargs)
     case.backend.execute.assert_not_called()
     case.connection.CreateContainer.assert_not_called()
@@ -972,14 +978,19 @@ def test_container_get_or_create_preflights_both_steps_rust(container_get_or_cre
     nothing.
 
     Fourteen cases are covered, including two options that only apply to reads.
-    Each raises ``NotImplementedError`` naming the method, with no request on
+    Each raises ``NotImplementedError`` naming the method (bad ``timeout`` values
+    raise ``ValueError`` instead), with no request on
     either engine, no cache write, no hook, and no movement in the fallback
     counter.
     """
     case = container_get_or_create_case
     hook = MagicMock()
     before = rust_compatibility_fallback_count()
-    with pytest.raises(NotImplementedError, match="create_container_if_not_exists"):
+    error, message = (
+        (ValueError, "timeout must be") if "timeout" in kwargs
+        else (NotImplementedError, "create_container_if_not_exists")
+    )
+    with pytest.raises(error, match=message):
         _call_get_or_create(case, response_hook=hook, **kwargs)
     case.backend.execute.assert_not_called()
     case.connection.ReadContainer.assert_not_called()
@@ -1453,20 +1464,20 @@ def test_container_get_or_create_explicit_core_python_keeps_transport_options_ru
     """A customer who chose legacy on purpose keeps the transport options only legacy
     supports.
 
-    A sub-second deadline and a connect timeout are refused on the Rust path, but
-    here the customer has explicitly asked for legacy, so both are forwarded --
-    to every request the call makes, not just the first. Dropping them would
-    silently give a call a longer deadline than the one asked for.
+    A per-call deadline and a connect timeout (which the Rust path refuses) are
+    forwarded when the customer explicitly asked for legacy -- to every
+    request the call makes, not just the first. Dropping them would silently
+    give a call a longer deadline than the one asked for.
     """
     case = container_get_or_create_case
     case.connection._backend = case.legacy_backend
-    _call_get_or_create(case, timeout=0.5, connection_timeout=2)
+    _call_get_or_create(case, timeout=1.5, connection_timeout=2)
     case.backend.execute.assert_not_called()
     calls = [case.connection.ReadContainer.call_args]
     if case.missing:
         calls.append(case.connection.CreateContainer.call_args)
     for call in calls:
-        assert call.kwargs["timeout"] == 0.5
+        assert call.kwargs["timeout"] == 1.5
         assert call.kwargs["connection_timeout"] == 2
 
 

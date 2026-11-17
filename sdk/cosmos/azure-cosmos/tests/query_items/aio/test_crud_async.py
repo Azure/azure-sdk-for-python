@@ -25,6 +25,7 @@ from azure.cosmos.http_constants import StatusCodes
 from common.priority_contract import assert_priority_contract_async
 from azure.cosmos.partition_key import PartitionKey
 from _client_transport import create_client_with_transport
+from config.clients import create_data_client_async, create_setup_client_async
 
 
 @pytest.mark.cosmosCircuitBreaker
@@ -50,17 +51,22 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.host = os.environ["ACCOUNT_HOST"]
         self.masterKey = os.environ["ACCOUNT_KEY"]
-        self.client = CosmosClient(self.host, self.masterKey, _backend="rust")
-        self.addAsyncCleanup(self.client.close)
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) runs the tested operations.
+        self.key_client = create_setup_client_async()
+        await self.key_client.__aenter__()
+        self.addAsyncCleanup(self.key_client.close)
+        self.client = create_data_client_async(_backend="rust")
         await self.client.__aenter__()
+        self.addAsyncCleanup(self.client.close)
         self._db_id = "qi_crud_async_" + uuid.uuid4().hex
-        self.database_for_test = await self.client.create_database(self._db_id)
-        self.addAsyncCleanup(self.client.delete_database, self._db_id)
-        self.key_database_for_test = self.database_for_test
+        self.key_database_for_test = await self.key_client.create_database(self._db_id)
+        self.addAsyncCleanup(self.key_client.delete_database, self._db_id)
+        self.database_for_test = self.client.get_database_client(self._db_id)
         self.configs = SimpleNamespace(
             TEST_DATABASE_ID=self._db_id,
             TEST_MULTI_PARTITION_CONTAINER_ID="multi_partition_" + uuid.uuid4().hex[:8])
-        await self.database_for_test.create_container(
+        await self.key_database_for_test.create_container(
             id=self.configs.TEST_MULTI_PARTITION_CONTAINER_ID, partition_key=PartitionKey(path="/pk"))
 
     async def _create_container_for_test(self, container_id, partition_key, **kwargs):
@@ -320,8 +326,8 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             # Known gap 5: Closed: runtime and operation timeout scopes (sub-second budgets are rejected).
             # Known gap 10: the Rust client also ignores the injected DelayedTransport, so no request is delayed.
             pytest.skip("accepted-vnext-change: Rust rejects the sub-second per-call timeout=0.5 with ValueError "
-                        "(known gap 5, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-5) and ignores the injected "
-                        "custom transport (known gap 10, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). "
+                        "(known gap 5) and ignores the injected "
+                        "custom transport (known gap 10). "
                         "The per-page 3 s timeout steps ran.")
             item_pages_short_timeout = container_with_delay.query_items(
                 query="SELECT * FROM c",

@@ -27,6 +27,8 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY_TENTATIVE, UNHEALTHY
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
+from config.clients import create_data_client_async_for_endpoint
+
 REGION_1 = os.getenv("WRITE_LOCATION", "")
 REGION_2 = os.getenv("READ_LOCATION", "West US")
 CHANGE_FEED = "changefeed"
@@ -78,7 +80,7 @@ class _RustFaultInjection(object):
     """Rust stand-in for FaultInjectionTransport with one region-targeted document fault.
 
     Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport
-    options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). Faults become Rust
+    options are excluded. Faults become Rust
     ``_fault_injection_rules`` fixed when the client is built, so the original's later
     ``faults = []`` / ``add_fault`` on the live client cannot change that client's rules.
     """
@@ -175,7 +177,7 @@ def validate_unhealthy_partitions(global_endpoint_manager,
     assert unhealthy_partitions == expected_unhealthy_partitions
 
 def validate_response_uri(response, expected_uri):
-    # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). Rust responses carry no outgoing `_request`, so the contacted region URL cannot be checked.
+    # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. Rust responses carry no outgoing `_request`, so the contacted region URL cannot be checked.
     request = response.get_response_headers()["_request"]
     assert request.url.startswith(expected_uri)
 
@@ -225,7 +227,7 @@ async def perform_write_operation(operation, container, fault_injection_containe
 async def perform_read_operation(operation, container, doc_id, pk, expected_uri):
     if operation == READ:
         read_resp = await container.read_item(item=doc_id, partition_key=pk)
-        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). Rust responses carry no outgoing `_request`, so the contacted region URL cannot be checked.
+        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. Rust responses carry no outgoing `_request`, so the contacted region URL cannot be checked.
         request = read_resp.get_response_headers()["_request"]
         # Validate the response comes from "Read Region" (the most preferred read-only region)
         assert request.url.startswith(expected_uri)
@@ -287,7 +289,7 @@ def capture_requests(container, resource_type="docs"):
     """Stand-in for test_config.capture_requests, which patches the Python pipeline transport.
 
     Known gap 6: Closed by design: `raw_request_hook` removed from both backends
-    (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). Rust sends requests itself, so nothing is
+. Rust sends requests itself, so nothing is
     captured; the operation still runs and the test then skips instead of passing on an empty list.
     """
     requests = []
@@ -343,7 +345,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
         }
         if custom_transport is not None:
             client_kwargs["_fault_injection_rules"] = custom_transport.rules()
-        client = CosmosClient(endpoint, _key(), _backend="rust", **client_kwargs)
+        client = create_data_client_async_for_endpoint(endpoint, _backend="rust", **client_kwargs)
         await client.__aenter__()
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)
@@ -357,7 +359,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
     async def setup_info(self, error, **kwargs):
         expected_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). The custom transport becomes Rust fault rules for document operations in REGION_1.
+        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. The custom transport becomes Rust fault rules for document operations in REGION_1.
         custom_transport = _RustFaultInjection(error, REGION_1)
         # two documents targeted to same partition, one will always fail and the other will succeed
         doc = create_doc()
@@ -369,8 +371,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
     @pytest.mark.skip(reason="internals-only: asserts the legacy Python per-partition circuit breaker "
                               "(client_connection._global_endpoint_manager partition_health_tracker, "
                               "_partition_health_tracker thresholds); "
-                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired "
-                              "(LEGACY_CODE_RETIREMENT.md#lr-23-python-per-partition-circuit-breaker). "
+                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired. "
                               "Also requires a single-write multi-region account.")
     @pytest.mark.parametrize("write_operation, error", write_operations_and_errors())
     async def test_write_failure_rate_threshold_async_rust(self, write_operation, error):
@@ -390,7 +391,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
                 if i == 4 or i == 8:
                     # perform some successful creates to reset consecutive counter
                     # remove faults and perform a write
-                    # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). Rust fault rules cannot be cleared or re-added on the live client.
+                    # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. Rust fault rules cannot be cleared or re-added on the live client.
                     custom_transport.faults = []
                     await fault_injection_container.upsert_item(body=doc)
                     custom_transport.add_fault(predicate, error)
@@ -415,8 +416,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
     @pytest.mark.skip(reason="internals-only: asserts the legacy Python per-partition circuit breaker "
                               "(client_connection._global_endpoint_manager partition_health_tracker, "
                               "_partition_health_tracker thresholds); "
-                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired "
-                              "(LEGACY_CODE_RETIREMENT.md#lr-23-python-per-partition-circuit-breaker). "
+                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired. "
                               "Also requires a single-write multi-region account.")
     async def test_stat_reset_async_rust(self):
         # Source: tests/test_per_partition_circuit_breaker_sm_mrr_async.py::TestPerPartitionCircuitBreakerSmMrrAsync.test_stat_reset_async
@@ -469,8 +469,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
     @pytest.mark.skip(reason="internals-only: asserts the legacy Python per-partition circuit breaker "
                               "(client_connection._global_endpoint_manager partition_health_tracker, "
                               "_partition_health_tracker thresholds); "
-                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired "
-                              "(LEGACY_CODE_RETIREMENT.md#lr-23-python-per-partition-circuit-breaker). "
+                              "the Rust driver has its own breaker (on by default), so the Python breaker is retired. "
                               "Also requires a single-write multi-region account.")
     @pytest.mark.parametrize("read_operation, write_operation", operations())
     async def test_service_request_error_async_rust(self, read_operation, write_operation):
@@ -497,7 +496,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
         # remove faults and reduce initial recover time and perform a write
         original_unavailable_time = _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS
         _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = 1
-        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). Rust fault rules cannot be cleared or re-added on the live client.
+        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. Rust fault rules cannot be cleared or re-added on the live client.
         custom_transport.faults = []
         try:
             await perform_read_operation(read_operation,
@@ -531,7 +530,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
         try:
             container = custom_setup['col']
             # Create a document to check the response headers
-            # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). The Rust-sent User-Agent cannot be captured; capture_requests skips after the upsert.
+            # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. The Rust-sent User-Agent cannot be captured; capture_requests skips after the upsert.
             with capture_requests(container, resource_type='docs') as requests:
                 await container.upsert_item(body={'id': str(uuid.uuid4()), 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'})
             for request in requests:

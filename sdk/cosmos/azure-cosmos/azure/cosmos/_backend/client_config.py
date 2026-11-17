@@ -39,6 +39,7 @@ also runs when driver acquisition converts the prepared configuration.
 from __future__ import annotations
 
 import math
+import os
 from collections.abc import Mapping
 from dataclasses import fields
 from numbers import Real
@@ -48,6 +49,7 @@ from .._availability_strategy_config import (
     CrossRegionHedgingStrategy, DEFAULT_THRESHOLD_MS, reject_rust_threshold_steps,
 )
 from ..documents import ConsistencyLevel
+from .constants import FAULT_INJECTION_ENV_VAR
 from .contracts import PreparedClientConfig, PreparedFaultInjectionRule
 from ._immutable import freeze_headers
 from .request_settings import reject_trigger_header
@@ -231,9 +233,18 @@ def _prepare_fault_injection_rules(
     Return a tuple of read-only PreparedFaultInjectionRule records with omitted
     optional fields filled in. None or an empty sequence produces no rules.
     The supplied mappings are not modified or retained as mutable rule data.
+    Any other value raises TypeError unless the test-only
+    COSMOS_ENABLE_FAULT_INJECTION switch is "1", so a customer app can't turn
+    on simulated failures in the shipped package.
     """
     if rules is None:
         return ()
+    if os.environ.get(FAULT_INJECTION_ENV_VAR) != "1":
+        raise TypeError(
+            "_fault_injection_rules is a test-only option; set {}=1 to use it.".format(
+                FAULT_INJECTION_ENV_VAR
+            )
+        )
     if isinstance(rules, (str, bytes, bytearray)) or not isinstance(rules, Sequence):
         raise ValueError("_fault_injection_rules must be a sequence of rule mappings.")
 

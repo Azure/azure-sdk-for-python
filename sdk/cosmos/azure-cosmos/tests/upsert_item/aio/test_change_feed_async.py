@@ -24,7 +24,7 @@ from config.settings import TestSettings, unique_database_id
 async def setup():
     database_id = unique_database_id("upsert-change-feed-async")
     # Closed decision: Rust owns endpoint discovery and multi-write routing
-    # (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#client-init-routing). Rust-backed clients reject the
+    #. Rust-backed clients reject the
     # original's multiple_write_locations argument (even False), so it is omitted.
     # Key-auth client for control-plane operations (create/delete containers)
     key_client = CosmosClient(TestSettings.host, TestSettings.masterKey, _backend="rust")

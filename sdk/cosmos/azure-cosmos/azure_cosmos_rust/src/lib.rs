@@ -15,45 +15,16 @@
 //! contract. Feed-range subset checks call the Rust driver's local comparison,
 //! not a CosmosDriver service operation.
 //!
-//! Every operation below has an `_async` twin that returns a Python awaitable
+//! Every operation export has an `_async` twin that returns a Python awaitable
 //! instead of a ready result. Runtime creation also has sync and async exports.
 //! Acquisition can initialize the default CosmosDriverRuntime,
 //! obtain the Tokio runtime, and wait for a CosmosDriver object to be created.
 //! It is not merely a driver-cache lookup. See each
 //! function for its execution and return-value contract.
 //!
-//! Runtime creation (`driver_runtime.rs`): `_create_runtime`, `_create_runtime_async`.
-//! Driver lifecycle (`runtime.rs`):
-//!   `_validate_runtime_configuration`, `acquire_driver_handle`,
-//!   `release_driver_handle`, `_runtime_configuration`,
-//!   `_debug_fault_injection_rule_hit_count`
-//!
-//! Items (`ffi/items.rs`):
-//!   `create_item`, `upsert_item`, `replace_item`, `delete_item`, `read_item`,
-//!   `patch_item`
-//!
-//! Queries and feeds (`ffi/query.rs`, `wire/item_feed.rs`):
-//!   `query_items`, `fetch_page_with_cursor`, and the
-//!   `_ItemFeedCursor` class
-//!
-//! Feed ranges (`ffi/feed_range.rs`, `feed_range_subset.rs`):
-//!   `read_feed_ranges`, `feed_range_from_partition_key`, `is_feed_range_subset`
-//!
-//! Throughput offers (`ffi/offers.rs`):
-//!   `get_throughput`, `replace_throughput`
-//!
-//! Databases (`ffi/databases.rs`):
-//!   `create_database`, `read_database`, `delete_database`, `list_databases`,
-//!   `query_databases`
-//!
-//! Containers (`ffi/containers.rs`):
-//!   `create_container`, `read_container`, `replace_container`,
-//!   `delete_container`, `list_containers`, `query_containers`,
-//!   `get_container_metadata`
-//!
-//! Diagnostics and settings (`wire/`):
-//!   `_debug_operation_count`, `_debug_attempt_count`, `_debug_retry_count`,
-//!   `_request_settings_schema`
+//! `azure/cosmos/_rust.pyi` is the complete list of exports, with their
+//! parameters; a unit test checks it against the built module. The
+//! registrations in `_rust` below show which Rust module defines each export.
 //!
 //! `wire/settings.rs` validates the request protocol and combines typed settings
 //! with prepared headers. Activity/session values become typed operation fields;
@@ -63,8 +34,11 @@
 //! consume headers, such as PATCH's If-Match precondition.
 //!
 //! The binding and linked Rust driver are separate responsibilities inside the
-//! same compiled extension. Use docs/V5/VOCABULARY.md for their established names.
-
+//! same compiled extension.
+
+#[cfg(test)]
+#[path = "../build_commit.rs"]
+mod build_commit;
 mod credential;
 mod driver_runtime;
 mod ffi;
@@ -183,7 +157,6 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
         m.py()
             .get_type_bound::<wire::_UnsupportedQueryFeatureError>(),
     )?;
-    m.add("__version__", env!("CARGO_PKG_VERSION"))?;
     m.add(
         "__python_commit__",
         env!("AZURE_COSMOS_BUILD_PYTHON_COMMIT"),

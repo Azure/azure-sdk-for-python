@@ -20,7 +20,6 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Natural Language :: English",
-    "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -41,6 +40,7 @@ aio = ["azure-core[aio]>=1.30.0"]
 [project.urls]
 Homepage = "https://github.com/Azure/azure-sdk-for-python"
 Repository = "https://github.com/Azure/azure-sdk-for-python"
+Changelog = "https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/CHANGELOG.md"
 
 # These are prototype targets, not the final release support policy.
 [tool.cibuildwheel]
@@ -118,6 +118,8 @@ exclude = [
     "azure/cosmos/_rust.*.so",
     "azure/cosmos/_rust.*.pyd",
     "azure/cosmos/_rust.*.dylib",
+    # The shared azure folder belongs to no single package; main's setup.py also left it out.
+    { path = "azure/__init__.py", format = "wheel" },
 ]
 
 [tool.azure-sdk-build]

@@ -356,7 +356,15 @@ class BindingAdapterShared:
         try:
             if runtime is not None and not isinstance(runtime, CosmosRuntime):
                 raise TypeError("runtime must be CosmosRuntime or None.")
-            from azure.cosmos import _rust
+            try:
+                from azure.cosmos import _rust
+            except ImportError as error:
+                raise ImportError(
+                    f"The compiled Rust extension azure.cosmos._rust could not be loaded: {error}. "
+                    "Install an azure-cosmos wheel built for this operating system, processor, "
+                    "and Python version. A source checkout must build the extension first.",
+                    name="azure.cosmos._rust",
+                ) from error
 
             if not hasattr(_rust, "_DriverHandle"):
                 raise RuntimeError(

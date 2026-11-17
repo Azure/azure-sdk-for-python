@@ -859,27 +859,45 @@ def _runtime_parameters(callable_object):
 
 
 def test_type_stub_matches_the_installed_rust_module_rust():
-    """Every name _rust.pyi declares exists in the built module with the same shape.
+    """_rust.pyi declares exactly the built module's exports, with the same shapes.
 
     The stub is written by hand; nothing generates it from the Rust code. Type checkers
     and editors trust it, so a renamed export or a changed parameter would type-check
     cleanly and fail only when called. This compares the stub shipped next to the module
-    with the module itself: function parameters (name, kind, default), class properties,
-    and declared constructors.
+    with the module itself: every export is declared and every declaration exists, with
+    the same function parameters (name, kind, default), class properties, and declared
+    constructors.
 
-    Names the stub leaves to ``__getattr__`` are untyped on purpose and not checked here.
-    ``_AsyncOperationProbe`` exists only in builds made with the ``test-probes`` feature,
-    so it is checked only when present.
+    ``_AsyncOperationProbe`` and ``read_item_async``'s ``_debug_lifecycle`` keyword exist
+    only in builds made with the ``test-probes`` feature, so they are allowed only there.
     """
     native = pytest.importorskip("azure.cosmos._rust")
     stub_path = Path(native.__file__).with_name("_rust.pyi")
     stub = ast.parse(stub_path.read_text(encoding="utf-8"))
     test_build_only = {"_AsyncOperationProbe"}
+    is_test_build = hasattr(native, "_AsyncOperationProbe")
+    declared_names = {
+        node.name for node in stub.body if isinstance(node, (ast.FunctionDef, ast.ClassDef))
+    } | {
+        node.target.id for node in stub.body
+        if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name)
+    }
+    runtime_names = {name for name in vars(native) if not name.startswith("__")}
+    runtime_names |= {
+        name for name in ("__version__", "__python_commit__", "__rust_driver_commit__") if hasattr(native, name)
+    }
+    missing_from_stub = sorted(runtime_names - declared_names)
+    missing_from_module = sorted(declared_names - runtime_names - test_build_only)
+    assert not missing_from_stub, f"binding exports missing from _rust.pyi: {missing_from_stub}"
+    assert not missing_from_module, f"_rust.pyi declares missing exports: {missing_from_module}"
     checked = 0
     for node in stub.body:
-        if isinstance(node, ast.FunctionDef) and node.name != "__getattr__":
-            assert hasattr(native, node.name), f"stub declares missing function {node.name}"
-            assert _runtime_parameters(getattr(native, node.name)) == _stub_parameters(node), node.name
+        if isinstance(node, ast.FunctionDef):
+            assert node.name != "__getattr__", "_rust.pyi must not hide undeclared exports"
+            expected = _stub_parameters(node)
+            if is_test_build and node.name == "read_item_async":
+                expected.append(("_debug_lifecycle", inspect.Parameter.KEYWORD_ONLY, None))
+            assert _runtime_parameters(getattr(native, node.name)) == expected, node.name
             checked += 1
         elif isinstance(node, ast.ClassDef):
             if node.name in test_build_only and not hasattr(native, node.name):

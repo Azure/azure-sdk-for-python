@@ -9,7 +9,10 @@
     "cdylib",
     "cfgs",
     "clippy",
+    "dedup",
+    "dedupe",
     "EDEADLK",
+    "falsey",
     "finalizer",
     "finalizers",
     "GLSN",
@@ -41,6 +44,7 @@
     "serde",
     "toxiproxy",
     "TOCTOU",
+    "uninlined",
     "UNLCK",
     "unraisable",
     "unraisablehook",
@@ -66,9 +70,9 @@
         "corepy",
         "dedups",
         "elts",
-        "falsey",
         "hdrs",
         "inprocess",
+        "kwonlyargs",
         "localns",
         "makepyfile",
         "mypkg",
@@ -80,6 +84,7 @@
         "pytester",
         "redef",
         "reprs",
+        "resumability",
         "uncoalesced",
         "Uncopyable",
         "undecoded",
@@ -150,6 +155,14 @@
         "wids",
         "wsec"
       ]
+    },
+    {
+      "filename": [
+        "tests/common/test_profiling_native_experiments_unit.py",
+        "tests/workloads/profiling_native_experiments.py",
+        "tests/workloads/native_experiments/**"
+      ],
+      "words": ["libmimalloc", "mimalloc", "psapi"]
     },
     {
       "filename": [

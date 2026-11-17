@@ -35,7 +35,7 @@
 //! runtime, not one Python worker thread per service request. See the shared
 //! execution helpers for cancellation and credential-callback limits.
 //!
-//! Reuse docs/V5/VOCABULARY.md for terminology. `runtime.rs` explains which
+//! `runtime.rs` explains which
 //! CosmosDriverRuntime resources and CosmosDriver objects can be shared;
 //! request inputs remain specific to each binding call.
 

@@ -19,19 +19,19 @@ Run with::
 
     pytest --noconftest tests/query_items/sync/test_query.py -v
 """
-import os
 import unittest
 import uuid
 from unittest.mock import patch
 
 import pytest
 
+from config.clients import create_data_client, create_setup_client
 from config.settings import TestSettings
 
 import azure.cosmos._retry_utility as retry_utility
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos import (
-    CosmosClient, PartitionKey, http_constants, _endpoint_discovery_retry_policy, _synchronized_request,
+    PartitionKey, http_constants, _endpoint_discovery_retry_policy, _synchronized_request,
 )
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._routing.feed_range_continuation import _decode_token
@@ -39,35 +39,42 @@ from query_items._distinct_helpers import DistinctConfig, distinct_query_diagnos
 from query_items._feed_range_helpers import create_feed_range_in_dict, create_range
 
 
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
-
-
 class _QueryTestCase(unittest.TestCase):
     config = DistinctConfig
 
     def setUp(self) -> None:
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) runs the tested operations.
+        self.key_client = create_setup_client()
+        self.addCleanup(self.key_client.close)
+        self.client = create_data_client(_backend="rust")
         self.addCleanup(self.client.close)
         self._db_id = "legacy_query_paging_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
-        self.database = self.client.create_database(self._db_id)
+        self.key_db = self.key_client.create_database(self._db_id)
         self.addCleanup(self._delete_owned_database)
         print(f"\nOwned query database: {self._db_id}")
-        self.container = self.database.create_container(
+        self.database = self.client.get_database_client(self._db_id)
+        self.container = self._create_container_for_test(
             id=self._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
 
     def _delete_owned_database(self) -> None:
-        self.client.delete_database(self._db_id)
+        self.key_client.delete_database(self._db_id)
         print(f"\nDeleted owned query database: {self._db_id}")
 
+    def _create_container_for_test(self, *args, **kwargs):
+        # Source helper: tests/test_query.py::TestQuery._create_container_for_test
+        container_ref = self.key_db.create_container(*args, **kwargs)
+        return self.database.get_container_client(container_ref.id)
+
+    def _delete_container_for_test(self, *args, **kwargs):
+        # Source helper: tests/test_query.py::TestQuery._delete_container_for_test
+        return self.key_db.delete_container(*args, **kwargs)
+
     def _create_multi_partition_container(self):
-        return self.database.create_container(
+        return self._create_container_for_test(
             "multi_partition_" + uuid.uuid4().hex[:8], PartitionKey(path="/pk"), offer_throughput=11000)
 
 
@@ -94,8 +101,8 @@ class TestQuery(_QueryTestCase):
 
         if http_constants.HttpHeaders.QueryMetrics not in query_iterable.get_response_headers():
             pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                        "metrics header is missing (known gap 36, "
-                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
+                        "metrics header is missing (known gap 36)"
+                        ". The query ran.")
         METRICS_HEADER_NAME = 'x-ms-documentdb-query-metrics'
         self.assertTrue(METRICS_HEADER_NAME in created_collection.client_connection.last_response_headers)
         metrics_header = created_collection.client_connection.last_response_headers[METRICS_HEADER_NAME]
@@ -103,7 +110,7 @@ class TestQuery(_QueryTestCase):
         metrics = metrics_header.split(';')
         self.assertTrue(len(metrics) > 1)
         self.assertTrue(all(['=' in x for x in metrics]))
-        self.database.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     def test_populate_index_metrics_rust(self):
         # Source: tests/test_query.py::TestQuery.test_populate_index_metrics
@@ -125,8 +132,8 @@ class TestQuery(_QueryTestCase):
 
         if http_constants.HttpHeaders.IndexUtilization not in query_iterable.get_response_headers():
             pytest.skip("driver-gap: Rust does not send populate_index_metrics over Gateway V2, so the "
-                        "index-utilization header is missing (known gap 36, "
-                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
+                        "index-utilization header is missing (known gap 36)"
+                        ". The query ran.")
         INDEX_HEADER_NAME = http_constants.HttpHeaders.IndexUtilization
         self.assertTrue(INDEX_HEADER_NAME in created_collection.client_connection.last_response_headers)
         index_metrics = created_collection.client_connection.last_response_headers[INDEX_HEADER_NAME]
@@ -145,14 +152,14 @@ class TestQuery(_QueryTestCase):
             and idx.get('IndexSpec') in ('/pk/?', '/_epk/?')
             for idx in candidate_indexes
         ))
-        self.database.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
-    # Known gap 36: query advice is dropped by the driver's response headers on both transports (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-advice-response-header).
+    # Known gap 36: query advice is dropped by the driver's response headers on both transports.
     @pytest.mark.skip(
         reason=(
             "driver-gap: the x-ms-cosmos-query-advice response header never reaches Python, with "
-            "Gateway V2 on or off (known gap 36, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-advice-response-header). "
+            "Gateway V2 on or off (known gap 36)"
+            ". "
             "The original skip cites the emulator; the legacy test passes on a live account."
         )
     )
@@ -239,7 +246,7 @@ class TestQuery(_QueryTestCase):
         query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
         self.assertIsNotNone(query_advice)
         self.assertIn("QA1009", query_advice)
-        self.database.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     @pytest.mark.skip(
         reason="driver-gap: Gap 30 - Rust rejects MAX queries without a partition key "
@@ -357,7 +364,7 @@ class TestQuery(_QueryTestCase):
         results = list(query_iterable)
         self.assertEqual(len(results), 2)
 
-        self.database.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     def test_query_pagination_with_max_item_count_rust(self):
         """Test pagination showing per-page limits and total results counting."""
@@ -410,7 +417,7 @@ class TestQuery(_QueryTestCase):
         for i, item in enumerate(all_fetched_results):
             self.assertEqual(item['value'], i)
 
-        self.database.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     def test_offset_limit_rust(self):
         # Source: tests/test_query.py::TestQuery.test_offset_limit
@@ -447,7 +454,7 @@ class TestQuery(_QueryTestCase):
         self._validate_offset_limit(created_collection=created_collection,
                                     query='SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1',
                                     results=[])
-        self.database.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     def _validate_offset_limit(self, created_collection, query, results):
         query_iterable = created_collection.query_items(
@@ -469,7 +476,7 @@ class TestQuery(_QueryTestCase):
         pk_field = "pk"
         different_field = "different_field"
 
-        created_collection = self.database.create_container(
+        created_collection = self._create_container_for_test(
             id='collection with composite index ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk", kind="Hash"),
             indexing_policy={
@@ -495,10 +502,10 @@ class TestQuery(_QueryTestCase):
 
         padded_docs = self.config._pad_with_none(documents, distinct_field)
 
-        # Known gap 30: query_items() remaining query, paging, and continuation-token gaps, item 2 (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30).
+        # Known gap 30: query_items() remaining query, paging, and continuation-token gaps, item 2.
         pytest.skip("driver-gap: Rust rejects cross-partition unordered DISTINCT without TOP or LIMIT "
-                    "(400/20125 ClientBufferedQueryRequiresFiniteWindow) (known gap 30 item 2, "
-                    "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30). The documents were created.")
+                    "(400/20125 ClientBufferedQueryRequiresFiniteWindow) (known gap 30 item 2)"
+                    ". The documents were created.")
         self._validate_distinct(created_collection=created_collection,
                                 query='SELECT distinct c.%s from c' % distinct_field,  # nosec
                                 results=self.config._get_distinct_docs(padded_docs, distinct_field, None, False),
@@ -523,7 +530,7 @@ class TestQuery(_QueryTestCase):
                                 is_select=True,
                                 fields=[different_field])
 
-        self.database.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     def _validate_distinct(self, created_collection, query, results, is_select, fields):
         with distinct_query_diagnostics(query):
@@ -578,8 +585,8 @@ class TestQuery(_QueryTestCase):
 
             if http_constants.HttpHeaders.QueryMetrics not in query_iterable.get_response_headers():
                 pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                            "metrics header is missing (known gap 36, "
-                            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The COUNT query ran.")
+                            "metrics header is missing (known gap 36)"
+                            ". The COUNT query ran.")
             response_headers = query_iterable.get_response_headers()
             metrics_header = response_headers[http_constants.HttpHeaders.QueryMetrics]
             metrics = dict(
@@ -674,14 +681,6 @@ class TestQuery(_QueryTestCase):
     # Copies below use owned containers in this test's database. The shared
     # TEST_MULTI_PARTITION_CONTAINER_ID (``/pk``) becomes an owned ``/pk``
     # container with 11000 RU so it still spans more than one physical partition.
-
-    def _create_container_for_test(self, *args, **kwargs):
-        # Source helper: tests/test_query.py::TestQuery._create_container_for_test
-        return self.database.create_container(*args, **kwargs)
-
-    def _delete_container_for_test(self, *args, **kwargs):
-        # Source helper: tests/test_query.py::TestQuery._delete_container_for_test
-        return self.database.delete_container(*args, **kwargs)
 
     def test_first_and_last_slashes_trimmed_for_query_string_rust(self):
         # Source: tests/test_query.py::TestQuery.test_first_and_last_slashes_trimmed_for_query_string
@@ -939,10 +938,10 @@ class TestQuery(_QueryTestCase):
             {"name": "@lookupVersion", "value": "console_csat"}  # cspell:disable-line
         ], enable_cross_partition_query=True)
 
-        # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-unscoped-max).
+        # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates.
         pytest.skip("driver-gap: Rust rejects cross-partition VALUE MAX with 400/20113 "
-                    "(ClientUnsupportedQueryFeature) (known gap 30 item 1, "
-                    "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-unscoped-max). The query was built.")
+                    "(ClientUnsupportedQueryFeature) (known gap 30 item 1)"
+                    ". The query was built.")
         self.assertListEqual(list(query_results), [None])
 
     def test_query_request_params_none_retry_policy_rust(self):
@@ -957,7 +956,7 @@ class TestQuery(_QueryTestCase):
         for item in items:
             created_collection.create_item(body=item)
 
-        # Known gap 11: Closed: driver-owned throttle retry waiting (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-11). Retry policies are owned by the Rust driver.
+        # Known gap 11: Closed: driver-owned throttle retry waiting. Retry policies are owned by the Rust driver.
         pytest.skip("internals-only: the errors are injected by patching legacy retry_utility.ExecuteFunction "
                     "and the legacy endpoint-discovery retry policy; Rust never calls them and owns its retries "
                     "(known gap 11). The items were created.")
@@ -1112,8 +1111,8 @@ class TestQuery(_QueryTestCase):
 
         if http_constants.HttpHeaders.QueryMetrics not in query_iterable.get_response_headers():
             pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                        "metrics header is missing (known gap 36, "
-                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). Paging and the query ran.")
+                        "metrics header is missing (known gap 36)"
+                        ". Paging and the query ran.")
         # Verify query metrics were populated
         metrics_header_name = 'x-ms-documentdb-query-metrics'
         self.assertTrue(metrics_header_name in created_collection.client_connection.last_response_headers)
@@ -1157,7 +1156,7 @@ class TestQuery(_QueryTestCase):
                 ).by_page()
                 for page in pages:
                     list(page)
-            # Known gap 5: Closed: runtime and operation timeout scopes (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-5). The driver applies the operation budget; Rust never calls legacy _synchronized_request.
+            # Known gap 5: Closed: runtime and operation timeout scopes. The driver applies the operation budget; Rust never calls legacy _synchronized_request.
             pytest.skip("internals-only: per-request timeout values were captured by patching legacy "
                         "_synchronized_request._PipelineRunFunction, which Rust never calls; the driver owns "
                         "the operation budget (known gap 5). The paged query with timeout ran.")
@@ -1184,10 +1183,10 @@ class TestQuery(_QueryTestCase):
                 )
 
             connection_timeout = 27
-            # Known gap 5: Closed: runtime and operation timeout scopes (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-5). Rust-served operations reject per-call connection_timeout.
+            # Known gap 5: Closed: runtime and operation timeout scopes. Rust-served operations reject per-call connection_timeout.
             pytest.skip("accepted-vnext-change: Rust query_items rejects per-call connection_timeout with "
-                        "NotImplementedError; connection limits belong to the runtime (known gap 5, "
-                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-5). The items were created.")
+                        "NotImplementedError; connection limits belong to the runtime (known gap 5)"
+                        ". The items were created.")
             captured, ctx = self._capture_pipeline_kwarg("connection_timeout")
             with ctx:
                 pages = container.query_items(
@@ -1229,10 +1228,10 @@ class TestQuery(_QueryTestCase):
             )
             feed_range = create_feed_range_in_dict(full_range)
 
-            # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-full-range-sum).
+            # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates.
             pytest.skip("driver-gap: Rust rejects full-range aggregates with 400/20113 "
-                        "(ClientUnsupportedQueryFeature) instead of the legacy AVG ValueError (known gap 30 item 1, "
-                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-full-range-sum). The items were created.")
+                        "(ClientUnsupportedQueryFeature) instead of the legacy AVG ValueError (known gap 30 item 1)"
+                        ". The items were created.")
             with self.assertRaises(ValueError) as cm:
                 pages = container.query_items(
                     query="SELECT VALUE AVG(c.amount) FROM c",

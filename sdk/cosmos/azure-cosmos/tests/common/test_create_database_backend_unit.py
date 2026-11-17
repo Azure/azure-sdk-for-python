@@ -254,13 +254,6 @@ def test_read_database_prepared_rejects_empty_normalized_id_rust(database_id):
     [
         ({}, {}, True),
         ({}, {"timeout": 1.0}, True),
-        ({}, {"timeout": 0.5}, False),
-        ({}, {"timeout": 0}, False),
-        ({}, {"timeout": -1}, False),
-        ({}, {"timeout": float("-inf")}, False),
-        ({}, {"timeout": "1"}, False),
-        ({}, {"timeout": float("nan")}, False),
-        ({}, {"timeout": float("inf")}, False),
         ({}, {"connection_timeout": 2}, False),
         ({}, {"response_hook": object()}, True),
         ({"initialHeaders": {"x-custom": "value"}}, {}, True),
@@ -278,6 +271,13 @@ def test_read_database_rust_eligibility_never_drops_transport_kwargs_rust(
         is_read_database_rust_eligible(request_options, operation_kwargs)
         is expected
     )
+
+
+@pytest.mark.parametrize("timeout", [0.5, 0, -1, float("-inf"), "1", float("nan"), float("inf")])
+def test_read_database_rust_eligibility_rejects_bad_timeout_as_value_error_rust(timeout):
+    """A bad timeout is a wrong value, so eligibility raises instead of answering "not eligible"."""
+    with pytest.raises(ValueError, match="timeout must be None or a finite number"):
+        is_read_database_rust_eligible({}, {"timeout": timeout})
 
 
 def test_sync_connection_read_database_forwards_initial_headers_rust():
@@ -613,13 +613,12 @@ def test_database_read_preserves_supported_options_and_refreshes_properties_rust
          "negative-inf", "rounds-out-of-range", "out-of-range", "overflow"],
 )
 def test_database_read_invalid_timeout_never_reaches_a_transport_rust(database_read_case, timeout):
-    """A timeout the Rust engine cannot express exactly is refused before anything
-    is sent.
+    """A bad timeout is refused as a wrong value before anything is sent.
 
     The list covers booleans, zero, negatives, a value below one second, a
     string, the three non-finite floats, and values at or past the range the
-    engine can hold. Each raises ``NotImplementedError`` telling the customer to
-    use the legacy Python client for this call.
+    engine can hold. Each raises ``ValueError``: the value is wrong, so
+    ``NotImplementedError`` ("Rust cannot do this") would mislead the customer.
 
     Neither engine is invoked, so an unusable deadline can never be rounded into
     a usable one behind the customer's back. The compatibility fallback counter
@@ -627,7 +626,7 @@ def test_database_read_invalid_timeout_never_reaches_a_transport_rust(database_r
     """
     case = database_read_case
     before = rust_compatibility_fallback_count()
-    with pytest.raises(NotImplementedError, match="DatabaseProxy.read.*legacy Python"):
+    with pytest.raises(ValueError, match="timeout must be None or a finite number"):
         _call_database_read(case, timeout=timeout)
     case.backend.execute.assert_not_called()
     case.connection.ReadDatabase.assert_not_called()
@@ -1346,23 +1345,20 @@ def test_async_read_database_maps_not_found_and_skips_hook_rust():
 
 
 @pytest.mark.parametrize(
-    "operation_kwargs",
+    "operation_kwargs,error,message",
     [
-        # The driver clamps a sub-second end-to-end timeout up to 1 second.
-        {Constants.Kwargs.TIMEOUT: 0.5},
-        # The binding ignores non-positive timeouts instead of raising the
-        # legacy CosmosClientTimeoutError.
-        {Constants.Kwargs.TIMEOUT: 0},
-        {Constants.Kwargs.TIMEOUT: -1},
-        # Preserve the legacy validation error for malformed values.
-        {Constants.Kwargs.TIMEOUT: "1"},
+        # Bad timeouts are wrong values, so they raise ValueError.
+        ({Constants.Kwargs.TIMEOUT: 0.5}, ValueError, "timeout must be"),
+        ({Constants.Kwargs.TIMEOUT: 0}, ValueError, "timeout must be"),
+        ({Constants.Kwargs.TIMEOUT: -1}, ValueError, "timeout must be"),
+        ({Constants.Kwargs.TIMEOUT: "1"}, ValueError, "timeout must be"),
         # Transport keywords are consumed by the azure-core pipeline, which the
         # Rust path does not run.
-        {"connection_timeout": 2},
+        ({"connection_timeout": 2}, NotImplementedError, "DatabaseProxy.read.*legacy Python"),
     ],
 )
 def test_read_database_rejects_options_rust_cannot_honor_rust(
-    operation_kwargs,
+    operation_kwargs, error, message,
 ):
     """Unsupported reads never cross from Rust to legacy transport."""
     connection = SimpleNamespace(
@@ -1371,7 +1367,7 @@ def test_read_database_rejects_options_rust_cannot_honor_rust(
     )
     backend = _BindingAdapter()
 
-    with pytest.raises(NotImplementedError, match="DatabaseProxy.read.*legacy Python"):
+    with pytest.raises(error, match=message):
         DatabaseHelper(connection, backend).read_database(
             "db1", {}, kwargs=dict(operation_kwargs),
         )
@@ -1397,17 +1393,17 @@ def test_read_database_rejects_driver_owned_initial_header_rust():
 
 
 @pytest.mark.parametrize(
-    "operation_kwargs",
+    "operation_kwargs,error,message",
     [
-        {Constants.Kwargs.TIMEOUT: 0.5},
-        {Constants.Kwargs.TIMEOUT: 0},
-        {Constants.Kwargs.TIMEOUT: -1},
-        {Constants.Kwargs.TIMEOUT: "1"},
-        {"connection_timeout": 2},
+        ({Constants.Kwargs.TIMEOUT: 0.5}, ValueError, "timeout must be"),
+        ({Constants.Kwargs.TIMEOUT: 0}, ValueError, "timeout must be"),
+        ({Constants.Kwargs.TIMEOUT: -1}, ValueError, "timeout must be"),
+        ({Constants.Kwargs.TIMEOUT: "1"}, ValueError, "timeout must be"),
+        ({"connection_timeout": 2}, NotImplementedError, "DatabaseProxy.read.*legacy Python"),
     ],
 )
 def test_async_read_database_rejects_options_rust_cannot_honor_rust(
-    operation_kwargs,
+    operation_kwargs, error, message,
 ):
     """Async reads also reject unsupported calls without fallback."""
     async def run():
@@ -1418,7 +1414,7 @@ def test_async_read_database_rejects_options_rust_cannot_honor_rust(
         )
         backend = _AsyncBindingAdapter()
 
-        with pytest.raises(NotImplementedError, match="DatabaseProxy.read.*legacy Python"):
+        with pytest.raises(error, match=message):
             await AsyncDatabaseHelper(connection, backend).read_database(
                 "db1", {}, kwargs=dict(operation_kwargs),
             )
@@ -3936,9 +3932,6 @@ def test_delete_database_service_error_never_fires_success_hook_or_replays_rust(
 @pytest.mark.parametrize(
     "kwargs",
     [
-        {"timeout": 0.5},
-        {"timeout": 0},
-        {"timeout": "invalid"},
         {"request_options": {"timeout": 10}},
         {"connection_timeout": 1},
         {"initial_headers": {"user-agent": "custom"}},
@@ -3950,9 +3943,9 @@ def test_delete_database_unsupported_options_never_fall_back_rust(delete_databas
     """Options the Rust engine cannot honor stop the delete instead of quietly
     sending it through the legacy transport.
 
-    The list covers a socket-level read timeout, deadlines that are too small,
-    zero, or not a number, a connect timeout, the raw request and response
-    hooks, two headers the driver owns, and an unknown keyword.
+    The list covers a timeout given only in raw request options, a connect
+    timeout, two headers the driver owns, and an unknown keyword. Bad timeout
+    values are covered by the invalid-timeout test below.
 
     Each raises ``NotImplementedError`` pointing at the legacy Python client.
     Nothing is sent on either path, the hook does not fire, and the fallback
@@ -3978,10 +3971,10 @@ def test_delete_database_unsupported_options_never_fall_back_rust(delete_databas
          "negative-inf", "rounds-out-of-range", "out-of-range", "overflow"],
 )
 def test_delete_database_invalid_timeout_never_reaches_a_transport_rust(delete_database_client, timeout):
-    """Reject the same unsupported deadlines as reads, before either transport."""
+    """Reject the same bad deadlines as reads with ``ValueError``, before either transport."""
     client = delete_database_client
     hook = MagicMock()
-    with pytest.raises(NotImplementedError, match="delete_database.*legacy Python"):
+    with pytest.raises(ValueError, match="timeout must be None or a finite number"):
         _call_delete_database(client, "db1", timeout=timeout, response_hook=hook)
     hook.assert_not_called()
     client._adapter.execute.assert_not_called()

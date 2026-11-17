@@ -6,13 +6,12 @@
 Copied from ``tests/test_headers.py``; the class and method names match
 the source (apart from the method's ``_rust`` suffix) so the parity reporter can pair
 the core-python and Rust
-runs. Builds its own database + container and reads ``ACCOUNT_HOST`` /
-``ACCOUNT_KEY`` from the environment.
+runs. Builds its own database + container through a key client; the tested
+operations run on the data client (AAD in the cosmosAAD* lanes).
 
 Run: ``pytest --noconftest tests/upsert_item/sync/test_headers.py -v``
 """
 import importlib
-import os
 import unittest
 from contextlib import contextmanager
 from copy import copy
@@ -22,14 +21,9 @@ import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey, exceptions, http_constants
+from config.clients import create_data_client, create_setup_client
 
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from azure.cosmos import PartitionKey, exceptions, http_constants
 
 
 # Same value as the source, so the wire bytes match the legacy path.
@@ -42,39 +36,41 @@ class TestHeaders(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = CosmosClient(HOST, KEY, _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) runs the tested operations.
+        cls.key_client = create_setup_client()
+        cls.client = create_data_client(_backend="rust")
         cls._db_id = "legacy_ui_headers_" + uuid.uuid4().hex[:8]
         cls._container_id = "c_" + uuid.uuid4().hex[:8]
-        cls.database = cls.client.create_database(cls._db_id)
+        cls.database = cls.key_client.create_database(cls._db_id)
         cls.container = cls.database.create_container(
             id=cls._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
+        cls.data_database = cls.client.get_database_client(cls._db_id)
+        cls.data_container = cls.data_database.get_container_client(cls._container_id)
 
     @classmethod
     def tearDownClass(cls):
         try:
-            cls.client.delete_database(cls._db_id)
+            cls.key_client.delete_database(cls._db_id)
         except Exception:  # pylint: disable=broad-except
             pass
+        cls.client.close()
+        cls.key_client.close()
 
     def test_container_upsert_item_throughput_bucket_rust(self):
         """Verify the operation prepares the requested throughput bucket."""
         # Source: tests/test_headers.py::TestHeaders.test_container_upsert_item_throughput_bucket
         binding = importlib.import_module(type(self.client._adapter).__module__)._rust_module
         with patch.object(binding, "upsert_item", wraps=binding.upsert_item) as operation:
-            self.container.upsert_item(
+            self.data_container.upsert_item(
                 body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
                 throughput_bucket=request_throughput_bucket_number,
             )
         self.assertTrue(operation.called)
         for call in operation.call_args_list:
             self.assertEqual(call.args[1].settings.throughput_bucket, request_throughput_bucket_number)
-
-    @property
-    def data_database(self):
-        # The original's data-plane database proxy; this file's single Rust key client serves both planes.
-        return self.database
 
     @pytest.mark.skip(reason="driver-gap: delete_all_items_by_partition_key has no Rust driver operation "
                              "(known gap 19); on the Rust client the call raises NotImplementedError from its "
@@ -101,8 +97,8 @@ class TestHeaders(unittest.TestCase):
 
         try:
             # delete all items for partition key 1
-            # Known gap 6: raw_request_hook removed; outgoing headers not observable (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). capture_requests patches the legacy Python transport, which a Rust-run operation does not use.
-            # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-19). No Rust driver path; the uncached container-metadata preload raises NotImplementedError before any request is sent.
+            # Known gap 6: raw_request_hook removed; outgoing headers not observable. capture_requests patches the legacy Python transport, which a Rust-run operation does not use.
+            # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed. No Rust driver path; the uncached container-metadata preload raises NotImplementedError before any request is sent.
             with _capture_requests(data_collection, resource_type='operations') as requests:
                 data_collection.delete_all_items_by_partition_key(
                     partition_key1,

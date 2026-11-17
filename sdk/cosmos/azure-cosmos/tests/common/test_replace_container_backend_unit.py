@@ -284,7 +284,9 @@ def test_unsupported_rust_options_never_fall_back_rust(replace_case, kwargs):
     along with a connect timeout, both raw hooks, an unknown keyword, two
     driver-owned headers, and a raw request-options dictionary.
 
-    Each raises ``NotImplementedError`` pointing at the legacy Python client.
+    Each raises ``NotImplementedError`` pointing at the legacy Python client,
+    except the bad deadlines, which raise ``ValueError`` because they are wrong
+    values rather than something Rust cannot do.
     Nothing is sent and the fallback counter does not move, so a customer's
     container is never rewritten by an engine they did not choose.
 
@@ -295,7 +297,11 @@ def test_unsupported_rust_options_never_fall_back_rust(replace_case, kwargs):
     if case.legacy:
         pytest.skip("Rust-specific eligibility")
     before = rust_compatibility_fallback_count()
-    with pytest.raises(NotImplementedError, match="replace_container.*legacy Python"):
+    error, message = (
+        (ValueError, "timeout must be") if "timeout" in kwargs
+        else (NotImplementedError, "replace_container.*legacy Python")
+    )
+    with pytest.raises(error, match=message):
         _replace(case, "c1", PK, **kwargs)
     _assert_no_dispatch(case)
     assert rust_compatibility_fallback_count() == before

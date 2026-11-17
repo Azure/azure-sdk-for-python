@@ -12,15 +12,16 @@ legacy partition key ranges and per-range QueryFeed results, so they stop with
 an internals-only skip where those internals are first used.
 """
 
-import os
 import unittest
 import uuid
 
 import pytest
 from azure.core.paging import ItemPaged
 
+from config.clients import create_data_client, create_setup_client
+
 import azure.cosmos._base as base
-from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos import PartitionKey
 from azure.cosmos import _query_iterable as query_iterable
 
 
@@ -28,17 +29,21 @@ from azure.cosmos import _query_iterable as query_iterable
 @pytest.mark.cosmosAADLong
 class TestCrossPartitionTopOrderBy(unittest.TestCase):
     def setUp(self):
-        self.client = CosmosClient(
-            os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust",
-        )
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) runs the tested operations.
+        self.key_client = create_setup_client()
+        self.addCleanup(self.key_client.close)
+        self.client = create_data_client(_backend="rust")
         self.addCleanup(self.client.close)
         self.database_id = "legacy_query_top_" + uuid.uuid4().hex
-        database = self.client.create_database(self.database_id)
+        key_db = self.key_client.create_database(self.database_id)
         self.addCleanup(self._delete_owned_database)
         print(f"\nOwned TOP database: {self.database_id}")
-        self.created_container = database.create_container(
+        created_container_ref = key_db.create_container(
             id="orders", partition_key=PartitionKey(path="/id"), offer_throughput=11000,
         )
+        self.created_container = self.client.get_database_client(
+            self.database_id).get_container_client(created_container_ref.id)
         self.collection_link = 'dbs/' + self.database_id + '/colls/' + self.created_container.id
         self.document_definitions = []
         for i in range(20):
@@ -55,7 +60,7 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
             self.document_definitions.append(d)
 
     def _delete_owned_database(self):
-        self.client.delete_database(self.database_id)
+        self.key_client.delete_database(self.database_id)
         print(f"\nDeleted owned TOP database: {self.database_id}")
 
     def test_orderby_top_query_rust(self):
@@ -378,11 +383,10 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
 
     def test_orderby_query_noncomparable_orderby_item_rust(self):
         # Source: tests/test_orderby.py::TestCrossPartitionTopOrderBy.test_orderby_query_noncomparable_orderby_item
-        # Known gap 30 item 10: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30
+        # Known gap 30 item 10
         pytest.skip(
             "driver-gap: Rust returns rows for ORDER BY over mixed number/string values instead of the "
-            "legacy ValueError (known gap 30 item 10, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-orderby-mixed-types)."
+            "legacy ValueError (known gap 30 item 10)."
         )
         # test orderby with different order by item type
 

@@ -1142,13 +1142,11 @@ def build(discovery=None, reviewed_annotation_refresh=False):
         "policy_references": [
             {
                 "id": "pushback13",
-                "path": "docs\\V5\\api-review\\RUST_PARITY_PUSHBACKS.md",
                 "excerpt": "## 13 — Closed: Rust owns automatic write retries",
                 "status": "accepted-exclusion",
             },
             {
                 "id": "pushback14",
-                "path": "docs\\V5\\api-review\\RUST_PARITY_PUSHBACKS.md",
                 "excerpt": "## 14 - Closed: progressive read hedging and write hedging are excluded",
                 "status": "accepted-exclusion",
             },

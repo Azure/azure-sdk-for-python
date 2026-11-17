@@ -133,12 +133,12 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
             container_id: str = SINGLE_PARTITION_CONTAINER_NAME,
             **kwargs):
         if custom_transport is not None:
-            # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). The emulator topology rewrite and per-region document faults have no Rust fault-rule equivalent.
+            # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. The emulator topology rewrite and per-region document faults have no Rust fault-rule equivalent.
             pytest.skip("accepted-vnext-change: the Rust client does not accept a custom transport, and Rust fault "
                         "injection cannot rewrite the emulator account topology into multiple regions "
                         "(known gap 10).")
         # Closed decision: Rust owns endpoint discovery and multi-write routing
-        # (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#client-init-routing). multiple_write_locations is
+        #. multiple_write_locations is
         # rejected on Rust clients, so it is dropped; the driver uses the account's multi-write capability.
         kwargs.pop("multiple_write_locations", None)
         client = CosmosClient(default_endpoint, key, consistency_level="Session", _backend="rust", **kwargs)
@@ -200,7 +200,7 @@ class TestFaultInjectionTransportAsync(IsolatedAsyncioTestCase):
             while (time.perf_counter() - start) < 2:
                 # reads and writes should failover to second region
                 upsert_document = await container.upsert_item(body=document_definition)
-                # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). Rust responses carry no "_request" entry, so the region URL check cannot run.
+                # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. Rust responses carry no "_request" entry, so the region URL check cannot run.
                 request = upsert_document.get_response_headers()["_request"]
                 assert request.url.startswith(second_region_uri)
                 read_document = await container.read_item(id_value, partition_key=id_value)

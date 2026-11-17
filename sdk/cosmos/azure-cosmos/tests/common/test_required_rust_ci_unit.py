@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 """Exercise the required-lane guard with real pytest collection and reports."""
 
+import ast
 import importlib.util
 import json
 import subprocess
@@ -351,8 +352,10 @@ def test_empty_discovery_fails_rust(tmp_path):
 
 @pytest.mark.parametrize("passed,filtered,exitcode", [(2, 0, 0), (0, 0, 0), (2, 1, 0), (2, 0, 1)])
 def test_native_runner_requires_actual_unfiltered_tests_rust(tmp_path, monkeypatch, passed, filtered, exitcode):
+    commands = []
+
     def execute(command, **kwargs):
-        assert command == ["cargo", "test", "--workspace", "--locked", "--", "--test-threads=1"]
+        commands.append(command)
         assert kwargs["cwd"] == PACKAGE
         kwargs["stdout"].write(
             f"test result: ok. {passed} passed; 0 failed; 2 ignored; 0 measured; {filtered} filtered out;\n"
@@ -365,6 +368,54 @@ def test_native_runner_requires_actual_unfiltered_tests_rust(tmp_path, monkeypat
             runner.run_native(tmp_path)
     else:
         assert runner.run_native(tmp_path) == exitcode
+    if exitcode:
+        assert len(commands) == 1
+    elif passed and not filtered:
+        assert commands[1:] == [
+            ["cargo", "test", "--workspace", "--locked", "--", "--test-threads=1"],
+            [
+                "cargo", "test", "--workspace", "--locked", "--features", "azure_cosmos_rust/test-probes",
+                "--", "--test-threads=1",
+            ],
+        ]
+        assert {path.name for path in tmp_path.iterdir()} == {
+            "cargo-clippy.log", "cargo-test.log", "cargo-test-probes.log"
+        }
+
+
+def test_cancellation_lane_rejects_extension_without_probe_rust(tmp_path, monkeypatch):
+    import azure.cosmos
+
+    native = SimpleNamespace(__file__=str(tmp_path / "_rust.pyd"))
+    monkeypatch.setattr(azure.cosmos, "_rust", native)
+    monkeypatch.setitem(runner.sys.modules, "azure.cosmos._rust", native)
+    monkeypatch.setattr(
+        runner.sys, "argv",
+        ["run_rust_ci.py", "cancellation", "--require-installed-wheel", "--results", str(tmp_path / "results")],
+    )
+    monkeypatch.delenv("PYTEST_ADDOPTS", raising=False)
+    monkeypatch.setenv("COSMOS_BACKEND", "rust")
+    monkeypatch.setenv("ACCOUNT_HOST", "https://localhost:8081/")
+    monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
+    pytest_main = Mock(return_value=0)
+    monkeypatch.setattr(runner.pytest, "main", pytest_main)
+    with pytest.raises(RuntimeError):
+        runner.main()
+    pytest_main.assert_not_called()
+
+
+def test_cancellation_lane_requires_both_end_to_end_cases_rust():
+    files = runner.discover_tests(PACKAGE, "cancellation")
+    assert files == [PACKAGE / "tests" / "fault_injection" / "aio" / "test_async_cancellation_fault.py"]
+    assert runner.declared_tests(files[0]) == {"test_cancelled_read_drops_native_future_and_client_recovers_rust"}
+    # The standard emulator job installs a normal wheel and selects -m cosmosEmulator.
+    tree = ast.parse(files[0].read_text(encoding="utf-8"))
+    marks = {
+        node.value.attr
+        for node in tree.body
+        if isinstance(node, ast.Assign) and [target.id for target in node.targets] == ["pytestmark"]
+    }
+    assert marks == {"cosmosRustProbes"}
 
 
 @pytest.mark.parametrize("outcome", [0, 7, "timeout"])
@@ -482,12 +533,12 @@ def test_supplemental_rust_checks_reuse_one_existing_test_job_rust():
     template = (repository / "sdk/cosmos/templates/rust-tests.yml").read_text()
     parsed = yaml.safe_load(template)
     assert set(parsed) == {"parameters", "steps"}
-    prepare, install, native, offline, publish = parsed["steps"]
+    prepare, install, native, offline, publish, cancellation, publish_cancellation = parsed["steps"]
     condition = (
         "and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), "
         "eq(variables['PythonVersion'], '3.13'), eq(variables['ChecksOverride'], 'whl,sdist'))"
     )
-    for step in (prepare, native, offline, publish):
+    for step in (prepare, native, offline, publish, cancellation, publish_cancellation):
         assert step["condition"] == condition
     assert install["template"] == "/eng/pipelines/templates/steps/install-msrust-toolchain.yml"
     assert install["parameters"] == {
@@ -507,7 +558,7 @@ def test_supplemental_rust_checks_reuse_one_existing_test_job_rust():
 def test_supplemental_rust_checks_require_built_wheel_and_save_results_rust():
     repository = PACKAGE.parents[2]
     parsed = yaml.safe_load((repository / "sdk/cosmos/templates/rust-tests.yml").read_text())
-    prepare, _, native, offline, publish = parsed["steps"]
+    prepare, _, native, offline, publish, cancellation, publish_cancellation = parsed["steps"]
     results = "$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust"
     assert results in prepare["pwsh"]
     assert "uploadLlmArtifacts" in prepare["pwsh"]
@@ -533,6 +584,17 @@ def test_supplemental_rust_checks_require_built_wheel_and_save_results_rust():
     assert publish["inputs"]["testResultsFiles"] == f"{results}/offline/pytest.xml"
     assert publish["inputs"]["failTaskOnFailedTests"] is True
     assert publish["inputs"]["failTaskOnMissingResultsFile"] is True
+    script = cancellation["pwsh"]
+    assert "python -m venv $venv" in script
+    assert "maturin build --release --locked --features test-probes --interpreter $python" in script
+    assert "install --no-deps --force-reinstall $wheels[0].FullName" in script
+    assert "run_rust_ci.py cancellation" in script and "--require-installed-wheel" in script
+    assert f"$results = '{results}/cancellation'" in script
+    assert cancellation["env"]["COSMOS_BACKEND"] == "rust"
+    assert cancellation["env"]["ACCOUNT_HOST"] == "https://localhost:8081/"
+    assert publish_cancellation["inputs"]["testResultsFiles"] == f"{results}/cancellation/pytest.xml"
+    assert publish_cancellation["inputs"]["failTaskOnFailedTests"] is True
+    assert publish_cancellation["inputs"]["failTaskOnMissingResultsFile"] is True
 
 
 def test_pipeline_telemetry_installs_dependencies_and_runs_offline_rust():

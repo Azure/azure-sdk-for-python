@@ -5,11 +5,10 @@ import asyncio
 import inspect
 import json
 import os
+import socket
 import subprocess
 import sys
-import threading
 import time
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -157,65 +156,50 @@ def test_real_binding_bounds_container_workflows_rust(asynchronous, operation):
 
 
 def _run_delayed_container_workflow(asynchronous, operation):
-    """Two 600 ms loopback responses must not fit into a one-second operation."""
+    """Two 600 ms responses must not fit into a one-second operation.
+
+    Fault injection answers every request inside the Rust driver, so nothing
+    goes over the network. The endpoint is a port nobody listens on, so any
+    request a rule does not answer fails instead of passing silently.
+    """
     from azure.cosmos import ConnectionPoolOptions, CosmosClient, CosmosRuntime
     from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 
-    finished = threading.Event()
-    requests = []
+    with socket.socket() as unused:
+        unused.bind(("127.0.0.1", 0))
+        endpoint = f"http://127.0.0.1:{unused.getsockname()[1]}"
+    location = {"name": "East US", "databaseAccountEndpoint": endpoint}
+    account = {"id": "test", "_rid": "AQAAAA==", "_self": "",
+               "writableLocations": [location], "readableLocations": [location]}
     properties = {
         "id": "orders", "_rid": "AQAAAIABAAA=", "_self": "dbs/AQAAAA==/colls/AQAAAIABAAA=/",
         "partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2},
     }
-    write_operation = "create" if operation == "create-if-missing" else operation
-
-    class Handler(BaseHTTPRequestHandler):
-        def do_GET(self):  # pylint: disable=invalid-name
-            if self.path == "/":
-                location = {"name": "East US", "databaseAccountEndpoint": endpoint}
-                body = {"id": "test", "_rid": "AQAAAA==", "_self": "",
-                        "writableLocations": [location], "readableLocations": [location]}
-                status = 200
-            else:
-                requests.append(("read", time.monotonic()))
-                finished.wait(0.6)
-                body, status = (
-                    ({"code": "NotFound", "message": "missing"}, 404)
-                    if operation == "create-if-missing" else (properties, 200)
-                )
-            self.respond(status, body)
-
-        def do_POST(self):  # pylint: disable=invalid-name
-            self.rfile.read(int(self.headers.get("Content-Length", 0)))
-            requests.append((write_operation, time.monotonic()))
-            finished.wait(0.6)
-            self.respond({"create": 201, "replace": 200, "delete": 204}[write_operation], properties)
-
-        do_PUT = do_POST
-        do_DELETE = do_POST
-
-        def respond(self, status, body):
-            data = b"" if status == 204 else json.dumps(body).encode()
-            try:
-                self.send_response(status)
-                self.send_header("Content-Type", "application/json")
-                self.send_header("Content-Length", str(len(data)))
-                self.end_headers()
-                self.wfile.write(data)
-            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
-                pass  # The expired native request can close its connection.
-
-        def log_message(self, *_args):
-            pass
-
+    missing = operation == "create-if-missing"
+    write_status = {"create-if-missing": 201, "replace": 200, "delete": 204}[operation]
+    # The first matching rule wins, so the container read must come before the
+    # catch-all rule that answers the create, replace, or delete.
+    rules = [
+        {"id": "account", "operation_type": "MetadataReadDatabaseAccount", "status_code": 200,
+         "response_body": json.dumps(account).encode(), "probability": 1.0},
+        {"id": "read", "operation_type": "MetadataReadContainer", "delay_ms": 600,
+         "status_code": 404 if missing else 200,
+         "response_body": json.dumps({"code": "NotFound"} if missing else properties).encode(),
+         "probability": 1.0},
+        {"id": "write", "operation_type": "All", "delay_ms": 600, "status_code": write_status,
+         "response_body": b"" if write_status == 204 else json.dumps(properties).encode(),
+         "probability": 1.0},
+    ]
     runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(proxy_allowed=False))
-    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
-    endpoint = f"http://127.0.0.1:{server.server_port}"
-    worker = threading.Thread(target=server.serve_forever, daemon=True)
-    worker.start()
     client_type = AsyncCosmosClient if asynchronous else CosmosClient
-    client = client_type(endpoint, "ZmFrZQ==", _backend="rust", timeout=1, runtime=runtime)
+    client = client_type(
+        endpoint, "ZmFrZQ==", _backend="rust", timeout=1, runtime=runtime,
+        _fault_injection_rules=rules,
+    )
     hook = MagicMock()
+
+    async def hit_count(rule_id):
+        return await _awaited(client._adapter._debug_fault_injection_rule_hit_count(rule_id))
 
     async def run():
         try:
@@ -236,25 +220,22 @@ def _run_delayed_container_workflow(asynchronous, operation):
                     result = database.create_container_if_not_exists(
                         "orders", PartitionKey(path="/pk"), response_hook=hook
                     )
-                if inspect.isawaitable(result):
-                    await result
+                await _awaited(result)
             elapsed = time.monotonic() - started
+            # Each step alone fits in one second; only running them one after
+            # the other on a shared budget runs out of time.
             assert 0.8 <= elapsed < 1.5, elapsed
-            assert [name for name, _ in requests] == ["read", write_operation]
-            assert requests[1][1] - started >= 0.5
+            assert await hit_count("read") == 1
+            assert await hit_count("write") == 1
             hook.assert_not_called()
         finally:
-            result = client.close()
-            if inspect.isawaitable(result):
-                await result
+            await _awaited(client.close())
 
-    try:
-        asyncio.run(run())
-    finally:
-        finished.set()
-        server.shutdown()
-        server.server_close()
-        worker.join(3)
+    asyncio.run(run())
+
+
+async def _awaited(value):
+    return await value if inspect.isawaitable(value) else value
 
 
 @pytest.mark.parametrize("expire_source_read", [False, True])

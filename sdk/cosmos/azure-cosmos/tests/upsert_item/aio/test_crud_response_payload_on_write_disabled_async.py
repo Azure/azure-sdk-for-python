@@ -10,7 +10,6 @@ container mirrors the shared ``TEST_MULTI_PARTITION_CONTAINER_ID`` container
 (``/pk``, 30000 RU/s).
 """
 
-import os
 import unittest
 import uuid
 from types import SimpleNamespace
@@ -20,9 +19,9 @@ import pytest
 from azure.core import MatchConditions
 
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos.aio import CosmosClient
 from common.priority_contract import assert_priority_contract_async
 from azure.cosmos.partition_key import PartitionKey
+from config.clients import create_data_client_async, create_setup_client_async
 
 
 class CosmosResponseHeaderEnvelope:
@@ -45,14 +44,16 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
             assert inst.status_code == status_code
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(
-            os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust", no_response_on_write=True,
-        )
+        self.key_client = create_setup_client_async(_backend="rust", no_response_on_write=True)
+        await self.key_client.__aenter__()
+        self.addAsyncCleanup(self.key_client.close)
+        self.client = create_data_client_async(_backend="rust", no_response_on_write=True)
+        await self.client.__aenter__()
         self.addAsyncCleanup(self.client.close)
         self._db_id = "upsert_noresponse_async_" + uuid.uuid4().hex
-        self.key_database_for_test = await self.client.create_database(self._db_id)
+        self.key_database_for_test = await self.key_client.create_database(self._db_id)
         self.addAsyncCleanup(self._delete_database)
-        self.database_for_test = self.key_database_for_test
+        self.database_for_test = self.client.get_database_client(self._db_id)
         self.multi_partition_container_id = "multi_partition_" + uuid.uuid4().hex[:8]
         await self.key_database_for_test.create_container(
             id=self.multi_partition_container_id,
@@ -63,7 +64,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
     async def _delete_database(self):
         try:
-            await self.client.delete_database(self._db_id)
+            await self.key_client.delete_database(self._db_id)
         except exceptions.CosmosResourceNotFoundError:
             pass
 
@@ -156,7 +157,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         )]
 
         assert len(document_list) == 1
-        # Known gap 23: Container delete and replace require preliminary metadata (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-23). On Rust this delete_container step first resolves container metadata (possible extra GET) before the DELETE; the step still executes.
+        # Known gap 23: Container delete and replace require preliminary metadata. On Rust this delete_container step first resolves container metadata (possible extra GET) before the DELETE; the step still executes.
         await self.key_database_for_test.delete_container(created_collection.id)
 
     async def test_document_upsert_async_rust(self):
@@ -296,7 +297,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         with self.assertRaises(StopAsyncIteration):
             await page_iter.__anext__()
 
-        # Known gap 23: Container delete and replace require preliminary metadata (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-23). On Rust this delete_container step first resolves container metadata (possible extra GET) before the DELETE; the step still executes.
+        # Known gap 23: Container delete and replace require preliminary metadata. On Rust this delete_container step first resolves container metadata (possible extra GET) before the DELETE; the step still executes.
         await self.key_database_for_test.delete_container(collection.id)
 
     async def test_delete_all_items_by_partition_key_async_rust(self):
@@ -326,7 +327,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
         try:
             # delete all items for partition key 1
-            # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-19). The Rust driver has no partition-key delete; the call still reaches the service, which rejects it here when the account feature is disabled.
+            # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed. The Rust driver has no partition-key delete; the call still reaches the service, which rejects it here when the account feature is disabled.
             await data_collection.delete_all_items_by_partition_key(partition_key1)
         except exceptions.CosmosHttpResponseError as e:
             error_text = " ".join(

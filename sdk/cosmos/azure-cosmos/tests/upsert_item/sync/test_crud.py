@@ -19,9 +19,10 @@ import unittest
 import uuid
 
 from azure.core import MatchConditions
-from azure.cosmos import CosmosClient, PartitionKey, exceptions
+from azure.cosmos import PartitionKey, exceptions
 from azure.cosmos import cosmos_client
 from common.priority_contract import assert_priority_contract
+from config.clients import create_data_client, create_setup_client
 
 
 class MockHandler(logging.Handler):
@@ -47,26 +48,33 @@ class TestCRUDOperations(unittest.TestCase):
     def setUp(self):
         self.host = os.environ["ACCOUNT_HOST"]
         self.masterKey = os.environ["ACCOUNT_KEY"]
-        self.client = CosmosClient(self.host, self.masterKey, _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) runs the tested operations.
+        self.key_client = create_setup_client()
+        self.addCleanup(self.key_client.close)
+        self.client = create_data_client(_backend="rust")
         self.addCleanup(self.client.close)
         self._db_id = "legacy_upsert_crud_" + uuid.uuid4().hex
-        self.databaseForTest = self.client.create_database(self._db_id)
-        self.addCleanup(self.client.delete_database, self._db_id)
+        self.key_databaseForTest = self.key_client.create_database(self._db_id)
+        self.addCleanup(self.key_client.delete_database, self._db_id)
+        self.databaseForTest = self.client.get_database_client(self._db_id)
         self.configs = SimpleNamespace(
             TEST_DATABASE_ID=self._db_id,
             TEST_MULTI_PARTITION_CONTAINER_ID="orders",
             TEST_SINGLE_PARTITION_CONTAINER_ID="single_partition")
-        self.databaseForTest.create_container(id="orders", partition_key=PartitionKey(path="/pk"))
-        self.databaseForTest.create_container(
+        self.key_databaseForTest.create_container(id="orders", partition_key=PartitionKey(path="/pk"))
+        self.key_databaseForTest.create_container(
             id=self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID, partition_key=PartitionKey(path="/pk"))
 
     def _create_container_for_test(self, container_id, partition_key, **kwargs):
-        self.databaseForTest.create_container(id=container_id, partition_key=partition_key, **kwargs)
+        # Source helper: tests/test_crud.py::TestCRUDOperations._create_container_for_test
+        self.key_databaseForTest.create_container(id=container_id, partition_key=partition_key, **kwargs)
         return self.databaseForTest.get_container_client(container_id)
 
     def _delete_container_for_test(self, container_id_or_container):
+        # Source helper: tests/test_crud.py::TestCRUDOperations._delete_container_for_test
         cid = container_id_or_container if isinstance(container_id_or_container, str) else container_id_or_container.id
-        self.databaseForTest.delete_container(cid)
+        self.key_databaseForTest.delete_container(cid)
 
     def test_partitioned_collection_document_crud_and_query_rust(self):
         # Source: tests/test_crud.py::TestCRUDOperations.test_partitioned_collection_document_crud_and_query
@@ -155,7 +163,7 @@ class TestCRUDOperations(unittest.TestCase):
         ))
 
         self.assertEqual(1, len(documentlist))
-        # Known gap 23: Container delete and replace require preliminary metadata (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-23). On Rust this delete_container step first resolves container metadata (possible extra GET) before the DELETE; the step still executes.
+        # Known gap 23: Container delete and replace require preliminary metadata. On Rust this delete_container step first resolves container metadata (possible extra GET) before the DELETE; the step still executes.
         self._delete_container_for_test(created_collection.id)
 
     def test_read_collection_only_once_rust(self):
@@ -288,7 +296,7 @@ class TestCRUDOperations(unittest.TestCase):
 
         try:
             # delete all items for partition key 1
-            # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-19). The Rust driver has no partition-key delete; the call still reaches the service, which rejects it here when the account feature is disabled.
+            # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed. The Rust driver has no partition-key delete; the call still reaches the service, which rejects it here when the account feature is disabled.
             created_collection.delete_all_items_by_partition_key(partition_key1)
         except exceptions.CosmosHttpResponseError as e:
             error_text = " ".join(

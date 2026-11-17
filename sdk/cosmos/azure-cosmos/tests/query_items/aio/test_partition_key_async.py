@@ -150,11 +150,11 @@ async def _perform_operations_on_pk(created_container, pk_field, pk_value):
     _assert_pk(item, pk_field)
     # Read & point reads
     await _read_and_assert(created_container, document_definition['id'], pk_field, pk_value)
-    # Known gap 18: Rust driver splits grouped reads into separate query requests (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-18). read_items has no Rust-only path yet.
+    # Known gap 18: Rust driver splits grouped reads into separate query requests. read_items has no Rust-only path yet.
     # Rust divergence (unnumbered, new): on a container client whose properties are not cached, read_items,
     # query_conflicts and delete_all_items_by_partition_key preload metadata via container.read(operationStartTime=...),
     # which Rust routing rejects with NotImplementedError, so this call can fail before any upsert runs.
-    pytest.skip("driver-gap: read_items is not migrated to the Rust driver and its container metadata preload raises NotImplementedError (known gap 18, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-18).")
+    pytest.skip("driver-gap: read_items is not migrated to the Rust driver and its container metadata preload raises NotImplementedError (known gap 18).")
     items_iter = await created_container.read_items(items=[(document_definition['id'], pk_value)])
     items_list = [i for i in items_iter]
     assert len(items_list) == 1
@@ -177,7 +177,7 @@ async def _perform_operations_on_pk(created_container, pk_field, pk_value):
     # Get Feed Range
     feed_range = await created_container.feed_range_from_partition_key(partition_key=pk_value)
     assert feed_range is not None
-    # Known gap 30: `query_items()`: remaining query, paging, and continuation-token gaps (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30). The point feed range from feed_range_from_partition_key is rejected with ValueError ("nonempty min-inclusive, max-exclusive Range").
+    # Known gap 30: `query_items()`: remaining query, paging, and continuation-token gaps. The point feed range from feed_range_from_partition_key is rejected with ValueError ("nonempty min-inclusive, max-exclusive Range").
     items_iter = created_container.query_items(query='SELECT * FROM c',
                                                feed_range=feed_range)
     items_list = [i async for i in items_iter]
@@ -188,7 +188,7 @@ async def _perform_operations_on_pk(created_container, pk_field, pk_value):
     await created_container.delete_item(item=document_definition['id'], partition_key=pk_value)
     # recreate the item to test delete item api
     await created_container.create_item(body=document_definition)
-    # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-19). No Rust driver path; the uncached-metadata preload above also fails here.
+    # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed. No Rust driver path; the uncached-metadata preload above also fails here.
     try:
         await created_container.delete_all_items_by_partition_key(partition_key=pk_value)
     except CosmosHttpResponseError as error:

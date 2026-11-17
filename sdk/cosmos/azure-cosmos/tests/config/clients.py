@@ -34,6 +34,12 @@ def create_setup_client(*, settings=TestSettings, **kwargs):
     return CosmosClient(settings.host, settings.masterKey, **kwargs)
 
 
+def create_setup_client_async(*, settings=TestSettings, **kwargs):
+    """Create an unentered key-authenticated async Rust client used for provisioning."""
+    kwargs.setdefault("_backend", "rust")
+    return AsyncCosmosClient(settings.host, settings.masterKey, **kwargs)
+
+
 def create_fault_setup_client(endpoint, key):
     """Create an independent, direct Rust client without fault rules."""
     runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(proxy_allowed=False))

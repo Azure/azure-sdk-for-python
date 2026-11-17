@@ -569,9 +569,11 @@ async fn next_plan_page(
             "Feed cursor failed; resume using the last delivered continuation token"
         }));
     }
-    modifiers
-        .custom_headers
-        .retain(|name, _| name.as_str() != "x-ms-continuation");
+    if !matches!(&request, FeedRequest::ChangeFeed(_)) {
+        modifiers
+            .custom_headers
+            .retain(|name, _| name.as_str() != "x-ms-continuation");
+    }
     let options = build_operation_options(
         None,
         modifiers.excluded_regions_value,
@@ -975,13 +977,28 @@ fn inputs(
     Option<String>,
     BindingPartitionKey,
 )> {
-    let (link, scope, modifiers) = extract_common_prepared_inputs(prepared)?;
+    let (link, scope, mut modifiers) = extract_common_prepared_inputs(prepared)?;
     let continuation: Option<String> = prepared
         .getattr("settings")?
         .getattr("query")?
         .getattr("continuation")?
         .extract()?;
     let op: String = prepared.getattr("op")?.extract()?;
+    if op == "query_items_change_feed" {
+        // The SDK checkpoint belongs to the plan, not an HTTP continuation header.
+        // Restore only the customer's explicit header after typed extraction.
+        let name = azure_core::http::headers::HeaderName::from_static("x-ms-continuation");
+        modifiers.custom_headers.remove(&name);
+        for pair in prepared.getattr("headers")?.call_method0("items")?.iter()? {
+            let (key, value) = pair?.extract::<(String, String)>()?;
+            if key.eq_ignore_ascii_case("x-ms-continuation") {
+                modifiers.custom_headers.insert(
+                    name.clone(),
+                    azure_core::http::headers::HeaderValue::from(value),
+                );
+            }
+        }
+    }
     if matches!(op.as_str(), "read_items" | "read_all_items") && continuation.is_some() {
         return Err(PyValueError::new_err(format!(
             "{op} does not support continuation tokens; continue the live iterator",
@@ -2806,6 +2823,175 @@ mod tests {
             .await
             .unwrap();
         assert!(request.operation(container).is_err());
+    }
+
+    #[test]
+    fn change_feed_inputs_separate_customer_header_from_sdk_checkpoint() {
+        crate::test_support::prepare_python();
+        Python::with_gil(|py| {
+            for name in [None, Some("x-ms-continuation"), Some("X-MS-CONTINUATION")] {
+                let kwargs = PyDict::new_bound(py);
+                kwargs.set_item("protocol_version", 3).unwrap();
+                kwargs.set_item("op", "query_items_change_feed").unwrap();
+                kwargs.set_item("container_link", "dbs/db/colls/c").unwrap();
+                kwargs
+                    .set_item(
+                        "partition_key",
+                        super::super::partition_key_input::test_partition_key(py, None),
+                    )
+                    .unwrap();
+                let headers = PyDict::new_bound(py);
+                if let Some(name) = name {
+                    headers.set_item(name, "customer-header").unwrap();
+                }
+                kwargs.set_item("headers", headers).unwrap();
+                let settings = super::super::settings::test_settings(py);
+                settings
+                    .getattr("query")
+                    .unwrap()
+                    .setattr("continuation", "c2.sdk-checkpoint")
+                    .unwrap();
+                kwargs.set_item("settings", settings).unwrap();
+                let prepared = py
+                    .import_bound("types")
+                    .unwrap()
+                    .getattr("SimpleNamespace")
+                    .unwrap()
+                    .call((), Some(&kwargs))
+                    .unwrap();
+                let (_, modifiers, token, _) = inputs(&prepared).unwrap();
+                assert_eq!(token.as_deref(), Some("c2.sdk-checkpoint"));
+                assert_eq!(
+                    modifiers
+                        .custom_headers
+                        .get(&HeaderName::from_static("x-ms-continuation"))
+                        .map(|value| value.as_str()),
+                    name.map(|_| "customer-header"),
+                );
+            }
+        });
+    }
+
+    #[tokio::test]
+    async fn change_feed_custom_headers_follow_driver_precedence() {
+        #[derive(Debug, Default)]
+        struct Requests(std::sync::Mutex<Vec<azure_core::http::headers::Headers>>);
+        impl RequestObserver for Requests {
+            fn on_request(&self, request: &Request) {
+                if request
+                    .url()
+                    .path()
+                    .trim_end_matches('/')
+                    .ends_with("/docs")
+                    && request
+                        .headers()
+                        .get_optional_str(&HeaderName::from_static("a-im"))
+                        .is_some()
+                {
+                    self.0.lock().unwrap().push(request.headers().clone());
+                }
+            }
+        }
+
+        crate::test_support::prepare_python();
+        let url = Url::parse("https://headers.emulator.local").unwrap();
+        let observed = Arc::new(Requests::default());
+        let emulator = Arc::new(
+            InMemoryEmulatorHttpClient::new(
+                VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())])
+                    .unwrap(),
+            )
+            .with_request_observer(observed.clone()),
+        );
+        emulator.store().create_database("db");
+        emulator.store().create_container_with_config(
+            "db",
+            "c",
+            PartitionKeyDefinition::from("/pk"),
+            ContainerConfig::new()
+                .with_partition_count(1)
+                .build()
+                .unwrap(),
+        );
+        let runtime = emulator.runtime_builder().build().await.unwrap();
+        let driver = runtime
+            .create_driver(
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
+                    .build(),
+            )
+            .await
+            .unwrap();
+        let container = driver
+            .resolve_container("db", "c", Default::default())
+            .await
+            .unwrap();
+        let request = change_request("LatestVersion", "Now");
+        let mut options = modifiers();
+        for (name, value) in [
+            ("x-app-check", "forwarded"),
+            ("a-im", "customer-mode"),
+            ("if-none-match", "customer-position"),
+            ("x-ms-continuation", "customer-header"),
+        ] {
+            options
+                .custom_headers
+                .insert(HeaderName::from(name), HeaderValue::from(value));
+        }
+        let driver_options =
+            build_operation_options(None, None, None, None, None, options.custom_headers.clone());
+        let mut plan = driver
+            .plan_operation(
+                request.operation(container.clone()).unwrap(),
+                &driver_options,
+                None,
+                &PlanOptions::default(),
+            )
+            .await
+            .unwrap();
+        driver
+            .execute_plan(&mut plan, Some(container), driver_options)
+            .await
+            .unwrap()
+            .unwrap();
+        let (_, token, _) = next_plan_page(
+            driver.clone(),
+            Arc::new(Mutex::new(CursorState::default())),
+            ("header-test".into(), "dbs/db/colls/c".into()),
+            None,
+            options,
+            FeedRequest::ChangeFeed(request),
+            PlanOptions::default(),
+        )
+        .await
+        .unwrap();
+        assert!(token.is_some());
+        let headers = observed.0.lock().unwrap();
+        assert_eq!(headers.len(), 2);
+        for name in [
+            "x-app-check",
+            "a-im",
+            "if-none-match",
+            "x-ms-max-item-count",
+            "x-ms-continuation",
+        ] {
+            let name = HeaderName::from(name);
+            assert_eq!(
+                headers[0].get_optional_str(&name),
+                headers[1].get_optional_str(&name)
+            );
+        }
+        assert_eq!(
+            headers[1].get_optional_str(&HeaderName::from_static("x-app-check")),
+            Some("forwarded")
+        );
+        assert_ne!(
+            headers[1].get_optional_str(&HeaderName::from_static("a-im")),
+            Some("customer-mode")
+        );
+        assert_ne!(
+            headers[1].get_optional_str(&HeaderName::from_static("if-none-match")),
+            Some("customer-position")
+        );
     }
 
     #[tokio::test]

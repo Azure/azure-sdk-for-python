@@ -19,7 +19,8 @@ from azure.cosmos.aio import CosmosClient
 from get_latest_session_token._fixtures import create_items_logical_pk_async, create_items_physical_pk_async
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosSplit
+@pytest.mark.cosmosAADSplit
 class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         state = random.getstate()

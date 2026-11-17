@@ -3,31 +3,25 @@
 """Copied multi ORDER BY / composite index query test against the ``_backend="rust"`` path.
 
 Self-contained: ``setUp`` creates an owned database that is deleted on cleanup.
-The original's shared test database and key/data client pair become one
-key-auth Rust client; the original's 25,100 RU/s container is still created
-inside the test. Class and method names match ``tests/test_multi_orderby.py``;
+The original's shared test database becomes an owned one; the original's
+key/data client split is kept (key client provisions, data client queries) and
+the original's 25,100 RU/s container is still created inside the test. Class and method names match ``tests/test_multi_orderby.py``;
 no original test module is imported.
 
 Run with::
 
     pytest --noconftest tests/query_items/sync/test_multi_orderby.py -v
 """
-import os
 import random
 import unittest
 import uuid
 
 import pytest
 
+from config.clients import create_data_client, create_setup_client
+
 from azure.cosmos import CosmosClient, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
 
 
 @pytest.mark.cosmosQuery
@@ -51,18 +45,25 @@ class TestMultiOrderBy(unittest.TestCase):
     items = []
 
     client: CosmosClient = None
+    key_client: CosmosClient = None
+    key_database: DatabaseProxy = None
     database: DatabaseProxy = None
 
     def setUp(self):
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) runs the tested operations.
+        self.key_client = create_setup_client()
+        self.addCleanup(self.key_client.close)
+        self.client = create_data_client(_backend="rust")
         self.addCleanup(self.client.close)
         self.database_id = "legacy_query_multi_orderby_" + uuid.uuid4().hex[:8]
-        self.database = self.client.create_database(self.database_id)
+        self.key_database = self.key_client.create_database(self.database_id)
         self.addCleanup(self._delete_owned_database)
         print(f"\nOwned multi ORDER BY database: {self.database_id}")
+        self.database = self.client.get_database_client(self.database_id)
 
     def _delete_owned_database(self):
-        self.client.delete_database(self.database_id)
+        self.key_client.delete_database(self.database_id)
         print(f"\nDeleted owned multi ORDER BY database: {self.database_id}")
 
     def generate_multi_orderby_item(self):
@@ -195,7 +196,7 @@ class TestMultiOrderBy(unittest.TestCase):
         }
 
         options = {'offerThroughput': 25100}
-        created_container_ref = self.database.create_container(
+        created_container_ref = self.key_database.create_container(
             id='multi_orderby_container' + str(uuid.uuid4()),
             indexing_policy=indexingPolicy,
             partition_key=PartitionKey(path='/pk'),
@@ -256,7 +257,7 @@ class TestMultiOrderBy(unittest.TestCase):
 
                         self.validate_results(expected_ordered_list, result_ordered_list, composite_index)
 
-        self.database.delete_container(created_container.id)
+        self.key_database.delete_container(created_container.id)
 
     def top(self, items, has_top, top_count):
         return items[0:top_count] if has_top else items

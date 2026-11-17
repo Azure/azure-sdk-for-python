@@ -4,8 +4,8 @@ You're in a Rust crate. The Python SDK that lives one directory up has a
 tiny chunk of code that isn't Python — it's Rust, and it lives here.
 This README is for someone about to edit it.
 
-If instead you want to install/build/test the Python SDK as a whole, the
-README at `../README.md` is the one you want.
+If instead you want to install/build/test the Python SDK as a whole, see
+`../docs/local_development.md`.
 
 ## What this crate is for
 
@@ -17,11 +17,13 @@ you get one file: `_rust.pyd` on Windows, `_rust.so` on Linux/macOS.
 That file gets dropped into `azure/cosmos/`, and the Python code
 imports it as `azure.cosmos._rust`.
 
-The workspace pins the driver to Git commit
-`84e2bb66c9911fa730dc9756c8fc3f9612456344`; `Cargo.lock` records the same source.
-This revision names PATCH strategy configuration `unstable_patch` and its
-account-key constructor `AccountReference::with_account_key`. The binding uses
-those names without changing the Python API or patching the driver source.
+The driver comes from one pinned Git commit of `azure-sdk-for-rust`. The
+commit is the `rev` of `azure_data_cosmos_driver` under
+`[workspace.dependencies]` in `../Cargo.toml`; `Cargo.lock` records the same
+source. The pinned driver names PATCH strategy configuration `unstable_patch`
+and its account-key constructor `AccountReference::with_account_key`. The
+binding uses those names without changing the Python API or patching the
+driver source.
 
 The binding is split across modules:
 
@@ -457,9 +459,7 @@ attempts remain recordable without complete operation totals.
 The rebuilt extension preserved baseline outcomes across 96 comparison
 cases and 80 copied-original executions. Existing ETag, continuation,
 range-identifier and all-versions test failures remain explicit gaps,
-not proof of full legacy parity. See Bite 55 in
-`../docs/V5/testing/rust-telemetry.md` for the customer example, evidence
-and limitations.
+not proof of full legacy parity.
 
 Bite 56 completes diagnostic handling for the existing public
 `ContainerProxy.execute_item_batch` span. Batch response interpretation
@@ -537,7 +537,8 @@ Current surface:
   driver handle and rule rather than a particular Python client.
 - private error translation: `_DriverTransportError`, `_DriverResponseError`,
   `_UnsupportedQueryFeatureError`.
-- build provenance: `__version__` and the recorded source revisions.
+- build provenance: `__python_commit__` and `__rust_driver_commit__`, the
+  recorded source revisions. The package version is `azure.cosmos.__version__`.
 
 Native operation entry points reject a mismatched `PreparedRequest.op` before
 driver lookup. The request protocol remains structural and versioned; it is not
@@ -720,20 +721,15 @@ resolve the broader original-HTTP-response-header gap.
 
 ## Where the Rust driver actually lives
 
-This crate inherits the driver source from the outer workspace:
-
-```toml
-azure_data_cosmos_driver = { workspace = true, features = ["__internal_native_query_plan", "fault_injection"] }
-```
+This crate inherits the driver source from the outer workspace. The driver
+features it enables are on the `azure_data_cosmos_driver` line under
+`[dependencies]` in `Cargo.toml` (this folder).
 
 The driver is not stored in this repository. The workspace pins a Git revision
 of `azure-sdk-for-rust`, and Cargo downloads that exact source. A neighboring
-Rust checkout is no longer required for the default build.
-
-```toml
-# ../Cargo.toml, under [workspace.dependencies]
-azure_data_cosmos_driver = { git = "https://github.com/Azure/azure-sdk-for-rust", rev = "075917d6cb987055dfa93e31296b261574456b66" }
-```
+Rust checkout is no longer required for the default build. The pinned
+revision is the `rev` of `azure_data_cosmos_driver` under
+`[workspace.dependencies]` in `../Cargo.toml`.
 
 Normal builds and development dependencies share that source. The in-memory
 emulator feature remains a development dependency, not a normal wheel feature.
@@ -759,7 +755,7 @@ override and keep it out of the pipeline configuration. See
 ## Building from in here (without going through maturin)
 
 For day-to-day Python work, build via `maturin develop` from the outer
-directory — see `../README.md`. But while you're hacking on Rust, the
+directory — see `../docs/local_development.md`. But while you're hacking on Rust, the
 two fastest feedback loops bypass maturin entirely:
 
 ```powershell
@@ -789,7 +785,9 @@ set `PYO3_PYTHON` to that environment's interpreter. Run the native suite from
 the workspace root with `cargo test --locked -p azure_cosmos_rust`.
 
 Tests that use Python call `crate::test_support::prepare_python()` before their
-workload. It initializes the synchronous and asynchronous Python packages once
+workload. It registers the test program's own binding as `azure.cosmos._rust`,
+so Python code never loads an older prebuilt `_rust` file from the checkout.
+It then initializes the synchronous and asynchronous Python packages once
 so concurrent tests do not race their first imports. Waiting for initialization
 releases the GIL, including when a caller already holds it. Only initialization
 is serialized; the test workloads retain normal parallel execution.

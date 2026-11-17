@@ -99,6 +99,38 @@ class FeedConfig:
         self.backend = backend
         self.recording_options = RecordingOptions.take(kwargs) if self.rust else RecordingOptions.snapshot({})
         if self.rust:
+            if operation == "query_items_change_feed" and "contentType" in self.options:
+                raise TypeError(
+                    "query_items_change_feed() does not accept content_type (contentType) "
+                    "on Rust-backed clients; omit this option. The Rust driver manages Content-Type."
+                )
+            if operation == "query_items_change_feed" and "accessCondition" in self.options:
+                raise TypeError(
+                    "query_items_change_feed() does not accept access_condition (accessCondition) "
+                    "on Rust-backed clients; omit this option. To resume, use continuation instead; "
+                    "a raw legacy feed position requires a complete partition_key."
+                )
+            if operation == "query_items_change_feed" and ("proxy" in kwargs or "proxy" in self.options):
+                raise TypeError(
+                    "query_items_change_feed() does not accept per-call proxy on Rust-backed clients; "
+                    "omit this option. Configure the proxy through environment variables and permit its use "
+                    "with ConnectionPoolOptions.proxy_allowed on the client's CosmosRuntime."
+                )
+            if operation == "query_items_change_feed" and ("stream" in kwargs or "stream" in self.options):
+                raise TypeError(
+                    "query_items_change_feed() does not accept stream on Rust-backed clients; "
+                    "response bodies are always buffered. Omit this option; pagination remains supported."
+                )
+            if operation == "query_items_change_feed":
+                for name in (
+                    "retry_total", "retry_connect", "retry_read", "retry_status",
+                    "retry_backoff_factor", "retry_backoff_max", "retry_on_methods",
+                ):
+                    if name in kwargs or name in self.options:
+                        raise TypeError(
+                            f"query_items_change_feed() does not accept per-call {name} on Rust-backed clients; "
+                            "omit this option to use driver-managed retries."
+                        )
             if operation == "query_items_change_feed" and (
                 "connection_timeout" in kwargs or "connection_timeout" in self.options
             ):
@@ -150,9 +182,10 @@ class FeedConfig:
             reject_unknown_feed_kwargs(operation, kwargs)
             unsupported = [repr(name) for name in kwargs]
             unsupported.extend(f"request_options[{name!r}]" for name in self.options.keys() - allowed)
-            unsupported.extend(
-                f"initial_headers[{name!r}]" for name in (initial or {}) if name.lower() in reserved
-            )
+            if operation != "query_items_change_feed":
+                unsupported.extend(
+                    f"initial_headers[{name!r}]" for name in (initial or {}) if name.lower() in reserved
+                )
             if unsupported:
                 raise NotImplementedError(
                     f"{operation} cannot honor these options on Rust: {', '.join(sorted(unsupported))}; "
@@ -308,7 +341,7 @@ class FeedPageState:
             headers.pop("x-ms-continuation", None)
         else:
             headers["x-ms-continuation"] = self.token
-        if notify_hook and self.responses:
+        if notify_hook and self.responses and self.config.hook is not None:
             body = dict(self.envelope)
             body["Documents"] = rows
             if "_count" in body:

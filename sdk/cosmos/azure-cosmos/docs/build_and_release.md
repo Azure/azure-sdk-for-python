@@ -117,20 +117,27 @@ azure-sdk-for-python\sdk\cosmos\azure-cosmos
 ### How the build obtains the Rust driver
 
 The SDK team does not maintain a second copy of the driver in the Python
-repository. This local-development configuration uses a **path dependency**
-on the neighboring `azure-sdk-for-rust` checkout. Each rebuild compiles its
-current driver source, including uncommitted changes, with the binding.
-Cargo does not pull that repository automatically.
+repository. The workspace `Cargo.toml` uses a **Git dependency** pinned to
+one commit of `azure-sdk-for-rust`:
 
-Pulling or editing the Rust checkout does not change an already-built Python
-extension. Rebuild and install it, then restart Python processes that loaded
-the previous binary. `Cargo.lock` does not freeze local driver source.
+```toml
+azure_data_cosmos_driver = { git = "https://github.com/Azure/azure-sdk-for-rust", rev = "b485409baf6e24ce198b028fb6d1c5a54a0e6d4c" }
+```
 
-This configuration requires both repositories in the expected layout.
-Before release or standalone CI/source builds, replace the local path with
-an approved portable source, such as a pinned Git revision or published
-version, and regenerate the lock. The current local setup is not a
-self-contained release configuration.
+Cargo downloads that exact commit from GitHub. `Cargo.lock` records the same
+commit, so every machine, including CI, compiles the same driver source. No
+`azure-sdk-for-rust` checkout is needed. CI pipelines do not check one out.
+
+A pinned commit is not a published release. It is a temporary choice for
+the preview, because the driver changes we need are not yet on crates.io.
+
+To move to a newer driver commit, change `rev`, run
+`cargo update -p azure_data_cosmos_driver`, and review the `Cargo.lock`
+changes. `tests\common\test_build_configuration_unit.py` checks the pinned
+commit in both files, so update it at the same time.
+
+To try unreleased driver changes from a local checkout, see
+[Build against a local driver checkout](#build-against-a-local-driver-checkout).
 
 For the final release, our plan calls for an approved driver version published
 on **crates.io**, the public registry from which Cargo downloads Rust source
@@ -281,7 +288,9 @@ files carry copies or descriptions of that version:
 `setup.py` obtains the version from the SDK-owned version-check helper, which
 reads `_version.py` without loading the SDK itself. Maturin still reads the
 static copy in `pyproject.toml`. The Rust binding crate's version is separate and
-does not determine the Python package release.
+does not determine the Python package release. The built extension does not
+expose the crate version. Use `azure.cosmos.__version__` for the package
+version.
 
 ### Updating a release without leaving stale copies
 
@@ -336,6 +345,49 @@ for development, or answering package-information requests. Source archives
 include the helper and its metadata inputs so a later build from the archive
 can perform the same check. Packaging tests verify that a mismatch is rejected
 before either builder is called.
+
+The build check compares only versions. The rest of the package information
+written in both `setup.py` and `pyproject.toml` is compared by a unit test,
+`test_python_metadata_stays_aligned_rust` in
+`tests\common\test_build_configuration_unit.py`, which the pipeline's
+offline Python tests run (section 15). This covers the name, required Python version,
+dependencies, the `aio` extra, classifiers, description, license, authors,
+maintainers, keywords, project links and readme. A difference fails the test,
+not the build.
+
+### What the PyPI page shows
+
+The package description on PyPI is the file named by `readme` in
+`pyproject.toml`: `README.md`. When the wheel is built, the file's text is
+copied into the wheel's `METADATA` file, and PyPI shows it on the package
+page.
+
+PyPI is not the only place customers read this file. Central's release
+tooling treats each package's `README.md` as its customer documentation and
+publishes it to learn.microsoft.com (`eng\common\scripts\Package-Properties.ps1`
+and `Update-DocsMsMetadata.ps1`).
+
+So `README.md` contains customer information only. Building and testing the
+SDK is described in `docs\local_development.md`, and `README.md` links to it
+at the end.
+
+We considered two other layouts:
+
+| Layout | Why we did not use it |
+|---|---|
+| Keep the build and test steps in `README.md` | Customers install a prebuilt wheel. They would still read steps they never need, such as installing the Microsoft Rust toolchain |
+| Keep `README.md` for developers and point `readme` at a separate customer file | Fixes PyPI only. learn.microsoft.com would still publish the developer steps from `README.md` |
+
+For example, an Alpha Bank developer who looks up `azure-cosmos` on PyPI or
+learn.microsoft.com sees how to install and use the SDK, not how to compile
+it.
+
+Most packages in this repository also add `CHANGELOG.md` to the description,
+using a setuptools-only setting that accepts a list of files. Maturin accepts
+one file, so we link to the changelog instead: the `Changelog` entry in
+`[project.urls]`, which PyPI shows beside the description. `setup.py` uses
+the same README-only description and the same links, so both files describe
+the same page.
 
 
 <a id="what-the-sdk-owned-build-helper-does"></a>
@@ -474,7 +526,7 @@ second member of this Python repository's workspace.
 
 The package-level file provides settings that the binding can reuse:
 
-- The driver's source location (currently a neighboring local checkout).
+- The driver's source location (currently a pinned GitHub commit).
 - Dependency version requirements.
 - The declared minimum Rust compiler version.
 - Information such as the license and authors.
@@ -493,6 +545,37 @@ work from progressing.
 This declaration permits compatible Tokio versions in the `1.x` series. It
 does not mean "download the newest Tokio version on every build." The exact
 selection is recorded separately in `Cargo.lock`.
+
+### Release build settings: Cargo's defaults, on purpose
+
+A **release profile** is a set of optional Cargo settings for optimized
+builds. Three of them are often suggested to make the compiled file smaller:
+
+- **LTO** (link-time optimization): optimize all the Rust code together
+  instead of one library at a time.
+- **`codegen-units = 1`**: compile each library as one piece, so the compiler
+  sees more code at once.
+- **Strip**: remove the names of internal functions from the compiled file.
+
+Cargo reads these settings only from the package-level `Cargo.toml`, the file
+at the top of the build. Neither of our `Cargo.toml` files sets them, so every
+wheel uses Cargo's defaults.
+
+We measured before deciding. On Windows x64, the release extension was
+11.35 MB with the defaults and 11.71 MB with all three settings turned on.
+Stripping saves little on Windows because the debug information is already
+in a separate `.pdb` file, and LTO made the file larger.
+
+Linux and macOS were not measured. Stripping might shrink those files, but it
+also removes the Rust function names that a crash report on a customer's
+machine would otherwise show. We keep the defaults until a Linux wheel built
+by the pipeline shows a saving worth that cost.
+
+The Rust SDK repository sets no release profile either, but that is not a
+precedent. It publishes source code, and Cargo ignores profile settings that
+come from dependencies, so the customer's own project chooses them. We ship
+an already-compiled file, so our package-level `Cargo.toml` is the one that
+decides.
 
 ### The binding's Cargo.toml: what this Rust project needs
 
@@ -518,6 +601,11 @@ version.
 `workspace = true` explicitly requests the shared declaration. Putting a
 dependency in the workspace file does not automatically make every member
 use it.
+
+In this package, the binding takes every dependency version from the
+workspace file. Keep that file limited to dependencies the binding uses.
+Cargo does not warn about an entry that no member uses, so remove the entry
+when the binding stops using that dependency.
 
 This explains why the two files are not duplicates:
 
@@ -569,8 +657,9 @@ dependency entries.** Checking it into Git lets builds reuse the reviewed
 selections rather than independently choose versions.
 
 A lock file does not promise byte-for-byte identical builds. Compiler versions,
-target platforms, and other inputs still matter. Nor does it freeze files in
-a developer's local path dependency: those source files can still change.
+target platforms, and other inputs still matter. Nor does it freeze driver
+files when a developer overrides the pin with a local checkout: those source
+files can still change.
 
 ### How we prevent a build from silently changing dependencies
 
@@ -660,22 +749,23 @@ The package-level `Cargo.toml` also contains:
 
 ```toml
 [workspace.package]
-rust-version = "1.75"
+rust-version = "1.97"
 ```
 
 The binding inherits that value. It answers a different question:
 
 | Setting | Meaning |
 |---|---|
-| `rust-version = "1.75"` | "This project declares Rust 1.75 as its minimum supported compiler." |
+| `rust-version = "1.97"` | "This project declares Rust 1.97 as its minimum supported compiler." |
 | `channel = "ms-prod-1.97"` | "Use this selected toolchain by default for our current builds." |
 
 **Declaring a minimum does not install or select that compiler.**
 
-If a wheel builds successfully with the selected 1.97 toolchain, that does not
-demonstrate that Rust 1.75 can build the same source. The driver or another
-dependency may require a newer compiler. Validate the minimum against the
-complete dependency set, or update the declaration.
+A declared minimum is only true if something builds with it. CI builds only
+with the selected toolchain, so `rust-version` names that same version. An
+older minimum would be an untested promise; the pinned driver already needs
+Rust 1.88. A unit test fails if the two versions drift apart, so update both
+together.
 
 The distinction to retain is:
 
@@ -1055,21 +1145,8 @@ For the current configuration, the developer needs:
 - The selected Rust toolchain, installed as described in the previous
   subsection.
 - The operating system's required compiler/linker tools.
-- Access to the selected driver and other Rust dependency sources.
-
-The current package configuration requires this neighboring checkout layout:
-
-```text
-repos\
-  azure-sdk-for-python\
-    sdk\cosmos\azure-cosmos\
-  azure-sdk-for-rust\
-    sdk\cosmos\azure_data_cosmos_driver\
-```
-
-Pull the intended Rust changes before rebuilding. If its dependency
-requirements changed, run `cargo update -p azure_data_cosmos_driver` and
-review the lock changes before the locked build.
+- Network access to GitHub, so Cargo can download the pinned driver commit,
+  and access to the other Rust dependency sources.
 
 Activate the intended virtual environment, then run these commands from the
 package source directory:
@@ -1083,9 +1160,7 @@ $env:RUSTUP_TOOLCHAIN = $null
 Get-Command cargo, rustc
 cargo -V
 rustc -V
-$driverRoot = (Resolve-Path '..\..\..\..\azure-sdk-for-rust').Path
 $env:AZURE_COSMOS_BUILD_PYTHON_COMMIT = git rev-parse HEAD
-$env:AZURE_COSMOS_BUILD_RUST_DRIVER_COMMIT = git -C $driverRoot rev-parse HEAD
 maturin develop --release --locked
 ```
 
@@ -1099,11 +1174,95 @@ because the current terminal cannot find `msrustup`.
 The current build configuration selects Maturin `1.15.0`. Confirm that the
 command resolves to that version in the intended environment. Installing a
 tool into one environment does not ensure a different shell finds it.
-The two commit labels identify the checked-out commits; they do not capture
-uncommitted source changes. Refresh them each time you rebuild.
+
+### Which commits the built extension records
+
+When a customer reports a problem, support needs to know which driver code
+is inside their wheel. The package version alone does not say, because the
+driver is pinned by commit, not by version. So every build records two
+labels in the extension, which anyone can read from
+`_rust.__python_commit__` and `_rust.__rust_driver_commit__`.
+
+`azure_cosmos_rust\build.rs` chooses them, using `build_commit.rs`:
+
+| Label | First choice | Otherwise |
+|---|---|---|
+| Driver commit | `AZURE_COSMOS_BUILD_RUST_DRIVER_COMMIT`, if set | The driver's pinned commit in `Cargo.lock`. `local` if `Cargo.lock` lists the driver with no source, as for a local path build. `unknown` if neither is found |
+| Python commit | `AZURE_COSMOS_BUILD_PYTHON_COMMIT`, if set | `BUILD_SOURCEVERSION`, which Azure Pipelines sets to the commit being built. `unknown` if neither is set |
+
+So the driver label needs no setting in any build, including a source
+distribution, which ships `Cargo.lock`. A local `maturin develop` has no
+`BUILD_SOURCEVERSION`, so the commands above set the Python label. A label
+names a commit; it does not capture uncommitted changes.
+
+On a pull request build, Azure Pipelines builds a temporary commit that
+merges the pull request into its target branch. `BUILD_SOURCEVERSION` names
+that merge commit, not the pull request's last commit.
+
+**Linux pipeline wheels record `unknown` for the Python commit today.** The
+Linux build runs in a container that sees only forwarded variables, and in
+the pipeline Central's list replaces ours (section 12, "Which settings reach
+the Linux build container"). Central's list does not include
+`BUILD_SOURCEVERSION`. Windows and macOS builds run on the build machine, so
+they see it. The driver label is not affected, because it comes from
+`Cargo.lock`, which is inside the container.
 
 `--release` requests optimized Rust code. It does not mean the SDK is being
 published or approved for production.
+
+### Build against a local driver checkout
+
+Sometimes we need driver changes that are not in the pinned commit yet. For
+example, a driver fix may still be under review in `azure-sdk-for-rust`.
+Cargo's **patch** setting builds from a local checkout instead of the pinned
+commit, without editing `Cargo.toml`.
+
+This example assumes the Rust checkout sits next to the Python checkout:
+
+```text
+repos\
+  azure-sdk-for-python\
+    sdk\cosmos\azure-cosmos\
+  azure-sdk-for-rust\
+    sdk\cosmos\azure_data_cosmos_driver\
+```
+
+From the package source directory, create `.cargo\config.toml`:
+
+```toml
+[patch."https://github.com/Azure/azure-sdk-for-rust"]
+azure_data_cosmos_driver = { path = "../../../../azure-sdk-for-rust/sdk/cosmos/azure_data_cosmos_driver" }
+```
+
+The relative path starts from the package source directory. Git ignores
+`.cargo\` in this package, so the override cannot be committed by mistake.
+
+Our Maturin settings always build with `--locked`, so update the lock first,
+then build:
+
+```powershell
+cargo update -p azure_data_cosmos_driver
+maturin develop --release --locked
+```
+
+`cargo update` switches the two driver entries in `Cargo.lock` from the
+GitHub commit to the local folder. Each rebuild now compiles the checkout's
+current source, including uncommitted changes. The driver commit label is
+`local`, because the lock no longer names a commit.
+
+Passing the patch to Maturin with `--config` does not work: Maturin first
+runs `cargo metadata`, which does not receive `--config` and then fails on
+the lock.
+
+When finished, remove the override and restore the pinned lock:
+
+```powershell
+Remove-Item .cargo -Recurse
+git checkout -- Cargo.lock
+```
+
+Do not commit a `Cargo.lock` that points at a local folder. CI does not have
+the Rust checkout, and `test_build_configuration_unit.py` fails on it.
 
 ### What changes after the command succeeds?
 
@@ -1161,7 +1320,9 @@ Set `ACCOUNT_HOST` and `ACCOUNT_KEY` to an isolated test account before running
 the test. Its fixtures create and clean up uniquely named resources. It checks
 native-future destruction after cancellation, a no-injection control, and
 recovery using the same client. A normal build fails with rebuild instructions
-instead of silently skipping this evidence.
+instead of silently skipping this evidence. Its `cosmosRustProbes` marker
+keeps the standard emulator job, which installs a normal wheel, from selecting
+it. CI runs it in its own step (section 15).
 
 After testing, restore the normal build and restart Python processes that loaded
 the instrumented extension:
@@ -1170,6 +1331,32 @@ the instrumented extension:
 python -m maturin develop --locked
 python -c "from azure.cosmos import _rust; assert not hasattr(_rust, '_AsyncOperationProbe')"
 ```
+
+### Fault injection is in every build, behind a test switch
+
+Unlike `test-probes`, the driver's `fault_injection` feature is requested in
+`azure_cosmos_rust\Cargo.toml` for every build, including customer wheels.
+Many test files pass `_fault_injection_rules` to `CosmosClient` to make a
+request fail on purpose, for example an order read that returns 503. They run
+in the standard emulator job on the normal wheel, so the feature stays in.
+
+Leaving the feature in costs almost nothing when no rules are set. The driver
+then skips fault injection for each request after one check.
+
+A customer app must not be able to turn this on. The SDK therefore refuses
+`_fault_injection_rules` with `TypeError` unless the environment variable
+`COSMOS_ENABLE_FAULT_INJECTION` is exactly `1`. The check is in
+`_prepare_fault_injection_rules` (`azure\cosmos\_backend\client_config.py`),
+which both the sync and async clients use. `tests\conftest.py` and
+`tests\fault_injection\conftest.py` set the switch; the second is needed
+because the native cancellation test step runs with `--confcutdir=tests\fault_injection`,
+which skips the first.
+
+The binding's `_debug_fault_injection_rule_hit_count` and
+`_debug_set_fault_injection_rule_enabled` act only on configured rules, so
+without the switch they fail with `unknown fault injection rule id`.
+`_debug_cached_account_regions` only reads the regions the client already
+cached.
 
 ## 8. Building and checking a wheel locally
 
@@ -1367,6 +1554,23 @@ azure_cosmos-<version>.dist-info\
 
 The `<version>` text is a placeholder for the package version.
 
+### The shared azure folder has no `__init__.py`
+
+The layout above has no `azure\__init__.py`, on purpose. Every `azure-*`
+package installs into the same `azure` folder, so no single package should
+own a file in it. If our wheel shipped `azure\__init__.py`, pip would record
+it as ours. Uninstalling azure-cosmos would then delete it while, for
+example, azure-storage-blob still uses the folder.
+
+Without that file, Python treats `azure` as a **namespace package**: one
+import name whose contents can come from several folders. `azure.cosmos`
+comes from our wheel and `azure.core` from azure-core's.
+
+The source tree keeps the file for development, so `[tool.maturin] exclude`
+in `pyproject.toml` leaves it out of the wheel only. `main`'s `setup.py` did
+the same by excluding the `azure` package. The source archive still includes
+it, as `main`'s did.
+
 ### The Python files are still part of the product
 
 Files such as `cosmos_client.py` remain readable Python source. Compiling the
@@ -1390,25 +1594,31 @@ renamed or gains a parameter, someone must update the stub too. Type checkers
 and editors trust the stub, so a stale one hides the mistake until the call
 runs.
 
-The stub declares only part of the extension: runtime creation and settings,
-acquiring and releasing a driver handle, the item batch calls, and four
-classes (`_CosmosRuntime`, `_DriverHandle`, `_ItemFeedCursor`,
-`_AsyncOperationProbe`). Every other export, such as `create_item` or
-`query_items`, falls through the stub's `__getattr__` and is treated as `Any`,
-so type checkers do not check those calls.
+The stub declares every export of a normal build: each operation and its
+`_async` twin, runtime and driver-handle functions, the feed cursor, the
+three error classes, and the test diagnostics. It has no `__getattr__`
+catch-all, so a type checker reports any name the stub does not declare.
 
 The unit test `test_type_stub_matches_the_installed_rust_module_rust`
 (`tests\common\test_naming_contracts_unit.py`) reads the stub that sits next
-to the installed extension and compares each declared name with the real
-module:
+to the installed extension and compares it with the real module. It fails if
+the extension has an export the stub does not declare, if the stub declares a
+name the extension lacks, or if a declaration differs:
 
 | Declared in the stub | Must match in the extension |
 |---|---|
 | Function | Name, and each parameter's name, kind (positional or keyword-only), and default |
 | Class | Name, properties, and constructor parameters |
 
-`_AsyncOperationProbe` exists only in `test-probes` builds (section 7), so the
-test checks it only when it is present.
+`_AsyncOperationProbe` and the `_debug_lifecycle` keyword of `read_item_async`
+exist only in `test-probes` builds (section 7), so the test accepts them only
+in those builds.
+
+**The stub does not check every call the SDK makes.** The SDK finds most
+operations by name at run time, for example
+`getattr(_rust_module, "read_item")` in `azure\cosmos\_backend\binding_adapter.py`,
+so a type checker cannot see which function is called or check its
+arguments. Tests that run the operation catch those mistakes instead.
 
 ### The extension is one compiled file for this target
 
@@ -1503,6 +1713,16 @@ for each one.
 | `cp310` | A CPython 3.10 compatibility baseline for this stable-ABI wheel |
 | `abi3` | The extension uses CPython's stable binary interface |
 | `win_amd64` | Windows x64 |
+
+The platform tag is the only operating-system information the installer
+uses. Package metadata also has optional **operating-system classifiers**,
+labels shown on the package index page. The installer ignores them.
+
+We do not declare one. The pure-Python package said
+`Operating System :: OS Independent`, which is false for platform wheels.
+Listing each operating system would be one more copy of the target list to
+keep in step. `azure-storage-extensions`, another compiled package in this
+repository, also declares none.
 
 ### Why we do not necessarily build a wheel for every Python version
 
@@ -1762,7 +1982,17 @@ such as its format and processor. The checks compare those properties with
 the build target and reject incompatible files.
 
 They also require the target's primary filename and check Linux's 32-bit or
-64-bit file class. Supplied native companions are checked as well.
+64-bit file class.
+
+The SDK package builder decides which files count as native libraries and
+copies only those. It passes their names to the binding's build in
+`AZURE_COSMOS_QUERYPLANINTEROP_STAGED_FILES`, and the checks inspect exactly
+those files. So every copied file is checked, and the rule for picking files
+exists only in the builder.
+
+A macOS **universal** file holds builds for several processors, such as Intel
+and Apple Silicon. The check accepts it if one of those builds matches the
+target, and ignores builds for processors it doesn't recognize.
 
 This proves more than checking the filename, but less than executing a query.
 Correct file headers do not establish that every dependency is present or
@@ -1808,6 +2038,37 @@ and combines its replies. QueryPlanInterop creates the plan; it does not read
 
 The driver does not download or compile QueryPlanInterop automatically.
 
+### Why writing the runtime setting is a temporary approach
+
+At the pinned driver commit, the environment variable is the only way to
+give the driver this directory. The driver reads it with `std::env::var`
+when it loads the library (`query_plan_native/native.rs`). It has no option
+for passing the directory instead. So the Python wrapper writes it into the
+process environment, once per process, just before the SDK first starts the
+driver (`_binding_adapter_shared.py`).
+
+That write affects the whole customer app, not just the SDK:
+
+| Effect | Example |
+|---|---|
+| Another thread may read the environment at the same moment. On Linux this can crash the process. The SDK's lock stops two SDK calls from writing at once, but it cannot stop other code from reading. | Alpha Bank's app has a thread doing a DNS lookup while the first Cosmos request starts |
+| Child processes inherit the setting, and an existing setting wins. | Alpha Bank's app, running in virtual environment A, starts a helper program in virtual environment B, which has a different SDK version. B loads A's library, which may not match B's driver |
+
+The time window for the first effect is small, because there is only one
+write per process.
+
+**The preview is not affected.** No pipeline sets
+`AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR`, so preview wheels contain no
+`.libs` directory. Without it, the wrapper writes nothing. The write starts
+only when we ship QueryPlanInterop, so the driver fix below is needed
+before then.
+
+The fix belongs to the driver: accept the directory as an option when the
+driver starts. The driver team's design record ADR-0009 already lists
+`AZURE_COSMOS_QUERYPLANINTEROP_DIR` as a temporary setting to replace with
+such an option. Once that option exists, the wrapper passes the path to the
+driver and stops writing the environment.
+
 ### Prove which planner ran
 
 A successful query is not enough evidence for the QueryPlanInterop feature.
@@ -1842,6 +2103,7 @@ Use `GatewayOnly` for a test that explicitly requests its plan from the gateway.
 | Confirm permission to redistribute the libraries, licensing, signing, and required companions | Producing team and release approver |
 | Supply each target's files before its wheel build, including inside Linux containers | Central team, using SDK-owned staging configuration |
 | Inspect final wheels and demonstrate QueryPlanInterop planning on supported targets | SDK team supplies tests; Central runs them |
+| Accept the library directory as a driver option, so the wrapper stops writing `AZURE_COSMOS_QUERYPLANINTEROP_DIR` into the process environment. Needed before the first wheel that ships QueryPlanInterop | Rust driver team, then Cosmos SDK team |
 
 This work is complete only when the intended files reach the final wheel and
 the installed SDK proves this particular provider works.
@@ -1924,7 +2186,7 @@ contains settings; it does not contain the compiler or install it by itself.
 |---|---|
 | Developer's machine | Rust build commands in this checkout use the selected toolchain. The developer must first install `msrustup` and the toolchain, with authorized access to its downloads, as described in [section 7](#7-building-for-local-development). |
 | Pipeline build machine | The installation step reads the file from the configured package directory and prepares that toolchain before the wheel build. |
-| Linux wheel-build container | The compiler must also be installed inside the container. Our `before-all` preparation in `pyproject.toml` obtains `msrustup` with `scripts\install-msrustup.sh`, then runs `msrustup toolchain install` from the mounted source directory. |
+| Linux wheel-build container | The compiler must also be installed inside the container. Our `before-all` preparation in `pyproject.toml` obtains `msrustup` with `scripts\install-msrustup.sh`, then runs `msrustup toolchain install` from the mounted source directory. Last, `scripts\configure-cargo-feed.sh` points Cargo at the dependency feed if the pipeline forwarded its address; without an address, Cargo keeps using crates.io. |
 | Alpha Bank installing a compatible wheel | No Rust compilation is needed, so the customer does not need these tools or this toolchain-selection file to install the wheel. |
 
 For example, a developer may already have public Rust installed and still
@@ -2175,6 +2437,51 @@ Linux wheel builds run inside the prepared containers introduced in section
 11. The compiler setup, required credentials, and input files must be available
 where the build actually runs, not just on the host.
 
+### Which settings reach the Linux build container
+
+The container does not see the build machine's environment variables. It
+sees only the variables named in a **pass list**. Two places define that
+list, and only one is used for a given build:
+
+| Pass list | Used when | Variables it forwards |
+|---|---|---|
+| `environment-pass` in our `pyproject.toml` | Someone runs cibuildwheel without the pipeline, for example on a developer machine | `PIP_INDEX_URL`, `MSRUSTUP_ACCESS_TOKEN`, `MSRUSTUP_PAT`, `MSRUSTUP_FEED_URL`, and the three `CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_*` variables |
+| `CIBW_ENVIRONMENT_PASS_LINUX`, set by Central's `build-package-artifacts.yml` | Pipeline builds | `PIP_INDEX_URL`; because `ci.yml` sets `InstallMsRustToolchain: true`, also the same Rust variables except `MSRUSTUP_PAT` |
+
+**In the pipeline, Central's list replaces ours; the two are not combined.**
+Today this causes no failure. `install-msrustup.sh` accepts either
+`MSRUSTUP_ACCESS_TOKEN` or `MSRUSTUP_PAT`, and the pipeline forwards the
+access token.
+
+The risk is a future change. If our Linux `before-all` step starts to need a
+new variable, adding it to `pyproject.toml` is not enough for pipeline
+builds. Central must add it to their list. `BUILD_SOURCEVERSION` is one
+such variable today: without it, Linux wheels record the Python commit as
+`unknown` (section 7, "Which commits the built extension records").
+
+### The pipeline's login stays visible for the whole build
+
+`MSRUSTUP_ACCESS_TOKEN` is not a token made only for the Rust installer. In
+the pipeline, `build-package-artifacts.yml` sets it to `System.AccessToken`,
+which is the pipeline's own login. It can do whatever the pipeline's account
+is allowed to do, such as reading internal feeds.
+
+We need it for one thing: `install-msrustup.sh` uses it in `before-all` to
+download the Microsoft Rust installer. But the variable is set for the whole
+"Generate Packages" step, and on Linux the pass list forwards it into the
+container. So every program the build runs can read it, not just our
+script. That includes pip's build tools, Cargo, and each third-party
+crate's build script (`build.rs`). On Windows and macOS the same step sets
+it directly on the build machine.
+
+For example, if a compromised crate's `build.rs` read
+`MSRUSTUP_ACCESS_TOKEN`, it would get the pipeline's login, not just
+installer access. Our scripts only send the token in a `curl` header and
+never print it.
+
+This is the same on `main`, and Central owns the fix (section 15, "Central
+changes still required").
+
 ### Where does the build download its Rust tools and dependencies?
 
 The build machine needs more than our Python and Rust source. It needs the
@@ -2195,10 +2502,9 @@ For our package, `rust-toolchain.toml` selects `ms-prod-1.97`. That answers
 **which toolchain version to use**. The toolchain feed answers **where to
 download it**. Neither setting replaces the other.
 
-The Cargo feed does not select the compiler version. It also does not replace
-the driver source configured in `Cargo.toml`; the current local path requires
-the neighboring Rust checkout. Release builds need an approved portable
-driver source instead.
+The Cargo feed does not select the compiler version. It also does not supply
+the driver: Cargo fetches the pinned driver commit from GitHub directly, not
+through the feed.
 
 ### Choosing a toolchain feed
 
@@ -2379,6 +2685,40 @@ The SDK records this policy, but enforcement in the shared
 publishers is still pending with Central. The current publishing path must
 not be used for this Rust-backed release before that work is integrated.
 
+### Which customers have no compatible wheel
+
+Section 10 lists the five targets we build. Customers on other platforms
+have no wheel for this version, even though the default `core-python`
+backend does not need the Rust extension:
+
+| Platform | Why no wheel matches |
+|---|---|
+| Intel Mac | We build macOS for ARM64 only |
+| Alpine and other musl-based Linux | `skip = ["*-musllinux*"]` |
+| Linux with glibc older than 2.28, such as Amazon Linux 2 and RHEL 7 | Our Linux wheels require glibc 2.28 |
+| Other processors, such as 32-bit Windows | No wheel targets them |
+
+The pure-Python package (for example 4.16.1) installed on all of them,
+because its single `py3-none-any` wheel matches any platform. So for these
+customers this is a regression.
+
+What pip does on these platforms depends on whether the customer pins a
+version:
+
+| Customer's request | What pip does |
+|---|---|
+| `pip install azure-cosmos` | Quietly installs the newest earlier version that has a matching file, which is the last pure-Python release |
+| `pip install azure-cosmos==<this version>` | Fails with "No matching distribution found" |
+
+We checked both with pip 24.0, using a local folder with a `py3-none-any`
+version 1.0 and a Linux-only version 2.0.
+
+The quiet case is the harder one to support: Alpha Bank's Intel Mac
+developer gets an older SDK than its Linux servers, with no warning.
+
+We accept this for the preview. Section 15 records the decision needed
+before general availability.
+
 Could we publish the source files so the customer can build a compatible wheel?
 That would offer a different installation path, with additional requirements.
 The next section explains why we do not yet support it.
@@ -2432,7 +2772,7 @@ multi-platform Azure SDK pipeline.**
 | Maturin | Needed during the build; pip normally installs the declared version into build isolation |
 | Cargo and `rustc` | A compatible Rust toolchain must be available |
 | Platform compiler/linker and required libraries | Needed as appropriate for the target and native dependencies |
-| Rust dependency sources | Must be accessible; the current local driver path must be replaced with an approved portable source before supporting standalone source installation |
+| Rust dependency sources | Must be accessible. Cargo downloads the pinned driver commit from GitHub and other dependencies from crates.io. A pinned commit is a preview choice; supporting standalone source installation needs the approved published driver described in [section 2](#how-the-build-obtains-the-rust-driver) |
 | QueryPlanInterop files | Needed if this source-build path promises that particular provider |
 | `cibuildwheel` | Not needed to build just the customer's local wheel |
 | Python `build` package | Not required merely to run `pip install`; pip can call the SDK package builder |
@@ -2462,7 +2802,7 @@ supply the package's own build inputs.
 ### The archive must stand on its own
 
 A source archive is incomplete if it builds only because the developer's
-machine supplies missing source files or a neighboring Rust checkout.
+machine supplies missing source files or a local Rust checkout.
 
 It must include all package-owned inputs required to start a clean build:
 
@@ -2480,27 +2820,58 @@ The driver source need not be copied into the archive if Cargo can obtain the
 approved source through the declared dependency. No active dependency may
 require an unrelated local directory outside the archive.
 
-**What today's archive contains.** A Maturin source archive built from this
-branch has 596 files. Maturin copies the whole driver crate from the
-neighboring `azure-sdk-for-rust` checkout into it. Whether the archive builds
-on a clean machine has not been tested. It is also missing files the earlier
-setuptools archive carried:
-
-| Missing from the archive | Required by the table above? |
-|---|---|
-| `LICENSE` | Yes |
-| `samples\` | No; the setuptools archive shipped them |
-| Python `tests\` | No; the setuptools archive shipped them |
-| `doc\*.rst`, `api.md`, `Contributing.md` | No |
-
-The preview release publishes wheels only, so this does not block it. Before
-any release that publishes a source archive, add the needed paths to
-`[tool.maturin] include` in `pyproject.toml` with `format = "sdist"`, and
-review the license notices for the copied driver source.
-
 Likewise, one target's QueryPlanInterop binary must not be included as if it
 worked on every target. If the source-installation promise includes that
 provider, define how the customer obtains matching files.
+
+### Today's archive is missing files that main's archive carried
+
+Before Rust, setuptools built the source archive. It read `MANIFEST.in`,
+which on `main` lists the extra files to copy in:
+
+```text
+include *.md
+include LICENSE
+recursive-include samples *.py *.md
+recursive-include tests *.py
+recursive-include doc *.rst
+```
+
+**Maturin builds the archive now, and Maturin does not read `MANIFEST.in`.**
+Our `MANIFEST.in` says so in its first line. It stays only because the
+repository's sdist check requires its `py.typed` line. Maturin adds the
+binding and the Python package on its own, and `README.md` because
+`pyproject.toml` names it as `readme`. Every other file
+must be listed under `[tool.maturin] include` in `pyproject.toml` with
+`format = "sdist"`. That list does not name the files above, so they
+silently dropped out.
+
+A Maturin source archive built from this branch has 263 files:
+
+| Content | In main's archive | In today's archive |
+|---|---|---|
+| `azure\cosmos\` Python package | Yes | Yes (210 files) |
+| `azure_cosmos_rust\` binding source | Not applicable | Yes (40 files) |
+| `README.md`, `CHANGELOG.md` | Yes | Yes |
+| `LICENSE` | Yes | **No** |
+| `samples\` | Yes | **No** |
+| Python `tests\` | Yes | **No** |
+| `doc\*.rst`, `api.md`, `Contributing.md` | Yes | **No** |
+| Rust driver source | Not applicable | No; Cargo downloads the pinned commit during the build |
+
+Only `LICENSE` is required by the table in the previous subsection. The
+package is MIT licensed, and the license text should travel with its source.
+The file exists in the package directory; it is simply not listed. Samples,
+tests, and docs do not affect whether the archive builds. `main` shipped
+them, so leaving them out is a visible change for anyone who used them.
+
+Whether the archive builds on a clean machine has not been tested.
+
+The preview release publishes wheels only, so this does not block it. Before
+any release that publishes a source archive, add `LICENSE` to
+`[tool.maturin] include` with `format = "sdist"`. Decide whether to add
+samples, tests, and docs to match `main`, then rebuild the archive and list
+its contents to confirm.
 
 ### Use and validate the actual source-archive creation path
 
@@ -2580,7 +2951,7 @@ The normal wheel check installs the wheel and runs pytest. Its
 `cosmosEmulator` marker filter still selects the emulator tests; the package's
 collection rules exclude the preserved legacy originals.
 
-Two additional checks use the existing `AfterTestSteps` hook:
+Three additional checks use the existing `AfterTestSteps` hook:
 
 - **Offline Python tests:** `run_rust_ci.py offline` selects the maintained unit
   tests except those selected by the dedicated telemetry suite. It runs without
@@ -2588,12 +2959,42 @@ Two additional checks use the existing `AfterTestSteps` hook:
   and fails missing execution or unexpected skips.
 - **Native Rust tests:** `run_rust_ci.py native` first runs `cargo clippy`. Clippy
   errors, such as a denied `large_futures` lint, fail the step; warnings don't.
-  It then runs `cargo test` and checks that test bodies actually ran. Building a
-  wheel alone does not run them. Some Rust tests start Python inside the test
-  process and import `azure.cosmos`. They put this checkout's package first on
-  Python's search path (`test_support.rs`), so an older `azure-cosmos`
-  installed on the machine cannot be tested by mistake. The script requires
-  `--results <folder>` and writes `cargo-clippy.log` and `cargo-test.log` there.
+  It then runs `cargo test` twice: once with the shipped features, and once with
+  the `test-probes` feature (section 7), so the cancellation instrumentation's
+  Rust tests also run. Each time it checks that test bodies actually ran.
+  Building a wheel alone does not run them. Some Rust tests start Python inside
+  the test process and import `azure.cosmos`. They put this checkout's package
+  first on Python's search path (`test_support.rs`), so an older `azure-cosmos`
+  installed on the machine cannot be tested by mistake. Before that import,
+  they register the test program's own binding as `azure.cosmos._rust`, so
+  Python code uses the code under test rather than a previously built `_rust`
+  file in the checkout. The script requires
+  `--results <folder>` and writes `cargo-clippy.log`, `cargo-test.log` and
+  `cargo-test-probes.log` there.
+- **Native cancellation test:** customer wheels don't contain the probe the
+  cancellation test needs (section 7). So this step creates a separate Python
+  environment, builds a `test-probes` wheel into it, and runs
+  `run_rust_ci.py cancellation` against the emulator. The script refuses an
+  extension without the probe, and fails unless both cases ran and passed: the
+  cancelled read and the no-injection control. No other step uses this
+  environment, so the probe never reaches the wheels the other steps test.
+  This adds one more Rust build to the job.
+
+**The Rust tests use a different build from the shipped wheel.** `cargo test`
+adds the binding's `[dev-dependencies]` (`azure_cosmos_rust\Cargo.toml`), which
+switch on two test-only features. The wheel build never uses them:
+
+| Test-only feature | What the Rust tests gain |
+|---|---|
+| Driver `__internal_in_memory_emulator` | A fake Cosmos service inside the test process, so tests need no network or account |
+| Tokio `test-util` | Test control of the Tokio clock |
+
+The in-memory emulator is a simplified fake, not the real service. Passing Rust
+tests show that the binding passes requests and results correctly; they do
+not show real-service behaviour. That evidence comes from the Python tests,
+which run the installed wheel against the Cosmos emulator or a live account.
+`test_build_configuration_unit.py` fails if the emulator feature moves out of
+`[dev-dependencies]`, so it cannot reach the shipped wheel by mistake.
 
 These steps run only in the existing Windows Python 3.13 standard test job
 (`ChecksOverride=whl,sdist`). They reuse that job's checkout and downloaded
@@ -2625,7 +3026,9 @@ service behaviors. No new YAML or marker is needed for the consolidated
 **Service-test scope is unchanged.** Unmarked service tests and tests selected
 only by other markers are not automatically included in the emulator job.
 Their account requirements and pipeline selection still need review. The
-unfiltered `parity` runner is not added here.
+`parity` suite of `run_rust_ci.py` is for local checks only and is not added
+to the pipeline; it is due for deletion (LR-20 in
+`docs\V5\api-review\LEGACY_CODE_RETIREMENT.md`).
 
 ### SDK pipeline wiring and Central ownership
 
@@ -2640,6 +3043,142 @@ named `templates` is not automatically Central-owned.
 | `sdk/cosmos/templates/telemetry-tests.yml` | Run diagnostic checks against the built wheel and require their results. | Cosmos SDK team |
 | `sdk/cosmos/templates/toxiproxy-tests.yml` | Install the network-fault tool, run the failure scenarios, and require their results. | Cosmos SDK team |
 
+### Only Microsoft employees can build the package today
+
+`azure-sdk-for-python` is a public repository, so anyone can clone it and try
+to build this package. Today, only Microsoft employees can.
+
+`rust-toolchain.toml` selects `ms-prod-1.97`. Anyone who runs `cargo` in the
+package directory gets that toolchain, and public Rust cannot install it. A
+contributor with only public Rust sees this on their first command:
+
+```text
+error: custom toolchain 'ms-prod-1.97' specified in override file
+'...\sdk\cosmos\azure-cosmos\rust-toolchain.toml' is not installed
+```
+
+[Section 7](#install-the-microsoft-rust-toolchain-on-a-developer-machine)
+installs the toolchain with `scripts\install-msrustup.sh`. That script
+downloads from an internal DevDiv feed
+(`devdiv.pkgs.visualstudio.com/DevDiv/_packaging/Rust.Sdk%40Release`), which
+accepts only Microsoft corporate sign-ins. An external contributor cannot
+get past this step, so they cannot build the Rust extension.
+
+Without the extension, `import azure.cosmos` still works. The SDK can send
+requests in two ways:
+
+- **By default**, it uses its existing Python code. That code does not need
+  the extension, so it still works against the emulator or an account.
+- **With `COSMOS_BACKEND=rust`**, it sends requests through the Python/Rust
+  binding. Without the extension, creating the client fails immediately with
+  `ImportError`. The message says that `azure.cosmos._rust` could not be
+  loaded and gives the original reason, such as a missing system library
+  (`azure\cosmos\_backend\_binding_adapter_shared.py`).
+
+So a contributor cannot run the Rust driver path against the emulator or an
+account, even for a Python change that never touches Rust. They can only run
+tests that replace the binding with a stand-in.
+
+This is a different question from customer source installation in
+[section 14](#the-internal-compiler-choice-is-a-release-decision-not-a-customer-prerequisite).
+That question is about customers installing the package. This one is about
+people contributing to it.
+
+The SDK team and Central must decide together:
+
+- Is it acceptable that external contributors cannot build this package?
+- If not, which public Rust version gives them a supported path, and how is
+  it selected without changing the toolchain the pipeline uses?
+- Does a build with public Rust need to be tested in CI, so that the path
+  keeps working?
+
+Nobody has tested whether the binding builds with public Rust. Until a
+decision is made, the contributor guidance in `docs\local_development.md`
+applies only to Microsoft employees.
+
+### Platforms without a wheel
+
+Some customers have no compatible wheel (section 13, "Which customers have
+no compatible wheel"). Before general availability, the SDK team and
+Central must choose one approach:
+
+| Option | What it means | Cost |
+|---|---|---|
+| Publish a pure-Python fallback wheel | Also publish a `py3-none-any` wheel of the same version. pip prefers a platform wheel where one matches, and uses the fallback elsewhere. The default `core-python` backend works there, while the Rust backend is unavailable | Reverses the "every wheel contains Rust" rule (section 4) and `_validate_native_wheel` in the package builder. Central must build and publish the extra wheel |
+| Build more targets | Add Intel Mac, musllinux, and an older glibc baseline such as `manylinux2014` | Each needs the Microsoft Rust installer in that build environment, plus Central build machines and time |
+
+Until then, the preview ships wheels for the five section 10 targets only.
+
+### The pinned pyo3 version has a security advisory
+
+The workspace `Cargo.toml` asks for `pyo3 = "0.22"`, and `Cargo.lock` locks
+0.22.6. Advisory
+[RUSTSEC-2025-0020](https://rustsec.org/advisories/RUSTSEC-2025-0020.html)
+affects every pyo3 version below 0.24.1. In those versions,
+`PyString::from_object` passes text to Python without a terminating zero
+byte. Python can then read past the end of the text and copy the extra
+memory into an error message.
+
+**The SDK cannot reach the affected code.** Nothing in `azure_cosmos_rust`
+calls `PyString::from_object` or `from_object_bound`, and neither does
+`pyo3-async-runtimes` 0.22.0. Inside pyo3 0.22.6, the only caller is the
+deprecated `PyString::from_object` wrapper (`src\types\string.rs`), which the
+binding does not use.
+
+**Audit tools still report it.** They check the locked version, not which
+functions are called. No pipeline under `eng/` or `sdk/cosmos` runs
+`cargo audit` or `cargo deny`, so our builds don't fail. A customer who scans
+the package is still warned.
+
+For example, Alpha Bank's security team scans `azure-cosmos`, sees
+RUSTSEC-2025-0020, and must file an exception before they can approve the
+preview.
+
+**The upgrade is a separate change before general availability.** The fix
+needs pyo3 0.24.1 or later; the latest is 0.30. `pyo3-async-runtimes` must
+move to the matching version, because each `pyo3-async-runtimes` release
+works with one pyo3 version. The binding uses pyo3's functions for
+converting values between Rust and Python in about 460 places across 24
+files, and pyo3 replaced several of those functions after 0.22. The SDK team owns this upgrade. It is complete when:
+
+- `Cargo.lock` locks pyo3 0.24.1 or later.
+- `run_rust_ci.py native` and the wheel tests pass.
+
+### The wheel has no third-party license notices
+
+`_rust` is compiled from open-source Rust crates written by other people:
+207 for Windows x64, 197 for Linux x64 and 198 for macOS ARM64
+(`cargo metadata`, counting normal and build dependencies). Most use MIT or
+Apache-2.0, but 21 offer neither:
+
+| License | Crates |
+|---|---|
+| Unicode-3.0 | 18, the `icu_*`, `zerovec`, `yoke` and related crates |
+| ISC | `rustls-webpki`, `untrusted` |
+| BSD-3-Clause | `subtle` |
+
+Licenses like these usually ask that the copyright line and license text be
+included when the code is redistributed. The wheel redistributes the code in
+compiled form. The `.dist-info` folder holds only:
+
+| File | What it contains |
+|---|---|
+| `licenses/LICENSE` | Our own MIT license |
+| `sboms/azure_cosmos_rust.cyclonedx.json` | The dependency list maturin generates, with each crate's license name but no license text or copyright lines |
+
+There is no third-party notice file. The repository's root `NOTICE.txt` is a
+general statement and is not packaged.
+
+For example, Alpha Bank's open-source compliance team asks where the BSD
+notice for `subtle` is. The wheel can't show them.
+
+**This blocks general availability until CELA, Microsoft's legal team,
+decides.** CELA must say whether the dependency list is enough or a notice
+file with the full license texts must
+ship in the wheel. If a notice file is needed, the SDK team generates it from
+`Cargo.lock` and adds it to `.dist-info/licenses/`, and a test checks that
+every wheel contains it.
+
 ### Central changes still required
 
 Central owns the shared implementation under `eng/`, including compiler
@@ -2648,7 +3187,25 @@ existing hook does not require changing those shared templates. A defect in
 shared tooling, such as the ARM64 PyO3 configuration losing the requested
 stable ABI, must be resolved separately; extra test steps cannot fix it.
 Central must also verify that release processing enforces the requested
-wheels-only publication policy.
+wheels-only publication policy. Central also needs to agree on the
+contributor toolchain question in "Only Microsoft employees can build the
+package today".
+
+Central must also add `BUILD_SOURCEVERSION` to the variables that
+`eng/pipelines/templates/steps/build-package-artifacts.yml` forwards to the
+Linux build container. Until then, Linux wheels record
+`_rust.__python_commit__` as `unknown`, while Windows and macOS wheels
+record the commit (section 7, "Which commits the built extension records").
+Our own `environment-pass` list cannot fix this, because the pipeline
+replaces it (section 12, "Which settings reach the Linux build container").
+
+Central should also narrow the Rust installer token. Today
+`build-package-artifacts.yml` passes `System.AccessToken` as
+`MSRUSTUP_ACCESS_TOKEN` for the whole "Generate Packages" step, so every
+build tool and dependency build script can read it (section 12, "The
+pipeline's login stays visible for the whole build"). Two possible fixes:
+make the token available only while the installer runs, or use a token that
+can only read the Rust feed. This is the same on `main`.
 
 Pipeline wiring is not evidence that the checks have passed. Before release,
 the required jobs must actually run, their results must be available, and

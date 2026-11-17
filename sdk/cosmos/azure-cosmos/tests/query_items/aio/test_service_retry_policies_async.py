@@ -67,12 +67,12 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             created_item = await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
             assert created_item["pk"]
 
-            # Known gap 11: Closed: driver-owned throttle retry waiting (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-11). Retry policies are owned by the Rust driver.
+            # Known gap 11: Closed: driver-owned throttle retry waiting. Retry policies are owned by the Rust driver.
             pytest.skip("internals-only: the rest of the test rewrites the legacy "
                         "client_connection._global_endpoint_manager.location_cache and patches "
                         "_retry_utility.ExecuteFunctionAsync to count legacy ServiceRequestRetryPolicy "
                         "region attempts; the Rust backend has neither and owns its retries "
-                        "(known gap 11, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-11). The item was created.")
+                        "(known gap 11). The item was created.")
 
 
 if __name__ == '__main__':

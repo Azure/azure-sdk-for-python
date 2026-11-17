@@ -16,7 +16,7 @@ import pytest
 from config import settings
 from azure.cosmos import CosmosClient, PartitionKey
 
-# Known gap 33: `CosmosClient(...)`: settings from first principles, bites 1-15 (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-33). Logging is resolved only under the summary-logging contract; Rust emits one summary record per operation (activity id inside the message) with no request/response records and no `activity_id` record attribute.
+# Known gap 33: `CosmosClient(...)`: settings from first principles, bites 1-15. Logging is resolved only under the summary-logging contract; Rust emits one summary record per operation (activity id inside the message) with no request/response records and no `activity_id` record attribute.
 _GAP_33_ACTIVITY_ID_SKIP = (
     "accepted-vnext-change: Rust emits one diagnostics summary record per operation, not legacy "
     "request/response HTTP log records with an activity_id attribute (known gap 33: summary-logging contract)."

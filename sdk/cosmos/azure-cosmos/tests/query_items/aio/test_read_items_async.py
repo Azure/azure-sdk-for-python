@@ -10,7 +10,6 @@ independent snapshot; original data, distribution and result assertions remain.
 """
 
 import asyncio
-import os
 import unittest
 import uuid
 
@@ -18,7 +17,7 @@ import pytest
 
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos import PartitionKey
-from azure.cosmos.aio import CosmosClient
+from config.clients import create_data_client_async, create_setup_client_async
 
 
 @pytest.mark.cosmosEmulator
@@ -26,15 +25,12 @@ from azure.cosmos.aio import CosmosClient
 class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
     """Rust-path copies of tests/test_read_items_async.py::TestReadItemsAsync."""
 
-    host = os.environ.get("ACCOUNT_HOST")
-    masterKey = os.environ.get("ACCOUNT_KEY")
-
     async def asyncSetUp(self):
         self.TEST_DATABASE_ID = "query_items_read_items_async_" + uuid.uuid4().hex
         # key-auth client for control-plane operations, and a separate data-plane client,
         # like the original create_test_clients_async pair.
-        self.key_client = CosmosClient(self.host, self.masterKey, _backend="rust")
-        self.client = CosmosClient(self.host, self.masterKey, _backend="rust")
+        self.key_client = create_setup_client_async()
+        self.client = create_data_client_async(_backend="rust")
         await self.key_client.__aenter__()
         await self.client.__aenter__()
         self.key_database = None

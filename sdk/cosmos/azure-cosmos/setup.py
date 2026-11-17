@@ -40,8 +40,6 @@ version = validate_version_metadata()
 
 with open("README.md", encoding="utf-8") as f:
     readme = f.read()
-with open("CHANGELOG.md", encoding="utf-8") as f:
-    changelog = f.read()
 
 exclude_packages = [
     "tests",
@@ -56,7 +54,7 @@ setup(
     version=version,
     include_package_data=True,
     description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
-    long_description=readme + "\n\n" + changelog,
+    long_description=readme,
     long_description_content_type="text/markdown",
     license="MIT License",
     author="Microsoft Corporation",
@@ -64,12 +62,15 @@ setup(
     maintainer="Microsoft",
     maintainer_email="askdocdb@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python",
+    project_urls={
+        "Repository": "https://github.com/Azure/azure-sdk-for-python",
+        "Changelog": "https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/CHANGELOG.md",
+    },
     keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Natural Language :: English",
-        "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",

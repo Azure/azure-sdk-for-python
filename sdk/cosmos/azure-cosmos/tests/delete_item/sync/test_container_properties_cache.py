@@ -76,7 +76,7 @@ class TestContainerPropertiesCache(unittest.TestCase):
                 path="/" + container2_pk))
         except exceptions.CosmosResourceExistsError:
             self.fail("Container Should not Already Exist.")
-        # Known gap 22: `create_item()`, `upsert_item()`, `replace_item()`: stale extracted key after container recreation (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-22). This client cached the old /PK path, so these creates fail with 400/1001 before the delete step is reached.
+        # Known gap 22: `create_item()`, `upsert_item()`, `replace_item()`: stale extracted key after container recreation. This client cached the old /PK path, so these creates fail with 400/1001 before the delete step is reached.
         try:
             created_container.create_item(body={'id': 'item1', container2_pk: 'val'})
             created_container.create_item(body={'id': 'item2', container2_pk: 'DifferentValue'})
@@ -121,7 +121,7 @@ class TestContainerPropertiesCache(unittest.TestCase):
                 path=container2_pk))
         except exceptions.CosmosResourceExistsError:
             self.fail("Container Should not Already Exist.")
-        # Known gap 22: `create_item()`, `upsert_item()`, `replace_item()`: stale extracted key after container recreation (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-22). This client cached the old /country,/state paths, so these creates fail with 400/1001 before the delete step is reached.
+        # Known gap 22: `create_item()`, `upsert_item()`, `replace_item()`: stale extracted key after container recreation. This client cached the old /country,/state paths, so these creates fail with 400/1001 before the delete step is reached.
         try:
             created_container.create_item(body={'id': 'item1', 'county': 'ventura', 'city': 'oxnard'})
             created_container.create_item(body={'id': 'item2',

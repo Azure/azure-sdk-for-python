@@ -232,9 +232,7 @@ An empty or otherwise unsupported credential also fails during construction.
 `ValueError` during client construction is accepted instead of constructing
 the client and waiting for `list_databases` to return HTTP 401. This approval
 is limited to that empty-input validation change. A genuine service-side
-401 during listing must still propagate as a service error. The original-test
-disposition and focused verification are recorded in
-`V5/testing/v5-test-accounting.md`, section 14.6.
+401 during listing must still propagate as a service error.
 
 Account keys and Entra credentials remain supported. Cosmos resource permissions
 are not Entra role assignments; changing the credential does not automatically
@@ -513,17 +511,16 @@ with DefaultAzureCredential() as credential:
         print(account)
 ```
 
-The [management operation](https://learn.microsoft.com/en-us/python/api/azure-mgmt-cosmosdb/azure.mgmt.cosmosdb.operations.databaseaccountsoperations#azure-mgmt-cosmosdb-operations-databaseaccountsoperations-get)
-returns a `DatabaseAccountGetResults` object. Use the
-[management result model](https://learn.microsoft.com/en-us/python/api/azure-mgmt-cosmosdb/azure.mgmt.cosmosdb.models.databaseaccountgetresults)
-for account configuration; it is not the legacy `DatabaseAccount` type or
+The management operation `DatabaseAccountsOperations.get` in
+`azure-mgmt-cosmosdb` returns a `DatabaseAccountGetResults` object. Use that
+management result model for account configuration; it is not the legacy `DatabaseAccount` type or
 a promise to expose every internal field used by the Cosmos SDK.
 
 **What changes for permissions**
 
 The identity needs the
-[`Microsoft.DocumentDB/databaseAccounts/read` control-plane permission](https://learn.microsoft.com/en-us/azure/role-based-access-control/permissions/databases#microsoftdocumentdb)
-for the account. A Cosmos account key does not authenticate this management
+`Microsoft.DocumentDB/databaseAccounts/read` control-plane permission for the
+account. A Cosmos account key does not authenticate this management
 request, and permission to read items does not automatically grant account
 management access. A customer with only data-plane access must obtain the
 additional permission or have an authorized configuration tool perform the
@@ -3059,8 +3056,7 @@ empty strings and tokens from any earlier implementation. Accessing
 
 The Rust team explained that unified read-many can use point reads, making
 continuation support overly complicated. The accepted direction is to use
-queries for saved progress, not to promise a future read-all token fix. This
-decision is recorded in [gap 34](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-34).
+queries for saved progress, not to promise a future read-all token fix.
 
 For an export that must resume later, use an ordinary select-all query:
 
@@ -3111,14 +3107,12 @@ an SDK/service error other than a timeout. Cancellation remains terminal.
 #### What is verified, and what remains open?
 
 Rust-only paging, token rejection, failure handling and sync/async result
-comparisons are verified for the cases recorded in the
-[migration status](V5/api-review/RUST_MIGRATION_STATUS.md#containerproxyread_all_items).
+comparisons are verified for the recorded migration cases.
 Native tests also cover 100, 101 and 150 simulated physical partitions and a
 split while using the same iterator. There is no retained 100-partition cap
 in this binding path. These tests are not cloud-account performance evidence.
 
-Complete throttle retry totals remain open in
-[gap 29](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-29). No claim of equal RU
+Complete throttle retry totals remain open. No claim of equal RU
 cost, request count or latency is made. This entry records the implemented
 migration decision, not formal API-board approval.
 
@@ -3135,9 +3129,7 @@ validation changes from unresolved behavior differences.
 
 The review uses the checked-out Rust driver
 `b485409baf6e24ce198b028fb6d1c5a54a0e6d4c`, with a rebuilt extension whose
-embedded revision was verified. The
-[query audit](V5/testing/v5-test-accounting.md#query-items-audit)
-records the original-test comparisons and their limits.
+embedded revision was verified.
 
 #### Aligning the sync and async cross-partition default
 
@@ -3281,9 +3273,8 @@ separate from whether the original unbounded query is supported.
 | Resume saved progress | A valid legacy feed-range bookmark is rejected. Transferring an ordered Rust bookmark from a key-derived feed range to the equivalent complete hierarchical key also fails. Same-scope Rust resumption is a separate, passing case. |
 | Catch an unlimited vector query with `except ValueError` | The default Rust path raises `ServiceResponseError` instead. |
 
-These are not approved removals. [Gap 30](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30)
-records the customer outcomes and ownership. Query advice and transport-specific
-diagnostic options remain separate in [Gap 36](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36).
+These are not approved removals. Query advice and transport-specific
+diagnostic options remain separate open gaps.
 
 **Aggregate error wording:** Recognized Rust aggregate rejections now explain:
 "This aggregate query is not supported by this SDK for the requested query
@@ -3332,13 +3323,18 @@ across multiple storage partitions described below.
 
 **Why migration needs an explicit decision**
 
-Legacy complete-key checkpoints can now resume on Rust, but this is not
-general interchangeability: Rust bookmarks cannot resume on legacy Python,
-and legacy range/prefix checkpoints still cannot be imported. The current
-Rust-backed API also rejects some scopes that legacy Python can poll.
-Correct handling of one empty page does not make those restrictions
-acceptable; customers need both a resumable workflow and support for the
-parts of `orders` they must process.
+Legacy Python change-feed token compatibility is not required on the Rust path,
+following the Rust-team confirmation recorded in Gap 39. Existing complete-key
+import remains implemented, but does not establish general interchangeability.
+LR-24 tracks removal of that importer from the Python wrapper and binding;
+removal has not started. Closing the compatibility requirement does not mean
+legacy tokens are already rejected. The cleanup must preserve Rust-issued
+bookmarks and retained legacy execution, and reject unsupported tokens without
+silently restarting the feed.
+Legacy range/prefix checkpoints still cannot be imported, and Rust bookmarks
+cannot resume on legacy Python. Separately, the current Rust-backed API rejects
+some scopes that legacy Python can poll. That polling restriction remains
+an open issue; the token-compatibility decision does not resolve it.
 
 **Argument changes and compatibility limits:** All arguments are keyword-only.
 The older `is_start_from_beginning` and `partition_key_range_id` keywords remain
@@ -3346,7 +3342,8 @@ with deprecation warnings. For `LatestVersion`, both backends accept a physical
 partition ID. The Rust binding resolves that ID to its range boundaries and
 uses the driver's range-based change feed; its own bookmarks restore the ID
 and reading position. Legacy per-range checkpoints still cannot migrate to Rust
-(Gap 39), and this does not add split/merge recovery. An unknown or retired ID
+(closed as not required in Gap 39), and this does not add split/merge recovery.
+An unknown or retired ID
 raises `ValueError` on Rust rather than selecting the whole container.
 Page size accepts a positive integer, `-1`, or `None`, not a boolean.
 
@@ -3361,6 +3358,25 @@ Rust-backed change-feed calls also reject `availability_strategy` with
 dictionaries. The same applies to `availabilityStrategy` inside
 `request_options` or `feed_options`. Omit the option; legacy acceptance is
 unchanged.
+
+Alpha Bank must also remove per-call controls that this Rust-backed API cannot
+honor. For example, `stream=True` does not enable incremental response-body
+reading: the SDK buffers each response, while page iteration remains available.
+The following options raise `TypeError` at pager creation, even when supplied
+as `None` or a false value:
+
+| Rejected option | What the customer app should do instead |
+|---|---|
+| `content_type` (`contentType` in options) | Omit it; the Rust driver manages Content-Type. |
+| `access_condition` (`accessCondition` in options) | Resume with the saved SDK bookmark through `continuation`, not a conditional-request setting. |
+| Per-call `proxy` | Configure the proxy through environment variables and permit it with `ConnectionPoolOptions.proxy_allowed` on the client's `CosmosRuntime`. |
+| `stream` | Omit it; consume the buffered results through item or page iteration. |
+| `retry_total`, `retry_connect`, `retry_read`, `retry_status`, `retry_backoff_factor`, `retry_backoff_max`, `retry_on_methods` | Omit these per-call overrides; retries remain driver-managed. |
+| Per-call `connection_timeout` | Configure `ConnectionPoolOptions.connection_timeout` on the client's `CosmosRuntime`. Use `timeout` for the separate page-fetch budget. |
+
+These checks also cover the corresponding entries in `request_options` and
+`feed_options`. They do not remove the retained legacy path's handling of these
+options or change the custom-header rules described below.
 
 The customer must select only one scope: a partition key, a feed range, or
 a physical-partition ID. An explicit null partition key still selects
@@ -3384,9 +3400,9 @@ An older raw ETag requires an explicit complete `partition_key` and resumes
 in `LatestVersion` mode. Its lack of container identity is not repaired by
 supplying that key. Subsequent pages publish Rust-backed bookmarks.
 Legacy whole-container, feed-range, partial-key and multiple-position imports
-remain unsupported; [Gap 39](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-39)
-tracks the public per-range import requirement. Item-query tokens cannot be
-substituted. `read_all_items` provides no saved bookmark.
+remain unsupported; general legacy-token import is no longer a requirement
+under Gap 39. Item-query tokens cannot be substituted. `read_all_items`
+provides no saved bookmark.
 Invalid tokens raise an error rather than silently restarting the feed.
 
 **Polling/response contract:** `by_page()` returns one empty caught-up page
@@ -3403,6 +3419,27 @@ Certain service failures during setup can be retried on the same iterator
 only when the binding confirms execution has not started. Timeout and
 cancellation remain terminal even during setup.
 Concurrent fetches on one result iterator are rejected.
+
+**Custom request headers:** Alpha Bank can supply
+`initial_headers={"X-Alpha-Run": "nightly"}` without a change-feed-specific
+header denylist. The wrapper validates and copies the input; the binding
+passes custom headers to the driver, whose generated values take precedence
+on conflicts. Use named SDK arguments for Cosmos settings rather than raw
+protocol-header overrides. Gateway V2 may ignore Cosmos-specific custom
+headers, so acceptance is not a delivery guarantee. The SDK continuation
+token remains separate from any customer-supplied `x-ms-continuation`
+header. Trigger-header exclusions and other APIs' validation are unchanged.
+
+**ETag and checkpoint are separate:** Alpha Bank may record an available
+service change-feed ETag, such as the illustrative `T1`, for diagnostics.
+The response hook and iterable's `get_response_headers()` preserve that
+value under `etag`; they no longer replace it with the SDK checkpoint.
+Save `pages.continuation_token` after processing the page and pass that
+token to a new iterator to resume. The existing `x-ms-continuation` header
+view carries the same SDK token. This applies to sync/async data and empty
+pages on both backends. A missing ETag is not manufactured, and item `_etag`
+properties are unchanged. V4 customer code that saved a checkpoint from
+`headers["etag"]` must switch to the page iterator's continuation API.
 
 **Timeout contract:** One explicit supported timeout budget per public page,
 including metadata, routing, retries and internal polls. Customer processing
@@ -3421,17 +3458,31 @@ contract and integration verification; rejection is not an approved exclusion.
 Fixing this restriction does not by itself establish support for every
 request control or preserve every original service response header.
 
+**Unresolved behavior and verification:** The `start_time` boundary question
+remains parked. The observed legacy/Rust difference does not yet establish
+which changes the service backend is intended to include at that boundary.
+This review does not claim time-boundary parity.
+
+The November 17, 2026 all-versions-and-deletes rerun could not verify the
+create/delete/resume scenarios: the service backend still reported that the
+capability was not enabled on the test account. All four functional combinations
+(legacy/Rust, sync/async) skipped; their local argument-validation scenarios
+passed. Those passes do not verify all-versions delivery or bookmark resume.
+Functional verification remains blocked until the account accepts that mode.
+
 **Customer migration:** Use named arguments. Legacy bookmarks are not
 interchangeable with the Rust-backed API's bookmarks. An ongoing feed cannot
 be migrated simply by "finishing" a poll: changes can arrive afterward.
 Selecting a fresh `Now` can leave changes after the old bookmark unread;
 selecting `Beginning` is not an equivalent resume and is unavailable for a
-fresh all-versions-and-deletes feed. The migration plan for ongoing readers
-remains an explicit open decision, not an approved restart or token-conversion
-contract.
+fresh all-versions-and-deletes feed. Legacy-token compatibility is excluded
+under the decision in Gap 39, not replaced by an automatic restart or
+token-conversion contract. The customer must deliberately choose how to
+transition an ongoing reader.
 
-Blocked scopes/options remain release gaps, not a reason to offer a legacy
-backend switch. Within a supported Rust-backed reader, persist the bookmark
+Multi-partition polling and other blocked request controls remain release
+gaps, not a reason to offer a legacy backend switch. Within a supported
+Rust-backed reader, persist the bookmark
 from the caught-up empty page and create a new iterator for the next poll.
 This is a draft for board review, not recorded board approval.
 
@@ -3673,8 +3724,7 @@ Run those copies with `COSMOS_BACKEND=core-python`, then with
 `COSMOS_BACKEND=rust`, using `--noconftest`. Their setup creates uniquely named
 databases and deletes only resources it owns. The Rust runs reject calls to
 legacy `Batch`. (The operation-capture plugin previously described here was
-retired with the parity framework; see LR-20 in
-`docs/V5/api-review/LEGACY_CODE_RETIREMENT.md`.)
+retired with the parity framework.)
 
 The native extension has been built and its two batch exports loaded.
 Offline routing and result-contract checks passed. **Live functional parity

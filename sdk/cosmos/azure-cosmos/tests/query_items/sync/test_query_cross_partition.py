@@ -109,8 +109,8 @@ class TestCrossPartitionQuery(unittest.TestCase):
 
         if http_constants.HttpHeaders.QueryMetrics not in query_iterable.get_response_headers():
             pytest.skip("driver-gap: Rust does not send populate_query_metrics over Gateway V2, so the "
-                        "query metrics header is missing (known gap 36, "
-                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
+                        "query metrics header is missing (known gap 36)"
+                        ". The query ran.")
         metrics_header_name = 'x-ms-documentdb-query-metrics'
         self.assertTrue(metrics_header_name in self.created_container.client_connection.last_response_headers)
         metrics_header = self.created_container.client_connection.last_response_headers[metrics_header_name]
@@ -137,8 +137,8 @@ class TestCrossPartitionQuery(unittest.TestCase):
 
         if http_constants.HttpHeaders.IndexUtilization not in query_iterable.get_response_headers():
             pytest.skip("driver-gap: Rust does not send populate_index_metrics over Gateway V2, so the "
-                        "index utilization header is missing (known gap 36, "
-                        "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36). The query ran.")
+                        "index utilization header is missing (known gap 36)"
+                        ". The query ran.")
         INDEX_HEADER_NAME = http_constants.HttpHeaders.IndexUtilization
         self.assertTrue(INDEX_HEADER_NAME in self.created_container.client_connection.last_response_headers)
         index_metrics = self.created_container.client_connection.last_response_headers[INDEX_HEADER_NAME]
@@ -158,12 +158,12 @@ class TestCrossPartitionQuery(unittest.TestCase):
             for idx in candidate_indexes
         ))
 
-    # Known gap 36: query advice is dropped by the driver's response headers on both transports (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-advice-response-header).
+    # Known gap 36: query advice is dropped by the driver's response headers on both transports.
     @pytest.mark.skip(
         reason=(
             "driver-gap: the x-ms-cosmos-query-advice response header never reaches Python, with "
-            "Gateway V2 on or off (known gap 36, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-advice-response-header). "
+            "Gateway V2 on or off (known gap 36)"
+            ". "
             "The original skip cites the emulator; the legacy test passes on a live account."
         )
     )
@@ -412,10 +412,9 @@ class TestCrossPartitionQuery(unittest.TestCase):
             {"name": "@lookupVersion", "value": "console_csat"}  # cspell:disable-line
         ], enable_cross_partition_query=True)
 
-        # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-unscoped-max).
+        # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates.
         pytest.skip("driver-gap: Rust rejects cross-partition MAX without a partition key with 400/20113 "
-                    "(ClientUnsupportedQueryFeature) (known gap 30 item 1, "
-                    "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-unscoped-max).")
+                    "(ClientUnsupportedQueryFeature) (known gap 30 item 1).")
         self.assertListEqual(list(query_results), [None])
 
     def test_continuation_token_size_limit_query_rust(self):

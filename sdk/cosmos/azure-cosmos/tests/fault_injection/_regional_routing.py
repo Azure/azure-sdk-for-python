@@ -85,7 +85,7 @@ def rules(rule_id, container_id, account, inject=True):
     return [
         {
             "id": rule_id + "-topology",
-            "operation_type": "MetadataReadDatabaseAccount",  # Only post-bootstrap account refreshes.
+            "operation_type": "MetadataReadDatabaseAccount",  # Startup and later account reads.
             "status_code": 200,  # Supply the simulated account document, not an error.
             "response_body": json.dumps(account).encode("utf-8"),  # Preserve unrelated account fields.
             "probability": 1.0,  # Keep later refreshes consistent with the test topology.

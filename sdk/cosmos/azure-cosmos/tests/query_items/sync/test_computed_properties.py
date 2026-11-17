@@ -5,12 +5,12 @@
 Source: tests/test_computed_properties.py. The original method, its query
 helpers, markers, queries and assertions are unchanged; only the setup differs.
 Instead of the shared ``test_config`` database the class owns a fresh database
-created through a key-auth client pinned to ``_backend="rust"``, so container
-creation, item writes and every ``query_items`` call run on the Rust driver.
+created through a key-auth setup client; as in the original, containers are
+created/replaced/deleted through that key client while item writes and every
+``query_items`` call go through the data client pinned to ``_backend="rust"``.
 The owned database is deleted in class cleanup.
 """
 
-import os
 import time
 import unittest
 import uuid
@@ -21,6 +21,7 @@ import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos import DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
+from config.clients import create_data_client, create_setup_client
 
 
 @pytest.mark.cosmosQuery
@@ -34,12 +35,16 @@ class TestComputedPropertiesQuery(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cls.key_client = cosmos_client.CosmosClient(
-            os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
+        # Same split as the original: key client provisions, data client (AAD in
+        # the cosmosAAD* lanes) runs the tested item and query operations.
+        cls.key_client = create_setup_client()
+        cls.addClassCleanup(cls.key_client.close)
+        cls.client = create_data_client(_backend="rust")
         cls.addClassCleanup(cls.client.close)
         cls.database_id = "query_items_computed_properties_" + uuid.uuid4().hex
-        cls.key_db = cls.created_db = cls.client.create_database(cls.database_id)
+        cls.key_db = cls.key_client.create_database(cls.database_id)
         cls.addClassCleanup(cls._delete_owned_database)
+        cls.created_db = cls.client.get_database_client(cls.database_id)
         cls.items = [
             {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5, 'stringProperty': 'prefixOne', 'db_group': 'GroUp1'},
             {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5, 'stringProperty': 'prefixTwo', 'db_group': 'GrOUp1'},
@@ -59,7 +64,7 @@ class TestComputedPropertiesQuery(unittest.TestCase):
     @classmethod
     def _delete_owned_database(cls):
         try:
-            cls.client.delete_database(cls.database_id)
+            cls.key_client.delete_database(cls.database_id)
         except exceptions.CosmosResourceNotFoundError:
             pass
 

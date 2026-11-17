@@ -30,13 +30,13 @@ test-probes = []
 # `extension-module` : use Python-extension linking behavior.
 # `abi3-py310`      : use the stable ABI from Python 3.10 onward.
 # `generate-import-lib`: support Windows ARM64 builds on an x64 machine.
-pyo3 = { version = "0.22", features = [
+pyo3 = { workspace = true, features = [
     "extension-module",
     "abi3-py310",
     "generate-import-lib",
 ] }
 
-# The workspace selects the neighboring driver checkout for local development.
+# The workspace pins the driver to one GitHub commit of azure-sdk-for-rust.
 #
 # Enable the driver's internal native query-planning integration. A query plan
 # describes execution across partitions and result combination. This feature
@@ -53,17 +53,17 @@ tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
 # Non-poisoning RwLock for the driver cache (endpoint, credential fingerprint,
 # config fingerprint) and token cache. Lock acquisition returns a guard rather
 # than a LockResult; this does not make arbitrary panics or interrupted mutations safe.
-parking_lot = "0.12"
+parking_lot = { workspace = true }
 
 # Process-salted cryptographic driver identities; never expose raw credentials.
-sha2 = "0.10"
-getrandom = "0.4"
+sha2 = { workspace = true }
+getrandom = { workspace = true }
 
 # Bridges a Rust future to a Python asyncio awaitable, so the async path can hand
 # the event loop something to `await` instead of parking one worker thread per
 # in-flight call. Version tracks pyo3 (0.22). Used by the async entry points in
 # `ffi/` / `wire/`.
-pyo3-async-runtimes = { version = "0.22", features = ["tokio-runtime"] }
+pyo3-async-runtimes = { workspace = true, features = ["tokio-runtime"] }
 
 # `async-trait` is required to implement the driver/azure_core `TokenCredential`
 # trait (an `async fn` trait method) for the Python-backed credential bridge.

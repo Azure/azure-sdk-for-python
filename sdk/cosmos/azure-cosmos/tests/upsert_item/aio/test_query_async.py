@@ -40,7 +40,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
     def setUpClass(cls):
         cls.TEST_DATABASE_ID = unique_database_id("upsert-query-async")
         # Closed decision: Rust owns endpoint discovery and multi-write routing
-        # (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#client-init-routing). Rust-backed clients reject the
+        #. Rust-backed clients reject the
         # original's multiple_write_locations argument (even False), so it is omitted.
         cls.key_client = create_setup_client(_backend="rust")
         cls.addClassCleanup(cls.key_client.close)
@@ -155,7 +155,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             except exceptions.CosmosHttpResponseError as e:
                 pytest.fail(e)
         # Set retry options to fail much more easily to avoid too much concurrency
-        # Known gap 11: Closed: driver-owned throttle retry waiting (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-11). The Rust driver owns 429 retry waiting, so mutating the connection policy's RetryOptions after construction does not shorten its retries; the queries below still pass because each either returns items or surfaces a 429.
+        # Known gap 11: Closed: driver-owned throttle retry waiting. The Rust driver owns 429 retry waiting, so mutating the connection policy's RetryOptions after construction does not shorten its retries; the queries below still pass because each either returns items or surfaces a 429.
         retry_options = RetryOptions(max_retry_attempt_count=1,
                                      fixed_retry_interval_in_milliseconds=1, max_wait_time_in_seconds=1)
         old_retry = self.client.client_connection.connection_policy.RetryOptions

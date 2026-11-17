@@ -13,7 +13,7 @@ from .._base import _deserialize_throughput
 from .._cosmos_responses import CosmosDict
 from ..offer import ThroughputProperties
 from .._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options
-from ._request_settings import COMMON_OPTIONS, is_supported_operation_timeout, prepare_service_request_settings
+from ._request_settings import COMMON_OPTIONS, prepare_service_request_settings, validate_operation_timeout
 from ._response_parse import with_response_header_snapshot
 from ._throughput_rust_routing import offer_response_headers
 
@@ -46,12 +46,9 @@ def read_routing(
     supported: bool,
     capability: str,
 ) -> OperationRouting:
-    routing = OperationRouting(
-        "get_throughput",
-        supported and is_supported_operation_timeout(options.get("timeout")),
-        capability=capability,
-    )
+    routing = OperationRouting("get_throughput", supported, capability=capability)
     if is_rust_backend(backend):
+        validate_operation_timeout(options.get("timeout"))
         routing.require_rust_support()
         prepare_service_request_settings(options, {}, resource_type="offers")
     return routing

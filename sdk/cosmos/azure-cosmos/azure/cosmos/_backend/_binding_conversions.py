@@ -69,7 +69,8 @@ def build_binding_request_from_page(prepared: PreparedPageRequest) -> PreparedRe
     headers = dict(prepared.headers)
     query_settings = prepared.settings.query
     if prepared.continuation is not None:
-        headers.pop("x-ms-continuation", None)
+        if prepared.op != OP_QUERY_ITEMS_CHANGE_FEED:
+            headers.pop("x-ms-continuation", None)
         query_settings = replace(query_settings, continuation=prepared.continuation)
     if prepared.max_item_count is not None:
         headers.pop("x-ms-max-item-count", None)

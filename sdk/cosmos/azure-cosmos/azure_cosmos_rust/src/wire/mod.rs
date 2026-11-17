@@ -17,7 +17,6 @@
 //! Metadata has a different result shape. Retained paging also records progress
 //! in a feed cursor; no feed cursor is created by a tuple conversion.
 //! Errors without an attached response do not prove that no service work occurred.
-//! See docs/V5/VOCABULARY.md for the shared terminology.
 
 // Extracted sub-modules --------------------------------------------------
 mod container_metadata;

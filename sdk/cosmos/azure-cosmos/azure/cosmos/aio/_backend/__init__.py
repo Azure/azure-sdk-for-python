@@ -32,6 +32,6 @@ OperationRouting rejects unsupported Rust requests; it never chooses legacy
 execution. Preflight, execution, parsing, and callback errors propagate without
 legacy replay. The Rust path is the release target.
 
-Terminology follows docs/V5/VOCABULARY.md. See AsyncBindingAdapter for the separate
+See AsyncBindingAdapter for the separate
 rules governing acquisition, cancellation, and the shared close future.
 """

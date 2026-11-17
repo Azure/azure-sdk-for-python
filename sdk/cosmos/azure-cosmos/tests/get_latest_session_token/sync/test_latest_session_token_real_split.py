@@ -7,7 +7,6 @@ operations use Rust. Python stale-cache injection is explicitly disabled:
 this copy preserves customer assertions, not proof of Rust routing recovery.
 """
 
-import os
 import random
 import time
 import unittest
@@ -16,8 +15,8 @@ from functools import partial
 
 import pytest
 
-from azure.cosmos import CosmosClient, CosmosRuntime, PartitionKey
-from config.clients import create_data_client
+from azure.cosmos import CosmosRuntime, PartitionKey
+from config.clients import create_data_client, create_setup_client
 from azure.cosmos._session_token_helpers import parse_session_token
 from get_latest_session_token._fixtures import create_items_logical_pk, create_items_physical_pk
 from get_latest_session_token._split_support import (
@@ -47,10 +46,7 @@ class TestLatestSessionTokenRealSplit(unittest.TestCase):
         self.create_data_client = partial(
             create_data_client, _backend="rust"
         )
-        self.key_client = CosmosClient(
-            os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust",
-            runtime=CosmosRuntime.create(),
-        )
+        self.key_client = create_setup_client(runtime=CosmosRuntime.create())
         self.addCleanup(self.key_client.close)
         self.key_database = self.key_client.create_database("token_parity_" + uuid.uuid4().hex)
         self.addCleanup(self.key_client.delete_database, self.key_database.id)

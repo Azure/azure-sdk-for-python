@@ -127,7 +127,7 @@ class TestRetryPolicy(unittest.TestCase):
                'key': 'value'}
         # Replaces the custom transport that fails every Patch/Replace with a 502. Rust patch
         # sends a read and then a replace, so both operation types are faulted.
-        # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). The Rust driver retries the 502 (4 attempts observed live), so counter == 0 fails.
+        # Known gap 13: Closed: Rust owns automatic write retries. The Rust driver retries the 502 (4 attempts observed live), so counter == 0 fails.
         rule_ids = ["read-502-" + uuid.uuid4().hex, "replace-502-" + uuid.uuid4().hex]
         rules = [{
             "id": rule_id,

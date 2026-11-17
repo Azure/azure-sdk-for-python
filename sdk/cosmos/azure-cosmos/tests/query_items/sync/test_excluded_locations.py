@@ -58,13 +58,12 @@ CLIENT_AND_REQUEST_TEST_DATA = [
     [[L1, L2], [L1, L2], []],
 ]
 
-# Known gap 33: serving region not visible (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#client-serving-region-gap). Rust logs and diagnostics do not name the region that served each attempt.
+# Known gap 33: serving region not visible. Rust logs and diagnostics do not name the region that served each attempt.
 REGION_NOT_OBSERVABLE = (
     "driver-gap: the Rust query_items binding does not report the region of each attempt; "
     "the original read request URLs from a Python logging handler that Rust requests never "
     "reach, and client.client_connection._global_endpoint_manager does not exist on Rust. "
-    "The query above ran with these exclusions and succeeded (known gap 33, "
-    "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#client-serving-region-gap)."
+    "The query above ran with these exclusions and succeeded (known gap 33)."
 )
 
 

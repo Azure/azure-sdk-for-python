@@ -6,7 +6,6 @@ An independent Rust runtime polls control-plane ranges without refreshing the da
 The legacy data-cache injection is explicitly disabled for Rust.
 """
 
-import os
 import random
 import time
 import unittest
@@ -16,8 +15,7 @@ from functools import partial
 import pytest
 
 from azure.cosmos import CosmosRuntime, PartitionKey
-from azure.cosmos.aio import CosmosClient
-from config.clients import create_data_client_async
+from config.clients import create_data_client_async, create_setup_client_async
 from azure.cosmos._session_token_helpers import parse_session_token
 from get_latest_session_token._fixtures import create_items_logical_pk_async, create_items_physical_pk_async
 from get_latest_session_token._split_support import (
@@ -47,10 +45,7 @@ class TestLatestSessionTokenRealSplitAsync(unittest.IsolatedAsyncioTestCase):
         self.create_data_client_async = partial(
             create_data_client_async, _backend="rust"
         )
-        self.key_client = CosmosClient(
-            os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust",
-            runtime=CosmosRuntime.create(),
-        )
+        self.key_client = create_setup_client_async(runtime=CosmosRuntime.create())
         self.addAsyncCleanup(self.key_client.close)
         await self.key_client.__aenter__()
         self.key_database = await self.key_client.create_database("token_parity_" + uuid.uuid4().hex)

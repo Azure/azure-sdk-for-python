@@ -1,11 +1,16 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import os
 import sys
 
 import pytest
 
+from azure.cosmos._backend.constants import FAULT_INJECTION_ENV_VAR
 from config import clients, collection, resources
+
+# Tests may pass _fault_injection_rules; customer apps can't without this switch.
+os.environ[FAULT_INJECTION_ENV_VAR] = "1"
 
 cosmos_sync_client = None
 _live_resources_initialized = False

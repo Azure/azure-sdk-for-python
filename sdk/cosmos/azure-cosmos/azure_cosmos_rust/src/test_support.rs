@@ -17,10 +17,17 @@ pub(crate) fn prepare_python() {
                     // Load this checkout's Python package, not an older azure-cosmos
                     // that happens to be installed in the Python environment.
                     let package_dir = concat!(env!("CARGO_MANIFEST_DIR"), "/..");
-                    py.import_bound("sys")
-                        .and_then(|sys| sys.getattr("path"))
+                    let sys = py.import_bound("sys").expect("import sys");
+                    sys.getattr("path")
                         .and_then(|path| path.call_method1("insert", (0, package_dir)))
                         .expect("put the checkout's Python package first on sys.path");
+                    // Register this test program's binding as azure.cosmos._rust.
+                    // Otherwise the import below also loads the checkout's prebuilt
+                    // _rust file, which may be older than the code under test.
+                    let binding = pyo3::wrap_pymodule!(crate::_rust)(py);
+                    sys.getattr("modules")
+                        .and_then(|modules| modules.set_item("azure.cosmos._rust", binding))
+                        .expect("register the binding under test as azure.cosmos._rust");
                     py.import_bound("azure.cosmos")
                         .expect("initialize the synchronous Python SDK for binding tests");
                     py.import_bound("azure.cosmos.aio")
@@ -28,6 +35,23 @@ pub(crate) fn prepare_python() {
                 });
             });
         });
+    });
+}
+
+#[test]
+fn python_code_uses_the_binding_under_test() {
+    prepare_python();
+    Python::with_gil(|py| {
+        let adapter = py
+            .import_bound("azure.cosmos._backend.binding_adapter")
+            .unwrap();
+        let handle_type = adapter
+            .getattr("_rust_module")
+            .unwrap()
+            .getattr("_DriverHandle")
+            .unwrap();
+        // A second, prebuilt copy of the binding would define its own type object.
+        assert!(handle_type.is(&py.get_type_bound::<crate::runtime::DriverHandle>()));
     });
 }
 

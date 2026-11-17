@@ -144,14 +144,17 @@ def _class_fixture(monkeypatch, surface):
     key_client.close.side_effect = lambda: events.append("key-close")
     query_client.close.side_effect = lambda: events.append("query-close")
     key_client.delete_database.side_effect = lambda *_: events.append("delete")
-    factory = MagicMock(side_effect=[key_client, query_client])
+    factory = MagicMock(side_effect=[key_client])
+    data_factory = MagicMock(return_value=query_client)
     if surface == "sync":
         monkeypatch.setattr(module.cosmos_client, "CosmosClient", factory)
+        monkeypatch.setattr(module, "create_data_client", data_factory)
     else:
         monkeypatch.setattr(module, "CosmosSyncClient", factory)
     return SimpleNamespace(
         module=module, cls=cls, key=key_client, query=query_client,
-        container=key_container, query_container=query_container, factory=factory, events=events,
+        container=key_container, query_container=query_container, factory=factory,
+        data_factory=data_factory, events=events,
     )
 
 
@@ -188,10 +191,11 @@ def test_class_setup_uses_original_data_policies_and_cleans_after_failure(monkey
             assert options["indexing_policy"] == _original_policy_helpers().get_full_text_indexing_policy("/text")
             assert options["full_text_policy"] == _original_policy_helpers().get_full_text_policy("/text")
             if surface == "sync":
-                assert fixture.cls.test_container.read_item is fixture.container.read_item
-                assert fixture.cls.test_container.query_items is fixture.query_container.query_items
+                # As in the original, the data client serves queries and lookups.
+                assert fixture.cls.test_container is fixture.query_container
                 fixture.cls.test_container.read_item("50", "1")
-                fixture.container.read_item.assert_called_once_with("50", "1")
+                fixture.query_container.read_item.assert_called_once_with("50", "1")
+                fixture.container.read_item.assert_not_called()
     finally:
         fixture.cls.doClassCleanups()
     assert not fixture.cls.tearDown_exceptions
@@ -206,7 +210,7 @@ def test_class_setup_uses_original_data_policies_and_cleans_after_failure(monkey
         assert f"database: {fixture.cls.database_id}" in output
         assert "Deleted owned" in output
     if surface == "sync" and stage is None:
-        assert fixture.factory.call_args_list[1].kwargs["_backend"] == "rust"
+        fixture.data_factory.assert_called_once_with(_backend="rust")
         fixture.query.close.assert_called_once()
         assert fixture.events == ["query-close", "delete", "key-close"]
 
@@ -263,31 +267,25 @@ def _async_client():
     return client
 
 
-@pytest.mark.parametrize("failure", [None, "query-enter", "lookup-enter", "lookup-container"])
-def test_async_lookups_are_awaited_core_python_and_clients_always_close(monkeypatch, failure):
+@pytest.mark.parametrize("failure", [None, "query-enter", "query-container"])
+def test_async_data_client_serves_queries_and_lookups_and_always_closes(monkeypatch, failure):
     module = _load(_paths("aio")[1])
     cls = getattr(module, _class_name("aio"))
     case = cls("test_hybrid_search_queries_async_rust")
     case.database_id, case.TEST_CONTAINER_ID = "owned-db", "owned-container"
-    query, lookup = _async_client(), _async_client()
-    factory = MagicMock(side_effect=[query, lookup])
-    monkeypatch.setattr(module, "CosmosClient", factory)
-    monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
-    monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
+    query = _async_client()
+    factory = MagicMock(return_value=query)
+    monkeypatch.setattr(module, "create_data_client_async", factory)
     if failure == "query-enter":
         query.__aenter__.side_effect = RuntimeError("query-enter")
-    elif failure == "lookup-enter":
-        lookup.__aenter__.side_effect = RuntimeError("lookup-enter")
-    elif failure == "lookup-container":
-        lookup.get_database_client.side_effect = RuntimeError("lookup-container")
+    elif failure == "query-container":
+        query.get_database_client.side_effect = RuntimeError("query-container")
     query_container = query.get_database_client.return_value.get_container_client.return_value
-    original_read = query_container.read_item
     async def exercise():
+        # As in the original, awaited lookups go through the data client.
+        assert case.test_container is query_container
         assert await case.test_container.read_item("50", "1") == {"vector": [1, 2, 3]}
-        lookup_container = lookup.get_database_client.return_value.get_container_client.return_value
-        lookup_container.read_item.assert_awaited_once_with("50", "1")
-        original_read.assert_not_called()
-        assert case.test_container.query_items is query_container.query_items
+        query_container.read_item.assert_awaited_once_with("50", "1")
 
     setattr(case, case._testMethodName, exercise)
     result = unittest.TestResult()
@@ -298,13 +296,8 @@ def test_async_lookups_are_awaited_core_python_and_clients_always_close(monkeypa
         assert not result.failures
     else:
         assert result.wasSuccessful(), result.errors + result.failures
-    assert [call.kwargs["_backend"] for call in factory.call_args_list] == (
-        ["rust"] if failure == "query-enter" else ["rust", "core-python"]
-    )
-    assert query_container.read_item is original_read
+    factory.assert_called_once_with(_backend="rust")
     query.close.assert_awaited_once()
-    if failure != "query-enter":
-        lookup.close.assert_awaited_once()
 
 
 @pytest.mark.parametrize("surface", ["sync", "aio"])

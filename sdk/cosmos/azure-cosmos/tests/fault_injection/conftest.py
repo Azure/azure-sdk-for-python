@@ -6,8 +6,12 @@ import os
 
 import pytest
 
+from azure.cosmos._backend.constants import FAULT_INJECTION_ENV_VAR
 from config import clients
 from config.fault_resources import owned_target as owned_target
+
+# This folder can run with --confcutdir, which skips tests/conftest.py.
+os.environ[FAULT_INJECTION_ENV_VAR] = "1"
 
 
 def pytest_addoption(parser):

@@ -10,15 +10,14 @@ afterwards. Known Rust gaps are skipped at the failing step.
 """
 
 import pytest
-import os
 import unittest
 import uuid
 
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos import CosmosClient
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 from azure.cosmos.partition_key import PartitionKey
+from config.clients import create_data_client, create_setup_client
 
 
 @pytest.mark.cosmosLong
@@ -26,19 +25,24 @@ from azure.cosmos.partition_key import PartitionKey
 class TestSubpartitionCrud(unittest.TestCase):
 
     def setUp(self):
-        self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) runs the tested operations.
+        self.key_client = create_setup_client()
+        self.addCleanup(self.key_client.close)
+        self.client = create_data_client(_backend="rust")
         self.addCleanup(self.client.close)
         self._db_id = "qi_crud_subpartition_" + uuid.uuid4().hex
-        self.databaseForTest = self.client.create_database(self._db_id)
-        self.addCleanup(self.client.delete_database, self._db_id)
+        self.key_databaseForTest = self.key_client.create_database(self._db_id)
+        self.addCleanup(self.key_client.delete_database, self._db_id)
+        self.databaseForTest = self.client.get_database_client(self._db_id)
 
     def _create_container_for_test(self, container_id, partition_key, **kwargs):
-        self.databaseForTest.create_container(id=container_id, partition_key=partition_key, **kwargs)
+        self.key_databaseForTest.create_container(id=container_id, partition_key=partition_key, **kwargs)
         return self.databaseForTest.get_container_client(container_id)
 
     def _delete_container_for_test(self, container_id_or_container):
         cid = container_id_or_container if isinstance(container_id_or_container, str) else container_id_or_container.id
-        self.databaseForTest.delete_container(cid)
+        self.key_databaseForTest.delete_container(cid)
 
     def test_partitioned_collection_document_crud_and_query_subpartition_rust(self):
         # pylint: disable-next=line-too-long

@@ -264,7 +264,9 @@ def test_delete_unsupported_rust_settings_never_reach_core_python_rust(delete_ca
     raw hooks, an unknown keyword, two driver-owned headers, and two raw
     request-options dictionaries.
 
-    Each raises ``NotImplementedError`` pointing at the legacy Python client.
+    Each raises ``NotImplementedError`` pointing at the legacy Python client,
+    except the bad deadlines, which raise ``ValueError`` because they are wrong
+    values rather than something Rust cannot do.
     Nothing is deleted, the hook does not run, and the fallback counter does not
     move -- a refusal is not a fallback, and silently running an irreversible
     delete on an engine the customer did not choose is exactly what must not
@@ -272,7 +274,11 @@ def test_delete_unsupported_rust_settings_never_reach_core_python_rust(delete_ca
     """
     hook = MagicMock()
     before = rust_compatibility_fallback_count()
-    with pytest.raises(NotImplementedError, match="delete_container.*legacy Python"):
+    error, message = (
+        (ValueError, "timeout must be") if "timeout" in kwargs
+        else (NotImplementedError, "delete_container.*legacy Python")
+    )
+    with pytest.raises(error, match=message):
         _delete(delete_case, "c1", response_hook=hook, **kwargs)
     _assert_no_dispatch(delete_case)
     hook.assert_not_called()
@@ -494,16 +500,16 @@ def test_explicit_core_python_delete_retains_core_python_transport_options_rust(
     """A customer who chose legacy on purpose keeps the transport options only legacy
     supports.
 
-    A sub-second deadline and a connect timeout are refused on the Rust path, but
-    here the customer has explicitly asked for legacy, so both are forwarded
-    rather than dropped. Dropping them would silently give the call a longer
-    deadline than the one asked for.
+    A connect timeout is refused on the Rust path, but here the customer has
+    explicitly asked for legacy, so it and the deadline are forwarded rather
+    than dropped. Dropping the deadline would silently give the call a longer
+    one than the one asked for.
     """
     case = delete_case
     case.connection._backend = case.legacy_backend
-    _delete(case, "c1", timeout=0.5, connection_timeout=2)
+    _delete(case, "c1", timeout=1.5, connection_timeout=2)
     call = case.connection.DeleteContainer.call_args
-    assert call.kwargs["timeout"] == 0.5
+    assert call.kwargs["timeout"] == 1.5
     assert call.kwargs["connection_timeout"] == 2
     case.backend.execute.assert_not_called()
 

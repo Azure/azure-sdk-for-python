@@ -59,7 +59,7 @@ class TestMultiMaster(unittest.TestCase):
     def _validate_tentative_write_headers(self):
         self.counter = 0  # Reset counter for each test run
         # Closed decision: Rust owns endpoint discovery and multi-write routing
-        # (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#client-init-routing). The original's
+        #. The original's
         # ExecuteFunction patch that fakes the account's EnableMultipleWritableLocations and the
         # UseMultipleWriteLocations connection-policy assignment have no Rust equivalent (the
         # assignment is rejected), so the driver uses the real account topology.
@@ -97,7 +97,7 @@ class TestMultiMaster(unittest.TestCase):
 
             is_allow_tentative_writes_set = self.EnableMultipleWritableLocations is True
 
-            # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). Rust outgoing request headers are not observable, so x-ms-cosmos-allow-tentative-writes cannot be counted.
+            # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. Rust outgoing request headers are not observable, so x-ms-cosmos-allow-tentative-writes cannot be counted.
             pytest.skip("internals-only: the tentative-writes header count came from patching legacy "
                         "_retry_utility.ExecuteFunction; Rust outgoing request headers are not observable "
                         "(known gap 6). All create/read/replace/upsert/delete operations ran.")

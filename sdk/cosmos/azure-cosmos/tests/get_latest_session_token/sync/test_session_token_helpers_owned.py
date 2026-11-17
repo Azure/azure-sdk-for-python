@@ -38,6 +38,7 @@ def deterministic_observations():
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.unittest
 class TestSessionTokenHelpers:
     def test_get_session_token_update_rust(self, setup):
         # Source: tests/test_session_token_helpers.py::TestSessionTokenHelpers.test_get_session_token_update

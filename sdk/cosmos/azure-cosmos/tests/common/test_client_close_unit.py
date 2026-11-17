@@ -49,6 +49,34 @@ def test_adapter_rejects_binding_without_owning_handles_rust(monkeypatch, async_
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
+@pytest.mark.parametrize(
+    "cause",
+    [
+        ModuleNotFoundError("No module named 'azure.cosmos._rust'"),
+        ImportError("DLL load failed while importing _rust: The specified module could not be found."),
+    ],
+)
+def test_adapter_reports_why_the_extension_failed_to_load_rust(monkeypatch, async_mode, cause):
+    import importlib.abc
+    import azure.cosmos
+
+    class _FailingFinder(importlib.abc.MetaPathFinder):
+        def find_spec(self, name, path, target=None):
+            if name == "azure.cosmos._rust":
+                raise cause
+            return None
+
+    monkeypatch.delattr(azure.cosmos, "_rust", raising=False)
+    monkeypatch.delitem(sys.modules, "azure.cosmos._rust", raising=False)
+    monkeypatch.setattr(sys, "meta_path", [_FailingFinder(), *sys.meta_path])
+    adapter_type = async_rust_module.AsyncBindingAdapter if async_mode else sync_rust_module.BindingAdapter
+    with pytest.raises(ImportError) as caught:
+        adapter_type(SYNC_URL, master_key="key")
+    assert caught.value.name == "azure.cosmos._rust"
+    assert caught.value.__cause__ is cause
+
+
+@pytest.mark.parametrize("async_mode", [False, True])
 @pytest.mark.parametrize("recreate", [False, True])
 @pytest.mark.parametrize("operation", ["execute", "metadata", "page"])
 def test_dispatch_keeps_owning_handle_across_close_rust(monkeypatch, async_mode, recreate, operation):

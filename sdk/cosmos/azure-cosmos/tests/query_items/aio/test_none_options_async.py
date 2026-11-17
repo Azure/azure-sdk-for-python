@@ -13,43 +13,42 @@ Run with::
 
     pytest --noconftest tests/query_items/aio/test_none_options_async.py -v
 """
-import os
 import unittest
 import uuid
 
 import pytest
 
 from azure.cosmos import PartitionKey
-from azure.cosmos.aio import CosmosClient
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from config.clients import create_data_client_async, create_setup_client_async
 
 
 @pytest.mark.cosmosEmulator
 class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) backs self.container.
+        self.key_client = create_setup_client_async()
+        await self.key_client.__aenter__()
+        self.client = create_data_client_async(_backend="rust")
         await self.client.__aenter__()
         self._db_id = "legacy_query_none_options_async_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
-        self.database = await self.client.create_database(self._db_id)
-        self.container = await self.database.create_container(
+        key_database = await self.key_client.create_database(self._db_id)
+        self.key_container = await key_database.create_container(
             id=self._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
+        self.database = self.client.get_database_client(self._db_id)
+        self.container = self.database.get_container_client(self._container_id)
 
     async def asyncTearDown(self):
         try:
-            await self.client.delete_database(self._db_id)
+            await self.key_client.delete_database(self._db_id)
         except Exception:  # pylint: disable=broad-except
             pass
         await self.client.close()
+        await self.key_client.close()
 
     async def test_container_query_items_none_options_partition_async_rust(self):
         """query_items accepts None for every optional argument.
@@ -103,8 +102,8 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
                 retry_write=None,
                 throughput_bucket=None,
             )
-        # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-19). No Rust driver path; the call reaches the service, which rejects it when the account feature is disabled.
-        pytest.skip("environment-gap: the test account has the partition key delete feature disabled, so the service rejects delete_all_items_by_partition_key with 400; Rust has no driver path for it either (known gap 19, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-19). The items were created.")
+        # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed. No Rust driver path; the call reaches the service, which rejects it when the account feature is disabled.
+        pytest.skip("environment-gap: the test account has the partition key delete feature disabled, so the service rejects delete_all_items_by_partition_key with 400; Rust has no driver path for it either (known gap 19). The items were created.")
         await self.container.delete_all_items_by_partition_key(pk_value, session_token=None, throughput_bucket=None)
         # Just ensure query still works with None options
         pager = self.container.query_items("SELECT * FROM c WHERE c.pk = @pk", parameters=[{"name": "@pk", "value": pk_value}],

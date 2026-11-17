@@ -9,14 +9,13 @@ database (the original creates its own ``/id`` container inside it), deleted
 afterwards.
 """
 
-import os
 import unittest
 import uuid
 
 import pytest
 
-from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
+from config.clients import create_data_client_async, create_setup_client_async
 
 
 @pytest.mark.cosmosAADLong
@@ -26,13 +25,18 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
     """
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
-        self.addAsyncCleanup(self.client.close)
+        # Same split as the original: key_databaseForTest provisions,
+        # data_databaseForTest (AAD in the cosmosAAD* lanes) runs the item operations.
+        self.key_client = create_setup_client_async()
+        await self.key_client.__aenter__()
+        self.addAsyncCleanup(self.key_client.close)
+        self.client = create_data_client_async(_backend="rust")
         await self.client.__aenter__()
+        self.addAsyncCleanup(self.client.close)
         self._db_id = "qi_crud_container_async_" + uuid.uuid4().hex
-        self.key_databaseForTest = await self.client.create_database(self._db_id)
-        self.addAsyncCleanup(self.client.delete_database, self._db_id)
-        self.data_databaseForTest = self.key_databaseForTest
+        self.key_databaseForTest = await self.key_client.create_database(self._db_id)
+        self.addAsyncCleanup(self.key_client.delete_database, self._db_id)
+        self.data_databaseForTest = self.client.get_database_client(self._db_id)
         self.database_for_test = self.key_databaseForTest
 
     async def test_partitioned_collection_document_crud_and_query_async_rust(self):

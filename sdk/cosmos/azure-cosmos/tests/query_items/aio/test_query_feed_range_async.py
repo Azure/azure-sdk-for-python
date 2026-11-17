@@ -15,12 +15,11 @@ documents, and always deletes it.
 The usefixtures marker names this owned replacement, not the shared original.
 
 SQL, feed-range construction, parameters, and assertions are preserved.
-Real-split copies only run when ``COSMOS_QUERY_FEED_RANGE_REAL_SPLIT=1``
-authorizes 11,000/24,000/60,000 RU/s.
+As in the original, the real-split copy runs unconditionally under its split
+lane marker.
 """
 
 import asyncio
-import os
 import time
 import unittest
 import uuid
@@ -30,7 +29,7 @@ import pytest
 import pytest_asyncio
 
 from azure.cosmos import PartitionKey
-from azure.cosmos.aio import CosmosClient
+from config.clients import create_data_client_async, create_setup_client_async
 from query_items import _feed_range_helpers as test_config
 
 PK_VALUES = ('pk1', 'pk2', 'pk3')
@@ -42,19 +41,26 @@ RUN_MARKER_VALUE = str(uuid.uuid4())
 @pytest.mark.cosmosAADSplit
 class TestQueryFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
-        self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
-        self.addAsyncCleanup(self.client.close)
+        # Same split as the original: key client provisions, data client (AAD in
+        # the cosmosAAD* lanes) seeds and queries.
+        self.key_client = create_setup_client_async()
+        await self.key_client.__aenter__()
+        self.addAsyncCleanup(self.key_client.close)
+        self.client = create_data_client_async(_backend="rust")
         await self.client.__aenter__()
+        self.addAsyncCleanup(self.client.close)
         self.database_id = "legacy_query_sum_async_" + uuid.uuid4().hex
-        self.database = await self.client.create_database(self.database_id)
+        self.key_db = await self.key_client.create_database(self.database_id)
         self.addAsyncCleanup(self._delete_owned_database)
         print(f"\nOwned async SUM database: {self.database_id}")
+        self.database = self.client.get_database_client(self.database_id)
         self.container = await self._create_seeded_container("orders")
 
     async def _create_seeded_container(self, container_id):
-        container = await self.database.create_container(
+        container_ref = await self.key_db.create_container(
             id=container_id, partition_key=PartitionKey(path="/pk", kind="Hash"),
         )
+        container = self.database.get_container_client(container_ref.id)
         for pk in PK_VALUES:
             await container.upsert_item({
                 "pk": pk, "id": str(uuid.uuid4()), "value": 100,
@@ -63,7 +69,7 @@ class TestQueryFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
         return container
 
     async def _delete_owned_database(self):
-        await self.client.delete_database(self.database_id)
+        await self.key_client.delete_database(self.database_id)
         print(f"Deleted owned async SUM database: {self.database_id}")
 
     @pytest.mark.skip(
@@ -152,8 +158,7 @@ class TestQueryFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
         # Known gap 30 item 6: the driver does not keep a point feed range as a single-key scope.
         pytest.skip(
             "driver-gap: Rust plans the SDK-produced point feed range as a cross-partition scope and rejects "
-            "AVG with 400/20113 'aggregates in cross-partition queries' (known gap 30 items 1 and 6, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-point-feed-range)."
+            "AVG with 400/20113 'aggregates in cross-partition queries' (known gap 30 items 1 and 6)."
         )
         items = [item async for item in container.query_items(
             query=query,
@@ -183,7 +188,6 @@ TEST_OFFER_THROUGHPUTS = [400, 30000]
 PARTITION_KEY = "pk"
 SPLIT_TIMEOUT = 60 * 10
 SLEEP_TIME = 30
-REAL_SPLIT_ENV = "COSMOS_QUERY_FEED_RANGE_REAL_SPLIT"
 
 
 async def add_all_pk_values_to_set_async(items: List[Mapping[str, str]], pk_value_set: Set[str]) -> None:
@@ -219,17 +223,24 @@ async def trigger_split_async(container, throughput):
 @pytest_asyncio.fixture(scope="class", loop_scope="class")
 async def setup_async(request):
     """Owned replacement for the original class-scoped ``setup_and_teardown_async``."""
-    client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
+    # Same split as the original: key client provisions, data client (AAD in
+    # the cosmosAAD* lanes) seeds and queries.
+    client = create_setup_client_async()
+    data_client = create_data_client_async(_backend="rust")
     try:
+        await client.__aenter__()
+        await data_client.__aenter__()
         database_id = "legacy_query_feed_range_async_" + uuid.uuid4().hex
         database = await client.create_database(database_id)
+        data_db = data_client.get_database_client(database_id)
         print(f"\nOwned async feed-range query database: {database_id}")
         try:
             for container_id, offer_throughput in zip(TEST_CONTAINERS_IDS, TEST_OFFER_THROUGHPUTS):
-                container = await database.create_container_if_not_exists(
+                await database.create_container_if_not_exists(
                     id=container_id,
                     partition_key=PartitionKey(path='/' + PARTITION_KEY, kind='Hash'),
                     offer_throughput=offer_throughput)
+                container = data_db.get_container_client(container_id)
                 for pk in PK_VALUES:
                     await container.upsert_item(body={
                         PARTITION_KEY: pk,
@@ -237,7 +248,7 @@ async def setup_async(request):
                         'value': 100,
                         RUN_MARKER_FIELD: RUN_MARKER_VALUE,
                     })
-            request.cls.data_db = database
+            request.cls.data_db = data_db
             request.cls.key_db = database
             yield
         finally:
@@ -246,6 +257,7 @@ async def setup_async(request):
             await client.delete_database(database_id)
             print(f"\nDeleted owned async feed-range query database: {database_id}")
     finally:
+        await data_client.close()
         await client.close()
 
 
@@ -440,8 +452,7 @@ class TestQueryFeedRangeAsyncRust:
         # Known gap 30 item 1: no cross-partition aggregate execution in the driver.
         pytest.skip(
             "driver-gap: Rust rejects MAX over the full feed range with 400/20113 'aggregates in "
-            "cross-partition queries' (known gap 30 item 1, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-unscoped-max)."
+            "cross-partition queries' (known gap 30 item 1)."
         )
         items = [item async for item in container.query_items(
             query=query,
@@ -475,8 +486,7 @@ class TestQueryFeedRangeAsyncRust:
         # Known gap 30 item 1: no cross-partition aggregate execution in the driver.
         pytest.skip(
             "driver-gap: Rust rejects COUNT over the full feed range with 400/20113 'aggregates in "
-            "cross-partition queries' (known gap 30 item 1, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-full-range-sum)."
+            "cross-partition queries' (known gap 30 item 1)."
         )
         items = [item async for item in container.query_items(
             query=query,
@@ -522,10 +532,6 @@ class TestQueryFeedRangeAsyncRust:
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     @pytest.mark.cosmosSplit
-    @pytest.mark.skipif(os.environ.get(REAL_SPLIT_ENV) != "1", reason=(
-        "environment-gap: real partition split raises throughput to 11000/24000/60000 RU/s; "
-        "opt in with COSMOS_QUERY_FEED_RANGE_REAL_SPLIT=1"
-    ))
     async def test_query_with_feed_range_async_during_partition_split_combined_async_rust(self, container_id):
         # pylint: disable-next=line-too-long
         # Source: tests/test_query_feed_range_async.py::TestQueryFeedRangeAsync.test_query_with_feed_range_async_during_partition_split_combined_async
@@ -769,12 +775,11 @@ class TestQueryFeedRangeAsyncRust:
     async def test_query_with_static_continuation_async_rust(self):
         # pylint: disable-next=line-too-long
         # Source: tests/test_query_feed_range_async.py::TestQueryFeedRangeAsync.test_query_with_static_continuation_async
-        # Known gap 30 item 7: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-feed-range-continuation
+        # Known gap 30 item 7
         # The legacy original passes without checking anything: its made-up token returns no pages.
         pytest.skip(
             "driver-gap: on a feed-range query the Rust driver rejects a service continuation token "
-            "with 400/20116, while legacy resumes from it (known gap 30 item 7, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-feed-range-continuation)."
+            "with 400/20116, while legacy resumes from it (known gap 30 item 7)."
         )
         container = self.get_container(SINGLE_PARTITION_CONTAINER_ID)
         query = 'SELECT * from c'

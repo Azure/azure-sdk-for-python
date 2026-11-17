@@ -319,6 +319,8 @@ def test_assertion_ledger_references_and_complete_reviewed_scope_rust():
     assert ledger["verification"]["kind"] == "static-correspondence-with-separately-recorded-targeted-execution"
     policies = {policy["id"]: policy for policy in ledger["policy_references"]}
     for policy in policies.values():
+        if "path" not in policy:
+            continue
         text = ROOT.joinpath(*policy["path"].split("\\")).read_text(encoding="utf-8-sig")
         assert policy["excerpt"] in text
         if "approval_excerpt" in policy:

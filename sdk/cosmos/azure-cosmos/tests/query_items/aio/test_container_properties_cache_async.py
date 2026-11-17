@@ -93,8 +93,8 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
                 path="/" + container2_pk))
         except exceptions.CosmosResourceExistsError:
             self.fail("Container Should not Already Exist.")
-        # Known gap 22: `create_item()`, `upsert_item()`, `replace_item()`: stale extracted key after container recreation (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-22). The data client loaded the old /PK definition when it created item1/item2, so its create below extracts the key with the old path and fails with 400/1001 instead of refreshing; the queries after it cannot run.
-        pytest.skip("driver-gap: after container recreation the stale client keeps the old extracted partition key, so this write fails with 400 (known gap 22, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-22).")
+        # Known gap 22: `create_item()`, `upsert_item()`, `replace_item()`: stale extracted key after container recreation. The data client loaded the old /PK definition when it created item1/item2, so its create below extracts the key with the old path and fails with 400/1001 instead of refreshing; the queries after it cannot run.
+        pytest.skip("driver-gap: after container recreation the stale client keeps the old extracted partition key, so this write fails with 400 (known gap 22).")
         try:
             await created_container.create_item(body={'id': 'item1', container2_pk: 'val'})
             await created_container.create_item(body={'id': 'item2', container2_pk: 'DifferentValue'})

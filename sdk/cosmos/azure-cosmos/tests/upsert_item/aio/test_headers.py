@@ -6,13 +6,12 @@
 Copied from ``tests/test_headers_async.py``; the class and method names
 match the source (apart from the method's ``_rust`` suffix) so the parity reporter can
 pair the core-python and
-Rust runs. Builds its own database + container and reads ``ACCOUNT_HOST``
-/ ``ACCOUNT_KEY`` from the environment.
+Rust runs. Builds its own database + container through a key client; the
+tested operations run on the data client (AAD in the cosmosAAD* lanes).
 
 Run: ``pytest --noconftest tests/upsert_item/aio/test_headers.py -v``
 """
 import importlib
-import os
 import unittest
 from contextlib import contextmanager
 from copy import copy
@@ -22,15 +21,9 @@ import uuid
 
 import pytest
 
-from azure.cosmos.aio import CosmosClient
+from config.clients import create_data_client_async, create_setup_client_async
+
 from azure.cosmos import PartitionKey, exceptions, http_constants
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
 
 
 # Same value as the source, so the wire bytes match the legacy path.
@@ -42,40 +35,43 @@ request_throughput_bucket_number = 3
 class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) runs the tested operations.
+        self.key_client = create_setup_client_async()
+        await self.key_client.__aenter__()
+        self.addAsyncCleanup(self.key_client.close)
+        self.client = create_data_client_async(_backend="rust")
         await self.client.__aenter__()
+        self.addAsyncCleanup(self.client.close)
         self._db_id = "legacy_ui_headers_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
-        self.database = await self.client.create_database(self._db_id)
+        self.database = await self.key_client.create_database(self._db_id)
+        self.addAsyncCleanup(self._delete_owned_database)
         self.container = await self.database.create_container(
             id=self._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
+        self.data_database = self.client.get_database_client(self._db_id)
+        self.data_container = self.data_database.get_container_client(self._container_id)
 
-    async def asyncTearDown(self):
+    async def _delete_owned_database(self):
         try:
-            await self.client.delete_database(self._db_id)
+            await self.key_client.delete_database(self._db_id)
         except Exception:  # pylint: disable=broad-except
             pass
-        await self.client.close()
 
     async def test_container_upsert_item_throughput_bucket_async_rust(self):
         """Verify the operation prepares the requested throughput bucket."""
         # Source: tests/test_headers_async.py::TestHeadersAsync.test_container_upsert_item_throughput_bucket_async
         binding = importlib.import_module(type(self.client._adapter).__module__)._rust_module
         with patch.object(binding, "upsert_item_async", wraps=binding.upsert_item_async) as operation:
-            await self.container.upsert_item(
+            await self.data_container.upsert_item(
                 body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
                 throughput_bucket=request_throughput_bucket_number,
             )
         self.assertTrue(operation.called)
         for call in operation.call_args_list:
             self.assertEqual(call.args[1].settings.throughput_bucket, request_throughput_bucket_number)
-
-    @property
-    def data_database(self):
-        # The original's data-plane database proxy; this file's single Rust key client serves both planes.
-        return self.database
 
     @pytest.mark.skip(reason="driver-gap: delete_all_items_by_partition_key has no Rust driver operation "
                              "(known gap 19); on the Rust client the call raises NotImplementedError from its "
@@ -102,8 +98,8 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
         try:
             # delete all items for partition key 1
-            # Known gap 6: raw_request_hook removed; outgoing headers not observable (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). capture_requests patches the legacy Python transport, which a Rust-run operation does not use.
-            # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-19). No Rust driver path; the uncached container-metadata preload raises NotImplementedError before any request is sent.
+            # Known gap 6: raw_request_hook removed; outgoing headers not observable. capture_requests patches the legacy Python transport, which a Rust-run operation does not use.
+            # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed. No Rust driver path; the uncached container-metadata preload raises NotImplementedError before any request is sent.
             with _capture_requests(data_collection, resource_type='operations') as requests:
                 await data_collection.delete_all_items_by_partition_key(
                     partition_key1,

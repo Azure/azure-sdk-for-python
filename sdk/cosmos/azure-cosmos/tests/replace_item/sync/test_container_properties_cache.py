@@ -86,7 +86,7 @@ class TestContainerPropertiesCache(unittest.TestCase):
         except exceptions.CosmosResourceExistsError:
             self.fail("Container Should not Already Exist.")
         # let's test create by replacing current container properties cache with old one
-        # Known gap 22: `create_item()`, `upsert_item()`, `replace_item()`: stale extracted key after container recreation (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-22). The stale client extracts the key with the old /PK path and its refreshed retry keeps it, so this create, the upsert and the replace below fail with 400 instead of recovering.
+        # Known gap 22: `create_item()`, `upsert_item()`, `replace_item()`: stale extracted key after container recreation. The stale client extracts the key with the old /PK path and its refreshed retry keeps it, so this create, the upsert and the replace below fail with 400 instead of recovering.
         created_container = old_cache.pop(0)
         try:
             created_container.create_item(body={'id': 'item1', container2_pk: 'val'})
@@ -144,7 +144,7 @@ class TestContainerPropertiesCache(unittest.TestCase):
         except exceptions.CosmosResourceExistsError:
             self.fail("Container Should not Already Exist.")
         # let's test create by replacing current container properties cache with old one
-        # Known gap 22: `create_item()`, `upsert_item()`, `replace_item()`: stale extracted key after container recreation (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-22). The stale client extracts the key with the old /country,/state paths and its refreshed retry keeps it, so this create, the upsert and the replace below fail with 400 instead of recovering.
+        # Known gap 22: `create_item()`, `upsert_item()`, `replace_item()`: stale extracted key after container recreation. The stale client extracts the key with the old /country,/state paths and its refreshed retry keeps it, so this create, the upsert and the replace below fail with 400 instead of recovering.
         created_container = old_cache.pop(0)
         try:
             created_container.create_item(body={'id': 'item1', 'county': 'ventura', 'city': 'oxnard'})

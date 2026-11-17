@@ -49,7 +49,8 @@ def _call(async_client, pairs, target):
     proxy_type = AsyncContainerProxy if async_client else ContainerProxy
     container = proxy_type.__new__(proxy_type)
     container.client_connection = Mock()
-    container._item_context = Mock()
+    # No attributes, so the tracing wrapper uses its defaults and any other use fails loudly.
+    container._item_context = Mock(spec=[])
     result = container.get_latest_session_token(pairs, target)
     if async_client:
         result = asyncio.run(result)

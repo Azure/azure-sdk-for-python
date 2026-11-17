@@ -11,11 +11,10 @@ Shared ``test_config`` provisioning is replaced by owned fixtures:
   full-range SUM/MIN and scoped AVG copies. Three logical partition keys
   are seeded there; multiple physical partitions are not guaranteed.
 
-Queries, feed ranges and assertions are unchanged. Real-split copies only run
-when ``COSMOS_QUERY_FEED_RANGE_REAL_SPLIT=1`` authorizes 11,000/60,000 RU/s.
+Queries, feed ranges and assertions are unchanged. As in the original, the
+real-split copy runs unconditionally under its split lane marker.
 """
 
-import os
 import time
 import unittest
 import uuid
@@ -23,7 +22,8 @@ from typing import List, Mapping, Set
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos import PartitionKey
+from config.clients import create_data_client, create_setup_client
 from query_items import _feed_range_helpers as test_config
 
 SINGLE_PARTITION_CONTAINER_ID = "single"
@@ -36,11 +36,6 @@ RUN_MARKER_FIELD = "_run_marker"
 RUN_MARKER_VALUE = str(uuid.uuid4())
 SPLIT_TIMEOUT = 60 * 10
 SLEEP_TIME = 30
-REAL_SPLIT_ENV = "COSMOS_QUERY_FEED_RANGE_REAL_SPLIT"
-
-
-def _rust_client():
-    return CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
 
 
 def add_all_pk_values_to_set(items: List[Mapping[str, str]], pk_value_set: Set[str]) -> None:
@@ -76,17 +71,22 @@ def trigger_split(container, throughput):
 @pytest.fixture(scope="class")
 def setup():
     """Owned replacement for the original class-scoped ``setup_and_teardown``."""
-    client = _rust_client()
+    # Same split as the original: key client provisions, data client (AAD in
+    # the cosmosAAD* lanes) seeds and queries.
+    client = create_setup_client()
+    data_client = create_data_client(_backend="rust")
     try:
         database_id = "legacy_query_feed_range_" + uuid.uuid4().hex
         database = client.create_database(database_id)
+        data_db = data_client.get_database_client(database_id)
         print(f"\nOwned feed-range query database: {database_id}")
         try:
             for container_id, offer_throughput in zip(TEST_CONTAINERS_IDS, TEST_OFFER_THROUGHPUTS):
-                container = database.create_container_if_not_exists(
+                database.create_container_if_not_exists(
                     id=container_id,
                     partition_key=PartitionKey(path='/' + PARTITION_KEY, kind='Hash'),
                     offer_throughput=offer_throughput)
+                container = data_db.get_container_client(container_id)
                 for pk in PK_VALUES:
                     container.upsert_item(body={
                         PARTITION_KEY: pk,
@@ -94,11 +94,12 @@ def setup():
                         'value': 100,
                         RUN_MARKER_FIELD: RUN_MARKER_VALUE,
                     })
-            yield {"key_db": database, "data_db": database}
+            yield {"key_db": database, "data_db": data_db}
         finally:
             client.delete_database(database_id)
             print(f"\nDeleted owned feed-range query database: {database_id}")
     finally:
+        data_client.close()
         client.close()
 
 
@@ -106,10 +107,12 @@ def setup():
 def owned_orders(request):
     """Per-test owned database for the retained SUM/MIN/AVG copies."""
     test = request.instance
-    test.client = _rust_client()
+    test.key_client = create_setup_client()
+    test.client = create_data_client(_backend="rust")
     try:
         test.database_id = "legacy_query_sum_" + uuid.uuid4().hex
-        test.database = test.client.create_database(test.database_id)
+        test.key_db = test.key_client.create_database(test.database_id)
+        test.database = test.client.get_database_client(test.database_id)
         print(f"\nOwned SUM database: {test.database_id}")
         try:
             test.container = test._create_seeded_container("orders")
@@ -118,6 +121,7 @@ def owned_orders(request):
             test._delete_owned_database()
     finally:
         test.client.close()
+        test.key_client.close()
 
 
 def get_container(setup, container_id: str):
@@ -132,7 +136,9 @@ def get_key_container(setup, container_id: str):
 @pytest.mark.cosmosAADSplit
 class TestQueryFeedRange:
     def _create_seeded_container(self, container_id):
-        container = self.database.create_container(id=container_id, partition_key=PartitionKey(path="/pk", kind="Hash"))
+        container_ref = self.key_db.create_container(
+            id=container_id, partition_key=PartitionKey(path="/pk", kind="Hash"))
+        container = self.database.get_container_client(container_ref.id)
         for pk in PK_VALUES:
             container.upsert_item({
                 "pk": pk, "id": str(uuid.uuid4()), "value": 100,
@@ -141,7 +147,7 @@ class TestQueryFeedRange:
         return container
 
     def _delete_owned_database(self):
-        self.client.delete_database(self.database_id)
+        self.key_client.delete_database(self.database_id)
         print(f"Deleted owned SUM database: {self.database_id}")
 
     @pytest.mark.usefixtures("owned_orders")
@@ -233,8 +239,7 @@ class TestQueryFeedRange:
         # Known gap 30 item 6: the driver does not keep a point feed range as a single-key scope.
         pytest.skip(
             "driver-gap: Rust plans the SDK-produced point feed range as a cross-partition scope and rejects "
-            "AVG with 400/20113 'aggregates in cross-partition queries' (known gap 30 items 1 and 6, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-point-feed-range)."
+            "AVG with 400/20113 'aggregates in cross-partition queries' (known gap 30 items 1 and 6)."
         )
         items = list(container.query_items(
             query=query,
@@ -424,8 +429,7 @@ class TestQueryFeedRange:
         # Known gap 30 item 1: no cross-partition aggregate execution in the driver.
         pytest.skip(
             "driver-gap: Rust rejects MAX over the full feed range with 400/20113 'aggregates in "
-            "cross-partition queries' (known gap 30 item 1, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-unscoped-max)."
+            "cross-partition queries' (known gap 30 item 1)."
         )
         items = list(container.query_items(
             query=query,
@@ -459,8 +463,7 @@ class TestQueryFeedRange:
         # Known gap 30 item 1: no cross-partition aggregate execution in the driver.
         pytest.skip(
             "driver-gap: Rust rejects COUNT over the full feed range with 400/20113 'aggregates in "
-            "cross-partition queries' (known gap 30 item 1, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-full-range-sum)."
+            "cross-partition queries' (known gap 30 item 1)."
         )
         items = list(container.query_items(
             query=query,
@@ -473,10 +476,6 @@ class TestQueryFeedRange:
 
     @pytest.mark.cosmosSplit
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    @pytest.mark.skipif(os.environ.get(REAL_SPLIT_ENV) != "1", reason=(
-        "environment-gap: real partition split raises throughput to 11000/60000 RU/s; "
-        "opt in with COSMOS_QUERY_FEED_RANGE_REAL_SPLIT=1"
-    ))
     def test_query_with_feed_range_during_partition_split_combined_rust(self, setup, container_id):
         # pylint: disable-next=line-too-long
         # Source: tests/test_query_feed_range.py::TestQueryFeedRange.test_query_with_feed_range_during_partition_split_combined
@@ -700,12 +699,11 @@ class TestQueryFeedRange:
 
     def test_query_with_static_continuation_rust(self, setup):
         # Source: tests/test_query_feed_range.py::TestQueryFeedRange.test_query_with_static_continuation
-        # Known gap 30 item 7: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-feed-range-continuation
+        # Known gap 30 item 7
         # The legacy original passes without checking anything: its made-up token returns no pages.
         pytest.skip(
             "driver-gap: on a feed-range query the Rust driver rejects a service continuation token "
-            "with 400/20116, while legacy resumes from it (known gap 30 item 7, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-feed-range-continuation)."
+            "with 400/20116, while legacy resumes from it (known gap 30 item 7)."
         )
         container = get_container(setup, SINGLE_PARTITION_CONTAINER_ID)
         query = 'SELECT * from c'

@@ -19,7 +19,6 @@ METADATA = 'metadata'
 OPERATION_TYPE = 'operationType'
 CREATE = 'create'
 DELETE = 'delete'
-E_TAG = 'etag'
 
 @pytest.fixture(scope="class")
 def setup():
@@ -45,8 +44,8 @@ def round_time():
     return utc_now - timedelta(microseconds=utc_now.microsecond)
 
 def assert_change_feed(expected, actual):
+    assert len(expected) == len(actual)
     if len(actual) == 0:
-        assert len(expected) == len(actual)
         return
 
     #TODO: remove this if we can add flag to get 'previous' always
@@ -65,6 +64,16 @@ def assert_change_feed(expected, actual):
             for key, value in expected_data.items():
                 assert key in actual_data
                 assert expected_data[key] == actual_data[key]
+
+
+@pytest.mark.parametrize("expected_count, actual_count", [(2, 1), (1, 2), (0, 1)])
+def test_assert_change_feed_rejects_count_mismatch(expected_count, actual_count):
+    changes = [
+        {CURRENT: {ID: f"order-{index}"}, METADATA: {OPERATION_TYPE: CREATE}}
+        for index in range(max(expected_count, actual_count))
+    ]
+    with pytest.raises(AssertionError):
+        assert_change_feed(changes[:expected_count], changes[:actual_count])
 
 
 def _is_all_versions_and_deletes_not_enabled(error: Exception) -> bool:
@@ -103,12 +112,14 @@ class TestChangeAllVersionsFeed:
                 mode=mode,
             )
             expected_change_feeds = []
-            actual_change_feeds = list(query_iterable)
+            pages = query_iterable.by_page()
+            actual_change_feeds = [item for page in pages for item in page]
         except Exception as e:
             if _is_all_versions_and_deletes_not_enabled(e):
                 pytest.skip("Change Feed 'All Versions and Deletes' capability is not enabled on this account.")
             raise
-        cont_token1 = created_collection.client_connection.last_response_headers[E_TAG]
+        cont_token1 = pages.continuation_token
+        assert cont_token1
         assert_change_feed(expected_change_feeds, actual_change_feeds)
 
         ## Test change_feed for created items from cont_token1 (Save the new continuation token)
@@ -123,8 +134,10 @@ class TestChangeAllVersionsFeed:
         )
 
         expected_change_feeds = [{CURRENT: {ID: f'doc{i}'}, METADATA: {OPERATION_TYPE: CREATE}} for i in range(4)]
-        actual_change_feeds = list(query_iterable)
-        cont_token2 = created_collection.client_connection.last_response_headers['etag']
+        pages = query_iterable.by_page()
+        actual_change_feeds = [item for page in pages for item in page]
+        cont_token2 = pages.continuation_token
+        assert cont_token2
         assert_change_feed(expected_change_feeds, actual_change_feeds)
 
         ## Test change_feed for deleted items
@@ -154,8 +167,11 @@ class TestChangeAllVersionsFeed:
             mode = mode,
             partition_key = 'pk1'
         )
-        list(query_iterable)
-        pk_cont_token = created_collection.client_connection.last_response_headers[E_TAG]
+        pages = query_iterable.by_page()
+        actual_change_feeds = [item for page in pages for item in page]
+        assert_change_feed([], actual_change_feeds)
+        pk_cont_token = pages.continuation_token
+        assert pk_cont_token
         new_documents = [{partition_key: f'pk{i}', ID: f'doc{i}'} for i in range(4)]
         created_items = []
         for document in new_documents:
@@ -181,7 +197,7 @@ class TestChangeAllVersionsFeed:
             created_collection.query_items_change_feed(
                 mode="test_invalid_mode",
             )
-        assert str(e.value) == "Invalid mode was used: 'test_invalid_mode'. Supported modes are ['LatestVersion', 'AllVersionsAndDeletes']."
+        assert str(e.value) == "mode must be LatestVersion or AllVersionsAndDeletes."
 
         # Error if partition_key_range_id was used with FULL_FIDELITY_FEED
         with pytest.raises(ValueError) as e:
@@ -189,14 +205,14 @@ class TestChangeAllVersionsFeed:
                 partition_key_range_id="TestPartitionKeyRangeId",
                 mode=mode,
             )
-        assert str(e.value) == "'AllVersionsAndDeletes' mode is not supported if 'partition_key_range_id' was used. Please use 'feed_range' instead."
+        assert str(e.value) == "A fresh AllVersionsAndDeletes feed requires Now and a logical scope or feed_range."
 
         # Error if is_start_from_beginning was in invalid type
         with pytest.raises(TypeError) as e:
             created_collection.query_items_change_feed(
                 is_start_from_beginning="Now",
             )
-        assert str(e.value) == "'is_start_from_beginning' must be 'bool' type, but given 'str'."
+        assert str(e.value) == "is_start_from_beginning must be a bool."
 
         # Error if is_start_from_beginning was used with FULL_FIDELITY_FEED
         with pytest.raises(ValueError) as e:
@@ -204,7 +220,7 @@ class TestChangeAllVersionsFeed:
                 is_start_from_beginning=True,
                 mode=mode,
             )
-        assert str(e.value) == "'AllVersionsAndDeletes' mode is only supported if 'is_start_from_beginning' is 'False'. Please use 'is_start_from_beginning=False' or 'continuation' instead."
+        assert str(e.value) == "A fresh AllVersionsAndDeletes feed requires Now and a logical scope or feed_range."
 
         # Error if 'is_start_from_beginning' was used with 'start_time'
         with pytest.raises(ValueError) as e:
@@ -212,20 +228,19 @@ class TestChangeAllVersionsFeed:
                 is_start_from_beginning=True,
                 start_time="Now",
             )
-        assert str(e.value) == "'is_start_from_beginning' and 'start_time' are exclusive, please only set one of them."
+        assert str(e.value) == "is_start_from_beginning and start_time are exclusive."
 
         # Error if 'start_time' was invalid value
         invalid_time = "Invalid value"
-        # TODO: previously it is throwing AttributeError, now has changed into ValueError, is it breaking change?
         with pytest.raises(ValueError) as e:
             created_collection.query_items_change_feed(start_time=invalid_time)
-        assert str(e.value) == "'start_time' must be either 'Now' or 'Beginning', but given 'Invalid value'."
+        assert str(e.value) == "start_time must be Now, Beginning, or a datetime."
 
         # Error if 'start_time' was invalid type
         invalid_time = 1.2
-        with pytest.raises(AttributeError) as e:
+        with pytest.raises(ValueError) as e:
             created_collection.query_items_change_feed(start_time=invalid_time)
-        assert str(e.value) == "'float' object has no attribute 'lower'"
+        assert str(e.value) == "start_time must be Now, Beginning, or a datetime."
 
         # Error if start_time was used with FULL_FIDELITY_FEED
         with pytest.raises(ValueError) as e:
@@ -233,10 +248,10 @@ class TestChangeAllVersionsFeed:
                 start_time=round_time(),
                 mode=mode,
             )
-        assert str(e.value) == "'AllVersionsAndDeletes' mode is only supported if 'start_time' is 'Now'. Please use 'start_time=\"Now\"' or 'continuation' instead."
+        assert str(e.value) == "A fresh AllVersionsAndDeletes feed requires Now and a logical scope or feed_range."
 
-        # Error if too many positional arguments
-        with pytest.raises(TypeError) as e:
+        # All change-feed settings are keyword-only.
+        with pytest.raises(TypeError, match="positional argument"):
             created_collection.query_items_change_feed(
                 "partition_key_range_id",
                 False,
@@ -244,10 +259,9 @@ class TestChangeAllVersionsFeed:
                 10,
                 "extra_argument",
             )
-        assert str(e.value) == "'query_items_change_feed()' takes 4 positional arguments but 5 were given."
 
-        # Error if arguments are in both positional and keyword arguments list
-        with pytest.raises(TypeError) as e:
+        # Keyword arguments do not make positional settings valid.
+        with pytest.raises(TypeError, match="positional argument"):
             created_collection.query_items_change_feed(
                 "partition_key_range_id",
                 False,
@@ -255,7 +269,6 @@ class TestChangeAllVersionsFeed:
                 10,
                 continuation="123",
             )
-        assert str(e.value) == "'query_items_change_feed()' got multiple values for argument 'continuation'."
 
         # Error if continuation is missing 'mode'
         with pytest.raises(ValueError) as e:

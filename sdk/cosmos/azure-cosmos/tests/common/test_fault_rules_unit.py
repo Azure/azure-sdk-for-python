@@ -17,12 +17,41 @@ error.
 """
 import pytest
 
+from azure.cosmos import CosmosClient
 from azure.cosmos._backend.client_config import _prepare_fault_injection_rules
+from azure.cosmos._backend.constants import FAULT_INJECTION_ENV_VAR
+from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 
 
 def _rule(**overrides):
     """Build a valid rule, with any field replaced by the caller."""
     return {"id": "test-fault", "operation_type": "CreateItem", "status_code": 502, **overrides}
+
+
+@pytest.mark.parametrize("switch", [None, "", "0", "true"])
+def test_rules_need_the_test_only_switch_rust(monkeypatch, switch):
+    """The shipped package contains fault injection, so a customer app must not reach it.
+
+    Only the exact test switch "1" turns rules on. Both public clients refuse the
+    argument before any request, and passing no rules still works without the switch.
+    """
+    if switch is None:
+        monkeypatch.delenv(FAULT_INJECTION_ENV_VAR, raising=False)
+    else:
+        monkeypatch.setenv(FAULT_INJECTION_ENV_VAR, switch)
+    assert _prepare_fault_injection_rules(None) == ()
+    for rules in ([_rule()], []):
+        with pytest.raises(TypeError):
+            _prepare_fault_injection_rules(rules)
+    for client_type in (CosmosClient, AsyncCosmosClient):
+        with pytest.raises(TypeError):
+            client_type(
+                "https://example.documents.azure.com:443/", "a2V5", _backend="rust",
+                _fault_injection_rules=[_rule()],
+            )
+    monkeypatch.setenv(FAULT_INJECTION_ENV_VAR, "1")
+    (prepared,) = _prepare_fault_injection_rules([_rule()])
+    assert prepared.id == "test-fault"
 
 
 def test_all_operations_requires_an_explicit_selector_and_preserves_filters_rust():

@@ -4,7 +4,8 @@
 
 Copied from ``tests/test_headers.py``; the class and method names match the
 source (apart from the method's ``_rust`` suffix). Builds its own database +
-container and reads ``ACCOUNT_HOST`` / ``ACCOUNT_KEY`` from the environment.
+container with a key client and runs the tested operations through the data
+client from ``config.clients``.
 
 The legacy test captured outgoing HTTP requests, which the Rust transport does
 not expose (known gap 6). The throughput-bucket copy instead checks the
@@ -14,21 +15,14 @@ Gateway V2 may still drop the header on the wire (known gap 36).
 Run: ``pytest --noconftest tests/query_items/sync/test_headers.py -v``
 """
 import importlib
-import os
 import unittest
 import uuid
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from azure.cosmos import PartitionKey
+from config.clients import create_data_client, create_setup_client
 
 
 # Same value as the source, so the wire bytes match the legacy path.
@@ -41,22 +35,28 @@ class TestHeaders(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = CosmosClient(HOST, KEY, _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) backs data_container.
+        cls.key_client = create_setup_client()
+        cls.client = create_data_client(_backend="rust")
         cls._db_id = "legacy_query_headers_" + uuid.uuid4().hex[:8]
         cls._container_id = "c_" + uuid.uuid4().hex[:8]
-        cls.database = cls.client.create_database(cls._db_id)
-        cls.data_container = cls.database.create_container(
+        cls.database = cls.key_client.create_database(cls._db_id)
+        cls.container = cls.database.create_container(
             id=cls._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
+        cls.data_database = cls.client.get_database_client(cls._db_id)
+        cls.data_container = cls.data_database.get_container_client(cls._container_id)
 
     @classmethod
     def tearDownClass(cls):
         try:
-            cls.client.delete_database(cls._db_id)
+            cls.key_client.delete_database(cls._db_id)
         except Exception:  # pylint: disable=broad-except
             pass
         cls.client.close()
+        cls.key_client.close()
 
     def side_effect_correlated_activity_id(self, *args, **kwargs):
         # Source helper: tests/test_headers.py::TestHeaders.side_effect_correlated_activity_id

@@ -11,8 +11,8 @@ class-scoped ``repro_setup`` fixture replaces the shared ``test_config``
 database with an owned one (``DATABASE_ID``), creates the original's
 30,000 RU/s repro container seeded with the original 200 documents, and
 always deletes the database. Queries, feed ranges and assertions are
-unchanged. The post-split copy only runs when
-``COSMOS_QUERY_FEED_RANGE_REAL_SPLIT=1`` authorizes a 60,000 RU/s split.
+unchanged. As in the original, the post-split copy runs unconditionally
+under its split lane markers.
 """
 
 import os
@@ -105,8 +105,7 @@ class TestFeedRangeMultiPartition(unittest.TestCase):
 
             # Known gap 30: aggregates beyond one complete partition key are unsupported.
             pytest.skip("driver-gap: prefix partition-key COUNT aggregate is rejected by the Rust driver "
-                        "with 400/20113; "
-                        "see RUST_PARITY_PUSHBACKS.md#query-full-range-sum")
+                        "with 400/20113")
             count_results = list(created_container.query_items(
                 query="SELECT VALUE COUNT(1) FROM c",
                 partition_key=['CA'],
@@ -171,7 +170,6 @@ MIN_DOCS_PER_PARTITION = 15
 
 SPLIT_TIMEOUT = 60 * 10
 SLEEP_TIME = 30
-REAL_SPLIT_ENV = "COSMOS_QUERY_FEED_RANGE_REAL_SPLIT"
 
 _REPRO_STATE = {}
 
@@ -223,8 +221,7 @@ def _count_in_range(container, range_min: str, range_max: str) -> int:
         test_config.create_range(range_min=range_min, range_max=range_max,
                                  is_min_inclusive=True, is_max_inclusive=False))
     # Known gap 30: aggregates beyond one complete partition key are unsupported.
-    pytest.skip("driver-gap: feed-range COUNT aggregate is rejected by the Rust driver with 400/20113; "
-                "see RUST_PARITY_PUSHBACKS.md#query-full-range-sum")
+    pytest.skip("driver-gap: feed-range COUNT aggregate is rejected by the Rust driver with 400/20113")
     items = list(container.query_items(
         query="SELECT VALUE COUNT(1) FROM c", feed_range=fr))
     return items[0] if items else 0
@@ -432,7 +429,7 @@ class TestFeedRangeMultiPartitionRust:
             # Known gap 36: query-metrics request options are not sent over Gateway V2.
             if http_constants.HttpHeaders.QueryMetrics not in count_headers:
                 pytest.skip("driver-gap: x-ms-documentdb-query-metrics is not returned over Gateway V2; "
-                            "(known gap 36, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-36).")
+                            "(known gap 36).")
             count_metrics = dict(
                 entry.split("=", 1)
                 for entry in count_headers[http_constants.HttpHeaders.QueryMetrics].split(";")
@@ -952,10 +949,6 @@ class TestFeedRangeMultiPartitionRust:
 
     @pytest.mark.cosmosSplit
     @pytest.mark.cosmosAADSplit
-    @pytest.mark.skipif(os.environ.get(REAL_SPLIT_ENV) != "1", reason=(
-        "environment-gap: real partition split raises throughput to 60000 RU/s; "
-        "opt in with COSMOS_QUERY_FEED_RANGE_REAL_SPLIT=1"
-    ))
     def test_post_split_resume_rust(self):
         """Resume a saved continuation after a real partition split."""
         # Source: tests/test_query_feed_range_multipartition.py::TestFeedRangeMultiPartition.test_post_split_resume

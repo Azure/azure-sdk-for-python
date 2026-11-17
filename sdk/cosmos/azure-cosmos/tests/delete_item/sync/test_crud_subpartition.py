@@ -10,13 +10,13 @@ deleted afterwards.
 """
 
 import pytest
-import os
 import unittest
 import uuid
 
+from config.clients import create_data_client, create_setup_client
+
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos import CosmosClient
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
@@ -26,19 +26,24 @@ from azure.cosmos.partition_key import PartitionKey
 class TestSubpartitionCrud(unittest.TestCase):
 
     def setUp(self):
-        self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) runs the tested operations.
+        self.key_client = create_setup_client()
+        self.addCleanup(self.key_client.close)
+        self.client = create_data_client(_backend="rust")
         self.addCleanup(self.client.close)
         self._db_id = "delete_item_crud_subpartition_" + uuid.uuid4().hex
-        self.databaseForTest = self.client.create_database(self._db_id)
-        self.addCleanup(self.client.delete_database, self._db_id)
+        self.key_databaseForTest = self.key_client.create_database(self._db_id)
+        self.addCleanup(self.key_client.delete_database, self._db_id)
+        self.databaseForTest = self.client.get_database_client(self._db_id)
 
     def _create_container_for_test(self, container_id, partition_key, **kwargs):
-        self.databaseForTest.create_container(id=container_id, partition_key=partition_key, **kwargs)
+        self.key_databaseForTest.create_container(id=container_id, partition_key=partition_key, **kwargs)
         return self.databaseForTest.get_container_client(container_id)
 
     def _delete_container_for_test(self, container_id_or_container):
         cid = container_id_or_container if isinstance(container_id_or_container, str) else container_id_or_container.id
-        self.databaseForTest.delete_container(cid)
+        self.key_databaseForTest.delete_container(cid)
 
     def test_partitioned_collection_document_crud_and_query_subpartition_rust(self):
         # Source: tests/test_crud_subpartition.py::TestSubpartitionCrud.test_partitioned_collection_document_crud_and_query_subpartition
@@ -174,7 +179,7 @@ class TestSubpartitionCrud(unittest.TestCase):
         self.assertEqual(doc_mixed_types.get('city'), created_mixed_type_doc.get('city'))
         self.assertEqual(doc_mixed_types.get('zipcode'), created_mixed_type_doc.get('zipcode'))
 
-        # Known gap 23: Container delete and replace require preliminary metadata (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-23). On Rust this delete_container step first resolves container metadata (possible extra GET) before the DELETE; the step still executes.
+        # Known gap 23: Container delete and replace require preliminary metadata. On Rust this delete_container step first resolves container metadata (possible extra GET) before the DELETE; the step still executes.
         self._delete_container_for_test(collection_id)
 
 

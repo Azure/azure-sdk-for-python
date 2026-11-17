@@ -9,15 +9,14 @@ Public feed ranges replace legacy routing internals. The hook result is now an
 independent snapshot; original data, distribution and result assertions remain.
 """
 
-import os
 import unittest
 import uuid
 
 import pytest
 
-import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos import PartitionKey
+from config.clients import create_data_client, create_setup_client
 
 
 @pytest.mark.cosmosEmulator
@@ -25,16 +24,13 @@ from azure.cosmos import PartitionKey
 class TestReadItems(unittest.TestCase):
     """Rust-path copies of tests/test_read_items.py::TestReadItems."""
 
-    host = os.environ.get("ACCOUNT_HOST")
-    masterKey = os.environ.get("ACCOUNT_KEY")
-
     @classmethod
     def setUpClass(cls):
         cls.TEST_DATABASE_ID = "query_items_read_items_" + uuid.uuid4().hex
         # key-auth client for control-plane operations, and a separate data-plane client,
         # like the original create_test_clients pair.
-        cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey, _backend="rust")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, _backend="rust")
+        cls.key_client = create_setup_client()
+        cls.client = create_data_client(_backend="rust")
         cls.key_database = cls.key_client.create_database(cls.TEST_DATABASE_ID)
         cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 

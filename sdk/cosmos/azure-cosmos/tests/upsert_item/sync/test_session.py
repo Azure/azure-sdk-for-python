@@ -24,6 +24,7 @@ from azure.core.rest import HttpRequest
 from azure.cosmos import DatabaseProxy, PartitionKey
 from azure.cosmos.http_constants import HttpHeaders
 from _fault_injection_transport import FaultInjectionTransport
+from config.clients import create_data_client
 
 
 def assert_no_session_token(request):
@@ -53,7 +54,7 @@ class TestSession(unittest.TestCase):
         # key-auth client for control-plane operations, and a separate data-plane client,
         # like the original create_test_clients pair.
         cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey, _backend="rust")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, _backend="rust")
+        cls.client = create_data_client(_backend="rust")
         cls.key_db = cls.key_client.create_database(cls.TEST_DATABASE_ID)
         cls.key_db.create_container(cls.TEST_COLLECTION_ID, PartitionKey(path="/pk"))
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
@@ -82,7 +83,7 @@ class TestSession(unittest.TestCase):
         self._unverified_request_checks.append(description)
 
     def _skip_unverified_request_checks(self):
-        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). The Rust-prepared outgoing request is not observable, so the request session-token header checks cannot run.
+        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. The Rust-prepared outgoing request is not observable, so the request session-token header checks cannot run.
         pytest.skip("accepted-vnext-change: outgoing request session-token header checks cannot be observed on the Rust path "
                     "(known gap 6); all response-side assertions ran. Unverified request checks: "
                     + "; ".join(self._unverified_request_checks))
@@ -92,7 +93,7 @@ class TestSession(unittest.TestCase):
 
         # Session token should not be sent for control plane operations
         # control-plane container create/read/delete via key_db
-        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). Each capture below cannot see the outgoing request headers on the Rust path.
+        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. Each capture below cannot see the outgoing request headers on the Rust path.
         with self._capture_requests("create_container: no session token") as requests:
             test_container = self.key_db.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
         for request in requests:
@@ -181,7 +182,7 @@ class TestSession(unittest.TestCase):
         custom_transport.add_response_transformation(
             is_get_account_predicate,
             emulator_as_multi_write_region_account_transformation)
-        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). The Rust client cannot take the custom transport that fakes the multi-write topology, so the client cannot be built.
+        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. The Rust client cannot take the custom transport that fakes the multi-write topology, so the client cannot be built.
         pytest.skip("accepted-vnext-change: custom transport (multi-write topology injection) is not accepted by the Rust client "
                     "(known gap 10); multiple_write_locations is also rejected and the live account is single-write.")
         client = cosmos_client.CosmosClient(self.host, self.masterKey, consistency_level="Session",

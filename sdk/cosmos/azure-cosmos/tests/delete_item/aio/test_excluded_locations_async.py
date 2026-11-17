@@ -41,7 +41,7 @@ class TestExcludedLocationsAsync:
 
         # The original repeated this for multiple_write_locations in [True, False]. Rust-backed
         # clients reject that switch ("Closed by design: Rust owns endpoint discovery and
-        # multi-write routing", docs/V5/api-review/RUST_PARITY_PUSHBACKS.md), so one pass runs
+        # multi-write routing"), so one pass runs
         # and the account's write topology decides the expected region.
         capture = DeleteRoutingCapture(monkeypatch, asynchronous=True)
         async with clients.create_data_client_async(

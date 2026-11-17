@@ -7,48 +7,50 @@ Copied from ``tests/test_none_options_async.py``; the class and method
 names match the source (apart from the method's ``_rust`` suffix) so the parity reporter
 can pair the core-python
 and Rust runs. The file name drops the ``_async`` suffix so it pairs
-with the sync copy. Builds its own database + container and reads
-``ACCOUNT_HOST`` / ``ACCOUNT_KEY`` from the environment.
+with the sync copy. Builds its own database + container through a key
+client; the tested operations run on the data client (AAD in the
+cosmosAAD* lanes).
 
 Run: ``pytest --noconftest tests/replace_item/aio/test_none_options.py -v``
 """
-import os
 import unittest
 import uuid
 
 import pytest
 
-from azure.cosmos.aio import CosmosClient
+from config.clients import create_data_client_async, create_setup_client_async
+
 from azure.cosmos import PartitionKey
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
 
 
 @pytest.mark.cosmosEmulator
 class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) runs the tested operations.
+        self.key_client = create_setup_client_async()
+        await self.key_client.__aenter__()
+        self.addAsyncCleanup(self.key_client.close)
+        self.client = create_data_client_async(_backend="rust")
         await self.client.__aenter__()
+        self.addAsyncCleanup(self.client.close)
         self._db_id = "legacy_ri_none_opts_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
-        self.database = await self.client.create_database(self._db_id)
-        self.container = await self.database.create_container(
+        key_database = await self.key_client.create_database(self._db_id)
+        self.addAsyncCleanup(self._delete_owned_database)
+        self.key_container = await key_database.create_container(
             id=self._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
+        self.database = self.client.get_database_client(self._db_id)
+        self.container = self.database.get_container_client(self._container_id)
 
-    async def asyncTearDown(self):
+    async def _delete_owned_database(self):
         try:
-            await self.client.delete_database(self._db_id)
+            await self.key_client.delete_database(self._db_id)
         except Exception:  # pylint: disable=broad-except
             pass
-        await self.client.close()
 
     async def _create_sample_item(self):
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}

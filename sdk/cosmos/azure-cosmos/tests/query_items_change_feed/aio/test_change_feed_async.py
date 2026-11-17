@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Source-identical change-feed filter assertions with owned Rust-backed clients."""
+"""Change-feed filter assertions using Rust-backed clients and SDK continuation tokens."""
 
 import uuid
 
@@ -16,7 +16,7 @@ from config.settings import TestSettings, unique_database_id
 async def setup():
     database_id = unique_database_id("query-change-feed-filters-async")
     # Closed decision: Rust owns endpoint discovery and multi-write routing
-    # (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#client-init-routing). Rust-backed clients reject the
+    #. Rust-backed clients reject the
     # original's multiple_write_locations argument (even False), so it is omitted.
     # Key-auth client for control-plane operations (create/delete containers)
     key_client = CosmosClient(TestSettings.host, TestSettings.masterKey, _backend="rust")
@@ -84,22 +84,18 @@ class TestChangeFeedAsync:
         elif 'etag' in created_collection.client_connection.last_response_headers:
             assert created_collection.client_connection.last_response_headers['etag'] != ''
         else:
-            fail("No Etag or etag found in last response headers")
+            pytest.fail("No Etag or etag found in last response headers")
 
         # Read change feed from beginning should return an empty list
         query_iterable = created_collection.query_items_change_feed(
             is_start_from_beginning=True,
             **filter_param
         )
-        iter_list = [item async for item in query_iterable]
+        pages = query_iterable.by_page()
+        iter_list = [item async for page in pages async for item in page]
         assert len(iter_list) == 0
-        if 'Etag' in created_collection.client_connection.last_response_headers:
-            continuation1 = created_collection.client_connection.last_response_headers['Etag']
-        elif 'etag' in created_collection.client_connection.last_response_headers:
-            continuation1 = created_collection.client_connection.last_response_headers['etag']
-        else:
-            fail("No Etag or etag found in last response headers")
-        assert continuation1 != ''
+        continuation1 = pages.continuation_token
+        assert continuation1
 
         # Create a document. Read change feed should return be able to read that document
         document_definition = {'pk': 'pk', 'id': 'doc1'}
@@ -108,16 +104,12 @@ class TestChangeFeedAsync:
             is_start_from_beginning=True,
             **filter_param
         )
-        iter_list = [item async for item in query_iterable]
+        pages = query_iterable.by_page()
+        iter_list = [item async for page in pages async for item in page]
         assert len(iter_list) == 1
         assert iter_list[0]['id'] == 'doc1'
-        if 'Etag' in created_collection.client_connection.last_response_headers:
-            continuation2 = created_collection.client_connection.last_response_headers['Etag']
-        elif 'etag' in created_collection.client_connection.last_response_headers:
-            continuation2 = created_collection.client_connection.last_response_headers['etag']
-        else:
-            fail("No Etag or etag found in last response headers")
-        assert continuation2 != ''
+        continuation2 = pages.continuation_token
+        assert continuation2
         assert continuation2 != continuation1
 
         # Create two new documents. Verify that change feed contains the 2 new documents
@@ -170,7 +162,8 @@ class TestChangeFeedAsync:
             is_start_from_beginning=True,
             **filter_param
         )
-        it = query_iterable.__aiter__()
+        pages = query_iterable.by_page()
+        it = (item async for page in pages async for item in page)
         expected_ids = 'doc1.doc2.doc3.'
         if "partition_key" in filter_param:
             expected_ids = 'doc1.doc2.'
@@ -178,12 +171,8 @@ class TestChangeFeedAsync:
         async for item in it:
             actual_ids += item['id'] + '.'
         assert actual_ids == expected_ids
-        if 'Etag' in created_collection.client_connection.last_response_headers:
-            continuation3 = created_collection.client_connection.last_response_headers['Etag']
-        elif 'etag' in created_collection.client_connection.last_response_headers:
-            continuation3 = created_collection.client_connection.last_response_headers['etag']
-        else:
-            fail("No Etag or etag found in last response headers")
+        continuation3 = pages.continuation_token
+        assert continuation3
 
         # verify reading empty change feed
         query_iterable = created_collection.query_items_change_feed(

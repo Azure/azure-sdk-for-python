@@ -5,7 +5,8 @@
 Self-contained: ``setUpClass`` creates an owned database and the original's
 10,100 RU/s ``/key`` container with Range indexes, inserts the original
 documents and deletes the database in ``tearDownClass``. The original's shared
-test database and key/data client pair become one key-auth Rust client. Class
+test database becomes an owned one; its key/data client split is kept (key
+client provisions, data client inserts and queries). Class
 and method names match ``tests/test_aggregate.py``; no original test module is
 imported.
 
@@ -13,12 +14,12 @@ Run with::
 
     pytest --noconftest tests/query_items/sync/test_aggregate.py -v
 """
-import os
 import unittest
 import uuid
 
 import pytest
 
+from config.clients import create_data_client, create_setup_client
 from config.settings import TestSettings
 
 import azure.cosmos.documents as documents
@@ -26,12 +27,6 @@ from azure.cosmos import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
 # Source helper: tests/test_config.py::TestConfig.data_auth_mode
 DATA_AUTH_MODE = TestSettings.data_auth_mode
 
@@ -52,6 +47,7 @@ class _config:
 @pytest.mark.cosmosQuery
 class TestAggregateQuery(unittest.TestCase):
     client: CosmosClient = None
+    key_client: CosmosClient = None
 
     @classmethod
     def setUpClass(cls):
@@ -62,21 +58,27 @@ class TestAggregateQuery(unittest.TestCase):
     @classmethod
     def tearDownClass(cls) -> None:
         try:
-            cls.client.delete_database(cls.database_id)
+            cls.key_client.delete_database(cls.database_id)
             print(f"\nDeleted owned aggregate database: {cls.database_id}")
         except CosmosHttpResponseError:
             pass
         finally:
             cls.client.close()
+            cls.key_client.close()
 
     @classmethod
     def _setup(cls):
-        cls.client = CosmosClient(HOST, KEY, _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) runs the tested operations.
+        cls.key_client = create_setup_client()
+        cls.client = create_data_client(_backend="rust")
         cls.database_id = "legacy_query_aggregate_" + uuid.uuid4().hex[:8]
-        cls.created_db = cls.client.create_database(cls.database_id)
+        cls.key_db = cls.key_client.create_database(cls.database_id)
         print(f"\nOwned aggregate database: {cls.database_id}")
         try:
-            cls.created_collection = cls._create_collection(cls.created_db)
+            cls.created_db = cls.client.get_database_client(cls.database_id)
+            created_collection_ref = cls._create_collection(cls.key_db)
+            cls.created_collection = cls.created_db.get_container_client(created_collection_ref.id)
 
             # test documents
             document_definitions = []
@@ -104,8 +106,9 @@ class TestAggregateQuery(unittest.TestCase):
 
             cls._insert_doc(cls.created_collection, document_definitions)
         except Exception:
-            cls.client.delete_database(cls.database_id)
+            cls.key_client.delete_database(cls.database_id)
             cls.client.close()
+            cls.key_client.close()
             raise
 
     @classmethod
@@ -165,10 +168,10 @@ class TestAggregateQuery(unittest.TestCase):
                 print(test_name + ': ' + query + " FAILED")
                 if "20113" in str(e):
                     # pylint: disable-next=line-too-long
-                    # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-full-range-sum).
+                    # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates.
                     pytest.skip("driver-gap: Rust rejects cross-partition aggregates with 400/20113 "
-                                "(ClientUnsupportedQueryFeature) (known gap 30 item 1, "
-                                "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-full-range-sum). "
+                                "(ClientUnsupportedQueryFeature) (known gap 30 item 1)"
+                                ". "
                                 "Failed at " + test_name + ".")
                 raise e
 

@@ -7,6 +7,10 @@
 /azure/cosmos/_rust*.pyd
 /azure/cosmos/_rust*.dylib
 
+# Local override that builds against a driver checkout instead of the pinned
+# commit. See docs/build_and_release.md section 7.
+/.cargo/
+
 # Local Clippy output
 /bite52-clippy.txt
 

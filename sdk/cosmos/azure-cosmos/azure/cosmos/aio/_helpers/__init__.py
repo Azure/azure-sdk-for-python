@@ -25,7 +25,7 @@ state. Some other migration helpers also retain the legacy connection.
 AsyncLegacyItemHelper is selected explicitly for migration comparisons.
 Unsupported Rust requests and all failures propagate without legacy fallback.
 
-Use docs/V5/VOCABULARY.md for terminology. The matching synchronous helper
+The matching synchronous helper
 explains shared preparation; each async helper explains differences that matter
 for waiting, callbacks, or cancellation.
 """

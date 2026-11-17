@@ -6,7 +6,6 @@ Each test owns a uniquely named database. The multi-partition container mirrors
 the shared ``TEST_MULTI_PARTITION_CONTAINER_ID`` container (``/pk``, 30000 RU/s).
 """
 
-import os
 import unittest
 import uuid
 from typing import Any, Dict, Optional
@@ -15,9 +14,9 @@ import pytest
 from azure.core import MatchConditions
 
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos import CosmosClient
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
+from config.clients import create_data_client, create_setup_client
 
 
 class CosmosResponseHeaderEnvelope:
@@ -40,14 +39,14 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             self.assertEqual(inst.status_code, status_code)
 
     def setUp(self):
-        self.client = CosmosClient(
-            os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust", no_response_on_write=True,
-        )
+        self.key_client = create_setup_client(_backend="rust", no_response_on_write=True)
+        self.addCleanup(self.key_client.close)
+        self.client = create_data_client(_backend="rust", no_response_on_write=True)
         self.addCleanup(self.client.close)
         self._db_id = "replace_noresponse_" + uuid.uuid4().hex
-        self.key_databaseForTest = self.client.create_database(self._db_id)
+        self.key_databaseForTest = self.key_client.create_database(self._db_id)
         self.addCleanup(self._delete_database)
-        self.databaseForTest = self.key_databaseForTest
+        self.databaseForTest = self.client.get_database_client(self._db_id)
         self.multi_partition_container_id = "multi_partition_" + uuid.uuid4().hex[:8]
         self.key_databaseForTest.create_container(
             id=self.multi_partition_container_id,
@@ -57,7 +56,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
     def _delete_database(self):
         try:
-            self.client.delete_database(self._db_id)
+            self.key_client.delete_database(self._db_id)
         except exceptions.CosmosResourceNotFoundError:
             pass
 
@@ -165,7 +164,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         ))
 
         self.assertEqual(1, len(documentlist))
-        # Known gap 23: Container delete and replace require preliminary metadata (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-23). On Rust this delete_container step first resolves container metadata (possible extra GET) before the DELETE; the step still executes.
+        # Known gap 23: Container delete and replace require preliminary metadata. On Rust this delete_container step first resolves container metadata (possible extra GET) before the DELETE; the step still executes.
         created_db.delete_container(created_collection.id)
 
     def test_document_crud_response_payload_enabled_via_override_rust(self):

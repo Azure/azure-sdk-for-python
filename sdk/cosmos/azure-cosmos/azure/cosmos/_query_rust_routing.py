@@ -36,8 +36,7 @@ read-all eligibility checks here, although they reuse response conversion.
 Database and container feeds also use this module's builders and checks.
 
 Eligibility checks are migration support, not a reason to discard request
-validation when legacy execution is retired. Terminology follows
-docs/V5/VOCABULARY.md.
+validation when legacy execution is retired.
 """
 from __future__ import annotations
 

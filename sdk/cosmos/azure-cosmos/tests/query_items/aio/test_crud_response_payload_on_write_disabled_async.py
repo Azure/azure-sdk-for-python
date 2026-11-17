@@ -10,7 +10,6 @@ container mirrors the shared ``TEST_MULTI_PARTITION_CONTAINER_ID`` container
 (``/pk``, 30000 RU/s). Known Rust gaps are skipped at the failing step.
 """
 
-import os
 import unittest
 import uuid
 from types import SimpleNamespace
@@ -20,10 +19,10 @@ import pytest
 from azure.core import MatchConditions
 
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos.aio import CosmosClient
 from azure.cosmos.http_constants import StatusCodes
 from common.priority_contract import assert_priority_contract_async
 from azure.cosmos.partition_key import PartitionKey
+from config.clients import create_data_client_async, create_setup_client_async
 
 
 class CosmosResponseHeaderEnvelope:
@@ -46,14 +45,19 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
             assert inst.status_code == status_code
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(
-            os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust", no_response_on_write=True,
-        )
+        # Same split as the original: both clients keep no_response_on_write=True;
+        # the key client provisions, the data client (AAD in the cosmosAAD* lanes)
+        # backs database_for_test.
+        self.key_client = create_setup_client_async(no_response_on_write=True)
+        await self.key_client.__aenter__()
+        self.addAsyncCleanup(self.key_client.close)
+        self.client = create_data_client_async(_backend="rust", no_response_on_write=True)
+        await self.client.__aenter__()
         self.addAsyncCleanup(self.client.close)
         self._db_id = "qi_noresponse_async_" + uuid.uuid4().hex
-        self.key_database_for_test = await self.client.create_database(self._db_id)
+        self.key_database_for_test = await self.key_client.create_database(self._db_id)
         self.addAsyncCleanup(self._delete_database)
-        self.database_for_test = self.key_database_for_test
+        self.database_for_test = self.client.get_database_client(self._db_id)
         self.multi_partition_container_id = "multi_partition_" + uuid.uuid4().hex[:8]
         await self.key_database_for_test.create_container(
             id=self.multi_partition_container_id,
@@ -64,7 +68,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
     async def _delete_database(self):
         try:
-            await self.client.delete_database(self._db_id)
+            await self.key_client.delete_database(self._db_id)
         except exceptions.CosmosResourceNotFoundError:
             pass
 

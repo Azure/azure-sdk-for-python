@@ -37,7 +37,7 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.TEST_DATABASE_ID = unique_database_id("upsert-query-xp-async")
         # Closed decision: Rust owns endpoint discovery and multi-write routing
-        # (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#client-init-routing). Rust-backed clients reject the
+        #. Rust-backed clients reject the
         # original's multiple_write_locations argument (even False), so it is omitted.
         # Key-auth client for control-plane operations (create/delete database and containers)
         self.key_client = CosmosClient(self.host, self.masterKey, _backend="rust")

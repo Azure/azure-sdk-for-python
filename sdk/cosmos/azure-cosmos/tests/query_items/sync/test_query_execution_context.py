@@ -4,7 +4,8 @@
 
 Self-contained: ``setUpClass`` creates an owned database and ``/id`` container
 with the original 20 documents and deletes the database in ``tearDownClass``.
-The original's key/data client pair becomes one key-auth Rust client. The
+The original's key/data client split is kept (key client provisions, data
+client reads and queries). The
 ``setUp`` partition-range sanity check uses public ``read_feed_ranges()``
 instead of the legacy ``client_connection._ReadPartitionKeyRanges``. The
 public ``query_items`` assertion runs; the legacy
@@ -16,11 +17,12 @@ Run with::
 
     pytest --noconftest tests/query_items/sync/test_query_execution_context.py -v
 """
-import os
 import unittest
 import uuid
 
 import pytest
+
+from config.clients import create_data_client, create_setup_client
 
 import azure.cosmos._base as base
 from azure.cosmos import CosmosClient
@@ -28,12 +30,6 @@ from azure.cosmos._execution_context import base_execution_context as base_execu
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
 
 
 def get_database_link(database):
@@ -54,20 +50,26 @@ class TestQueryExecutionContextEndToEnd(unittest.TestCase):
     created_collection = None
     document_definitions = None
     created_db = None
+    key_db = None
     client: CosmosClient = None
+    key_client: CosmosClient = None
 
     @classmethod
     def setUpClass(cls):
-        cls.client = CosmosClient(HOST, KEY, _backend="rust")
+        # Key/data client setup: key-auth for control-plane, AAD for data-plane.
+        cls.key_client = create_setup_client()
+        cls.client = create_data_client(_backend="rust")
         cls.database_id = "legacy_query_exec_context_" + uuid.uuid4().hex[:8]
-        cls.created_db = cls.client.create_database(cls.database_id)
+        cls.key_db = cls.key_client.create_database(cls.database_id)
         print(f"\nOwned query execution context database: {cls.database_id}")
         try:
+            cls.created_db = cls.client.get_database_client(cls.database_id)
             container_id = 'query_execution_context_tests_' + str(uuid.uuid4())
-            cls.created_collection = cls.created_db.create_container(
+            cls.key_db.create_container(
                 id=container_id,
                 partition_key=PartitionKey(path='/id', kind='Hash')
             )
+            cls.created_collection = cls.created_db.get_container_client(container_id)
             cls.document_definitions = []
 
             # create a document using the document definition
@@ -79,19 +81,21 @@ class TestQueryExecutionContextEndToEnd(unittest.TestCase):
                 cls.document_definitions.append(d)
             cls.insert_doc(cls.document_definitions)
         except Exception:
-            cls.client.delete_database(cls.database_id)
+            cls.key_client.delete_database(cls.database_id)
             cls.client.close()
+            cls.key_client.close()
             raise
 
     @classmethod
     def tearDownClass(cls):
         try:
-            cls.client.delete_database(cls.database_id)
+            cls.key_client.delete_database(cls.database_id)
             print(f"\nDeleted owned query execution context database: {cls.database_id}")
         except CosmosHttpResponseError:
             pass
         finally:
             cls.client.close()
+            cls.key_client.close()
 
     def setUp(self):
         # sanity check:

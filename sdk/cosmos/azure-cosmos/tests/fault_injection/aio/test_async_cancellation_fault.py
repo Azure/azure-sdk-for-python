@@ -16,7 +16,7 @@ from fault_injection._async_cancellation import (
 )
 from fault_injection._delayed_create import assert_route, emit
 
-pytestmark = pytest.mark.cosmosEmulator
+pytestmark = pytest.mark.cosmosRustProbes
 
 
 @pytest.fixture(autouse=True)

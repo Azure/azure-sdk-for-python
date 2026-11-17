@@ -25,6 +25,7 @@ from azure.cosmos.http_constants import StatusCodes
 from common.priority_contract import assert_priority_contract
 from azure.cosmos.partition_key import PartitionKey
 from _client_transport import create_client_with_transport
+from config.clients import create_data_client, create_setup_client
 
 
 @pytest.mark.cosmosCircuitBreaker
@@ -50,16 +51,20 @@ class TestCRUDOperations(unittest.TestCase):
     def setUp(self):
         self.host = os.environ["ACCOUNT_HOST"]
         self.masterKey = os.environ["ACCOUNT_KEY"]
-        self.client = cosmos_client.CosmosClient(self.host, self.masterKey, _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) runs the tested operations.
+        self.key_client = create_setup_client()
+        self.addCleanup(self.key_client.close)
+        self.client = create_data_client(_backend="rust")
         self.addCleanup(self.client.close)
         self._db_id = "qi_crud_" + uuid.uuid4().hex
-        self.databaseForTest = self.client.create_database(self._db_id)
-        self.addCleanup(self.client.delete_database, self._db_id)
-        self.key_databaseForTest = self.databaseForTest
+        self.key_databaseForTest = self.key_client.create_database(self._db_id)
+        self.addCleanup(self.key_client.delete_database, self._db_id)
+        self.databaseForTest = self.client.get_database_client(self._db_id)
         self.configs = SimpleNamespace(
             TEST_DATABASE_ID=self._db_id,
             TEST_MULTI_PARTITION_CONTAINER_ID="multi_partition_" + uuid.uuid4().hex[:8])
-        self.databaseForTest.create_container(
+        self.key_databaseForTest.create_container(
             id=self.configs.TEST_MULTI_PARTITION_CONTAINER_ID, partition_key=PartitionKey(path="/pk"))
 
     def _create_container_for_test(self, container_id, partition_key, **kwargs):
@@ -433,8 +438,8 @@ class TestCRUDOperations(unittest.TestCase):
 
         # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded.
         # The Rust client never calls the injected DelayedTransport, so no request is delayed.
-        pytest.skip("accepted-vnext-change: the Rust client ignores the injected custom transport, so the 3 s per-request delay never happens and the 2 s page timeout cannot fire (known gap 10, "
-                    "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). The per-page 5 s timeout steps ran.")
+        pytest.skip("accepted-vnext-change: the Rust client ignores the injected custom transport, so the 3 s per-request delay never happens and the 2 s page timeout cannot fire (known gap 10)"
+                    ". The per-page 5 s timeout steps ran.")
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
             list(next(item_pages_short_timeout))
 

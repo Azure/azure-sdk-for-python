@@ -235,20 +235,7 @@ class ChangeFeedConfig(FeedConfig):
         )
         self.path = _base.GetPathFromLink(proxy.container_link, http_constants.ResourceType.Document)
         self.collection_id = _base.GetResourceIdOrFullNameFromLink(proxy.container_link)
-        if self.rust:
-            reserved = {
-                "if-none-match",
-                "if-modified-since",
-                "a-im",
-                "x-ms-cosmos-changefeed-wire-format-version",
-                "x-ms-start-epk",
-                "x-ms-end-epk",
-                "x-ms-documentdb-readfeed-key-type",
-                "x-ms-max-item-count",
-            }
-            if any(name.lower() in reserved for name in (self.options.get("initialHeaders") or {})):
-                raise NotImplementedError("Rust change feed cannot honor these options; no fallback.")
-        elif self.options.get(Constants.Kwargs.AVAILABILITY_STRATEGY) is not None:
+        if not self.rust and self.options.get(Constants.Kwargs.AVAILABILITY_STRATEGY) is not None:
             self.options[Constants.Kwargs.AVAILABILITY_STRATEGY] = _validate_request_hedging_strategy(
                 self.options[Constants.Kwargs.AVAILABILITY_STRATEGY]
             )

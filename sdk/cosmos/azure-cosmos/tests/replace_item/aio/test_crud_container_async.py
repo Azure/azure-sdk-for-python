@@ -9,12 +9,11 @@ client uses ``_backend="rust"`` and the test owns a uniquely named database
 """
 
 import pytest
-import os
 import unittest
 import uuid
 
-from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
+from config.clients import create_data_client_async, create_setup_client_async
 
 
 @pytest.mark.cosmosAADLong
@@ -22,24 +21,19 @@ from azure.cosmos.partition_key import PartitionKey
 class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
+        # Same split as the original: the key client provisions, the data
+        # client (AAD in the cosmosAAD* lanes) runs the tested operations.
+        self.key_client = create_setup_client_async()
+        await self.key_client.__aenter__()
+        self.addAsyncCleanup(self.key_client.close)
+        self.client = create_data_client_async(_backend="rust")
         await self.client.__aenter__()
+        self.addAsyncCleanup(self.client.close)
         self._db_id = "replace_item_crud_container_async_" + uuid.uuid4().hex
-        self.key_databaseForTest = None
-        try:
-            self.key_databaseForTest = await self.client.create_database(self._db_id)
-        except BaseException:
-            await self.client.close()
-            raise
-        self.data_databaseForTest = self.key_databaseForTest
+        self.key_databaseForTest = await self.key_client.create_database(self._db_id)
+        self.addAsyncCleanup(self.key_client.delete_database, self._db_id)
+        self.data_databaseForTest = self.client.get_database_client(self._db_id)
         self.database_for_test = self.key_databaseForTest
-
-    async def asyncTearDown(self):
-        try:
-            if self.key_databaseForTest is not None:
-                await self.client.delete_database(self._db_id)
-        finally:
-            await self.client.close()
 
     async def test_partitioned_collection_document_crud_and_query_async_rust(self):
         # Source: tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_partitioned_collection_document_crud_and_query_async
@@ -113,7 +107,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         )]
 
         assert len(document_list) == 1
-        # Known gap 23: Container delete and replace require preliminary metadata (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-23). On Rust this delete_container step first resolves container metadata (possible extra GET) before the DELETE; the step still executes.
+        # Known gap 23: Container delete and replace require preliminary metadata. On Rust this delete_container step first resolves container metadata (possible extra GET) before the DELETE; the step still executes.
         await self.key_databaseForTest.delete_container(created_collection.id)
 
 

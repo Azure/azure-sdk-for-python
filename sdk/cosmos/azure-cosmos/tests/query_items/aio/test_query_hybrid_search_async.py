@@ -3,10 +3,10 @@
 """Original async hybrid/full-text methods with class-owned key-auth resources.
 
 Source: tests/test_query_hybrid_search_async.py. Original markers, methods and
-assertions are retained; key-auth parity does not validate AAD authentication.
-Core Python provisions the original /text-only policies and 12,000 RU/s
-container and seeds the original data once per class/backend subprocess.
-Async Core Python serves awaited vector lookups; only queries select Rust.
+assertions are retained; a key-auth Core Python client provisions the original /text-only policies
+and 12,000 RU/s container and seeds the original data once per class/backend
+subprocess. As in the original, queries and awaited vector lookups run through
+the async data client (Rust; AAD in the cosmosAAD* lanes).
 """
 
 import os
@@ -19,10 +19,10 @@ import pytest
 import azure.cosmos.exceptions as exceptions
 import hybrid_search_data
 from azure.cosmos import http_constants, CosmosClient as CosmosSyncClient
-from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 from common import _test_helpers as test_config
 from config import settings
+from config.clients import create_data_client_async
 
 
 @pytest.mark.cosmosAADQuery
@@ -67,23 +67,11 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
                 self.addCleanup(os.environ.__setitem__, name, previous)
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(
-            os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust"
-        )
+        self.client = create_data_client_async(_backend="rust")
         self.addAsyncCleanup(self.client.close)
         await self.client.__aenter__()
         self.test_container = self.client.get_database_client(self.database_id).get_container_client(
             self.TEST_CONTAINER_ID)
-        self.lookup_client = CosmosClient(
-            os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="core-python"
-        )
-        self.addAsyncCleanup(self.lookup_client.close)
-        await self.lookup_client.__aenter__()
-        lookup_container = self.lookup_client.get_database_client(self.database_id).get_container_client(
-            self.TEST_CONTAINER_ID)
-        lookup_patch = patch.object(self.test_container, "read_item", lookup_container.read_item)
-        lookup_patch.start()
-        self.addCleanup(lookup_patch.stop)
 
     async def test_wrong_hybrid_search_queries_async_rust(self):
         # pylint: disable-next=line-too-long
@@ -310,8 +298,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         # Known gap 30 item 7: Rust folds the hybrid statistics/component responses into one page.
         pytest.skip(
             "driver-gap: Rust combines the cross-partition hybrid statistics and component responses into one "
-            "ranked page, so response_hook fires once instead of 6 times (known gap 30 item 7, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-hybrid-response-hooks).")
+            "ranked page, so response_hook fires once instead of 6 times (known gap 30 item 7).")
         assert response_hook.count == 6 # one global stat query per partition, two queries per partition for each component query
 
     async def test_hybrid_search_partitioned_query_response_hook_async_rust(self):

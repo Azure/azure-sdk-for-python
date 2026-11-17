@@ -2,7 +2,8 @@
 //!
 //! Read architecture metadata from the supported PE (Windows), ELF (Linux), and
 //! Mach-O (macOS) formats and compare it with Cargo's target. A universal Mach-O
-//! file can contain multiple architectures. ELF pointer width is checked too.
+//! file can contain multiple architectures; slices with an unknown CPU type are
+//! skipped. ELF pointer width is checked too.
 //!
 //! It is used by `build.rs` at build time and compiled again into the crate's
 //! test build so the readers themselves can be tested.
@@ -164,13 +165,20 @@ fn detect_fat_mach_o(
         return Err("QueryPlanInterop universal Mach-O header is truncated".to_string());
     }
 
+    // Skip CPU types we don't know: only the slice for the Cargo target matters.
     let mut architectures = Vec::with_capacity(architecture_count);
     for index in 0..architecture_count {
         let cpu_type = read_u32(bytes, 8 + index * entry_size, endianness)?;
-        let architecture = mach_o_architecture(cpu_type)?;
-        if !architectures.contains(&architecture) {
-            architectures.push(architecture);
+        if let Ok(architecture) = mach_o_architecture(cpu_type) {
+            if !architectures.contains(&architecture) {
+                architectures.push(architecture);
+            }
         }
+    }
+    if architectures.is_empty() {
+        return Err(
+            "QueryPlanInterop universal Mach-O contains no supported architecture".to_string(),
+        );
     }
     Ok(architectures)
 }
@@ -279,6 +287,23 @@ mod tests {
             detect_architectures(&bytes, "macos").unwrap(),
             vec![BinaryArchitecture::X86_64, BinaryArchitecture::Aarch64]
         );
+    }
+
+    #[test]
+    fn universal_mach_o_skips_unknown_slices() {
+        // PowerPC (18) is unknown; the ARM64 slice is still found.
+        let mut bytes = vec![0; 48];
+        bytes[..4].copy_from_slice(&[0xca, 0xfe, 0xba, 0xbe]);
+        bytes[4..8].copy_from_slice(&2u32.to_be_bytes());
+        bytes[8..12].copy_from_slice(&18u32.to_be_bytes());
+        bytes[28..32].copy_from_slice(&0x0100_000cu32.to_be_bytes());
+        assert_eq!(
+            detect_architectures(&bytes, "macos").unwrap(),
+            vec![BinaryArchitecture::Aarch64]
+        );
+
+        bytes[28..32].copy_from_slice(&18u32.to_be_bytes());
+        assert!(detect_architectures(&bytes, "macos").is_err());
     }
 
     #[test]

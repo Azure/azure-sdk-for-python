@@ -19,6 +19,8 @@ import pytest
 
 from azure.cosmos import CosmosClient, PartitionKey
 
+from config.clients import create_data_client_for_endpoint
+
 REGION_1 = os.getenv("WRITE_LOCATION", "")
 REGION_2 = os.getenv("READ_LOCATION", "West US")
 PK_VALUE = "pk1"
@@ -37,7 +39,7 @@ def capture_requests(container, resource_type="docs"):
     """Stand-in for test_config.capture_requests, which patches the Python pipeline transport.
 
     Known gap 6: Closed by design: `raw_request_hook` removed from both backends
-    (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). Rust sends requests itself, so nothing is
+. Rust sends requests itself, so nothing is
     captured; the operation still runs and the test then skips instead of passing on an empty list.
     """
     requests = []
@@ -89,14 +91,14 @@ class TestPerPartitionAutomaticFailover:
             "excluded_locations": excluded_regions,
             **kwargs,
         }
-        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). No custom transport is passed; Rust uses the real account response.
-        client = CosmosClient(endpoint, _key(), _backend="rust", **client_kwargs)
+        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. No custom transport is passed; Rust uses the real account response.
+        client = create_data_client_for_endpoint(endpoint, _backend="rust", **client_kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}
 
     def setup_info(self, error=None, max_count=None, is_batch=False, exclude_client_regions=False, session_error=False, **kwargs):
-        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). The original's PPAF-enabled account-topology rewrite has no Rust fault-rule equivalent; the Rust driver owns PPAF and uses the account's real setting.
+        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. The original's PPAF-enabled account-topology rewrite has no Rust fault-rule equivalent; the Rust driver owns PPAF and uses the account's real setting.
         custom_transport = None
         # two documents targeted to same partition, one will always fail and the other will succeed
         doc_fail_id = str(uuid.uuid4())
@@ -115,7 +117,7 @@ class TestPerPartitionAutomaticFailover:
         try:
             fault_injection_container = custom_setup['col']
             # Create a document to check the response headers
-            # Known gap 6: Closed by design: `raw_request_hook` removed from both backends (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). The Rust-sent User-Agent cannot be captured; capture_requests skips after the upsert.
+            # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. The Rust-sent User-Agent cannot be captured; capture_requests skips after the upsert.
             with capture_requests(fault_injection_container, resource_type='docs') as requests:
                 fault_injection_container.upsert_item(body={'id': doc_success_id, 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'})
             for request in requests:

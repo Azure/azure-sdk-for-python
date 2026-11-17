@@ -147,7 +147,7 @@ class TestRetryableWritesAsync:
 
             # Test without retry_write for upsert_item
             test_item = {"id": "1", "pk": "test", "data": "retryable write test"}
-            # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Rust retries the injected 408 itself, so the write may succeed instead of raising.
+            # Known gap 13: Closed: Rust owns automatic write retries. Rust retries the injected 408 itself, so the write may succeed instead of raising.
             try:
                 await me.container.upsert_item(test_item)
                 pytest.fail("Expected an exception without retry_write")
@@ -156,7 +156,7 @@ class TestRetryableWritesAsync:
 
             # Test with retry_write for upsert_item
             me.counter = 0  # Reset counter
-            # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Per-call retry_write raises NotImplementedError on the Rust item backend before any request is sent.
+            # Known gap 13: Closed: Rust owns automatic write retries. Per-call retry_write raises NotImplementedError on the Rust item backend before any request is sent.
             pytest.skip("Per-call retry_write is not supported on the Rust backend (known gap 13).")
             try:
                 await me.container.upsert_item(test_item, retry_write=2)
@@ -334,7 +334,7 @@ class TestRetryableWritesAsync:
             test_patch_operations = [
                 {"op": "add", "path": "/data", "value": "patched retryable write test"}
             ]
-            # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Rust retries the injected 408 on the replace leg of its client-side patch, so patch may succeed instead of raising.
+            # Known gap 13: Closed: Rust owns automatic write retries. Rust retries the injected 408 on the replace leg of its client-side patch, so patch may succeed instead of raising.
             try:
                 await me.container.patch_item(item=test_item['id'], partition_key=test_item['pk'],
                                               patch_operations=test_patch_operations)
@@ -401,7 +401,7 @@ class TestRetryableWritesAsync:
 
             # Test without retry_write for upsert_item
             test_item = {"id": "1", "state": "CA", "city": "San Francisco", "data": "retryable write test"}
-            # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Rust retries the injected 408 itself, so the write may succeed instead of raising.
+            # Known gap 13: Closed: Rust owns automatic write retries. Rust retries the injected 408 itself, so the write may succeed instead of raising.
             try:
                 await me.container.upsert_item(test_item)
                 pytest.fail("Expected an exception without retry_write")
@@ -410,7 +410,7 @@ class TestRetryableWritesAsync:
 
             # Test with retry_write for upsert_item
             me.counter = 0  # Reset counter
-            # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Per-call retry_write raises NotImplementedError on the Rust item backend before any request is sent.
+            # Known gap 13: Closed: Rust owns automatic write retries. Per-call retry_write raises NotImplementedError on the Rust item backend before any request is sent.
             pytest.skip("Per-call retry_write is not supported on the Rust backend (known gap 13).")
             try:
                 await me.container.upsert_item(test_item, retry_write=2)
@@ -587,7 +587,7 @@ class TestRetryableWritesAsync:
             test_patch_operations_hpk = [
                 {"op": "add", "path": "/data", "value": "patched retryable write test"}
             ]
-            # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Rust retries the injected 408 on the replace leg of its client-side patch, so patch may succeed instead of raising.
+            # Known gap 13: Closed: Rust owns automatic write retries. Rust retries the injected 408 on the replace leg of its client-side patch, so patch may succeed instead of raising.
             try:
                 await me.container.patch_item(item=test_item['id'],
                                               partition_key=[test_item['state'], test_item['city']],

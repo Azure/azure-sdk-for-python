@@ -144,7 +144,7 @@ class TestFeedRangeMultiPartitionAsync:
                 assert count_pager.continuation_token is None
 
                 count_headers = count_iterable.get_response_headers()
-                # Divergence not yet in docs/V5/api-review/RUST_PARITY_PUSHBACKS.md: Rust query_items with populate_query_metrics=True returns no x-ms-documentdb-query-metrics response header (legacy does), so this lookup raises KeyError.
+                # Divergence not yet recorded: Rust query_items with populate_query_metrics=True returns no x-ms-documentdb-query-metrics response header (legacy does), so this lookup raises KeyError.
                 count_metrics = dict(
                     entry.split("=", 1)
                     for entry in count_headers[http_constants.HttpHeaders.QueryMetrics].split(";")
@@ -159,7 +159,7 @@ class TestFeedRangeMultiPartitionAsync:
                 # continuation token; that token must still resume on the
                 # partition-key request path and return the same remaining items.
                 feed_range = await created_container.feed_range_from_partition_key(full_key)
-                # Known gap 30: `query_items()`: remaining query, paging, and continuation-token gaps (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30). The point feed range from feed_range_from_partition_key is rejected with ValueError ("nonempty min-inclusive, max-exclusive Range").
+                # Known gap 30: `query_items()`: remaining query, paging, and continuation-token gaps. The point feed range from feed_range_from_partition_key is rejected with ValueError ("nonempty min-inclusive, max-exclusive Range").
                 epk_pager = created_container.query_items(
                     query=query,
                     feed_range=feed_range,

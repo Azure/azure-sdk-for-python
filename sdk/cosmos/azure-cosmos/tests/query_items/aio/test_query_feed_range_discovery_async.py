@@ -8,7 +8,6 @@ Each parameterized case owns its client in a function-scoped loop, so the
 asyncio marker intentionally omits the original shared fixture's class scope.
 """
 
-import os
 import uuid
 from typing import List, Mapping, Set
 
@@ -16,7 +15,7 @@ import pytest
 import pytest_asyncio
 
 from azure.cosmos import PartitionKey
-from azure.cosmos.aio import CosmosClient
+from config.clients import create_data_client_async, create_setup_client_async
 
 TEST_CONTAINERS_IDS = ["single", "multi"]
 TEST_OFFER_THROUGHPUTS = [400, 30000]
@@ -36,22 +35,27 @@ async def add_all_pk_values_to_set_async(items: List[Mapping[str, str]], pk_valu
 
 @pytest_asyncio.fixture
 async def setup_and_teardown_async(request, container_id):
-    async with CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust") as client:
+    # Same split as the original: key client provisions, data client (AAD in
+    # the cosmosAAD* lanes) seeds and queries.
+    async with create_setup_client_async() as client, \
+            create_data_client_async(_backend="rust") as data_client:
         database_id = "legacy_query_ranges_async_" + uuid.uuid4().hex
         database = await client.create_database(database_id)
         print(f"\nOwned async feed-range query database: {database_id}")
         try:
-            container = await database.create_container(
+            container_ref = await database.create_container(
                 id=container_id,
                 partition_key=PartitionKey(path="/" + PARTITION_KEY, kind="Hash"),
                 offer_throughput=TEST_OFFER_THROUGHPUTS[TEST_CONTAINERS_IDS.index(container_id)],
             )
+            data_db = data_client.get_database_client(database_id)
+            container = data_db.get_container_client(container_ref.id)
             for pk in PK_VALUES:
                 await container.upsert_item({
                     PARTITION_KEY: pk, "id": str(uuid.uuid4()), "value": 100,
                     RUN_MARKER_FIELD: RUN_MARKER_VALUE,
                 })
-            request.instance.data_db = database
+            request.instance.data_db = data_db
             yield
         finally:
             request.instance.data_db = None

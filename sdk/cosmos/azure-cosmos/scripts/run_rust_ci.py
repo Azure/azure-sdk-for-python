@@ -26,6 +26,13 @@ TOXIPROXY_CASE_COUNTS = {
     "test_toxiproxy_write.py": 8,
     "test_toxiproxy_reset_socket.py": 6,
 }
+# Shipped feature set first, then the cancellation instrumentation customer wheels omit.
+CARGO_TEST_RUNS = (
+    ("cargo-test.log", ()),
+    ("cargo-test-probes.log", ("--features", "azure_cosmos_rust/test-probes")),
+)
+# Needs an extension built with the test-probes feature; see rust-tests.yml.
+CANCELLATION_CASE_COUNTS = {"fault_injection/aio/test_async_cancellation_fault.py": 2}
 TELEMETRY_MODULES = (
     "telemetry/test_rust_telemetry_unit.py",
     "telemetry/test_tracing_settings_unit.py",
@@ -114,17 +121,22 @@ def discover_tests(root: Path, suite: str) -> list[Path]:
 
     :param root: Package source directory.
     :type root: pathlib.Path
-    :param suite: Offline, telemetry, Toxiproxy, or service selection (CLI name parity).
+    :param suite: Offline, telemetry, Toxiproxy, cancellation, or service selection (CLI name parity).
     :type suite: str
     :return: Required test module paths.
     :rtype: list[pathlib.Path]
     """
     tests = root / "tests"
-    if suite == "toxiproxy":
-        files = [tests / "toxiproxy" / name for name in TOXIPROXY_CASE_COUNTS]
+    if suite in ("toxiproxy", "cancellation"):
+        folder, names, label = (
+            ("toxiproxy", TOXIPROXY_CASE_COUNTS, "Toxiproxy")
+            if suite == "toxiproxy"
+            else (".", CANCELLATION_CASE_COUNTS, "cancellation")
+        )
+        files = [tests / folder / name for name in names]
         for path in files:
             if not path.is_file():
-                raise RuntimeError(f"Required Toxiproxy module is missing: {path}")
+                raise RuntimeError(f"Required {label} module is missing: {path}")
     elif suite == "telemetry":
         files = [tests / name for name in TELEMETRY_MODULES]
         for path in files:
@@ -310,7 +322,7 @@ class RequiredCoverage:
 
 
 def run_native(results: Path) -> int:
-    """Run clippy, then the actual test harness, not cargo build or cargo test --no-run.
+    """Run clippy, then the actual test harness with and without ``test-probes``.
 
     Clippy fails the run only on errors, such as the ``large_futures`` lint the
     workspace denies. Clippy warnings are printed but do not fail the run.
@@ -327,22 +339,23 @@ def run_native(results: Path) -> int:
     print((results / "cargo-clippy.log").read_text(encoding="utf-8"))
     if completed.returncode:
         return completed.returncode
-    command = ["cargo", "test", "--workspace", "--locked", "--", "--test-threads=1"]
-    with (results / "cargo-test.log").open("w", encoding="utf-8") as log:
-        completed = subprocess.run(command, cwd=PACKAGE, stdout=log, stderr=subprocess.STDOUT, check=False)
-    output = (results / "cargo-test.log").read_text(encoding="utf-8")
-    print(output)
-    if completed.returncode:
-        return completed.returncode
-    summaries = re.findall(
-        r"test result: ok\. (\d+) passed; (\d+) failed; (\d+) ignored; \d+ measured; (\d+) filtered out", output
-    )
-    if (
-        not summaries
-        or sum(int(row[0]) for row in summaries) == 0
-        or any(int(row[1]) or int(row[3]) for row in summaries)
-    ):
-        raise RuntimeError("Cargo did not report an unfiltered, nonempty successful test run.")
+    for log_name, features in CARGO_TEST_RUNS:
+        command = ["cargo", "test", "--workspace", "--locked", *features, "--", "--test-threads=1"]
+        with (results / log_name).open("w", encoding="utf-8") as log:
+            completed = subprocess.run(command, cwd=PACKAGE, stdout=log, stderr=subprocess.STDOUT, check=False)
+        output = (results / log_name).read_text(encoding="utf-8")
+        print(output)
+        if completed.returncode:
+            return completed.returncode
+        summaries = re.findall(
+            r"test result: ok\. (\d+) passed; (\d+) failed; (\d+) ignored; \d+ measured; (\d+) filtered out", output
+        )
+        if (
+            not summaries
+            or sum(int(row[0]) for row in summaries) == 0
+            or any(int(row[1]) or int(row[3]) for row in summaries)
+        ):
+            raise RuntimeError("Cargo did not report an unfiltered, nonempty successful test run.")
     return 0
 
 
@@ -379,7 +392,7 @@ def run_toxiproxy_worker(results, native):
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("suite", choices=("offline", "parity", "native", "toxiproxy", "telemetry"))
+    parser.add_argument("suite", choices=("offline", "parity", "native", "toxiproxy", "telemetry", "cancellation"))
     parser.add_argument("--results", type=Path, required=True)
     parser.add_argument("--collect-only", action="store_true")
     parser.add_argument("--require-installed-wheel", action="store_true")
@@ -405,11 +418,13 @@ def main() -> int:
     if args.toxiproxy_worker:
         if args.suite != "toxiproxy" or sys.stdin.buffer.read(1) != b"1":
             raise RuntimeError("Runner did not establish Toxiproxy process-tree ownership.")
-    if args.suite in ("parity", "toxiproxy"):
+    if args.suite in ("parity", "toxiproxy", "cancellation"):
         if os.environ.get("COSMOS_BACKEND") != "rust":
             raise RuntimeError("The service lane requires COSMOS_BACKEND=rust.")
         if not os.environ.get("ACCOUNT_HOST") or not os.environ.get("ACCOUNT_KEY"):
             raise RuntimeError("The service lane requires emulator endpoint and key.")
+    if args.suite == "cancellation" and not hasattr(native, "_AsyncOperationProbe"):
+        raise RuntimeError("The cancellation lane requires an extension built with --features test-probes.")
     files = discover_tests(PACKAGE, args.suite)
     sys.path[:0] = [str(PACKAGE), str(PACKAGE / "tests")]
     if args.suite == "toxiproxy":
@@ -449,6 +464,8 @@ def main() -> int:
                 "junit_log_passing_tests=true",
             ]
         )
+    if args.suite == "cancellation":
+        options.append("--confcutdir=" + str(PACKAGE / "tests" / "fault_injection"))
     expected_skips = (
         {(PACKAGE / "tests" / name).resolve(): reasons for name, reasons in OFFLINE_SKIPS.items()}
         if args.suite in ("offline", "telemetry")
@@ -460,6 +477,8 @@ def main() -> int:
         counts = (
             {PACKAGE / "tests" / "toxiproxy" / name: count for name, count in TOXIPROXY_CASE_COUNTS.items()}
             if args.suite == "toxiproxy"
+            else {PACKAGE / "tests" / name: count for name, count in CANCELLATION_CASE_COUNTS.items()}
+            if args.suite == "cancellation"
             else {}
         )
         return int(
@@ -471,7 +490,7 @@ def main() -> int:
                         results,
                         expected_skips,
                         required_case_counts=counts,
-                        allow_declared_skips=args.suite not in ("toxiproxy", "telemetry"),
+                        allow_declared_skips=args.suite not in ("toxiproxy", "telemetry", "cancellation"),
                     )
                 ],
             )

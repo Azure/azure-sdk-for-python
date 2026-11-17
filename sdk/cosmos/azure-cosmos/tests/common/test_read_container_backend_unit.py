@@ -376,14 +376,20 @@ def test_unsupported_rust_settings_never_replay_rust(read_case, kwargs):
     driver owns.
 
     On the Rust path each raises ``NotImplementedError`` naming the method, with
-    nothing sent, nothing cached, and the fallback counter unmoved. On the
-    legacy path the same call simply succeeds, because those settings are part
-    of what that path offers.
+    nothing sent, nothing cached, and the fallback counter unmoved. A bad
+    deadline is a wrong value, so it raises ``ValueError`` on both paths. On the
+    legacy path the other settings simply succeed, because they are part of
+    what that path offers.
 
     Both halves matter: a customer must not be moved between engines without
     asking, and must not lose a working feature by staying where they are.
     """
     case = read_case
+    if "timeout" in kwargs:
+        with pytest.raises(ValueError, match="timeout must be"):
+            _read(case, **kwargs)
+        _assert_no_dispatch(case)
+        return
     if case.legacy:
         _read(case, **kwargs)
         case.backend.execute.assert_not_called()

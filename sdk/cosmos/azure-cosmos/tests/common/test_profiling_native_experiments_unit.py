@@ -31,7 +31,8 @@ def fixture_package(tmp_path):
         "Cargo.lock": 'version = 4\n\n[[package]]\nname = "azure_cosmos_rust"\nversion = "0.1.0"\n',
         "azure_cosmos_rust/Cargo.toml": (
             '[package]\nname = "azure_cosmos_rust"\nversion = "0.1.0"\n'
-            '[dependencies]\npyo3 = { version = "0.22", features = [\n'
+            '[dependencies]\n'
+            'pyo3 = { version = "0.22", features = [\n'
             '    "extension-module",\n    "abi3-py310",\n] }\n'
         ),
         "azure_cosmos_rust/src/lib.rs": "mod runtime;\nmod wire;\n",

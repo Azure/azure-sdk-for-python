@@ -44,8 +44,7 @@
 //! its selected driver runtime independently of the Python runtime object.
 //!
 //! Preferred regions and driver operation defaults are prepared separately for
-//! DriverOptions. See docs/V5/VOCABULARY.md for the object names and
-//! docs/V5/use-cases/01-cosmos-client-creation.md for the ownership walkthrough.
+//! DriverOptions.
 
 use std::collections::{BTreeMap, HashMap};
 use std::sync::{Arc, OnceLock, Weak};

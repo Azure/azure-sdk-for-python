@@ -141,8 +141,8 @@ def test_python_metadata_stays_aligned_rust(monkeypatch):
     """The two places that describe this package agree with each other and with the version file.
 
     The package is described both in the modern configuration file and in the older build
-    script, which is still there for tooling that expects it. Six things have to match,
-    including the version, which comes from a third place again.
+    script, which is still there for tooling that expects it. Every field written in both
+    has to match, including the version, which comes from a third place again.
 
     The older script is run with the function that would actually build replaced, so what
     it was about to be told can be read back. Two descriptions that drift apart produce a
@@ -162,6 +162,17 @@ def test_python_metadata_stays_aligned_rust(monkeypatch):
     assert project["dependencies"] == legacy["install_requires"]
     assert project["optional-dependencies"] == legacy["extras_require"]
     assert project["classifiers"] == legacy["classifiers"]
+    assert project["description"] == legacy["description"]
+    assert project["license"] == {"text": legacy["license"]}
+    assert project["authors"] == [{"name": legacy["author"], "email": legacy["author_email"]}]
+    assert project["maintainers"] == [
+        {"name": legacy["maintainer"], "email": legacy["maintainer_email"]}
+    ]
+    assert project["keywords"] == [word.strip() for word in legacy["keywords"].split(",")]
+    assert project["urls"] == {"Homepage": legacy["url"], **legacy["project_urls"]}
+    assert "Changelog" in project["urls"]
+    readme = (PACKAGE_ROOT / project["readme"]).read_text(encoding="utf-8")
+    assert legacy["long_description"] == readme
     assert build_metadata.validate_version_metadata(PACKAGE_ROOT) == version
 
 
@@ -188,10 +199,10 @@ def test_prototype_wheel_targets_rust():
 
 
 def test_driver_source_and_features_are_preserved_rust():
-    """Local development builds use the neighboring driver checkout, not a stale Git pin.
+    """The driver comes from one pinned GitHub commit, so CI needs no Rust checkout.
 
-    Both dependency groups inherit the same source. The lock must not retain a
-    second, Git-sourced driver. Release builds need a portable source selection.
+    Both dependency groups inherit the same source. The lock must record that
+    same commit, with no second copy of the driver from a local folder.
     The optional features are listed explicitly because they change what the driver can
     do. Three are on for normal use; a separate one is on only for the driver's own tests,
     which is what keeps a built-in test service out of what customers receive.
@@ -200,7 +211,8 @@ def test_driver_source_and_features_are_preserved_rust():
     binding = _read_toml(PACKAGE_ROOT / "azure_cosmos_rust" / "Cargo.toml")
     driver = workspace["workspace"]["dependencies"]["azure_data_cosmos_driver"]
     assert driver == {
-        "path": r"..\..\..\..\azure-sdk-for-rust\sdk\cosmos\azure_data_cosmos_driver",
+        "git": "https://github.com/Azure/azure-sdk-for-rust",
+        "rev": "b485409baf6e24ce198b028fb6d1c5a54a0e6d4c",
     }
     for group in ("dependencies", "dev-dependencies"):
         dependency = binding[group]["azure_data_cosmos_driver"]
@@ -218,7 +230,21 @@ def test_driver_source_and_features_are_preserved_rust():
     lock = _read_toml(PACKAGE_ROOT / "Cargo.lock")
     locked_drivers = [package for package in lock["package"] if package["name"] == "azure_data_cosmos_driver"]
     assert len(locked_drivers) == 1
-    assert "source" not in locked_drivers[0]
+    assert locked_drivers[0]["source"] == (
+        "git+https://github.com/Azure/azure-sdk-for-rust?rev=b485409baf6e24ce198b028fb6d1c5a54a0e6d4c"
+        "#b485409baf6e24ce198b028fb6d1c5a54a0e6d4c"
+    )
+
+
+def test_declared_minimum_rust_matches_the_toolchain_rust():
+    """``rust-version`` names the only compiler CI builds with, so the promise stays true.
+
+    Changing the ``rust-toolchain.toml`` channel without updating ``rust-version``
+    fails here.
+    """
+    workspace = _read_toml(PACKAGE_ROOT / "Cargo.toml")["workspace"]["package"]
+    channel = _read_toml(PACKAGE_ROOT / "rust-toolchain.toml")["toolchain"]["channel"]
+    assert channel.removeprefix("ms-prod-") == workspace["rust-version"]
 
 
 def test_windows_cross_build_has_target_and_import_library_inputs_rust():
@@ -264,6 +290,16 @@ def test_source_archive_declares_its_build_bootstrap_inputs_rust():
     } <= source_inputs
     for name in ("install-msrustup.sh", "configure-cargo-feed.sh"):
         assert (PACKAGE_ROOT / "scripts" / name).is_file()
+
+
+def test_wheel_leaves_out_shared_azure_namespace_file_rust():
+    """Other azure-* packages share the azure folder, so the wheel must not own it."""
+    excludes = _read_toml(PACKAGE_ROOT / "pyproject.toml")["tool"]["maturin"]["exclude"]
+    namespace_rules = [
+        entry for entry in excludes
+        if (entry if isinstance(entry, str) else entry["path"]) == "azure/__init__.py"
+    ]
+    assert namespace_rules == [{"path": "azure/__init__.py", "format": "wheel"}]
 
 
 @pytest.mark.parametrize(

@@ -29,6 +29,10 @@ DEFAULT_BACKEND_NAME = BACKEND_NAME_CORE_PYTHON
 #: env var decides; otherwise ``DEFAULT_BACKEND_NAME`` is used.
 BACKEND_ENV_VAR = "COSMOS_BACKEND"
 
+#: Test-only switch. The release extension contains the driver's fault
+#: injection, so ``_fault_injection_rules`` is refused unless this is ``"1"``.
+FAULT_INJECTION_ENV_VAR = "COSMOS_ENABLE_FAULT_INJECTION"
+
 
 def is_rust_backend(backend: Any) -> bool:
     """Identify a Python backend for the Rust path while the legacy path remains."""

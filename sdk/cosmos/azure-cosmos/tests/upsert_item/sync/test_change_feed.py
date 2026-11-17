@@ -25,7 +25,7 @@ def setup():
     # and a data-plane client (AAD or key) for the change feed reads.
     database_id = unique_database_id("upsert-change-feed")
     # Closed decision: Rust owns endpoint discovery and multi-write routing
-    # (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#client-init-routing). Rust-backed clients reject the
+    #. Rust-backed clients reject the
     # original's multiple_write_locations argument (even False), so it is omitted.
     key_client = create_setup_client(_backend="rust")
     data_client = create_data_client(_backend="rust")

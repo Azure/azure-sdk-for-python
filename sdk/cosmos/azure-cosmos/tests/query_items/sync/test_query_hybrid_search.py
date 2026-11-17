@@ -3,10 +3,10 @@
 """Original hybrid/full-text methods with class-owned key-auth resources.
 
 Source: tests/test_query_hybrid_search.py. Original markers, methods and
-assertions are retained; key-auth parity does not validate AAD authentication.
-Core Python provisions the original /text-only policies and 12,000 RU/s
-container, seeds the original data, and serves vector lookups. Only queries
-select Rust. Each backend subprocess owns one fresh database for the class.
+assertions are retained; a key-auth Core Python client provisions the original /text-only policies
+and 12,000 RU/s container and seeds the original data. As in the original,
+queries and vector lookups run through the data client (Rust; AAD in the
+cosmosAAD* lanes). Each backend subprocess owns one fresh database for the class.
 """
 
 import os
@@ -23,6 +23,7 @@ from azure.cosmos import http_constants
 from azure.cosmos.partition_key import PartitionKey
 from common import _test_helpers as test_config
 from config import settings
+from config.clients import create_data_client
 
 
 @pytest.mark.cosmosAADQuery
@@ -51,15 +52,10 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             item['id'] = str(index)
             item['pk'] = str((index % 2) + 1)
             key_container.create_item(item)
-        cls.client = cosmos_client.CosmosClient(
-            os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust"
-        )
+        cls.client = create_data_client(_backend="rust")
         cls.addClassCleanup(cls.client.close)
         cls.test_container = cls.client.get_database_client(cls.database_id).get_container_client(
             cls.TEST_CONTAINER_ID)
-        lookup_patch = patch.object(cls.test_container, "read_item", key_container.read_item)
-        lookup_patch.start()
-        cls.addClassCleanup(lookup_patch.stop)
 
     @classmethod
     def _delete_owned_database(cls):
@@ -301,8 +297,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         # Known gap 30 item 7: Rust folds the hybrid statistics/component responses into one page.
         pytest.skip(
             "driver-gap: Rust combines the cross-partition hybrid statistics and component responses into one "
-            "ranked page, so response_hook fires once instead of 6 times (known gap 30 item 7, "
-            "docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#query-hybrid-response-hooks).")
+            "ranked page, so response_hook fires once instead of 6 times (known gap 30 item 7).")
         assert response_hook.count == 6 # one global stat query per partition, two queries per partition for each component query
 
     def test_hybrid_search_partitioned_query_response_hook_rust(self):

@@ -102,9 +102,8 @@ class TestRetryPolicy(unittest.TestCase):
                 }))
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
-            # Known gap 29: Throttle retry totals are missing from Python response metadata
-            # (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-29).
-            pytest.skip("driver-gap: known gap 29 (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-29) - "
+            # Known gap 29: Throttle retry totals are missing from Python response metadata.
+            pytest.skip("driver-gap: known gap 29 - "
                         "the Rust path does not expose x-ms-throttle-retry-count or "
                         "x-ms-throttle-retry-wait-time-ms in last_response_headers.")
             self.assertEqual(max_retry_attempt_count,
@@ -118,7 +117,7 @@ class TestRetryPolicy(unittest.TestCase):
     @pytest.mark.skip(
         reason="internals-only: the legacy original is unconditionally skipped and counts calls to a "
         "patched _retry_utility.ExecuteFunction, which the Rust backend never calls; Rust owns "
-        "query retries (known gap 13, docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13)."
+        "query retries (known gap 13)."
     )
     def test_default_retry_policy_for_query_rust(self):
         # Source: tests/test_retry_policy.py::TestRetryPolicy.test_default_retry_policy_for_query

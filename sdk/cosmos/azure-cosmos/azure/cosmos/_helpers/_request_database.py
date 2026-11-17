@@ -34,6 +34,7 @@ from ._request_settings import (
     OPTION_HEADER_NAMES,
     is_supported_operation_timeout,
     overrides_driver_owned_header,
+    validate_operation_timeout,
 )
 from ._resource_validation import validate_resource
 from ._wire_encoding import serialize_body_to_bytes
@@ -173,7 +174,11 @@ def database_existence_read_options(
 def is_create_database_rust_eligible(
     request_options: Mapping[str, Any], operation_kwargs: Mapping[str, Any],
 ) -> bool:
-    """Reject settings that cannot describe an account-level creation request."""
+    """Reject settings that cannot describe an account-level creation request.
+
+    A bad timeout raises ``ValueError``; it is a wrong value, not a Rust limit.
+    """
+    validate_operation_timeout(operation_kwargs.get("timeout"))
     # Azure Core owns tracing controls; they are not native request settings.
     if set(operation_kwargs).difference({"timeout", "tracing_options", "tracing_attributes"}):
         return False
@@ -187,7 +192,7 @@ def is_create_database_rust_eligible(
         for name in initial
     ):
         return False
-    return is_supported_operation_timeout(operation_kwargs.get("timeout"))
+    return True
 
 
 def build_create_database_prepared(
@@ -278,21 +283,22 @@ def is_read_database_rust_eligible(
     * any operation kwarg outside ``_RUST_READ_DATABASE_SUPPORTED_KWARGS`` --
       for example ``connection_timeout``, which the
       legacy azure-core pipeline consumes and the Rust path never sees.
-    * a ``timeout`` that is not a finite, non-boolean numeric duration of at least
-      one second within Rust's duration range.
     * ``initial_headers`` containing a standard header the driver always
       overwrites. The legacy pipeline preserves those caller overrides.
 
-    For example, ``timeout=0.5`` fails this eligibility check rather than being
-    accepted as a supported operation timeout. Eligibility is not permission
+    A ``timeout`` that is not None or a finite, non-boolean number of seconds
+    from 1 up to 2**64 raises ``ValueError`` instead, because it is a wrong value
+    rather than something Rust cannot do. For example, ``timeout=0.5`` raises
+    ``ValueError``. Eligibility is not permission
     to retry a failed operation through the legacy path.
 
     :param request_options: The internal options dict for this read.
     :type request_options: Mapping[str, Any]
     :param operation_kwargs: The kwargs left over after ``build_options``.
     :type operation_kwargs: Mapping[str, Any]
-    :returns: ``True`` when the known timeout, kwarg, and header checks pass.
+    :returns: ``True`` when the kwarg and header checks pass.
     :rtype: bool
+    :raises ValueError: If ``timeout`` is not a supported number of seconds.
     """
     return _database_request_options_are_supported(request_options, operation_kwargs)
 
@@ -302,15 +308,14 @@ def _database_request_options_are_supported(
     operation_kwargs: Mapping[str, Any],
 ) -> bool:
     timeout = operation_kwargs.get(Constants.Kwargs.TIMEOUT)
+    validate_operation_timeout(timeout)
     option_timeout = request_options.get(Constants.Kwargs.TIMEOUT)
     # The prepared request forwards kwargs, not a timeout supplied only in options.
     if option_timeout is not None and option_timeout != timeout:
         return False
     if set(operation_kwargs).difference(_RUST_READ_DATABASE_SUPPORTED_KWARGS):
         return False
-    if overrides_driver_owned_header(request_options):
-        return False
-    return is_supported_operation_timeout(timeout)
+    return not overrides_driver_owned_header(request_options)
 
 
 def build_delete_database_prepared(

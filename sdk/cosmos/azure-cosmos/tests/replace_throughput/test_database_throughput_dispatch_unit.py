@@ -293,7 +293,11 @@ def test_database_read_rejects_unsupported_inputs_without_core_python_rust(datab
     original = deepcopy(kwargs)
     hooks = []
     before = rust_compatibility_fallback_count()
-    with pytest.raises(NotImplementedError, match="legacy Python path"):
+    error, message = (
+        (ValueError, "timeout must be") if "timeout" in kwargs
+        else (NotImplementedError, "legacy Python path")
+    )
+    with pytest.raises(error, match=message):
         invoke(response_hook=lambda *_: hooks.append(True), **kwargs)
     assert kwargs == original
     assert not hooks
@@ -360,7 +364,11 @@ def test_replacement_rejects_unsupported_inputs_before_metadata_rust(throughput_
 
     invoke, _, recording, metadata = throughput_replace
     before = rust_compatibility_fallback_count()
-    with pytest.raises(NotImplementedError, match="legacy Python"):
+    error, message = (
+        (ValueError, "timeout must be") if "timeout" in kwargs
+        else (NotImplementedError, "legacy Python")
+    )
+    with pytest.raises(error, match=message):
         invoke(**kwargs)
     assert not metadata
     assert not recording.requests

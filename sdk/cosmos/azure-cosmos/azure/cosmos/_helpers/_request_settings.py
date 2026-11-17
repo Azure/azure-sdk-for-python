@@ -370,6 +370,18 @@ def is_supported_operation_timeout(timeout: Any) -> bool:
     return 1.0 <= seconds < 2**64
 
 
+def validate_operation_timeout(timeout: Any) -> None:
+    """Raise ``ValueError`` unless ``timeout`` is None or a number of seconds from 1 up to 2**64.
+
+    A bad timeout is a wrong value, not a missing feature, so checks that decide
+    whether Rust can run a call use this instead of answering "not eligible".
+    For example, ``timeout=0.5`` and ``timeout=-1`` both raise ``ValueError``
+    rather than ``NotImplementedError``.
+    """
+    if not is_supported_operation_timeout(timeout):
+        raise ValueError("timeout must be None or a finite number of seconds >= 1 and < 2**64.")
+
+
 def apply_no_response_on_write_default(
     options: Dict[str, Any], no_response_on_write_default: bool
 ) -> None:

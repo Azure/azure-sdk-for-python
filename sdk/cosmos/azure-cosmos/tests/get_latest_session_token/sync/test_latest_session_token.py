@@ -18,7 +18,8 @@ from azure.cosmos import CosmosClient, PartitionKey
 from get_latest_session_token._fixtures import create_items_logical_pk, create_items_physical_pk
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosSplit
+@pytest.mark.cosmosAADSplit
 class TestLatestSessionToken(unittest.TestCase):
     def setUp(self):
         state = random.getstate()

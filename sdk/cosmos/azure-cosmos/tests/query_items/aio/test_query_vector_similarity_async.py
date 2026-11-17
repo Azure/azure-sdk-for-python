@@ -5,9 +5,10 @@
 Core Python provisions the original three 128-dimensional configurations
 for ordering; pagination and the hooks use only quantized-flat/cosine.
 Rejection and buffer tests use the original empty two-dimensional container.
-The larger-data test seeds that configuration through an async Core Python client.
+The larger-data test seeds that configuration through the async data client.
 Original throughput and data are retained in owned key-auth resources.
-Only queries select Rust. Unused containers and shared/AAD setup are not included.
+Only queries select Rust, through the data client (AAD in the cosmosAAD* lanes)
+as in the original. Unused containers and the shared database are not included.
 """
 
 import os
@@ -19,6 +20,7 @@ import pytest
 
 import azure.cosmos.exceptions as exceptions
 from config import settings
+from config.clients import create_data_client_async
 from common import _test_helpers as test_config
 import vector_test_data
 from azure.cosmos import CosmosClient as CosmosSyncClient, PartitionKey, http_constants
@@ -83,27 +85,12 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
                     container.create_item(item)
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(
-            os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust"
-        )
+        self.client = create_data_client_async(_backend="rust")
         self.addAsyncCleanup(self.client.close)
         await self.client.__aenter__()
         database = self.client.get_database_client(self.database_id)
         for attribute, index_type, _, _ in self.profiles:
             setattr(self, attribute, database.get_container_client(index_type))
-        if self._testMethodName == "test_vector_query_large_data_async_rust":
-            self.seed_client = CosmosClient(
-                os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="core-python"
-            )
-            self.addAsyncCleanup(self.seed_client.close)
-            await self.seed_client.__aenter__()
-            seed_container = self.seed_client.get_database_client(
-                self.database_id
-            ).get_container_client("quantizedFlat")
-            # Preserve the original awaited writes without migrating writes with queries.
-            seed_patch = patch.object(self.created_large_container, "create_item", seed_container.create_item)
-            seed_patch.start()
-            self.addCleanup(seed_patch.stop)
 
     def _delete_owned_database(self):
         self.sync_client.delete_database(self.database_id)
@@ -166,6 +153,10 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
         os.environ["AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"] = "50000"
         [item async for item in self.created_large_container.query_items(query=query)]
 
+    @pytest.mark.skip(
+        reason="driver-gap: Gap 30 item 3 - Rust rejects cross-partition DISTINCT combined with vector "
+        "ORDER BY (400/20113 ClientUnsupportedQueryFeature). Re-enable when the driver supports it."
+    )
     async def test_vector_query_large_data_async_rust(self):
         # Source: tests/test_query_vector_similarity_async.py::TestVectorSimilarityQueryAsync.test_vector_query_large_data_async
         # test different limit queries on a larger data set

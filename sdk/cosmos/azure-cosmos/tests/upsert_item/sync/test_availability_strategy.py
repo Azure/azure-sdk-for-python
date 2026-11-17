@@ -78,7 +78,7 @@ class FaultInjectionTransport(object):
     """Rust stand-in for the legacy FaultInjectionTransport.
 
     Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport
-    options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). The predicate and error lambdas
+    options are excluded. The predicate and error lambdas
     are evaluated once against a probe to record the operation type, target region, delay and error, which
     become Rust ``_fault_injection_rules`` fixed when the client is built.
     """
@@ -220,7 +220,7 @@ def _perform_read_operation(
     """Execute different types of read operations"""
     if availability_strategy is not None:
         kwargs['availability_strategy'] = availability_strategy
-    # Known gap 14: Closed: progressive read hedging and write hedging are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-14). A per-call threshold_steps_ms raises TypeError before the read is sent.
+    # Known gap 14: Closed: progressive read hedging and write hedging are excluded. A per-call threshold_steps_ms raises TypeError before the read is sent.
     if _has_threshold_steps(availability_strategy):
         pytest.skip(_GAP_14_STEPS_SKIP)
     if operation == READ:
@@ -283,10 +283,10 @@ def _perform_write_operation(
     excluded_locations = [] if excluded_locations is None else excluded_locations
     if availability_strategy is not None:
         kwargs['availability_strategy'] = availability_strategy
-    # Known gap 14: Closed: progressive read hedging and write hedging are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-14). threshold_steps_ms is rejected and Rust never hedges writes to a second region.
+    # Known gap 14: Closed: progressive read hedging and write hedging are excluded. threshold_steps_ms is rejected and Rust never hedges writes to a second region.
     if _has_threshold_steps(availability_strategy):
         pytest.skip(_GAP_14_STEPS_SKIP)
-    # Known gap 13: Closed: Rust owns automatic write retries (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13). Every write below passes retry_write, which the Rust item backend rejects before any request is sent.
+    # Known gap 13: Closed: Rust owns automatic write retries. Every write below passes retry_write, which the Rust item backend rejects before any request is sent.
     pytest.skip(_GAP_13_RETRY_WRITE_SKIP)
 
     if operation == CREATE:
@@ -352,7 +352,7 @@ def _perform_write_operation(
 
 def _validate_response_uris(expected_location_uris, excluded_location_uris, operation_type=None, resource_type=None):
     """Validate that response came from expected region and not from excluded regions"""
-    # Known gap 33: `CosmosClient(...)`: settings from first principles, bites 1-15 (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-33). Logging is resolved only under the summary-logging contract; Rust requests emit no `Request URL:` records, so contacted regions cannot be read from the log.
+    # Known gap 33: `CosmosClient(...)`: settings from first principles, bites 1-15. Logging is resolved only under the summary-logging contract; Rust requests emit no `Request URL:` records, so contacted regions cannot be read from the log.
     if not any('Request URL:' in msg for msg in TestAvailabilityStrategy.MOCK_HANDLER.messages):
         pytest.skip(_GAP_33_LOG_SKIP)
     # Get Request URLs from mock handler messages
@@ -479,10 +479,10 @@ class TestAvailabilityStrategy:
             container_id = self.TEST_CONTAINER_MULTI_PARTITION_ID
 
         # Closed decision: Rust owns endpoint discovery and multi-write routing
-        # (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#client-init-routing). multiple_write_locations is
+        #. multiple_write_locations is
         # rejected on Rust clients, so it is omitted; the driver uses the account's multi-write capability.
         kwargs.pop("multiple_write_locations", None)
-        # Known gap 14: Closed: progressive read hedging and write hedging are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-14). A client threshold_steps_ms raises TypeError at construction.
+        # Known gap 14: Closed: progressive read hedging and write hedging are excluded. A client threshold_steps_ms raises TypeError at construction.
         if _has_threshold_steps(kwargs.get("availability_strategy")):
             pytest.skip(_GAP_14_STEPS_SKIP)
 
@@ -492,7 +492,7 @@ class TestAvailabilityStrategy:
             **kwargs,
         }
         if custom_transport is not None:
-            # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). Account-response transformations (PPAF) have no Rust fault-rule equivalent.
+            # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. Account-response transformations (PPAF) have no Rust fault-rule equivalent.
             if custom_transport.response_transformations:
                 pytest.skip(_GAP_10_PPAF_SKIP)
             client_kwargs["_fault_injection_rules"] = custom_transport.rules(self.REGION_BY_URI)
@@ -534,7 +534,7 @@ class TestAvailabilityStrategy:
             request_availability_strategy):
         """Test for steady state, operations go to first preferred location even with availability strategy enabled"""
         # Source: tests/test_availability_strategy.py::TestAvailabilityStrategy.test_availability_strategy_in_steady_state
-        # Known gap 14: Closed: progressive read hedging and write hedging are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-14). Every parameter set supplies threshold_steps_ms, which Rust rejects at the client or the request.
+        # Known gap 14: Closed: progressive read hedging and write hedging are excluded. Every parameter set supplies threshold_steps_ms, which Rust rejects at the client or the request.
         setup = self._setup_method_with_custom_transport(
             None,
             availability_strategy=client_availability_strategy)
@@ -590,7 +590,7 @@ class TestAvailabilityStrategy:
         )
         custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
 
-        # Known gap 14: Closed: progressive read hedging and write hedging are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-14). threshold_steps_ms is rejected, and writes never hedge to failed_over_uri on Rust.
+        # Known gap 14: Closed: progressive read hedging and write hedging are excluded. threshold_steps_ms is rejected, and writes never hedge to failed_over_uri on Rust.
         setup = self._setup_method_with_custom_transport(
             custom_transport,
             multiple_write_locations=True,
@@ -651,7 +651,7 @@ class TestAvailabilityStrategy:
         )
         custom_transport.add_fault(predicate_first_region, error_lambda_first_region)
 
-        # Known gap 14: Closed: progressive read hedging and write hedging are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-14). This strategy's threshold_steps_ms is rejected per request, and writes never hedge on Rust.
+        # Known gap 14: Closed: progressive read hedging and write hedging are excluded. This strategy's threshold_steps_ms is rejected per request, and writes never hedge on Rust.
         strategy = {'threshold_ms':100, 'threshold_steps_ms':50}
         setup = self._setup_method_with_custom_transport(
             custom_transport,
@@ -703,7 +703,7 @@ class TestAvailabilityStrategy:
         )
         custom_transport.add_fault(predicate_first_region, error_lambda_first_region)
 
-        # Known gap 14: Closed: progressive read hedging and write hedging are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-14). This strategy's threshold_steps_ms is rejected per request, and writes never hedge on Rust.
+        # Known gap 14: Closed: progressive read hedging and write hedging are excluded. This strategy's threshold_steps_ms is rejected per request, and writes never hedge on Rust.
         strategy = {'threshold_ms':100, 'threshold_steps_ms':50}
         setup = self._setup_method_with_custom_transport(
             custom_transport,
@@ -731,7 +731,7 @@ class TestAvailabilityStrategy:
         """Test that request-level disabled policy overrides client-level enabled policy"""
         # Source: tests/test_availability_strategy.py::TestAvailabilityStrategy.test_request_level_disable_override_client_strategy
         # Setup client with enabled hedging policy
-        # Known gap 14: Closed: progressive read hedging and write hedging are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-14). This client strategy's threshold_steps_ms is rejected at construction.
+        # Known gap 14: Closed: progressive read hedging and write hedging are excluded. This client strategy's threshold_steps_ms is rejected at construction.
         client_strategy = {'threshold_ms':100, 'threshold_steps_ms':50}
 
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_1)
@@ -791,7 +791,7 @@ class TestAvailabilityStrategy:
         setup_without_fault['col'].create_item(body=doc)
 
         # Create request-level policy to enable hedging
-        # Known gap 14: Closed: progressive read hedging and write hedging are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-14). This strategy's threshold_steps_ms is rejected per request, and writes never hedge on Rust.
+        # Known gap 14: Closed: progressive read hedging and write hedging are excluded. This strategy's threshold_steps_ms is rejected per request, and writes never hedge on Rust.
         request_strategy = {'threshold_ms':100, 'threshold_steps_ms':50}
 
         expected_uris = [uri_down, failed_over_uri]
@@ -833,7 +833,7 @@ class TestAvailabilityStrategy:
         excluded_uris = [failed_over_uri]
 
         # Test should fail with error from the first region
-        # Known gap 14: Closed: progressive read hedging and write hedging are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-14). This strategy's threshold_steps_ms is rejected per request.
+        # Known gap 14: Closed: progressive read hedging and write hedging are excluded. This strategy's threshold_steps_ms is rejected per request.
         strategy = {'threshold_ms':100, 'threshold_steps_ms':50}
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
@@ -887,7 +887,7 @@ class TestAvailabilityStrategy:
         expected_uris = [uri_down]
         excluded_uris = [failed_over_uri]
 
-        # Known gap 14: Closed: progressive read hedging and write hedging are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-14). This strategy's threshold_steps_ms is rejected per request; Rust never hedges writes.
+        # Known gap 14: Closed: progressive read hedging and write hedging are excluded. This strategy's threshold_steps_ms is rejected per request; Rust never hedges writes.
         strategy = {'threshold_ms':100, 'threshold_steps_ms':50}
 
         # Test should fail with error from the first region
@@ -927,7 +927,7 @@ class TestAvailabilityStrategy:
 
             custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
 
-            # Known gap 14: Closed: progressive read hedging and write hedging are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-14). This strategy's threshold_steps_ms is rejected per request; Rust never hedges writes, so no first future is cancelled.
+            # Known gap 14: Closed: progressive read hedging and write hedging are excluded. This strategy's threshold_steps_ms is rejected per request; Rust never hedges writes, so no first future is cancelled.
             strategy = {'threshold_ms':100, 'threshold_steps_ms':50}
 
             setup_with_fault_injection = self._setup_method_with_custom_transport(
@@ -1010,7 +1010,7 @@ class TestAvailabilityStrategy:
         )
         custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
         # enable ppaf
-        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-10). Rust fault rules cannot rewrite the account response to enable PPAF, so client setup skips.
+        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. Rust fault rules cannot rewrite the account response to enable PPAF, so client setup skips.
         is_get_account_predicate = lambda r: FaultInjectionTransport.predicate_is_database_account_call(r)
         # Set the database account response to have PPAF enabled
         ppaf_enabled_database_account = \
@@ -1025,7 +1025,7 @@ class TestAvailabilityStrategy:
         doc = _create_doc()
         setup_without_fault['col'].create_item(body=doc)
 
-        # Known gap 14: Closed: progressive read hedging and write hedging are excluded (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-14). Rust never hedges writes, so writes would not reach failed_over_uri.
+        # Known gap 14: Closed: progressive read hedging and write hedging are excluded. Rust never hedges writes, so writes would not reach failed_over_uri.
         expected_uris = [uri_down, failed_over_uri]
         # Test operation with fault injection
 
