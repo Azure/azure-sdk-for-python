@@ -194,21 +194,33 @@ inside each container. The pipeline forwards `PIP_INDEX_URL`,
 `MSRUSTUP_ACCESS_TOKEN`, `MSRUSTUP_FEED_URL`, and the
 `CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_*` index, token, and credential-provider
 variables. Credentials stay in the build environment, not checked-in files.
-On Windows, `sdk_build` provisions only the package's selected CPython targets
-from the approved Azure SDK NuGet feed. Exact interpreter versions and package
-names come from the installed `cibuildwheel`, including native interpreters needed
-to cross-compile ARM64 wheels.
-For Microsoft Rust toolchain builds, `PYTHON_ARM64_LIB_DIR` and a temporary
-`PYO3_CONFIG_FILE` are set only for ARM64 targets, using that target's Python
-import libraries. A temporary cibuildwheel configuration preserves the resolved
-package environment and hooks without changing the checked-in package configuration
-or setting a single library path for the entire job.
 
 This opt-in does not provision Rust for source-installing test, documentation,
 or analysis jobs. Prepare those jobs separately before enabling a Rust package,
 and keep real source-distribution testing. Packages with a static
 `[project].version` also need version synchronization with `_version.py` for
 nightly builds. No package is activated by adding this shared support.
+
+## Windows ARM64 Rust wheels
+
+Our Windows CI builds ARM64 wheels on AMD64 agents. The `sdk_build` helper
+supplies matching ARM64 Python import libraries and a temporary PyO3 configuration
+so Maturin does not mistake the AMD64 build interpreter for the ARM64 target.
+
+Version-specific packages need no extra setting. If your package enables PyO3's
+stable ABI, add the matching minimum to `pyproject.toml`. For Cargo's `abi3-py310`:
+
+```toml
+[tool.azure-sdk-build]
+pyo3-abi3-minimum = "3.10"
+```
+
+The helper does not read Cargo features: keep these settings aligned and retain
+your strict ABI audit. The minimum cannot exceed the target Python version or be
+combined with a free-threaded ARM64 target.
+
+A package-owned `PYO3_CONFIG_FILE` is preserved and controls its own ABI settings.
+ARM64 runtime/import tests require an ARM64 runner.
 
 # I already have a package that supports Python 2, can I get short version on how to udpate to Python 3 only?
 

@@ -8,6 +8,7 @@ namespace azure.mgmt.keyvault
         mhsm_private_endpoint_connections: MHSMPrivateEndpointConnectionsOperations
         mhsm_private_link_resources: MHSMPrivateLinkResourcesOperations
         mhsm_regions: MHSMRegionsOperations
+        network_security_perimeter_configurations: NetworkSecurityPerimeterConfigurationsOperations
         operations: Operations
         private_endpoint_connections: PrivateEndpointConnectionsOperations
         private_link_resources: PrivateLinkResourcesOperations
@@ -46,6 +47,7 @@ namespace azure.mgmt.keyvault.aio
         mhsm_private_endpoint_connections: MHSMPrivateEndpointConnectionsOperations
         mhsm_private_link_resources: MHSMPrivateLinkResourcesOperations
         mhsm_regions: MHSMRegionsOperations
+        network_security_perimeter_configurations: NetworkSecurityPerimeterConfigurationsOperations
         operations: Operations
         private_endpoint_connections: PrivateEndpointConnectionsOperations
         private_link_resources: PrivateLinkResourcesOperations
@@ -498,6 +500,44 @@ namespace azure.mgmt.keyvault.aio.operations
         def list_deleted(self, **kwargs: Any) -> AsyncItemPaged[DeletedManagedHsm]: ...
 
 
+    class azure.mgmt.keyvault.aio.operations.NetworkSecurityPerimeterConfigurationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01-preview', params_added_on={'2026-10-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'network_security_perimeter_configuration_name', 'accept']}, api_versions_list=['2026-10-01-preview'])
+        async def get_configuration(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                network_security_perimeter_configuration_name: str, 
+                **kwargs: Any
+            ) -> NetworkSecurityPerimeterConfiguration: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01-preview', params_added_on={'2026-10-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'accept']}, api_versions_list=['2026-10-01-preview'])
+        def list_configurations(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[NetworkSecurityPerimeterConfiguration]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01-preview', params_added_on={'2026-10-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'network_security_perimeter_configuration_name']}, api_versions_list=['2026-10-01-preview'])
+        async def reconcile_configuration(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                network_security_perimeter_configuration_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+
     class azure.mgmt.keyvault.aio.operations.Operations:
 
         def __init__(
@@ -924,6 +964,67 @@ namespace azure.mgmt.keyvault.models
         REPLACE = "replace"
 
 
+    class azure.mgmt.keyvault.models.AccessRule(_Model):
+        name: Optional[str]
+        properties: Optional[AccessRuleProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Optional[str] = ..., 
+                properties: Optional[AccessRuleProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.keyvault.models.AccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INBOUND = "Inbound"
+        OUTBOUND = "Outbound"
+
+
+    class azure.mgmt.keyvault.models.AccessRuleProperties(_Model):
+        address_prefixes: Optional[list[str]]
+        direction: Optional[Union[str, AccessRuleDirection]]
+        email_addresses: Optional[list[str]]
+        fully_qualified_domain_names: Optional[list[str]]
+        network_security_perimeters: Optional[list[NetworkSecurityPerimeter]]
+        phone_numbers: Optional[list[str]]
+        subscriptions: Optional[list[AccessRulePropertiesSubscription]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                address_prefixes: Optional[list[str]] = ..., 
+                direction: Optional[Union[str, AccessRuleDirection]] = ..., 
+                email_addresses: Optional[list[str]] = ..., 
+                fully_qualified_domain_names: Optional[list[str]] = ..., 
+                network_security_perimeters: Optional[list[NetworkSecurityPerimeter]] = ..., 
+                phone_numbers: Optional[list[str]] = ..., 
+                subscriptions: Optional[list[AccessRulePropertiesSubscription]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.keyvault.models.AccessRulePropertiesSubscription(_Model):
+        id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.keyvault.models.Action(_Model):
         type: Optional[Union[str, KeyRotationPolicyActionType]]
 
@@ -1163,6 +1264,13 @@ namespace azure.mgmt.keyvault.models
         KEY = "Key"
         MANAGED_IDENTITY = "ManagedIdentity"
         USER = "User"
+
+
+    class azure.mgmt.keyvault.models.IssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CONFIGURATION_PROPAGATION_FAILURE = "ConfigurationPropagationFailure"
+        MISSING_IDENTITY_CONFIGURATION = "MissingIdentityConfiguration"
+        MISSING_PERIMETER_CONFIGURATION = "MissingPerimeterConfiguration"
+        UNKNOWN = "Unknown"
 
 
     class azure.mgmt.keyvault.models.JsonWebKeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2010,6 +2118,94 @@ namespace azure.mgmt.keyvault.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.keyvault.models.NetworkSecurityPerimeter(_Model):
+        id: Optional[str]
+        location: Optional[str]
+        perimeter_guid: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: Optional[str] = ..., 
+                location: Optional[str] = ..., 
+                perimeter_guid: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.keyvault.models.NetworkSecurityPerimeterConfiguration(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[NetworkSecurityPerimeterConfigurationProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[NetworkSecurityPerimeterConfigurationProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.keyvault.models.NetworkSecurityPerimeterConfigurationProperties(_Model):
+        network_security_perimeter: Optional[NetworkSecurityPerimeter]
+        profile: Optional[NetworkSecurityProfile]
+        provisioning_issues: Optional[list[ProvisioningIssue]]
+        provisioning_state: Optional[Union[str, NetworkSecurityPerimeterConfigurationProvisioningState]]
+        resource_association: Optional[ResourceAssociation]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                network_security_perimeter: Optional[NetworkSecurityPerimeter] = ..., 
+                profile: Optional[NetworkSecurityProfile] = ..., 
+                resource_association: Optional[ResourceAssociation] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.keyvault.models.NetworkSecurityPerimeterConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCEPTED = "Accepted"
+        CANCELED = "Canceled"
+        CREATING = "Creating"
+        DELETING = "Deleting"
+        FAILED = "Failed"
+        SUCCEEDED = "Succeeded"
+        UPDATING = "Updating"
+
+
+    class azure.mgmt.keyvault.models.NetworkSecurityProfile(_Model):
+        access_rules: Optional[list[AccessRule]]
+        access_rules_version: Optional[int]
+        diagnostic_settings_version: Optional[int]
+        enabled_log_categories: Optional[list[str]]
+        name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                access_rules: Optional[list[AccessRule]] = ..., 
+                access_rules_version: Optional[int] = ..., 
+                diagnostic_settings_version: Optional[int] = ..., 
+                enabled_log_categories: Optional[list[str]] = ..., 
+                name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.keyvault.models.Operation(_Model):
         display: Optional[OperationDisplay]
         is_data_action: Optional[bool]
@@ -2263,6 +2459,19 @@ namespace azure.mgmt.keyvault.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.keyvault.models.ProvisioningIssue(_Model):
+        name: Optional[str]
+        properties: Optional[ProvisioningIssueProperties]
+
+
+    class azure.mgmt.keyvault.models.ProvisioningIssueProperties(_Model):
+        description: Optional[str]
+        issue_type: Optional[Union[str, IssueType]]
+        severity: Optional[Union[str, Severity]]
+        suggested_access_rules: Optional[list[AccessRule]]
+        suggested_resource_ids: Optional[list[str]]
+
+
     class azure.mgmt.keyvault.models.ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ACTIVATED = "Activated"
         DELETING = "Deleting"
@@ -2296,6 +2505,28 @@ namespace azure.mgmt.keyvault.models
         name: Optional[str]
         system_data: Optional[SystemData]
         type: Optional[str]
+
+
+    class azure.mgmt.keyvault.models.ResourceAssociation(_Model):
+        access_mode: Optional[Union[str, ResourceAssociationAccessMode]]
+        name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                access_mode: Optional[Union[str, ResourceAssociationAccessMode]] = ..., 
+                name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.keyvault.models.ResourceAssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUDIT = "Audit"
+        ENFORCED = "Enforced"
+        LEARNING = "Learning"
 
 
     class azure.mgmt.keyvault.models.RotationPolicy(_Model):
@@ -2452,6 +2683,11 @@ namespace azure.mgmt.keyvault.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.keyvault.models.Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ERROR = "Error"
+        WARNING = "Warning"
+
+
     class azure.mgmt.keyvault.models.Sku(_Model):
         family: Union[str, SkuFamily]
         name: Union[str, SkuName]
@@ -2519,6 +2755,34 @@ namespace azure.mgmt.keyvault.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.keyvault.models.TokenBindingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ENFORCED = "Enforced"
+        NOT_ENFORCED = "NotEnforced"
+
+
+    class azure.mgmt.keyvault.models.TokenBindingParameters(_Model):
+        minimum_token_binding_strength: Optional[Union[str, TokenBindingStrength]]
+        mode: Optional[Union[str, TokenBindingMode]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                minimum_token_binding_strength: Optional[Union[str, TokenBindingStrength]] = ..., 
+                mode: Optional[Union[str, TokenBindingMode]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.keyvault.models.TokenBindingStrength(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ATTESTED_CONFIDENTIAL = "AttestedConfidential"
+        ATTESTED_TRUSTED_LAUNCH = "AttestedTrustedLaunch"
+        NO_VALIDATION = "NoValidation"
+        UNATTESTED = "Unattested"
+
+
     class azure.mgmt.keyvault.models.TrackedResource(Resource):
         id: str
         location: str
@@ -2562,6 +2826,7 @@ namespace azure.mgmt.keyvault.models
 
     class azure.mgmt.keyvault.models.Vault(ProxyResource):
         id: str
+        identity: Optional[ManagedServiceIdentity]
         location: Optional[str]
         name: str
         properties: VaultProperties
@@ -2573,6 +2838,7 @@ namespace azure.mgmt.keyvault.models
         def __init__(
                 self, 
                 *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
                 location: Optional[str] = ..., 
                 properties: VaultProperties, 
                 tags: Optional[dict[str, str]] = ...
@@ -2630,6 +2896,7 @@ namespace azure.mgmt.keyvault.models
 
 
     class azure.mgmt.keyvault.models.VaultCreateOrUpdateParameters(_Model):
+        identity: Optional[ManagedServiceIdentity]
         location: str
         properties: VaultProperties
         tags: Optional[dict[str, str]]
@@ -2638,6 +2905,7 @@ namespace azure.mgmt.keyvault.models
         def __init__(
                 self, 
                 *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
                 location: str, 
                 properties: VaultProperties, 
                 tags: Optional[dict[str, str]] = ...
@@ -2648,6 +2916,7 @@ namespace azure.mgmt.keyvault.models
 
 
     class azure.mgmt.keyvault.models.VaultPatchParameters(_Model):
+        identity: Optional[ManagedServiceIdentity]
         properties: Optional[VaultPatchProperties]
         tags: Optional[dict[str, str]]
 
@@ -2655,6 +2924,7 @@ namespace azure.mgmt.keyvault.models
         def __init__(
                 self, 
                 *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
                 properties: Optional[VaultPatchProperties] = ..., 
                 tags: Optional[dict[str, str]] = ...
             ) -> None: ...
@@ -2666,6 +2936,7 @@ namespace azure.mgmt.keyvault.models
     class azure.mgmt.keyvault.models.VaultPatchProperties(_Model):
         access_policies: Optional[list[AccessPolicyEntry]]
         create_mode: Optional[Union[str, CreateMode]]
+        enable_cross_tenant_access_protection: Optional[bool]
         enable_purge_protection: Optional[bool]
         enable_rbac_authorization: Optional[bool]
         enable_soft_delete: Optional[bool]
@@ -2673,10 +2944,12 @@ namespace azure.mgmt.keyvault.models
         enabled_for_disk_encryption: Optional[bool]
         enabled_for_template_deployment: Optional[bool]
         network_acls: Optional[NetworkRuleSet]
+        protection_keys_wrapping_key: Optional[WrappingKeyConfiguration]
         public_network_access: Optional[str]
         sku: Optional[Sku]
         soft_delete_retention_in_days: Optional[int]
         tenant_id: Optional[str]
+        token_binding_parameters: Optional[TokenBindingParameters]
 
         @overload
         def __init__(
@@ -2684,6 +2957,7 @@ namespace azure.mgmt.keyvault.models
                 *, 
                 access_policies: Optional[list[AccessPolicyEntry]] = ..., 
                 create_mode: Optional[Union[str, CreateMode]] = ..., 
+                enable_cross_tenant_access_protection: Optional[bool] = ..., 
                 enable_purge_protection: Optional[bool] = ..., 
                 enable_rbac_authorization: Optional[bool] = ..., 
                 enable_soft_delete: Optional[bool] = ..., 
@@ -2691,10 +2965,12 @@ namespace azure.mgmt.keyvault.models
                 enabled_for_disk_encryption: Optional[bool] = ..., 
                 enabled_for_template_deployment: Optional[bool] = ..., 
                 network_acls: Optional[NetworkRuleSet] = ..., 
+                protection_keys_wrapping_key: Optional[WrappingKeyConfiguration] = ..., 
                 public_network_access: Optional[str] = ..., 
                 sku: Optional[Sku] = ..., 
                 soft_delete_retention_in_days: Optional[int] = ..., 
-                tenant_id: Optional[str] = ...
+                tenant_id: Optional[str] = ..., 
+                token_binding_parameters: Optional[TokenBindingParameters] = ...
             ) -> None: ...
 
         @overload
@@ -2704,6 +2980,7 @@ namespace azure.mgmt.keyvault.models
     class azure.mgmt.keyvault.models.VaultProperties(_Model):
         access_policies: Optional[list[AccessPolicyEntry]]
         create_mode: Optional[Union[str, CreateMode]]
+        enable_cross_tenant_access_protection: Optional[bool]
         enable_purge_protection: Optional[bool]
         enable_rbac_authorization: Optional[bool]
         enable_soft_delete: Optional[bool]
@@ -2713,11 +2990,13 @@ namespace azure.mgmt.keyvault.models
         hsm_pool_resource_id: Optional[str]
         network_acls: Optional[NetworkRuleSet]
         private_endpoint_connections: Optional[list[PrivateEndpointConnectionItem]]
+        protection_keys_wrapping_key: Optional[WrappingKeyConfiguration]
         provisioning_state: Optional[Union[str, VaultProvisioningState]]
         public_network_access: Optional[str]
         sku: Sku
         soft_delete_retention_in_days: Optional[int]
         tenant_id: str
+        token_binding_parameters: Optional[TokenBindingParameters]
         vault_uri: Optional[str]
 
         @overload
@@ -2726,6 +3005,7 @@ namespace azure.mgmt.keyvault.models
                 *, 
                 access_policies: Optional[list[AccessPolicyEntry]] = ..., 
                 create_mode: Optional[Union[str, CreateMode]] = ..., 
+                enable_cross_tenant_access_protection: Optional[bool] = ..., 
                 enable_purge_protection: Optional[bool] = ..., 
                 enable_rbac_authorization: Optional[bool] = ..., 
                 enable_soft_delete: Optional[bool] = ..., 
@@ -2733,11 +3013,13 @@ namespace azure.mgmt.keyvault.models
                 enabled_for_disk_encryption: Optional[bool] = ..., 
                 enabled_for_template_deployment: Optional[bool] = ..., 
                 network_acls: Optional[NetworkRuleSet] = ..., 
+                protection_keys_wrapping_key: Optional[WrappingKeyConfiguration] = ..., 
                 provisioning_state: Optional[Union[str, VaultProvisioningState]] = ..., 
                 public_network_access: Optional[str] = ..., 
                 sku: Sku, 
                 soft_delete_retention_in_days: Optional[int] = ..., 
                 tenant_id: str, 
+                token_binding_parameters: Optional[TokenBindingParameters] = ..., 
                 vault_uri: Optional[str] = ...
             ) -> None: ...
 
@@ -2760,6 +3042,47 @@ namespace azure.mgmt.keyvault.models
                 *, 
                 id: str, 
                 ignore_missing_vnet_service_endpoint: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.keyvault.models.WrappingKeyAuthenticationData(_Model):
+        auth_type: Literal["ServiceIdentity"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.keyvault.models.WrappingKeyConfiguration(_Model):
+        key_authentication_data: WrappingKeyAuthenticationData
+        key_value: WrappingKeyValue
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                key_authentication_data: WrappingKeyAuthenticationData, 
+                key_value: WrappingKeyValue
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.keyvault.models.WrappingKeyValue(_Model):
+        kty: Literal["oct"]
+        url: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                url: str
             ) -> None: ...
 
         @overload
@@ -3187,6 +3510,44 @@ namespace azure.mgmt.keyvault.operations
 
         @distributed_trace
         def list_deleted(self, **kwargs: Any) -> ItemPaged[DeletedManagedHsm]: ...
+
+
+    class azure.mgmt.keyvault.operations.NetworkSecurityPerimeterConfigurationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01-preview', params_added_on={'2026-10-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'network_security_perimeter_configuration_name', 'accept']}, api_versions_list=['2026-10-01-preview'])
+        def get_configuration(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                network_security_perimeter_configuration_name: str, 
+                **kwargs: Any
+            ) -> NetworkSecurityPerimeterConfiguration: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01-preview', params_added_on={'2026-10-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'accept']}, api_versions_list=['2026-10-01-preview'])
+        def list_configurations(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[NetworkSecurityPerimeterConfiguration]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01-preview', params_added_on={'2026-10-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'network_security_perimeter_configuration_name']}, api_versions_list=['2026-10-01-preview'])
+        def reconcile_configuration(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                network_security_perimeter_configuration_name: str, 
+                **kwargs: Any
+            ) -> None: ...
 
 
     class azure.mgmt.keyvault.operations.Operations:
@@ -4103,6 +4464,13 @@ namespace azure.mgmt.keyvault.types
         lastModifiedByType: Union[str, IdentityType]
 
 
+    class azure.mgmt.keyvault.types.TokenBindingParameters(TypedDict, total=False):
+        key "minimumTokenBindingStrength": Union[str, TokenBindingStrength]
+        key "mode": Union[str, TokenBindingMode]
+        minimumTokenBindingStrength: Union[str, TokenBindingStrength]
+        mode: Union[str, TokenBindingMode]
+
+
     class azure.mgmt.keyvault.types.Trigger(TypedDict, total=False):
         key "timeAfterCreate": str
         key "timeBeforeExpiry": str
@@ -4143,21 +4511,26 @@ namespace azure.mgmt.keyvault.types
 
 
     class azure.mgmt.keyvault.types.VaultCreateOrUpdateParameters(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
         key "location": Required[str]
         key "properties": Required[VaultProperties]
+        identity: ManagedServiceIdentity
         location: str
         properties: VaultProperties
         tags: dict[str, str]
 
 
     class azure.mgmt.keyvault.types.VaultPatchParameters(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
         key "properties": ForwardRef('VaultPatchProperties', module='types')
+        identity: ManagedServiceIdentity
         properties: VaultPatchProperties
         tags: dict[str, str]
 
 
     class azure.mgmt.keyvault.types.VaultPatchProperties(TypedDict, total=False):
         key "createMode": Union[str, CreateMode]
+        key "enableCrossTenantAccessProtection": bool
         key "enablePurgeProtection": bool
         key "enableRbacAuthorization": bool
         key "enableSoftDelete": bool
@@ -4165,12 +4538,15 @@ namespace azure.mgmt.keyvault.types
         key "enabledForDiskEncryption": bool
         key "enabledForTemplateDeployment": bool
         key "networkAcls": ForwardRef('NetworkRuleSet', module='types')
+        key "protectionKeysWrappingKey": ForwardRef('WrappingKeyConfiguration', module='types')
         key "publicNetworkAccess": str
         key "sku": ForwardRef('Sku', module='types')
         key "softDeleteRetentionInDays": int
         key "tenantId": str
+        key "tokenBindingParameters": ForwardRef('TokenBindingParameters', module='types')
         accessPolicies: list[AccessPolicyEntry]
         createMode: Union[str, CreateMode]
+        enableCrossTenantAccessProtection: bool
         enablePurgeProtection: bool
         enableRbacAuthorization: bool
         enableSoftDelete: bool
@@ -4178,14 +4554,17 @@ namespace azure.mgmt.keyvault.types
         enabledForDiskEncryption: bool
         enabledForTemplateDeployment: bool
         networkAcls: NetworkRuleSet
+        protectionKeysWrappingKey: WrappingKeyConfiguration
         publicNetworkAccess: str
         sku: Sku
         softDeleteRetentionInDays: int
         tenantId: str
+        tokenBindingParameters: TokenBindingParameters
 
 
     class azure.mgmt.keyvault.types.VaultProperties(TypedDict, total=False):
         key "createMode": Union[str, CreateMode]
+        key "enableCrossTenantAccessProtection": bool
         key "enablePurgeProtection": bool
         key "enableRbacAuthorization": bool
         key "enableSoftDelete": bool
@@ -4194,14 +4573,17 @@ namespace azure.mgmt.keyvault.types
         key "enabledForTemplateDeployment": bool
         key "hsmPoolResourceId": str
         key "networkAcls": ForwardRef('NetworkRuleSet', module='types')
+        key "protectionKeysWrappingKey": ForwardRef('WrappingKeyConfiguration', module='types')
         key "provisioningState": Union[str, VaultProvisioningState]
         key "publicNetworkAccess": str
         key "sku": Required[Sku]
         key "softDeleteRetentionInDays": int
         key "tenantId": Required[str]
+        key "tokenBindingParameters": ForwardRef('TokenBindingParameters', module='types')
         key "vaultUri": str
         accessPolicies: list[AccessPolicyEntry]
         createMode: Union[str, CreateMode]
+        enableCrossTenantAccessProtection: bool
         enablePurgeProtection: bool
         enableRbacAuthorization: bool
         enableSoftDelete: bool
@@ -4211,11 +4593,13 @@ namespace azure.mgmt.keyvault.types
         hsmPoolResourceId: str
         networkAcls: NetworkRuleSet
         privateEndpointConnections: list[PrivateEndpointConnectionItem]
+        protectionKeysWrappingKey: WrappingKeyConfiguration
         provisioningState: Union[str, VaultProvisioningState]
         publicNetworkAccess: str
         sku: Sku
         softDeleteRetentionInDays: int
         tenantId: str
+        tokenBindingParameters: TokenBindingParameters
         vaultUri: str
 
 
@@ -4224,6 +4608,25 @@ namespace azure.mgmt.keyvault.types
         key "ignoreMissingVnetServiceEndpoint": bool
         id: str
         ignoreMissingVnetServiceEndpoint: bool
+
+
+    class azure.mgmt.keyvault.types.WrappingKeyAuthenticationData(TypedDict, total=False):
+        key "authType": Required[Literal["ServiceIdentity"]]
+        authType: Literal[ServiceIdentity]
+
+
+    class azure.mgmt.keyvault.types.WrappingKeyConfiguration(TypedDict, total=False):
+        key "keyAuthenticationData": Required[WrappingKeyAuthenticationData]
+        key "keyValue": Required[WrappingKeyValue]
+        keyAuthenticationData: WrappingKeyAuthenticationData
+        keyValue: WrappingKeyValue
+
+
+    class azure.mgmt.keyvault.types.WrappingKeyValue(TypedDict, total=False):
+        key "kty": Required[Literal["oct"]]
+        key "url": Required[str]
+        kty: Literal[oct]
+        url: str
 
 
 ```
