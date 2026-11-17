@@ -356,6 +356,10 @@ def try_native_upload(
             f"received {type(data).__name__}."
         )
 
+    length = kwargs.get("length")
+    if length is not None:
+        upload_data = upload_data[:length]
+
     token_provider = _build_token_provider(blob_client.credential)
 
     overwrite = kwargs.get("overwrite", False)
@@ -393,7 +397,13 @@ def try_native_upload(
 
     with _translate_native_errors():
         result = native_upload(
-            url=blob_client.url,
+            url=(
+                blob_client.url
+                + ("&" if "?" in blob_client.url else "?")
+                + blob_client.credential.signature.lstrip("?")
+                if isinstance(blob_client.credential, AzureSasCredential)
+                else blob_client.url
+            ),
             data=upload_data,
             token_provider=token_provider,
             credential_id=id(blob_client.credential) if token_provider else None,
@@ -519,8 +529,9 @@ class NativeStorageStreamDownloader:
         :rtype: Iterator[bytes]
         """
         if self._buffer:
-            yield bytes(self._buffer)
+            buffered = bytes(self._buffer)
             self._buffer = bytearray()
+            yield buffered
         yield from self._iter
 
 
@@ -566,7 +577,13 @@ def try_native_download(
 
     with _translate_native_errors():
         stream = native_download(
-            url=blob_client.url,
+            url=(
+                blob_client.url
+                + ("&" if "?" in blob_client.url else "?")
+                + blob_client.credential.signature.lstrip("?")
+                if isinstance(blob_client.credential, AzureSasCredential)
+                else blob_client.url
+            ),
             token_provider=token_provider,
             credential_id=id(blob_client.credential) if token_provider else None,
             offset=offset,

@@ -239,16 +239,21 @@ fn upload_overwrite_and_explicit_access_conditions() {
                 if_tags: Some("\"key\"='value'"),
                 ..Default::default()
             },
-            Some(("x-ms-if-tags", "\"key\"='value'")),
+            Some(("if-none-match", "*")),
         ),
     ];
     for (options, expected) in cases {
+        let expected_tags = options.if_tags;
         let transport = MockHttpClient::new(created);
         Python::attach(|py| {
             options.run(py, &transport, b"body").unwrap();
         });
         let requests = transport.requests();
         assert_eq!(requests.len(), 1);
+        assert_eq!(
+            header(&requests[0], "x-ms-if-tags").as_deref(),
+            expected_tags
+        );
         if let Some((name, value)) = expected {
             assert_eq!(header(&requests[0], name).as_deref(), Some(value));
         }

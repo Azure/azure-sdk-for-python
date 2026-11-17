@@ -30,6 +30,7 @@ from azure.core.exceptions import (
     ServiceResponseError,
 )
 from azure.storage.blob import (
+    BlobClient,
     BlobImmutabilityPolicyMode,
     BlobType,
     ContentSettings,
@@ -333,6 +334,28 @@ class TestNativeDispatch(_NativeTransferTestCase):
         with self.assertRaises(LookupError):
             self.upload(data="text", encoding="not-a-real-encoding")
         self.extension.upload_blob.assert_not_called()
+
+    def test_upload_slices_encoded_payload_to_length(self):
+        for data, kwargs, expected in (
+            (b"abcdef", {"length": 3}, b"abc"),
+            (b"abcdef", {"length": 0}, b""),
+            (b"abcdef", {"length": None}, b"abcdef"),
+            (b"abcdef", {"length": 10}, b"abcdef"),
+            ("caf\u00e9", {"length": 4}, b"caf\xc3"),
+            ("caf\u00e9", {"length": 0}, b""),
+            ("caf\u00e9", {"length": 3, "encoding": "utf-16-le"}, b"c\x00a"),
+        ):
+            with self.subTest(data=data, kwargs=kwargs):
+                self.upload(data=data, **kwargs)
+                self.assertEqual(self.extension.upload_blob.call_args.kwargs["data"], expected)
+
+    def test_blob_client_upload_honors_length(self):
+        with BlobClient.from_blob_url(self.client.url) as client:
+            for length, expected in ((3, b"abc"), (0, b""), (None, b"abcdef")):
+                with self.subTest(length=length):
+                    result = client.upload_blob(b"abcdef", length=length)
+                    self.assertIs(result, self.extension.upload_blob.return_value)
+                    self.assertEqual(self.extension.upload_blob.call_args.kwargs["data"], expected)
 
     def test_upload_forwards_supported_options(self):
         modified = datetime(2024, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
@@ -722,6 +745,31 @@ class TestNativeStorageStreamDownloader(_NativeTransferTestCase):
         self.assertEqual(stream.events, [("next", b"ab")])
         self.assertEqual(next(chunks), b"cde")
         self.assertEqual(list(chunks), [])
+
+    def test_paused_chunks_does_not_duplicate_buffered_bytes(self):
+        for stream_type in (_FakeNativeStream, _FakeNativeReadallStream):
+            for method in ("read", "readall"):
+                with self.subTest(stream_type=stream_type, method=method):
+                    stream = stream_type([b"ab", b"cde", b"f"])
+                    downloader = NativeStorageStreamDownloader(stream, "blob", "container")
+                    self.assertEqual(downloader.read(1), b"a")
+                    chunks = downloader.chunks()
+                    self.assertEqual(next(chunks), b"b")
+                    if method == "read":
+                        self.assertEqual(downloader.read(2), b"cd")
+                        self.assertEqual(downloader.readall(), b"ef")
+                    else:
+                        self.assertEqual(downloader.readall(), b"cdef")
+                    self.assertEqual(list(chunks), [])
+
+    def test_resuming_chunks_preserves_newly_buffered_bytes(self):
+        downloader, _ = self.make_downloader([b"ab", b"cde"])
+        self.assertEqual(downloader.read(1), b"a")
+        chunks = downloader.chunks()
+        self.assertEqual(next(chunks), b"b")
+        self.assertEqual(downloader.read(1), b"c")
+        self.assertEqual(list(chunks), [])
+        self.assertEqual(downloader.readall(), b"de")
 
     def test_readinto_writes_each_window_before_fetching_next(self):
         downloader, stream = self.make_downloader([b"ab", b"cde", b"f"])

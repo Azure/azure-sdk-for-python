@@ -642,6 +642,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         native_result = try_native_upload(
             blob_client=self,
             data=data,
+            length=length,
             blob_type=blob_type,
             encryption_options={
                 "required": self.require_encryption,

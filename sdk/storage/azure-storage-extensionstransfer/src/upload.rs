@@ -199,8 +199,7 @@ fn upload_blob_with_client<'py>(
     let has_access_conditions = if_match.is_some()
         || if_none_match.is_some()
         || if_modified_since.is_some()
-        || if_unmodified_since.is_some()
-        || if_tags.is_some();
+        || if_unmodified_since.is_some();
     if !overwrite && !has_access_conditions {
         options = options.if_not_exists();
     }

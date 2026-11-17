@@ -5,9 +5,10 @@
 # --------------------------------------------------------------------------
 # pylint: disable=attribute-defined-outside-init
 
-"""Live OAuth integration tests requiring the native transfer extension."""
+"""Live integration tests requiring the native transfer extension."""
 
 import os
+from datetime import datetime, timedelta, timezone
 from io import BytesIO
 
 import pytest
@@ -15,8 +16,9 @@ import pytest
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
+from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import ResourceExistsError
-from azure.storage.blob import BlobServiceClient, ContentSettings
+from azure.storage.blob import BlobClient, BlobSasPermissions, BlobServiceClient, ContentSettings, generate_blob_sas
 from azure.storage.blob._transfer_native import _is_native_available, NativeStorageStreamDownloader
 
 
@@ -49,6 +51,37 @@ class TestStorageNativeTransfer(StorageRecordedTestCase):
         container = self.bsc.create_container(self.container_name)
         request.addfinalizer(container.delete_container)
         return container.get_blob_client(self.get_resource_name("blob"))
+
+    @pytest.mark.parametrize("credential_type", [str, AzureSasCredential], ids=["raw-sas", "sas-credential"])
+    @BlobPreparer()
+    def test_upload_download_blob_with_sas(self, credential_type, request, caplog, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        # Arrange
+        blob = self._setup(storage_account_name, request)
+        start = datetime.now(timezone.utc) - timedelta(minutes=5)
+        expiry = datetime.now(timezone.utc) + timedelta(hours=1)
+        delegation_key = self.bsc.get_user_delegation_key(start, expiry)
+        sas = self.generate_sas(
+            generate_blob_sas,
+            account_name=blob.account_name,
+            container_name=blob.container_name,
+            blob_name=blob.blob_name,
+            user_delegation_key=delegation_key,
+            permission=BlobSasPermissions(read=True, create=True, write=True),
+            expiry=expiry,
+        )
+        data = os.urandom(SMALL_BLOB_SIZE)
+
+        # Act
+        with BlobClient.from_blob_url(blob.url, credential=credential_type(sas)) as sas_blob:
+            sas_blob.upload_blob(data)
+            downloader = sas_blob.download_blob()
+
+            # Assert
+            assert "Used native Rust extension for blob upload." in caplog.text
+            assert isinstance(downloader, NativeStorageStreamDownloader)
+            assert downloader.readall() == data
 
     @pytest.mark.parametrize("size", BLOB_SIZES)
     @BlobPreparer()
