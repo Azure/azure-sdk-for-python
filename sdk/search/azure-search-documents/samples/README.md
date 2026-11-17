@@ -82,6 +82,25 @@ python -m pip install -e .
 
 Behavior of preview APIs may change before GA.
 
+Direct agentic Search and Microsoft Retriever 1:
+
+* Search hotel documents using `query_type="agentic"` and `AgenticSearchOptions`, then inspect
+  issued subqueries, termination, planning tokens, and `reasoning_tokens`:
+  [sample_agentic_search_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_agentic_search_preview.py)
+  ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_agentic_search_preview_async.py)).
+  This uses `SearchClient.search`, not knowledge-base retrieval.
+* Explicitly configure `KnowledgeBaseMicrosoftRetriever1Model`, verify the saved selection,
+  and retrieve hotel facts with minimal reasoning and extractive output:
+  [sample_microsoft_retriever_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_microsoft_retriever_preview.py)
+  ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_microsoft_retriever_preview_async.py)).
+
+Both require the corresponding November-preview capability, semantic search, and **paid standard
+Knowledge Retrieval already enabled**. Microsoft Retriever 1 has no free tier. These samples
+do not enable billing or configure a customer model deployment. Set `AZURE_SEARCH_SERVICE_ENDPOINT`
+and optionally `AZURE_SEARCH_API_KEY`; otherwise the caller uses `DefaultAzureCredential`.
+Only resources successfully created by the run are cleaned up. Returned usage is not a billing
+reconciliation, and extractive output does not demonstrate external-model answer synthesis.
+
 Random scoring:
 
 * Create seeded and unseeded random scoring profiles over twenty synthetic hotel documents:
@@ -164,7 +183,8 @@ Enterprise Knowledge Graph (EKG):
   retrieve through a KB with generated GQL and graph references:
   [sample_graph_extraction_cache_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_graph_extraction_cache_preview.py)
   ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_graph_extraction_cache_preview_async.py)).
-  This example uses inline ontology attachment during the initial ingestion.
+  Optionally hydrate graph evidence with supporting source text. The source GET also verifies that the
+  write-only cache connection string is omitted.
 
 Install `azure-identity` and, for async execution, `aiohttp`. Both pairs require
 `AZURE_SEARCH_SERVICE_ENDPOINT` and a November-preview service supporting the demonstrated APIs.
@@ -199,9 +219,8 @@ native Azure OpenAI deployments. Search needs Cognitive Services OpenAI User on 
 or set `AZURE_OPENAI_API_KEY`. Extraction, embeddings, retrieval, and retained resources incur costs.
 Samples do not deploy models or change permissions, feature flags, or storage settings.
 
-Set `AZURE_SEARCH_GRAPH_HYDRATE=true` for the direct graph-index sample only when hydration
-is already supported and authorized. The extraction/cache sample demonstrates inline ontology
-ingestion and graph-row KB retrieval, not hydration, deferred attachment, or ontology replacement.
+Set `AZURE_SEARCH_GRAPH_HYDRATE=true` only when hydration is already supported and authorized.
+Otherwise the samples demonstrate evidence IDs and graph-row KB retrieval, **not hydration**.
 Actual cache reuse requires execution/service telemetry; unchanged chunks or faster execution
 alone are not proof of a cache hit. Once attached, an ontology cannot be detached.
 
@@ -260,7 +279,14 @@ Knowledge base and retrieval:
 Knowledge source kinds:
 
 * Knowledge source CRUD with query hints, private Blob ingestion, analyzer verification, and cursor pagination: [sample_knowledge_source_crud.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_crud.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_crud_async.py))
-* File knowledge source lifecycle with relative-path metadata, multipart update, prefix paging, deletion, and service-selected modes: [sample_knowledge_source_file_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_file_preview.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_file_preview_async.py))
+* File knowledge source ingestion LROs with multipart upload, replacement, completion/error checks,
+  preserved file identity, relative-path metadata, prefix paging, updated-content retrieval, and deletion:
+  [sample_knowledge_source_file_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_file_preview.py)
+  ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_file_preview_async.py)).
+  The samples call `begin_ingest_knowledge_source_file_multipart` and
+  `begin_ingest_knowledge_source_file_replacement`, waiting for both pollers.
+  Configure the native Azure OpenAI embedding variables listed in the scripts; Search's identity
+  needs access to that deployment. No Blob source is required.
 * MCP server knowledge source: [sample_knowledge_source_mcp_server_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_mcp_server_preview.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_mcp_server_preview_async.py))
 * Work IQ knowledge source with customer-owned Entra app authentication, optional tenant behavior, and separate authorization channels: [sample_knowledge_source_workiq_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_workiq_preview.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_workiq_preview_async.py))
 * Fabric ontology knowledge source: [sample_knowledge_source_fabric_ontology_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_fabric_ontology_preview.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_fabric_ontology_preview_async.py))

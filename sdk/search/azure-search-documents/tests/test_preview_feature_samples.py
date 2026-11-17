@@ -6,6 +6,8 @@
 
 import asyncio
 import importlib.util
+import json
+import os
 from pathlib import Path
 from types import SimpleNamespace
 from unittest import mock
@@ -29,6 +31,72 @@ def _feature_samples(monkeypatch):
 
 @pytest.mark.usefixtures("feature_samples")
 class TestPreviewFeatureSamples:
+    @pytest.mark.parametrize("scenario", ["file_lro", "topic_graph"])
+    def test_sample_playback_preserves_sanitized_models_and_recorded_vector_dimensions(self, monkeypatch, scenario):
+        import _preview_sample_helpers as helpers
+        from search_service_preparer import (
+            FAKE_AZURE_OPENAI_EMBEDDING_DEPLOYMENT,
+            FAKE_AZURE_OPENAI_EMBEDDING_MODEL,
+        )
+
+        variables = {
+            "run_tag": "recorded-sample",
+            "AZURE_OPENAI_EMBEDDING_DEPLOYMENT": "live-only-deployment",
+            "AZURE_OPENAI_EMBEDDING_MODEL": "text-embedding-3-large",
+            "topic_embeddings": json.dumps([[0, [0.1, 0.2, 0.3]]]),
+        }
+        monkeypatch.setenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT", "unrelated-local-deployment")
+        monkeypatch.setenv("AZURE_OPENAI_EMBEDDING_MODEL", "text-embedding-ada-002")
+        monkeypatch.delenv("AZURE_OPENAI_EMBEDDING_DIMENSIONS", raising=False)
+        monkeypatch.setattr(helpers, "get_recording_id", lambda: "recording-id")
+        monkeypatch.setattr(helpers, "remove_batch_sanitizers", mock.Mock())
+        monkeypatch.setattr(helpers, "add_body_key_sanitizer", mock.Mock())
+        helpers.load_preview_sample(
+            SimpleNamespace(is_live=False), monkeypatch, scenario, "https://sample.search.windows.net", variables
+        )
+
+        assert os.environ["AZURE_OPENAI_EMBEDDING_DEPLOYMENT"] == FAKE_AZURE_OPENAI_EMBEDDING_DEPLOYMENT
+        assert os.environ["AZURE_OPENAI_EMBEDDING_MODEL"] == FAKE_AZURE_OPENAI_EMBEDDING_MODEL
+        if scenario == "topic_graph":
+            assert os.environ["AZURE_OPENAI_EMBEDDING_DIMENSIONS"] == "3"
+
+    @pytest.mark.parametrize("is_async", [False, True])
+    @pytest.mark.parametrize("kind", ["agentic_search", "microsoft_retriever", "knowledge_source_file"])
+    def test_new_sample_collisions_never_delete_existing_resources(self, feature_samples, monkeypatch, is_async, kind):
+        require_capability("azure.search.documents.models.AgenticSearchDebugInfo")
+        import azure.search.documents.indexes as sync_indexes
+        import azure.search.documents.indexes.aio as async_indexes
+
+        for name, value in {
+            "AZURE_OPENAI_ENDPOINT": "https://fake-openai.openai.azure.com",
+            "AZURE_OPENAI_EMBEDDING_DEPLOYMENT": "text-embedding-3-large",
+            "AZURE_OPENAI_EMBEDDING_MODEL": "text-embedding-3-large",
+            "AZURE_SEARCH_FILE_COMPATIBLE_EMBEDDINGS": "false",
+        }.items():
+            monkeypatch.setenv(name, value)
+        name = "sample_" + kind + "_preview" + ("_async" if is_async else "")
+        spec = importlib.util.spec_from_file_location(name, feature_samples / (name + ".py"))
+        sample = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(sample)
+        operation = mock.AsyncMock if is_async else mock.Mock
+        client = mock.MagicMock()
+        client.__enter__.return_value = client
+        client.__aenter__.return_value = client
+        client.close = operation()
+        client.create_or_update_index = operation(side_effect=ResourceExistsError("existing index"))
+        client.create_or_update_knowledge_source = operation(side_effect=ResourceExistsError("existing source"))
+        monkeypatch.setattr(
+            async_indexes if is_async else sync_indexes, "SearchIndexClient", mock.Mock(return_value=client)
+        )
+        with pytest.raises(ResourceExistsError):
+            if is_async:
+                asyncio.run(sample.main())
+            else:
+                sample.main()
+        client.delete_index.assert_not_called()
+        client.delete_knowledge_source.assert_not_called()
+        client.delete_knowledge_base.assert_not_called()
+
     @pytest.mark.parametrize("is_async", [False, True])
     def test_random_scoring_collisions_never_delete_existing_resources(self, feature_samples, monkeypatch, is_async):
         require_capability("azure.search.documents.indexes.models.RandomScoringFunction")

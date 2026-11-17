@@ -7,7 +7,8 @@
 
 """
 DESCRIPTION:
-    Demonstrates File knowledge source setup and retrieval.
+    Ingest and replace File knowledge source content with long-running operations,
+    wait for completion, and retrieve the updated hotel facts.
 
 USAGE:
     python sample_knowledge_source_file_preview.py
@@ -23,10 +24,11 @@ USAGE:
     the embedding resource. Direct uploads do not require a Storage account.
 """
 
+import json
 import os
 
 from sample_utils import (
-    cleanup_resources,
+    cleanup_preview_resources,
     get_sample_run_tag,
     print_retrieval_summary,
     wait_for_knowledge_source_active,
@@ -40,9 +42,11 @@ knowledge_base_name = f"hotels-file-kb-{run_tag}"
 upload_file_name = "hotels.txt"
 
 
-def main():  # pylint: disable=too-many-locals
+def main():  # pylint: disable=too-many-locals,too-many-statements
     # [START sample_knowledge_source_file_preview]
+    from azure.core import MatchConditions
     from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents import ApiVersion
     from azure.search.documents.indexes import SearchIndexClient
     from azure.search.documents.indexes.models import (
         AzureOpenAIVectorizerParameters,
@@ -65,7 +69,16 @@ def main():  # pylint: disable=too-many-locals
         KnowledgeSourceIngestionParameters,
     )
 
-    index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
+    embedding_model = KnowledgeSourceAzureOpenAIVectorizer(
+        azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
+            resource_url=os.environ["AZURE_OPENAI_ENDPOINT"],
+            deployment_name=os.environ["AZURE_OPENAI_EMBEDDING_DEPLOYMENT"],
+            model_name=os.environ["AZURE_OPENAI_EMBEDDING_MODEL"],
+        )
+    )
+    created: list[tuple[str, str]] = []
+    api_version = ApiVersion.V2026_11_01_PREVIEW.value
+    index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key), api_version=api_version)
     try:
         knowledge_source = FileKnowledgeSource(
             name=knowledge_source_name,
@@ -73,17 +86,14 @@ def main():  # pylint: disable=too-many-locals
             file_parameters=FileKnowledgeSourceParameters(
                 ingestion_parameters=KnowledgeSourceIngestionParameters(
                     content_extraction_mode="minimal",
-                    embedding_model=KnowledgeSourceAzureOpenAIVectorizer(
-                        azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
-                            resource_url=os.environ["AZURE_OPENAI_ENDPOINT"],
-                            deployment_name=os.environ["AZURE_OPENAI_EMBEDDING_DEPLOYMENT"],
-                            model_name=os.environ["AZURE_OPENAI_EMBEDDING_MODEL"],
-                        )
-                    ),
+                    embedding_model=embedding_model,
                 )
             ),
         )
-        created_knowledge_source = index_client.create_or_update_knowledge_source(knowledge_source)
+        created_knowledge_source = index_client.create_or_update_knowledge_source(
+            knowledge_source, match_condition=MatchConditions.IfMissing
+        )
+        created.append(("knowledge_source", knowledge_source_name))
         print(f"Created: knowledge source '{created_knowledge_source.name}'")
 
         retrieved_knowledge_source = index_client.get_knowledge_source(knowledge_source_name)
@@ -104,20 +114,24 @@ def main():  # pylint: disable=too-many-locals
             output_mode="extractiveData",
             retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
         )
-        index_client.create_or_update_knowledge_base(knowledge_base)
+        index_client.create_or_update_knowledge_base(knowledge_base, match_condition=MatchConditions.IfMissing)
+        created.append(("knowledge_base", knowledge_base_name))
 
         file_content = b"Historic Harbor Hotel has free parking and a rooftop restaurant."
         file_metadata = FileUploadMetadata(
             file_name=f"hotels/{upload_file_name}",
             metadata={"category": "hotel", "city": "Seattle"},
         )
-        uploaded_file = index_client.upload_knowledge_source_file_multipart(
+        upload_poller = index_client.begin_ingest_knowledge_source_file_multipart(
             name=knowledge_source_name,
             body=UploadKnowledgeSourceFileMultipartRequest(
                 metadata=file_metadata,
                 content=(upload_file_name, file_content, "text/plain"),
             ),
         )
+        uploaded_file = upload_poller.result(timeout=300)
+        assert upload_poller.done()
+        assert uploaded_file.error_message is None
         print(f"Uploaded: file '{uploaded_file.file_name}'")
         print(f"Prefix: {uploaded_file.prefix}; size: {uploaded_file.file_size_bytes} bytes")
         print(f"Service-selected modes: {uploaded_file.parsing_mode}, {uploaded_file.extraction_mode}")
@@ -125,7 +139,7 @@ def main():  # pylint: disable=too-many-locals
         print(f"Processing error: {uploaded_file.error_message}")
         assert uploaded_file.file_id is not None
 
-        annex_file = index_client.upload_knowledge_source_file_multipart(
+        annex_poller = index_client.begin_ingest_knowledge_source_file_multipart(
             name=knowledge_source_name,
             body=UploadKnowledgeSourceFileMultipartRequest(
                 metadata=FileUploadMetadata(
@@ -135,9 +149,11 @@ def main():  # pylint: disable=too-many-locals
                 content=("annex.txt", b"Harbor Hotel Annex has meeting rooms.", "text/plain"),
             ),
         )
+        annex_file = annex_poller.result(timeout=300)
+        assert annex_file.error_message is None
         assert annex_file.file_id is not None
 
-        updated_file = index_client.update_knowledge_source_file(
+        replacement_poller = index_client.begin_ingest_knowledge_source_file_replacement(
             file_id=uploaded_file.file_id,
             name=knowledge_source_name,
             body=UpdateKnowledgeSourceFileRequest(
@@ -152,6 +168,10 @@ def main():  # pylint: disable=too-many-locals
                 ),
             ),
         )
+        updated_file = replacement_poller.result(timeout=300)
+        assert replacement_poller.done()
+        assert updated_file.file_id == uploaded_file.file_id
+        assert updated_file.error_message is None
         print(f"Updated: file '{updated_file.file_name}'")
         assert updated_file.metadata == {"category": "renovated hotel", "city": "Seattle"}
         assert updated_file.parsing_mode is not None
@@ -173,7 +193,7 @@ def main():  # pylint: disable=too-many-locals
 
         wait_for_knowledge_source_active(index_client, knowledge_source_name)
         retrieval_client = KnowledgeBaseRetrievalClient(
-            service_endpoint, AzureKeyCredential(key), knowledge_base_name=knowledge_base_name
+            service_endpoint, AzureKeyCredential(key), knowledge_base_name=knowledge_base_name, api_version=api_version
         )
         try:
             request = KnowledgeBaseRetrievalRequest(
@@ -189,6 +209,9 @@ def main():  # pylint: disable=too-many-locals
             )
             retrieval_result = retrieval_client.retrieve(request)
             print_retrieval_summary(retrieval_result)
+            assert retrieval_result.references
+            assert not any(activity.error for activity in retrieval_result.activity or [])
+            assert "free Wi-Fi" in json.dumps(retrieval_result.as_dict())
             for reference in retrieval_result.references or []:
                 if isinstance(reference, KnowledgeBaseFileReference):
                     print(f"Search-owned citation URL: {reference.citation_url}")
@@ -201,11 +224,7 @@ def main():  # pylint: disable=too-many-locals
         # [END sample_knowledge_source_file_preview]
     finally:
         try:
-            cleanup_resources(
-                index_client,
-                knowledge_base_name=knowledge_base_name,
-                knowledge_source_name=knowledge_source_name,
-            )
+            cleanup_preview_resources(index_client, created)
         finally:
             index_client.close()
 

@@ -6,6 +6,7 @@
 DESCRIPTION:
     Asynchronously extract a hotel EKG with an inline ontology and enrichment
     cache, query relationships, and retrieve through a knowledge base.
+    Optionally hydrate graph evidence with supporting source text.
 
 USAGE:
     python sample_graph_extraction_cache_preview_async.py
@@ -53,6 +54,7 @@ async def main():  # pylint: disable=too-many-locals,too-many-statements,too-man
     )
     from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
     from azure.search.documents.knowledgebases.models import (
+        AgentRuntimeGraphHydrateDocumentsParams,
         AgentRuntimeGraphParams,
         AgentRuntimeGraphProvenanceParams,
         AzureBlobKnowledgeSourceParams,
@@ -125,6 +127,9 @@ async def main():  # pylint: disable=too-many-locals,too-many-statements,too-man
             await indexes.create_or_update_knowledge_source(source, match_condition=MatchConditions.IfMissing)
             await wait_for_knowledge_source_active_async(indexes, source_name)
             stored = await indexes.get_knowledge_source(source_name)
+            cache = stored.as_dict()["azureBlobParameters"]["ingestionParameters"]["cache"]
+            if "storageConnectionString" in cache:
+                raise RuntimeError("The write-only cache connection string was returned by GET.")
             resources = stored.as_dict()["azureBlobParameters"]["createdResources"]
             if not all(
                 isinstance(resources.get(kind), str) and resources[kind].startswith(source_name + "-")
@@ -251,6 +256,71 @@ async def main():  # pylint: disable=too-many-locals,too-many-statements,too-man
                     print("Graph retrieval activities:", activities)
                     for reference in references:
                         print("Graph reference:", reference.source_data)
+
+                    if os.environ.get("AZURE_SEARCH_GRAPH_HYDRATE", "").lower() == "true":
+                        schema = await indexes.get_index(resources["index"])
+                        text_field = next(
+                            (
+                                field.name
+                                for field in schema.fields
+                                if field.name in {"snippet", "content"} and field.retrievable is not False
+                            ),
+                            None,
+                        )
+                        key_field = next(field.name for field in schema.fields if field.key)
+                        if not text_field:
+                            raise RuntimeError(
+                                "The provenance index does not expose a supported retrievable text field."
+                            )
+                        hydrated = await retrieval.retrieve(
+                            KnowledgeBaseRetrievalRequest(
+                                messages=[
+                                    KnowledgeBaseMessage(
+                                        role="user",
+                                        content=[
+                                            KnowledgeBaseMessageTextContent(
+                                                text=(
+                                                    "Using only the knowledge graph's operatedBy relationship, "
+                                                    "which organizations operate the hotels? "
+                                                    "Include supporting source text from graph provenance."
+                                                )
+                                            )
+                                        ],
+                                    )
+                                ],
+                                include_activity=True,
+                                output_mode="extractiveData",
+                                knowledge_source_params=[
+                                    AzureBlobKnowledgeSourceParams(
+                                        knowledge_source_name=source_name,
+                                        include_references=True,
+                                        include_reference_source_data=True,
+                                        graph_parameters=AgentRuntimeGraphParams(
+                                            include_query=True,
+                                            provenance=AgentRuntimeGraphProvenanceParams(
+                                                kind="hydrate",
+                                                hydrate_documents=AgentRuntimeGraphHydrateDocumentsParams(
+                                                    select=f"{key_field},{text_field}",
+                                                    top=5,
+                                                ),
+                                            ),
+                                        ),
+                                    )
+                                ],
+                            )
+                        )
+                        if not any(
+                            item.type == "graphSearch" and (item.source_data or {}).get(text_field)
+                            for item in hydrated.references or []
+                        ):
+                            raise RuntimeError("Hydrated KB retrieval did not return supporting source text.")
+                        print_retrieval_summary(hydrated)
+                        print(
+                            "Hydrated graph references:",
+                            [item.source_data for item in hydrated.references or []],
+                        )
+                    else:
+                        print("Hydration not requested; graph-row retrieval does not prove source hydration.")
 
                 print("Cache is configured; cache hits require separate execution/service telemetry.")
     # [END sample_graph_extraction_cache_preview_async]
