@@ -9,6 +9,8 @@ from urllib.parse import urlparse
 DEFAULT_SCOPE_SUFFIX = ".default"
 _AZURE_PUBLIC_CLOUD_AUDIENCE = "https://appconfig.azure.com/"
 _STAGING_DOMAIN = "appconfig-staging.azure.com"
+# Regional staging endpoints use "appconfig-stage" but share the staging audience.
+_REGIONAL_STAGING_DOMAIN = "appconfig-stage.azure.com"
 
 
 def get_audience(endpoint: str) -> str:
@@ -21,7 +23,7 @@ def get_audience(endpoint: str) -> str:
     :rtype: str
     """
     hostname = urlparse(endpoint).hostname or ""
-    if hostname.endswith(f".{_STAGING_DOMAIN}"):
+    if hostname.endswith((f".{_STAGING_DOMAIN}", f".{_REGIONAL_STAGING_DOMAIN}")):
         return f"https://{_STAGING_DOMAIN}/"
 
     labels = hostname.split(".")

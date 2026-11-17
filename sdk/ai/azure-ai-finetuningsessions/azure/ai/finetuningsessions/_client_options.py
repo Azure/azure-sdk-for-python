@@ -154,7 +154,7 @@ class _DirectContextPolicy(policies.SansIOHTTPPolicy):
             canonical + r"(?:/[^/]+(?:/(?:complete|heartbeat|forward_backward|forward|optim_step|"
             r"checkpoint|checkpoint_sample|sample|checkpoints(?:/[^/]+)?|request/[^/]+))?)?"
         )
-        self._download_path = re.compile(canonical + r"/[^/]+/checkpoints/[^/]+/download")
+        self._download_path = re.compile(canonical + r"/[^/]+/checkpoints/[^/]+/download(?:/files/[0-9a-f]{64})?")
         self._context_key = f"finetuning-direct-headers-{id(self)}"
 
     def on_request(self, request: Any) -> None:

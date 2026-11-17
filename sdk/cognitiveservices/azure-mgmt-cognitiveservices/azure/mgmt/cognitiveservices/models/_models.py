@@ -243,7 +243,7 @@ class AADAuthTypeConnectionProperties(
     :ivar use_workspace_managed_identity:
     :vartype use_workspace_managed_identity: bool
     :ivar auth_type: Authentication type of the connection target. Required. AAD.
-    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.AAD
+    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.ConnectionAuthType
     """
 
     auth_type: Literal[ConnectionAuthType.AAD] = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -378,7 +378,7 @@ class AccessKeyAuthTypeConnectionProperties(
     :ivar credentials:
     :vartype credentials: ~azure.mgmt.cognitiveservices.models.ConnectionAccessKey
     :ivar auth_type: Authentication type of the connection target. Required. ACCESS_KEY.
-    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.ACCESS_KEY
+    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.ConnectionAuthType
     """
 
     credentials: Optional["_models.ConnectionAccessKey"] = rest_field(
@@ -532,6 +532,53 @@ class Account(ProxyResource):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
+class AccountCostControl(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A budget that measures consumption and optionally alerts or blocks requests within an account.
+    Reading, deleting, and enforcing stored identity selections requires
+    Microsoft.CognitiveServices/CostControlsByIdentity registration.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.CostControlProperties
+    :ivar etag: The opaque entity tag used for optimistic concurrency.
+    :vartype etag: str
+    """
+
+    properties: Optional["_models.CostControlProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """The opaque entity tag used for optimistic concurrency."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.CostControlProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AccountKeyAuthTypeConnectionProperties(
     ConnectionPropertiesV2, discriminator="AccountKey"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -589,7 +636,7 @@ class AccountKeyAuthTypeConnectionProperties(
     :ivar credentials: Account key object for connection credential.
     :vartype credentials: ~azure.mgmt.cognitiveservices.models.ConnectionAccountKey
     :ivar auth_type: Authentication type of the connection target. Required. ACCOUNT_KEY.
-    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.ACCOUNT_KEY
+    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.ConnectionAuthType
     """
 
     credentials: Optional["_models.ConnectionAccountKey"] = rest_field(
@@ -919,14 +966,20 @@ class AccountProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
      version.
     :vartype agent_hosting_configurations:
      list[~azure.mgmt.cognitiveservices.models.AgentHostingConfiguration]
-    :ivar cost_control_ids: The full resource IDs of cost controls directly attached to this
-     account. At the moment the service only supports a single cost control. This will be expanded
-     in future API versions.
-    :vartype cost_control_ids: list[str]
-    :ivar cost_control_connections: The account-level connections used to publish cost control
-     telemetry and events. Application Insights is optional for attachment, accounting, and
-     enforcement and can be configured later. Event Grid must be configured before attaching a cost
-     control with an alert threshold.
+    :ivar trusted_certificate_sources: Private CA trust sources for supported features in an
+     AIServices account with allowProjectManagement enabled. Supports one Azure Key Vault source
+     containing version-pinned references to secrets with PEM-encoded CA certificates or certificate
+     bundles. On PUT or PATCH, a non-null array replaces the complete configuration, so include all
+     references to retain. Omit this property or send null to preserve the existing configuration;
+     send an empty array to clear it.
+    :vartype trusted_certificate_sources:
+     list[~azure.mgmt.cognitiveservices.models.TrustedCertificateSource]
+    :ivar cost_control_connections: Account-level cost-control telemetry connections. Application
+     Insights is optional. Budget notifications use their own Event Grid connection IDs;
+     account-level Event Grid configuration is not exposed or accepted by this API version. Set this
+     object to null in an account update to clear the Application Insights connection. Existing
+     legacy Event Grid configuration is preserved. This property is available independently of
+     Microsoft.CognitiveServices/CostControls subscription registration.
     :vartype cost_control_connections: ~azure.mgmt.cognitiveservices.models.CostControlConnections
     """
 
@@ -945,9 +998,7 @@ class AccountProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
      a specific feature. The values are read-only and for reference only."""
     is_migrated: Optional[bool] = rest_field(name="isMigrated", visibility=["read"])
     """If the resource is migrated from an existing key."""
-    migration_token: Optional[str] = rest_field(
-        name="migrationToken", visibility=["read", "create", "update", "delete", "query"]
-    )
+    migration_token: Optional[str] = rest_field(name="migrationToken", visibility=["create", "update"])
     """Resource migration token."""
     sku_change_info: Optional["_models.SkuChangeInfo"] = rest_field(name="skuChangeInfo", visibility=["read"])
     """Sku change info of account."""
@@ -1064,17 +1115,24 @@ class AccountProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
      the configuration cannot be changed, removed, or reordered. Account update requests should omit
      this property or send the complete existing value unchanged. Responses only include hosting
      configuration types defined by the requested API version."""
-    cost_control_ids: Optional[list[str]] = rest_field(
-        name="costControlIds", visibility=["read", "create", "update", "delete", "query"]
+    trusted_certificate_sources: Optional[list["_models.TrustedCertificateSource"]] = rest_field(
+        name="trustedCertificateSources", visibility=["read", "create", "update"]
     )
-    """The full resource IDs of cost controls directly attached to this account. At the moment the
-     service only supports a single cost control. This will be expanded in future API versions."""
+    """Private CA trust sources for supported features in an AIServices account with
+     allowProjectManagement enabled. Supports one Azure Key Vault source containing version-pinned
+     references to secrets with PEM-encoded CA certificates or certificate bundles. On PUT or PATCH,
+     a non-null array replaces the complete configuration, so include all references to retain. Omit
+     this property or send null to preserve the existing configuration; send an empty array to clear
+     it."""
     cost_control_connections: Optional["_models.CostControlConnections"] = rest_field(
         name="costControlConnections", visibility=["read", "update"]
     )
-    """The account-level connections used to publish cost control telemetry and events. Application
-     Insights is optional for attachment, accounting, and enforcement and can be configured later.
-     Event Grid must be configured before attaching a cost control with an alert threshold."""
+    """Account-level cost-control telemetry connections. Application Insights is optional. Budget
+     notifications use their own Event Grid connection IDs; account-level Event Grid configuration
+     is not exposed or accepted by this API version. Set this object to null in an account update to
+     clear the Application Insights connection. Existing legacy Event Grid configuration is
+     preserved. This property is available independently of Microsoft.CognitiveServices/CostControls
+     subscription registration."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -1104,7 +1162,7 @@ class AccountProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
         associated_projects: Optional[list[str]] = None,
         capability_settings: Optional["_models.CapabilitySettings"] = None,
         agent_hosting_configurations: Optional[list["_models.AgentHostingConfiguration"]] = None,
-        cost_control_ids: Optional[list[str]] = None,
+        trusted_certificate_sources: Optional[list["_models.TrustedCertificateSource"]] = None,
         cost_control_connections: Optional["_models.CostControlConnections"] = None,
     ) -> None: ...
 
@@ -1926,7 +1984,7 @@ class ApiKeyAuthConnectionProperties(
     :ivar credentials: Api key object for connection credential.
     :vartype credentials: ~azure.mgmt.cognitiveservices.models.ConnectionApiKey
     :ivar auth_type: Authentication type of the connection target. Required. API_KEY.
-    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.API_KEY
+    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.ConnectionAuthType
     """
 
     credentials: Optional["_models.ConnectionApiKey"] = rest_field(
@@ -2030,7 +2088,7 @@ class ApiProperties(_Model):  # pylint: disable=docstring-keyword-should-match-k
     )
     """(QnAMaker Only) The runtime endpoint of QnAMaker."""
     qna_azure_search_endpoint_key: Optional[str] = rest_field(
-        name="qnaAzureSearchEndpointKey", visibility=["read", "create", "update", "delete", "query"]
+        name="qnaAzureSearchEndpointKey", visibility=["create", "update"]
     )
     """(QnAMaker Only) The Azure Search endpoint key of QnAMaker."""
     qna_azure_search_endpoint_id: Optional[str] = rest_field(
@@ -2042,11 +2100,11 @@ class ApiProperties(_Model):  # pylint: disable=docstring-keyword-should-match-k
     )
     """(Bing Search Only) The flag to enable statistics of Bing Search."""
     event_hub_connection_string: Optional[str] = rest_field(
-        name="eventHubConnectionString", visibility=["read", "create", "update", "delete", "query"]
+        name="eventHubConnectionString", visibility=["create", "update"]
     )
     """(Personalization Only) The flag to enable statistics of Bing Search."""
     storage_account_connection_string: Optional[str] = rest_field(
-        name="storageAccountConnectionString", visibility=["read", "create", "update", "delete", "query"]
+        name="storageAccountConnectionString", visibility=["create", "update"]
     )
     """(Personalization Only) The storage account connection string."""
     aad_client_id: Optional[str] = rest_field(
@@ -2292,23 +2350,30 @@ class ArcDeploymentKubernetesResources(_Model):  # pylint: disable=docstring-key
 class ArcDeploymentModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model reference for an Arc deployment.
 
-    :ivar format: Deployment model format. Required.
+    :ivar format: Read-only. Deployment model format resolved from the model asset. Required.
     :vartype format: str
-    :ivar name: Deployment model name. Required.
+    :ivar name: Read-only. Deployment model name resolved from the model asset. Required.
     :vartype name: str
+    :ivar version: Read-only. Deployment model version resolved from the model asset. Required.
+    :vartype version: str
+    :ivar asset_id: AzureML Registry model asset URI. Required.
+    :vartype asset_id: str
     """
 
-    format: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Deployment model format. Required."""
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Deployment model name. Required."""
+    format: str = rest_field(visibility=["read"])
+    """Read-only. Deployment model format resolved from the model asset. Required."""
+    name: str = rest_field(visibility=["read"])
+    """Read-only. Deployment model name resolved from the model asset. Required."""
+    version: str = rest_field(visibility=["read"])
+    """Read-only. Deployment model version resolved from the model asset. Required."""
+    asset_id: str = rest_field(name="assetId", visibility=["read", "create", "update", "delete", "query"])
+    """AzureML Registry model asset URI. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        format: str,
-        name: str,
+        asset_id: str,
     ) -> None: ...
 
     @overload
@@ -2403,11 +2468,11 @@ class ArcDeploymentProperties(_Model):  # pylint: disable=docstring-keyword-shou
     :ivar extension_id: Full Azure resource ID of the Foundry inference extension on the target
      Arc-enabled Kubernetes cluster. Required on creation and immutable after creation. Required.
     :vartype extension_id: str
-    :ivar runtime: Inference runtime. Required on creation and immutable after creation. Required.
-     Known values are: "vllm" and "onnx-genai".
+    :ivar runtime: Read-only. Inference runtime resolved from the model asset. Required. Known
+     values are: "vllm" and "onnx-genai".
     :vartype runtime: str or ~azure.mgmt.cognitiveservices.models.ArcDeploymentRuntime
-    :ivar compute: Compute type for the deployment. Required on creation and immutable after
-     creation. Required. Known values are: "gpu" and "cpu".
+    :ivar compute: Read-only. Compute type resolved from the model asset. Required. Known values
+     are: "gpu" and "cpu".
     :vartype compute: str or ~azure.mgmt.cognitiveservices.models.ArcDeploymentComputeType
     :ivar deployment_template: Optional deployment template identifier for advanced vLLM tuning.
      Allowed only when runtime is vllm. Example:
@@ -2447,12 +2512,12 @@ class ArcDeploymentProperties(_Model):  # pylint: disable=docstring-keyword-shou
     extension_id: str = rest_field(name="extensionId", visibility=["read", "create"])
     """Full Azure resource ID of the Foundry inference extension on the target Arc-enabled Kubernetes
      cluster. Required on creation and immutable after creation. Required."""
-    runtime: Union[str, "_models.ArcDeploymentRuntime"] = rest_field(visibility=["read", "create"])
-    """Inference runtime. Required on creation and immutable after creation. Required. Known values
-     are: \"vllm\" and \"onnx-genai\"."""
-    compute: Union[str, "_models.ArcDeploymentComputeType"] = rest_field(visibility=["read", "create"])
-    """Compute type for the deployment. Required on creation and immutable after creation. Required.
-     Known values are: \"gpu\" and \"cpu\"."""
+    runtime: Union[str, "_models.ArcDeploymentRuntime"] = rest_field(visibility=["read"])
+    """Read-only. Inference runtime resolved from the model asset. Required. Known values are:
+     \"vllm\" and \"onnx-genai\"."""
+    compute: Union[str, "_models.ArcDeploymentComputeType"] = rest_field(visibility=["read"])
+    """Read-only. Compute type resolved from the model asset. Required. Known values are: \"gpu\" and
+     \"cpu\"."""
     deployment_template: Optional[str] = rest_field(name="deploymentTemplate", visibility=["read", "create"])
     """Optional deployment template identifier for advanced vLLM tuning. Allowed only when runtime is
      vllm. Example:
@@ -2502,8 +2567,6 @@ class ArcDeploymentProperties(_Model):  # pylint: disable=docstring-keyword-shou
         *,
         model: "_models.ArcDeploymentModel",
         extension_id: str,
-        runtime: Union[str, "_models.ArcDeploymentRuntime"],
-        compute: Union[str, "_models.ArcDeploymentComputeType"],
         replicas: int,
         resources: "_models.ArcDeploymentKubernetesResources",
         deployment_template: Optional[str] = None,
@@ -2812,6 +2875,1144 @@ class AssignedIdentity(_Model):  # pylint: disable=docstring-keyword-should-matc
         principal_id: str,
         tenant_id: str,
         subject: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksCluster(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An existing Azure Kubernetes Service cluster attached to a Cognitive Services account.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar properties: The resource-specific properties for this resource. Required.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.AttachedAksClusterProperties
+    """
+
+    properties: "_models.AttachedAksClusterProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: "_models.AttachedAksClusterProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterAccountIdentityStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Account identity associated with the AI Manager integration.
+
+    :ivar resource_id: ARM resource ID of the account identity.
+    :vartype resource_id: str
+    :ivar principal_id: Identity principal ID.
+    :vartype principal_id: str
+    :ivar tenant_id: Identity tenant ID.
+    :vartype tenant_id: str
+    :ivar revision: Identity revision.
+    :vartype revision: int
+    """
+
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the account identity."""
+    principal_id: Optional[str] = rest_field(
+        name="principalId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Identity principal ID."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """Identity tenant ID."""
+    revision: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Identity revision."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+        principal_id: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        revision: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterAiManagerStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Status of the AI Manager integration on the attached cluster.
+
+    :ivar provisioning_state: Provisioning state of the AI Manager integration.
+    :vartype provisioning_state: str
+    :ivar message: Details of the integration state.
+    :vartype message: str
+    :ivar attachment_incarnation: Attachment incarnation associated with this integration.
+    :vartype attachment_incarnation: str
+    :ivar resource_id: ARM resource ID of the AI Manager resource.
+    :vartype resource_id: str
+    :ivar cluster_resource_id: ARM resource ID of the AKS cluster.
+    :vartype cluster_resource_id: str
+    :ivar owner_account_id: ARM resource ID of the owning Cognitive Services account.
+    :vartype owner_account_id: str
+    :ivar delete_policy: Deletion policy for the underlying integration resource.
+    :vartype delete_policy: str
+    :ivar effective_account_identity: Account identity used by the integration.
+    :vartype effective_account_identity:
+     ~azure.mgmt.cognitiveservices.models.AttachedAksClusterAccountIdentityStatus
+    :ivar role_assignments: Role assignment status for the integration.
+    :vartype role_assignments:
+     ~azure.mgmt.cognitiveservices.models.AttachedAksClusterRoleAssignmentStatus
+    :ivar dependency_epoch: Dependency tracking epoch.
+    :vartype dependency_epoch: int
+    :ivar consumer_state: Current integration consumer state, such as Invalid, Degraded, or Ready.
+    :vartype consumer_state: str
+    :ivar reference_admission: Whether new dependency references are admitted, such as Open or
+     Closed.
+    :vartype reference_admission: str
+    :ivar dependent_deployment_count: Number of deployments that depend on the integration.
+    :vartype dependent_deployment_count: int
+    """
+
+    provisioning_state: Optional[str] = rest_field(
+        name="provisioningState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Provisioning state of the AI Manager integration."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Details of the integration state."""
+    attachment_incarnation: Optional[str] = rest_field(
+        name="attachmentIncarnation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Attachment incarnation associated with this integration."""
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the AI Manager resource."""
+    cluster_resource_id: Optional[str] = rest_field(
+        name="clusterResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the AKS cluster."""
+    owner_account_id: Optional[str] = rest_field(
+        name="ownerAccountId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the owning Cognitive Services account."""
+    delete_policy: Optional[str] = rest_field(
+        name="deletePolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Deletion policy for the underlying integration resource."""
+    effective_account_identity: Optional["_models.AttachedAksClusterAccountIdentityStatus"] = rest_field(
+        name="effectiveAccountIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Account identity used by the integration."""
+    role_assignments: Optional["_models.AttachedAksClusterRoleAssignmentStatus"] = rest_field(
+        name="roleAssignments", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Role assignment status for the integration."""
+    dependency_epoch: Optional[int] = rest_field(
+        name="dependencyEpoch", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Dependency tracking epoch."""
+    consumer_state: Optional[str] = rest_field(
+        name="consumerState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current integration consumer state, such as Invalid, Degraded, or Ready."""
+    reference_admission: Optional[str] = rest_field(
+        name="referenceAdmission", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether new dependency references are admitted, such as Open or Closed."""
+    dependent_deployment_count: Optional[int] = rest_field(
+        name="dependentDeploymentCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of deployments that depend on the integration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        provisioning_state: Optional[str] = None,
+        message: Optional[str] = None,
+        attachment_incarnation: Optional[str] = None,
+        resource_id: Optional[str] = None,
+        cluster_resource_id: Optional[str] = None,
+        owner_account_id: Optional[str] = None,
+        delete_policy: Optional[str] = None,
+        effective_account_identity: Optional["_models.AttachedAksClusterAccountIdentityStatus"] = None,
+        role_assignments: Optional["_models.AttachedAksClusterRoleAssignmentStatus"] = None,
+        dependency_epoch: Optional[int] = None,
+        consumer_state: Optional[str] = None,
+        reference_admission: Optional[str] = None,
+        dependent_deployment_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterCapabilityStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Readiness of an individual attachment capability.
+
+    :ivar name: Capability name.
+    :vartype name: str
+    :ivar ready: Whether the capability is ready.
+    :vartype ready: bool
+    :ivar message: Details of the capability's readiness.
+    :vartype message: str
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Capability name."""
+    ready: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the capability is ready."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Details of the capability's readiness."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        ready: Optional[bool] = None,
+        message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterConnectorRegistration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Registration details of the attachment connector.
+
+    :ivar registration_id: Connector registration identifier.
+    :vartype registration_id: str
+    :ivar project_id: Project identifier associated with the registration.
+    :vartype project_id: str
+    :ivar attachment_name: Name of the attachment.
+    :vartype attachment_name: str
+    :ivar project_location: Region associated with the connector registration.
+    :vartype project_location: str
+    :ivar endpoint: Connector service endpoint.
+    :vartype endpoint: str
+    :ivar token_audience: Authentication audience for the connector service.
+    :vartype token_audience: str
+    :ivar connector_identity_resource_id: ARM resource ID of the connector identity.
+    :vartype connector_identity_resource_id: str
+    :ivar connector_client_id: Connector identity client ID.
+    :vartype connector_client_id: str
+    :ivar connector_tenant_id: Connector identity tenant ID.
+    :vartype connector_tenant_id: str
+    """
+
+    registration_id: Optional[str] = rest_field(
+        name="registrationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Connector registration identifier."""
+    project_id: Optional[str] = rest_field(name="projectId", visibility=["read", "create", "update", "delete", "query"])
+    """Project identifier associated with the registration."""
+    attachment_name: Optional[str] = rest_field(
+        name="attachmentName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the attachment."""
+    project_location: Optional[str] = rest_field(
+        name="projectLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Region associated with the connector registration."""
+    endpoint: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Connector service endpoint."""
+    token_audience: Optional[str] = rest_field(
+        name="tokenAudience", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Authentication audience for the connector service."""
+    connector_identity_resource_id: Optional[str] = rest_field(
+        name="connectorIdentityResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the connector identity."""
+    connector_client_id: Optional[str] = rest_field(
+        name="connectorClientId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Connector identity client ID."""
+    connector_tenant_id: Optional[str] = rest_field(
+        name="connectorTenantId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Connector identity tenant ID."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        registration_id: Optional[str] = None,
+        project_id: Optional[str] = None,
+        attachment_name: Optional[str] = None,
+        project_location: Optional[str] = None,
+        endpoint: Optional[str] = None,
+        token_audience: Optional[str] = None,
+        connector_identity_resource_id: Optional[str] = None,
+        connector_client_id: Optional[str] = None,
+        connector_tenant_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterExtensionConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """User-configurable training extension settings.
+
+    :ivar ray_version: Ray version used by the training extension.
+    :vartype ray_version: str
+    """
+
+    ray_version: Optional[str] = rest_field(
+        name="rayVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ray version used by the training extension."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ray_version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterExtensionProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration of the training extension.
+
+    :ivar installation_mode: Extension installation mode. Defaults to Managed. Manual installation
+     requires service enablement and an exact chart version. Known values are: "Managed" and
+     "Manual".
+    :vartype installation_mode: str or
+     ~azure.mgmt.cognitiveservices.models.AttachedAksClusterExtensionInstallationMode
+    :ivar version: Extension package version, or the exact chart version for Manual installation.
+    :vartype version: str
+    :ivar release_train: Extension package release train.
+    :vartype release_train: str
+    :ivar use_existing_kube_ray_operator: Whether to use an existing KubeRay operator instead of
+     installing one.
+    :vartype use_existing_kube_ray_operator: bool
+    :ivar configuration: Supported extension configuration. Other Helm settings are
+     service-managed.
+    :vartype configuration:
+     ~azure.mgmt.cognitiveservices.models.AttachedAksClusterExtensionConfiguration
+    """
+
+    installation_mode: Optional[Union[str, "_models.AttachedAksClusterExtensionInstallationMode"]] = rest_field(
+        name="installationMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Extension installation mode. Defaults to Managed. Manual installation requires service
+     enablement and an exact chart version. Known values are: \"Managed\" and \"Manual\"."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Extension package version, or the exact chart version for Manual installation."""
+    release_train: Optional[str] = rest_field(
+        name="releaseTrain", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Extension package release train."""
+    use_existing_kube_ray_operator: Optional[bool] = rest_field(
+        name="useExistingKubeRayOperator", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to use an existing KubeRay operator instead of installing one."""
+    configuration: Optional["_models.AttachedAksClusterExtensionConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Supported extension configuration. Other Helm settings are service-managed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        installation_mode: Optional[Union[str, "_models.AttachedAksClusterExtensionInstallationMode"]] = None,
+        version: Optional[str] = None,
+        release_train: Optional[str] = None,
+        use_existing_kube_ray_operator: Optional[bool] = None,
+        configuration: Optional["_models.AttachedAksClusterExtensionConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterHealthComponent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Health of an individual attachment component.
+
+    :ivar name: Component name.
+    :vartype name: str
+    :ivar state: Evaluated component health. Known values are: "Unknown", "Healthy", "Degraded",
+     and "Unhealthy".
+    :vartype state: str or ~azure.mgmt.cognitiveservices.models.AttachedAksClusterHealthState
+    :ivar message: Details of the component's health.
+    :vartype message: str
+    :ivar last_observed_at_utc: Time at which component health was last observed.
+    :vartype last_observed_at_utc: ~datetime.datetime
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Component name."""
+    state: Optional[Union[str, "_models.AttachedAksClusterHealthState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Evaluated component health. Known values are: \"Unknown\", \"Healthy\", \"Degraded\", and
+     \"Unhealthy\"."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Details of the component's health."""
+    last_observed_at_utc: Optional[datetime.datetime] = rest_field(
+        name="lastObservedAtUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Time at which component health was last observed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        state: Optional[Union[str, "_models.AttachedAksClusterHealthState"]] = None,
+        message: Optional[str] = None,
+        last_observed_at_utc: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterHealthReason(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A reason contributing to attachment health.
+
+    :ivar code: Machine-readable health reason code.
+    :vartype code: str
+    :ivar component: Component associated with the reason.
+    :vartype component: str
+    :ivar message: Description of the health condition.
+    :vartype message: str
+    :ivar recommended_action: Recommended action for the health condition.
+    :vartype recommended_action: str
+    """
+
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Machine-readable health reason code."""
+    component: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Component associated with the reason."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the health condition."""
+    recommended_action: Optional[str] = rest_field(
+        name="recommendedAction", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Recommended action for the health condition."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        component: Optional[str] = None,
+        message: Optional[str] = None,
+        recommended_action: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterHealthStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Evaluated health of an attachment.
+
+    :ivar state: Overall attachment health. Known values are: "Unknown", "Healthy", "Degraded", and
+     "Unhealthy".
+    :vartype state: str or ~azure.mgmt.cognitiveservices.models.AttachedAksClusterHealthState
+    :ivar summary: Summary of the evaluated health.
+    :vartype summary: str
+    :ivar last_observed_at_utc: Time at which health was last observed.
+    :vartype last_observed_at_utc: ~datetime.datetime
+    :ivar new_work_admission_allowed: Whether the attachment can admit new workloads.
+    :vartype new_work_admission_allowed: bool
+    :ivar components: Health of individual attachment components.
+    :vartype components:
+     list[~azure.mgmt.cognitiveservices.models.AttachedAksClusterHealthComponent]
+    :ivar reasons: Reasons contributing to the evaluated health.
+    :vartype reasons: list[~azure.mgmt.cognitiveservices.models.AttachedAksClusterHealthReason]
+    """
+
+    state: Optional[Union[str, "_models.AttachedAksClusterHealthState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Overall attachment health. Known values are: \"Unknown\", \"Healthy\", \"Degraded\", and
+     \"Unhealthy\"."""
+    summary: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Summary of the evaluated health."""
+    last_observed_at_utc: Optional[datetime.datetime] = rest_field(
+        name="lastObservedAtUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Time at which health was last observed."""
+    new_work_admission_allowed: Optional[bool] = rest_field(
+        name="newWorkAdmissionAllowed", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the attachment can admit new workloads."""
+    components: Optional[list["_models.AttachedAksClusterHealthComponent"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Health of individual attachment components."""
+    reasons: Optional[list["_models.AttachedAksClusterHealthReason"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reasons contributing to the evaluated health."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.AttachedAksClusterHealthState"]] = None,
+        summary: Optional[str] = None,
+        last_observed_at_utc: Optional[datetime.datetime] = None,
+        new_work_admission_allowed: Optional[bool] = None,
+        components: Optional[list["_models.AttachedAksClusterHealthComponent"]] = None,
+        reasons: Optional[list["_models.AttachedAksClusterHealthReason"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterIdentityStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Identity status for training on the attached cluster.
+
+    :ivar resource_id: ARM resource ID of the identity.
+    :vartype resource_id: str
+    :ivar client_id: Identity client ID.
+    :vartype client_id: str
+    :ivar principal_id: Identity principal ID.
+    :vartype principal_id: str
+    :ivar tenant_id: Identity tenant ID.
+    :vartype tenant_id: str
+    :ivar federated_identity_credential_resource_id: ARM resource ID of the federated identity
+     credential.
+    :vartype federated_identity_credential_resource_id: str
+    :ivar kubernetes_service_account_name: Kubernetes service account associated with the identity.
+    :vartype kubernetes_service_account_name: str
+    """
+
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
+    """Identity client ID."""
+    principal_id: Optional[str] = rest_field(
+        name="principalId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Identity principal ID."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """Identity tenant ID."""
+    federated_identity_credential_resource_id: Optional[str] = rest_field(
+        name="federatedIdentityCredentialResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the federated identity credential."""
+    kubernetes_service_account_name: Optional[str] = rest_field(
+        name="kubernetesServiceAccountName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Kubernetes service account associated with the identity."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+        client_id: Optional[str] = None,
+        principal_id: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        federated_identity_credential_resource_id: Optional[str] = None,
+        kubernetes_service_account_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterIntegrationResourceStatus(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Status of an integration resource associated with the attachment.
+
+    :ivar resource_id: ARM resource ID of the integration resource.
+    :vartype resource_id: str
+    :ivar provisioning_state: Provisioning state of the integration resource.
+    :vartype provisioning_state: str
+    :ivar message: Details of the integration state.
+    :vartype message: str
+    """
+
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the integration resource."""
+    provisioning_state: Optional[str] = rest_field(
+        name="provisioningState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Provisioning state of the integration resource."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Details of the integration state."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+        provisioning_state: Optional[str] = None,
+        message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterListItem(_Model):
+    """A lightweight attachment resource returned by LIST.
+
+    :ivar id: ARM resource ID of the attachment.
+    :vartype id: str
+    :ivar name: Attachment name.
+    :vartype name: str
+    :ivar type: Resource type of the attachment.
+    :vartype type: str
+    :ivar properties: Lightweight attachment properties.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.AttachedAksClusterListProperties
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """ARM resource ID of the attachment."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """Attachment name."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """Resource type of the attachment."""
+    properties: Optional["_models.AttachedAksClusterListProperties"] = rest_field(visibility=["read"])
+    """Lightweight attachment properties."""
+
+
+class AttachedAksClusterListProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Lightweight attachment properties returned by LIST.
+
+    :ivar cluster_resource_id: ARM resource ID of the attached AKS cluster.
+    :vartype cluster_resource_id: str
+    :ivar capabilities: Capabilities enabled on the attachment.
+    :vartype capabilities: list[str or
+     ~azure.mgmt.cognitiveservices.models.AttachedAksClusterCapability]
+    :ivar stage: Current attachment provisioning stage. Known values are: "Accepted", "Validating",
+     "ProvisioningCluster", "ProvisioningIdentity", "PendingBootstrap", "ClusterReady", "Ready",
+     "Degraded", "Failed", "Deleting", and "Blocked".
+    :vartype stage: str or ~azure.mgmt.cognitiveservices.models.AttachedAksClusterProvisioningStage
+    :ivar health: Evaluated attachment health.
+    :vartype health: ~azure.mgmt.cognitiveservices.models.AttachedAksClusterHealthStatus
+    :ivar project_location: Region associated with the attachment.
+    :vartype project_location: str
+    :ivar created_time: Attachment creation time.
+    :vartype created_time: ~datetime.datetime
+    :ivar modified_time: Attachment modification time.
+    :vartype modified_time: ~datetime.datetime
+    """
+
+    cluster_resource_id: Optional[str] = rest_field(
+        name="clusterResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the attached AKS cluster."""
+    capabilities: Optional[list[Union[str, "_models.AttachedAksClusterCapability"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Capabilities enabled on the attachment."""
+    stage: Optional[Union[str, "_models.AttachedAksClusterProvisioningStage"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current attachment provisioning stage. Known values are: \"Accepted\", \"Validating\",
+     \"ProvisioningCluster\", \"ProvisioningIdentity\", \"PendingBootstrap\", \"ClusterReady\",
+     \"Ready\", \"Degraded\", \"Failed\", \"Deleting\", and \"Blocked\"."""
+    health: Optional["_models.AttachedAksClusterHealthStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Evaluated attachment health."""
+    project_location: Optional[str] = rest_field(
+        name="projectLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Region associated with the attachment."""
+    created_time: Optional[datetime.datetime] = rest_field(
+        name="createdTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Attachment creation time."""
+    modified_time: Optional[datetime.datetime] = rest_field(
+        name="modifiedTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Attachment modification time."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cluster_resource_id: Optional[str] = None,
+        capabilities: Optional[list[Union[str, "_models.AttachedAksClusterCapability"]]] = None,
+        stage: Optional[Union[str, "_models.AttachedAksClusterProvisioningStage"]] = None,
+        health: Optional["_models.AttachedAksClusterHealthStatus"] = None,
+        project_location: Optional[str] = None,
+        created_time: Optional[datetime.datetime] = None,
+        modified_time: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterProjectBinding(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A server-managed project binding on the attached cluster.
+
+    :ivar project_id: Identifier of the bound Foundry project.
+    :vartype project_id: str
+    :ivar project_name: Name of the bound Foundry project.
+    :vartype project_name: str
+    :ivar namespace: Kubernetes namespace assigned to the project.
+    :vartype namespace: str
+    :ivar service_account_name: Kubernetes service account used by the project.
+    :vartype service_account_name: str
+    :ivar workload_identity_client_id: Client ID of the project's workload identity.
+    :vartype workload_identity_client_id: str
+    :ivar allowed_capabilities: Capabilities available to the project binding.
+    :vartype allowed_capabilities: list[str or
+     ~azure.mgmt.cognitiveservices.models.AttachedAksClusterCapability]
+    :ivar stage: Current project binding stage. Known values are: "Reconciling", "Ready",
+     "Degraded", and "Blocked".
+    :vartype stage: str or
+     ~azure.mgmt.cognitiveservices.models.AttachedAksClusterProjectBindingStage
+    :ivar message: Details of the current binding state.
+    :vartype message: str
+    :ivar kube_ray_ready: Whether the binding is ready for KubeRay workloads.
+    :vartype kube_ray_ready: bool
+    :ivar foundry_native_ready: Whether the binding is ready for Foundry-native workloads.
+    :vartype foundry_native_ready: bool
+    """
+
+    project_id: Optional[str] = rest_field(name="projectId", visibility=["read", "create", "update", "delete", "query"])
+    """Identifier of the bound Foundry project."""
+    project_name: Optional[str] = rest_field(
+        name="projectName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the bound Foundry project."""
+    namespace: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Kubernetes namespace assigned to the project."""
+    service_account_name: Optional[str] = rest_field(
+        name="serviceAccountName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Kubernetes service account used by the project."""
+    workload_identity_client_id: Optional[str] = rest_field(
+        name="workloadIdentityClientId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Client ID of the project's workload identity."""
+    allowed_capabilities: Optional[list[Union[str, "_models.AttachedAksClusterCapability"]]] = rest_field(
+        name="allowedCapabilities", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Capabilities available to the project binding."""
+    stage: Optional[Union[str, "_models.AttachedAksClusterProjectBindingStage"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current project binding stage. Known values are: \"Reconciling\", \"Ready\", \"Degraded\", and
+     \"Blocked\"."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Details of the current binding state."""
+    kube_ray_ready: Optional[bool] = rest_field(
+        name="kubeRayReady", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the binding is ready for KubeRay workloads."""
+    foundry_native_ready: Optional[bool] = rest_field(
+        name="foundryNativeReady", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the binding is ready for Foundry-native workloads."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_id: Optional[str] = None,
+        project_name: Optional[str] = None,
+        namespace: Optional[str] = None,
+        service_account_name: Optional[str] = None,
+        workload_identity_client_id: Optional[str] = None,
+        allowed_capabilities: Optional[list[Union[str, "_models.AttachedAksClusterCapability"]]] = None,
+        stage: Optional[Union[str, "_models.AttachedAksClusterProjectBindingStage"]] = None,
+        message: Optional[str] = None,
+        kube_ray_ready: Optional[bool] = None,
+        foundry_native_ready: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of an account-level AKS attachment.
+
+    :ivar cluster_resource_id: ARM resource ID of the existing AKS cluster. This value is
+     immutable. Required.
+    :vartype cluster_resource_id: str
+    :ivar capabilities: The complete set of capabilities for this attachment, without duplicates.
+     PUT replaces the set. foundryNative is added automatically unless aiManager is the only
+     capability. After attach, the only supported change is adding kuberay; other changes return 409
+     Conflict and require detaching first. Required.
+    :vartype capabilities: list[str or
+     ~azure.mgmt.cognitiveservices.models.AttachedAksClusterCapability]
+    :ivar extension_profile: Configuration of the training extension on the attached cluster.
+    :vartype extension_profile:
+     ~azure.mgmt.cognitiveservices.models.AttachedAksClusterExtensionProfile
+    :ivar project_bindings: Server-managed project bindings on the attached cluster.
+    :vartype project_bindings:
+     list[~azure.mgmt.cognitiveservices.models.AttachedAksClusterProjectBinding]
+    :ivar status: Server-reported attachment provisioning, integration, and health status.
+    :vartype status: ~azure.mgmt.cognitiveservices.models.AttachedAksClusterStatus
+    """
+
+    cluster_resource_id: str = rest_field(name="clusterResourceId", visibility=["read", "create"])
+    """ARM resource ID of the existing AKS cluster. This value is immutable. Required."""
+    capabilities: list[Union[str, "_models.AttachedAksClusterCapability"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The complete set of capabilities for this attachment, without duplicates. PUT replaces the set.
+     foundryNative is added automatically unless aiManager is the only capability. After attach, the
+     only supported change is adding kuberay; other changes return 409 Conflict and require
+     detaching first. Required."""
+    extension_profile: Optional["_models.AttachedAksClusterExtensionProfile"] = rest_field(
+        name="extensionProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration of the training extension on the attached cluster."""
+    project_bindings: Optional[list["_models.AttachedAksClusterProjectBinding"]] = rest_field(
+        name="projectBindings", visibility=["read"]
+    )
+    """Server-managed project bindings on the attached cluster."""
+    status: Optional["_models.AttachedAksClusterStatus"] = rest_field(visibility=["read"])
+    """Server-reported attachment provisioning, integration, and health status."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cluster_resource_id: str,
+        capabilities: list[Union[str, "_models.AttachedAksClusterCapability"]],
+        extension_profile: Optional["_models.AttachedAksClusterExtensionProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterReadinessStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Readiness of the attachment connector and capabilities.
+
+    :ivar connector_ready: Whether the connector is ready.
+    :vartype connector_ready: bool
+    :ivar capabilities: Readiness of individual capabilities.
+    :vartype capabilities:
+     list[~azure.mgmt.cognitiveservices.models.AttachedAksClusterCapabilityStatus]
+    :ivar blockers: Conditions preventing readiness.
+    :vartype blockers: list[str]
+    """
+
+    connector_ready: Optional[bool] = rest_field(
+        name="connectorReady", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the connector is ready."""
+    capabilities: Optional[list["_models.AttachedAksClusterCapabilityStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Readiness of individual capabilities."""
+    blockers: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Conditions preventing readiness."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connector_ready: Optional[bool] = None,
+        capabilities: Optional[list["_models.AttachedAksClusterCapabilityStatus"]] = None,
+        blockers: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterRoleAssignmentStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Role assignments associated with the AI Manager integration.
+
+    :ivar contributor_id: ARM resource ID of the contributor role assignment.
+    :vartype contributor_id: str
+    :ivar inference_operator_id: ARM resource ID of the inference operator role assignment.
+    :vartype inference_operator_id: str
+    :ivar status: Current role assignment status.
+    :vartype status: str
+    """
+
+    contributor_id: Optional[str] = rest_field(
+        name="contributorId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the contributor role assignment."""
+    inference_operator_id: Optional[str] = rest_field(
+        name="inferenceOperatorId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the inference operator role assignment."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Current role assignment status."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        contributor_id: Optional[str] = None,
+        inference_operator_id: Optional[str] = None,
+        status: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AttachedAksClusterStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Current provisioning and health status of an attachment.
+
+    :ivar stage: Current attachment provisioning stage. Known values are: "Accepted", "Validating",
+     "ProvisioningCluster", "ProvisioningIdentity", "PendingBootstrap", "ClusterReady", "Ready",
+     "Degraded", "Failed", "Deleting", and "Blocked".
+    :vartype stage: str or ~azure.mgmt.cognitiveservices.models.AttachedAksClusterProvisioningStage
+    :ivar cluster_resource_id: ARM resource ID of the attached AKS cluster.
+    :vartype cluster_resource_id: str
+    :ivar provider_operation_id: Identifier of an underlying provider operation, when present.
+    :vartype provider_operation_id: str
+    :ivar message: Details of the current attachment state.
+    :vartype message: str
+    :ivar identity: Identity provisioned for training on the attached cluster.
+    :vartype identity: ~azure.mgmt.cognitiveservices.models.AttachedAksClusterIdentityStatus
+    :ivar connector_registration: Connector registration associated with the attachment.
+    :vartype connector_registration:
+     ~azure.mgmt.cognitiveservices.models.AttachedAksClusterConnectorRegistration
+    :ivar observed_generation: Attachment generation observed by the connector.
+    :vartype observed_generation: int
+    :ivar connector_observed_at_utc: Time at which the connector was last observed.
+    :vartype connector_observed_at_utc: ~datetime.datetime
+    :ivar readiness: Connector and capability readiness.
+    :vartype readiness: ~azure.mgmt.cognitiveservices.models.AttachedAksClusterReadinessStatus
+    :ivar ai_manager: Status of the AI Manager integration.
+    :vartype ai_manager: ~azure.mgmt.cognitiveservices.models.AttachedAksClusterAiManagerStatus
+    :ivar extension: Status of the training extension resource.
+    :vartype extension:
+     ~azure.mgmt.cognitiveservices.models.AttachedAksClusterIntegrationResourceStatus
+    :ivar health: Evaluated attachment health and workload admission status.
+    :vartype health: ~azure.mgmt.cognitiveservices.models.AttachedAksClusterHealthStatus
+    :ivar last_updated_time_utc: Last update time of the attachment status.
+    :vartype last_updated_time_utc: ~datetime.datetime
+    """
+
+    stage: Optional[Union[str, "_models.AttachedAksClusterProvisioningStage"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current attachment provisioning stage. Known values are: \"Accepted\", \"Validating\",
+     \"ProvisioningCluster\", \"ProvisioningIdentity\", \"PendingBootstrap\", \"ClusterReady\",
+     \"Ready\", \"Degraded\", \"Failed\", \"Deleting\", and \"Blocked\"."""
+    cluster_resource_id: Optional[str] = rest_field(
+        name="clusterResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the attached AKS cluster."""
+    provider_operation_id: Optional[str] = rest_field(
+        name="providerOperationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Identifier of an underlying provider operation, when present."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Details of the current attachment state."""
+    identity: Optional["_models.AttachedAksClusterIdentityStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Identity provisioned for training on the attached cluster."""
+    connector_registration: Optional["_models.AttachedAksClusterConnectorRegistration"] = rest_field(
+        name="connectorRegistration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Connector registration associated with the attachment."""
+    observed_generation: Optional[int] = rest_field(
+        name="observedGeneration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Attachment generation observed by the connector."""
+    connector_observed_at_utc: Optional[datetime.datetime] = rest_field(
+        name="connectorObservedAtUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Time at which the connector was last observed."""
+    readiness: Optional["_models.AttachedAksClusterReadinessStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Connector and capability readiness."""
+    ai_manager: Optional["_models.AttachedAksClusterAiManagerStatus"] = rest_field(
+        name="aiManager", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Status of the AI Manager integration."""
+    extension: Optional["_models.AttachedAksClusterIntegrationResourceStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Status of the training extension resource."""
+    health: Optional["_models.AttachedAksClusterHealthStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Evaluated attachment health and workload admission status."""
+    last_updated_time_utc: Optional[datetime.datetime] = rest_field(
+        name="lastUpdatedTimeUtc", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Last update time of the attachment status."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        stage: Optional[Union[str, "_models.AttachedAksClusterProvisioningStage"]] = None,
+        cluster_resource_id: Optional[str] = None,
+        provider_operation_id: Optional[str] = None,
+        message: Optional[str] = None,
+        identity: Optional["_models.AttachedAksClusterIdentityStatus"] = None,
+        connector_registration: Optional["_models.AttachedAksClusterConnectorRegistration"] = None,
+        observed_generation: Optional[int] = None,
+        connector_observed_at_utc: Optional[datetime.datetime] = None,
+        readiness: Optional["_models.AttachedAksClusterReadinessStatus"] = None,
+        ai_manager: Optional["_models.AttachedAksClusterAiManagerStatus"] = None,
+        extension: Optional["_models.AttachedAksClusterIntegrationResourceStatus"] = None,
+        health: Optional["_models.AttachedAksClusterHealthStatus"] = None,
+        last_updated_time_utc: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload
@@ -3245,13 +4446,52 @@ class CapacityConfig(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
+class CertificateBundleReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A reference to a specific version of a Key Vault secret containing a PEM-encoded CA certificate
+    or certificate bundle.
+
+    :ivar secret_name: Name of the Key Vault secret containing the CA certificate or certificate
+     bundle. Required.
+    :vartype secret_name: str
+    :ivar secret_version: Required, pinned version of the Key Vault secret. Newer secret versions
+     are not followed automatically. To rotate a bundle, update this value and resubmit the complete
+     account trust configuration. Required.
+    :vartype secret_version: str
+    """
+
+    secret_name: str = rest_field(name="secretName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the Key Vault secret containing the CA certificate or certificate bundle. Required."""
+    secret_version: str = rest_field(name="secretVersion", visibility=["read", "create", "update", "delete", "query"])
+    """Required, pinned version of the Key Vault secret. Newer secret versions are not followed
+     automatically. To rotate a bundle, update this value and resubmit the complete account trust
+     configuration. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        secret_name: str,
+        secret_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ChannelsBuiltInAuthorizationPolicy(ApplicationAuthorizationPolicy, discriminator="Channels"):
     """Represents a built-in authorization policy specific to Azure Bot Service/Channels
     authentication.
 
     :ivar type: Authorization scheme type. Required. Channels-specific (AzureBotService)
      authorization.
-    :vartype type: str or ~azure.mgmt.cognitiveservices.models.CHANNELS
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.BuiltInAuthorizationScheme
     """
 
     type: Literal[BuiltInAuthorizationScheme.CHANNELS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -3428,7 +4668,7 @@ class ClusterComputeProperties(
     :ivar creation_time: Creation time of the compute resource.
     :vartype creation_time: ~datetime.datetime
     :ivar compute_type: The type of compute resource. Required. Cluster (AKS-backed) compute type.
-    :vartype compute_type: str or ~azure.mgmt.cognitiveservices.models.CLUSTER
+    :vartype compute_type: str or ~azure.mgmt.cognitiveservices.models.ComputeType
     :ivar pools: Pools attached to this compute cluster. Required.
     :vartype pools: list[~azure.mgmt.cognitiveservices.models.Pool]
     :ivar subnet_arm_id: ARM ID of the subnet used for compute.
@@ -4502,7 +5742,7 @@ class ContainerInstanceComputeProperties(
     :ivar creation_time: Creation time of the compute resource.
     :vartype creation_time: ~datetime.datetime
     :ivar compute_type: The type of compute resource. Required. Container Instance compute type.
-    :vartype compute_type: str or ~azure.mgmt.cognitiveservices.models.CONTAINER_INSTANCE
+    :vartype compute_type: str or ~azure.mgmt.cognitiveservices.models.ComputeType
     :ivar target_cluster_id: ARM resource ID of the parent cluster that hosts this container
      instance. Required.
     :vartype target_cluster_id: str
@@ -4563,38 +5803,100 @@ class ContainerInstanceComputeProperties(
         self.compute_type = ComputeType.CONTAINER_INSTANCE  # type: ignore
 
 
-class CostControl(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A cost control owned by a Cognitive Services account.
+class CostControlAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Blocks requests when consumption reaches the explicitly configured threshold. No implicit
+    blocking action is created.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
+    :ivar type: The enforcement action. Only ``Block`` is supported. Required. Default value is
+     "Block".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.cognitiveservices.models.CostControlProperties
-    :ivar etag: The entity tag used for optimistic concurrency.
-    :vartype etag: str
+    :ivar threshold_type: Whether threshold is a percentage of amount or an absolute value in the
+     budget's unit. Required. Known values are: "Percentage" and "Absolute".
+    :vartype threshold_type: str or ~azure.mgmt.cognitiveservices.models.CostControlThresholdType
+    :ivar threshold: The positive threshold. Percentages cannot exceed 100; absolute thresholds
+     cannot exceed amount and must be whole numbers for Tokens budgets. Required.
+    :vartype threshold: float
+    :ivar operator: The threshold comparison. Only ``GreaterThanOrEqualTo`` is supported. Required.
+     Default value is "GreaterThanOrEqualTo".
+    :vartype operator: str
     """
 
-    properties: Optional["_models.CostControlProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    type: Literal["Block"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The enforcement action. Only ``Block`` is supported. Required. Default value is \"Block\"."""
+    threshold_type: Union[str, "_models.CostControlThresholdType"] = rest_field(
+        name="thresholdType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The resource-specific properties for this resource."""
-    etag: Optional[str] = rest_field(visibility=["read"])
-    """The entity tag used for optimistic concurrency."""
+    """Whether threshold is a percentage of amount or an absolute value in the budget's unit.
+     Required. Known values are: \"Percentage\" and \"Absolute\"."""
+    threshold: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The positive threshold. Percentages cannot exceed 100; absolute thresholds cannot exceed amount
+     and must be whole numbers for Tokens budgets. Required."""
+    operator: Literal["GreaterThanOrEqualTo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The threshold comparison. Only ``GreaterThanOrEqualTo`` is supported. Required. Default value
+     is \"GreaterThanOrEqualTo\"."""
 
     @overload
     def __init__(
         self,
         *,
-        properties: Optional["_models.CostControlProperties"] = None,
+        threshold_type: Union[str, "_models.CostControlThresholdType"],
+        threshold: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["Block"] = "Block"
+        self.operator: Literal["GreaterThanOrEqualTo"] = "GreaterThanOrEqualTo"
+
+
+class CostControlActionPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Edits to an existing named blocking action. New actions require all fields after merging;
+    supplied fields cannot be null.
+
+    :ivar type: The enforcement action. Only ``Block`` is supported. Default value is "Block".
+    :vartype type: str
+    :ivar threshold_type: Whether threshold is a percentage of amount or an absolute value in the
+     budget's unit. Known values are: "Percentage" and "Absolute".
+    :vartype threshold_type: str or ~azure.mgmt.cognitiveservices.models.CostControlThresholdType
+    :ivar threshold: The positive threshold. Percentages cannot exceed 100; absolute thresholds
+     cannot exceed amount and must be whole numbers for Tokens budgets.
+    :vartype threshold: float
+    :ivar operator: The threshold comparison. Only ``GreaterThanOrEqualTo`` is supported. Default
+     value is "GreaterThanOrEqualTo".
+    :vartype operator: str
+    """
+
+    type: Optional[Literal["Block"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The enforcement action. Only ``Block`` is supported. Default value is \"Block\"."""
+    threshold_type: Optional[Union[str, "_models.CostControlThresholdType"]] = rest_field(
+        name="thresholdType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether threshold is a percentage of amount or an absolute value in the budget's unit. Known
+     values are: \"Percentage\" and \"Absolute\"."""
+    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The positive threshold. Percentages cannot exceed 100; absolute thresholds cannot exceed amount
+     and must be whole numbers for Tokens budgets."""
+    operator: Optional[Literal["GreaterThanOrEqualTo"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The threshold comparison. Only ``GreaterThanOrEqualTo`` is supported. Default value is
+     \"GreaterThanOrEqualTo\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Literal["Block"]] = None,
+        threshold_type: Optional[Union[str, "_models.CostControlThresholdType"]] = None,
+        threshold: Optional[float] = None,
+        operator: Optional[Literal["GreaterThanOrEqualTo"]] = None,
     ) -> None: ...
 
     @overload
@@ -4608,131 +5910,296 @@ class CostControl(ProxyResource):  # pylint: disable=docstring-keyword-should-ma
         super().__init__(*args, **kwargs)
 
 
-class CostControlConnections(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Defines account-level connections used to publish cost-control telemetry and events.
-    Application Insights is optional and may be removed while policies remain attached. Event Grid
-    is required for alerts; supplied connection references must still be valid.
+class CostControlAdditionalInfoFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Selects traffic whose named additional-info attribute equals at least one of the supplied
+    values.
 
-    :ivar app_insights_connection_id: Gets or sets the full resource ID of the optional Application
-     Insights connection.
+    :ivar name: The built-in attribute: agent, sessionId, project, deployment, or tokenType.
+     Resource selectors use owner-scoped short names, not Azure resource IDs. Agent selections
+     require an explicit project filter selecting exactly one project; multiple agents in that
+     project are supported. A project-owned control can select only its owning project. Project,
+     agent, and deployment values must be plain names of 1-64 characters without leading or trailing
+     whitespace, control characters, path/query/fragment separators, percent signs, or . and .. path
+     segments. tokenType accepts input, output, or both for a Tokens budget; omission measures
+     overall tokens. Required. Known values are: "agent", "sessionId", "project", "deployment", and
+     "tokenType".
+    :vartype name: str or ~azure.mgmt.cognitiveservices.models.CostControlFilterName
+    :ivar operator: The comparison operator.``In`` is supported. Required. Default value is "In".
+    :vartype operator: str
+    :ivar values_property: One or more nonempty, non-whitespace strings to match. There is no
+     per-condition value-count limit; the serialized cost-control definition must not exceed 32 KiB.
+     Required.
+    :vartype values_property: list[str]
+    """
+
+    name: Union[str, "_models.CostControlFilterName"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The built-in attribute: agent, sessionId, project, deployment, or tokenType. Resource selectors
+     use owner-scoped short names, not Azure resource IDs. Agent selections require an explicit
+     project filter selecting exactly one project; multiple agents in that project are supported. A
+     project-owned control can select only its owning project. Project, agent, and deployment values
+     must be plain names of 1-64 characters without leading or trailing whitespace, control
+     characters, path/query/fragment separators, percent signs, or . and .. path segments. tokenType
+     accepts input, output, or both for a Tokens budget; omission measures overall tokens. Required.
+     Known values are: \"agent\", \"sessionId\", \"project\", \"deployment\", and \"tokenType\"."""
+    operator: Literal["In"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The comparison operator.``In`` is supported. Required. Default value is \"In\"."""
+    values_property: list[str] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
+    )
+    """One or more nonempty, non-whitespace strings to match. There is no per-condition value-count
+     limit; the serialized cost-control definition must not exceed 32 KiB. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Union[str, "_models.CostControlFilterName"],
+        values_property: list[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.operator: Literal["In"] = "In"
+
+
+class CostControlConnections(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Account-level telemetry connections. Application Insights is optional and may be removed while
+    controls exist.
+
+    :ivar app_insights_connection_id: The full resource ID of the optional Application Insights
+     connection. Set to null in an account update to remove it.
     :vartype app_insights_connection_id: str
-    :ivar event_grid_connection_id: The full resource ID of the Event Grid connection used for cost
-     control alerts. This connection must be configured when an attached cost control contains an
-     alert threshold action and cannot be removed while such an action remains attached.
-    :vartype event_grid_connection_id: str
     """
 
     app_insights_connection_id: Optional[str] = rest_field(
         name="appInsightsConnectionId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Gets or sets the full resource ID of the optional Application Insights connection."""
-    event_grid_connection_id: Optional[str] = rest_field(
-        name="eventGridConnectionId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The full resource ID of the Event Grid connection used for cost control alerts. This connection
-     must be configured when an attached cost control contains an alert threshold action and cannot
-     be removed while such an action remains attached."""
+    """The full resource ID of the optional Application Insights connection. Set to null in an account
+     update to remove it."""
 
     @overload
     def __init__(
         self,
         *,
         app_insights_connection_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CostControlFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Traffic selection using exactly one of ``additionalInfo`` or ``and``. Additional-info names
+    must be unique across the complete expression. Filters narrow the owner's scope and cannot
+    extend a project-owned control to another project. Values within one condition are
+    alternatives; conditions are combined with AND. An agent selection requires an explicit project
+    filter selecting exactly one project, including for project-owned controls.
+
+    :ivar additional_info: A single additional-info condition. Must not be combined with ``and`` on
+     the same filter object.
+    :vartype additional_info: ~azure.mgmt.cognitiveservices.models.CostControlAdditionalInfoFilter
+    :ivar and_property: A conjunction of at least two conditions. Must not be combined with
+     ``additionalInfo`` on the same filter object.
+    :vartype and_property: list[~azure.mgmt.cognitiveservices.models.CostControlFilter]
+    """
+
+    additional_info: Optional["_models.CostControlAdditionalInfoFilter"] = rest_field(
+        name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A single additional-info condition. Must not be combined with ``and`` on the same filter
+     object."""
+    and_property: Optional[list["_models.CostControlFilter"]] = rest_field(
+        name="and", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A conjunction of at least two conditions. Must not be combined with ``additionalInfo`` on the
+     same filter object."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        additional_info: Optional["_models.CostControlAdditionalInfoFilter"] = None,
+        and_property: Optional[list["_models.CostControlFilter"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CostControlGrouping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An additional built-in request attribute used to partition a budget into independent counters.
+
+    :ivar name: The built-in attribute to group by. project is available only for account-owned
+     controls. Required. Known values are: "project", "agent", and "sessionId".
+    :vartype name: str or ~azure.mgmt.cognitiveservices.models.CostControlGroupingName
+    :ivar type: The grouping kind. Only ``AdditionalInfoKey`` is supported. Required. Default value
+     is "AdditionalInfoKey".
+    :vartype type: str
+    """
+
+    name: Union[str, "_models.CostControlGroupingName"] = rest_field(visibility=["read", "create", "update"])
+    """The built-in attribute to group by. project is available only for account-owned controls.
+     Required. Known values are: \"project\", \"agent\", and \"sessionId\"."""
+    type: Literal["AdditionalInfoKey"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The grouping kind. Only ``AdditionalInfoKey`` is supported. Required. Default value is
+     \"AdditionalInfoKey\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Union[str, "_models.CostControlGroupingName"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["AdditionalInfoKey"] = "AdditionalInfoKey"
+
+
+class CostControlNotification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An alert notification with an explicit threshold, enabled state, and Event Grid destination.
+
+    :ivar event_grid_connection_id: The full resource ID of the Cognitive Services Event Grid
+     connection used to publish this notification. Required.
+    :vartype event_grid_connection_id: str
+    :ivar threshold_type: Whether threshold is a percentage of amount or an absolute value in the
+     budget's unit. Required. Known values are: "Percentage" and "Absolute".
+    :vartype threshold_type: str or ~azure.mgmt.cognitiveservices.models.CostControlThresholdType
+    :ivar threshold: The positive threshold. Percentages cannot exceed 100; absolute thresholds
+     cannot exceed amount and must be whole numbers for Tokens budgets. Required.
+    :vartype threshold: float
+    :ivar enabled: Whether this notification is enabled. Disabled notifications remain configured
+     but do not publish alerts. Required.
+    :vartype enabled: bool
+    :ivar operator: The threshold comparison. Only ``GreaterThanOrEqualTo`` is supported. Required.
+     Default value is "GreaterThanOrEqualTo".
+    :vartype operator: str
+    """
+
+    event_grid_connection_id: str = rest_field(
+        name="eventGridConnectionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The full resource ID of the Cognitive Services Event Grid connection used to publish this
+     notification. Required."""
+    threshold_type: Union[str, "_models.CostControlThresholdType"] = rest_field(
+        name="thresholdType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether threshold is a percentage of amount or an absolute value in the budget's unit.
+     Required. Known values are: \"Percentage\" and \"Absolute\"."""
+    threshold: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The positive threshold. Percentages cannot exceed 100; absolute thresholds cannot exceed amount
+     and must be whole numbers for Tokens budgets. Required."""
+    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this notification is enabled. Disabled notifications remain configured but do not
+     publish alerts. Required."""
+    operator: Literal["GreaterThanOrEqualTo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The threshold comparison. Only ``GreaterThanOrEqualTo`` is supported. Required. Default value
+     is \"GreaterThanOrEqualTo\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_grid_connection_id: str,
+        threshold_type: Union[str, "_models.CostControlThresholdType"],
+        threshold: float,
+        enabled: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.operator: Literal["GreaterThanOrEqualTo"] = "GreaterThanOrEqualTo"
+
+
+class CostControlNotificationPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Edits to an existing named notification. New notifications require all fields after merging;
+    supplied fields cannot be null.
+
+    :ivar event_grid_connection_id: The full resource ID of the Cognitive Services Event Grid
+     connection used to publish this notification.
+    :vartype event_grid_connection_id: str
+    :ivar threshold_type: Whether threshold is a percentage of amount or an absolute value in the
+     budget's unit. Known values are: "Percentage" and "Absolute".
+    :vartype threshold_type: str or ~azure.mgmt.cognitiveservices.models.CostControlThresholdType
+    :ivar threshold: The positive threshold. Percentages cannot exceed 100; absolute thresholds
+     cannot exceed amount and must be whole numbers for Tokens budgets.
+    :vartype threshold: float
+    :ivar enabled: Whether this notification is enabled. Disabled notifications remain configured
+     but do not publish alerts.
+    :vartype enabled: bool
+    :ivar operator: The threshold comparison. Only ``GreaterThanOrEqualTo`` is supported. Default
+     value is "GreaterThanOrEqualTo".
+    :vartype operator: str
+    """
+
+    event_grid_connection_id: Optional[str] = rest_field(
+        name="eventGridConnectionId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The full resource ID of the Cognitive Services Event Grid connection used to publish this
+     notification."""
+    threshold_type: Optional[Union[str, "_models.CostControlThresholdType"]] = rest_field(
+        name="thresholdType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether threshold is a percentage of amount or an absolute value in the budget's unit. Known
+     values are: \"Percentage\" and \"Absolute\"."""
+    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The positive threshold. Percentages cannot exceed 100; absolute thresholds cannot exceed amount
+     and must be whole numbers for Tokens budgets."""
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this notification is enabled. Disabled notifications remain configured but do not
+     publish alerts."""
+    operator: Optional[Literal["GreaterThanOrEqualTo"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The threshold comparison. Only ``GreaterThanOrEqualTo`` is supported. Default value is
+     \"GreaterThanOrEqualTo\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
         event_grid_connection_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CostControlDimension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A request dimension used to partition cost control consumption.
-
-    :ivar type: The kind of request dimension. Required. Known values are: "Agent", "Identity",
-     "Session", "Project", "Account", and "Custom".
-    :vartype type: str or ~azure.mgmt.cognitiveservices.models.CostControlDimensionType
-    :ivar attribute: Gets or sets the attribute path retained for legacy Custom counters. Authored
-     rules cannot select Custom; built-in dimensions must omit this property.
-    :vartype attribute: str
-    """
-
-    type: Union[str, "_models.CostControlDimensionType"] = rest_field(visibility=["read", "create", "update"])
-    """The kind of request dimension. Required. Known values are: \"Agent\", \"Identity\",
-     \"Session\", \"Project\", \"Account\", and \"Custom\"."""
-    attribute: Optional[str] = rest_field(visibility=["read"])
-    """Gets or sets the attribute path retained for legacy Custom counters. Authored rules cannot
-     select Custom; built-in dimensions must omit this property."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Union[str, "_models.CostControlDimensionType"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CostControlMatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Gets or sets optional match arrays keyed by ``agentResourceIds``, ``identityObjectIds``,
-    ``sessionIds``, or ``projectIds``. Each array contains 1 to 20 non-empty values. Agent resource
-    IDs use
-    /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}.
-    Legacy dotted identity, session, and project keys remain accepted, but cannot be combined with
-    their canonical key.
-
-    :ivar agent_resource_ids: Agent resource IDs use
-     /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}.
-    :vartype agent_resource_ids: list[str]
-    :ivar identity_object_ids: The authenticated principal object IDs to match.
-    :vartype identity_object_ids: list[str]
-    :ivar session_ids: The Foundry session IDs to match.
-    :vartype session_ids: list[str]
-    :ivar project_ids: The Foundry project resource IDs to match.
-    :vartype project_ids: list[str]
-    """
-
-    agent_resource_ids: Optional[list[str]] = rest_field(
-        name="agentResourceIds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Agent resource IDs use
-     /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}."""
-    identity_object_ids: Optional[list[str]] = rest_field(
-        name="identityObjectIds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The authenticated principal object IDs to match."""
-    session_ids: Optional[list[str]] = rest_field(
-        name="sessionIds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The Foundry session IDs to match."""
-    project_ids: Optional[list[str]] = rest_field(
-        name="projectIds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The Foundry project resource IDs to match."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        agent_resource_ids: Optional[list[str]] = None,
-        identity_object_ids: Optional[list[str]] = None,
-        session_ids: Optional[list[str]] = None,
-        project_ids: Optional[list[str]] = None,
+        threshold_type: Optional[Union[str, "_models.CostControlThresholdType"]] = None,
+        threshold: Optional[float] = None,
+        enabled: Optional[bool] = None,
+        operator: Optional[Literal["GreaterThanOrEqualTo"]] = None,
     ) -> None: ...
 
     @overload
@@ -4747,16 +6214,21 @@ class CostControlMatch(_Model):  # pylint: disable=docstring-keyword-should-matc
 
 
 class CostControlPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The request used to update a cost control.
+    """A partial budget update. Omitting properties preserves all existing budget properties. Setting
+    properties to null or an empty object ({}) clears all existing budget properties. A non-empty
+    properties object updates the supplied fields according to their merge semantics; omitted
+    fields retain their existing values.
 
-    :ivar properties: The cost control properties to update.
+    :ivar properties: The budget properties to update. Omission preserves existing properties. Null
+     or an empty object ({}) clears all existing properties.
     :vartype properties: ~azure.mgmt.cognitiveservices.models.CostControlPatchProperties
     """
 
     properties: Optional["_models.CostControlPatchProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The cost control properties to update."""
+    """The budget properties to update. Omission preserves existing properties. Null or an empty
+     object ({}) clears all existing properties."""
 
     @overload
     def __init__(
@@ -4777,30 +6249,107 @@ class CostControlPatch(_Model):  # pylint: disable=docstring-keyword-should-matc
 
 
 class CostControlPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The properties that can be changed on a cost control.
+    """Edits applied when properties is a non-empty object. Omitted fields retain their existing
+    values; no defaults are applied. The complete merged result may contain at most one
+    notification, including disabled notifications, and one Block action. Exceeding either limit
+    returns HTTP 400 without changing the stored definition. Missing registration returns 403
+    FeatureNotRegistered before merging or no-op detection. Omitting or removing identity
+    selections does not require this registration; omitted stored selections are preserved, subject
+    to existing validation rules.
 
-    :ivar display_name: An optional human-readable name for the cost control. Set this property to
-     null to clear it.
-    :vartype display_name: str
-    :ivar rules: The complete replacement set of cost control rules.
-    :vartype rules: list[~azure.mgmt.cognitiveservices.models.CostControlRule]
+    :ivar provider: The resource provider. If supplied, it must be Microsoft.CognitiveServices and
+     cannot be null. Default value is "Microsoft.CognitiveServices".
+    :vartype provider: str
+    :ivar grouping: Replaces additional grouping. Omission preserves grouping; an empty array
+     restores the owner's default counter. Null is not accepted.
+    :vartype grouping: list[~azure.mgmt.cognitiveservices.models.CostControlGrouping]
+    :ivar category: The existing measurement category. Changing it after creation is not supported.
+     Known values are: "Cost" and "Tokens".
+    :vartype category: str or ~azure.mgmt.cognitiveservices.models.CostControlCategory
+    :ivar amount: Replaces the positive budget amount, measured in United States dollars for the
+     Cost category or in whole tokens for the Tokens category.
+    :vartype amount: float
+    :ivar time_grain: Replaces the calendar-aligned UTC renewal interval. Known values are:
+     "Daily", "Weekly", and "Monthly".
+    :vartype time_grain: str or ~azure.mgmt.cognitiveservices.models.CostControlTimeGrain
+    :ivar time_period: Merges supplied dates into the existing validity window; omitted dates
+     remain unchanged.
+    :vartype time_period: ~azure.mgmt.cognitiveservices.models.CostControlTimePeriodPatch
+    :ivar filter: Replaces the complete traffic filter. Set to null to select all eligible traffic
+     within the owner's scope.
+    :vartype filter: ~azure.mgmt.cognitiveservices.models.CostControlFilter
+    :ivar notifications: Merges notifications by case-insensitive name, preserving existing name
+     casing. Null entries delete notifications; null clears the collection. Omission or an empty
+     object preserves existing notifications. New entries must supply all required notification
+     fields after merging. The complete merged result may contain at most one notification,
+     including disabled notifications; otherwise the request returns HTTP 400.
+    :vartype notifications: dict[str,
+     ~azure.mgmt.cognitiveservices.models.CostControlNotificationPatch]
+    :ivar provider_properties: Merges provider-specific settings. Set to null to remove all
+     blocking actions; omission preserves them.
+    :vartype provider_properties:
+     ~azure.mgmt.cognitiveservices.models.CostControlProviderPropertiesPatch
     """
 
-    display_name: Optional[str] = rest_field(
-        name="displayName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """An optional human-readable name for the cost control. Set this property to null to clear it."""
-    rules: Optional[list["_models.CostControlRule"]] = rest_field(
+    provider: Optional[Literal["Microsoft.CognitiveServices"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The complete replacement set of cost control rules."""
+    """The resource provider. If supplied, it must be Microsoft.CognitiveServices and cannot be null.
+     Default value is \"Microsoft.CognitiveServices\"."""
+    grouping: Optional[list["_models.CostControlGrouping"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Replaces additional grouping. Omission preserves grouping; an empty array restores the owner's
+     default counter. Null is not accepted."""
+    category: Optional[Union[str, "_models.CostControlCategory"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The existing measurement category. Changing it after creation is not supported. Known values
+     are: \"Cost\" and \"Tokens\"."""
+    amount: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Replaces the positive budget amount, measured in United States dollars for the Cost category or
+     in whole tokens for the Tokens category."""
+    time_grain: Optional[Union[str, "_models.CostControlTimeGrain"]] = rest_field(
+        name="timeGrain", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Replaces the calendar-aligned UTC renewal interval. Known values are: \"Daily\", \"Weekly\",
+     and \"Monthly\"."""
+    time_period: Optional["_models.CostControlTimePeriodPatch"] = rest_field(
+        name="timePeriod", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Merges supplied dates into the existing validity window; omitted dates remain unchanged."""
+    filter: Optional["_models.CostControlFilter"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Replaces the complete traffic filter. Set to null to select all eligible traffic within the
+     owner's scope."""
+    notifications: Optional[dict[str, "_models.CostControlNotificationPatch"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Merges notifications by case-insensitive name, preserving existing name casing. Null entries
+     delete notifications; null clears the collection. Omission or an empty object preserves
+     existing notifications. New entries must supply all required notification fields after merging.
+     The complete merged result may contain at most one notification, including disabled
+     notifications; otherwise the request returns HTTP 400."""
+    provider_properties: Optional["_models.CostControlProviderPropertiesPatch"] = rest_field(
+        name="providerProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Merges provider-specific settings. Set to null to remove all blocking actions; omission
+     preserves them."""
 
     @overload
     def __init__(
         self,
         *,
-        display_name: Optional[str] = None,
-        rules: Optional[list["_models.CostControlRule"]] = None,
+        provider: Optional[Literal["Microsoft.CognitiveServices"]] = None,
+        grouping: Optional[list["_models.CostControlGrouping"]] = None,
+        category: Optional[Union[str, "_models.CostControlCategory"]] = None,
+        amount: Optional[float] = None,
+        time_grain: Optional[Union[str, "_models.CostControlTimeGrain"]] = None,
+        time_period: Optional["_models.CostControlTimePeriodPatch"] = None,
+        filter: Optional["_models.CostControlFilter"] = None,  # pylint: disable=redefined-builtin
+        notifications: Optional[dict[str, "_models.CostControlNotificationPatch"]] = None,
+        provider_properties: Optional["_models.CostControlProviderPropertiesPatch"] = None,
     ) -> None: ...
 
     @overload
@@ -4815,124 +6364,100 @@ class CostControlPatchProperties(_Model):  # pylint: disable=docstring-keyword-s
 
 
 class CostControlProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The customer-authored settings of a cost control.
+    """The consumption budget and its traffic selection, notifications, and enforcement actions. A
+    cost control applies within its owner's scope.
 
-    :ivar display_name: An optional human-readable name for the cost control.
-    :vartype display_name: str
-    :ivar rules: The rules enforced by the cost control. Required.
-    :vartype rules: list[~azure.mgmt.cognitiveservices.models.CostControlRule]
-    """
-
-    display_name: Optional[str] = rest_field(
-        name="displayName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """An optional human-readable name for the cost control."""
-    rules: list["_models.CostControlRule"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The rules enforced by the cost control. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        rules: list["_models.CostControlRule"],
-        display_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CostControlRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A cost limit and the population to which it applies.
-
-    :ivar name: The stable rule identifier, unique within the cost control without regard to case.
-     Required.
-    :vartype name: str
-    :ivar counter_key: Gets or sets the single built-in dimension used to partition consumption.
-     Custom dimensions are retained only for legacy reads and metadata-only updates. Legacy
-     singleton arrays are accepted on read; serialization always emits an object. To track another
-     field, create another rule. Required.
-    :vartype counter_key: ~azure.mgmt.cognitiveservices.models.CostControlDimension
-    :ivar unit: The unit used for the cost control amount and absolute thresholds. Required. "Usd"
-    :vartype unit: str or ~azure.mgmt.cognitiveservices.models.CostControlUnit
-    :ivar amount: The maximum consumption allowed by this rule, expressed in the selected unit.
-     Required.
+    :ivar provider: The resource provider for this budget. Omission selects
+     Microsoft.CognitiveServices; responses return that value. Default value is
+     "Microsoft.CognitiveServices".
+    :vartype provider: str
+    :ivar grouping: Optional additional partitioning of consumption. Omission or an empty array
+     uses one counter for the owning account or Foundry project. Responses omit owner-default
+     grouping. A project-owned control cannot explicitly group by project.
+    :vartype grouping: list[~azure.mgmt.cognitiveservices.models.CostControlGrouping]
+    :ivar category: Whether the budget measures estimated cost in United States dollars or token
+     consumption. This category cannot be changed after creation. Required. Known values are: "Cost"
+     and "Tokens".
+    :vartype category: str or ~azure.mgmt.cognitiveservices.models.CostControlCategory
+    :ivar amount: The positive budget amount, measured in United States dollars for the Cost
+     category or in tokens for the Tokens category. Token amounts must be whole numbers. Required.
     :vartype amount: float
-    :ivar period: Gets or sets the calendar-aligned UTC renewal period. Authored rules support Day,
-     Week, or Month. This field is required for recurring rules and must be omitted for
-     non-recurring rules. Legacy stored minute, hour, and year periods are preserved when reading
-     definitions. Known values are: "Minute", "Hour", "Day", "Week", "Month", and "Year".
-    :vartype period: str or ~azure.mgmt.cognitiveservices.models.CostControlPeriod
-    :ivar recurring: Whether the cost control renews. The default is true.
-    :vartype recurring: bool
-    :ivar match: Gets or sets optional match arrays keyed by ``agentResourceIds``,
-     ``identityObjectIds``, ``sessionIds``, or ``projectIds``. Each array contains 1 to 20 non-empty
-     values. Agent resource IDs use
-     /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}.
-     Legacy dotted identity, session, and project keys remain accepted, but cannot be combined with
-     their canonical key.
-    :vartype match: ~azure.mgmt.cognitiveservices.models.CostControlMatch
-    :ivar thresholds: Gets or sets optional thresholds. Omitted or empty thresholds track usage
-     without explicit actions. Authored thresholds must explicitly specify Alert or Block; Audit is
-     retained for legacy reads.
-    :vartype thresholds: list[~azure.mgmt.cognitiveservices.models.CostControlThreshold]
+    :ivar time_grain: The calendar-aligned UTC interval at which consumption counters renew within
+     the validity window. Required. Known values are: "Daily", "Weekly", and "Monthly".
+    :vartype time_grain: str or ~azure.mgmt.cognitiveservices.models.CostControlTimeGrain
+    :ivar time_period: The finite UTC validity window during which the control applies. Required.
+    :vartype time_period: ~azure.mgmt.cognitiveservices.models.CostControlTimePeriod
+    :ivar filter: Optional traffic selection. Omission selects all eligible traffic within the
+     owner's scope.
+    :vartype filter: ~azure.mgmt.cognitiveservices.models.CostControlFilter
+    :ivar notifications: Alert notifications keyed by nonempty, case-insensitively unique names.
+     Each notification supplies its own Event Grid connection. PUT and the complete merged PATCH
+     result may contain at most one notification, including disabled notifications. Omission on
+     creation creates no notifications.
+    :vartype notifications: dict[str, ~azure.mgmt.cognitiveservices.models.CostControlNotification]
+    :ivar provider_properties: Optional provider-specific enforcement settings. Omission creates no
+     blocking actions.
+    :vartype provider_properties:
+     ~azure.mgmt.cognitiveservices.models.CostControlProviderProperties
     """
 
-    name: str = rest_field(visibility=["read", "create", "update"])
-    """The stable rule identifier, unique within the cost control without regard to case. Required."""
-    counter_key: "_models.CostControlDimension" = rest_field(
-        name="counterKey", visibility=["read", "create", "update", "delete", "query"]
+    provider: Optional[Literal["Microsoft.CognitiveServices"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
-    """Gets or sets the single built-in dimension used to partition consumption. Custom dimensions are
-     retained only for legacy reads and metadata-only updates. Legacy singleton arrays are accepted
-     on read; serialization always emits an object. To track another field, create another rule.
-     Required."""
-    unit: Union[str, "_models.CostControlUnit"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The unit used for the cost control amount and absolute thresholds. Required. \"Usd\""""
+    """The resource provider for this budget. Omission selects Microsoft.CognitiveServices; responses
+     return that value. Default value is \"Microsoft.CognitiveServices\"."""
+    grouping: Optional[list["_models.CostControlGrouping"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional additional partitioning of consumption. Omission or an empty array uses one counter
+     for the owning account or Foundry project. Responses omit owner-default grouping. A
+     project-owned control cannot explicitly group by project."""
+    category: Union[str, "_models.CostControlCategory"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the budget measures estimated cost in United States dollars or token consumption. This
+     category cannot be changed after creation. Required. Known values are: \"Cost\" and \"Tokens\"."""
     amount: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The maximum consumption allowed by this rule, expressed in the selected unit. Required."""
-    period: Optional[Union[str, "_models.CostControlPeriod"]] = rest_field(
+    """The positive budget amount, measured in United States dollars for the Cost category or in
+     tokens for the Tokens category. Token amounts must be whole numbers. Required."""
+    time_grain: Union[str, "_models.CostControlTimeGrain"] = rest_field(
+        name="timeGrain", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The calendar-aligned UTC interval at which consumption counters renew within the validity
+     window. Required. Known values are: \"Daily\", \"Weekly\", and \"Monthly\"."""
+    time_period: "_models.CostControlTimePeriod" = rest_field(
+        name="timePeriod", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The finite UTC validity window during which the control applies. Required."""
+    filter: Optional["_models.CostControlFilter"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Gets or sets the calendar-aligned UTC renewal period. Authored rules support Day, Week, or
-     Month. This field is required for recurring rules and must be omitted for non-recurring rules.
-     Legacy stored minute, hour, and year periods are preserved when reading definitions. Known
-     values are: \"Minute\", \"Hour\", \"Day\", \"Week\", \"Month\", and \"Year\"."""
-    recurring: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether the cost control renews. The default is true."""
-    match: Optional["_models.CostControlMatch"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Gets or sets optional match arrays keyed by ``agentResourceIds``, ``identityObjectIds``,
-     ``sessionIds``, or ``projectIds``. Each array contains 1 to 20 non-empty values. Agent resource
-     IDs use
-     /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}.
-     Legacy dotted identity, session, and project keys remain accepted, but cannot be combined with
-     their canonical key."""
-    thresholds: Optional[list["_models.CostControlThreshold"]] = rest_field(
+    """Optional traffic selection. Omission selects all eligible traffic within the owner's scope."""
+    notifications: Optional[dict[str, "_models.CostControlNotification"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Gets or sets optional thresholds. Omitted or empty thresholds track usage without explicit
-     actions. Authored thresholds must explicitly specify Alert or Block; Audit is retained for
-     legacy reads."""
+    """Alert notifications keyed by nonempty, case-insensitively unique names. Each notification
+     supplies its own Event Grid connection. PUT and the complete merged PATCH result may contain at
+     most one notification, including disabled notifications. Omission on creation creates no
+     notifications."""
+    provider_properties: Optional["_models.CostControlProviderProperties"] = rest_field(
+        name="providerProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional provider-specific enforcement settings. Omission creates no blocking actions."""
 
     @overload
     def __init__(
         self,
         *,
-        name: str,
-        counter_key: "_models.CostControlDimension",
-        unit: Union[str, "_models.CostControlUnit"],
+        category: Union[str, "_models.CostControlCategory"],
         amount: float,
-        period: Optional[Union[str, "_models.CostControlPeriod"]] = None,
-        recurring: Optional[bool] = None,
-        match: Optional["_models.CostControlMatch"] = None,
-        thresholds: Optional[list["_models.CostControlThreshold"]] = None,
+        time_grain: Union[str, "_models.CostControlTimeGrain"],
+        time_period: "_models.CostControlTimePeriod",
+        provider: Optional[Literal["Microsoft.CognitiveServices"]] = None,
+        grouping: Optional[list["_models.CostControlGrouping"]] = None,
+        filter: Optional["_models.CostControlFilter"] = None,  # pylint: disable=redefined-builtin
+        notifications: Optional[dict[str, "_models.CostControlNotification"]] = None,
+        provider_properties: Optional["_models.CostControlProviderProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -4946,43 +6471,148 @@ class CostControlRule(_Model):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
-class CostControlThreshold(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An action evaluated when cost control consumption reaches a threshold.
+class CostControlProviderProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Provider-specific budget enforcement settings.
 
-    :ivar type: How the threshold value is interpreted. Required. Known values are: "Percentage"
-     and "Absolute".
-    :vartype type: str or ~azure.mgmt.cognitiveservices.models.CostControlThresholdType
-    :ivar value: Gets or sets the threshold value. Legacy Audit definitions retain their stored
-     values; new thresholds support only Alert or Block. Required.
-    :vartype value: float
-    :ivar action: Gets or sets the threshold action. Authored thresholds must explicitly specify
-     Alert or Block. Legacy stored definitions with omitted actions continue to read as Audit.
-     Required. Known values are: "Audit", "Alert", and "Block".
-    :vartype action: str or ~azure.mgmt.cognitiveservices.models.CostControlThresholdAction
+    :ivar actions: Blocking actions keyed by nonempty, case-insensitively unique names. PUT and the
+     complete merged PATCH result may contain at most one Block action, independently of the
+     notification limit. Omission on creation creates no blocking actions.
+    :vartype actions: dict[str, ~azure.mgmt.cognitiveservices.models.CostControlAction]
     """
 
-    type: Union[str, "_models.CostControlThresholdType"] = rest_field(
+    actions: Optional[dict[str, "_models.CostControlAction"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """How the threshold value is interpreted. Required. Known values are: \"Percentage\" and
-     \"Absolute\"."""
-    value: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Gets or sets the threshold value. Legacy Audit definitions retain their stored values; new
-     thresholds support only Alert or Block. Required."""
-    action: Union[str, "_models.CostControlThresholdAction"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Gets or sets the threshold action. Authored thresholds must explicitly specify Alert or Block.
-     Legacy stored definitions with omitted actions continue to read as Audit. Required. Known
-     values are: \"Audit\", \"Alert\", and \"Block\"."""
+    """Blocking actions keyed by nonempty, case-insensitively unique names. PUT and the complete
+     merged PATCH result may contain at most one Block action, independently of the notification
+     limit. Omission on creation creates no blocking actions."""
 
     @overload
     def __init__(
         self,
         *,
-        type: Union[str, "_models.CostControlThresholdType"],
-        value: float,
-        action: Union[str, "_models.CostControlThresholdAction"],
+        actions: Optional[dict[str, "_models.CostControlAction"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CostControlProviderPropertiesPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Partial provider-specific edits. Named actions merge rather than replacing the complete
+    collection.
+
+    :ivar actions: Merges actions by case-insensitive name, preserving existing name casing. Null
+     entries delete actions; null clears the collection. Omission or an empty object preserves
+     existing actions. New entries must supply all required action fields after merging. The
+     complete merged result may contain at most one Block action; otherwise the request returns HTTP
+     400.
+    :vartype actions: dict[str, ~azure.mgmt.cognitiveservices.models.CostControlActionPatch]
+    """
+
+    actions: Optional[dict[str, "_models.CostControlActionPatch"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Merges actions by case-insensitive name, preserving existing name casing. Null entries delete
+     actions; null clears the collection. Omission or an empty object preserves existing actions.
+     New entries must supply all required action fields after merging. The complete merged result
+     may contain at most one Block action; otherwise the request returns HTTP 400."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        actions: Optional[dict[str, "_models.CostControlActionPatch"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CostControlTimePeriod(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A finite validity interval, including its start and excluding its end.
+
+    :ivar start_date: The inclusive UTC start, encoded as an ISO 8601 timestamp ending in Z with up
+     to seven fractional digits. Required.
+    :vartype start_date: ~datetime.datetime
+    :ivar end_date: The exclusive UTC end, later than startDate, encoded as an ISO 8601 timestamp
+     ending in Z with up to seven fractional digits. Required.
+    :vartype end_date: ~datetime.datetime
+    """
+
+    start_date: datetime.datetime = rest_field(
+        name="startDate", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The inclusive UTC start, encoded as an ISO 8601 timestamp ending in Z with up to seven
+     fractional digits. Required."""
+    end_date: datetime.datetime = rest_field(
+        name="endDate", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The exclusive UTC end, later than startDate, encoded as an ISO 8601 timestamp ending in Z with
+     up to seven fractional digits. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        start_date: datetime.datetime,
+        end_date: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CostControlTimePeriodPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Partial edits to a validity interval. Supplied dates cannot be null, and the merged start must
+    precede the merged end.
+
+    :ivar start_date: The inclusive UTC start, encoded as an ISO 8601 timestamp ending in Z with up
+     to seven fractional digits.
+    :vartype start_date: ~datetime.datetime
+    :ivar end_date: The exclusive UTC end, later than startDate, encoded as an ISO 8601 timestamp
+     ending in Z with up to seven fractional digits.
+    :vartype end_date: ~datetime.datetime
+    """
+
+    start_date: Optional[datetime.datetime] = rest_field(
+        name="startDate", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The inclusive UTC start, encoded as an ISO 8601 timestamp ending in Z with up to seven
+     fractional digits."""
+    end_date: Optional[datetime.datetime] = rest_field(
+        name="endDate", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The exclusive UTC end, later than startDate, encoded as an ISO 8601 timestamp ending in Z with
+     up to seven fractional digits."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        start_date: Optional[datetime.datetime] = None,
+        end_date: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload
@@ -5039,7 +6669,8 @@ class CustomBlocklistConfig(RaiBlocklistConfig):  # pylint: disable=docstring-ke
     :ivar blocking: If blocking would occur.
     :vartype blocking: bool
     :ivar source: Content source to apply the Content Filters. Known values are: "Prompt",
-     "Completion", "PreToolCall", "PostToolCall", "PreRun", and "PostRun".
+     "Completion", "PreToolCall", "PostToolCall", "PreRun", "PostRun", "AgentStartup",
+     "PreModelCall", "PostModelCall", and "AgentShutdown".
     :vartype source: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyContentSource
     """
 
@@ -5047,7 +6678,8 @@ class CustomBlocklistConfig(RaiBlocklistConfig):  # pylint: disable=docstring-ke
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Content source to apply the Content Filters. Known values are: \"Prompt\", \"Completion\",
-     \"PreToolCall\", \"PostToolCall\", \"PreRun\", and \"PostRun\"."""
+     \"PreToolCall\", \"PostToolCall\", \"PreRun\", \"PostRun\", \"AgentStartup\", \"PreModelCall\",
+     \"PostModelCall\", and \"AgentShutdown\"."""
 
     @overload
     def __init__(
@@ -5158,10 +6790,10 @@ class CustomKeysConnectionProperties(
     :ivar credentials: Custom Keys credential object.
     :vartype credentials: ~azure.mgmt.cognitiveservices.models.CustomKeys
     :ivar auth_type: Authentication type of the connection target. Required. CUSTOM_KEYS.
-    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.CUSTOM_KEYS
+    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.ConnectionAuthType
     """
 
-    credentials: Optional["_models.CustomKeys"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    credentials: Optional["_models.CustomKeys"] = rest_field(visibility=["create", "update"])
     """Custom Keys credential object."""
     auth_type: Literal[ConnectionAuthType.CUSTOM_KEYS] = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Authentication type of the connection target. Required. CUSTOM_KEYS."""
@@ -5493,10 +7125,6 @@ class DeploymentProperties(_Model):  # pylint: disable=docstring-keyword-should-
      select the models subset for routing and the routing mode (balanced, quality, cost) for routing
      across all supported models or the model subset.
     :vartype routing: ~azure.mgmt.cognitiveservices.models.DeploymentRouting
-    :ivar cost_control_ids: The full resource IDs of cost controls directly attached to this
-     deployment. At the moment the service only supports a single cost control. This will be
-     expanded in future API versions.
-    :vartype cost_control_ids: list[str]
     """
 
     provisioning_state: Optional[Union[str, "_models.DeploymentProvisioningState"]] = rest_field(
@@ -5575,11 +7203,6 @@ class DeploymentProperties(_Model):  # pylint: disable=docstring-keyword-should-
      the deployed model is 'model-router' version 2025-11-18 or later. Allows you to select the
      models subset for routing and the routing mode (balanced, quality, cost) for routing across all
      supported models or the model subset."""
-    cost_control_ids: Optional[list[str]] = rest_field(
-        name="costControlIds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The full resource IDs of cost controls directly attached to this deployment. At the moment the
-     service only supports a single cost control. This will be expanded in future API versions."""
 
     @overload
     def __init__(
@@ -5598,7 +7221,6 @@ class DeploymentProperties(_Model):  # pylint: disable=docstring-keyword-should-
         service_tier: Optional[Union[str, "_models.ServiceTier"]] = None,
         deployment_state: Optional[Union[str, "_models.DeploymentState"]] = None,
         routing: Optional["_models.DeploymentRouting"] = None,
-        cost_control_ids: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -6288,7 +7910,7 @@ class FqdnOutboundRule(
     :vartype destination: str
     :ivar type: Type of a managed network Outbound Rule of a cognitive services account. Required.
      FQDN.
-    :vartype type: str or ~azure.mgmt.cognitiveservices.models.FQDN
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.RuleType
     """
 
     destination: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6379,7 +8001,7 @@ class HostedAgentDeployment(
     :vartype max_replicas: int
     :ivar deployment_type: Gets or sets the type of deployment for the agent. Required. The
      underlying infra is owned by the platform.
-    :vartype deployment_type: str or ~azure.mgmt.cognitiveservices.models.HOSTED
+    :vartype deployment_type: str or ~azure.mgmt.cognitiveservices.models.AgentDeploymentType
     """
 
     min_replicas: Optional[int] = rest_field(
@@ -6580,7 +8202,7 @@ class ManagedAgentDeployment(
      ~azure.mgmt.cognitiveservices.models.AgentDeploymentProvisioningState
     :ivar deployment_type: Gets or sets the type of deployment for the agent. Required. The
      underlying infra is managed by the platform in the deployer's subscription.
-    :vartype deployment_type: str or ~azure.mgmt.cognitiveservices.models.MANAGED
+    :vartype deployment_type: str or ~azure.mgmt.cognitiveservices.models.AgentDeploymentType
     """
 
     deployment_type: Literal[AgentDeploymentType.MANAGED] = rest_discriminator(name="deploymentType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -6621,7 +8243,7 @@ class ManagedClusterAgentHostingConfiguration(
     :vartype name: str
     :ivar hosting_type: Type of infrastructure used to host Foundry agents. Required. Agents are
      hosted on an Azure Kubernetes Service managed cluster.
-    :vartype hosting_type: str or ~azure.mgmt.cognitiveservices.models.MANAGED_CLUSTER
+    :vartype hosting_type: str or ~azure.mgmt.cognitiveservices.models.AgentHostingType
     :ivar hosting_management_identity_resource_id: Azure resource ID of the user-assigned managed
      identity used by the Foundry resource provider to manage the hosting configuration. The
      identity must be assigned to the Foundry account in identity.userAssignedIdentities. Required.
@@ -6736,8 +8358,17 @@ class ManagedComputeCapacityProperties(_Model):
 
     :ivar accelerator_type: The type of accelerator (e.g., Azure.A100, Azure.H100).
     :vartype accelerator_type: str
+    :ivar offer_scope: The capacity offer scope: Global or DataZone. Omitted for deployment-scoped
+     results.
+    :vartype offer_scope: str
+    :ivar scope_id: The identifier within the offer scope: an empty string for Global, or US or EU
+     for DataZone. Omitted for deployment-scoped results.
+    :vartype scope_id: str
     :ivar available_accelerators: The number of available accelerators in the region.
     :vartype available_accelerators: int
+    :ivar total_available_accelerators: The total number of available accelerators summed across
+     regions within the scope. Omitted for deployment-scoped results.
+    :vartype total_available_accelerators: int
     :ivar deployment_size_capacities: Capacity information broken down by deployment size.
     :vartype deployment_size_capacities:
      list[~azure.mgmt.cognitiveservices.models.DeploymentSizeCapacity]
@@ -6745,8 +8376,16 @@ class ManagedComputeCapacityProperties(_Model):
 
     accelerator_type: Optional[str] = rest_field(name="acceleratorType", visibility=["read"])
     """The type of accelerator (e.g., Azure.A100, Azure.H100)."""
+    offer_scope: Optional[str] = rest_field(name="offerScope", visibility=["read"])
+    """The capacity offer scope: Global or DataZone. Omitted for deployment-scoped results."""
+    scope_id: Optional[str] = rest_field(name="scopeId", visibility=["read"])
+    """The identifier within the offer scope: an empty string for Global, or US or EU for DataZone.
+     Omitted for deployment-scoped results."""
     available_accelerators: Optional[int] = rest_field(name="availableAccelerators", visibility=["read"])
     """The number of available accelerators in the region."""
+    total_available_accelerators: Optional[int] = rest_field(name="totalAvailableAccelerators", visibility=["read"])
+    """The total number of available accelerators summed across regions within the scope. Omitted for
+     deployment-scoped results."""
     deployment_size_capacities: Optional[list["_models.DeploymentSizeCapacity"]] = rest_field(
         name="deploymentSizeCapacities", visibility=["read"]
     )
@@ -7074,8 +8713,11 @@ class ManagedComputeUsage(_Model):  # pylint: disable=docstring-keyword-should-m
     :vartype limit: float
     :ivar current_value: Current value for this metric.
     :vartype current_value: float
-    :ivar offer_scope: Offer scope (e.g., 'Global', 'Datazone-US').
+    :ivar offer_scope: Offer scope. Supported values are 'Global' and 'DataZone'.
     :vartype offer_scope: str
+    :ivar scope_id: Scope identifier for the managed compute usage. Supported values are ''
+     (empty), 'US', and 'EU'.
+    :vartype scope_id: str
     :ivar deployments: Deployments consuming this managed compute quota.
     :vartype deployments: list[~azure.mgmt.cognitiveservices.models.ManagedComputeDeploymentInfo]
     """
@@ -7100,7 +8742,10 @@ class ManagedComputeUsage(_Model):  # pylint: disable=docstring-keyword-should-m
     offer_scope: Optional[str] = rest_field(
         name="offerScope", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Offer scope (e.g., 'Global', 'Datazone-US')."""
+    """Offer scope. Supported values are 'Global' and 'DataZone'."""
+    scope_id: Optional[str] = rest_field(name="scopeId", visibility=["read", "create", "update", "delete", "query"])
+    """Scope identifier for the managed compute usage. Supported values are '' (empty), 'US', and
+     'EU'."""
     deployments: Optional[list["_models.ManagedComputeDeploymentInfo"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7114,6 +8759,7 @@ class ManagedComputeUsage(_Model):  # pylint: disable=docstring-keyword-should-m
         limit: Optional[float] = None,
         current_value: Optional[float] = None,
         offer_scope: Optional[str] = None,
+        scope_id: Optional[str] = None,
         deployments: Optional[list["_models.ManagedComputeDeploymentInfo"]] = None,
     ) -> None: ...
 
@@ -7185,7 +8831,7 @@ class ManagedIdentityAuthTypeConnectionProperties(
     :ivar credentials:
     :vartype credentials: ~azure.mgmt.cognitiveservices.models.ConnectionManagedIdentity
     :ivar auth_type: Authentication type of the connection target. Required. MANAGED_IDENTITY.
-    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.MANAGED_IDENTITY
+    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.ConnectionAuthType
     """
 
     credentials: Optional["_models.ConnectionManagedIdentity"] = rest_field(
@@ -8453,7 +10099,7 @@ class NoneAuthTypeConnectionProperties(
     :ivar use_workspace_managed_identity:
     :vartype use_workspace_managed_identity: bool
     :ivar auth_type: Authentication type of the connection target. Required. NONE.
-    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.NONE
+    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.ConnectionAuthType
     """
 
     auth_type: Literal[ConnectionAuthType.NONE] = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -8545,7 +10191,7 @@ class OAuth2AuthTypeConnectionProperties(
      depending on each OAuth2 provider's implementation.
     :vartype credentials: ~azure.mgmt.cognitiveservices.models.ConnectionOAuth2
     :ivar auth_type: Authentication type of the connection target. Required. O_AUTH2.
-    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.O_AUTH2
+    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.ConnectionAuthType
     """
 
     credentials: Optional["_models.ConnectionOAuth2"] = rest_field(
@@ -8680,7 +10326,7 @@ class OrganizationSharedBuiltInAuthorizationPolicy(
 
     :ivar type: Authorization scheme type. Required. Claim-based, requires membership in the
      tenant.
-    :vartype type: str or ~azure.mgmt.cognitiveservices.models.ORGANIZATION_SCOPE
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.BuiltInAuthorizationScheme
     """
 
     type: Literal[BuiltInAuthorizationScheme.ORGANIZATION_SCOPE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -8801,7 +10447,7 @@ class PATAuthTypeConnectionProperties(
     :ivar credentials:
     :vartype credentials: ~azure.mgmt.cognitiveservices.models.ConnectionPersonalAccessToken
     :ivar auth_type: Authentication type of the connection target. Required. PAT.
-    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.PAT
+    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.ConnectionAuthType
     """
 
     credentials: Optional["_models.ConnectionPersonalAccessToken"] = rest_field(
@@ -9275,7 +10921,7 @@ class PrivateEndpointOutboundRule(
     :vartype fqdns: list[str]
     :ivar type: Type of a managed network Outbound Rule of a cognitive services account. Required.
      PRIVATE_ENDPOINT.
-    :vartype type: str or ~azure.mgmt.cognitiveservices.models.PRIVATE_ENDPOINT
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.RuleType
     """
 
     destination: Optional["_models.PrivateEndpointOutboundRuleDestination"] = rest_field(
@@ -9675,6 +11321,53 @@ class ProjectCapabilityHostProperties(_Model):  # pylint: disable=docstring-keyw
         super().__init__(*args, **kwargs)
 
 
+class ProjectCostControl(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A budget that measures consumption and optionally alerts or blocks requests within its owning
+    Foundry project. Reading, deleting, and enforcing stored identity selections requires
+    Microsoft.CognitiveServices/CostControlsByIdentity registration.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.CostControlProperties
+    :ivar etag: The opaque entity tag used for optimistic concurrency.
+    :vartype etag: str
+    """
+
+    properties: Optional["_models.CostControlProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """The opaque entity tag used for optimistic concurrency."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.CostControlProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ProjectProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Cognitive Services Project'.
 
@@ -9694,6 +11387,10 @@ class ProjectProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
      partial override of the account defaults; omitted fields inherit from the parent account when
      present. Settable only at create time.
     :vartype capability_settings: ~azure.mgmt.cognitiveservices.models.CapabilitySettings
+    :ivar tool_controls: The project-level tool access policy. Omitting this property in a PUT
+     request clears the policy. In PATCH requests, omission preserves the policy and an explicit
+     null clears it. Responses omit this property when no policy is configured.
+    :vartype tool_controls: ~azure.mgmt.cognitiveservices.models.ToolControls
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -9718,6 +11415,12 @@ class ProjectProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
     """Effective agent capability settings for the project. Optional partial override of the account
      defaults; omitted fields inherit from the parent account when present. Settable only at create
      time."""
+    tool_controls: Optional["_models.ToolControls"] = rest_field(
+        name="toolControls", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The project-level tool access policy. Omitting this property in a PUT request clears the
+     policy. In PATCH requests, omission preserves the policy and an explicit null clears it.
+     Responses omit this property when no policy is configured."""
 
     @overload
     def __init__(
@@ -9726,6 +11429,7 @@ class ProjectProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         capability_settings: Optional["_models.CapabilitySettings"] = None,
+        tool_controls: Optional["_models.ToolControls"] = None,
     ) -> None: ...
 
     @overload
@@ -10016,8 +11720,167 @@ class QuotaTierUpgradeEligibilityInfo(_Model):  # pylint: disable=docstring-keyw
         super().__init__(*args, **kwargs)
 
 
-class RaiAcsEmptyObject(_Model):
-    """An object that must contain no properties."""
+class RaiAcsAgentShutdownInterventionPoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Agent-shutdown binding with the canonical summary target.
+
+    :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
+     Required. Default value is "$snap.summary".
+    :vartype policy_target: str
+    :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Default
+     value is "agent_summary".
+    :vartype policy_target_kind: str
+    :ivar policy: The logical policy evaluated at this intervention point. Required.
+    :vartype policy: ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyBinding
+    :ivar annotations: Optional annotator bindings keyed by declaration name. Results are available
+     to Rego as input.annotations.<name>.
+    :vartype annotations: dict[str, ~azure.mgmt.cognitiveservices.models.RaiAcsAnnotationBinding]
+    """
+
+    policy_target: Literal["$snap.summary"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The canonical Agent Hooks snapshot path projected as the policy target. Required. Default value
+     is \"$snap.summary\"."""
+    policy_target_kind: Literal["agent_summary"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The semantic kind of the projected policy target. Required. Default value is \"agent_summary\"."""
+    policy: "_models.RaiAcsPolicyBinding" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The logical policy evaluated at this intervention point. Required."""
+    annotations: Optional[dict[str, "_models.RaiAcsAnnotationBinding"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional annotator bindings keyed by declaration name. Results are available to Rego as
+     input.annotations.<name>."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policy: "_models.RaiAcsPolicyBinding",
+        annotations: Optional[dict[str, "_models.RaiAcsAnnotationBinding"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.policy_target: Literal["$snap.summary"] = "$snap.summary"
+        self.policy_target_kind: Literal["agent_summary"] = "agent_summary"
+
+
+class RaiAcsAgentStartupInterventionPoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Agent-startup binding with the canonical initialization target.
+
+    :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
+     Required. Default value is "$snap.agent_init".
+    :vartype policy_target: str
+    :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Default
+     value is "agent_init".
+    :vartype policy_target_kind: str
+    :ivar policy: The logical policy evaluated at this intervention point. Required.
+    :vartype policy: ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyBinding
+    :ivar annotations: Optional annotator bindings keyed by declaration name. Results are available
+     to Rego as input.annotations.<name>.
+    :vartype annotations: dict[str, ~azure.mgmt.cognitiveservices.models.RaiAcsAnnotationBinding]
+    """
+
+    policy_target: Literal["$snap.agent_init"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The canonical Agent Hooks snapshot path projected as the policy target. Required. Default value
+     is \"$snap.agent_init\"."""
+    policy_target_kind: Literal["agent_init"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The semantic kind of the projected policy target. Required. Default value is \"agent_init\"."""
+    policy: "_models.RaiAcsPolicyBinding" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The logical policy evaluated at this intervention point. Required."""
+    annotations: Optional[dict[str, "_models.RaiAcsAnnotationBinding"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional annotator bindings keyed by declaration name. Results are available to Rego as
+     input.annotations.<name>."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policy: "_models.RaiAcsPolicyBinding",
+        annotations: Optional[dict[str, "_models.RaiAcsAnnotationBinding"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.policy_target: Literal["$snap.agent_init"] = "$snap.agent_init"
+        self.policy_target_kind: Literal["agent_init"] = "agent_init"
+
+
+class RaiAcsAnnotationBinding(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Binds an annotator to a subject at one intervention point. The map key selects its declaration.
+
+    :ivar from_property: The Agent Control Specification path selecting the subject passed to the
+     annotator. Required.
+    :vartype from_property: str
+    """
+
+    from_property: str = rest_field(name="from", visibility=["read", "create", "update", "delete", "query"])
+    """The Agent Control Specification path selecting the subject passed to the annotator. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        from_property: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiAcsAnnotatorDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A named Agent Control Specification annotator declaration with host-defined configuration.
+
+    :ivar type: The dispatcher kind. Supported configuration is determined by the evaluation host.
+     Required. Known values are: "classifier", "llm", and "endpoint".
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.RaiAcsAnnotatorType
+    """
+
+    type: Union[str, "_models.RaiAcsAnnotatorType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The dispatcher kind. Supported configuration is determined by the evaluation host. Required.
+     Known values are: \"classifier\", \"llm\", and \"endpoint\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.RaiAcsAnnotatorType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class RaiAcsHarmConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -10065,37 +11928,40 @@ class RaiAcsInterventionPoint(_Model):  # pylint: disable=docstring-keyword-shou
     """Binds one logical policy to an Agent Control Specification intervention point.
 
     :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
-     Required. Known values are: "$snap.input", "$snap.output", "$snap.tool_call.args", and
-     "$snap.tool_result.value".
+     Required. Known values are: "$snap.agent_init", "$snap.input", "$snap.messages",
+     "$snap.response", "$snap.output", "$snap.tool_call.args", "$snap.tool_result.value", and
+     "$snap.summary".
     :vartype policy_target: str or ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyTarget
     :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Known
-     values are: "user_input", "assistant_output", "tool_args", and "tool_result".
+     values are: "agent_init", "user_input", "messages", "model_response", "assistant_output",
+     "tool_args", "tool_result", and "agent_summary".
     :vartype policy_target_kind: str or ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyTargetKind
     :ivar policy: The logical policy evaluated at this intervention point. Required.
     :vartype policy: ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyBinding
-    :ivar annotations: Standard Agent Control Specification annotation bindings are disabled; when
-     present, this object must be empty.
-    :vartype annotations: ~azure.mgmt.cognitiveservices.models.RaiAcsEmptyObject
+    :ivar annotations: Optional annotator bindings keyed by declaration name. Results are available
+     to Rego as input.annotations.<name>.
+    :vartype annotations: dict[str, ~azure.mgmt.cognitiveservices.models.RaiAcsAnnotationBinding]
     """
 
     policy_target: Union[str, "_models.RaiAcsPolicyTarget"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The canonical Agent Hooks snapshot path projected as the policy target. Required. Known values
-     are: \"$snap.input\", \"$snap.output\", \"$snap.tool_call.args\", and
-     \"$snap.tool_result.value\"."""
+     are: \"$snap.agent_init\", \"$snap.input\", \"$snap.messages\", \"$snap.response\",
+     \"$snap.output\", \"$snap.tool_call.args\", \"$snap.tool_result.value\", and \"$snap.summary\"."""
     policy_target_kind: Union[str, "_models.RaiAcsPolicyTargetKind"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The semantic kind of the projected policy target. Required. Known values are: \"user_input\",
-     \"assistant_output\", \"tool_args\", and \"tool_result\"."""
+    """The semantic kind of the projected policy target. Required. Known values are: \"agent_init\",
+     \"user_input\", \"messages\", \"model_response\", \"assistant_output\", \"tool_args\",
+     \"tool_result\", and \"agent_summary\"."""
     policy: "_models.RaiAcsPolicyBinding" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The logical policy evaluated at this intervention point. Required."""
-    annotations: Optional["_models.RaiAcsEmptyObject"] = rest_field(
+    annotations: Optional[dict[str, "_models.RaiAcsAnnotationBinding"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Standard Agent Control Specification annotation bindings are disabled; when present, this
-     object must be empty."""
+    """Optional annotator bindings keyed by declaration name. Results are available to Rego as
+     input.annotations.<name>."""
 
     @overload
     def __init__(
@@ -10104,7 +11970,7 @@ class RaiAcsInterventionPoint(_Model):  # pylint: disable=docstring-keyword-shou
         policy_target: Union[str, "_models.RaiAcsPolicyTarget"],
         policy_target_kind: Union[str, "_models.RaiAcsPolicyTargetKind"],
         policy: "_models.RaiAcsPolicyBinding",
-        annotations: Optional["_models.RaiAcsEmptyObject"] = None,
+        annotations: Optional[dict[str, "_models.RaiAcsAnnotationBinding"]] = None,
     ) -> None: ...
 
     @overload
@@ -10121,20 +11987,44 @@ class RaiAcsInterventionPoint(_Model):  # pylint: disable=docstring-keyword-shou
 class RaiAcsInterventionPoints(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Intervention points supported by the Azure AI Content Safety Unified Moderate host profile.
 
+    :ivar agent_startup: The policy evaluated when the agent execution session starts.
+    :vartype agent_startup:
+     ~azure.mgmt.cognitiveservices.models.RaiAcsAgentStartupInterventionPoint
     :ivar input: The policy evaluated for user input.
     :vartype input: ~azure.mgmt.cognitiveservices.models.RaiAcsInterventionPoint
+    :ivar pre_model_call: The policy evaluated before a model call.
+    :vartype pre_model_call:
+     ~azure.mgmt.cognitiveservices.models.RaiAcsPreModelCallInterventionPoint
+    :ivar post_model_call: The policy evaluated after a model call.
+    :vartype post_model_call:
+     ~azure.mgmt.cognitiveservices.models.RaiAcsPostModelCallInterventionPoint
     :ivar pre_tool_call: The policy evaluated before a tool call.
     :vartype pre_tool_call: ~azure.mgmt.cognitiveservices.models.RaiAcsToolInterventionPoint
     :ivar post_tool_call: The policy evaluated after a tool call.
     :vartype post_tool_call: ~azure.mgmt.cognitiveservices.models.RaiAcsToolInterventionPoint
     :ivar output: The policy evaluated for final output.
     :vartype output: ~azure.mgmt.cognitiveservices.models.RaiAcsInterventionPoint
+    :ivar agent_shutdown: The policy evaluated when the agent execution session shuts down.
+    :vartype agent_shutdown:
+     ~azure.mgmt.cognitiveservices.models.RaiAcsAgentShutdownInterventionPoint
     """
 
+    agent_startup: Optional["_models.RaiAcsAgentStartupInterventionPoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy evaluated when the agent execution session starts."""
     input: Optional["_models.RaiAcsInterventionPoint"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The policy evaluated for user input."""
+    pre_model_call: Optional["_models.RaiAcsPreModelCallInterventionPoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy evaluated before a model call."""
+    post_model_call: Optional["_models.RaiAcsPostModelCallInterventionPoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy evaluated after a model call."""
     pre_tool_call: Optional["_models.RaiAcsToolInterventionPoint"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10147,15 +12037,23 @@ class RaiAcsInterventionPoints(_Model):  # pylint: disable=docstring-keyword-sho
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The policy evaluated for final output."""
+    agent_shutdown: Optional["_models.RaiAcsAgentShutdownInterventionPoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy evaluated when the agent execution session shuts down."""
 
     @overload
     def __init__(
         self,
         *,
+        agent_startup: Optional["_models.RaiAcsAgentStartupInterventionPoint"] = None,
         input: Optional["_models.RaiAcsInterventionPoint"] = None,
+        pre_model_call: Optional["_models.RaiAcsPreModelCallInterventionPoint"] = None,
+        post_model_call: Optional["_models.RaiAcsPostModelCallInterventionPoint"] = None,
         pre_tool_call: Optional["_models.RaiAcsToolInterventionPoint"] = None,
         post_tool_call: Optional["_models.RaiAcsToolInterventionPoint"] = None,
         output: Optional["_models.RaiAcsInterventionPoint"] = None,
+        agent_shutdown: Optional["_models.RaiAcsAgentShutdownInterventionPoint"] = None,
     ) -> None: ...
 
     @overload
@@ -10187,9 +12085,9 @@ class RaiAcsManifest(_Model):  # pylint: disable=docstring-keyword-should-match-
      empty when no tool selector is configured. A tool selector requires a non-empty catalog, and an
      unknown selected key fails closed.
     :vartype tools: dict[str, ~azure.mgmt.cognitiveservices.models.RaiAcsToolDefinition]
-    :ivar annotators: Standard Agent Control Specification annotator dispatch is disabled; when
-     present, this object must be empty.
-    :vartype annotators: ~azure.mgmt.cognitiveservices.models.RaiAcsEmptyObject
+    :ivar annotators: Optional annotator declarations keyed by name. Omitted or empty maps request
+     no annotator declarations.
+    :vartype annotators: dict[str, ~azure.mgmt.cognitiveservices.models.RaiAcsAnnotatorDefinition]
     """
 
     agent_control_specification_version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -10211,11 +12109,11 @@ class RaiAcsManifest(_Model):  # pylint: disable=docstring-keyword-should-match-
     """Static tool catalog keyed by canonical tool name. The catalog may be omitted or empty when no
      tool selector is configured. A tool selector requires a non-empty catalog, and an unknown
      selected key fails closed."""
-    annotators: Optional["_models.RaiAcsEmptyObject"] = rest_field(
+    annotators: Optional[dict[str, "_models.RaiAcsAnnotatorDefinition"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Standard Agent Control Specification annotator dispatch is disabled; when present, this object
-     must be empty."""
+    """Optional annotator declarations keyed by name. Omitted or empty maps request no annotator
+     declarations."""
 
     @overload
     def __init__(
@@ -10226,7 +12124,7 @@ class RaiAcsManifest(_Model):  # pylint: disable=docstring-keyword-should-match-
         intervention_points: "_models.RaiAcsInterventionPoints",
         metadata: Optional[dict[str, Any]] = None,
         tools: Optional[dict[str, "_models.RaiAcsToolDefinition"]] = None,
-        annotators: Optional["_models.RaiAcsEmptyObject"] = None,
+        annotators: Optional[dict[str, "_models.RaiAcsAnnotatorDefinition"]] = None,
     ) -> None: ...
 
     @overload
@@ -10322,6 +12220,109 @@ class RaiAcsPolicyBinding(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
+class RaiAcsPostModelCallInterventionPoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Post-model binding with the canonical model-response target.
+
+    :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
+     Required. Default value is "$snap.response".
+    :vartype policy_target: str
+    :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Default
+     value is "model_response".
+    :vartype policy_target_kind: str
+    :ivar policy: The logical policy evaluated at this intervention point. Required.
+    :vartype policy: ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyBinding
+    :ivar annotations: Optional annotator bindings keyed by declaration name. Results are available
+     to Rego as input.annotations.<name>.
+    :vartype annotations: dict[str, ~azure.mgmt.cognitiveservices.models.RaiAcsAnnotationBinding]
+    """
+
+    policy_target: Literal["$snap.response"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The canonical Agent Hooks snapshot path projected as the policy target. Required. Default value
+     is \"$snap.response\"."""
+    policy_target_kind: Literal["model_response"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The semantic kind of the projected policy target. Required. Default value is
+     \"model_response\"."""
+    policy: "_models.RaiAcsPolicyBinding" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The logical policy evaluated at this intervention point. Required."""
+    annotations: Optional[dict[str, "_models.RaiAcsAnnotationBinding"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional annotator bindings keyed by declaration name. Results are available to Rego as
+     input.annotations.<name>."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policy: "_models.RaiAcsPolicyBinding",
+        annotations: Optional[dict[str, "_models.RaiAcsAnnotationBinding"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.policy_target: Literal["$snap.response"] = "$snap.response"
+        self.policy_target_kind: Literal["model_response"] = "model_response"
+
+
+class RaiAcsPreModelCallInterventionPoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Pre-model binding with the canonical messages target.
+
+    :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
+     Required. Default value is "$snap.messages".
+    :vartype policy_target: str
+    :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Default
+     value is "messages".
+    :vartype policy_target_kind: str
+    :ivar policy: The logical policy evaluated at this intervention point. Required.
+    :vartype policy: ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyBinding
+    :ivar annotations: Optional annotator bindings keyed by declaration name. Results are available
+     to Rego as input.annotations.<name>.
+    :vartype annotations: dict[str, ~azure.mgmt.cognitiveservices.models.RaiAcsAnnotationBinding]
+    """
+
+    policy_target: Literal["$snap.messages"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The canonical Agent Hooks snapshot path projected as the policy target. Required. Default value
+     is \"$snap.messages\"."""
+    policy_target_kind: Literal["messages"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The semantic kind of the projected policy target. Required. Default value is \"messages\"."""
+    policy: "_models.RaiAcsPolicyBinding" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The logical policy evaluated at this intervention point. Required."""
+    annotations: Optional[dict[str, "_models.RaiAcsAnnotationBinding"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional annotator bindings keyed by declaration name. Results are available to Rego as
+     input.annotations.<name>."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policy: "_models.RaiAcsPolicyBinding",
+        annotations: Optional[dict[str, "_models.RaiAcsAnnotationBinding"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.policy_target: Literal["$snap.messages"] = "$snap.messages"
+        self.policy_target_kind: Literal["messages"] = "messages"
+
+
 class RaiAcsRegoPolicyDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Rego policy definition in the Azure AI Content Safety Unified Moderate host profile.
 
@@ -10411,17 +12412,19 @@ class RaiAcsToolInterventionPoint(_Model):  # pylint: disable=docstring-keyword-
     """Binds one logical policy to a tool-call intervention point.
 
     :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
-     Required. Known values are: "$snap.input", "$snap.output", "$snap.tool_call.args", and
-     "$snap.tool_result.value".
+     Required. Known values are: "$snap.agent_init", "$snap.input", "$snap.messages",
+     "$snap.response", "$snap.output", "$snap.tool_call.args", "$snap.tool_result.value", and
+     "$snap.summary".
     :vartype policy_target: str or ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyTarget
     :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Known
-     values are: "user_input", "assistant_output", "tool_args", and "tool_result".
+     values are: "agent_init", "user_input", "messages", "model_response", "assistant_output",
+     "tool_args", "tool_result", and "agent_summary".
     :vartype policy_target_kind: str or ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyTargetKind
     :ivar policy: The logical policy evaluated at this intervention point. Required.
     :vartype policy: ~azure.mgmt.cognitiveservices.models.RaiAcsPolicyBinding
-    :ivar annotations: Standard Agent Control Specification annotation bindings are disabled; when
-     present, this object must be empty.
-    :vartype annotations: ~azure.mgmt.cognitiveservices.models.RaiAcsEmptyObject
+    :ivar annotations: Optional annotator bindings keyed by declaration name. Results are available
+     to Rego as input.annotations.<name>.
+    :vartype annotations: dict[str, ~azure.mgmt.cognitiveservices.models.RaiAcsAnnotationBinding]
     :ivar tool_name_from: Selects the tool catalog key from the raw Agent Hooks snapshot using an
      extensible snapshot path. Known values are: "$snap.tool_call.name" and "$.tool_call.name".
     :vartype tool_name_from: str or ~azure.mgmt.cognitiveservices.models.RaiAcsToolNameSelector
@@ -10431,20 +12434,21 @@ class RaiAcsToolInterventionPoint(_Model):  # pylint: disable=docstring-keyword-
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The canonical Agent Hooks snapshot path projected as the policy target. Required. Known values
-     are: \"$snap.input\", \"$snap.output\", \"$snap.tool_call.args\", and
-     \"$snap.tool_result.value\"."""
+     are: \"$snap.agent_init\", \"$snap.input\", \"$snap.messages\", \"$snap.response\",
+     \"$snap.output\", \"$snap.tool_call.args\", \"$snap.tool_result.value\", and \"$snap.summary\"."""
     policy_target_kind: Union[str, "_models.RaiAcsPolicyTargetKind"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The semantic kind of the projected policy target. Required. Known values are: \"user_input\",
-     \"assistant_output\", \"tool_args\", and \"tool_result\"."""
+    """The semantic kind of the projected policy target. Required. Known values are: \"agent_init\",
+     \"user_input\", \"messages\", \"model_response\", \"assistant_output\", \"tool_args\",
+     \"tool_result\", and \"agent_summary\"."""
     policy: "_models.RaiAcsPolicyBinding" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The logical policy evaluated at this intervention point. Required."""
-    annotations: Optional["_models.RaiAcsEmptyObject"] = rest_field(
+    annotations: Optional[dict[str, "_models.RaiAcsAnnotationBinding"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Standard Agent Control Specification annotation bindings are disabled; when present, this
-     object must be empty."""
+    """Optional annotator bindings keyed by declaration name. Results are available to Rego as
+     input.annotations.<name>."""
     tool_name_from: Optional[Union[str, "_models.RaiAcsToolNameSelector"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10458,7 +12462,7 @@ class RaiAcsToolInterventionPoint(_Model):  # pylint: disable=docstring-keyword-
         policy_target: Union[str, "_models.RaiAcsPolicyTarget"],
         policy_target_kind: Union[str, "_models.RaiAcsPolicyTargetKind"],
         policy: "_models.RaiAcsPolicyBinding",
-        annotations: Optional["_models.RaiAcsEmptyObject"] = None,
+        annotations: Optional[dict[str, "_models.RaiAcsAnnotationBinding"]] = None,
         tool_name_from: Optional[Union[str, "_models.RaiAcsToolNameSelector"]] = None,
     ) -> None: ...
 
@@ -10806,7 +12810,8 @@ class RaiContentFilterProperties(_Model):  # pylint: disable=docstring-keyword-s
      High).
     :vartype is_multi_level_filter: bool
     :ivar source: Content source to apply the Content Filters. Known values are: "Prompt",
-     "Completion", "PreToolCall", "PostToolCall", "PreRun", and "PostRun".
+     "Completion", "PreToolCall", "PostToolCall", "PreRun", "PostRun", "AgentStartup",
+     "PreModelCall", "PostModelCall", and "AgentShutdown".
     :vartype source: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyContentSource
     """
 
@@ -10820,7 +12825,8 @@ class RaiContentFilterProperties(_Model):  # pylint: disable=docstring-keyword-s
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Content source to apply the Content Filters. Known values are: \"Prompt\", \"Completion\",
-     \"PreToolCall\", \"PostToolCall\", \"PreRun\", and \"PostRun\"."""
+     \"PreToolCall\", \"PostToolCall\", \"PreRun\", \"PostRun\", \"AgentStartup\", \"PreModelCall\",
+     \"PostModelCall\", and \"AgentShutdown\"."""
 
     @overload
     def __init__(
@@ -11502,7 +13508,8 @@ class RaiPolicyContentFilter(_Model):  # pylint: disable=docstring-keyword-shoul
     :ivar blocking: If blocking would occur.
     :vartype blocking: bool
     :ivar source: Content source to apply the Content Filters. Known values are: "Prompt",
-     "Completion", "PreToolCall", "PostToolCall", "PreRun", and "PostRun".
+     "Completion", "PreToolCall", "PostToolCall", "PreRun", "PostRun", "AgentStartup",
+     "PreModelCall", "PostModelCall", and "AgentShutdown".
     :vartype source: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyContentSource
     :ivar action: The action types to apply to the content filters. Known values are: "None",
      "BLOCKING", "ANNOTATING", "HITL", and "RETRY".
@@ -11523,7 +13530,8 @@ class RaiPolicyContentFilter(_Model):  # pylint: disable=docstring-keyword-shoul
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Content source to apply the Content Filters. Known values are: \"Prompt\", \"Completion\",
-     \"PreToolCall\", \"PostToolCall\", \"PreRun\", and \"PostRun\"."""
+     \"PreToolCall\", \"PostToolCall\", \"PreRun\", \"PostRun\", \"AgentStartup\", \"PreModelCall\",
+     \"PostModelCall\", and \"AgentShutdown\"."""
     action: Optional[Union[str, "_models.RaiActionType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -11564,7 +13572,8 @@ class RaiPolicyCustomExternalSafetyProviderReference(
      safety provider.
     :vartype managed_identity_resource_id: str
     :ivar source: The request stage at which the provider runs. Required. Known values are:
-     "Prompt", "Completion", "PreToolCall", "PostToolCall", "PreRun", and "PostRun".
+     "Prompt", "Completion", "PreToolCall", "PostToolCall", "PreRun", "PostRun", "AgentStartup",
+     "PreModelCall", "PostModelCall", and "AgentShutdown".
     :vartype source: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyContentSource
     :ivar blocking: Whether a provider rejection blocks the request.
     :vartype blocking: bool
@@ -11582,7 +13591,8 @@ class RaiPolicyCustomExternalSafetyProviderReference(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The request stage at which the provider runs. Required. Known values are: \"Prompt\",
-     \"Completion\", \"PreToolCall\", \"PostToolCall\", \"PreRun\", and \"PostRun\"."""
+     \"Completion\", \"PreToolCall\", \"PostToolCall\", \"PreRun\", \"PostRun\", \"AgentStartup\",
+     \"PreModelCall\", \"PostModelCall\", and \"AgentShutdown\"."""
     blocking: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether a provider rejection blocks the request."""
 
@@ -12452,7 +14462,7 @@ class RoleBasedBuiltInAuthorizationPolicy(ApplicationAuthorizationPolicy, discri
     """Built-in role-based authorization policy.
 
     :ivar type: Authorization scheme type. Required. Standard AzureML RBAC.
-    :vartype type: str or ~azure.mgmt.cognitiveservices.models.DEFAULT
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.BuiltInAuthorizationScheme
     """
 
     type: Literal[BuiltInAuthorizationScheme.DEFAULT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -12483,7 +14493,8 @@ class SafetyProviderConfig(RaiSafetyProviderConfig):  # pylint: disable=docstrin
     :ivar blocking: If blocking would occur.
     :vartype blocking: bool
     :ivar source: Content source to apply the Content Filters. Known values are: "Prompt",
-     "Completion", "PreToolCall", "PostToolCall", "PreRun", and "PostRun".
+     "Completion", "PreToolCall", "PostToolCall", "PreRun", "PostRun", "AgentStartup",
+     "PreModelCall", "PostModelCall", and "AgentShutdown".
     :vartype source: str or ~azure.mgmt.cognitiveservices.models.RaiPolicyContentSource
     """
 
@@ -12491,7 +14502,8 @@ class SafetyProviderConfig(RaiSafetyProviderConfig):  # pylint: disable=docstrin
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Content source to apply the Content Filters. Known values are: \"Prompt\", \"Completion\",
-     \"PreToolCall\", \"PostToolCall\", \"PreRun\", and \"PostRun\"."""
+     \"PreToolCall\", \"PostToolCall\", \"PreRun\", \"PostRun\", \"AgentStartup\", \"PreModelCall\",
+     \"PostModelCall\", and \"AgentShutdown\"."""
 
     @overload
     def __init__(
@@ -12570,7 +14582,7 @@ class SASAuthTypeConnectionProperties(
     :ivar credentials:
     :vartype credentials: ~azure.mgmt.cognitiveservices.models.ConnectionSharedAccessSignature
     :ivar auth_type: Authentication type of the connection target. Required. SAS.
-    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.SAS
+    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.ConnectionAuthType
     """
 
     credentials: Optional["_models.ConnectionSharedAccessSignature"] = rest_field(
@@ -12665,7 +14677,7 @@ class ServicePrincipalAuthTypeConnectionProperties(
     :ivar credentials:
     :vartype credentials: ~azure.mgmt.cognitiveservices.models.ConnectionServicePrincipal
     :ivar auth_type: Authentication type of the connection target. Required. SERVICE_PRINCIPAL.
-    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.SERVICE_PRINCIPAL
+    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.ConnectionAuthType
     """
 
     credentials: Optional["_models.ConnectionServicePrincipal"] = rest_field(
@@ -12723,7 +14735,7 @@ class ServiceTagOutboundRule(
     :vartype destination: ~azure.mgmt.cognitiveservices.models.ServiceTagOutboundRuleDestination
     :ivar type: Type of a managed network Outbound Rule of a cognitive services account. Required.
      SERVICE_TAG.
-    :vartype type: str or ~azure.mgmt.cognitiveservices.models.SERVICE_TAG
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.RuleType
     """
 
     destination: Optional["_models.ServiceTagOutboundRuleDestination"] = rest_field(
@@ -13233,6 +15245,117 @@ class ThrottlingRule(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
+class ToolControlEntry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Identifies a tool by its canonical type and optional MCP server URL or connector.
+
+    :ivar type: The canonical tool type. For type mcp, exactly one of serverUrl or connectorId must
+     be specified. Other tool types must omit both properties. Required. Known values are: "a2a",
+     "azure_ai_search", "azure_function", "bing_grounding", "browser_automation",
+     "capture_structured_outputs", "openapi", "function", "file_search", "computer_use_preview",
+     "web_search", "mcp", "code_interpreter", "image_generation", "local_shell", "shell", "custom",
+     "web_search_preview", "apply_patch", "a2a_preview", "bing_custom_search_preview",
+     "browser_automation_preview", "fabric_dataagent_preview", "sharepoint_grounding_preview",
+     "memory_search_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview", and
+     "web_iq_preview".
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.ToolControlType
+    :ivar server_url: The absolute HTTPS URL or URL pattern of an MCP server, stored as a string to
+     support wildcards. The entire URL may contain at most one literal '*' across its hostname,
+     path, query, and fragment. Supported patterns include https://*.contoso.com/mcp,
+     `https://contoso.com/mcp/ <https://contoso.com/mcp/>`_*, https://contoso.com/mcp?tenant=*, and
+     `https://contoso.com/mcp# <https://contoso.com/mcp#>`_*. A hostname wildcard must be the
+     leftmost label. The URL must not contain user information. Applies only to type mcp and cannot
+     be specified together with connectorId.
+    :vartype server_url: str
+    :ivar connector_id: The opaque MCP connector catalog identifier, not an Azure resource ID.
+     Applies only to type mcp and cannot be specified together with serverUrl.
+    :vartype connector_id: str
+    """
+
+    type: Union[str, "_models.ToolControlType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The canonical tool type. For type mcp, exactly one of serverUrl or connectorId must be
+     specified. Other tool types must omit both properties. Required. Known values are: \"a2a\",
+     \"azure_ai_search\", \"azure_function\", \"bing_grounding\", \"browser_automation\",
+     \"capture_structured_outputs\", \"openapi\", \"function\", \"file_search\",
+     \"computer_use_preview\", \"web_search\", \"mcp\", \"code_interpreter\", \"image_generation\",
+     \"local_shell\", \"shell\", \"custom\", \"web_search_preview\", \"apply_patch\",
+     \"a2a_preview\", \"bing_custom_search_preview\", \"browser_automation_preview\",
+     \"fabric_dataagent_preview\", \"sharepoint_grounding_preview\", \"memory_search_preview\",
+     \"work_iq_preview\", \"fabric_iq_preview\", \"toolbox_search_preview\", and \"web_iq_preview\"."""
+    server_url: Optional[str] = rest_field(name="serverUrl", visibility=["read", "create", "update", "delete", "query"])
+    """The absolute HTTPS URL or URL pattern of an MCP server, stored as a string to support
+     wildcards. The entire URL may contain at most one literal '*' across its hostname, path, query,
+     and fragment. Supported patterns include https://*.contoso.com/mcp, `https://contoso.com/mcp/
+     <https://contoso.com/mcp/>`_*, https://contoso.com/mcp?tenant=*, and `https://contoso.com/mcp#
+     <https://contoso.com/mcp#>`_*. A hostname wildcard must be the leftmost label. The URL must not
+     contain user information. Applies only to type mcp and cannot be specified together with
+     connectorId."""
+    connector_id: Optional[str] = rest_field(
+        name="connectorId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The opaque MCP connector catalog identifier, not an Azure resource ID. Applies only to type mcp
+     and cannot be specified together with serverUrl."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ToolControlType"],
+        server_url: Optional[str] = None,
+        connector_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ToolControls(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defines the default and per-tool access policy for a Foundry project.
+
+    :ivar default_action: The action applied when a tool is not listed explicitly. Only Deny is
+     currently supported. "Deny"
+    :vartype default_action: str or ~azure.mgmt.cognitiveservices.models.ToolControlsDefaultAction
+    :ivar allowed_tools: The tools explicitly allowed by the policy. Omission or an empty array
+     specifies no explicitly allowed tools.
+    :vartype allowed_tools: list[~azure.mgmt.cognitiveservices.models.ToolControlEntry]
+    """
+
+    default_action: Optional[Union[str, "_models.ToolControlsDefaultAction"]] = rest_field(
+        name="defaultAction", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The action applied when a tool is not listed explicitly. Only Deny is currently supported.
+     \"Deny\""""
+    allowed_tools: Optional[list["_models.ToolControlEntry"]] = rest_field(
+        name="allowedTools", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The tools explicitly allowed by the policy. Omission or an empty array specifies no explicitly
+     allowed tools."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        default_action: Optional[Union[str, "_models.ToolControlsDefaultAction"]] = None,
+        allowed_tools: Optional[list["_models.ToolControlEntry"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class TrafficRoutingRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a rule for routing traffic to a specific deployment.
 
@@ -13268,6 +15391,59 @@ class TrafficRoutingRule(_Model):  # pylint: disable=docstring-keyword-should-ma
         description: Optional[str] = None,
         deployment_id: Optional[str] = None,
         traffic_percentage: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TrustedCertificateSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An Azure resource containing the CA certificate bundles trusted by supported features in the
+    account.
+
+    :ivar type: Type of resource containing the certificate bundles. Currently only AzureKeyVault
+     is supported. Required. "AzureKeyVault"
+    :vartype type: str or ~azure.mgmt.cognitiveservices.models.TrustedCertificateSourceType
+    :ivar resource_id: Azure resource ID of the Key Vault containing the referenced secrets. The
+     account identity must have permission to read these secrets. Required.
+    :vartype resource_id: str
+    :ivar certificate_bundle_references: References to secrets containing one or more PEM-encoded
+     CA certificates. Each secret name and version pair must be unique within the source, using
+     case-insensitive comparison. The same secret name can be referenced with different versions.
+     Required.
+    :vartype certificate_bundle_references:
+     list[~azure.mgmt.cognitiveservices.models.CertificateBundleReference]
+    """
+
+    type: Union[str, "_models.TrustedCertificateSourceType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of resource containing the certificate bundles. Currently only AzureKeyVault is supported.
+     Required. \"AzureKeyVault\""""
+    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
+    """Azure resource ID of the Key Vault containing the referenced secrets. The account identity must
+     have permission to read these secrets. Required."""
+    certificate_bundle_references: list["_models.CertificateBundleReference"] = rest_field(
+        name="certificateBundleReferences", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """References to secrets containing one or more PEM-encoded CA certificates. Each secret name and
+     version pair must be unique within the source, using case-insensitive comparison. The same
+     secret name can be referenced with different versions. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.TrustedCertificateSourceType"],
+        resource_id: str,
+        certificate_bundle_references: list["_models.CertificateBundleReference"],
     ) -> None: ...
 
     @overload
@@ -13483,7 +15659,7 @@ class UsernamePasswordAuthTypeConnectionProperties(
     :ivar credentials:
     :vartype credentials: ~azure.mgmt.cognitiveservices.models.ConnectionUsernamePassword
     :ivar auth_type: Authentication type of the connection target. Required. USERNAME_PASSWORD.
-    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.USERNAME_PASSWORD
+    :vartype auth_type: str or ~azure.mgmt.cognitiveservices.models.ConnectionAuthType
     """
 
     credentials: Optional["_models.ConnectionUsernamePassword"] = rest_field(

@@ -7,6 +7,7 @@
 
 import json
 import time
+from copy import deepcopy
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
@@ -14,64 +15,22 @@ import pytest
 
 from azure.core import MatchConditions
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import HttpResponseError
 from azure.mgmt.cognitiveservices import models
 from azure.mgmt.cognitiveservices.aio import CognitiveServicesManagementClient
 
-
-SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
-RESOURCE_ID = (
-    f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/rg/providers/"
-    "Microsoft.CognitiveServices/accounts/acct/costControls/monthly-budget"
+from test_cost_controls_operations import (
+    API_VERSION,
+    BUDGET_PROPERTIES,
+    PATCH_CASES,
+    SUBSCRIPTION_ID,
+    _cost_control_case,
 )
 
-RULE = models.CostControlRule(
-    name="project-budget",
-    counter_key=[models.CostControlDimension(type="project")],
-    unit="usd",
-    amount=125,
-    period="month",
-    recurring=True,
-    match=models.CostControlMatch(
-        project_ids=[
-            "/subscriptions/sub/resourceGroups/rg/providers/"
-            "Microsoft.CognitiveServices/accounts/acct/projects/project"
-        ]
-    ),
-    thresholds=[
-        models.CostControlThreshold(type="percentage", value=80, action="alert"),
-        models.CostControlThreshold(type="absolute", value=100, action="block"),
-    ],
-)
-COST_CONTROL = models.CostControl(properties=models.CostControlProperties(display_name="Monthly budget", rules=[RULE]))
-COST_CONTROL_RESPONSE = {
-    "id": RESOURCE_ID,
-    "name": "monthly-budget",
-    "type": "Microsoft.CognitiveServices/accounts/costControls",
-    "etag": '"body-etag"',
-    "properties": {
-        "displayName": "Monthly budget",
-        "rules": [
-            {
-                "name": "project-budget",
-                "counterKey": [{"type": "project"}],
-                "unit": "usd",
-                "amount": 125,
-                "period": "month",
-                "recurring": True,
-                "match": {
-                    "projectIds": [
-                        "/subscriptions/sub/resourceGroups/rg/providers/"
-                        "Microsoft.CognitiveServices/accounts/acct/projects/project"
-                    ]
-                },
-                "thresholds": [
-                    {"type": "percentage", "value": 80, "action": "alert"},
-                    {"type": "absolute", "value": 100, "action": "block"},
-                ],
-            }
-        ],
-    },
-}
+
+@pytest.fixture(params=["account", "project"])
+def cost_control_case(request):
+    return _cost_control_case(request.param)
 
 
 class _FakeAsyncCredential:
@@ -134,14 +93,14 @@ def _json_body(request):
 
 
 @pytest.mark.asyncio
-async def test_create_serializes_thresholds_and_if_none_match():
-    client = _make_client(201, COST_CONTROL_RESPONSE, {"ETag": '"response-etag"'})
+async def test_create_serializes_budget_and_if_none_match(cost_control_case):
+    client = _make_client(201, cost_control_case.response, {"ETag": '"response-etag"'})
+    budget = cost_control_case.model_type(properties=models.CostControlProperties(deepcopy(BUDGET_PROPERTIES)))
 
-    result = await client.cost_controls.create_or_update(
-        "rg",
-        "acct",
+    result = await getattr(client, cost_control_case.operations_name).create_or_update(
+        *cost_control_case.parent_args,
         "monthly-budget",
-        COST_CONTROL,
+        budget,
         etag="*",
         match_condition=MatchConditions.IfMissing,
     )
@@ -149,41 +108,40 @@ async def test_create_serializes_thresholds_and_if_none_match():
     request = _request(client)
     body = _json_body(request)
     assert request.method == "PUT"
+    assert request.url.endswith(f"{cost_control_case.parent_id}/costControls/monthly-budget?api-version={API_VERSION}")
     assert request.headers["If-None-Match"] == "*"
-    assert body["properties"]["rules"][0]["thresholds"] == [
-        {"type": "percentage", "value": 80, "action": "alert"},
-        {"type": "absolute", "value": 100, "action": "block"},
-    ]
-    assert body["properties"]["rules"][0]["match"]["projectIds"]
-    assert result.properties.rules[0].thresholds[1].action == "block"
+    assert body == {"properties": BUDGET_PROPERTIES}
+    assert isinstance(result, cost_control_case.model_type)
+    assert result.properties.notifications["budget-alert"].threshold == 80
+    assert result.properties.provider_properties.actions["budget-block"].type == "Block"
 
 
 @pytest.mark.asyncio
-async def test_get_deserializes_cost_control_and_etag_header():
-    client = _make_client(200, COST_CONTROL_RESPONSE, {"ETag": '"response-etag"'})
+async def test_get_deserializes_cost_control_and_etag_header(cost_control_case):
+    client = _make_client(200, cost_control_case.response, {"ETag": '"response-etag"'})
 
-    result, response_headers = await client.cost_controls.get(
-        "rg",
-        "acct",
+    result, response_headers = await getattr(client, cost_control_case.operations_name).get(
+        *cost_control_case.parent_args,
         "monthly-budget",
         cls=lambda _, model, headers: (model, headers),
     )
 
     request = _request(client)
     assert request.method == "GET"
-    assert request.url.endswith("/costControls/monthly-budget?api-version=2026-09-15-preview")
+    assert request.url.endswith(f"{cost_control_case.parent_id}/costControls/monthly-budget?api-version={API_VERSION}")
+    assert isinstance(result, cost_control_case.model_type)
+    assert result.properties.amount == 125
     assert result.etag == '"body-etag"'
     assert response_headers["ETag"] == '"response-etag"'
 
 
 @pytest.mark.asyncio
-async def test_update_sends_if_match_and_replacement_rules():
-    client = _make_client(200, COST_CONTROL_RESPONSE, {"ETag": '"updated-etag"'})
-    patch = models.CostControlPatch(properties=models.CostControlPatchProperties(rules=[RULE]))
+async def test_update_sends_if_match_and_partial_budget(cost_control_case):
+    client = _make_client(200, cost_control_case.response, {"ETag": '"updated-etag"'})
+    patch = models.CostControlPatch(properties=models.CostControlPatchProperties(amount=150))
 
-    await client.cost_controls.update(
-        "rg",
-        "acct",
+    await getattr(client, cost_control_case.operations_name).update(
+        *cost_control_case.parent_args,
         "monthly-budget",
         patch,
         etag='"body-etag"',
@@ -193,28 +151,28 @@ async def test_update_sends_if_match_and_replacement_rules():
     request = _request(client)
     assert request.method == "PATCH"
     assert request.headers["If-Match"] == '"body-etag"'
-    assert _json_body(request)["properties"]["rules"][0]["name"] == "project-budget"
+    assert _json_body(request) == {"properties": {"amount": 150}}
 
 
 @pytest.mark.asyncio
-async def test_list_deserializes_cost_controls():
-    client = _make_client(200, {"value": [COST_CONTROL_RESPONSE], "nextLink": None})
+async def test_list_deserializes_cost_controls(cost_control_case):
+    client = _make_client(200, {"value": [cost_control_case.response], "nextLink": None})
+    operations = getattr(client, cost_control_case.operations_name)
 
-    result = [cost_control async for cost_control in client.cost_controls.list("rg", "acct")]
+    result = [cost_control async for cost_control in operations.list(*cost_control_case.parent_args)]
 
     request = _request(client)
     assert request.method == "GET"
-    assert request.url.endswith("/costControls?api-version=2026-09-15-preview")
+    assert request.url.endswith(f"{cost_control_case.parent_id}/costControls?api-version={API_VERSION}")
     assert [cost_control.name for cost_control in result] == ["monthly-budget"]
 
 
 @pytest.mark.asyncio
-async def test_delete_sends_if_match():
+async def test_delete_sends_if_match(cost_control_case):
     client = _make_client(204)
 
-    result = await client.cost_controls.delete(
-        "rg",
-        "acct",
+    result = await getattr(client, cost_control_case.operations_name).delete(
+        *cost_control_case.parent_args,
         "monthly-budget",
         etag='"body-etag"',
         match_condition=MatchConditions.IfNotModified,
@@ -224,6 +182,60 @@ async def test_delete_sends_if_match():
     assert result is None
     assert request.method == "DELETE"
     assert request.headers["If-Match"] == '"body-etag"'
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("payload", PATCH_CASES)
+async def test_update_preserves_patch_payload(cost_control_case, payload):
+    client = _make_client(200, cost_control_case.response)
+
+    await getattr(client, cost_control_case.operations_name).update(
+        *cost_control_case.parent_args,
+        "monthly-budget",
+        models.CostControlPatch(deepcopy(payload)),
+    )
+
+    request = _request(client)
+    assert request.method == "PATCH"
+    assert request.url.endswith(f"{cost_control_case.parent_id}/costControls/monthly-budget?api-version={API_VERSION}")
+    assert _json_body(request) == payload
+
+
+@pytest.mark.asyncio
+async def test_check_existence_uses_head_and_returns_etag(cost_control_case):
+    client = _make_client(200, headers={"ETag": '"head-etag"'})
+    operations = getattr(client, cost_control_case.operations_name)
+
+    assert await operations.check_existence(*cost_control_case.parent_args, "monthly-budget") is True
+    response_headers = await operations.check_existence(
+        *cost_control_case.parent_args, "monthly-budget", cls=lambda _, model, headers: headers
+    )
+
+    request = _request(client)
+    assert request.method == "HEAD"
+    assert request.url.endswith(f"{cost_control_case.parent_id}/costControls/monthly-budget?api-version={API_VERSION}")
+    assert response_headers["ETag"] == '"head-etag"'
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "status_code,error_code",
+    [(400, "BadRequest"), (403, "FeatureNotRegistered"), (412, "PreconditionFailed")],
+)
+async def test_update_propagates_service_errors(cost_control_case, status_code, error_code):
+    client = _make_client(status_code, {"error": {"code": error_code, "message": "Update rejected"}})
+
+    with pytest.raises(HttpResponseError) as error:
+        await getattr(client, cost_control_case.operations_name).update(
+            *cost_control_case.parent_args,
+            "monthly-budget",
+            models.CostControlPatch(properties=models.CostControlPatchProperties(amount=150)),
+            etag='"stale-etag"',
+            match_condition=MatchConditions.IfNotModified,
+        )
+
+    assert error.value.status_code == status_code
+    assert error.value.error.code == error_code
 
 
 @pytest.mark.asyncio

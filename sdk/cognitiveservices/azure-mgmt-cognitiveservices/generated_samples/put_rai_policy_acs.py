@@ -98,12 +98,13 @@ def main():
                     }
                 ],
                 "format": "ACS",
+                "mode": "Asynchronous_filter",
             }
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2026-09-15-preview/PutRaiPolicyAcs.json
+# x-ms-original-file: 2026-11-15-preview/PutRaiPolicyAcs.json
 if __name__ == "__main__":
     main()
