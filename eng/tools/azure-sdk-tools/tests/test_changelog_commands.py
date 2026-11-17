@@ -317,8 +317,18 @@ class TestResolvePackage:
         result = changelog._resolve_package("some-nonexistent-package-name")
         assert result == "some-nonexistent-package-name"
 
-    def test_none_returns_none(self):
-        assert changelog._resolve_package(None) is None
+    @patch("azpysdk.changelog.get_package_from_repo")
+    def test_current_directory_resolves_name(self, mock_get_pkg):
+        mock_get_pkg.return_value = SimpleNamespace(name="azure-core")
+        package_directory = os.path.join(REPO_ROOT, "sdk", "core", "azure-core")
+        with patch("os.getcwd", return_value=package_directory):
+            result = changelog._resolve_package(None)
+        assert result == "azure-core"
+        mock_get_pkg.assert_called_once_with(package_directory, REPO_ROOT)
+
+    def test_repo_root_without_package_returns_none(self):
+        with patch("os.getcwd", return_value=REPO_ROOT):
+            assert changelog._resolve_package(None) is None
 
 
 # ---------------------------------------------------------------------------
@@ -356,9 +366,9 @@ class TestEnsureChronusInstalled:
         mock_call.assert_called_once()
         cmd = mock_call.call_args[0][0]
         assert cmd == ["/usr/bin/npm", "ci"]
-        # And it must run from the .github directory, not repo root.
+        # And it must run from the directory that contains the pinned manifest.
         _, kwargs = mock_call.call_args
-        assert kwargs["cwd"].endswith(".github")
+        assert kwargs["cwd"].endswith(os.path.join(".github", "chronus"))
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=False)
     @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npm")
