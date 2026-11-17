@@ -67,6 +67,7 @@ def upload_blob(
     timeout: "int | None" = None,
     max_concurrency: "int | None" = None,
     max_block_size: "int | None" = None,
+    api_version: "str | None" = None,
 ) -> dict:
     """Upload a block blob using the native Rust extension.
 
@@ -116,6 +117,8 @@ def upload_blob(
         Defaults to the available CPU count when not specified, or 8 if it cannot be determined.
     :keyword int max_block_size: Maximum size per block for chunked uploads.
         Defaults to 4 MiB when not specified.
+    :keyword str api_version: Storage API version to use for requests. Defaults to the
+        Rust SDK's version when not specified.
     :returns: A dict containing available upload response values.
     :rtype: dict
     :raises ValueError: If the native module is not available.
@@ -160,6 +163,7 @@ def upload_blob(
         timeout=timeout,
         max_concurrency=max_concurrency,
         max_block_size=max_block_size,
+        api_version=api_version,
     )
 
 
@@ -183,6 +187,7 @@ def download_blob(
     timeout: "int | None" = None,
     max_concurrency: "int | None" = None,
     max_chunk_size: "int | None" = None,
+    api_version: "str | None" = None,
 ) -> "Iterator[bytes]":
     """Begin a download of a block blob using the native Rust extension.
 
@@ -229,6 +234,8 @@ def download_blob(
     :keyword int max_chunk_size: Maximum size of each ranged download request.
         Defaults to 4 MiB when not specified. Each iteration yields one chunk of this size (the
         final chunk may be smaller).
+    :keyword str api_version: Storage API version to use for requests. Defaults to the
+        Rust SDK's version when not specified.
     :returns: A lazy iterator yielding the blob content one chunk at a time. The object also
         exposes ``size`` (total bytes to be delivered) and ``readall()`` (returns all remaining
         content as a single ``bytes`` object).
@@ -262,4 +269,5 @@ def download_blob(
         timeout=timeout,
         max_concurrency=max_concurrency,
         max_chunk_size=max_chunk_size,
+        api_version=api_version,
     )

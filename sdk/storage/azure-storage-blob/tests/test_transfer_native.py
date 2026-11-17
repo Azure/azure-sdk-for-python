@@ -130,6 +130,7 @@ class _NativeTransferTestCase(unittest.TestCase):
             blob_name="blob",
             container_name="container",
             version_id=None,
+            api_version="2025-11-05",
             _config=SimpleNamespace(max_chunk_get_size=8),
         )
         self.config = SimpleNamespace(max_block_size=4)
@@ -313,11 +314,12 @@ class TestNativeDispatch(_NativeTransferTestCase):
                 self.extension.upload_blob.assert_called_once()
                 forwarded = self.extension.upload_blob.call_args.kwargs
                 self.assertEqual(forwarded["url"], self.client.url)
+                self.assertEqual(forwarded["api_version"], self.client.api_version)
                 self.assertIs(forwarded["data"], data)
                 self.assertIs(forwarded["overwrite"], False)
                 self.assertEqual(forwarded["max_block_size"], 4)
                 for key, value in forwarded.items():
-                    if key not in ("url", "data", "overwrite", "max_block_size"):
+                    if key not in ("url", "api_version", "data", "overwrite", "max_block_size"):
                         self.assertIsNone(value, key)
 
     def test_upload_encodes_text_and_accepts_empty_bytes(self):
@@ -357,6 +359,16 @@ class TestNativeDispatch(_NativeTransferTestCase):
                     self.assertIs(result, self.extension.upload_blob.return_value)
                     self.assertEqual(self.extension.upload_blob.call_args.kwargs["data"], expected)
 
+    def test_blob_client_forwards_api_version(self):
+        for api_version in (None, "2024-11-04"):
+            with self.subTest(api_version=api_version):
+                options = {} if api_version is None else {"api_version": api_version}
+                with BlobClient.from_blob_url(self.client.url, **options) as client:
+                    client.upload_blob(b"data")
+                    client.download_blob().readall()
+                    for native in (self.extension.upload_blob, self.extension.download_blob):
+                        self.assertEqual(native.call_args.kwargs["api_version"], client.api_version)
+
     def test_upload_forwards_supported_options(self):
         modified = datetime(2024, 1, 2, 3, 4, 5, tzinfo=timezone.utc)
         unmodified = datetime(2024, 2, 3, 4, 5, 6, tzinfo=timezone.utc)
@@ -395,6 +407,7 @@ class TestNativeDispatch(_NativeTransferTestCase):
         forwarded = self.extension.upload_blob.call_args.kwargs
         expected = {
             "url": self.client.url,
+            "api_version": self.client.api_version,
             "data": b"data",
             "token_provider": None,
             "credential_id": None,
@@ -445,9 +458,10 @@ class TestNativeDispatch(_NativeTransferTestCase):
         self.extension.download_blob.assert_called_once()
         forwarded = self.extension.download_blob.call_args.kwargs
         self.assertEqual(forwarded["url"], self.client.url)
+        self.assertEqual(forwarded["api_version"], self.client.api_version)
         self.assertEqual(forwarded["max_chunk_size"], 8)
         for key, value in forwarded.items():
-            if key not in ("url", "max_chunk_size"):
+            if key not in ("url", "api_version", "max_chunk_size"):
                 self.assertIsNone(value, key)
         self.assertIsInstance(result, NativeStorageStreamDownloader)
         self.assertEqual((result.name, result.container, result.size), ("blob", "container", 4))
@@ -473,6 +487,7 @@ class TestNativeDispatch(_NativeTransferTestCase):
         )
         self.extension.download_blob.assert_called_once_with(
             url=self.client.url,
+            api_version=self.client.api_version,
             token_provider=None,
             credential_id=None,
             offset=10,
@@ -526,6 +541,54 @@ class TestNativeDispatch(_NativeTransferTestCase):
                 self.assertEqual(forwarded["if_none_match"], '"other"')
                 self.assertEqual(forwarded["if_modified_since"], expected_timestamp)
                 self.assertEqual(forwarded["if_unmodified_since"], expected_timestamp)
+
+    def test_match_conditions_follow_python_transfer_semantics(self):
+        cases = [
+            ({}, None, None),
+            ({"match_condition": MatchConditions.Unconditionally}, None, None),
+            ({"match_condition": MatchConditions.Unconditionally, "etag": "ignored"}, None, None),
+            ({"match_condition": MatchConditions.Unconditionally, "if_match": "*"}, None, None),
+            ({"match_condition": MatchConditions.IfPresent}, "*", None),
+            ({"match_condition": MatchConditions.IfMissing}, None, "*"),
+            ({"match_condition": MatchConditions.IfNotModified, "etag": "etag"}, "etag", None),
+            ({"match_condition": MatchConditions.IfModified, "etag": "etag"}, None, "etag"),
+            ({"match_condition": MatchConditions.IfNotModified, "etag": 'W/"etag"'}, 'W/"etag"', None),
+            ({"if_match": "etag"}, "etag", None),
+            ({"if_none_match": "etag"}, None, "etag"),
+            ({"if_match": "*"}, "*", None),
+            ({"if_none_match": "*"}, None, "*"),
+            ({"if_match": "etag", "if_none_match": "ignored"}, "etag", None),
+            (
+                {"match_condition": MatchConditions.IfMissing, "if_match": "ignored"},
+                None,
+                "*",
+            ),
+        ]
+        for transfer, native in (
+            (self.upload, self.extension.upload_blob),
+            (self.download, self.extension.download_blob),
+        ):
+            for options, if_match, if_none_match in cases:
+                with self.subTest(transfer=transfer.__name__, options=options):
+                    transfer(**options)
+                    forwarded = native.call_args.kwargs
+                    self.assertEqual(forwarded["if_match"], if_match)
+                    self.assertEqual(forwarded["if_none_match"], if_none_match)
+
+    def test_invalid_match_conditions_do_not_call_native(self):
+        for transfer, native in (
+            (self.upload, self.extension.upload_blob),
+            (self.download, self.extension.download_blob),
+        ):
+            for options in (
+                {"etag": "etag"},
+                {"match_condition": MatchConditions.IfNotModified},
+                {"match_condition": MatchConditions.IfModified},
+            ):
+                with self.subTest(transfer=transfer.__name__, options=options):
+                    with self.assertRaisesRegex(ValueError, "specified without"):
+                        transfer(**options)
+            native.assert_not_called()
 
     def test_supported_credentials_and_callback_wiring(self):
         token_credential = Mock(spec=["get_token"])

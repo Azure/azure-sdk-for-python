@@ -721,10 +721,9 @@ fn binding_options_reach_download_requests() {
                     ("if-none-match", "\"not-match\""),
                     ("if-modified-since", "Tue, 14 Nov 2023 22:13:20 GMT"),
                     ("if-unmodified-since", "Tue, 14 Nov 2023 22:15:00 GMT"),
-                    ("x-ms-if-tags", "\"tag\"='value'"),
                 ];
                 for (name, expected) in conditions {
-                    // Once locked to the first ETag, later requests drop the other conditions.
+                    // The ETag lock replaces the original ETag and time conditions.
                     let expected = (first || etag.is_none()).then_some(expected);
                     assert_eq!(header(&request, name), expected, "{name}");
                 }
@@ -734,6 +733,7 @@ fn binding_options_reach_download_requests() {
                 };
                 assert_eq!(header(&request, "if-match"), Some(expected_if_match));
                 for (name, expected) in [
+                    ("x-ms-if-tags", "\"tag\"='value'"),
                     ("x-ms-lease-id", "lease"),
                     ("x-ms-encryption-key", "key"),
                     ("x-ms-encryption-key-sha256", "hash"),
@@ -749,6 +749,56 @@ fn binding_options_reach_download_requests() {
                     .iter()
                     .any(|(name, value)| name == "timeout" && value == "17"));
             }
+        }
+    });
+}
+
+#[test]
+fn changed_tags_with_unchanged_etag_fail_later_ranges() {
+    Python::initialize();
+    Python::attach(|py| {
+        for readall in [false, true] {
+            let mock = MockHttpClient::new(|request| {
+                if range(request) != Some((1, 3)) {
+                    assert_eq!(header(request, "if-match"), Some(ETAG_VALUE));
+                    if header(request, "x-ms-if-tags") == Some("\"tag\"='value'") {
+                        return response(
+                            StatusCode::PreconditionFailed,
+                            &[("x-ms-error-code", "ConditionNotMet"), ("etag", ETAG_VALUE)],
+                            Vec::new(),
+                        );
+                    }
+                }
+                blob_response(request, b"abcdefgh")
+            });
+            let mut stream = download_with_options(py, &mock).unwrap();
+            assert_eq!(next_bytes(&mut stream, py).unwrap(), b"bcd");
+            let error = if readall {
+                stream.readall(py).unwrap_err()
+            } else {
+                stream.__next__(py).unwrap_err()
+            };
+            assert!(error.is_instance_of::<crate::errors::NativeTransferError>(py));
+            assert_eq!(
+                error
+                    .value(py)
+                    .getattr("status_code")
+                    .unwrap()
+                    .extract::<u16>()
+                    .unwrap(),
+                412
+            );
+            assert!(stream
+                .__next__(py)
+                .unwrap_err()
+                .value(py)
+                .is(error.value(py)));
+            assert!(stream
+                .readall(py)
+                .unwrap_err()
+                .value(py)
+                .is(error.value(py)));
+            assert_ranges(&mock, &[(1, 3), (4, 6)]);
         }
     });
 }

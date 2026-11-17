@@ -147,18 +147,29 @@ fn build_blob_client(
     blob_url: &str,
     token_provider: Option<Py<PyAny>>,
     credential_id: Option<usize>,
+    api_version: Option<&str>,
 ) -> PyResult<BlobClient> {
     let mut options = BlobClientOptions::default();
     options.client_options.transport = Some(get_transport().clone());
-    build_blob_client_with_options(blob_url, token_provider, credential_id, options)
+    build_blob_client_with_options(
+        blob_url,
+        token_provider,
+        credential_id,
+        api_version,
+        options,
+    )
 }
 
 fn build_blob_client_with_options(
     blob_url: &str,
     token_provider: Option<Py<PyAny>>,
     credential_id: Option<usize>,
-    options: BlobClientOptions,
+    api_version: Option<&str>,
+    mut options: BlobClientOptions,
 ) -> PyResult<BlobClient> {
+    if let Some(api_version) = api_version {
+        options.version = api_version.to_string();
+    }
     let blob_url =
         Url::parse(blob_url).map_err(|e| PyValueError::new_err(format!("Invalid URL: {e}")))?;
 
@@ -249,12 +260,14 @@ mod tests {
         Python::attach(|py| {
             let mock = MockHttpClient::new(|request| panic!("Unexpected request: {request:?}"));
             assert!(
-                build_blob_client_with_options("not a URL", None, None, mock.options()).is_err()
+                build_blob_client_with_options("not a URL", None, None, None, mock.options())
+                    .is_err()
             );
             let provider = py.None();
             assert!(build_blob_client_with_options(
                 "https://account.blob.core.windows.net/container/blob",
                 Some(provider),
+                None,
                 None,
                 mock.options(),
             )
@@ -281,12 +294,50 @@ mod tests {
             );
             response(StatusCode::Ok, &[("content-length", "0")], Vec::new())
         });
-        let client = build_blob_client_with_options(url, None, None, mock.options()).unwrap();
+        let client = build_blob_client_with_options(url, None, None, None, mock.options()).unwrap();
         get_runtime()
             .unwrap()
             .block_on(client.download(None))
             .unwrap();
         assert_eq!(mock.requests().len(), 1);
+    }
+
+    #[test]
+    fn client_api_version_reaches_upload_and_download_requests() {
+        for api_version in [None, Some("2024-11-04"), Some("2025-11-05")] {
+            let expected = api_version
+                .map(str::to_string)
+                .unwrap_or_else(|| BlobClientOptions::default().version);
+            let mock = MockHttpClient::new(move |request| {
+                assert_eq!(
+                    request.headers.get_optional_str(&"x-ms-version".into()),
+                    Some(expected.as_str())
+                );
+                match request.method.as_str() {
+                    "PUT" => response(StatusCode::Created, &[], Vec::new()),
+                    "GET" => response(StatusCode::Ok, &[("content-length", "0")], Vec::new()),
+                    other => panic!("Unexpected request method: {other}"),
+                }
+            });
+            let client = build_blob_client_with_options(
+                "https://account.blob.core.windows.net/container/blob",
+                None,
+                None,
+                api_version,
+                mock.options(),
+            )
+            .unwrap();
+            get_runtime().unwrap().block_on(async {
+                client
+                    .upload(azure_core::Bytes::from_static(b"data").into(), None)
+                    .await
+                    .unwrap();
+                client.download(None).await.unwrap();
+            });
+            let requests = mock.requests();
+            assert!(requests.iter().any(|request| request.method == "PUT"));
+            assert!(requests.iter().any(|request| request.method == "GET"));
+        }
     }
 
     #[test]

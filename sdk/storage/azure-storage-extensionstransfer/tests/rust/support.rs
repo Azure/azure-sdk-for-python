@@ -59,6 +59,7 @@ impl MockHttpClient {
             "https://account.blob.core.windows.net/container/blob",
             None,
             None,
+            None,
             self.options(),
         )
         .unwrap()

@@ -465,7 +465,6 @@ impl NativeDownloadStream {
             options.if_none_match = None;
             options.if_modified_since = None;
             options.if_unmodified_since = None;
-            options.if_tags = None;
         }
         *stream.state_mut() = StreamState::NotStarted(Box::new(Pump {
             client,
@@ -606,6 +605,7 @@ impl NativeDownloadStream {
     timeout = None,
     max_concurrency = None,
     max_chunk_size = None,
+    api_version = None,
 ))]
 pub(crate) fn download_blob(
     py: Python<'_>,
@@ -627,8 +627,9 @@ pub(crate) fn download_blob(
     timeout: Option<i32>,
     max_concurrency: Option<usize>,
     max_chunk_size: Option<u64>,
+    api_version: Option<&str>,
 ) -> PyResult<NativeDownloadStream> {
-    let blob_client = build_blob_client(url, token_provider, credential_id)?;
+    let blob_client = build_blob_client(url, token_provider, credential_id, api_version)?;
     download_with_client(
         py,
         blob_client,

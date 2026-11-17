@@ -90,6 +90,7 @@ fn python_bytes(data: &Bound<'_, PyAny>) -> PyResult<Bytes> {
     timeout = None,
     max_concurrency = None,
     max_block_size = None,
+    api_version = None,
 ))]
 pub(crate) fn upload_blob<'py>(
     py: Python<'py>,
@@ -123,8 +124,9 @@ pub(crate) fn upload_blob<'py>(
     timeout: Option<i32>,
     max_concurrency: Option<usize>,
     max_block_size: Option<u64>,
+    api_version: Option<&str>,
 ) -> PyResult<Bound<'py, PyDict>> {
-    let blob_client = build_blob_client(url, token_provider, credential_id)?;
+    let blob_client = build_blob_client(url, token_provider, credential_id, api_version)?;
     upload_blob_with_client(
         py,
         blob_client,

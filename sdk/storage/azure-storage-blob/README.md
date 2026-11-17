@@ -42,7 +42,7 @@ pip install "azure-storage-blob[ext-transfer]"
 
 The extension is experimental, is not intended for production use, and may introduce breaking
 changes in minor releases. Native transfer return types, request counts, and error handling
-may differ from transfers without the extension; unsupported options raise errors rather than
+may differ from transfers without the extension; explicitly rejected options raise errors rather than
 automatically falling back to Python. Set `AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1` to use
 Python transfers even when the extension is installed. Asynchronous APIs do not use the extension.
 See the [transfer extension README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-extensionstransfer#readme)
@@ -65,9 +65,26 @@ Native transfers do not support:
 - **Progress callbacks** — The `progress_hook` option is not supported for uploads or downloads.
 - **Asynchronous transfers** — Asynchronous APIs do not use the extension.
 
-When the extension is installed and native transfers are enabled, unsupported inputs and options
+When the extension is installed and native transfers are enabled, the unsupported inputs and options listed above
 raise errors rather than automatically falling back to Python transfers. To use these features,
 set `AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1` before starting a transfer.
+
+###### Per-call and client configuration
+
+Native transfers use the Rust SDK's HTTP pipeline rather than the Python client's pipeline.
+The client's `api_version` is used for native upload and download requests.
+Many undocumented per-call keyword arguments and client configuration options are not supported
+and may be ignored without an error. For example:
+
+- **Per-call options** such as custom request `headers` are not forwarded to native transfers.
+- **Client retry settings** such as `retry_total` and a custom `retry_policy` do not configure
+  the native retry behavior.
+- **HTTP logging options** such as `logging_enable` do not enable Python HTTP request/response
+  logging for native transfers.
+
+These are examples, not an exhaustive list. Do not assume that options accepted by the Python
+client also apply to native transfers. If your application relies on these options, set
+`AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1` to use the Python transfer path.
 
 ### Create a storage account
 If you wish to create a new storage account, you can use the

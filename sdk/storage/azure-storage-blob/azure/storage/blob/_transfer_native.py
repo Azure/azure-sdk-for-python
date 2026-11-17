@@ -44,9 +44,10 @@ from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError,
 )
+from ._generated._utils.utils import prep_if_match, prep_if_none_match
 from ._models import BlobType
 from ._serialize import (
-    get_blob_modify_conditions,
+    get_modify_conditions,
     get_lease_id,
 )
 
@@ -231,6 +232,15 @@ def _to_unix_timestamp(value: Any) -> Optional[int]:
     return int(value.timestamp())
 
 
+def _get_native_modify_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    conditions = get_modify_conditions(dict(kwargs))
+    etag = conditions.pop("etag", None)
+    match_condition = conditions.pop("match_condition", None)
+    conditions["if_match"] = prep_if_match(etag, match_condition)
+    conditions["if_none_match"] = prep_if_none_match(etag, match_condition)
+    return conditions
+
+
 def _can_use_native_upload(
     blob_type: str,
     encryption_options: Dict[str, Any],
@@ -379,7 +389,7 @@ def try_native_upload(
     lease = get_lease_id(kwargs.get("lease", None))
     tags = kwargs.get("tags", None)
 
-    conditions = get_blob_modify_conditions(dict(kwargs))
+    conditions = _get_native_modify_conditions(kwargs)
     if_tags = kwargs.get("if_tags_match_condition", None)
 
     immutability_policy = kwargs.get("immutability_policy", None)
@@ -405,6 +415,7 @@ def try_native_upload(
                 else blob_client.url
             ),
             data=upload_data,
+            api_version=blob_client.api_version,
             token_provider=token_provider,
             credential_id=id(blob_client.credential) if token_provider else None,
             overwrite=overwrite,
@@ -572,7 +583,7 @@ def try_native_download(
     max_concurrency = kwargs.get("max_concurrency", None)
     cpk = kwargs.get("cpk", None)
     lease = get_lease_id(kwargs.get("lease", None))
-    conditions = get_blob_modify_conditions(dict(kwargs))
+    conditions = _get_native_modify_conditions(kwargs)
     version_id = kwargs.get("version_id", getattr(blob_client, "version_id", None))
 
     with _translate_native_errors():
@@ -584,6 +595,7 @@ def try_native_download(
                 if isinstance(blob_client.credential, AzureSasCredential)
                 else blob_client.url
             ),
+            api_version=blob_client.api_version,
             token_provider=token_provider,
             credential_id=id(blob_client.credential) if token_provider else None,
             offset=offset,
