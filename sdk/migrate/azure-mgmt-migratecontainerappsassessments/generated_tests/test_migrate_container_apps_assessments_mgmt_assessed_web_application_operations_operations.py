@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.migratecontainerappsassessments import MigrateClient
+from azure.mgmt.migratecontainerappsassessments import MigrateContainerAppsAssessmentsMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,18 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestMigrateContainerAppsOptionsOperationsOperations(AzureMgmtRecordedTestCase):
+class TestMigrateContainerAppsAssessmentsMgmtAssessedWebApplicationOperationsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(MigrateClient)
+        self.client = self.create_mgmt_client(MigrateContainerAppsAssessmentsMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_container_apps_options_operations_get(self, resource_group):
-        response = self.client.container_apps_options_operations.get(
+    def test_assessed_web_application_operations_get(self, resource_group):
+        response = self.client.assessed_web_application_operations.get(
             resource_group_name=resource_group.name,
             project_name="str",
-            assessment_options_name="str",
+            assessment_name="str",
+            assessed_workload="str",
         )
 
         # please add some check logic here by yourself
@@ -32,10 +33,11 @@ class TestMigrateContainerAppsOptionsOperationsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_container_apps_options_operations_list_by_parent(self, resource_group):
-        response = self.client.container_apps_options_operations.list_by_parent(
+    def test_assessed_web_application_operations_list_by_parent(self, resource_group):
+        response = self.client.assessed_web_application_operations.list_by_parent(
             resource_group_name=resource_group.name,
             project_name="str",
+            assessment_name="str",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

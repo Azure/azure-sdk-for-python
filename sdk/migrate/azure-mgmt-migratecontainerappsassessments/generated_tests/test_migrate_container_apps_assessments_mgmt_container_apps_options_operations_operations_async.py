@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.migratecontainerappsassessments.aio import MigrateClient
+from azure.mgmt.migratecontainerappsassessments.aio import MigrateContainerAppsAssessmentsMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,18 +15,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestMigrateContainerAppsManagedEnvironmentOperationsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestMigrateContainerAppsAssessmentsMgmtContainerAppsOptionsOperationsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(MigrateClient, is_async=True)
+        self.client = self.create_mgmt_client(MigrateContainerAppsAssessmentsMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_container_apps_managed_environment_operations_get(self, resource_group):
-        response = await self.client.container_apps_managed_environment_operations.get(
+    async def test_container_apps_options_operations_get(self, resource_group):
+        response = await self.client.container_apps_options_operations.get(
             resource_group_name=resource_group.name,
             project_name="str",
-            assessment_name="str",
-            managed_environment_name="str",
+            assessment_options_name="str",
         )
 
         # please add some check logic here by yourself
@@ -34,11 +33,10 @@ class TestMigrateContainerAppsManagedEnvironmentOperationsOperationsAsync(AzureM
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_container_apps_managed_environment_operations_list_by_parent(self, resource_group):
-        response = self.client.container_apps_managed_environment_operations.list_by_parent(
+    async def test_container_apps_options_operations_list_by_parent(self, resource_group):
+        response = self.client.container_apps_options_operations.list_by_parent(
             resource_group_name=resource_group.name,
             project_name="str",
-            assessment_name="str",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

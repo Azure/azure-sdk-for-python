@@ -19,8 +19,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class MigrateClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
-    """Configuration for MigrateClient.
+class MigrateContainerAppsAssessmentsMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long,docstring-keyword-should-match-keyword-only
+    """Configuration for MigrateContainerAppsAssessmentsMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

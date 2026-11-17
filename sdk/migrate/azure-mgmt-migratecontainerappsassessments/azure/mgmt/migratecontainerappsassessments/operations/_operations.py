@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models, types as _types
-from .._configuration import MigrateClientConfiguration
+from .._configuration import MigrateContainerAppsAssessmentsMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
@@ -469,14 +469,16 @@ class ContainerAppsAssessmentOperationsOperations:  # pylint: disable=docstring-
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.migratecontainerappsassessments.MigrateClient`'s
+        :class:`~azure.mgmt.migratecontainerappsassessments.MigrateContainerAppsAssessmentsMgmtClient`'s
         :attr:`container_apps_assessment_operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MigrateClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MigrateContainerAppsAssessmentsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1114,14 +1116,16 @@ class AssessedWebApplicationOperationsOperations:  # pylint: disable=docstring-m
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.migratecontainerappsassessments.MigrateClient`'s
+        :class:`~azure.mgmt.migratecontainerappsassessments.MigrateContainerAppsAssessmentsMgmtClient`'s
         :attr:`assessed_web_application_operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MigrateClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MigrateContainerAppsAssessmentsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1316,14 +1320,16 @@ class ContainerAppsOptionsOperationsOperations:  # pylint: disable=docstring-mis
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.migratecontainerappsassessments.MigrateClient`'s
+        :class:`~azure.mgmt.migratecontainerappsassessments.MigrateContainerAppsAssessmentsMgmtClient`'s
         :attr:`container_apps_options_operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MigrateClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MigrateContainerAppsAssessmentsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1513,14 +1519,16 @@ class ContainerAppsSummaryOperationsOperations:  # pylint: disable=docstring-mis
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.migratecontainerappsassessments.MigrateClient`'s
+        :class:`~azure.mgmt.migratecontainerappsassessments.MigrateContainerAppsAssessmentsMgmtClient`'s
         :attr:`container_apps_summary_operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MigrateClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MigrateContainerAppsAssessmentsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1715,14 +1723,16 @@ class ContainerAppsManagedEnvironmentOperationsOperations:  # pylint: disable=do
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.migratecontainerappsassessments.MigrateClient`'s
+        :class:`~azure.mgmt.migratecontainerappsassessments.MigrateContainerAppsAssessmentsMgmtClient`'s
         :attr:`container_apps_managed_environment_operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MigrateClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MigrateContainerAppsAssessmentsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1923,14 +1933,16 @@ class ContainerAppsCostDetailOperationsOperations:  # pylint: disable=docstring-
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.migratecontainerappsassessments.MigrateClient`'s
+        :class:`~azure.mgmt.migratecontainerappsassessments.MigrateContainerAppsAssessmentsMgmtClient`'s
         :attr:`container_apps_cost_detail_operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MigrateClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MigrateContainerAppsAssessmentsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.migratecontainerappsassessments import MigrateClient
+from azure.mgmt.migratecontainerappsassessments import MigrateContainerAppsAssessmentsMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.migratecontainerappsassessments import MigrateClient
 
 
 def main():
-    client = MigrateClient(
+    client = MigrateContainerAppsAssessmentsMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

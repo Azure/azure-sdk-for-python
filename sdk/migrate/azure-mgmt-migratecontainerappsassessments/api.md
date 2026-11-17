@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.migratecontainerappsassessments
 
-    class azure.mgmt.migratecontainerappsassessments.MigrateClient: implements ContextManager 
+    class azure.mgmt.migratecontainerappsassessments.MigrateContainerAppsAssessmentsMgmtClient: implements ContextManager 
         assessed_web_application_operations: AssessedWebApplicationOperationsOperations
         container_apps_assessment_operations: ContainerAppsAssessmentOperationsOperations
         container_apps_cost_detail_operations: ContainerAppsCostDetailOperationsOperations
@@ -34,7 +34,7 @@ namespace azure.mgmt.migratecontainerappsassessments
 
 namespace azure.mgmt.migratecontainerappsassessments.aio
 
-    class azure.mgmt.migratecontainerappsassessments.aio.MigrateClient: implements AsyncContextManager 
+    class azure.mgmt.migratecontainerappsassessments.aio.MigrateContainerAppsAssessmentsMgmtClient: implements AsyncContextManager 
         assessed_web_application_operations: AssessedWebApplicationOperationsOperations
         container_apps_assessment_operations: ContainerAppsAssessmentOperationsOperations
         container_apps_cost_detail_operations: ContainerAppsCostDetailOperationsOperations

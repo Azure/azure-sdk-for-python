@@ -6,40 +6,37 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.migratecontainerappsassessments.aio import MigrateClient
+from azure.mgmt.migratecontainerappsassessments import MigrateContainerAppsAssessmentsMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestMigrateContainerAppsSummaryOperationsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestMigrateContainerAppsAssessmentsMgmtContainerAppsOptionsOperationsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(MigrateClient, is_async=True)
+        self.client = self.create_mgmt_client(MigrateContainerAppsAssessmentsMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_container_apps_summary_operations_get(self, resource_group):
-        response = await self.client.container_apps_summary_operations.get(
+    @recorded_by_proxy
+    def test_container_apps_options_operations_get(self, resource_group):
+        response = self.client.container_apps_options_operations.get(
             resource_group_name=resource_group.name,
             project_name="str",
-            assessment_name="str",
-            summary_name="str",
+            assessment_options_name="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_container_apps_summary_operations_list_by_parent(self, resource_group):
-        response = self.client.container_apps_summary_operations.list_by_parent(
+    @recorded_by_proxy
+    def test_container_apps_options_operations_list_by_parent(self, resource_group):
+        response = self.client.container_apps_options_operations.list_by_parent(
             resource_group_name=resource_group.name,
             project_name="str",
-            assessment_name="str",
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
