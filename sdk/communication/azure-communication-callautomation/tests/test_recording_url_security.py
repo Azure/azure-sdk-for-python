@@ -10,6 +10,8 @@ from urllib.parse import urlparse
 
 import pytest
 import requests
+from unittest_helpers import mock_response
+
 from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
@@ -20,12 +22,11 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     SansIOHTTPPolicy,
 )
-from azure.core.pipeline.transport import AioHttpTransport, RequestsTransport
+# Transports are exported dynamically through the module's __getattr__.
+from azure.core.pipeline.transport import AioHttpTransport, RequestsTransport  # pylint: disable=no-name-in-module
 from azure.communication.callautomation import CallAutomationClient
 from azure.communication.callautomation.aio import CallAutomationClient as AsyncCallAutomationClient
 from azure.communication.callautomation._recording_url_validator import validate_recording_url
-
-from unittest_helpers import mock_response
 
 ENDPOINT = "https://example.communication.azure.com"
 VALID_URL = "https://x.asm.skype.com/recording?sig=a%2Fb%3D&part=1"
@@ -166,7 +167,7 @@ def test_custom_policy_list_revalidates_each_attempt(loop, operation):
     authentication = policies[-1]
     authentication.on_request = Mock(wraps=authentication.on_request)
 
-    def send(request, **kwargs):
+    def send(request, **_kwargs):
         if loop == "redirect":
             return mock_response(307, {"location": "https://attacker.example/recording"})
         request.url = "https://attacker.example/recording"
@@ -189,7 +190,7 @@ async def test_async_custom_policy_list_revalidates_each_attempt(loop, operation
     authentication = policies[-1]
     authentication.on_request = AsyncMock(wraps=authentication.on_request)
 
-    async def send(request, **kwargs):
+    async def send(request, **_kwargs):
         if loop == "redirect":
             return mock_response(307, {"location": "https://attacker.example/recording"})
         request.url = "https://attacker.example/recording"
@@ -290,7 +291,7 @@ async def test_async_rejects_unsafe_redirect(operation, location):
 def test_preserves_allowed_redirects(operation, location):
     urls = []
 
-    def send(request, **kwargs):
+    def send(request, **_kwargs):
         urls.append(request.url)
         return mock_response(307, {"location": location}) if len(urls) == 1 else mock_response()
 
@@ -306,7 +307,7 @@ def test_preserves_allowed_redirects(operation, location):
 async def test_async_preserves_allowed_redirects(operation, location):
     urls = []
 
-    async def send(request, **kwargs):
+    async def send(request, **_kwargs):
         urls.append(request.url)
         return mock_response(307, {"location": location}) if len(urls) == 1 else mock_response()
 
@@ -319,10 +320,11 @@ async def test_async_preserves_allowed_redirects(operation, location):
 
 class CaptureAdapter(requests.adapters.BaseAdapter):
     def __init__(self, redirect_url=None):
+        super().__init__()
         self.requests = []
         self.redirect_url = redirect_url
 
-    def send(self, request, **kwargs):
+    def send(self, request, **_kwargs):
         self.requests.append(request)
         if self.redirect_url and len(self.requests) == 1:
             response = requests.Response()
@@ -349,7 +351,7 @@ def test_requests_transport_rejects_invalid_url(operation, url):
         with CallAutomationClient(ENDPOINT, token, transport=RequestsTransport(session=session)) as client:
             with pytest.raises(ValueError):
                 getattr(client, operation)(url)
-    assert adapter.requests == []
+    assert not adapter.requests
     token.get_token.assert_not_called()
 
 
@@ -389,7 +391,7 @@ async def test_aiohttp_transport_destination(operation, url):
     destinations = []
     trace = aiohttp.TraceConfig()
 
-    async def on_request_start(session, context, params):
+    async def on_request_start(_session, _context, params):
         destinations.append(params)
         raise AssertionError("Stop before network I/O")
 
@@ -401,7 +403,7 @@ async def test_aiohttp_transport_destination(operation, url):
             if url != VALID_URL:
                 with pytest.raises(ValueError):
                     await getattr(client, operation)(url)
-                assert destinations == []
+                assert not destinations
                 token.get_token.assert_not_called()
             else:
                 with pytest.raises(AssertionError, match="Stop before network"):
