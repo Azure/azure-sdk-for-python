@@ -19,6 +19,10 @@
 - Report sampling progress using final call outcomes rather than intermediate notifications or retry attempts.
 - Preserve typed terminal errors and canonical session identifiers when session close fails, including `engine_dead` HTTP 409 responses. Unrecognized or malformed conflicts remain HTTP errors rather than being inferred as engine death.
 
+### Other Changes
+
+- Refresh generation source references and archived tooling to match the current shared SDK toolchain without changing generated APIs or runtime behavior.
+
 ## 1.0.0b2 (2026-11-12)
 
 ### Features Added

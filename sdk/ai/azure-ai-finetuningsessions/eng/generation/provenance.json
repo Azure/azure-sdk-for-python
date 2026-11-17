@@ -8,7 +8,7 @@
     "repository": "Azure/azure-rest-api-specs",
     "directory": "specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions",
     "base_commit": "8cd2e82bc9c6cdd2e21aeb504ee9c752c17dd397",
-    "commit": "c28231a9cce415895dbe57f1d31563acc7594d30",
+    "commit": "b6c976e3eb306de82f854f72ee1963f4f92bb2a9",
     "requires_uncommitted_working_tree": false,
     "source_fingerprint_sha256": "758ffa082a71c67027a8f38030f17094b2ddcdb7b9b150ae9827ed5721c43101",
     "client_sha256": "896eac6693ab2e1a005c16e56da9b682afe4430a2b462089dd13a04863b55ca8",
@@ -21,14 +21,14 @@
     "lockfile": "../../../eng/emitter-package-lock.json",
     "archived_manifest": "eng/generation/emitter-package.json",
     "archived_lockfile": "eng/generation/emitter-package-lock.json",
-    "manifest_sha256": "a816a8a320e1510593939131c93048a2b45f428f6bbfe2ae8a3a6b301cf5a686",
-    "lockfile_sha256": "15116b17bef564e30ce0bb132f15396dd9e2c5b5524a888b255a8ada8f02b776",
+    "manifest_sha256": "33c22117de8a9c82f5921f9648d33c91ee129c4ecf6447710b0521ac5a0fb7b7",
+    "lockfile_sha256": "6099f892d8251ae8e7712391d500439c58ff21f6fc0bdf4a24e1f0448b64ddff",
     "hash_normalization": "CRLF-to-LF",
     "python_backend_requirements": "eng/generation/requirements.txt",
-    "python_emitter": "0.63.11",
-    "http_client_python": "0.40.0",
-    "compiler": "1.17.0",
-    "client_generator_core": "0.73.1"
+    "python_emitter": "0.63.12",
+    "http_client_python": "0.40.1",
+    "compiler": "1.18.0",
+    "client_generator_core": "0.74.0"
   },
   "assembly": {
     "generated_inventory_entries": 21,
@@ -85,6 +85,7 @@
     "focused_security_review_findings": 0,
     "pyright_passed": true,
     "pyright_version": "1.1.407",
-    "type_completeness_no_regression": true
+    "type_completeness_no_regression": true,
+    "current_shared_toolchain_generation_unchanged": true
   }
 }
