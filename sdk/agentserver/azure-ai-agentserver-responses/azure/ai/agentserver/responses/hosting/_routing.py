@@ -83,6 +83,44 @@ async def _sync_to_async_gen(sync_gen: types.GeneratorType) -> AsyncIterator:
         sync_gen.close()
 
 
+class _HandlerCancelledError(RuntimeError):
+    """The create handler raised ``CancelledError`` although no cancellation was requested."""
+
+
+async def _surface_leaked_cancellation(
+    iterator: AsyncIterator[_generated_models.ResponseStreamEvent],
+    cancellation_signal: asyncio.Event,
+) -> AsyncIterator[_generated_models.ResponseStreamEvent]:
+    """Yield the handler's events, reporting a ``CancelledError`` that leaked from the handler as a handler error.
+
+    Client disconnects, ``/cancel``, steering and shutdown either set *cancellation_signal* or cancel the task that
+    runs the handler. A ``CancelledError`` that arrives with neither came from code inside the handler, such as an
+    MCP client whose anyio cancel scope was exited from another task. S-024 treats it as a handler error, so the
+    response still ends with ``response.failed`` (or a standalone ``error`` before ``response.created``) rather than
+    a stream without a terminal event. Python 3.10 has no ``Task.cancelling()``, so there it still propagates.
+
+    :param iterator: The normalised handler event iterator.
+    :type iterator: AsyncIterator[ResponseStreamEvent]
+    :param cancellation_signal: The per-request cancellation event passed to the handler.
+    :type cancellation_signal: asyncio.Event
+    :return: An async iterator yielding the handler's events.
+    :rtype: AsyncIterator[ResponseStreamEvent]
+    :raises _HandlerCancelledError: If the handler raised ``CancelledError`` while no cancellation was requested.
+    """
+    try:
+        async for event in iterator:
+            yield event
+    except asyncio.CancelledError as cancelled:
+        cancelling = getattr(asyncio.current_task(), "cancelling", None)
+        if cancellation_signal.is_set() or cancelling is None or cancelling():
+            raise
+        raise _HandlerCancelledError(
+            "The response handler raised CancelledError, but no cancellation was requested."
+        ) from cancelled
+    finally:
+        await _close_iterator(iterator)
+
+
 def _serialize_event_payload(payload: Any) -> bytes:
     """Serialize a stream event for the file-backed registry codec.
 
@@ -673,6 +711,9 @@ class ResponsesAgentServerHost(AgentServerHost):
           result is recursively normalised.
         - Async generator → returned as-is.
 
+        A ``CancelledError`` the handler raises while no cancellation was requested is
+        reported as a handler error (S-024); see :func:`_surface_leaked_cancellation`.
+
         :param request: The parsed create-response request.
         :type request: CreateResponse
         :param context: The response context for the request.
@@ -686,7 +727,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         if self._create_fn is None:
             raise NotImplementedError("No create handler registered. Use the @app.response_handler decorator.")
         result = self._create_fn(request, context, cancellation_signal)
-        return self._normalize_handler_result(result)
+        return _surface_leaked_cancellation(self._normalize_handler_result(result), cancellation_signal)
 
     def _normalize_handler_result(self, result: Any) -> AsyncIterator[_generated_models.ResponseStreamEvent]:
         """Convert a handler result into an AsyncIterator.

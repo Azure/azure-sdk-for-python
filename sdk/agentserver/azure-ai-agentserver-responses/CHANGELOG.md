@@ -10,6 +10,13 @@
 
 - Remove the exact caller-scoped runtime record when deferred resilient-task
   activation fails, rather than retaining an execution that never started.
+- A `CancelledError` that a create handler raises while no cancellation was
+  requested (for example, leaked by an MCP client whose anyio cancel scope was
+  exited from another task) is now a handler error (S-024). Streaming responses
+  end with `response.failed`, or a standalone `error` before
+  `response.created`, instead of closing without a terminal event. This
+  requires Python 3.11 or later (`Task.cancelling()`); on Python 3.10 such an
+  error still propagates.
 
 ### Other Changes
 
