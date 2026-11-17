@@ -9,8 +9,10 @@ import aiohttp
 import pytest
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import StreamClosedError, StreamConsumedError, ResponseNotReadError
+from rest_client_async import AsyncMockRestClient
 
 
 @pytest.mark.asyncio
@@ -35,7 +37,7 @@ async def test_iter_raw_on_iterable(client):
 
 
 @pytest.mark.asyncio
-async def test_iter_with_error(client):
+async def test_iter_with_error(client, port):
     request = HttpRequest("GET", "/errors/403")
 
     async with client.send_request(request, stream=True) as response:
@@ -53,6 +55,18 @@ async def test_iter_with_error(client):
 
     assert response.is_closed
 
+    # Ignore environment proxies so that an unresolvable host fails with a DNS error
+    # instead of an HTTP error returned by a network proxy.
+    request = HttpRequest("GET", "http://doesNotExist")
+    async with AsyncMockRestClient(port, transport=AioHttpTransport(use_env_settings=False)) as no_proxy_client:
+        with pytest.raises(ServiceRequestError):
+            async with await no_proxy_client.send_request(request, stream=True):
+                raise ValueError("Should error before entering")
+    assert response.is_closed
+
+
+@pytest.mark.asyncio
+async def test_iter_with_connection_error(client):
     request = HttpRequest("GET", "/streams/basic")
     connection_error = aiohttp.ClientConnectionError("Connection failed")
     # A CI proxy can turn a DNS failure into an HTTP response instead.
@@ -62,7 +76,6 @@ async def test_iter_with_error(client):
                 raise ValueError("Should error before entering")
     mock_request.assert_awaited_once()
     assert error.value.inner_exception is connection_error
-    assert response.is_closed
 
 
 @pytest.mark.asyncio
