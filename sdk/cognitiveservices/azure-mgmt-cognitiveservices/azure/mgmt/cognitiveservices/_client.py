@@ -22,17 +22,25 @@ from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     AccountCapabilityHostsOperations,
     AccountConnectionsOperations,
+    AccountCostControlsOperations,
     AccountsOperations,
+    AdapterDeploymentsOperations,
     AgentApplicationsOperations,
     AgentDeploymentsOperations,
+    ArcDeploymentsOperations,
+    AttachedAksClustersOperations,
     CommitmentPlansOperations,
     CommitmentTiersOperations,
+    ComputeOperationsOperations,
+    ComputesOperations,
     DefenderForAISettingsOperations,
     DeletedAccountsOperations,
     DeploymentsOperations,
     EncryptionScopesOperations,
     LocationBasedModelCapacitiesOperations,
     ManagedComputeCapacitiesOperations,
+    ManagedComputeDeploymentsOperations,
+    ManagedComputeUsagesOperationGroupOperations,
     ManagedNetworkProvisionsOperations,
     ManagedNetworkSettingsOperations,
     ModelCapacitiesOperations,
@@ -45,20 +53,24 @@ from .operations import (
     PrivateLinkResourcesOperations,
     ProjectCapabilityHostsOperations,
     ProjectConnectionsOperations,
+    ProjectCostControlsOperations,
     ProjectsOperations,
     QuotaTiersOperations,
+    RaiBindingsOperations,
     RaiBlocklistItemsOperations,
     RaiBlocklistsOperations,
     RaiContentFiltersOperations,
     RaiExternalSafetyProviderOperations,
     RaiExternalSafetyProvidersOperations,
     RaiPoliciesOperations,
+    RaiRegosOperations,
     RaiToolLabelsOperations,
     RaiTopicsOperations,
     ResourceSkusOperations,
     SubscriptionRaiPolicyOperations,
     TestRaiExternalSafetyProviderOperations,
     UsagesOperations,
+    WorkbenchesOperations,
     _CognitiveServicesManagementClientOperationsMixin,
 )
 
@@ -83,6 +95,9 @@ class CognitiveServicesManagementClient(
     :vartype accounts: azure.mgmt.cognitiveservices.operations.AccountsOperations
     :ivar deleted_accounts: DeletedAccountsOperations operations
     :vartype deleted_accounts: azure.mgmt.cognitiveservices.operations.DeletedAccountsOperations
+    :ivar attached_aks_clusters: AttachedAksClustersOperations operations
+    :vartype attached_aks_clusters:
+     azure.mgmt.cognitiveservices.operations.AttachedAksClustersOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.cognitiveservices.operations.PrivateEndpointConnectionsOperations
@@ -97,6 +112,10 @@ class CognitiveServicesManagementClient(
     :ivar subscription_rai_policy: SubscriptionRaiPolicyOperations operations
     :vartype subscription_rai_policy:
      azure.mgmt.cognitiveservices.operations.SubscriptionRaiPolicyOperations
+    :ivar rai_regos: RaiRegosOperations operations
+    :vartype rai_regos: azure.mgmt.cognitiveservices.operations.RaiRegosOperations
+    :ivar rai_bindings: RaiBindingsOperations operations
+    :vartype rai_bindings: azure.mgmt.cognitiveservices.operations.RaiBindingsOperations
     :ivar rai_blocklist_items: RaiBlocklistItemsOperations operations
     :vartype rai_blocklist_items:
      azure.mgmt.cognitiveservices.operations.RaiBlocklistItemsOperations
@@ -126,12 +145,37 @@ class CognitiveServicesManagementClient(
      azure.mgmt.cognitiveservices.operations.ProjectCapabilityHostsOperations
     :ivar quota_tiers: QuotaTiersOperations operations
     :vartype quota_tiers: azure.mgmt.cognitiveservices.operations.QuotaTiersOperations
+    :ivar arc_deployments: ArcDeploymentsOperations operations
+    :vartype arc_deployments: azure.mgmt.cognitiveservices.operations.ArcDeploymentsOperations
     :ivar agent_applications: AgentApplicationsOperations operations
     :vartype agent_applications:
      azure.mgmt.cognitiveservices.operations.AgentApplicationsOperations
+    :ivar managed_compute_deployments: ManagedComputeDeploymentsOperations operations
+    :vartype managed_compute_deployments:
+     azure.mgmt.cognitiveservices.operations.ManagedComputeDeploymentsOperations
+    :ivar adapter_deployments: AdapterDeploymentsOperations operations
+    :vartype adapter_deployments:
+     azure.mgmt.cognitiveservices.operations.AdapterDeploymentsOperations
+    :ivar compute_operations: ComputeOperationsOperations operations
+    :vartype compute_operations:
+     azure.mgmt.cognitiveservices.operations.ComputeOperationsOperations
+    :ivar managed_compute_usages_operation_group: ManagedComputeUsagesOperationGroupOperations
+     operations
+    :vartype managed_compute_usages_operation_group:
+     azure.mgmt.cognitiveservices.operations.ManagedComputeUsagesOperationGroupOperations
+    :ivar computes: ComputesOperations operations
+    :vartype computes: azure.mgmt.cognitiveservices.operations.ComputesOperations
+    :ivar workbenches: WorkbenchesOperations operations
+    :vartype workbenches: azure.mgmt.cognitiveservices.operations.WorkbenchesOperations
     :ivar managed_compute_capacities: ManagedComputeCapacitiesOperations operations
     :vartype managed_compute_capacities:
      azure.mgmt.cognitiveservices.operations.ManagedComputeCapacitiesOperations
+    :ivar account_cost_controls: AccountCostControlsOperations operations
+    :vartype account_cost_controls:
+     azure.mgmt.cognitiveservices.operations.AccountCostControlsOperations
+    :ivar project_cost_controls: ProjectCostControlsOperations operations
+    :vartype project_cost_controls:
+     azure.mgmt.cognitiveservices.operations.ProjectCostControlsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.cognitiveservices.operations.PrivateLinkResourcesOperations
@@ -184,9 +228,10 @@ class CognitiveServicesManagementClient(
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-11-01"
-     and None. Default value is None. If not set, the operation's default API version will be used.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-11-15-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -244,6 +289,9 @@ class CognitiveServicesManagementClient(
         self.deleted_accounts = DeletedAccountsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.attached_aks_clusters = AttachedAksClustersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -258,6 +306,8 @@ class CognitiveServicesManagementClient(
         self.subscription_rai_policy = SubscriptionRaiPolicyOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.rai_regos = RaiRegosOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.rai_bindings = RaiBindingsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.rai_blocklist_items = RaiBlocklistItemsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -281,10 +331,31 @@ class CognitiveServicesManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.quota_tiers = QuotaTiersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.arc_deployments = ArcDeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agent_applications = AgentApplicationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.managed_compute_deployments = ManagedComputeDeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.adapter_deployments = AdapterDeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.compute_operations = ComputeOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_compute_usages_operation_group = ManagedComputeUsagesOperationGroupOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.computes = ComputesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.workbenches = WorkbenchesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.managed_compute_capacities = ManagedComputeCapacitiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.account_cost_controls = AccountCostControlsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.project_cost_controls = ProjectCostControlsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_link_resources = PrivateLinkResourcesOperations(

@@ -1241,7 +1241,7 @@ def decrypt_queue_message(
     require_encryption: bool,
     key_encryption_key: Optional[KeyEncryptionKey],
     resolver: Optional[Callable[[str], KeyEncryptionKey]],
-) -> str:
+) -> Tuple[str, bool]:
     """
     Returns the decrypted message contents from an EncryptedQueueMessage.
     If no encryption metadata is present, will return the unaltered message.
@@ -1262,8 +1262,8 @@ def decrypt_queue_message(
     :param Optional[Callable[[str], KeyEncryptionKey]] resolver:
         The user-provided key resolver. Uses the kid string to return a key-encryption-key
         implementing the interface defined above.
-    :return: The plain text message from the queue message.
-    :rtype: str
+    :return: The plain text message and whether it was decrypted.
+    :rtype: tuple[str, bool]
     """
     response = response.http_response
 
@@ -1282,9 +1282,9 @@ def decrypt_queue_message(
                 + "Message was either not encrypted or metadata was incorrect."
             ) from exc
 
-        return message
+        return message, False
     try:
-        return _decrypt_message(decoded_data, encryption_data, key_encryption_key, resolver).decode("utf-8")
+        return _decrypt_message(decoded_data, encryption_data, key_encryption_key, resolver).decode("utf-8"), True
     except Exception as error:
         raise HttpResponseError(
             message="Decryption failed.", response=response, error=error  # type: ignore [arg-type]
