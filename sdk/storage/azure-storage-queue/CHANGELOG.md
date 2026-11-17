@@ -1,6 +1,16 @@
 # Release History
 
-## 12.18.1 (2026-10-20)
+## 12.18.2 (2026-11-18)
+
+### Bugs Fixed
+- Fixed an issue where `update_message` could replace encrypted message content with plaintext when no key-encryption-key was configured. Trying to update an encrypted message without a key-encryption-key will now raise an error.
+
+## 12.19.0b1 (2026-11-05)
+
+### Features Added
+- Added support for service versions 2026-12-06 and 2027-03-07.
+
+## 12.18.1 (2026-10-29)
 
 ### Bugs Fixed
 - Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_queue_sas`, and `QueueServiceClient.get_user_delegation_key` (sync and async). Datetimes without timezone information continue to be treated as UTC.
