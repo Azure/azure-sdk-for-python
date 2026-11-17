@@ -49,7 +49,6 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                         "usageThreshold": 0,
                         "acceptGrowCapacityPoolForShortTermCloneSplit": "str",
                         "actualThroughputMibps": 0.0,
-                        "asyncDirectoryDelete": {"status": "str", "trashBinName": "str"},
                         "avsDataStore": "str",
                         "backupId": "str",
                         "baremetalTenantId": "str",
@@ -89,7 +88,6 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                         "defaultUserQuotaInKiBs": 0,
                         "deleteBaseSnapshot": bool,
                         "effectiveNetworkFeatures": "str",
-                        "enableSubvolumes": "str",
                         "encrypted": bool,
                         "encryptionKeySource": "str",
                         "exportPolicy": {
@@ -115,15 +113,12 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                         },
                         "fileAccessLogs": "str",
                         "fileSystemId": "str",
-                        "geoNamespaceProperties": {"originVolume": "str"},
                         "inheritedSizeInBytes": 0,
                         "isDefaultQuotaEnabled": bool,
                         "isLargeVolume": bool,
                         "isRestoring": bool,
                         "kerberosEnabled": bool,
                         "keyVaultPrivateEndpointResourceId": "str",
-                        "language": "str",
-                        "largeVolumeType": "str",
                         "ldapEnabled": bool,
                         "ldapServerType": "str",
                         "maximumNumberOfFiles": 0,
@@ -190,7 +185,6 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                     "location": "str",
                     "name": "str",
                     "properties": {
-                        "asyncDirectoryDelete": {"status": "str", "trashBinName": "str"},
                         "coolAccess": bool,
                         "coolAccessRetrievalPolicy": "str",
                         "coolAccessTieringPolicy": "str",
@@ -223,7 +217,6 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                                 }
                             ]
                         },
-                        "geoNamespaceProperties": {"originVolume": "str"},
                         "isDefaultQuotaEnabled": bool,
                         "protocolTypes": ["str"],
                         "serviceLevel": "str",

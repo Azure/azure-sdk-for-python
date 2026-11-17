@@ -46,16 +46,19 @@ def main():
                                 {
                                     "afterGates": [{"displayName": "gate after group-a", "type": "Approval"}],
                                     "beforeGates": [{"displayName": "gate before group-a", "type": "Approval"}],
+                                    "maxAllowedFailures": "1",
                                     "maxConcurrency": "5",
                                     "memberSelector": {"byLabel": "tier=frontend"},
                                     "name": "group-a",
                                 }
                             ],
+                            "maxAllowedFailures": "2",
                             "maxConcurrency": "20%",
                             "name": "stage1",
                         },
                         {
                             "afterStageWaitInSeconds": 600,
+                            "maxAllowedFailures": "25%",
                             "maxConcurrency": "50%",
                             "memberSelector": {"byLabel": "env=production"},
                             "name": "stage2",
@@ -68,6 +71,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-11-01/UpdateStrategies_CreateOrUpdate.json
+# x-ms-original-file: 2026-11-02-preview/UpdateStrategies_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
