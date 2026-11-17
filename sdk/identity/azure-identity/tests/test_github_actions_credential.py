@@ -40,32 +40,20 @@ def github_environment():
         yield
 
 
-@pytest.mark.parametrize(
-    "credential_class", [GitHubActionsCredential, AsyncGitHubActionsCredential]
-)
+@pytest.mark.parametrize("credential_class", [GitHubActionsCredential, AsyncGitHubActionsCredential])
 @pytest.mark.parametrize("explicit", [False, True])
 def test_initialize(credential_class, explicit):
-    kwargs = (
-        {"tenant_id": "explicit-tenant", "client_id": "explicit-client"}
-        if explicit
-        else {}
-    )
+    kwargs = {"tenant_id": "explicit-tenant", "client_id": "explicit-client"} if explicit else {}
     credential = credential_class(**kwargs)
     client = credential._client_assertion_credential._client
-    assert client._tenant_id == (
-        "explicit-tenant" if explicit else "environment-tenant"
-    )
-    assert client._client_id == (
-        "explicit-client" if explicit else "environment-client"
-    )
+    assert client._tenant_id == ("explicit-tenant" if explicit else "environment-tenant")
+    assert client._client_id == ("explicit-client" if explicit else "environment-client")
     assert client._authority == "https://login.microsoftonline.com"
     assert credential._audience == "api://AzureADTokenExchange"
     assert credential._client_assertion_credential._func.__self__ is credential
 
 
-@pytest.mark.parametrize(
-    "credential_class", [GitHubActionsCredential, AsyncGitHubActionsCredential]
-)
+@pytest.mark.parametrize("credential_class", [GitHubActionsCredential, AsyncGitHubActionsCredential])
 @pytest.mark.parametrize("missing", ["tenant_id", "client_id"])
 def test_missing_identity(credential_class, missing):
     os.environ.pop("AZURE_" + missing.upper())
@@ -73,17 +61,13 @@ def test_missing_identity(credential_class, missing):
         credential_class()
 
 
-@pytest.mark.parametrize(
-    "credential_class", [GitHubActionsCredential, AsyncGitHubActionsCredential]
-)
+@pytest.mark.parametrize("credential_class", [GitHubActionsCredential, AsyncGitHubActionsCredential])
 def test_invalid_tenant(credential_class):
     with pytest.raises(ValueError):
         credential_class(tenant_id="invalid tenant")
 
 
-@pytest.mark.parametrize(
-    "credential_class", [GitHubActionsCredential, AsyncGitHubActionsCredential]
-)
+@pytest.mark.parametrize("credential_class", [GitHubActionsCredential, AsyncGitHubActionsCredential])
 @pytest.mark.parametrize(
     "authority,audience",
     [
@@ -94,36 +78,24 @@ def test_invalid_tenant(credential_class):
 )
 @pytest.mark.parametrize("explicit", [False, True])
 def test_authority(credential_class, authority, audience, explicit):
-    os.environ["AZURE_AUTHORITY_HOST"] = (
-        AzureAuthorityHosts.AZURE_CHINA if explicit else authority
-    )
+    os.environ["AZURE_AUTHORITY_HOST"] = AzureAuthorityHosts.AZURE_CHINA if explicit else authority
     kwargs = {"authority": authority} if explicit else {}
     credential = credential_class(**kwargs)
     assert credential._audience == audience
-    assert (
-        credential._client_assertion_credential._client._authority
-        == "https://" + authority
-    )
+    assert credential._client_assertion_credential._client._authority == "https://" + authority
 
 
 def test_derive_audience_normalized_url():
-    assert (
-        derive_audience("https://LOGIN.MICROSOFTONLINE.COM/")
-        == "api://AzureADTokenExchange"
-    )
+    assert derive_audience("https://LOGIN.MICROSOFTONLINE.COM/") == "api://AzureADTokenExchange"
 
 
-@pytest.mark.parametrize(
-    "credential_class", [GitHubActionsCredential, AsyncGitHubActionsCredential]
-)
+@pytest.mark.parametrize("credential_class", [GitHubActionsCredential, AsyncGitHubActionsCredential])
 def test_unsupported_authority(credential_class):
     with pytest.raises(ValueError, match="Unsupported authority"):
         credential_class(authority="https://example.test")
 
 
-@pytest.mark.parametrize(
-    "query", ["", "?job=123", "?job=123&flag=&job=456&audience=old&audience=duplicate"]
-)
+@pytest.mark.parametrize("query", ["", "?job=123", "?job=123&flag=&job=456&audience=old&audience=duplicate"])
 def test_build_oidc_request(query):
     os.environ[ACTIONS_ID_TOKEN_REQUEST_URL] = "https://example.test/oidc" + query
     audience = "api://AzureADTokenExchange"
@@ -135,19 +107,13 @@ def test_build_oidc_request(query):
     assert parsed.netloc == "example.test"
     assert parsed.path == "/oidc"
     expected = [
-        (key, value)
-        for key, value in parse_qsl(query.lstrip("?"), keep_blank_values=True)
-        if key != "audience"
+        (key, value) for key, value in parse_qsl(query.lstrip("?"), keep_blank_values=True) if key != "audience"
     ]
-    assert parse_qsl(parsed.query, keep_blank_values=True) == expected + [
-        ("audience", audience)
-    ]
+    assert parse_qsl(parsed.query, keep_blank_values=True) == expected + [("audience", audience)]
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
-@pytest.mark.parametrize(
-    "missing", [ACTIONS_ID_TOKEN_REQUEST_URL, ACTIONS_ID_TOKEN_REQUEST_TOKEN]
-)
+@pytest.mark.parametrize("missing", [ACTIONS_ID_TOKEN_REQUEST_URL, ACTIONS_ID_TOKEN_REQUEST_TOKEN])
 def test_missing_github_environment(get_token_method, missing):
     credential = GitHubActionsCredential()
     os.environ.pop(missing)
@@ -162,9 +128,7 @@ def test_delegation(get_token_method):
     credential = GitHubActionsCredential()
     credential._client_assertion_credential = Mock()
     expected = (
-        AccessToken("access-token", 123)
-        if get_token_method == "get_token"
-        else AccessTokenInfo("access-token", 123)
+        AccessToken("access-token", 123) if get_token_method == "get_token" else AccessTokenInfo("access-token", 123)
     )
     method = getattr(credential._client_assertion_credential, get_token_method)
     method.return_value = expected
@@ -174,9 +138,7 @@ def test_delegation(get_token_method):
     method.assert_called_once_with("scope", **kwargs)
 
 
-@pytest.mark.parametrize(
-    "status,payload", [(400, {}), (200, {}), (200, {"value": 123}), (200, None)]
-)
+@pytest.mark.parametrize("status,payload", [(400, {}), (200, {}), (200, {"value": 123}), (200, None)])
 def test_oidc_error(status, payload):
     credential = GitHubActionsCredential()
     response = Mock(status_code=status, headers={}, json=Mock(return_value=payload))
@@ -189,14 +151,10 @@ def test_oidc_error(status, payload):
 
 def test_oidc_invalid_json():
     credential = GitHubActionsCredential()
-    response = Mock(
-        status_code=200, headers={}, json=Mock(side_effect=ValueError("invalid JSON"))
-    )
+    response = Mock(status_code=200, headers={}, json=Mock(side_effect=ValueError("invalid JSON")))
     credential._pipeline = Mock()
     credential._pipeline.run.return_value.http_response = response
-    with pytest.raises(
-        ClientAuthenticationError, match="Failed to deserialize JSON"
-    ) as error:
+    with pytest.raises(ClientAuthenticationError, match="Failed to deserialize JSON") as error:
         credential._get_oidc_token()
     assert error.value.response is response
 
@@ -204,17 +162,12 @@ def test_oidc_invalid_json():
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 def test_token_exchange_and_cache(get_token_method):
     def send(request, **kwargs):
-        assert (
-            request.url
-            == "https://login.microsoftonline.com/environment-tenant/oauth2/v2.0/token"
-        )
+        assert request.url == "https://login.microsoftonline.com/environment-tenant/oauth2/v2.0/token"
         assert request.data["client_id"] == "environment-client"
         assert request.data["client_assertion"] == "github-assertion"
         assert request.data["client_assertion_type"] == JWT_BEARER_ASSERTION
         assert request.data["scope"] == "scope"
-        return mock_response(
-            json_payload=build_aad_response(access_token="azure-token")
-        )
+        return mock_response(json_payload=build_aad_response(access_token="azure-token"))
 
     transport = Mock(send=Mock(side_effect=send))
     credential = GitHubActionsCredential(transport=transport)
@@ -227,9 +180,7 @@ def test_token_exchange_and_cache(get_token_method):
     transport.send.assert_called_once()
     credential._pipeline.run.assert_called_once()
     request = credential._pipeline.run.call_args.args[0]
-    assert (
-        dict(parse_qsl(urlsplit(request.url).query))["audience"] == credential._audience
-    )
+    assert dict(parse_qsl(urlsplit(request.url).query))["audience"] == credential._audience
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
@@ -245,9 +196,7 @@ def test_github_request_through_pipeline(get_token_method):
             response.json = Mock(return_value={"value": "github-assertion"})
             return response
         assert request.data["client_assertion"] == "github-assertion"
-        return mock_response(
-            json_payload=build_aad_response(access_token="azure-token")
-        )
+        return mock_response(json_payload=build_aad_response(access_token="azure-token"))
 
     transport = MagicMock(send=Mock(side_effect=send))
     with GitHubActionsCredential(transport=transport) as credential:
