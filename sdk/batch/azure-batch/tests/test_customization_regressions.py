@@ -6,22 +6,34 @@ import base64
 import datetime
 import hashlib
 import hmac
+import importlib
+import inspect
+import json
+import re
 import unittest
-from unittest.mock import AsyncMock, Mock, patch
+from typing import get_args, get_type_hints
+from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline import PipelineContext, PipelineRequest
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, BearerTokenCredentialPolicy
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.batch import BatchClient, models
 from azure.batch.aio import BatchClient as AsyncBatchClient
+from azure.batch.models import BatchJobTerminateOptions
 from azure.batch._operations._operations import _BatchClientOperationsMixin as GeneratedOperations
 from azure.batch.aio._operations._operations import _BatchClientOperationsMixin as AsyncGeneratedOperations
 from azure.batch._patch import BatchExceptionPolicy, BatchSharedKeyAuthPolicy
 
 
 ENDPOINT = "https://account.region.batch.azure.com"
+OPTIONAL_BODY_POST_OPERATIONS = (
+    ("_terminate_job_internal", ("job",), models.BatchJobTerminateOptions),
+    ("_deallocate_node_internal", ("pool", "node"), models.BatchNodeDeallocateOptions),
+    ("_reboot_node_internal", ("pool", "node"), models.BatchNodeRebootOptions),
+    ("_reimage_node_internal", ("pool", "node"), models.BatchNodeReimageOptions),
+)
 
 
 def named_key():
@@ -39,11 +51,11 @@ def file_headers():
     }
 
 
-def convert_file_response(*args, **kwargs):
+def convert_file_response(*_args, **kwargs):
     return kwargs["cls"](None, None, file_headers())
 
 
-def create_collection_result(*args, **kwargs):
+def create_collection_result(*_args, **kwargs):
     return models.BatchCreateTaskCollectionResult(
         result_values=[
             models.BatchTaskCreateResult(task_id=task.id, status=models.BatchTaskAddStatus.SUCCESS)
@@ -52,7 +64,89 @@ def create_collection_result(*args, **kwargs):
     )
 
 
+def referenced_model_types(annotation):
+    if inspect.isclass(annotation) and annotation.__module__.startswith("azure.batch.models."):
+        yield annotation
+    children = annotation if isinstance(annotation, (list, tuple)) else get_args(annotation)
+    for child in children:
+        yield from referenced_model_types(child)
+
+
+def accepted_post_response(request, **_kwargs):
+    response = Mock(spec=HttpResponse)
+    response.request = request
+    response.status_code = 202
+    response.headers = {}
+    response.content_type = ""
+    response.content = b""
+    response.text.return_value = ""
+    return response
+
+
+def termination_body_cases():
+    return (
+        ("omitted", {}, None),
+        ("none", {"options": None}, None),
+        ("empty-model", {"options": BatchJobTerminateOptions()}, {}),
+        (
+            "populated-model",
+            {"options": BatchJobTerminateOptions(termination_reason="UserTerminate")},
+            {"terminateReason": "UserTerminate"},
+        ),
+    )
+
+
 class TestCustomizationExports(unittest.TestCase):
+    def test_all_operation_and_nested_model_types_have_public_exports(self):
+        pending = []
+        for client in (BatchClient, AsyncBatchClient):
+            for name, method in inspect.getmembers(client, inspect.isfunction):
+                if not name.startswith("_"):
+                    for annotation in get_type_hints(method).values():
+                        pending.extend(referenced_model_types(annotation))
+        checked = set()
+        while pending:
+            model_type = pending.pop()
+            if model_type in checked:
+                continue
+            checked.add(model_type)
+            with self.subTest(model=model_type.__name__):
+                self.assertIn(model_type.__name__, models.__all__)
+                self.assertIs(getattr(models, model_type.__name__), model_type)
+            # Generated model annotations refer to an alias imported only under TYPE_CHECKING.
+            namespace = dict(vars(importlib.import_module(model_type.__module__)), _models=models)
+            for annotation in get_type_hints(model_type, globalns=namespace).values():
+                pending.extend(referenced_model_types(annotation))
+        self.assertTrue(checked)
+
+    def test_operation_documentation_uses_public_model_names(self):
+        checked = set()
+        for client in (BatchClient, AsyncBatchClient):
+            for name, method in inspect.getmembers(client, inspect.isfunction):
+                if name.startswith("_"):
+                    continue
+                references = re.findall(r"azure\.batch\.models\.([A-Za-z_]\w*)", inspect.getdoc(method) or "")
+                for model_name in references:
+                    with self.subTest(client=client, method=name, model=model_name):
+                        self.assertIn(model_name, models.__all__)
+                        self.assertTrue(inspect.isclass(getattr(models, model_name)))
+                        checked.add(model_name)
+        self.assertTrue(checked)
+
+    def test_option_annotations_use_the_public_classes(self):
+        options = {
+            "begin_terminate_job": BatchJobTerminateOptions,
+            "begin_deallocate_node": models.BatchNodeDeallocateOptions,
+            "begin_reboot_node": models.BatchNodeRebootOptions,
+            "begin_reimage_node": models.BatchNodeReimageOptions,
+        }
+        for client in (BatchClient, AsyncBatchClient):
+            for name, model_type in options.items():
+                with self.subTest(client=client, method=name):
+                    method = getattr(client, name)
+                    self.assertIn(model_type, get_args(get_type_hints(method)["options"]))
+                    self.assertNotRegex(inspect.getsource(method), r"_models\._(?:models|enums)\.")
+
     def test_public_customizations_are_available_on_both_clients(self):
         names = (
             "begin_delete_job",
@@ -138,6 +232,65 @@ class TestSyncCustomizationBehavior(unittest.TestCase):
         self.client = BatchClient(ENDPOINT, named_key())
         self.addCleanup(self.client.close)
 
+    def test_api_version_default_and_overrides_are_forwarded(self):
+        self.assertEqual(self.client._config.api_version, "2026-10-01")
+        for version in ("2025-06-01", None):
+            with self.subTest(version=version):
+                with BatchClient(ENDPOINT, named_key(), api_version=version) as client:
+                    self.assertEqual(client._config.api_version, version)
+
+    def test_terminate_job_accepts_public_options(self):
+        options = BatchJobTerminateOptions(termination_reason="UserTerminate")
+        completed_job = models.BatchJob(state=models.BatchJobState.COMPLETED)
+        with patch.object(self.client, "_terminate_job_internal", return_value=Mock()) as operation:
+            with patch.object(self.client, "get_job", return_value=completed_job):
+                poller = getattr(self.client, "begin_terminate_job")("job", options=options, polling_interval=0)
+                self.assertIsNone(poller.result(timeout=5))
+        self.assertIs(operation.call_args.kwargs["options"], options)
+        self.assertEqual(options.termination_reason, "UserTerminate")
+        self.assertTrue(poller.done())
+
+    def test_terminate_job_empty_options_reach_transport(self):
+        for case, arguments, expected_body in termination_body_cases():
+            with self.subTest(case=case):
+                transport = MagicMock()
+                transport.send.side_effect = accepted_post_response
+                with BatchClient(ENDPOINT, named_key(), transport=transport) as client:
+                    completed_job = models.BatchJob(state=models.BatchJobState.COMPLETED)
+                    with patch.object(client, "get_job", return_value=completed_job):
+                        poller = getattr(client, "begin_terminate_job")("job", polling_interval=0, **arguments)
+                        self.assertIsNone(poller.result(timeout=5))
+                    transport.send.assert_called_once()
+                    request = transport.send.call_args.args[0]
+                    self.assertEqual(request.method, "POST")
+                    self.assertEqual(request.url, ENDPOINT + "/jobs/job/terminate?api-version=2026-10-01")
+                    if expected_body is None:
+                        self.assertIsNone(request.content)
+                        self.assertNotIn("content-type", request.headers)
+                    else:
+                        self.assertEqual(json.loads(request.content), expected_body)
+                        if expected_body:
+                            self.assertEqual(
+                                request.headers["content-type"], "application/json; odata=minimalmetadata"
+                            )
+
+    def test_optional_body_post_operations_handle_absent_and_empty_models(self):
+        for name, args, model_type in OPTIONAL_BODY_POST_OPERATIONS:
+            for options in (None, model_type()):
+                with self.subTest(operation=name, options=options):
+                    transport = MagicMock()
+                    transport.send.side_effect = accepted_post_response
+                    with BatchClient(ENDPOINT, named_key(), transport=transport) as client:
+                        self.assertIsNone(getattr(client, name)(*args, options=options))
+                    transport.send.assert_called_once()
+                    request = transport.send.call_args.args[0]
+                    self.assertEqual(request.method, "POST")
+                    if options is None:
+                        self.assertIsNone(request.content)
+                        self.assertNotIn("content-type", request.headers)
+                    else:
+                        self.assertEqual(json.loads(request.content), {})
+
     def test_file_properties_and_integer_timeout(self):
         for method in ("get_node_file_properties", "get_task_file_properties"):
             generated = "_" + method + "_internal"
@@ -154,7 +307,7 @@ class TestSyncCustomizationBehavior(unittest.TestCase):
     def test_bulk_tasks_are_batched_and_aggregated(self):
         tasks = [models.BatchTaskCreateOptions(id=str(index), command_line="echo test") for index in range(101)]
         with patch.object(self.client, "create_task_collection", side_effect=create_collection_result) as operation:
-            result = self.client.create_tasks("job", tasks, service_timeout=19)
+            result = getattr(self.client, "create_tasks")("job", tasks, service_timeout=19)
         self.assertEqual(operation.call_count, 2)
         self.assertEqual({value.task_id for value in result.result_values}, {task.id for task in tasks})
         for call in operation.call_args_list:
@@ -170,13 +323,15 @@ class TestSyncCustomizationBehavior(unittest.TestCase):
         response = models.BatchCreateTaskCollectionResult(result_values=[failure])
         with patch.object(self.client, "create_task_collection", return_value=response):
             with self.assertRaises(models.CreateTasksError) as raised:
-                self.client.create_tasks("job", [models.BatchTaskCreateOptions(id="task", command_line="echo test")])
+                getattr(self.client, "create_tasks")(
+                    "job", [models.BatchTaskCreateOptions(id="task", command_line="echo test")]
+                )
         self.assertEqual(list(raised.exception.failure_tasks), [failure])
 
     def test_delete_pool_poller_completes_when_pool_disappears(self):
         with patch.object(self.client, "_delete_pool_internal", return_value=Mock()) as operation:
             with patch.object(self.client, "get_pool", side_effect=ResourceNotFoundError("gone")):
-                poller = self.client.begin_delete_pool("pool", service_timeout=23, polling_interval=0)
+                poller = getattr(self.client, "begin_delete_pool")("pool", service_timeout=23, polling_interval=0)
                 self.assertIsNone(poller.result(timeout=5))
         self.assertTrue(poller.done())
         self.assertEqual(operation.call_args.kwargs["service_timeout"], datetime.timedelta(seconds=23))
@@ -186,6 +341,69 @@ class TestAsyncCustomizationBehavior(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.client = AsyncBatchClient(ENDPOINT, named_key())
         self.addAsyncCleanup(self.client.close)
+
+    async def test_api_version_default_and_overrides_are_forwarded(self):
+        self.assertEqual(self.client._config.api_version, "2026-10-01")
+        for version in ("2025-06-01", None):
+            with self.subTest(version=version):
+                async with AsyncBatchClient(ENDPOINT, named_key(), api_version=version) as client:
+                    self.assertEqual(client._config.api_version, version)
+
+    async def test_terminate_job_accepts_public_options(self):
+        options = BatchJobTerminateOptions(termination_reason="UserTerminate")
+        completed_job = models.BatchJob(state=models.BatchJobState.COMPLETED)
+        with patch.object(
+            self.client, "_terminate_job_internal", new_callable=AsyncMock, return_value=Mock()
+        ) as operation:
+            with patch.object(self.client, "get_job", new_callable=AsyncMock, return_value=completed_job):
+                poller = await getattr(self.client, "begin_terminate_job")("job", options=options, polling_interval=0)
+                self.assertIsNone(await poller.result())
+        self.assertIs(operation.call_args.kwargs["options"], options)
+        self.assertEqual(options.termination_reason, "UserTerminate")
+        self.assertTrue(poller.done())
+
+    async def test_terminate_job_empty_options_reach_transport(self):
+        for case, arguments, expected_body in termination_body_cases():
+            with self.subTest(case=case):
+                transport = MagicMock()
+                transport.send = AsyncMock(side_effect=accepted_post_response)
+                transport.close = AsyncMock()
+                async with AsyncBatchClient(ENDPOINT, named_key(), transport=transport) as client:
+                    completed_job = models.BatchJob(state=models.BatchJobState.COMPLETED)
+                    with patch.object(client, "get_job", new_callable=AsyncMock, return_value=completed_job):
+                        poller = await getattr(client, "begin_terminate_job")("job", polling_interval=0, **arguments)
+                        self.assertIsNone(await poller.result())
+                    transport.send.assert_awaited_once()
+                    request = transport.send.call_args.args[0]
+                    self.assertEqual(request.method, "POST")
+                    self.assertEqual(request.url, ENDPOINT + "/jobs/job/terminate?api-version=2026-10-01")
+                    if expected_body is None:
+                        self.assertIsNone(request.content)
+                        self.assertNotIn("content-type", request.headers)
+                    else:
+                        self.assertEqual(json.loads(request.content), expected_body)
+                        if expected_body:
+                            self.assertEqual(
+                                request.headers["content-type"], "application/json; odata=minimalmetadata"
+                            )
+
+    async def test_optional_body_post_operations_handle_absent_and_empty_models(self):
+        for name, args, model_type in OPTIONAL_BODY_POST_OPERATIONS:
+            for options in (None, model_type()):
+                with self.subTest(operation=name, options=options):
+                    transport = MagicMock()
+                    transport.send = AsyncMock(side_effect=accepted_post_response)
+                    transport.close = AsyncMock()
+                    async with AsyncBatchClient(ENDPOINT, named_key(), transport=transport) as client:
+                        self.assertIsNone(await getattr(client, name)(*args, options=options))
+                    transport.send.assert_awaited_once()
+                    request = transport.send.call_args.args[0]
+                    self.assertEqual(request.method, "POST")
+                    if options is None:
+                        self.assertIsNone(request.content)
+                        self.assertNotIn("content-type", request.headers)
+                    else:
+                        self.assertEqual(json.loads(request.content), {})
 
     async def test_file_properties_and_integer_timeout(self):
         for method in ("get_node_file_properties", "get_task_file_properties"):
@@ -207,7 +425,7 @@ class TestAsyncCustomizationBehavior(unittest.IsolatedAsyncioTestCase):
         with patch.object(
             self.client, "create_task_collection", new_callable=AsyncMock, side_effect=create_collection_result
         ) as operation:
-            result = await self.client.create_tasks("job", tasks, service_timeout=19)
+            result = await getattr(self.client, "create_tasks")("job", tasks, service_timeout=19)
         self.assertEqual(operation.await_count, 2)
         self.assertEqual({value.task_id for value in result.result_values}, {task.id for task in tasks})
         for call in operation.call_args_list:
@@ -223,7 +441,7 @@ class TestAsyncCustomizationBehavior(unittest.IsolatedAsyncioTestCase):
         response = models.BatchCreateTaskCollectionResult(result_values=[failure])
         with patch.object(self.client, "create_task_collection", new_callable=AsyncMock, return_value=response):
             with self.assertRaises(models.CreateTasksError) as raised:
-                await self.client.create_tasks(
+                await getattr(self.client, "create_tasks")(
                     "job", [models.BatchTaskCreateOptions(id="task", command_line="echo test")]
                 )
         self.assertEqual(list(raised.exception.failure_tasks), [failure])
@@ -235,7 +453,9 @@ class TestAsyncCustomizationBehavior(unittest.IsolatedAsyncioTestCase):
             with patch.object(
                 self.client, "get_pool", new_callable=AsyncMock, side_effect=ResourceNotFoundError("gone")
             ):
-                poller = await self.client.begin_delete_pool("pool", service_timeout=23, polling_interval=0)
+                poller = await getattr(self.client, "begin_delete_pool")(
+                    "pool", service_timeout=23, polling_interval=0
+                )
                 self.assertIsNone(await poller.result())
         self.assertTrue(poller.done())
         self.assertEqual(operation.call_args.kwargs["service_timeout"], datetime.timedelta(seconds=23))

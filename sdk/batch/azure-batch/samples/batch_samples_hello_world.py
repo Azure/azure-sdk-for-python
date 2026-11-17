@@ -17,11 +17,12 @@ USAGE:
     python batch_samples_hello_world.py
 """
 
+from configparser import ConfigParser
+
 from azure.batch import models
 from azure.batch import BatchClient
+from azure.core.exceptions import AzureError
 from azure.identity import DefaultAzureCredential
-
-from configparser import ConfigParser
 
 
 class BatchSamples:
@@ -49,7 +50,7 @@ class BatchSamples:
         try:
             # create a batch pool
             client.create_pool(pool=pool_content)
-        except Exception as e:
+        except AzureError as e:
             print(e)
 
     def create_job_and_submit_task(self, client: BatchClient, pool_id: str, job_id: str):
@@ -63,7 +64,7 @@ class BatchSamples:
         try:
             # create a batch job
             client.create_job(job=job_content)
-        except Exception as e:
+        except AzureError as e:
             print(e)
 
         # set up parameters for a batch task
@@ -75,7 +76,7 @@ class BatchSamples:
         try:
             # create a batch task
             client.create_task(job_id=job_id, task=task_content)
-        except Exception as e:
+        except AzureError as e:
             print(e)
 
     def cleanup(self, client: BatchClient, pool_id: str, job_id: str):
@@ -86,17 +87,17 @@ class BatchSamples:
 
 
 if __name__ == "__main__":
-    pool_id = "my_pool"
-    job_id = "my_job"
+    POOL_ID = "my_pool"
+    JOB_ID = "my_job"
 
     parser = ConfigParser()
     parser.read("samples.cfg")
     batchAccountEndpoint = parser.get("Batch", "BATCH_ACCOUNT_ENDPOINT")
 
     credentials = DefaultAzureCredential()
-    client = BatchClient(batchAccountEndpoint, credentials)
+    batch_client = BatchClient(batchAccountEndpoint, credentials)
 
     sample = BatchSamples()
-    sample.create_pool(client, pool_id)
-    sample.create_job_and_submit_task(client, pool_id, job_id)
-    sample.cleanup(client, pool_id, job_id)
+    sample.create_pool(batch_client, POOL_ID)
+    sample.create_job_and_submit_task(batch_client, POOL_ID, JOB_ID)
+    sample.cleanup(batch_client, POOL_ID, JOB_ID)

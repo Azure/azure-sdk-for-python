@@ -1,11 +1,9 @@
 import unittest
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 
 from azure.core.exceptions import (
-    HttpResponseError,
     ClientAuthenticationError,
     ResourceNotFoundError,
-    ResourceExistsError,
     ResourceModifiedError,
 )
 from azure.batch._patch import BatchExceptionPolicy, BatchErrorFormat
@@ -146,7 +144,7 @@ class TestResponseHandler(unittest.TestCase):
         def get_header(header):
             if header == "If-Match":
                 return "foobar"
-            elif header == "If-None-Match":
+            if header == "If-None-Match":
                 return "*"
             return None
 

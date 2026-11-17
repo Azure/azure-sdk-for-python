@@ -103,7 +103,7 @@ def create_job(batch_client: BatchClient, job_id: str, pool_id: str):
 
 def add_tasks(batch_client: BatchClient, job_id: str, input_files, output_container_sas_url):
     # [START tutorial_parallel_add_tasks]
-    tasks = list()
+    tasks = []
 
     for idx, input_file in enumerate(input_files):
         input_file_path = input_file.file_path
@@ -142,7 +142,6 @@ def wait_for_tasks(batch_client: BatchClient, job_id: str, timeout_expiration):
         if not incomplete_tasks:
             print()
             return True
-        else:
-            time.sleep(1)
+        time.sleep(1)
     return False
     # [END tutorial_parallel_wait_tasks]

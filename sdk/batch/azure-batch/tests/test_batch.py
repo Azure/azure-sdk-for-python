@@ -6,21 +6,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import asyncio
+import binascii
 import datetime
+import functools
+import hashlib
 import io
 import os
-import hashlib
+import platform
 import time
-import binascii
+from typing import Iterable, Union
+
 import pytest
 import six
-import functools
-
-import azure.core.exceptions
-from azure.batch import models
-from azure.batch.aio import BatchClient as AsyncBatchClient
-from azure.batch import BatchClient as SyncBatchClient
-from typing import Iterable, Union
 
 from batch_preparers import AccountPreparer, PoolPreparer, JobPreparer
 from async_wrapper import wrap_list_result, wrap_result, wrap_file_result
@@ -28,13 +26,16 @@ from decorators import recorded_by_proxy_async, client_setup
 
 from devtools_testutils import (
     AzureMgmtRecordedTestCase,
-    AzureRecordedTestCase,
-    recorded_by_proxy,
     EnvironmentVariableLoader,
     StorageAccountPreparer,
     CachedResourceGroupPreparer,
     set_custom_default_matcher,
 )
+
+import azure.core.exceptions
+from azure.batch import models
+from azure.batch.aio import BatchClient as AsyncBatchClient
+from azure.batch import BatchClient as SyncBatchClient
 
 # toggle to test sync or async client
 TEST_SYNC_CLIENT = False
@@ -46,9 +47,6 @@ BATCH_RESOURCE = "https://batch.core.windows.net/"
 DEFAULT_VM_SIZE = "standard_d2_v2"
 SECRET_FIELDS = ["primary", "secondary"]
 
-
-import platform
-import asyncio
 
 # Workaround to disable "Asyncio Event Loop is Closed" errors on Windows
 # From: https://stackoverflow.com/questions/45600579/
@@ -83,34 +81,24 @@ class TestBatch(AzureMgmtRecordedTestCase):
         raise RuntimeError(err)
 
     async def assertBatchError(self, code, func, *args, **kwargs):
-        try:
+        with pytest.raises(azure.core.exceptions.HttpResponseError) as raised:
             await wrap_result(func(*args, **kwargs))
-            self.fail("BatchErrorException expected but not raised")
-        except azure.core.exceptions.HttpResponseError as err:
-            assert err.error.code == code
-        except Exception as err:
-            self.fail("Expected BatchErrorException, instead got: {!r}".format(err))
+        assert raised.value.error.code == code
 
     async def assertCreateTasksError(self, code, func, *args, **kwargs):
-        try:
+        with pytest.raises(models.CreateTasksError) as raised:
             await wrap_result(func(*args, **kwargs))
-            self.fail("CreateTasksError expected but not raised")
-        except models.CreateTasksError as err:
-            try:
-                batch_error = err.errors.pop()
-                if code:
-                    assert batch_error.error.code == code
-            except IndexError:
-                pytest.fail("Inner BatchErrorException expected but not exist")
-        except Exception as err:
-            pytest.fail("Expected CreateTasksError, instead got: {!r}".format(err))
+        assert raised.value.errors, "Inner BatchErrorException expected but does not exist"
+        batch_error = raised.value.errors.pop()
+        if code:
+            assert batch_error.error.code == code
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
-    async def test_batch_create_pools(self, client: BatchClient, **kwargs):
+    async def test_batch_create_pools(self, client: BatchClient, **_kwargs):
         # Test Create Iaas Pool
         users = [
             models.UserAccount(name="test-user-1", password="secret"),
@@ -264,7 +252,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
-    async def test_batch_create_pool_with_blobfuse_mount(self, client: BatchClient, **kwargs):
+    async def test_batch_create_pool_with_blobfuse_mount(self, client: BatchClient, **_kwargs):
         # Test Create Iaas Pool
         test_iaas_pool = models.BatchPoolCreateOptions(
             id="batch_iass_",
@@ -308,7 +296,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
-    async def test_batch_create_pool_with_osdisksecurityprofile(self, client: BatchClient, **kwargs):
+    async def test_batch_create_pool_with_osdisksecurityprofile(self, client: BatchClient, **_kwargs):
         # Test Create Iaas Pool
         test_iaas_pool = models.BatchPoolCreateOptions(
             id="batch_iass_",
@@ -383,9 +371,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         self,
         client: BatchClient,
         batch_diskencryptionset_id,
-        batch_resource_group,
-        batch_usersub_account_name,
-        **kwargs
+        **_kwargs
     ):
 
         test_iaas_pool = models.BatchPoolCreateOptions(
@@ -468,7 +454,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
-    async def test_batch_update_pools(self, client: BatchClient, **kwargs):
+    async def test_batch_update_pools(self, client: BatchClient, **_kwargs):
         test_paas_pool = models.BatchPoolCreateOptions(
             id="batch_paas_",
             vm_size=DEFAULT_VM_SIZE,
@@ -611,7 +597,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
-    async def test_batch_job_schedules(self, client: BatchClient, **kwargs):
+    async def test_batch_job_schedules(self, client: BatchClient, **_kwargs):
         # Test Create Job Schedule
         schedule_id = "batch_schedule_"
         job_spec = models.BatchJobSpecification(
@@ -695,7 +681,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
-    async def test_batch_network_configuration(self, client: BatchClient, **kwargs):
+    async def test_batch_network_configuration(self, client: BatchClient, **_kwargs):
         # Test Create Pool with Network Config
 
         network_config = models.NetworkConfiguration(
@@ -769,7 +755,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test List Batch Nodes
         nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         assert len(nodes) == 2
-        while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.IDLE]):
+        while self.is_live and any(n for n in nodes if n.state != models.BatchNodeState.IDLE):
             time.sleep(10)
             nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         assert len(nodes) == 2
@@ -818,7 +804,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             client.begin_reboot_node(
                 batch_pool.name,
                 nodes[0].id,
-                models._models.BatchNodeRebootOptions(node_reboot_kind=models._enums.BatchNodeRebootKind.TERMINATE),
+                models.BatchNodeRebootOptions(node_reboot_kind=models.BatchNodeRebootKind.TERMINATE),
                 polling_interval=5,
             )
         )
@@ -860,7 +846,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
-    async def test_batch_compute_node_extensions(self, client: BatchClient, **kwargs):
+    async def test_batch_compute_node_extensions(self, client: BatchClient, **_kwargs):
         # Test Create Iaas Pool
         network_config = models.NetworkConfiguration(
             endpoint_configuration=models.BatchPoolEndpointConfiguration(
@@ -935,7 +921,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     async def test_batch_compute_node_user(self, client: BatchClient, **kwargs):
         batch_pool = kwargs.pop("batch_pool")
         nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
-        while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.IDLE]):
+        while self.is_live and any(n for n in nodes if n.state != models.BatchNodeState.IDLE):
             time.sleep(10)
             nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         assert len(nodes) == 1
@@ -972,7 +958,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     async def test_batch_compute_node_remote_desktop(self, client: BatchClient, **kwargs):
         batch_pool = kwargs.pop("batch_pool")
         nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
-        while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.IDLE]):
+        while self.is_live and any(n for n in nodes if n.state != models.BatchNodeState.IDLE):
             time.sleep(10)
             nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         assert len(nodes) == 1
@@ -992,7 +978,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         batch_environment=BATCH_ENVIRONMENT,
         name_prefix="batch4",
     )
-    @PoolPreparer(os="Windows", size=1, pool_name="filepool")
+    @PoolPreparer(operating_system="Windows", size=1, pool_name="filepool")
     @JobPreparer()
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
@@ -1001,7 +987,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         batch_pool = kwargs.pop("batch_pool")
         batch_job = kwargs.pop("batch_job")
         nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
-        while self.is_live and any([n for n in nodes if n.state != models.BatchNodeState.IDLE]):
+        while self.is_live and any(n for n in nodes if n.state != models.BatchNodeState.IDLE):
             time.sleep(10)
             nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         assert len(nodes) == 1
@@ -1078,6 +1064,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_batch_tasks(self, client: BatchClient, **kwargs):
         batch_job = kwargs.pop("batch_job")
+        task_param = await self._check_task_creation(client, batch_job)
+        await self._check_task_operations(client, batch_job, task_param)
+        await self._check_bulk_tasks(client, batch_job)
+
+    async def _check_task_creation(self, client, batch_job):
         # Test Create Task with Auto Complete
         exit_conditions = models.ExitConditions(
             exit_codes=[
@@ -1100,13 +1091,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             command_line='cmd /c "echo hello world"',
             exit_conditions=exit_conditions,
         )
-        try:
-            await wrap_result(client.create_task(batch_job.id, task_param))
-        except azure.core.exceptions.HttpResponseError as e:
-            message = "{}: ".format(e.error.code, e.error.message)
-            for v in e.model.values:
-                message += "\n{}: {}".format(v.key, v.value)
-            raise Exception(message)
+        await wrap_result(client.create_task(batch_job.id, task_param))
         task = await wrap_result(client.get_task(batch_job.id, task_param.id))
         assert isinstance(task, models.BatchTask)
         assert task.exit_conditions is not None
@@ -1192,7 +1177,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
         task = await wrap_result(client.get_task(batch_job.id, task_param.id))
         assert isinstance(task, models.BatchTask)
         assert task.user_identity.username == "task-user"
+        return task_param
 
+    async def _check_task_operations(self, client, batch_job, task_param):
         # Test Add Task Collection
         tasks = []
         for i in range(7, 10):
@@ -1249,6 +1236,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await wrap_result(client.delete_task(batch_job.id, task_param.id))
         assert response is None
 
+    async def _check_bulk_tasks(self, client, batch_job):
         # Test Bulk Add Task Failure
         task_id = "mytask"
         tasks_to_add = []
@@ -1304,7 +1292,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
-    async def test_batch_jobs(self, client: BatchClient, **kwargs):
+    async def test_batch_jobs(self, client: BatchClient, **_kwargs):
         # Test Create Job
         auto_pool = models.BatchAutoPoolSpecification(
             pool_lifetime_option=models.BatchPoolLifetimeOption.JOB,
@@ -1375,6 +1363,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert isinstance(jobs, Iterable)
         assert len(list(jobs)) == 2
 
+        await self._check_job_lifecycle(client, job_param, job_auto_param)
+
+    async def _check_job_lifecycle(self, client, job_param, job_auto_param):
         # Test LRO disable job
         poller = await wrap_result(
             client.begin_disable_job(
@@ -1409,14 +1400,14 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Prep and release task status
         task_status = await wrap_list_result(client.list_job_preparation_and_release_task_status(job_param.id))
         assert isinstance(task_status, Iterable)
-        assert list(task_status) == []
+        assert not list(task_status)
 
         # Test Terminate Job using LRO
         # TODO: default for termination_reason wasn't set so manually adding it. check on why default isn't working
         poller = await wrap_result(
             client.begin_terminate_job(
                 job_id=job_param.id,
-                options=models._models.BatchJobTerminateOptions(termination_reason="UserTerminate"),
+                options=models.BatchJobTerminateOptions(termination_reason="UserTerminate"),
                 polling_interval=5,
             )
         )
@@ -1448,7 +1439,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
     @client_setup
     @recorded_by_proxy_async
-    async def test_batch_exception_policy(self, client: BatchClient, **kwargs):
+    async def test_batch_exception_policy(self, client: BatchClient, **_kwargs):
         # Test Resource Not Found Error (404)
         try:
             await wrap_result(client.get_pool("non-existent-pool-id"))

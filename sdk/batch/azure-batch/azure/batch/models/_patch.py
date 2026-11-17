@@ -73,6 +73,21 @@ class CreateTasksError(HttpResponseError):
 class BatchFileProperties:
     """Information about a file or directory on a Compute Node with additional properties.
 
+    :keyword url: The URL of the file.
+    :paramtype url: str
+    :keyword is_directory: Whether the object represents a directory.
+    :paramtype is_directory: bool
+    :keyword last_modified: The time at which the file was last modified. Required.
+    :paramtype last_modified: ~datetime.datetime
+    :keyword content_length: The length of the file. Required.
+    :paramtype content_length: int
+    :keyword creation_time: The file creation time, when available.
+    :paramtype creation_time: ~datetime.datetime
+    :keyword content_type: The content type of the file.
+    :paramtype content_type: str
+    :keyword file_mode: The file mode in octal format, returned only for Linux nodes.
+    :paramtype file_mode: str
+
     :ivar url: The URL of the file.
     :vartype url: str
     :ivar is_directory: Whether the object represents a directory.

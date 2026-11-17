@@ -481,7 +481,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models._models.BatchNodeDeallocateOptions] = None,
+        options: Optional[_models.BatchNodeDeallocateOptions] = None,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -497,7 +497,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for deallocating the Compute Node. Default value is None.
-        :type options: ~azure.batch.models._models.BatchNodeDeallocateOptions
+        :type options: ~azure.batch.models.BatchNodeDeallocateOptions
         :keyword service_timeout: The maximum time that the server can spend processing the initial request to
          deallocate the Compute Node, in seconds. The default is 30 seconds. If the value is larger
          than 30, the default will be used instead.". Default value is None.
@@ -539,7 +539,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models._models.BatchNodeRebootOptions] = None,
+        options: Optional[_models.BatchNodeRebootOptions] = None,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -555,7 +555,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for rebooting the Compute Node. Default value is None.
-        :type options: ~azure.batch.models._models.BatchNodeRebootOptions
+        :type options: ~azure.batch.models.BatchNodeRebootOptions
         :keyword service_timeout: The maximum time that the server can spend processing the initial request to
          reboot the Compute Node, in seconds. The default is 30 seconds. If the value is larger than 30,
          the default will be used instead.". Default value is None.
@@ -597,7 +597,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models._models.BatchNodeReimageOptions] = None,
+        options: Optional[_models.BatchNodeReimageOptions] = None,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -617,7 +617,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for reimaging the Compute Node. Default value is None.
-        :type options: ~azure.batch.models._models.BatchNodeReimageOptions
+        :type options: ~azure.batch.models.BatchNodeReimageOptions
         :keyword service_timeout: The maximum time that the server can spend processing the initial request to
          reimage the Compute Node, in seconds. The default is 30 seconds. If the value is larger than 30,
          the default will be used instead.". Default value is None.
@@ -953,7 +953,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     async def begin_terminate_job(
         self,
         job_id: str,
-        options: Optional[_models._models.BatchJobTerminateOptions] = None,
+        options: Optional[_models.BatchJobTerminateOptions] = None,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -977,7 +977,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param job_id: The ID of the Job to terminate. Required.
         :type job_id: str
         :param options: The options to use for terminating the Job. Default value is None.
-        :type options: ~azure.batch.models._models.BatchJobTerminateOptions
+        :type options: ~azure.batch.models.BatchJobTerminateOptions
         :keyword service_timeout: The maximum time that the server can spend processing the initial request
          to terminate the Job, in seconds. The default is 30 seconds. If the value is larger than 30,
          the default will be used instead.". Default value is None.
@@ -1145,7 +1145,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param job_id: The ID of the Job to which the Task collection is to be added. Required.
         :type job_id: str
         :param task_collection: The Tasks to be added. Required.
-        :type task_collection: ~azure.batch.models.BatchTaskAddCollectionResult
+        :type task_collection: list[~azure.batch.models.BatchTaskCreateOptions]
         :keyword max_concurrency: number of coroutines to use in parallel when adding tasks. If specified
          and greater than 0, will start additional coroutines to submit requests and wait for them to finish.
          Otherwise will submit create_task_collection requests sequentially on main thread
@@ -1158,9 +1158,9 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: BatchTaskAddCollectionResult. The BatchTaskAddCollectionResult is compatible with MutableMapping
-        :rtype: ~azure.batch.models.BatchTaskAddCollectionResult
-        :raises ~azure.batch.custom.CreateTasksError:
+        :return: The aggregated results of submitting the tasks.
+        :rtype: ~azure.batch.models.BatchCreateTaskCollectionResult
+        :raises ~azure.batch.models.CreateTasksError:
         """
 
         kwargs.update({"service_timeout": _to_timedelta(service_timeout), "ocp_date": ocp_date})
@@ -1450,14 +1450,12 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 class _TaskWorkflowManager:
     """Worker class for one create_task_collection request
 
+    :param batch_client: The client used to submit task collections.
+    :type batch_client: ~azure.batch.aio.BatchClient
     :param str job_id: The ID of the job to which the task collection is to be
         added.
-    :ivar tasks_to_add: The collection of tasks to add.
-    :vartype tasks_to_add: Iterable[~azure.batch.models.BatchTaskCreateContent]
-    :param task_create_task_collection_options: Additional parameters for the
-        operation
-    :type task_create_task_collection_options: :class:`TaskAddCollectionOptions
-        <azure.batch.models.TaskAddCollectionOptions>`
+    :param task_collection: The collection of tasks to add.
+    :type task_collection: typing.Iterable[~azure.batch.models.BatchTaskCreateOptions]
     """
 
     def __init__(

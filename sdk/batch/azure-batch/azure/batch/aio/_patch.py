@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Union
+from typing import Optional, Union
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import AzureNamedKeyCredential
@@ -23,26 +23,30 @@ __all__ = [
 class BatchClient(GenerateBatchClient):
     """BatchClient.
 
-    :param endpoint: HTTP or HTTPS endpoint for the Web PubSub service instance.
+    :param endpoint: The Azure Batch account endpoint.
     :type endpoint: str
-    :param hub: Target hub name, which should start with alphabetic characters and only contain
-     alpha-numeric characters or underscore.
-    :type hub: str
-    :param credentials: Credential needed for the client to connect to Azure.
-    :type credentials: ~azure.identity.ClientSecretCredential, ~azure.core.credentials.AzureNamedKeyCredential,
-     or ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :param credential: The asynchronous token or Shared Key credential used to authenticate requests.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
+     ~azure.core.credentials.AzureNamedKeyCredential
+
+    :keyword api_version: The service API version. Defaults to ``2026-10-01``.
+     Overriding it may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(
-        self, endpoint: str, credential: Union[AzureNamedKeyCredential, AsyncTokenCredential], **kwargs
+        self,
+        endpoint: str,
+        credential: Union[AzureNamedKeyCredential, AsyncTokenCredential],
+        *,
+        api_version: Optional[str] = "2026-10-01",
+        **kwargs
     ) -> None:
         per_call_policies = kwargs.pop("per_call_policies", [])
         per_call_policies.append(BatchExceptionPolicy())
         super().__init__(
             endpoint=endpoint,
+            api_version=api_version,
             credential=credential,  # type: ignore
             authentication_policy=kwargs.pop("authentication_policy", self._format_shared_key_credential(credential)),
             per_call_policies=per_call_policies,

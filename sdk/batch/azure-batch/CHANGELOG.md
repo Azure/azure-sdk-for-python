@@ -7,6 +7,11 @@
 - Added hardware profiles and virtual machine SKU allocation strategies for pools.
 - Added availability-zone allocation and resiliency policies for pools.
 
+### Bugs Fixed
+
+- Fixed `begin_terminate_job` raising `ValueError` when options are omitted or an empty options model is supplied, by incorporating the updated generator's optional-body content-type handling.
+- Made `BatchJobTerminateOptions`, `BatchNodeDeallocateOptions`, `BatchNodeRebootOptions`, `BatchNodeReimageOptions`, and their operation enums available through `azure.batch.models`. Updated synchronous and asynchronous operation annotations and documentation to use public model names.
+
 ### Breaking Changes
 
 - Removed `BatchClient.list_pool_usage_metrics` and its asynchronous counterpart, along with the `BatchPoolUsageMetrics` and `BatchPoolUsageStatistics` models, to align with service API version `2026-10-01`.
