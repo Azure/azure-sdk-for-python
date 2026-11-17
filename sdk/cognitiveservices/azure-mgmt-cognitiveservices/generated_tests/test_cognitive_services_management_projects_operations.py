@@ -49,11 +49,16 @@ class TestCognitiveServicesManagementProjectsOperations(AzureMgmtRecordedTestCas
                 "location": "str",
                 "name": "str",
                 "properties": {
+                    "capabilitySettings": {"blobStore": "str", "documentStore": "str", "vectorStore": "str"},
                     "description": "str",
                     "displayName": "str",
                     "endpoints": {"str": "str"},
                     "isDefault": bool,
                     "provisioningState": "str",
+                    "toolControls": {
+                        "allowedTools": [{"type": "str", "connectorId": "str", "serverUrl": "str"}],
+                        "defaultAction": "str",
+                    },
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -90,11 +95,16 @@ class TestCognitiveServicesManagementProjectsOperations(AzureMgmtRecordedTestCas
                 "location": "str",
                 "name": "str",
                 "properties": {
+                    "capabilitySettings": {"blobStore": "str", "documentStore": "str", "vectorStore": "str"},
                     "description": "str",
                     "displayName": "str",
                     "endpoints": {"str": "str"},
                     "isDefault": bool,
                     "provisioningState": "str",
+                    "toolControls": {
+                        "allowedTools": [{"type": "str", "connectorId": "str", "serverUrl": "str"}],
+                        "defaultAction": "str",
+                    },
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",

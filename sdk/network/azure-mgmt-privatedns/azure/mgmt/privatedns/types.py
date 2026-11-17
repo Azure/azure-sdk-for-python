@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 class AaaaRecord(TypedDict, total=False):
     """An AAAA record.
 
-    :ivar ipv6_address: The IPv6 address of this AAAA record.
-    :vartype ipv6_address: str
+    :ivar ipv6Address: The IPv6 address of this AAAA record.
+    :vartype ipv6Address: str
     """
 
     ipv6Address: str
@@ -28,8 +28,8 @@ class AaaaRecord(TypedDict, total=False):
 class ARecord(TypedDict, total=False):
     """An A record.
 
-    :ivar ipv4_address: The IPv4 address of this A record.
-    :vartype ipv4_address: str
+    :ivar ipv4Address: The IPv4 address of this A record.
+    :vartype ipv4Address: str
     """
 
     ipv4Address: str
@@ -62,6 +62,30 @@ class MxRecord(TypedDict, total=False):
     """The domain name of the mail host for this MX record."""
 
 
+class PrivateDnsResourceReferenceRequest(TypedDict, total=False):
+    """Represents the properties of the private DNS Resource Reference Request.
+
+    :ivar properties: The properties of the Resource Reference Request.
+    :vartype properties: "PrivateDnsResourceReferenceRequestProperties"
+    """
+
+    properties: "PrivateDnsResourceReferenceRequestProperties"
+    """The properties of the Resource Reference Request."""
+
+
+class PrivateDnsResourceReferenceRequestProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Represents the properties of the private DNS Resource Reference Request.
+
+    :ivar targetResources: A list of references to azure resources for which referencing private
+     DNS records need to be queried.
+    :vartype targetResources: list["SubResource"]
+    """
+
+    targetResources: list["SubResource"]
+    """A list of references to azure resources for which referencing private DNS records need to be
+     queried."""
+
+
 class Resource(TypedDict, total=False):
     """Resource.
 
@@ -73,9 +97,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -101,9 +125,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -118,9 +142,9 @@ class PrivateZone(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of the Private DNS zone.
     :vartype properties: "PrivateZoneProperties"
     :ivar tags: Resource tags.
@@ -144,35 +168,35 @@ class PrivateZone(ProxyResource):
 class PrivateZoneProperties(TypedDict, total=False):
     """Represents the properties of the Private DNS zone.
 
-    :ivar max_number_of_record_sets: The maximum number of record sets that can be created in this
+    :ivar maxNumberOfRecordSets: The maximum number of record sets that can be created in this
      Private DNS zone. This is a read-only property and any attempt to set this value will be
      ignored.
-    :vartype max_number_of_record_sets: int
-    :ivar number_of_record_sets: The current number of record sets in this Private DNS zone. This
-     is a read-only property and any attempt to set this value will be ignored.
-    :vartype number_of_record_sets: int
-    :ivar max_number_of_virtual_network_links: The maximum number of virtual networks that can be
-     linked to this Private DNS zone. This is a read-only property and any attempt to set this value
-     will be ignored.
-    :vartype max_number_of_virtual_network_links: int
-    :ivar number_of_virtual_network_links: The current number of virtual networks that are linked
+    :vartype maxNumberOfRecordSets: int
+    :ivar numberOfRecordSets: The current number of record sets in this Private DNS zone. This is a
+     read-only property and any attempt to set this value will be ignored.
+    :vartype numberOfRecordSets: int
+    :ivar maxNumberOfVirtualNetworkLinks: The maximum number of virtual networks that can be linked
      to this Private DNS zone. This is a read-only property and any attempt to set this value will
      be ignored.
-    :vartype number_of_virtual_network_links: int
-    :ivar max_number_of_virtual_network_links_with_registration: The maximum number of virtual
-     networks that can be linked to this Private DNS zone with registration enabled. This is a
-     read-only property and any attempt to set this value will be ignored.
-    :vartype max_number_of_virtual_network_links_with_registration: int
-    :ivar number_of_virtual_network_links_with_registration: The current number of virtual networks
-     that are linked to this Private DNS zone with registration enabled. This is a read-only
+    :vartype maxNumberOfVirtualNetworkLinks: int
+    :ivar numberOfVirtualNetworkLinks: The current number of virtual networks that are linked to
+     this Private DNS zone. This is a read-only property and any attempt to set this value will be
+     ignored.
+    :vartype numberOfVirtualNetworkLinks: int
+    :ivar maxNumberOfVirtualNetworkLinksWithRegistration: The maximum number of virtual networks
+     that can be linked to this Private DNS zone with registration enabled. This is a read-only
      property and any attempt to set this value will be ignored.
-    :vartype number_of_virtual_network_links_with_registration: int
-    :ivar provisioning_state: The provisioning state of the resource. This is a read-only property
+    :vartype maxNumberOfVirtualNetworkLinksWithRegistration: int
+    :ivar numberOfVirtualNetworkLinksWithRegistration: The current number of virtual networks that
+     are linked to this Private DNS zone with registration enabled. This is a read-only property and
+     any attempt to set this value will be ignored.
+    :vartype numberOfVirtualNetworkLinksWithRegistration: int
+    :ivar provisioningState: The provisioning state of the resource. This is a read-only property
      and any attempt to set this value will be ignored. Known values are: "Creating", "Updating",
      "Deleting", "Succeeded", "Failed", and "Canceled".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar internal_id: Private zone internal Id.
-    :vartype internal_id: str
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar internalId: Private zone internal Id.
+    :vartype internalId: str
     """
 
     maxNumberOfRecordSets: int
@@ -226,9 +250,9 @@ class RecordSet(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of the record set.
     :vartype properties: "RecordSetProperties"
     :ivar etag: The ETag of the record set.
@@ -250,25 +274,33 @@ class RecordSetProperties(TypedDict, total=False):
     :vartype ttl: int
     :ivar fqdn: Fully qualified domain name of the record set.
     :vartype fqdn: str
-    :ivar is_auto_registered: Is the record set auto-registered in the Private DNS zone through a
+    :ivar isAutoRegistered: Is the record set auto-registered in the Private DNS zone through a
      virtual network link?.
-    :vartype is_auto_registered: bool
-    :ivar a_records: The list of A records in the record set.
-    :vartype a_records: list["ARecord"]
-    :ivar aaaa_records: The list of AAAA records in the record set.
-    :vartype aaaa_records: list["AaaaRecord"]
-    :ivar cname_record: The CNAME record in the record set.
-    :vartype cname_record: "CnameRecord"
-    :ivar mx_records: The list of MX records in the record set.
-    :vartype mx_records: list["MxRecord"]
-    :ivar ptr_records: The list of PTR records in the record set.
-    :vartype ptr_records: list["PtrRecord"]
-    :ivar soa_record: The SOA record in the record set.
-    :vartype soa_record: "SoaRecord"
-    :ivar srv_records: The list of SRV records in the record set.
-    :vartype srv_records: list["SrvRecord"]
-    :ivar txt_records: The list of TXT records in the record set.
-    :vartype txt_records: list["TxtRecord"]
+    :vartype isAutoRegistered: bool
+    :ivar aRecords: The list of A records in the record set.
+    :vartype aRecords: list["ARecord"]
+    :ivar aaaaRecords: The list of AAAA records in the record set.
+    :vartype aaaaRecords: list["AaaaRecord"]
+    :ivar cnameRecord: The CNAME record in the record set.
+    :vartype cnameRecord: "CnameRecord"
+    :ivar mxRecords: The list of MX records in the record set.
+    :vartype mxRecords: list["MxRecord"]
+    :ivar ptrRecords: The list of PTR records in the record set.
+    :vartype ptrRecords: list["PtrRecord"]
+    :ivar soaRecord: The SOA record in the record set.
+    :vartype soaRecord: "SoaRecord"
+    :ivar srvRecords: The list of SRV records in the record set.
+    :vartype srvRecords: list["SrvRecord"]
+    :ivar txtRecords: The list of TXT records in the record set.
+    :vartype txtRecords: list["TxtRecord"]
+    :ivar trafficManagementProfile: A reference to an azure private traffic manager profile
+     resource from where the record set value is taken. Cannot be combined with aRecords,
+     aaaaRecords, or cnameRecord.
+    :vartype trafficManagementProfile: "SubResource"
+    :ivar provisioningState: The provisioning state of the record set. This is a read-only property
+     and any attempt to set this value will be ignored. Known values are: "Creating", "Updating",
+     "Deleting", "Succeeded", "Failed", and "Canceled".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     metadata: dict[str, str]
@@ -295,6 +327,13 @@ class RecordSetProperties(TypedDict, total=False):
     """The list of SRV records in the record set."""
     txtRecords: list["TxtRecord"]
     """The list of TXT records in the record set."""
+    trafficManagementProfile: "SubResource"
+    """A reference to an azure private traffic manager profile resource from where the record set
+     value is taken. Cannot be combined with aRecords, aaaaRecords, or cnameRecord."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the record set. This is a read-only property and any attempt to set
+     this value will be ignored. Known values are: \"Creating\", \"Updating\", \"Deleting\",
+     \"Succeeded\", \"Failed\", and \"Canceled\"."""
 
 
 class SoaRecord(TypedDict, total=False):
@@ -304,17 +343,17 @@ class SoaRecord(TypedDict, total=False):
     :vartype host: str
     :ivar email: The email contact for this SOA record.
     :vartype email: str
-    :ivar serial_number: The serial number for this SOA record.
-    :vartype serial_number: int
-    :ivar refresh_time: The refresh value for this SOA record.
-    :vartype refresh_time: int
-    :ivar retry_time: The retry time for this SOA record.
-    :vartype retry_time: int
-    :ivar expire_time: The expire time for this SOA record.
-    :vartype expire_time: int
-    :ivar minimum_ttl: The minimum value for this SOA record. By convention this is used to
+    :ivar serialNumber: The serial number for this SOA record.
+    :vartype serialNumber: int
+    :ivar refreshTime: The refresh value for this SOA record.
+    :vartype refreshTime: int
+    :ivar retryTime: The retry time for this SOA record.
+    :vartype retryTime: int
+    :ivar expireTime: The expire time for this SOA record.
+    :vartype expireTime: int
+    :ivar minimumTtl: The minimum value for this SOA record. By convention this is used to
      determine the negative caching duration.
-    :vartype minimum_ttl: int
+    :vartype minimumTtl: int
     """
 
     host: str
@@ -371,20 +410,20 @@ class SubResource(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -425,9 +464,9 @@ class VirtualNetworkLink(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of the virtual network link to the Private DNS zone.
     :vartype properties: "VirtualNetworkLinkProperties"
     :ivar tags: Resource tags.
@@ -451,25 +490,25 @@ class VirtualNetworkLink(ProxyResource):
 class VirtualNetworkLinkProperties(TypedDict, total=False):
     """Represents the properties of the Private DNS zone.
 
-    :ivar virtual_network: The reference of the virtual network.
-    :vartype virtual_network: "SubResource"
-    :ivar registration_enabled: Is auto-registration of virtual machine records in the virtual
+    :ivar virtualNetwork: The reference of the virtual network.
+    :vartype virtualNetwork: "SubResource"
+    :ivar registrationEnabled: Is auto-registration of virtual machine records in the virtual
      network in the Private DNS zone enabled?.
-    :vartype registration_enabled: bool
-    :ivar resolution_policy: The resolution policy on the virtual network link. Only applicable for
+    :vartype registrationEnabled: bool
+    :ivar resolutionPolicy: The resolution policy on the virtual network link. Only applicable for
      virtual network links to privatelink zones, and for A,AAAA,CNAME queries. When set to
      'NxDomainRedirect', Azure DNS resolver falls back to public resolution if private dns query
      resolution results in non-existent domain response. Known values are: "Default" and
      "NxDomainRedirect".
-    :vartype resolution_policy: Union[str, "ResolutionPolicy"]
-    :ivar virtual_network_link_state: The status of the virtual network link to the Private DNS
-     zone. Possible values are 'InProgress' and 'Done'. This is a read-only property and any attempt
-     to set this value will be ignored. Known values are: "InProgress" and "Completed".
-    :vartype virtual_network_link_state: Union[str, "VirtualNetworkLinkState"]
-    :ivar provisioning_state: The provisioning state of the resource. This is a read-only property
+    :vartype resolutionPolicy: Union[str, "ResolutionPolicy"]
+    :ivar virtualNetworkLinkState: The status of the virtual network link to the Private DNS zone.
+     Possible values are 'InProgress' and 'Done'. This is a read-only property and any attempt to
+     set this value will be ignored. Known values are: "InProgress" and "Completed".
+    :vartype virtualNetworkLinkState: Union[str, "VirtualNetworkLinkState"]
+    :ivar provisioningState: The provisioning state of the resource. This is a read-only property
      and any attempt to set this value will be ignored. Known values are: "Creating", "Updating",
      "Deleting", "Succeeded", "Failed", and "Canceled".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     virtualNetwork: "SubResource"

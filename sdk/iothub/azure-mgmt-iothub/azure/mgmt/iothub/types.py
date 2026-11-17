@@ -15,19 +15,17 @@ if TYPE_CHECKING:
         AccessRights,
         AuthenticationType,
         Capabilities,
-        ConnectionProfile,
         CreatedByType,
         DefaultAction,
         DeviceRegistryIdentityType,
         DeviceRegistryLinkingState,
         EventStreamAuthenticationType,
+        FallbackRouteSource,
         GatewayVersion,
         IotHubReplicaRoleType,
         IotHubSku,
         IotHubSkuTier,
         IpFilterActionType,
-        IpVersion,
-        MessagePayloadFormat,
         NetworkRuleIPAction,
         PrivateLinkServiceConnectionStatus,
         PublicNetworkAccess,
@@ -292,21 +290,6 @@ class DeviceRegistryLinkingProperties(TypedDict, total=False):
     """The last error encountered when linking the IoT Hub with an Azure Device Registry."""
 
 
-class EncryptionPropertiesDescription(TypedDict, total=False):
-    """The encryption properties for the IoT hub.
-
-    :ivar keySource: The source of the key.
-    :vartype keySource: str
-    :ivar keyVaultProperties: The properties of the KeyVault key.
-    :vartype keyVaultProperties: list["KeyVaultKeyProperties"]
-    """
-
-    keySource: str
-    """The source of the key."""
-    keyVaultProperties: list["KeyVaultKeyProperties"]
-    """The properties of the KeyVault key."""
-
-
 class EnrichmentProperties(TypedDict, total=False):
     """The properties of an enrichment that your IoT hub applies to messages delivered to endpoints.
 
@@ -470,10 +453,8 @@ class FallbackRouteProperties(TypedDict, total=False):
      underscores, hyphens, has a maximum length of 64 characters, and must be unique.
     :vartype name: str
     :ivar source: The source to which the routing rule is to be applied to. For example,
-     DeviceMessages. Required. Known values are: "Invalid", "DeviceMessages", "TwinChangeEvents",
-     "DeviceLifecycleEvents", "DeviceJobLifecycleEvents", "DigitalTwinChangeEvents",
-     "DeviceConnectionStateEvents", and "MqttBrokerMessages".
-    :vartype source: Union[str, "RoutingSource"]
+     DeviceMessages. Required. "DeviceMessages"
+    :vartype source: Union[str, "FallbackRouteSource"]
     :ivar condition: The condition which is evaluated in order to apply the fallback route. If the
      condition is not provided it will evaluate to true by default. For grammar, See:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language
@@ -489,11 +470,9 @@ class FallbackRouteProperties(TypedDict, total=False):
     name: str
     """The name of the route. The name can only include alphanumeric characters, periods, underscores,
      hyphens, has a maximum length of 64 characters, and must be unique."""
-    source: Required[Union[str, "RoutingSource"]]
+    source: Required[Union[str, "FallbackRouteSource"]]
     """The source to which the routing rule is to be applied to. For example, DeviceMessages.
-     Required. Known values are: \"Invalid\", \"DeviceMessages\", \"TwinChangeEvents\",
-     \"DeviceLifecycleEvents\", \"DeviceJobLifecycleEvents\", \"DigitalTwinChangeEvents\",
-     \"DeviceConnectionStateEvents\", and \"MqttBrokerMessages\"."""
+     Required. \"DeviceMessages\""""
     condition: str
     """The condition which is evaluated in order to apply the fallback route. If the condition is not
      provided it will evaluate to true by default. For grammar, See:
@@ -746,29 +725,14 @@ class IotHubProperties(TypedDict, total=False):
     :vartype cloudToDevice: "CloudToDeviceProperties"
     :ivar comments: IoT hub comments.
     :vartype comments: str
-    :ivar deviceStreams: The device streams properties of iothub.
-    :vartype deviceStreams: "IotHubPropertiesDeviceStreams"
     :ivar features: The capabilities and features enabled for the IoT hub. Known values are: "None"
      and "DeviceManagement".
     :vartype features: Union[str, "Capabilities"]
-    :ivar encryption: The encryption properties for the IoT hub.
-    :vartype encryption: "EncryptionPropertiesDescription"
     :ivar locations: Primary and secondary location for iot hub.
     :vartype locations: list["IotHubLocationDescription"]
     :ivar enableDataResidency: This property when set to true, will enable data residency, thus,
      disabling disaster recovery.
     :vartype enableDataResidency: bool
-    :ivar rootCertificate: This property store root certificate related information.
-    :vartype rootCertificate: "RootCertificateProperties"
-    :ivar ipVersion: This property specifies the IP Version the hub is currently utilizing. Known
-     values are: "ipv4", "ipv6", and "ipv4ipv6".
-    :vartype ipVersion: Union[str, "IpVersion"]
-    :ivar connectionProfile: The connection profile that the IoT hub uses for device connections.
-     Defaults to 'Classic'. Known values are: "Classic" and "MqttV5".
-    :vartype connectionProfile: Union[str, "ConnectionProfile"]
-    :ivar mqttV5Settings: The custom topic configuration for an Event Grid-backed MQTT v5 IoT hub.
-     This property is valid only when connectionProfile is 'MqttV5'.
-    :vartype mqttV5Settings: "MqttV5Settings"
     :ivar deviceRegistry: Represents properties related to the Azure Device Registry (ADR).
     :vartype deviceRegistry: "DeviceRegistry"
     :ivar iotHubDetails: Set of additional read-only properties for the IoT hub.
@@ -832,43 +796,17 @@ class IotHubProperties(TypedDict, total=False):
     """The IoT hub cloud-to-device messaging properties."""
     comments: str
     """IoT hub comments."""
-    deviceStreams: "IotHubPropertiesDeviceStreams"
-    """The device streams properties of iothub."""
     features: Union[str, "Capabilities"]
     """The capabilities and features enabled for the IoT hub. Known values are: \"None\" and
      \"DeviceManagement\"."""
-    encryption: "EncryptionPropertiesDescription"
-    """The encryption properties for the IoT hub."""
     locations: list["IotHubLocationDescription"]
     """Primary and secondary location for iot hub."""
     enableDataResidency: bool
     """This property when set to true, will enable data residency, thus, disabling disaster recovery."""
-    rootCertificate: "RootCertificateProperties"
-    """This property store root certificate related information."""
-    ipVersion: Union[str, "IpVersion"]
-    """This property specifies the IP Version the hub is currently utilizing. Known values are:
-     \"ipv4\", \"ipv6\", and \"ipv4ipv6\"."""
-    connectionProfile: Union[str, "ConnectionProfile"]
-    """The connection profile that the IoT hub uses for device connections. Defaults to 'Classic'.
-     Known values are: \"Classic\" and \"MqttV5\"."""
-    mqttV5Settings: "MqttV5Settings"
-    """The custom topic configuration for an Event Grid-backed MQTT v5 IoT hub. This property is valid
-     only when connectionProfile is 'MqttV5'."""
     deviceRegistry: "DeviceRegistry"
     """Represents properties related to the Azure Device Registry (ADR)."""
     iotHubDetails: "IotHubDetails"
     """Set of additional read-only properties for the IoT hub."""
-
-
-class IotHubPropertiesDeviceStreams(TypedDict, total=False):
-    """The device streams properties of iothub.
-
-    :ivar streamingEndpoints: List of Device Streams Endpoints.
-    :vartype streamingEndpoints: list[str]
-    """
-
-    streamingEndpoints: list[str]
-    """List of Device Streams Endpoints."""
 
 
 class IotHubSkuInfo(TypedDict, total=False):
@@ -919,21 +857,6 @@ class IpFilterRule(TypedDict, total=False):
     """A string that contains the IP address range in CIDR notation for the rule. Required."""
 
 
-class KeyVaultKeyProperties(TypedDict, total=False):
-    """The properties of the KeyVault key.
-
-    :ivar keyIdentifier: The identifier of the key.
-    :vartype keyIdentifier: str
-    :ivar identity: Managed identity properties of KeyVault Key.
-    :vartype identity: "ManagedIdentity"
-    """
-
-    keyIdentifier: str
-    """The identifier of the key."""
-    identity: "ManagedIdentity"
-    """Managed identity properties of KeyVault Key."""
-
-
 class ManagedIdentity(TypedDict, total=False):
     """The properties of the Managed identity.
 
@@ -974,17 +897,6 @@ class MessagingEndpointProperties(TypedDict, total=False):
     """The number of times the IoT hub attempts to deliver a message. See:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-file-upload>`_."""
-
-
-class MqttV5Settings(TypedDict, total=False):
-    """Settings for an Event Grid-backed MQTT v5 IoT hub.
-
-    :ivar topicGroups: The customer-defined groups of topic templates that devices publish to.
-    :vartype topicGroups: list["TopicGroup"]
-    """
-
-    topicGroups: list["TopicGroup"]
-    """The customer-defined groups of topic templates that devices publish to."""
 
 
 class NetworkRuleSetIpRule(TypedDict, total=False):
@@ -1110,23 +1022,6 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
     """Actions required for a private endpoint connection."""
 
 
-class RootCertificateProperties(TypedDict, total=False):
-    """This property store root certificate related information.
-
-    :ivar enableRootCertificateV2: This property when set to true, hub will use G2 cert; while it's
-     set to false, hub uses Baltimore Cert.
-    :vartype enableRootCertificateV2: bool
-    :ivar lastUpdatedTimeUtc: the last update time to root certificate flag.
-    :vartype lastUpdatedTimeUtc: str
-    """
-
-    enableRootCertificateV2: bool
-    """This property when set to true, hub will use G2 cert; while it's set to false, hub uses
-     Baltimore Cert."""
-    lastUpdatedTimeUtc: str
-    """the last update time to root certificate flag."""
-
-
 class RouteProperties(TypedDict, total=False):
     """The properties of a routing rule that your IoT hub uses to route messages to endpoints.
 
@@ -1135,16 +1030,13 @@ class RouteProperties(TypedDict, total=False):
     :vartype name: str
     :ivar source: The source that the routing rule is to be applied to, such as DeviceMessages.
      Required. Known values are: "Invalid", "DeviceMessages", "TwinChangeEvents",
-     "DeviceLifecycleEvents", "DeviceJobLifecycleEvents", "DigitalTwinChangeEvents",
-     "DeviceConnectionStateEvents", and "MqttBrokerMessages".
+     "DeviceLifecycleEvents", "DeviceJobLifecycleEvents", and "DeviceConnectionStateEvents".
     :vartype source: Union[str, "RoutingSource"]
     :ivar condition: The condition that is evaluated to apply the routing rule. If no condition is
      provided, it evaluates to true by default. For grammar, see:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language>`_.
     :vartype condition: str
-    :ivar dataSchema: The data schema reference that is used to interpret the message body.
-    :vartype dataSchema: str
     :ivar endpointNames: The list of endpoints to which messages that satisfy the condition are
      routed. Currently only one endpoint is allowed. Required.
     :vartype endpointNames: list[str]
@@ -1158,15 +1050,12 @@ class RouteProperties(TypedDict, total=False):
     source: Required[Union[str, "RoutingSource"]]
     """The source that the routing rule is to be applied to, such as DeviceMessages. Required. Known
      values are: \"Invalid\", \"DeviceMessages\", \"TwinChangeEvents\", \"DeviceLifecycleEvents\",
-     \"DeviceJobLifecycleEvents\", \"DigitalTwinChangeEvents\", \"DeviceConnectionStateEvents\", and
-     \"MqttBrokerMessages\"."""
+     \"DeviceJobLifecycleEvents\", and \"DeviceConnectionStateEvents\"."""
     condition: str
     """The condition that is evaluated to apply the routing rule. If no condition is provided, it
      evaluates to true by default. For grammar, see:
      `https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language
      <https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-query-language>`_."""
-    dataSchema: str
-    """The data schema reference that is used to interpret the message body."""
     endpointNames: Required[list[str]]
     """The list of endpoints to which messages that satisfy the condition are routed. Currently only
      one endpoint is allowed. Required."""
@@ -1214,9 +1103,6 @@ class RoutingCosmosDBSqlApiProperties(TypedDict, total=False):
      specified at most once, but order and non-placeholder components are arbitrary. This parameter
      is only required if PartitionKeyName is specified.
     :vartype partitionKeyTemplate: str
-    :ivar messagePayloadFormat: The format of the message payload delivered to this endpoint. Known
-     values are: "DOObservationV1" and "None".
-    :vartype messagePayloadFormat: Union[str, "MessagePayloadFormat"]
     """
 
     name: Required[str]
@@ -1254,9 +1140,6 @@ class RoutingCosmosDBSqlApiProperties(TypedDict, total=False):
      {deviceid}, {DD}, {MM}, and {YYYY}. Any one placeholder may be specified at most once, but
      order and non-placeholder components are arbitrary. This parameter is only required if
      PartitionKeyName is specified."""
-    messagePayloadFormat: Union[str, "MessagePayloadFormat"]
-    """The format of the message payload delivered to this endpoint. Known values are:
-     \"DOObservationV1\" and \"None\"."""
 
 
 class RoutingEndpoints(TypedDict, total=False):
@@ -1328,9 +1211,6 @@ class RoutingEventHubProperties(TypedDict, total=False):
     :vartype subscriptionId: str
     :ivar resourceGroup: The name of the resource group of the event hub endpoint.
     :vartype resourceGroup: str
-    :ivar messagePayloadFormat: The format of the message payload delivered to this endpoint. Known
-     values are: "DOObservationV1" and "None".
-    :vartype messagePayloadFormat: Union[str, "MessagePayloadFormat"]
     """
 
     id: str
@@ -1355,9 +1235,6 @@ class RoutingEventHubProperties(TypedDict, total=False):
     """The subscription identifier of the event hub endpoint."""
     resourceGroup: str
     """The name of the resource group of the event hub endpoint."""
-    messagePayloadFormat: Union[str, "MessagePayloadFormat"]
-    """The format of the message payload delivered to this endpoint. Known values are:
-     \"DOObservationV1\" and \"None\"."""
 
 
 class RoutingEventStreamProperties(TypedDict, total=False):
@@ -1387,9 +1264,6 @@ class RoutingEventStreamProperties(TypedDict, total=False):
     :vartype eventStreamId: str
     :ivar sourceId: The unique GUID of the custom source for the event stream.
     :vartype sourceId: str
-    :ivar messagePayloadFormat: The format of the message payload delivered to this endpoint. Known
-     values are: "DOObservationV1" and "None".
-    :vartype messagePayloadFormat: Union[str, "MessagePayloadFormat"]
     """
 
     name: Required[str]
@@ -1414,9 +1288,6 @@ class RoutingEventStreamProperties(TypedDict, total=False):
     """The unique GUID of the target event stream under the workspace."""
     sourceId: str
     """The unique GUID of the custom source for the event stream."""
-    messagePayloadFormat: Union[str, "MessagePayloadFormat"]
-    """The format of the message payload delivered to this endpoint. Known values are:
-     \"DOObservationV1\" and \"None\"."""
 
 
 class RoutingMessage(TypedDict, total=False):
@@ -1508,9 +1379,6 @@ class RoutingServiceBusQueueEndpointProperties(TypedDict, total=False):
     :vartype subscriptionId: str
     :ivar resourceGroup: The name of the resource group of the service bus queue endpoint.
     :vartype resourceGroup: str
-    :ivar messagePayloadFormat: The format of the message payload delivered to this endpoint. Known
-     values are: "DOObservationV1" and "None".
-    :vartype messagePayloadFormat: Union[str, "MessagePayloadFormat"]
     """
 
     id: str
@@ -1535,9 +1403,6 @@ class RoutingServiceBusQueueEndpointProperties(TypedDict, total=False):
     """The subscription identifier of the service bus queue endpoint."""
     resourceGroup: str
     """The name of the resource group of the service bus queue endpoint."""
-    messagePayloadFormat: Union[str, "MessagePayloadFormat"]
-    """The format of the message payload delivered to this endpoint. Known values are:
-     \"DOObservationV1\" and \"None\"."""
 
 
 class RoutingServiceBusTopicEndpointProperties(TypedDict, total=False):
@@ -1567,9 +1432,6 @@ class RoutingServiceBusTopicEndpointProperties(TypedDict, total=False):
     :vartype subscriptionId: str
     :ivar resourceGroup: The name of the resource group of the service bus topic endpoint.
     :vartype resourceGroup: str
-    :ivar messagePayloadFormat: The format of the message payload delivered to this endpoint. Known
-     values are: "DOObservationV1" and "None".
-    :vartype messagePayloadFormat: Union[str, "MessagePayloadFormat"]
     """
 
     id: str
@@ -1594,9 +1456,6 @@ class RoutingServiceBusTopicEndpointProperties(TypedDict, total=False):
     """The subscription identifier of the service bus topic endpoint."""
     resourceGroup: str
     """The name of the resource group of the service bus topic endpoint."""
-    messagePayloadFormat: Union[str, "MessagePayloadFormat"]
-    """The format of the message payload delivered to this endpoint. Known values are:
-     \"DOObservationV1\" and \"None\"."""
 
 
 class RoutingStorageContainerProperties(TypedDict, total=False):
@@ -1638,9 +1497,6 @@ class RoutingStorageContainerProperties(TypedDict, total=False):
      'avro', 'avrodeflate', and 'JSON'. Default value is 'avro'. Known values are: "Avro",
      "AvroDeflate", and "JSON".
     :vartype encoding: Union[str, "RoutingStorageContainerPropertiesEncoding"]
-    :ivar messagePayloadFormat: The format of the message payload delivered to this endpoint. Known
-     values are: "DOObservationV1" and "None".
-    :vartype messagePayloadFormat: Union[str, "MessagePayloadFormat"]
     """
 
     id: str
@@ -1679,9 +1535,6 @@ class RoutingStorageContainerProperties(TypedDict, total=False):
     """Encoding that is used to serialize messages to blobs. Supported values are 'avro',
      'avrodeflate', and 'JSON'. Default value is 'avro'. Known values are: \"Avro\",
      \"AvroDeflate\", and \"JSON\"."""
-    messagePayloadFormat: Union[str, "MessagePayloadFormat"]
-    """The format of the message payload delivered to this endpoint. Known values are:
-     \"DOObservationV1\" and \"None\"."""
 
 
 class RoutingTwin(TypedDict, total=False):
@@ -1837,8 +1690,8 @@ class TestAllRoutesInput(TypedDict, total=False):
     """Input for testing all routes.
 
     :ivar routingSource: Routing source. Known values are: "Invalid", "DeviceMessages",
-     "TwinChangeEvents", "DeviceLifecycleEvents", "DeviceJobLifecycleEvents",
-     "DigitalTwinChangeEvents", "DeviceConnectionStateEvents", and "MqttBrokerMessages".
+     "TwinChangeEvents", "DeviceLifecycleEvents", "DeviceJobLifecycleEvents", and
+     "DeviceConnectionStateEvents".
     :vartype routingSource: Union[str, "RoutingSource"]
     :ivar message: Routing message.
     :vartype message: "RoutingMessage"
@@ -1848,8 +1701,7 @@ class TestAllRoutesInput(TypedDict, total=False):
 
     routingSource: Union[str, "RoutingSource"]
     """Routing source. Known values are: \"Invalid\", \"DeviceMessages\", \"TwinChangeEvents\",
-     \"DeviceLifecycleEvents\", \"DeviceJobLifecycleEvents\", \"DigitalTwinChangeEvents\",
-     \"DeviceConnectionStateEvents\", and \"MqttBrokerMessages\"."""
+     \"DeviceLifecycleEvents\", \"DeviceJobLifecycleEvents\", and \"DeviceConnectionStateEvents\"."""
     message: "RoutingMessage"
     """Routing message."""
     twin: "RoutingTwin"
@@ -1873,19 +1725,3 @@ class TestRouteInput(TypedDict, total=False):
     """Route properties. Required."""
     twin: "RoutingTwin"
     """Routing Twin Reference."""
-
-
-class TopicGroup(TypedDict, total=False):
-    """A named set of topic templates for an Event Grid-backed MQTT v5 IoT hub.
-
-    :ivar topicGroupId: The customer-supplied identifier used to reconcile the topic group during
-     updates.
-    :vartype topicGroupId: str
-    :ivar topicTemplates: The topic templates in this group.
-    :vartype topicTemplates: list[str]
-    """
-
-    topicGroupId: str
-    """The customer-supplied identifier used to reconcile the topic group during updates."""
-    topicTemplates: list[str]
-    """The topic templates in this group."""

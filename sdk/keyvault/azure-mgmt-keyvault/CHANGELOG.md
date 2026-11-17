@@ -1,5 +1,42 @@
 # Release History
 
+## 14.2.0b1 (2026-11-11)
+
+### Features Added
+
+  - Client `KeyVaultManagementClient` added operation group `network_security_perimeter_configurations`
+  - Model `Vault` added property `identity`
+  - Model `VaultCreateOrUpdateParameters` added property `identity`
+  - Model `VaultPatchParameters` added property `identity`
+  - Model `VaultPatchProperties` added property `enable_cross_tenant_access_protection`
+  - Model `VaultPatchProperties` added property `protection_keys_wrapping_key`
+  - Model `VaultPatchProperties` added property `token_binding_parameters`
+  - Model `VaultProperties` added property `enable_cross_tenant_access_protection`
+  - Model `VaultProperties` added property `protection_keys_wrapping_key`
+  - Model `VaultProperties` added property `token_binding_parameters`
+  - Added model `AccessRule`
+  - Added enum `AccessRuleDirection`
+  - Added model `AccessRuleProperties`
+  - Added model `AccessRulePropertiesSubscription`
+  - Added enum `IssueType`
+  - Added model `NetworkSecurityPerimeter`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added enum `NetworkSecurityPerimeterConfigurationProvisioningState`
+  - Added model `NetworkSecurityProfile`
+  - Added model `ProvisioningIssue`
+  - Added model `ProvisioningIssueProperties`
+  - Added model `ResourceAssociation`
+  - Added enum `ResourceAssociationAccessMode`
+  - Added enum `Severity`
+  - Added enum `TokenBindingMode`
+  - Added model `TokenBindingParameters`
+  - Added enum `TokenBindingStrength`
+  - Added model `WrappingKeyAuthenticationData`
+  - Added model `WrappingKeyConfiguration`
+  - Added model `WrappingKeyValue`
+  - Added operation group `NetworkSecurityPerimeterConfigurationsOperations`
+
 ## 14.1.0 (2026-10-08)
 
 ### Features Added
