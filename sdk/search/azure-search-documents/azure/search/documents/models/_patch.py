@@ -219,6 +219,8 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         for doc in documents:
             action = IndexAction(action_type=action_type)
             action.update(doc)
+            # Documents must not override the action selected by the helper method.
+            action.action_type = action_type
             new_actions.append(action)
 
         actions.extend(new_actions)
