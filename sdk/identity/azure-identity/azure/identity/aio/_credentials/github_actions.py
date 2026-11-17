@@ -31,8 +31,9 @@ class GitHubActionsCredential(AsyncContextManager):
     :keyword str client_id: ID of the Microsoft Entra application. Defaults to the
         ``AZURE_CLIENT_ID`` environment variable.
     :keyword str authority: Authority of a Microsoft Entra endpoint. Defaults to ``AZURE_AUTHORITY_HOST``,
-        or Azure Public Cloud when unset. Azure Public, China, and US Government clouds are supported.
-        The GitHub OIDC token audience is derived from this authority.
+        or Azure Public Cloud when unset. Azure Public, China, US Government, France Government, Germany
+        Government, and Singapore Government clouds are supported. The GitHub OIDC token audience is
+        derived from this authority.
     :keyword cache_persistence_options: Configuration for persistent token caching. If unspecified,
         tokens are cached in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions

@@ -69,20 +69,36 @@ def test_invalid_tenant(credential_class):
 
 @pytest.mark.parametrize("credential_class", [GitHubActionsCredential, AsyncGitHubActionsCredential])
 @pytest.mark.parametrize(
-    "authority,audience",
+    "authority,host,audience",
     [
-        (AzureAuthorityHosts.AZURE_PUBLIC_CLOUD, "api://AzureADTokenExchange"),
-        (AzureAuthorityHosts.AZURE_CHINA, "api://AzureADTokenExchangeChina"),
-        (AzureAuthorityHosts.AZURE_GOVERNMENT, "api://AzureADTokenExchangeUSGov"),
+        (AzureAuthorityHosts.AZURE_PUBLIC_CLOUD, "login.microsoftonline.com", "api://AzureADTokenExchange"),
+        (AzureAuthorityHosts.AZURE_CHINA, "login.chinacloudapi.cn", "api://AzureADTokenExchangeChina"),
+        (AzureAuthorityHosts.AZURE_GOVERNMENT, "login.microsoftonline.us", "api://AzureADTokenExchangeUSGov"),
+        (AzureAuthorityHosts.AZURE_FRANCE_GOVERNMENT, "login.sovcloud-identity.fr", "api://AzureADTokenExchangeFrance"),
+        (
+            AzureAuthorityHosts.AZURE_GERMANY_GOVERNMENT,
+            "login.sovcloud-identity.de",
+            "api://AzureADTokenExchangeGermany",
+        ),
+        (
+            AzureAuthorityHosts.AZURE_SINGAPORE_GOVERNMENT,
+            "login.sovcloud-identity.sg",
+            "api://AzureADTokenExchangeGovSG",
+        ),
     ],
 )
 @pytest.mark.parametrize("explicit", [False, True])
-def test_authority(credential_class, authority, audience, explicit):
+def test_authority(credential_class, authority, host, audience, explicit):
     os.environ["AZURE_AUTHORITY_HOST"] = AzureAuthorityHosts.AZURE_CHINA if explicit else authority
     kwargs = {"authority": authority} if explicit else {}
     credential = credential_class(**kwargs)
     assert credential._audience == audience
-    assert credential._client_assertion_credential._client._authority == "https://" + authority
+    assert credential._client_assertion_credential._client._authority == "https://" + host
+
+
+def test_legacy_germany_authority():
+    with pytest.warns(DeprecationWarning, match="AZURE_GERMANY is deprecated"):
+        assert AzureAuthorityHosts.AZURE_GERMANY == "login.microsoftonline.de"
 
 
 def test_derive_audience_normalized_url():

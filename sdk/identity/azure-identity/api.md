@@ -75,8 +75,11 @@ namespace azure.identity
 
     class azure.identity.AzureAuthorityHosts(metaclass=AzureAuthorityHostsMeta):
         AZURE_CHINA = login.chinacloudapi.cn
+        AZURE_FRANCE_GOVERNMENT = login.sovcloud-identity.fr
+        AZURE_GERMANY_GOVERNMENT = login.sovcloud-identity.de
         AZURE_GOVERNMENT = login.microsoftonline.us
         AZURE_PUBLIC_CLOUD = login.microsoftonline.com
+        AZURE_SINGAPORE_GOVERNMENT = login.sovcloud-identity.sg
 
 
     class azure.identity.AzureCliCredential: implements ContextManager 
@@ -564,8 +567,11 @@ namespace azure.identity
 
     class azure.identity.KnownAuthorities(AzureAuthorityHosts):
         AZURE_CHINA = login.chinacloudapi.cn
+        AZURE_FRANCE_GOVERNMENT = login.sovcloud-identity.fr
+        AZURE_GERMANY_GOVERNMENT = login.sovcloud-identity.de
         AZURE_GOVERNMENT = login.microsoftonline.us
         AZURE_PUBLIC_CLOUD = login.microsoftonline.com
+        AZURE_SINGAPORE_GOVERNMENT = login.sovcloud-identity.sg
 
 
     class azure.identity.ManagedIdentityCredential: implements ContextManager 
@@ -1037,7 +1043,7 @@ namespace azure.identity.aio
                 self, 
                 tenant_id: str, 
                 client_id: str, 
-                func: Callable[[], str], 
+                func: Callable[[], Union[str, Awaitable[str]]], 
                 *, 
                 additionally_allowed_tenants: Optional[List[str]] = ..., 
                 authority: Optional[str] = ..., 

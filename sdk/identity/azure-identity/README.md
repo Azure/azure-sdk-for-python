@@ -180,8 +180,9 @@ with GitHubActionsCredential() as credential:
     token = credential.get_token("https://management.azure.com/.default")
 ```
 
-The optional `authority` keyword (or `AZURE_AUTHORITY_HOST`) selects Azure Public, China, or US Government.
-The GitHub token audience is derived from that authority; Azure Public is the default.
+The optional `authority` keyword (or `AZURE_AUTHORITY_HOST`) selects Azure Public, China, US Government, France
+Government, Germany Government, or Singapore Government. The GitHub token audience is derived from that authority;
+Azure Public is the default.
 
 ### Authenticate users
 

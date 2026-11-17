@@ -334,19 +334,22 @@ To access an Azure resource, the identity must also have the required permission
 | --- | --- |
 | `ValueError`: Missing required argument `tenant_id` or `client_id` | Set `AZURE_TENANT_ID` and `AZURE_CLIENT_ID`, or pass the corresponding constructor arguments. Explicit nonempty arguments take precedence over environment values. |
 | `CredentialUnavailableError`: Missing GitHub environment variable | Run in a GitHub Actions job with `id-token: write` permission. Both GitHub request variables must be present in the Python process. |
-| `ValueError`: Unsupported authority | Use Azure Public, China, or US Government. Set `authority` or `AZURE_AUTHORITY_HOST`; the GitHub audience is selected automatically. Custom authorities are not supported. |
+| `ValueError`: Unsupported authority | Set `authority` or `AZURE_AUTHORITY_HOST` to a supported host. See [supported authority and audience pairs](#supported-authority-and-audience-pairs). Custom authorities are not supported. |
 | `ClientAuthenticationError`: Unexpected response from OIDC token endpoint | Check the HTTP status and the job's OIDC permission. Use the runner-provided request token, not an Azure access token or a personal access token. |
 | `ClientAuthenticationError`: OIDC token not found in response | The GitHub endpoint must return a JSON response with a string `value` field. Verify that the runner-provided URL has not been replaced by another endpoint. |
 | `AADSTS700238`: GitHub issuer not permitted in the tenant | Ask the tenant administrator whether GitHub OIDC federation is allowed, or use an approved tenant that permits it. |
 | Entra rejects the assertion | Verify the tenant, client ID, and federated identity credential. The issuer, workflow subject, and cloud-specific audience must match. |
 
-Supported authority/audience pairs:
+### Supported authority and audience pairs
 
 | Authority host | Audience |
 | --- | --- |
 | `login.microsoftonline.com` | `api://AzureADTokenExchange` |
 | `login.chinacloudapi.cn` | `api://AzureADTokenExchangeChina` |
 | `login.microsoftonline.us` | `api://AzureADTokenExchangeUSGov` |
+| `login.sovcloud-identity.fr` | `api://AzureADTokenExchangeFrance` |
+| `login.sovcloud-identity.de` | `api://AzureADTokenExchangeGermany` |
+| `login.sovcloud-identity.sg` | `api://AzureADTokenExchangeGovSG` |
 
 `GitHubActionsCredential` is not part of `DefaultAzureCredential`.
 
