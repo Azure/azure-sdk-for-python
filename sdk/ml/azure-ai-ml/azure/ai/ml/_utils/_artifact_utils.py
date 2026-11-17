@@ -184,7 +184,7 @@ class ArtifactCache:
         # Version selectors are valid CLI arguments, but not Windows filenames.
         cache_component = value.replace("%", "%25").replace("*", "%2A")
         if sys.version_info >= (3, 13):
-            reserved = ntpath.isreserved(cache_component)
+            reserved = ntpath.isreserved(cache_component)  # cspell:ignore isreserved
         else:
             reserved = PureWindowsPath(cache_component).is_reserved()
         if reserved:

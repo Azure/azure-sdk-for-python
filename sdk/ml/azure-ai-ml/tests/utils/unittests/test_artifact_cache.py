@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 import errno
+import ntpath
 import os
 import subprocess
 import sys
@@ -255,7 +256,10 @@ def test_version_selectors_have_safe_distinct_cache_keys(artifact_cache, downloa
     "version, cache_name", [("*", "%2A"), ("1.*", "1.%2A"), ("1.2.*", "1.2.%2A"), ("%2A", "%252A")]
 )
 def test_reserved_filename_check_uses_encoded_cache_component(mocker, version, cache_name):
-    windows_path = mocker.patch(f"{_MODULE}.PureWindowsPath", wraps=PureWindowsPath)
+    if sys.version_info >= (3, 13):
+        windows_path = mocker.patch(f"{_MODULE}.ntpath.isreserved", wraps=ntpath.isreserved)
+    else:
+        windows_path = mocker.patch(f"{_MODULE}.PureWindowsPath", wraps=PureWindowsPath)
 
     assert ArtifactCache._cache_path_component(version, "version") == cache_name
     windows_path.assert_called_once_with(cache_name)
