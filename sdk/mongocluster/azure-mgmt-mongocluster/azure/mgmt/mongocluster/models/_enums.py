@@ -11,7 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
@@ -20,7 +20,7 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The authentication modes supporting on the Mongo cluster."""
+    """The authentication modes supporting on the DocumentDB cluster."""
 
     NATIVE_AUTH = "NativeAuth"
     """Native mongo authentication mode using username and password with auth mechanism
@@ -53,12 +53,12 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The mode that the Mongo Cluster is created with."""
+    """The mode that the DocumentDB cluster is created with."""
 
     DEFAULT = "Default"
-    """Create a new mongo cluster."""
+    """Create a new DocumentDB cluster."""
     POINT_IN_TIME_RESTORE = "PointInTimeRestore"
-    """Create a mongo cluster from a restore point-in-time."""
+    """Create a DocumentDB cluster from a restore point-in-time."""
     GEO_REPLICA = "GeoReplica"
     """Create a replica cluster in distinct geographic region from the source cluster."""
     REPLICA = "Replica"
@@ -127,36 +127,36 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class MongoClusterStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the Mongo cluster resource."""
+    """The status of the DocumentDB cluster resource."""
 
     READY = "Ready"
-    """The mongo cluster resource is ready for use."""
+    """The DocumentDB cluster resource is ready for use."""
     PROVISIONING = "Provisioning"
-    """The mongo cluster resource is being provisioned."""
+    """The DocumentDB cluster resource is being provisioned."""
     UPDATING = "Updating"
-    """The mongo cluster resource is being updated."""
+    """The DocumentDB cluster resource is being updated."""
     STARTING = "Starting"
-    """The mongo cluster resource is being started."""
+    """The DocumentDB cluster resource is being started."""
     STOPPING = "Stopping"
-    """The mongo cluster resource is being stopped."""
+    """The DocumentDB cluster resource is being stopped."""
     STOPPED = "Stopped"
-    """The mongo cluster resource is stopped."""
+    """The DocumentDB cluster resource is stopped."""
     DROPPING = "Dropping"
-    """The mongo cluster resource is being dropped."""
+    """The DocumentDB cluster resource is being dropped."""
 
 
 class NetworkBypassMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The network bypass mode for the Mongo cluster."""
+    """The network bypass mode for the DocumentDB cluster."""
 
     NONE = "None"
     """No network bypass is enabled."""
     AZURE_COSMOS_DB = "AzureCosmosDB"
-    """Allows Azure Cosmos DB service to bypass network restrictions."""
+    """Allows the Azure Cosmos DB service to bypass network restrictions."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -168,7 +168,7 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PreviewFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Preview features that can be enabled on a mongo cluster."""
+    """Preview features that can be enabled on a DocumentDB cluster."""
 
     GEO_REPLICAS = "GeoReplicas"
     """Enables geo replicas preview feature. The feature must be set at create-time on new cluster to
@@ -239,18 +239,18 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether or not public endpoint access is allowed for this Mongo cluster.  Value is optional and
-    default value is 'Enabled'.
+    """Whether or not public endpoint access is allowed for this DocumentDB cluster.  Value is
+    optional and default value is 'Enabled'.
     """
 
     ENABLED = "Enabled"
-    """If set, mongo cluster can be accessed through private and public methods."""
+    """If set, DocumentDB cluster can be accessed through private and public methods."""
     DISABLED = "Disabled"
     """If set, the private endpoints are the exclusive access method."""
 
 
 class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Replication role of the mongo cluster."""
+    """Replication role of the DocumentDB cluster."""
 
     PRIMARY = "Primary"
     """The cluster is a primary replica."""
@@ -279,13 +279,12 @@ class ReplicationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of storage that a mongo cluster can be provisioned with."""
+    """The type of storage that a DocumentDB cluster can be provisioned with."""
 
     PREMIUM_SSD = "PremiumSSD"
-    """Premium SSD for high performance workloads."""
+    """Premium SSD storage. Premium SSD v2 is recommended for better performance."""
     PREMIUM_SS_DV2 = "PremiumSSDv2"
-    """Premium SSD v2 for very IO-intensive workloads. This is a preview option and has additional
-    limitations."""
+    """Premium SSD v2 storage. Recommended for better performance."""
 
 
 class UserRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
