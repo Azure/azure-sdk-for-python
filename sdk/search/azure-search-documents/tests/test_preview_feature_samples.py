@@ -9,7 +9,8 @@ import importlib.util
 import json
 import os
 from pathlib import Path
-from types import SimpleNamespace
+import sys
+from types import ModuleType, SimpleNamespace
 from unittest import mock
 
 import pytest
@@ -31,6 +32,39 @@ def _feature_samples(monkeypatch):
 
 @pytest.mark.usefixtures("feature_samples")
 class TestPreviewFeatureSamples:
+    @pytest.mark.parametrize("is_async", [False, True])
+    @pytest.mark.parametrize("provider_state", ["missing", "namespace"])
+    def test_record_topic_embeddings_replays_vectors_without_openai_sdk(self, monkeypatch, is_async, provider_state):
+        from _preview_sample_helpers import record_topic_embeddings
+
+        unavailable_provider = None if provider_state == "missing" else ModuleType("openai")
+        monkeypatch.setitem(sys.modules, "openai", unavailable_provider)
+        recorded = [[0, [0.25, 0.75]], [1, [0.5, 0.5]]]
+        with pytest.MonkeyPatch.context() as sample_patch:
+            record_topic_embeddings(
+                SimpleNamespace(is_live=False),
+                sample_patch,
+                {"topic_embeddings": json.dumps(recorded)},
+                is_async=is_async,
+            )
+            provider = importlib.import_module("openai")
+            client_type = getattr(provider, "AsyncAzureOpenAI" if is_async else "AzureOpenAI")
+            if is_async:
+
+                async def read_embeddings():
+                    async with client_type() as client:
+                        return await client.embeddings.create(input=["hotel", "topic"], model="recorded-model")
+
+                response = asyncio.run(read_embeddings())
+            else:
+                with client_type() as client:
+                    response = client.embeddings.create(input=["hotel", "topic"], model="recorded-model")
+
+            assert [(item.index, item.embedding) for item in response.data] == [
+                (index, vector) for index, vector in recorded
+            ]
+        assert sys.modules["openai"] is unavailable_provider
+
     @pytest.mark.parametrize("scenario", ["file_lro", "topic_graph"])
     def test_sample_playback_preserves_sanitized_models_and_recorded_vector_dimensions(self, monkeypatch, scenario):
         import _preview_sample_helpers as helpers

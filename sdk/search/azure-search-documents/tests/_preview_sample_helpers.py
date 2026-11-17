@@ -9,7 +9,8 @@ import json
 import os
 from pathlib import Path
 import re
-from types import SimpleNamespace
+import sys
+from types import ModuleType, SimpleNamespace
 from unittest import mock
 
 from azure.core import MatchConditions
@@ -161,13 +162,10 @@ def configure_graph_storage(test, monkeypatch, variables):
 
 def record_topic_embeddings(test, monkeypatch, variables, *, is_async=False):
     """Keep actual provider vectors for playback without contacting the provider again."""
-    import openai
-
     client_name = "AsyncAzureOpenAI" if is_async else "AzureOpenAI"
-    original = getattr(openai, client_name)
+    if not test.is_live:
 
-    def factory(*args, **kwargs):
-        if not test.is_live:
+        def playback_client(*_args, **_kwargs):
             data = [
                 SimpleNamespace(index=index, embedding=vector)
                 for index, vector in json.loads(variables["topic_embeddings"])
@@ -178,6 +176,17 @@ def record_topic_embeddings(test, monkeypatch, variables, *, is_async=False):
             operation = mock.AsyncMock if is_async else mock.Mock
             client.embeddings.create = operation(return_value=SimpleNamespace(data=data))
             return client
+
+        provider = ModuleType("openai")
+        setattr(provider, client_name, playback_client)
+        monkeypatch.setitem(sys.modules, "openai", provider)
+        return
+
+    import openai
+
+    original = getattr(openai, client_name)
+
+    def factory(*args, **kwargs):
         client = original(*args, **kwargs)
         create = client.embeddings.create
         if is_async:
