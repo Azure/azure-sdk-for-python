@@ -21,6 +21,7 @@ from .vscode import VisualStudioCodeCredential
 from .client_assertion import ClientAssertionCredential
 from .workload_identity import WorkloadIdentityCredential
 from .azure_pipelines import AzurePipelinesCredential
+from .github_actions import GitHubActionsCredential
 
 
 __all__ = [
@@ -36,6 +37,7 @@ __all__ = [
     "DefaultAzureCredential",
     "DeviceCodeCredential",
     "EnvironmentCredential",
+    "GitHubActionsCredential",
     "InteractiveBrowserCredential",
     "ManagedIdentityCredential",
     "OnBehalfOfCredential",

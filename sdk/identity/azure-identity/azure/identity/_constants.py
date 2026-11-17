@@ -32,8 +32,11 @@ class AzureAuthorityHosts(metaclass=AzureAuthorityHostsMeta):
     """
 
     AZURE_CHINA = "login.chinacloudapi.cn"
+    AZURE_FRANCE_GOVERNMENT = "login.sovcloud-identity.fr"
+    AZURE_GERMANY_GOVERNMENT = "login.sovcloud-identity.de"
     AZURE_GOVERNMENT = "login.microsoftonline.us"
     AZURE_PUBLIC_CLOUD = "login.microsoftonline.com"
+    AZURE_SINGAPORE_GOVERNMENT = "login.sovcloud-identity.sg"
 
 
 class KnownAuthorities(AzureAuthorityHosts):

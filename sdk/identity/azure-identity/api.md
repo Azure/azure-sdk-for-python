@@ -75,8 +75,11 @@ namespace azure.identity
 
     class azure.identity.AzureAuthorityHosts(metaclass=AzureAuthorityHostsMeta):
         AZURE_CHINA = login.chinacloudapi.cn
+        AZURE_FRANCE_GOVERNMENT = login.sovcloud-identity.fr
+        AZURE_GERMANY_GOVERNMENT = login.sovcloud-identity.de
         AZURE_GOVERNMENT = login.microsoftonline.us
         AZURE_PUBLIC_CLOUD = login.microsoftonline.com
+        AZURE_SINGAPORE_GOVERNMENT = login.sovcloud-identity.sg
 
 
     class azure.identity.AzureCliCredential: implements ContextManager 
@@ -476,6 +479,39 @@ namespace azure.identity
             ) -> AccessTokenInfo: ...
 
 
+    class azure.identity.GitHubActionsCredential: implements ContextManager 
+
+        def __init__(
+                self, 
+                *, 
+                additionally_allowed_tenants: Optional[List[str]] = ..., 
+                authority: Optional[str] = ..., 
+                cache_persistence_options: TokenCachePersistenceOptions = ..., 
+                client_id: Optional[str] = ..., 
+                tenant_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        def close(self) -> None: ...
+
+        def get_token(
+                self, 
+                *scopes: str, 
+                *, 
+                claims: Optional[str] = ..., 
+                enable_cae: bool = False, 
+                tenant_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AccessToken: ...
+
+        def get_token_info(
+                self, 
+                *scopes: str, 
+                *, 
+                options: Optional[TokenRequestOptions] = ..., 
+            ) -> AccessTokenInfo: ...
+
+
     class azure.identity.InteractiveBrowserCredential(InteractiveCredential): implements ContextManager 
 
         def __getstate__(self) -> Dict[str, Any]: ...
@@ -531,8 +567,11 @@ namespace azure.identity
 
     class azure.identity.KnownAuthorities(AzureAuthorityHosts):
         AZURE_CHINA = login.chinacloudapi.cn
+        AZURE_FRANCE_GOVERNMENT = login.sovcloud-identity.fr
+        AZURE_GERMANY_GOVERNMENT = login.sovcloud-identity.de
         AZURE_GOVERNMENT = login.microsoftonline.us
         AZURE_PUBLIC_CLOUD = login.microsoftonline.com
+        AZURE_SINGAPORE_GOVERNMENT = login.sovcloud-identity.sg
 
 
     class azure.identity.ManagedIdentityCredential: implements ContextManager 
@@ -653,7 +692,7 @@ namespace azure.identity
                 self, 
                 *, 
                 allow_unencrypted_storage: bool = False, 
-                name: str = "msal.cache", 
+                name: str = _DEFAULT_CACHE_NAME, 
                 **kwargs: Any
             ) -> None: ...
 
@@ -745,6 +784,7 @@ namespace azure.identity
                 self, 
                 *, 
                 client_id: Optional[str] = ..., 
+                enable_azure_proxy: Optional[bool] = ..., 
                 tenant_id: Optional[str] = ..., 
                 token_file_path: Optional[str] = ..., 
                 **kwargs: Any
@@ -1003,7 +1043,7 @@ namespace azure.identity.aio
                 self, 
                 tenant_id: str, 
                 client_id: str, 
-                func: Callable[[], str], 
+                func: Callable[[], Union[str, Awaitable[str]]], 
                 *, 
                 additionally_allowed_tenants: Optional[List[str]] = ..., 
                 authority: Optional[str] = ..., 
@@ -1126,6 +1166,39 @@ namespace azure.identity.aio
             ) -> AccessToken: ...
 
         @log_get_token_async
+        async def get_token_info(
+                self, 
+                *scopes: str, 
+                *, 
+                options: Optional[TokenRequestOptions] = ..., 
+            ) -> AccessTokenInfo: ...
+
+
+    class azure.identity.aio.GitHubActionsCredential(AsyncContextManager): implements AsyncContextManager 
+
+        def __init__(
+                self, 
+                *, 
+                additionally_allowed_tenants: Optional[List[str]] = ..., 
+                authority: Optional[str] = ..., 
+                cache_persistence_options: TokenCachePersistenceOptions = ..., 
+                client_id: Optional[str] = ..., 
+                tenant_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        async def close(self) -> None: ...
+
+        async def get_token(
+                self, 
+                *scopes: str, 
+                *, 
+                claims: Optional[str] = ..., 
+                enable_cae: bool = False, 
+                tenant_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AccessToken: ...
+
         async def get_token_info(
                 self, 
                 *scopes: str, 
@@ -1279,6 +1352,7 @@ namespace azure.identity.aio
                 self, 
                 *, 
                 client_id: Optional[str] = ..., 
+                enable_azure_proxy: Optional[bool] = ..., 
                 tenant_id: Optional[str] = ..., 
                 token_file_path: Optional[str] = ..., 
                 **kwargs: Any

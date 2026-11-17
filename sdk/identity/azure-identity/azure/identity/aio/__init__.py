@@ -21,6 +21,7 @@ from ._credentials import (
     ClientAssertionCredential,
     WorkloadIdentityCredential,
     AzurePipelinesCredential,
+    GitHubActionsCredential,
 )
 from ._bearer_token_provider import get_bearer_token_provider
 
@@ -35,6 +36,7 @@ __all__ = [
     "ClientSecretCredential",
     "DefaultAzureCredential",
     "EnvironmentCredential",
+    "GitHubActionsCredential",
     "ManagedIdentityCredential",
     "OnBehalfOfCredential",
     "ChainedTokenCredential",

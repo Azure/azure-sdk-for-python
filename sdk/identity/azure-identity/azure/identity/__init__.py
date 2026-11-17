@@ -27,6 +27,7 @@ from ._credentials import (
     VisualStudioCodeCredential,
     WorkloadIdentityCredential,
     AzurePipelinesCredential,
+    GitHubActionsCredential,
 )
 from ._persistent_cache import TokenCachePersistenceOptions
 from ._bearer_token_provider import get_bearer_token_provider
@@ -49,6 +50,7 @@ __all__ = [
     "DefaultAzureCredential",
     "DeviceCodeCredential",
     "EnvironmentCredential",
+    "GitHubActionsCredential",
     "InteractiveBrowserCredential",
     "KnownAuthorities",
     "OnBehalfOfCredential",
