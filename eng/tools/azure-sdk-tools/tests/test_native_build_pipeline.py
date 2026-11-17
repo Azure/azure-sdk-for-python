@@ -87,8 +87,7 @@ def test_sbom_timeout_is_preserved_with_rust_documentation_configuration():
     build = load_template("steps/build-extended-artifacts.yml")
     for template in (jobs, build):
         timeout = next(
-            parameter for parameter in template["parameters"]
-            if parameter["name"] == "SbomGenerationTimeoutInMinutes"
+            parameter for parameter in template["parameters"] if parameter["name"] == "SbomGenerationTimeoutInMinutes"
         )
         assert timeout == {"name": "SbomGenerationTimeoutInMinutes", "type": "number", "default": 30}
 
