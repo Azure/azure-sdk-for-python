@@ -32,7 +32,7 @@ def test_unknown_authority():
     )
     with pytest.raises(ValueError) as ex:
         credential._get_app()
-    assert "disable_instance_discovery" in str(ex.value)
+        assert "disable_instance_discovery" in str(ex)
 
     credential = MsalCredential(
         client_id="CLIENT_ID",
