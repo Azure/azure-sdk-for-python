@@ -5,7 +5,8 @@
 import pytest
 
 from azure.identity._internal.msal_credentials import MsalCredential
-from azure.core.exceptions import ServiceRequestError
+
+from helpers import get_discovery_response, mock_response, Request, validating_transport
 
 
 def test_instance_discovery():
@@ -25,21 +26,39 @@ def test_instance_discovery():
 
 
 def test_unknown_authority():
+    transport = validating_transport(
+        [
+            Request(
+                method="GET",
+                authority="login.microsoftonline.com",
+                url_substring="/common/discovery/instance",
+                required_params={
+                    "authorization_endpoint": "https://unknown.authority/organizations/oauth2/v2.0/authorize"
+                },
+            )
+        ],
+        [mock_response(status_code=400, json_payload={"error": "invalid_instance"})],
+    )
     credential = MsalCredential(
         client_id="CLIENT_ID",
         authority="unknown.authority",
+        transport=transport,
     )
-    with pytest.raises(ValueError) as ex:
+    with pytest.raises(ValueError, match="disable_instance_discovery"):
         credential._get_app()
-        assert "disable_instance_discovery" in str(ex)
+    transport.send.assert_called_once()
 
+    transport = validating_transport(
+        [Request(method="GET", url="https://unknown.authority/organizations/v2.0/.well-known/openid-configuration")],
+        [get_discovery_response(endpoint="https://unknown.authority/organizations")],
+    )
     credential = MsalCredential(
         client_id="CLIENT_ID",
         authority="unknown.authority",
         disable_instance_discovery=True,
+        transport=transport,
     )
 
-    with pytest.raises(ServiceRequestError):
-        # Instance discovery is disabled, so the credential should not attempt to validate the authority, and instead
-        # attempt to use the authority as given. This is fail since unknown.authority is not resolvable.
-        credential._get_app()
+    app = credential._get_app()
+    assert not app._instance_discovery
+    transport.send.assert_called_once()

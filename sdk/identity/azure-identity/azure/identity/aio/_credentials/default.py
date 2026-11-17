@@ -316,9 +316,18 @@ class DefaultAzureCredential(ChainedTokenCredential):
            `message` attribute listing each authentication attempt and its error message.
         """
         if self._successful_credential:
-            token_info = await cast(AsyncSupportsTokenInfo, self._successful_credential).get_token_info(
-                *scopes, options=options
-            )
+            if hasattr(self._successful_credential, "get_token_info"):
+                token_info = await cast(AsyncSupportsTokenInfo, self._successful_credential).get_token_info(
+                    *scopes, options=options
+                )
+            else:
+                options = options or {}
+                if options.get("pop"):
+                    raise CredentialUnavailableError(
+                        "Proof of possession arguments are not supported for this credential."
+                    )
+                token = await cast(AsyncTokenCredential, self._successful_credential).get_token(*scopes, **options)
+                token_info = AccessTokenInfo(token=token.token, expires_on=token.expires_on)
             _LOGGER.info(
                 "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
             )
