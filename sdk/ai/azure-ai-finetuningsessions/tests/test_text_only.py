@@ -6,6 +6,7 @@
 import asyncio
 import inspect
 import json
+import warnings
 from contextlib import asynccontextmanager
 from copy import deepcopy
 
@@ -17,13 +18,21 @@ from azure.ai.finetuningsessions import (
     TextOnlyTrainingChunkError,
 )
 from azure.ai.finetuningsessions import _patch as sync_patch
+from azure.ai.finetuningsessions._experimental import ExperimentalWarning
 from azure.ai.finetuningsessions.aio import FineTuningSessionClient as AsyncClient
 from azure.ai.finetuningsessions.aio import _patch as async_patch
+from azure.ai.finetuningsessions.experimental import ExperimentalSettings
 from azure.ai.finetuningsessions.models import (
     AdamParams,
+    Datum,
     LoRAConfig,
+    LossFn,
+    LossFnConfig,
+    ModelInput,
+    ModelInputChunk,
     SampleOperationResult,
     SamplingParams,
+    TensorData,
     TextOnlyAssistantMessage,
     TextOnlyInvalidSampleChoice,
     TextOnlySampleChoice,
@@ -192,10 +201,10 @@ def asynchronous(request, monkeypatch):
 
 
 @asynccontextmanager
-async def session(asynchronous, outcomes):
+async def session(asynchronous, outcomes, *, experimental_settings=None):
     transport = (_AsyncTransport if asynchronous else _SyncTransport)(outcomes)
     client = (AsyncClient if asynchronous else FineTuningSessionClient)(
-        ENDPOINT, AzureKeyCredential("fixture-key"), transport=transport
+        ENDPOINT, AzureKeyCredential("fixture-key"), transport=transport, experimental_settings=experimental_settings
     )
     obj = client if asynchronous else FineTuningSession(client, "session_test")
     try:
@@ -439,13 +448,19 @@ async def test_malformed_response_ref_is_never_coerced_or_forged(asynchronous, r
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("loss_fn", [None, "importance_sampling", "ppo", "cispo", "sapo"])
+@pytest.mark.parametrize("loss_fn", [None, "importance_sampling", "tis", "ppo", "cispo", "sapo"])
 async def test_scalar_reference_training(asynchronous, loss_fn):
     training = deepcopy(TRAINING)
     if loss_fn is not None:
-        training.update(loss_fn=loss_fn, loss_fn_config={})
+        training.update(
+            loss_fn=loss_fn,
+            loss_fn_config={"clip_high_threshold": 2.0} if loss_fn == "tis" else {},
+        )
     async with session(asynchronous, [ACCEPTED, completed(SCALAR)]) as (obj, transport):
-        result = await invoke(obj, "forward_backward", text_only_input=training)
+        with warnings.catch_warnings(record=True) as notices:
+            warnings.simplefilter("always", ExperimentalWarning)
+            result = await invoke(obj, "forward_backward", text_only_input=training)
+        assert any(isinstance(notice.message, ExperimentalWarning) for notice in notices) == (loss_fn == "tis")
         assert result.loss_fn_output_type == "scalar"
         assert result.loss_fn_outputs == []
         assert result.metrics == SCALAR["metrics"]
@@ -453,9 +468,126 @@ async def test_scalar_reference_training(asynchronous, loss_fn):
         assert set(payload) == {"text_only_input"}
         assert payload["text_only_input"]["samples"] == TRAINING["samples"]
         assert payload["text_only_input"]["loss_fn"] == (loss_fn or "importance_sampling")
+        if loss_fn == "tis":
+            assert payload["text_only_input"]["loss_fn_config"] == {"clip_high_threshold": 2.0}
     assert TRAINING == {
         "samples": [{"sample_ref": c["sample_ref"], "advantage": 0.5} for c in PUBLIC_RESULT["choices"]]
     }
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("surface", ["forward_backward", "forward_backward_post", "forward_backward_async"])
+@pytest.mark.parametrize("multi_chunk", [False, True], ids=["single", "chunked"])
+async def test_reference_tis_warns_without_settings(asynchronous, surface, multi_chunk, monkeypatch):
+    if not asynchronous and surface != "forward_backward":
+        pytest.skip("Pipelined handles are async-only")
+    training = {**deepcopy(TRAINING), "loss_fn": "tis", "loss_fn_config": {"clip_high_threshold": 3.0}}
+    if multi_chunk:
+        monkeypatch.setattr(sync_patch, "_MAX_CHUNK_LEN", 1)
+    scalar = {**SCALAR, "metrics": {**SCALAR["metrics"], "num_samples": 1 if multi_chunk else 2}}
+    accepted = [
+        (200, {**ACCEPTED[1], "request_id": f"request_chunk_{index}"}) for index in range(2 if multi_chunk else 1)
+    ]
+    results = [completed(scalar)] * len(accepted)
+    outcomes = accepted + results if asynchronous else [reply for pair in zip(accepted, results) for reply in pair]
+    async with session(asynchronous, outcomes) as (obj, transport):
+        with pytest.warns(ExperimentalWarning, match="at your own risk"):
+            result = await invoke(obj, surface, text_only_input=training)
+            if surface == "forward_backward_post":
+                result = await result.poll_result()
+            elif surface == "forward_backward_async":
+                result = await result
+        assert result.loss_fn_output_type == "scalar"
+        posts = [request for request in transport.requests if request.method == "POST"]
+        assert len(posts) == (2 if multi_chunk else 1)
+        inputs = [body(request)["text_only_input"] for request in posts]
+        assert [sample for data in inputs for sample in data["samples"]] == training["samples"]
+        assert all(
+            data["loss_fn"] == "tis" and data["loss_fn_config"] == {"clip_high_threshold": 3.0} for data in inputs
+        )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "surface",
+    ["forward", "forward_post", "forward_async", "forward_backward", "forward_backward_post", "forward_backward_async"],
+)
+async def test_native_convenience_tis_warns_without_settings(asynchronous, surface, monkeypatch):
+    if not asynchronous and surface not in ("forward", "forward_backward"):
+        pytest.skip("Pipelined handles are async-only")
+    datum = Datum(
+        model_input=ModelInput(chunks=[ModelInputChunk(tokens=[1, 2])]),
+        loss_fn_inputs={
+            "target_tokens": TensorData(data=[2, 3]),
+            "advantages": TensorData(data=[0.5, -0.5]),
+            "logprobs": TensorData(data=[-1.0, -2.0]),
+        },
+    )
+    wave = surface == "forward_backward_async"
+    if wave:
+        monkeypatch.setattr(sync_patch, "_MAX_CHUNK_LEN", 1)
+    outcomes = [ACCEPTED, completed(SCALAR)] * (2 if wave else 1)
+    async with session(asynchronous, outcomes) as (obj, transport):
+        arguments = {
+            "batch": [datum, datum] if wave else [datum],
+            "loss_fn": LossFn.TIS,
+            "loss_fn_config": LossFnConfig(clip_high_threshold=3.0),
+        }
+        if wave:
+            arguments["max_chunks_per_wave"] = 1
+        with pytest.warns(ExperimentalWarning, match="at your own risk"):
+            result = await invoke(obj, surface, **arguments)
+            if surface.endswith("_post"):
+                await result.poll_result()
+            elif surface.endswith("_async"):
+                await result
+        posts = [request for request in transport.requests if request.method == "POST"]
+        assert len(posts) == (2 if wave else 1)
+        input_key = "forward_backward_input" if surface.startswith("forward_backward") else "forward_input"
+        for request in posts:
+            payload = body(request)
+            assert set(payload) == {input_key}
+            assert payload[input_key]["loss_fn"] == "tis"
+            assert payload[input_key]["loss_fn_config"] == {"clip_high_threshold": 3.0}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("enabled", [False, True])
+@pytest.mark.parametrize("surface", ["forward", "forward_backward", "sample"])
+async def test_convenience_score_centering_requires_settings(asynchronous, enabled, surface):
+    settings = ExperimentalSettings(enable_score_centering=True) if enabled else None
+    async with session(asynchronous, [ACCEPTED, completed(SCALAR)], experimental_settings=settings) as (obj, transport):
+        if surface == "sample":
+            arguments = {
+                "prompt_tokens": [1, 2],
+                "checkpoint_id": "sampler_test",
+                "sampling_params": SamplingParams(max_tokens=4, score_centering_head_size=2),
+            }
+        else:
+            arguments = {
+                "batch": [
+                    Datum(
+                        model_input=ModelInput(chunks=[ModelInputChunk(tokens=[1, 2])]),
+                        loss_fn_inputs={"target_tokens": TensorData(data=[2, 3])},
+                    )
+                ],
+                "loss_fn": LossFn.SCORE_CENTERING,
+            }
+        if not enabled:
+            with pytest.raises(ValueError, match="ExperimentalSettings\\(enable_score_centering=True\\)"):
+                await invoke(obj, surface, **arguments)
+            assert transport.requests == []
+        else:
+            with pytest.warns(ExperimentalWarning, match="Native score centering"):
+                await invoke(obj, surface, **arguments)
+            assert [request.method for request in transport.requests] == ["POST", "GET"]
+            payload = body(transport.requests[0])
+            if surface == "sample":
+                assert payload["sampling_params"]["score_centering_head_size"] == 2
+            else:
+                input_key = "forward_input" if surface == "forward" else "forward_backward_input"
+                assert payload[input_key]["loss_fn"] == "score_centering"
+            assert "experimental_settings" not in payload
 
 
 @pytest.mark.asyncio

@@ -7,6 +7,8 @@
 - Add capability-negotiated completion-feed observation for synchronous and asynchronous convenience sampling. Notifications trigger authoritative result retrieval; services and sessions without exact enablement retain legacy polling.
 - Add the async-only `connection_pool_limit` client option to size the default connection pool without changing sampling concurrency or caller-supplied transports.
 - Expose checkpoint save status, typed `CheckpointPublicationState`, publication requirements, and deployment eligibility when returned by the service.
+- Add experimental native TIS loss, including reference-based text-only training, with an experimental warning when selected.
+- Add explicitly opted-in native score centering, decode-time sampling head capture, multidimensional tensor shapes, and head/provenance metadata. These require compatible service support and do not enable service capabilities.
 
 ### Breaking Changes
 
@@ -16,8 +18,8 @@
 
 - Preserve completion-feed cursor progress across reconnects, honor bounded server retry hints, and recover missed notifications through sparse result retrieval.
 - Drain completion observers during client shutdown and let idle streams finish their bounded window so newly submitted sampling work can reuse the stream.
-- Report sampling progress using final call outcomes rather than intermediate notifications or retry attempts.
-- Preserve typed terminal errors and canonical session identifiers when session close fails, including `engine_dead` HTTP 409 responses. Unrecognized or malformed conflicts remain HTTP errors rather than being inferred as engine death.
+- Report cumulative final sampling-call totals per client/session across reconnects and idle periods, rather than resetting counts or counting notifications and retry attempts.
+- Preserve typed terminal errors and canonical session identifiers when session close fails, including `engine_dead` and `worker_crashed` HTTP 409 responses. Conflicting, malformed, or nonterminal codes and generic busy/deadline messages remain HTTP errors rather than being inferred as engine death.
 
 ### Other Changes
 

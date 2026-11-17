@@ -133,6 +133,32 @@ def test_required_model_annotations_and_keyword_overloads(model, field, annotati
     assert ast.unparse(overload.args.kwonlyargs[index].annotation) == annotation.__name__
 
 
+def test_exported_sampling_constructor_accepts_score_centering_head_size():
+    definition = ast.parse(inspect.getsource(SamplingParams)).body[0]
+    constructor = next(
+        method
+        for method in definition.body
+        if isinstance(method, ast.FunctionDef)
+        and method.name == "__init__"
+        and any(parameter.arg == "max_tokens" for parameter in method.args.kwonlyargs)
+    )
+    index = next(
+        index
+        for index, parameter in enumerate(constructor.args.kwonlyargs)
+        if parameter.arg == "score_centering_head_size"
+    )
+    assert ast.unparse(constructor.args.kwonlyargs[index].annotation) == "Optional[int]"
+    assert ast.literal_eval(constructor.args.kw_defaults[index]) is None
+    params = SamplingParams(
+        max_tokens=4,
+        temperature=1.0,
+        top_p=1.0,
+        top_k=-1,
+        score_centering_head_size=2,
+    )
+    assert _wire(params)["score_centering_head_size"] == 2
+
+
 @pytest.mark.parametrize("mapping", [False, True])
 @pytest.mark.parametrize("data", [{}, {"rank": None}])
 def test_rank_validation_covers_mapping_and_keyword_construction(mapping, data):

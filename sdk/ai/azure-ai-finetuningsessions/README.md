@@ -191,6 +191,32 @@ models and providers. `SamplingOperationResult` is an alias for
 prompt count once per prompt, not once per sampled sequence. Missing or
 invalid counts remain `None`; the SDK does not estimate them from other data.
 
+### Experimental native losses
+
+`LossFn.TIS` selects sum-reduced token-level truncated importance sampling.
+Its `clip_high_threshold` must be finite and at least 1; the service defaults
+to 2 when it is omitted. TIS is also accepted as `"tis"` for reference-based
+text-only training. Selecting it emits an experimental warning.
+
+Native `LossFn.SCORE_CENTERING` and sampling head capture require an explicit
+client opt-in. Import `ExperimentalSettings` from
+`azure.ai.finetuningsessions.experimental` and pass
+`experimental_settings=ExperimentalSettings(enable_score_centering=True)`
+to either client constructor. This also emits an experimental warning when
+used; constructing the client alone does not warn.
+
+`SamplingParams.score_centering_head_size` accepts 0 to disable capture or
+1 through 128 to request decode-time top-K heads. Capture requires
+`temperature=1`, `top_p=1`, `top_k=-1`, and no `response_format`; it is not
+supported with text-only input. Native training accepts corresponding head
+tokens, log-probabilities and masks in `LossFnInputs`. `TensorData.shape`
+preserves multidimensional shapes while values remain flat on the wire.
+Returned `SampledSequence` objects preserve head data and capture provenance.
+
+These features are under development and require compatible service support.
+The SDK opt-in does not enable service capabilities, grant authorization, or
+guarantee deployment availability. Existing losses are unchanged.
+
 ### Completion-feed sampling
 
 Synchronous and asynchronous convenience session creation advertise
@@ -220,8 +246,10 @@ service-side inference or unload the session.
 
 Use one logical consuming client per session. Observation progress is held in
 client memory; cross-process acknowledgement sharing and restoration after
-process restart are not supported. INFO progress updates count final sampling
-call outcomes, not notifications or intermediate retries.
+process restart are not supported. INFO progress updates count cumulative final
+sampling-call outcomes for each session on that client, not notifications or
+intermediate retries. Totals survive reconnects and idle periods and start
+fresh with a new client.
 
 ### Opt-in text-only operations
 

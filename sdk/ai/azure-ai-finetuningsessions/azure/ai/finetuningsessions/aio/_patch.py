@@ -76,6 +76,7 @@ from .._exceptions import (
 from .._exceptions import (
     RequestRetryableError as _RequestRetryableError,
 )
+from .._experimental import _check_experimental_request, _resolve_experimental_settings
 from .._patch import (
     _API_VERSION,
     _DEFAULT_OPERATION_TIMEOUT_SEC,
@@ -158,6 +159,7 @@ class _ClientBase(_GeneratedClient):
         self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs: Any
     ) -> None:
         options = dict(kwargs)
+        settings = _resolve_experimental_settings(options.pop("experimental_settings", None))
         allow_insecure_http = options.pop("allow_insecure_http", False)
         options = _prepare_client_options(
             endpoint,
@@ -178,6 +180,7 @@ class _ClientBase(_GeneratedClient):
         super().__init__(endpoint=endpoint, credential=cast(AsyncTokenCredential, credential), **options)
         cast(Any, self._config).allow_insecure_http = allow_insecure_http
         cast(Any, self._config).api_version = kwargs.get("api_version", "v1")
+        cast(Any, self._config).experimental_settings = settings
 
     async def close(self) -> None:
         """Drain observation and heartbeat tasks before closing the HTTP pipeline."""
@@ -563,6 +566,7 @@ async def _post(  # pylint: disable=too-many-locals
     # Keep the preview submission state machine intact: classification, retry
     # tracking, semaphore lifetime, and backoff ordering must remain unchanged.
     # pylint: disable=too-many-statements,too-many-nested-blocks
+    _check_experimental_request(body_model, getattr(getattr(self, "_config", None), "experimental_settings", None))
     _ensure_async_state(self)
     subpath = _client_resource_subpath(self, subpath)
     body_json = _json.dumps(body_model, cls=_SdkJSONEncoder, exclude_readonly=True)
@@ -765,6 +769,7 @@ async def _post_sample(
     # Preserve the preview ordering of JWT recovery, terminal classification,
     # throttle/fault budgets (including malformed success), and semaphore release before backoff.
     # pylint: disable=too-many-statements,too-many-locals
+    _check_experimental_request(body_model, getattr(getattr(self, "_config", None), "experimental_settings", None))
     _ensure_async_state(self)
     subpath = _client_resource_subpath(self, subpath)
     body_json = _json.dumps(body_model, cls=_SdkJSONEncoder, exclude_readonly=True)

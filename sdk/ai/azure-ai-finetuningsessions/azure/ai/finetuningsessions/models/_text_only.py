@@ -86,7 +86,7 @@ class TextOnlyTrainingInput(TypedDict):
     """Reference-based training; references are never decoded by the SDK."""
 
     samples: List[TextOnlyTrainingSample]
-    loss_fn: NotRequired[Literal["importance_sampling", "ppo", "cispo", "sapo"]]
+    loss_fn: NotRequired[Literal["importance_sampling", "tis", "ppo", "cispo", "sapo"]]
     loss_fn_config: NotRequired[Dict[str, Any]]
 
 

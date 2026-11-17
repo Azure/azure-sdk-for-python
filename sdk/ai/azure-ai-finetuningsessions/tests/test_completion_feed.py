@@ -352,6 +352,7 @@ async def test_notification_receipt_is_logged_before_accept_backpressure(feed, m
     response.close = AsyncMock()
     feed.client.send_request = AsyncMock(return_value=response)
     release = asyncio.Event()
+    feed.completed_samples, feed.failed_samples, feed.pending_samples = 3, 1, 2
 
     async def accept(cursor, request_id):
         assert cursor == "1-0" and request_id == "r"
@@ -363,6 +364,7 @@ async def test_notification_receipt_is_logged_before_accept_backpressure(feed, m
     try:
         await spin_until(lambda: "notification_received" in caplog.text)
         assert not reading.done()
+        assert (feed.completed_samples, feed.failed_samples, feed.pending_samples) == (3, 1, 2)
     finally:
         release.set()
         await reading
@@ -374,6 +376,7 @@ async def test_notification_receipt_is_logged_before_accept_backpressure(feed, m
     expected = f"[completion_feed] notification_received request_id=r status={status}"
     assert messages == [expected, expected]
     assert "private-payload" not in caplog.text
+    assert (feed.completed_samples, feed.failed_samples, feed.pending_samples) == (3, 1, 2)
     response.close.assert_awaited_once()
 
 
@@ -382,6 +385,7 @@ async def test_notification_receipt_is_logged_before_accept_backpressure(feed, m
     [
         ("normal", None),
         ("disconnect", ConnectionError),
+        ("timeout", asyncio.TimeoutError),
         ("cancel", asyncio.CancelledError),
         ("close_failure", RuntimeError),
     ],
@@ -406,6 +410,8 @@ async def test_sampling_progress_ignores_replayed_notifications(feed, caplog, en
             yield chunk
         if ending == "cancel":
             raise asyncio.CancelledError()
+        if ending == "timeout":
+            raise asyncio.TimeoutError()
 
     response.iter_bytes = iter_bytes
     feed.client.send_request = AsyncMock(return_value=response)
@@ -421,13 +427,20 @@ async def test_sampling_progress_ignores_replayed_notifications(feed, caplog, en
         for record in caplog.records
         if record.name == module.__name__ and "Sampling progress" in record.getMessage()
     ]
-    assert summaries == ["[completion_feed] Sampling progress: 1 completed, 0 failed since last update; 2 pending"]
+    assert summaries == ["[completion_feed] Sampling progress for this session: 1 completed, 0 failed; 2 pending"]
     response.close.assert_awaited_once()
-    if error is None:
-        assert await feed._round(30)
-        assert caplog.messages[-1] == (
-            "[completion_feed] Sampling progress: 0 completed, 0 failed since last update; 2 pending"
-        )
+    assert (feed.completed_samples, feed.failed_samples, feed.pending_samples) == (1, 0, 2)
+    feed.completed_samples += 1
+    feed.failed_samples += 1
+    feed.pending_samples = 0
+    response.chunks = [b"event: end\n\n"]
+    response.iter_bytes = Bytes(*response.chunks).iter_bytes
+    response.close.side_effect = None
+    assert await feed._round(30)
+    assert caplog.messages[-1] == (
+        "[completion_feed] Sampling progress for this session: 2 completed, 1 failed; 0 pending"
+    )
+    assert (feed.completed_samples, feed.failed_samples, feed.pending_samples) == (2, 1, 0)
 
 
 async def test_sampling_progress_is_logged_when_transport_fails(feed, caplog):
@@ -436,7 +449,8 @@ async def test_sampling_progress_is_logged_when_transport_fails(feed, caplog):
     feed.client.send_request = AsyncMock(side_effect=ConnectionError("offline"))
     with pytest.raises(ConnectionError):
         await feed._round(30)
-    assert ("[completion_feed] Sampling progress: 0 completed, 1 failed since last update; 0 pending") in caplog.text
+    assert ("[completion_feed] Sampling progress for this session: 0 completed, 1 failed; 0 pending") in caplog.text
+    assert feed.failed_samples == 1
 
 
 async def test_ack_only_call_does_not_log_or_reset_sampling_progress(feed, caplog):
@@ -448,6 +462,37 @@ async def test_ack_only_call_does_not_log_or_reset_sampling_progress(feed, caplo
     assert "Sampling progress" not in caplog.text
     assert feed.completed_samples == 1
     response.close.assert_awaited_once()
+
+
+@pytest.mark.parametrize("error", [ConnectionError, asyncio.TimeoutError])
+async def test_sampling_totals_survive_reconnect_backoff(feed, monkeypatch, caplog, error):
+    caplog.set_level("INFO", logger=module.__name__)
+    feed.completed_samples, feed.failed_samples, feed.pending_samples = 3, 1, 2
+    feed.registrations.add(0)
+    response = Bytes(b"event: end\n\n")
+    response.status_code = 200
+    response.headers = {"content-type": "text/event-stream"}
+    response.raise_for_status = Mock()
+    response.close = AsyncMock()
+    observed_totals = []
+
+    async def send(*args, **kwargs):
+        observed_totals.append((feed.completed_samples, feed.failed_samples, feed.pending_samples))
+        if feed.client.send_request.await_count == 1:
+            raise error("offline")
+        feed.registrations.clear()
+        return response
+
+    feed.client.send_request = AsyncMock(side_effect=send)
+    sleep = AsyncMock()
+    monkeypatch.setattr(module.asyncio, "sleep", sleep)
+    await asyncio.wait_for(module._CompletionFeed._watch(feed, asyncio.Event()), 5)
+    assert feed.client.send_request.await_count == 2
+    assert observed_totals == [(3, 1, 2), (3, 1, 2)]
+    sleep.assert_awaited_once()
+    summaries = [message for message in caplog.messages if "Sampling progress" in message]
+    assert summaries == ["[completion_feed] Sampling progress for this session: 3 completed, 1 failed; 2 pending"] * 2
+    assert (feed.completed_samples, feed.failed_samples, feed.pending_samples) == (3, 1, 2)
 
 
 async def test_owned_backoff_keeps_runner_active_until_it_finishes(feed):
@@ -761,7 +806,7 @@ async def test_full_sample_permit_lifetime_and_alias_observer(monkeypatch, feed)
     client._sample_semaphore = asyncio.Semaphore(1)
     client._completion_feed_enabled["session_test1234"] = True
     client._completion_feeds["session_test1234"] = feed
-    post = AsyncMock(side_effect=[("a", "sample"), ("b", "sample")])
+    post = AsyncMock(side_effect=[("a", "sample"), ("b", "sample"), ("c", "sample")])
     monkeypatch.setattr(patch, "_post_sample", post)
     monkeypatch.setattr(patch, "_poll", AsyncMock(return_value="done"))
     kwargs = {
@@ -786,6 +831,14 @@ async def test_full_sample_permit_lifetime_and_alias_observer(monkeypatch, feed)
     assert await b == "done"
     assert post.await_count == 2
     assert (feed.completed_samples, feed.failed_samples, feed.pending_samples) == (2, 0, 0)
+    await spin_until(lambda: feed.runner is None)
+    c = asyncio.create_task(patch.sample(client, "session_test1234", **kwargs))
+    await spin_until(lambda: "c" in feed.requests)
+    assert patch._get_or_create_completion_feed(client, "test1234") is feed
+    assert (feed.completed_samples, feed.failed_samples, feed.pending_samples) == (2, 0, 1)
+    await feed._accept("3-0", "c")
+    assert await c == "done"
+    assert (feed.completed_samples, feed.failed_samples, feed.pending_samples) == (3, 0, 0)
 
 
 @pytest.mark.parametrize("fails", [False, True])

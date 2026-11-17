@@ -439,7 +439,7 @@ class ForwardBackwardInput(_Model):  # pylint: disable=docstring-keyword-should-
     :ivar data: Training examples to process in this batch. Required.
     :vartype data: list[~azure.ai.finetuningsessions.models.Datum]
     :ivar loss_fn: Loss function to evaluate for the batch. Required. Known values are:
-     "cross_entropy", "importance_sampling", "ppo", "cispo", and "sapo".
+     "cross_entropy", "importance_sampling", "tis", "score_centering", "ppo", "cispo", and "sapo".
     :vartype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
     :ivar loss_fn_config: Optional hyper-parameters for the selected loss function.
     :vartype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig
@@ -449,7 +449,7 @@ class ForwardBackwardInput(_Model):  # pylint: disable=docstring-keyword-should-
     """Training examples to process in this batch. Required."""
     loss_fn: Union[str, "_models.LossFn"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Loss function to evaluate for the batch. Required. Known values are: \"cross_entropy\",
-     \"importance_sampling\", \"ppo\", \"cispo\", and \"sapo\"."""
+     \"importance_sampling\", \"tis\", \"score_centering\", \"ppo\", \"cispo\", and \"sapo\"."""
     loss_fn_config: Optional["_models.LossFnConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -631,7 +631,7 @@ class ForwardInput(ForwardBackwardInput):  # pylint: disable=docstring-keyword-s
     :ivar data: Training examples to process in this batch. Required.
     :vartype data: list[~azure.ai.finetuningsessions.models.Datum]
     :ivar loss_fn: Loss function to evaluate for the batch. Required. Known values are:
-     "cross_entropy", "importance_sampling", "ppo", "cispo", and "sapo".
+     "cross_entropy", "importance_sampling", "tis", "score_centering", "ppo", "cispo", and "sapo".
     :vartype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
     :ivar loss_fn_config: Optional hyper-parameters for the selected loss function.
     :vartype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig
@@ -853,8 +853,9 @@ class LossFnConfig(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     :ivar clip_low_threshold: PPO (Proximal Policy Optimization) / CISPO (Clipped
      Importance-Sampled Policy Optimization): lower clip threshold.
     :vartype clip_low_threshold: float
-    :ivar clip_high_threshold: PPO (Proximal Policy Optimization) / CISPO (Clipped
-     Importance-Sampled Policy Optimization): upper clip threshold.
+    :ivar clip_high_threshold: PPO / CISPO: upper clip threshold. TIS: upper-only token ratio cap,
+     finite and at least 1; defaults to 2. Score centering: optional TIS weighting cap; omit for
+     standalone centering.
     :vartype clip_high_threshold: float
     :ivar tau_pos: SAPO (Soft Adaptive Policy Optimization): positive advantage temperature.
     :vartype tau_pos: float
@@ -866,8 +867,8 @@ class LossFnConfig(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     """PPO (Proximal Policy Optimization) / CISPO (Clipped Importance-Sampled Policy Optimization):
      lower clip threshold."""
     clip_high_threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """PPO (Proximal Policy Optimization) / CISPO (Clipped Importance-Sampled Policy Optimization):
-     upper clip threshold."""
+    """PPO / CISPO: upper clip threshold. TIS: upper-only token ratio cap, finite and at least 1;
+     defaults to 2. Score centering: optional TIS weighting cap; omit for standalone centering."""
     tau_pos: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """SAPO (Soft Adaptive Policy Optimization): positive advantage temperature."""
     tau_neg: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -908,6 +909,15 @@ class LossFnInputs(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     :ivar logprobs: Per-token reference log-probabilities for KL-divergence regularisation. Omit or
      pass empty array to skip KL.
     :vartype logprobs: ~azure.ai.finetuningsessions.models.TensorData
+    :ivar score_centering_head_tokens: Decode-time head token IDs with shape (target_length, K), K
+     <= 128.
+    :vartype score_centering_head_tokens: ~azure.ai.finetuningsessions.models.TensorData
+    :ivar score_centering_head_logprobs: Decode-time sampler head logprobs matching the head token
+     shape.
+    :vartype score_centering_head_logprobs: ~azure.ai.finetuningsessions.models.TensorData
+    :ivar score_centering_head_mask: Optional 0/1 head-entry mask; inactive prompt/tool positions
+     should be masked.
+    :vartype score_centering_head_mask: ~azure.ai.finetuningsessions.models.TensorData
     """
 
     target_tokens: "_models.TensorData" = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -921,6 +931,18 @@ class LossFnInputs(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     logprobs: Optional["_models.TensorData"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Per-token reference log-probabilities for KL-divergence regularisation. Omit or pass empty
      array to skip KL."""
+    score_centering_head_tokens: Optional["_models.TensorData"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Decode-time head token IDs with shape (target_length, K), K <= 128."""
+    score_centering_head_logprobs: Optional["_models.TensorData"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Decode-time sampler head logprobs matching the head token shape."""
+    score_centering_head_mask: Optional["_models.TensorData"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional 0/1 head-entry mask; inactive prompt/tool positions should be masked."""
 
     @overload
     def __init__(
@@ -930,6 +952,9 @@ class LossFnInputs(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         weights: "_models.TensorData",
         advantages: Optional["_models.TensorData"] = None,
         logprobs: Optional["_models.TensorData"] = None,
+        score_centering_head_tokens: Optional["_models.TensorData"] = None,
+        score_centering_head_logprobs: Optional["_models.TensorData"] = None,
+        score_centering_head_mask: Optional["_models.TensorData"] = None,
     ) -> None: ...
 
     @overload
@@ -1095,6 +1120,15 @@ class SampledSequence(_Model):  # pylint: disable=docstring-keyword-should-match
     :vartype text: str
     :ivar logprobs: Log-probability of each generated token.
     :vartype logprobs: list[float]
+    :ivar score_centering_head_tokens: Independently selected decode-time top-K token IDs per
+     generated token.
+    :vartype score_centering_head_tokens: list[list[int]]
+    :ivar score_centering_head_logprobs: Decode-time sampler logprobs corresponding to the head
+     token IDs.
+    :vartype score_centering_head_logprobs: list[list[float]]
+    :ivar score_centering_provenance: Verified decode-time checkpoint, token-prefix digest and
+     probability mode.
+    :vartype score_centering_provenance: dict[str, str]
     """
 
     tokens: list[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1103,6 +1137,18 @@ class SampledSequence(_Model):  # pylint: disable=docstring-keyword-should-match
     """Decoded text of the generated sequence."""
     logprobs: Optional[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Log-probability of each generated token."""
+    score_centering_head_tokens: Optional[list[list[int]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Independently selected decode-time top-K token IDs per generated token."""
+    score_centering_head_logprobs: Optional[list[list[float]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Decode-time sampler logprobs corresponding to the head token IDs."""
+    score_centering_provenance: Optional[dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Verified decode-time checkpoint, token-prefix digest and probability mode."""
 
     @overload
     def __init__(
@@ -1111,6 +1157,9 @@ class SampledSequence(_Model):  # pylint: disable=docstring-keyword-should-match
         tokens: list[int],
         text: Optional[str] = None,
         logprobs: Optional[list[float]] = None,
+        score_centering_head_tokens: Optional[list[list[int]]] = None,
+        score_centering_head_logprobs: Optional[list[list[float]]] = None,
+        score_centering_provenance: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1258,6 +1307,10 @@ class SampleRequest(_Model):  # pylint: disable=docstring-keyword-should-match-k
 class SamplingParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Token-generation sampling parameters.
 
+    :ivar score_centering_head_size: Experimental decode-time head capture: 0 disables, 1..128
+     requests top-K. Requires temperature=1, top_p=1, top_k=-1 and no response_format. Unsupported
+     with text-only input.
+    :vartype score_centering_head_size: int
     :ivar max_tokens: Maximum tokens to generate. Required.
     :vartype max_tokens: int
     :ivar temperature: Softmax temperature. Default 1.0. Required.
@@ -1275,6 +1328,9 @@ class SamplingParams(_Model):  # pylint: disable=docstring-keyword-should-match-
     :vartype response_format: dict[str, any]
     """
 
+    score_centering_head_size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Experimental decode-time head capture: 0 disables, 1..128 requests top-K. Requires
+     temperature=1, top_p=1, top_k=-1 and no response_format. Unsupported with text-only input."""
     max_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Maximum tokens to generate. Required."""
     temperature: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1301,6 +1357,7 @@ class SamplingParams(_Model):  # pylint: disable=docstring-keyword-should-match-
         temperature: float,
         top_p: float,
         top_k: int,
+        score_centering_head_size: Optional[int] = None,
         seed: Optional[int] = None,
         stop_criteria: Optional["_unions.StopCriteria"] = None,
         response_format: Optional[dict[str, Any]] = None,
@@ -1670,16 +1727,21 @@ class TensorData(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
 
     :ivar data: The floating-point values of the tensor. Required.
     :vartype data: list[float]
+    :ivar shape: Optional dimensions for multidimensional loss inputs.
+    :vartype shape: list[int]
     """
 
     data: list[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The floating-point values of the tensor. Required."""
+    shape: Optional[list[int]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional dimensions for multidimensional loss inputs."""
 
     @overload
     def __init__(
         self,
         *,
         data: list[float],
+        shape: Optional[list[int]] = None,
     ) -> None: ...
 
     @overload

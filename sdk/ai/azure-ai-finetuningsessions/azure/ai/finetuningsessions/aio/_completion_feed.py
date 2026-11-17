@@ -333,13 +333,12 @@ class _CompletionFeed:  # pylint: disable=too-many-instance-attributes
                 finally:
                     if wait:
                         _logger.info(
-                            "[completion_feed] Sampling progress: %d completed, "
-                            "%d failed since last update; %d pending",
+                            "[completion_feed] Sampling progress for this session: "
+                            "%d completed, %d failed; %d pending",
                             self.completed_samples,
                             self.failed_samples,
                             self.pending_samples,
                         )
-                        self.completed_samples = self.failed_samples = 0
 
     async def _watch(self, stopping: asyncio.Event) -> None:
         backoff = _RECONNECT_INITIAL_DELAY

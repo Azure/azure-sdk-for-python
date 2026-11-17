@@ -74,6 +74,12 @@ directly from TypeSpec. They do not require model overrides or edits to generate
 classes. Validate their mapping, typed access, and legacy omission behavior
 after regeneration.
 
+Native loss values, tensor shapes and score-centering metadata are defined in
+TypeSpec and regenerated into the models. Experimental client settings and
+warnings are maintained in `experimental.py` and `_experimental.py`; they are
+client-side checks, not service request fields or authorization controls.
+Keep both modules in the verifier's explicit maintained inventory.
+
 ## Validation and packaging
 
 Run the package's existing tests, type checks, formatting, spelling, and

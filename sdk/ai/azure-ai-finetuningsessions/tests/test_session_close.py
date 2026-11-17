@@ -78,6 +78,7 @@ async def test_close_success_preserves_request_and_return_value(client, status: 
 
 @pytest.mark.parametrize("status", [409, 500])
 @pytest.mark.parametrize("nested", [False, True])
+@pytest.mark.parametrize("error_code", ["engine_dead", "worker_crashed"])
 @pytest.mark.parametrize(
     "session_id,resource_id",
     [
@@ -86,12 +87,12 @@ async def test_close_success_preserves_request_and_return_value(client, status: 
         ("12345678", "model_12345678"),
     ],
 )
-async def test_close_engine_dead_preserves_identity_and_diagnostics(
-    client, status: int, nested: bool, session_id: str, resource_id: str
+async def test_close_terminal_engine_error_preserves_identity_and_diagnostics(
+    client, status: int, nested: bool, error_code: str, session_id: str, resource_id: str
 ) -> None:
     detail = {
-        "reason": "engine_dead",
-        "error_code": "engine_dead",
+        "reason": error_code,
+        "error_code": error_code,
         "failure_reason": "lease expired",
         "message": "The training engine stopped",
         "debug_ref": "support-reference",
@@ -104,7 +105,7 @@ async def test_close_engine_dead_preserves_identity_and_diagnostics(
     with pytest.raises(TrainingEngineError) as caught:
         await close(client, session_id)
 
-    assert caught.value.error_code == "engine_dead"
+    assert caught.value.error_code == error_code
     assert caught.value.session_id == "session_12345678"
     assert caught.value.debug_ref == "support-reference"
     assert caught.value.response is client.response
@@ -118,6 +119,15 @@ async def test_close_engine_dead_preserves_identity_and_diagnostics(
     "status,body",
     [
         (409, {"detail": {"reason": "model_busy", "message": "Model is busy"}}),
+        (409, {"detail": {"reason": "engine_busy", "message": "The engine is busy"}}),
+        (409, {"detail": {"error_code": "model_busy", "message": "A previous engine died"}}),
+        (409, {"reason": "engine_dead", "error_code": "model_busy", "message": "Engine died"}),
+        (409, {"reason": "model_busy", "error_code": "engine_dead", "message": "Engine died"}),
+        (409, {"error_code": "engine_dead", "code": "model_busy"}),
+        (409, {"detail": "The engine is busy"}),
+        (409, {"detail": "The request deadline expired"}),
+        (409, {"detail": {"error_code": ["engine_dead"], "message": "Engine died"}}),
+        (409, {"detail": {"reason": "engine_dead", "message": []}}),
         (409, {"detail": "Conflict"}),
         (409, []),
         (409, None),

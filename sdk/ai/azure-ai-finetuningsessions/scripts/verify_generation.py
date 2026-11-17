@@ -37,11 +37,13 @@ HANDWRITTEN_MODULES = {
     "_client_options.py",
     "_completion_feed.py",
     "_exceptions.py",
+    "_experimental.py",
     "_logging_setup.py",
     "_operation_compat.py",
     "_scalar_serialization.py",
     "_text_only.py",
     "aio/_completion_feed.py",
+    "experimental.py",
     "models/_text_only.py",
 }
 MAINTAINED_MODULES = HANDWRITTEN_MODULES | {

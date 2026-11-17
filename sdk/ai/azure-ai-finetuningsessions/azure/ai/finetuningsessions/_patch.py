@@ -64,6 +64,7 @@ from ._exceptions import (
     _classify_http_error,
     _classify_poll_failure,
 )
+from ._experimental import _check_experimental_request, _resolve_experimental_settings
 from ._logging_setup import install_default_logging as _install_default_logging
 from ._text_only import (
     _is_protected_mutation,
@@ -1148,12 +1149,14 @@ class FineTuningSessionClient(FineTuningSessionClientGenerated):  # pylint: disa
         allow_insecure_http: bool = False,
         **kwargs: Any,
     ) -> None:
+        settings = _resolve_experimental_settings(kwargs.pop("experimental_settings", None))
         original_kwargs = _prepare_client_options(endpoint, credential, kwargs, allow_insecure_http=allow_insecure_http)
         # The generated base is token-only typed; the supplied policy handles
         # the supported AzureKeyCredential without calling get_token on it.
         super().__init__(endpoint=endpoint, credential=cast(TokenCredential, credential), **original_kwargs)
         cast(Any, self._config).allow_insecure_http = allow_insecure_http
         cast(Any, self._config).api_version = kwargs.get("api_version", "v1")
+        cast(Any, self._config).experimental_settings = settings
         # One pipeline owns one transport. Inherited close/context-manager paths
         # now release sessions as well, and custom policies are passed only once.
         self._session_client = self._client
@@ -1717,6 +1720,9 @@ class FineTuningSession:
             resubmissions of server-marked retryable failures.
         :rtype: ~azure.ai.finetuningsessions.models.OperationResult
         """
+        _check_experimental_request(
+            body_model, getattr(getattr(self._client, "_config", None), "experimental_settings", None)
+        )
         attempt = 0
         timeline: dict[str, Optional[float]] = {
             "operation_started_at": _time.monotonic(),
