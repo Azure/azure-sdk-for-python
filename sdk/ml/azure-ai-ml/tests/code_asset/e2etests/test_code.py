@@ -72,6 +72,7 @@ class TestCode(AzureRecordedTestCase):
         code_asset_2 = registry_client._code.get(code_asset_1.name, code_asset_1.version)
         assert code_asset_1.id == code_asset_2.id
 
+    @pytest.mark.usefixtures("recorded_blob_download_size")
     def test_download_directory_code(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         with tempfile.TemporaryDirectory() as base_dir:
             # blob path is relative to the folder name of the code path.
@@ -92,6 +93,7 @@ class TestCode(AzureRecordedTestCase):
                 assert Path(target_dir, "file1.txt").read_text() == Path(source_dir, "file1.txt").read_text()
                 assert Path(target_dir, "file2.txt").read_text() == Path(source_dir, "file2.txt").read_text()
 
+    @pytest.mark.usefixtures("recorded_blob_download_size")
     def test_download_file_code(self, client: MLClient, code_asset_path: str, randstr: Callable[[str], str]) -> None:
         code_entity = Code(name=randstr("name"), version="1", path=code_asset_path)
         # code of the same content will be created only once, so we need to use name/version from created code
