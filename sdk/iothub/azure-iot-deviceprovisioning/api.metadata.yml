@@ -1,0 +1,5 @@
+apiHash: 4bf782f97ed5928e8a8c1fd3ff585975cb30d70ee2e464d57d59c3d76e87783c
+packageRelativePath: sdk/iothub/azure-iot-deviceprovisioning
+packageVersion: 1.0.0b1
+parserVersion: 0.3.31
+pythonVersion: 3.12.16
