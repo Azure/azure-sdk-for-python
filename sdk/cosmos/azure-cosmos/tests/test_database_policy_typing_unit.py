@@ -1,5 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
+# cspell:ignore kwonlyargs
 
 """Checks that the container policy keywords of the sync and async DatabaseProxy are typed the same way."""
 
