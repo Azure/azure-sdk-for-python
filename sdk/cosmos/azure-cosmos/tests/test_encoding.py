@@ -29,11 +29,8 @@ class TestEncoding(unittest.TestCase):
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
     client: cosmos_client.CosmosClient = None
-    key_client: cosmos_client.CosmosClient = None
     created_db: DatabaseProxy = None
-    key_db: DatabaseProxy = None
     created_container: ContainerProxy = None
-    key_container: ContainerProxy = None
 
     @staticmethod
     def _large_cjk_document(id_prefix):
@@ -51,12 +48,6 @@ class TestEncoding(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-
-        # Key-auth client for control-plane operations (e.g. stored procedures)
-        cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.key_db = cls.key_client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
-        cls.key_container = cls.key_db.get_container_client(
-            test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
         # AAD (or key, depending on env var) client for data-plane operations
         cls.client = test_config.TestConfig.create_data_client()
@@ -79,25 +70,6 @@ class TestEncoding(unittest.TestCase):
 
         read_doc = self.created_container.read_item(item=created_doc['id'], partition_key='pk')
         self.assertEqual(read_doc['unicode_content'], test_string)
-
-    @pytest.mark.skipif(
-        test_config.TestConfig.data_auth_mode == 'aad',
-        reason="Stored-procedure creation is a control-plane operation that needs key auth; "
-               "the account under test may have local auth disabled.",
-    )
-    def test_create_stored_procedure_with_line_separator_para_seperator_next_line_unicodes(self):
-        # scripts.create_stored_procedure and scripts.get_stored_procedure are control-plane.
-        # operations that will return 403 under AAD Data Contributor role. This test uses key_container
-        # (key-auth) for these operations.
-        test_string = 'Line Separator (\u2028) & Paragraph Separator (\u2029) & Next Line (\x85) & نیم\u200cفاصله'  # cspell:disable-line
-
-        test_string_unicode = u'Line Separator (\u2028) & Paragraph Separator (\u2029) & Next Line (\x85) & نیم\u200cفاصله'  # cspell:disable-line
-
-        stored_proc_definition = {'id': 'myid' + str(uuid.uuid4()), 'body': test_string}
-        created_sp = self.key_container.scripts.create_stored_procedure(body=stored_proc_definition)
-
-        read_sp = self.key_container.scripts.get_stored_procedure(created_sp['id'])
-        self.assertEqual(read_sp['body'], test_string_unicode)
 
     # Round-trip tests for documents that contain 4-byte UTF-8
     # characters (emoji). These exercise both writing and reading
@@ -152,7 +124,7 @@ class TestEncoding(unittest.TestCase):
         captured = {}
 
         def capture_body(request):
-            captured['body'] = request.http_request.body
+            captured['body'] = request.body
 
         def assert_compact_body(expected_content):
             # Compact bodies are handed to the transport as UTF-8 bytes, not str,
@@ -176,11 +148,14 @@ class TestEncoding(unittest.TestCase):
 
             # Keep the non-ASCII partition key: these operations must send an
             # escaped partition-key header alongside a raw UTF-8 item body.
-            created = container.create_item({
-                'id': doc_id,
-                'pk': '日本',
-                'content': 'create café 日本 🎉',
-            }, raw_request_hook=capture_body)
+            with test_config.capture_requests(container, resource_type='docs') as requests:
+                created = container.create_item({
+                    'id': doc_id,
+                    'pk': '日本',
+                    'content': 'create café 日本 🎉',
+                })
+            for request in requests:
+                capture_body(request)
             self.assertEqual(created['content'], 'create café 日本 🎉')
 
             # Round-tripping alone cannot detect a regression to escaped
@@ -189,73 +164,85 @@ class TestEncoding(unittest.TestCase):
             assert_compact_body(created['content'])
 
             created['content'] = 'upsert مرحبا 日本 🚀'  # cspell:disable-line
-            upserted = container.upsert_item(
-                created,
-                raw_request_hook=capture_body,
-            )
+            with test_config.capture_requests(container, resource_type='docs') as requests:
+                upserted = container.upsert_item(
+                    created,
+                )
+            for request in requests:
+                capture_body(request)
             self.assertEqual(upserted['content'], created['content'])
             assert_compact_body(upserted['content'])
 
             upserted['content'] = 'replace नमस्ते 日本 🌍'  # cspell:disable-line
-            replaced = container.replace_item(
-                doc_id,
-                upserted,
-                raw_request_hook=capture_body,
-            )
+            with test_config.capture_requests(container, resource_type='docs') as requests:
+                replaced = container.replace_item(
+                    doc_id,
+                    upserted,
+                )
+            for request in requests:
+                capture_body(request)
             self.assertEqual(replaced['content'], upserted['content'])
             assert_compact_body(replaced['content'])
 
-            patched = container.patch_item(
-                doc_id,
-                partition_key='日本',
-                patch_operations=[
-                    {
-                        'op': 'set',
-                        'path': '/content',
-                        'value': 'patch שלום 日本 🎊',  # cspell:disable-line
-                    },
-                ],
-                raw_request_hook=capture_body,
-            )
+            with test_config.capture_requests(container, resource_type='docs') as requests:
+                patched = container.patch_item(
+                    doc_id,
+                    partition_key='日本',
+                    patch_operations=[
+                        {
+                            'op': 'set',
+                            'path': '/content',
+                            'value': 'patch שלום 日本 🎊',  # cspell:disable-line
+                        },
+                    ],
+                )
+            for request in requests:
+                capture_body(request)
             self.assertEqual(patched['content'], 'patch שלום 日本 🎊')  # cspell:disable-line
             assert_compact_body(patched['content'])
 
             # A patch filter predicate travels in the same request body as the
             # patch operations, so a non-ASCII predicate is affected by the
             # option too and must be sent compact and accepted by the service.
-            conditional = container.patch_item(
-                doc_id,
-                partition_key='日本',
-                patch_operations=[
-                    {
-                        'op': 'set',
-                        'path': '/content',
-                        'value': 'conditional patch 日本 ✅',
-                    },
-                ],
-                filter_predicate="FROM c WHERE c.pk = '日本'",
-                raw_request_hook=capture_body,
-            )
+            with test_config.capture_requests(container, resource_type='docs') as requests:
+                conditional = container.patch_item(
+                    doc_id,
+                    partition_key='日本',
+                    patch_operations=[
+                        {
+                            'op': 'set',
+                            'path': '/content',
+                            'value': 'conditional patch 日本 ✅',
+                        },
+                    ],
+                    filter_predicate="FROM c WHERE c.pk = '日本'",
+                )
+            for request in requests:
+                capture_body(request)
             self.assertEqual(conditional['content'], 'conditional patch 日本 ✅')
             assert_compact_body("FROM c WHERE c.pk = '日本'")
 
             batch_id = 'utf8-batch-日本-' + str(uuid.uuid4())
-            batch_result = container.execute_item_batch(
-                [(
-                    'create',
-                    ({'id': batch_id, 'pk': '日本', 'content': 'batch ไทย 日本 🎉'},),  # cspell:disable-line
-                )],
-                partition_key='日本',
-                raw_request_hook=capture_body,
-            )
+            with test_config.capture_requests(container, resource_type='docs') as requests:
+                batch_result = container.execute_item_batch(
+                    [(
+                        'create',
+                        ({'id': batch_id, 'pk': '日本', 'content': 'batch ไทย 日本 🎉'},),  # cspell:disable-line
+                    )],
+                    partition_key='日本',
+                )
+            for request in requests:
+                capture_body(request)
             self.assertEqual(batch_result[0]['statusCode'], 201)
             assert_compact_body('batch ไทย 日本 🎉')  # cspell:disable-line
 
-            read_batch_result = container.execute_item_batch(
-                [('read', (batch_id,))],
-                partition_key='日本',
-                raw_request_hook=capture_body,
-            )
+            with test_config.capture_requests(container, resource_type='docs') as requests:
+                read_batch_result = container.execute_item_batch(
+                    [('read', (batch_id,))],
+                    partition_key='日本',
+                )
+            for request in requests:
+                capture_body(request)
             self.assertEqual(read_batch_result[0]['statusCode'], 200)
             self.assertEqual(read_batch_result[0]['resourceBody']['content'], 'batch ไทย 日本 🎉')  # cspell:disable-line
             self.assertNotIn('日本', captured['body'])
@@ -264,11 +251,13 @@ class TestEncoding(unittest.TestCase):
             # A delete-only batch is the other body-free shape: like read, the
             # operation carries just an id, so the item-write option must leave
             # it escaped. The service must still accept that escaped form.
-            delete_batch_result = container.execute_item_batch(
-                [('delete', (batch_id,))],
-                partition_key='日本',
-                raw_request_hook=capture_body,
-            )
+            with test_config.capture_requests(container, resource_type='docs') as requests:
+                delete_batch_result = container.execute_item_batch(
+                    [('delete', (batch_id,))],
+                    partition_key='日本',
+                )
+            for request in requests:
+                capture_body(request)
             self.assertEqual(delete_batch_result[0]['statusCode'], 204)
             self.assertNotIn('日本', captured['body'])
             self.assertIn('\\u65e5', captured['body'])

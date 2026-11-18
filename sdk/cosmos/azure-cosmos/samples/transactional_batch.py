@@ -82,9 +82,11 @@ def execute_item_batch(database, container):
         print("\nAn error occurred in the batch operation. All operations have been rolled back.\n")
 
     
-    # You can also use this logic to read directly from a file into the batch you'd like to create:
-    # with open("file_name.txt", "r") as data_file:
-    #    container.execute_item_batch([("upsert", (t,)) for t in data_file.readlines()])
+    # Each JSON Lines document must have account_number="Account1"; the file must fit one batch.
+    # import json
+    # with open("file_name.txt", "r", encoding="utf-8") as data_file:
+    #     operations = [("upsert", (json.loads(line),)) for line in data_file]
+    #     container.execute_item_batch(operations, partition_key="Account1")
 
 
 def get_sales_order(item_id):

@@ -1,0 +1,167 @@
+#!/usr/bin/env bash
+# ---------------------------------------------------------------------------
+# RESPONSIBILITY: create one profiling session's setup records, not a workload.
+#
+# It:
+#   - creates PROFILING_SESSION_ID, a UTC timestamp in YYYYMMDD-HHMMSSmmm form.
+#     Reports select baseline rows with --profiling-session-id. Milliseconds keep
+#     two sessions started in the same second apart.
+#   - creates artifacts/<phase>-<PROFILING_SESSION_ID>/ for evidence.
+#   - writes manifest-<PROFILING_SESSION_ID>.json recording the build, host,
+#     test target, load and results container. No secrets are written to it.
+#   - writes session.env, which the operator sources to get PROFILING_SESSION_ID and
+#     PROFILING_SESSION_DIR into their terminal. A child process cannot export variables
+#     back to the shell that started it, hence the printed 'source' line.
+#
+# PROFILING_SESSION_ID groups the experiment's evidence. CPU/memory captures use separate stamps
+# and append them to run.txt so their rows can be matched to the session:
+#
+#   PROFILING_SESSION_ID  20260810-180432717
+#   directory  artifacts/point-read-profile-20260810-180432717/
+#   row tag    workload_id = baseline-read-rust-20260810-180432717
+#                            ^prefix  ^op ^backend ^profiling session identifier
+#
+# The tag shape is required, not cosmetic: reports select rows with
+# STARTSWITH(c.workload_id, @prefix) AND ENDSWITH(c.workload_id, @run_id).
+# If PERF_WORKLOAD_ID is unset, perf_reporting_config.py falls back to a random UUID;
+# rows are still written but no report can ever match them.
+#
+# Preparation fails here when the manifest is missing, unparseable, has no
+# build labels, or the Python checkout has uncommitted changes by default.
+# PROFILING_ALLOW_DIRTY=1 allows local edits; the manifest retains the dirty flag
+# and source fingerprint. A fingerprint does not preserve the source contents.
+#
+# Usage:
+#   ./profiling_create_session.sh                      # phase: point-read-profile
+#   ./profiling_create_session.sh my-experiment        # custom phase label
+# ---------------------------------------------------------------------------
+set -uo pipefail
+cd "$(dirname "$0")"
+
+source ./profiling_common.sh || exit 2
+
+PHASE="${1:-point-read-profile}"
+# The phase becomes a directory name and a JSON string value, so it is checked
+# before either is built from it.
+profiling_validate_phase "${PHASE}" || exit 2
+
+profiling_load_env || exit 2
+profiling_verify_extension_build || exit 1
+
+# Milliseconds match the YYYYMMDD-HHMMSSmmm shape the reporting tools document,
+# and keep two sessions started in the same second from colliding. date's %N is
+# not portable, so fall back to zeros rather than mint a malformed id.
+_ns="$(date +%N 2>/dev/null || echo 000000000)"
+[[ "${_ns}" =~ ^[0-9]{9}$ ]] || _ns="000000000"
+export PROFILING_SESSION_ID="$(date -u +%Y%m%d-%H%M%S)${_ns:0:3}"
+PROFILING_SESSION_DIR="$PWD/artifacts/${PHASE}-${PROFILING_SESSION_ID}"
+mkdir -p "$PWD/artifacts" || exit 1
+mkdir "$PROFILING_SESSION_DIR" || { echo "ERROR: cannot create a fresh ${PROFILING_SESSION_DIR}" >&2; exit 1; }
+
+# One JSON record of the build/host/account/load behind everything in this
+# directory. Defined in perf_common.sh; required, never writes keys.
+# The generic manifest stamp equals the profiling session identifier here.
+write_run_manifest "$PROFILING_SESSION_DIR" "$PROFILING_SESSION_ID" "$PHASE" || exit 1
+
+MANIFEST="${PROFILING_SESSION_DIR}/manifest-${PROFILING_SESSION_ID}.json"
+
+if [[ ! -f "${MANIFEST}" ]]; then
+  echo "ERROR: no manifest was written at ${MANIFEST}." >&2
+  echo "       Without it the session cannot record which build produced its" >&2
+  echo "       numbers, so preparation stops here." >&2
+  exit 1
+fi
+
+python3 - "$MANIFEST" "${PROFILING_ALLOW_DIRTY:-0}" <<'PY'
+import json
+import sys
+
+manifest_path, allow_dirty = sys.argv[1], sys.argv[2] == "1"
+
+try:
+    with open(manifest_path) as handle:
+        manifest = json.load(handle)
+except Exception as exc:
+    print(f"    manifest is not readable JSON: {exc}")
+    sys.exit(1)
+
+build = manifest.get("build")
+if not isinstance(build, dict):
+    print("    manifest has no build section")
+    sys.exit(1)
+
+problems = []
+
+# Uncommitted code cannot be named by a commit hash, so a profile taken from it
+# cannot be reproduced or compared.
+for field in ("git_dirty", "rust_driver_dirty"):
+    if build.get(field) is True:
+        problems.append(f"{field}=true (built from uncommitted code)")
+
+# Without these the row cannot be traced back to source at all.
+for field in (
+    "git_commit",
+    "rust_driver_commit",
+    "rust_extension_path",
+    "rust_extension_python_commit",
+    "rust_extension_driver_commit",
+):
+    if build.get(field) in (None, "", "unknown", "none"):
+        problems.append(f"{field} is unknown")
+
+if build.get("rust_extension_python_commit") != build.get("git_commit"):
+    problems.append("loaded extension Python commit differs from checkout commit")
+if build.get("rust_extension_driver_commit") != build.get("rust_driver_commit"):
+    problems.append("loaded extension Rust-driver commit differs from checkout commit")
+
+# The path proof in the next document depends on this counter existing.
+if build.get("rust_extension_has_operation_counter") != "True":
+    problems.append("the loaded _rust extension has no _debug_operation_count()")
+
+if not problems:
+    print("    build record complete: source labels recorded and no dirty-source flags")
+    sys.exit(0)
+
+for problem in problems:
+    print(f"    !! {problem}")
+
+dirty_only = all("dirty" in problem for problem in problems)
+if dirty_only and allow_dirty:
+    print("    PROFILING_ALLOW_DIRTY=1: continuing, but the recorded commits do")
+    print("    not describe the code that will run")
+    sys.exit(0)
+sys.exit(1)
+PY
+if [[ $? -ne 0 ]]; then
+  echo "ERROR: the session's build record is incomplete (see above). Preparation" >&2
+  echo "       stops here because these numbers could not be tied to a build." >&2
+  echo "       Commit the changes, or rebuild, then re-run." >&2
+  exit 1
+fi
+
+# The operator's shell needs these; a child process cannot export into it.
+SESSION_ENV="${PROFILING_SESSION_DIR}/session.env"
+cat > "${SESSION_ENV}" <<EOF
+export PROFILING_SESSION_ID="${PROFILING_SESSION_ID}"
+export PROFILING_SESSION_DIR="${PROFILING_SESSION_DIR}"
+export PROFILING_SESSION_LABEL="${PHASE}"
+EOF
+profiling_load_session "${PROFILING_SESSION_DIR}" || {
+  echo "ERROR: generated session failed validation." >&2
+  exit 1
+}
+
+printf 'artifacts=%s\ntarget=%s/%s\nprofiling_session_id=%s\n' \
+  "$PROFILING_SESSION_DIR" "$COSMOS_DATABASE" "$COSMOS_CONTAINER" "$PROFILING_SESSION_ID" \
+  | tee "$PROFILING_SESSION_DIR/run.txt"
+
+echo
+echo "=== Profiling session ${PROFILING_SESSION_ID} open ==="
+echo "    Tag every workload with a matching id, for example:"
+echo "        PERF_WORKLOAD_ID=baseline-read-rust-${PROFILING_SESSION_ID}"
+echo "    and read its rows back with:"
+echo "        python3 latency_report.py --prefix baseline- --profiling-session-id ${PROFILING_SESSION_ID}"
+echo
+echo "    Load this session into the current terminal:"
+echo "        source ${SESSION_ENV}"
+exit 0

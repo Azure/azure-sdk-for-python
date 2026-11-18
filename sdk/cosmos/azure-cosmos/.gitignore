@@ -1,0 +1,27 @@
+# Rust build artifacts (anchored to this package).
+# Cargo.lock is tracked on purpose: builds use --locked.
+# _rust.pyi is tracked source, so only the compiled extension files are listed.
+/target/
+/azure/cosmos/*.pdb
+/azure/cosmos/_rust*.so
+/azure/cosmos/_rust*.pyd
+/azure/cosmos/_rust*.dylib
+
+# Local override that builds against a driver checkout instead of the pinned
+# commit. See docs/build_and_release.md section 7.
+/.cargo/
+
+# Local Clippy output
+/bite52-clippy.txt
+
+# Local working notes: parity audits, API-review notes, and design scratch.
+# Kept on each developer's machine only and never committed.
+/docs/V5/
+
+# Workload credentials, including copies in nested workload folders.
+# profiling_target.env contains no secrets and remains checked in.
+/tests/workloads/**/*secrets.env
+
+# Generated workload profiler captures, logs, reports, and run manifests.
+/tests/workloads/**/artifacts/
+/tests/workloads/**/logs/

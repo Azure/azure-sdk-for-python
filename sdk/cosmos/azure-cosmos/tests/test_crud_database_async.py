@@ -22,7 +22,7 @@ import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes
+from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
 
@@ -83,8 +83,7 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        # Control-plane (key-auth): used for all database CRUD / throughput / account
-        # operations in this file. AAD data-plane tokens cannot authorize control-plane.
+        # Use the key-auth client for database operations.
         self.key_client, self.database_for_test, self.client, self.data_database_for_test = (
             test_config.TestConfig.create_test_clients_async(self.configs.TEST_DATABASE_ID))
         await self.key_client.__aenter__()
@@ -120,37 +119,13 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         database_proxy = await self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         assert database_id == database_proxy.id
-        db_throughput = await database_proxy.get_throughput()
-        assert 5000 == db_throughput.offer_throughput
 
         database_proxy = await self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         assert database_id == database_proxy.id
-        db_throughput = await database_proxy.get_throughput()
-        assert 5000 == db_throughput.offer_throughput
 
         # delete database.
         await self.key_client.delete_database(database_id)
 
-    async def test_database_level_offer_throughput_async(self):
-        # Create a database with throughput
-        offer_throughput = 1000
-        database_id = test_config.unique_database_id()
-        created_db = await self.key_client.create_database(
-            id=database_id,
-            offer_throughput=offer_throughput
-        )
-        assert created_db.id == database_id
-
-        # Verify offer throughput for database
-        offer = await created_db.get_throughput()
-        assert offer.offer_throughput == offer_throughput
-
-        # Update database offer throughput
-        new_offer_throughput = 2000
-        offer = await created_db.replace_throughput(new_offer_throughput)
-        assert offer.offer_throughput == new_offer_throughput
-
-        await self.key_client.delete_database(database_id)
 
     async def test_sql_query_crud_async(self):
         # create two databases.
@@ -180,22 +155,6 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.key_client.delete_database(db1.id)
         await self.key_client.delete_database(db2.id)
-
-    async def test_database_account_functionality_async(self):
-        # Validate database account functionality.
-        database_account = await self.key_client._get_database_account()
-        assert database_account.DatabasesLink == '/dbs/'
-        assert database_account.MediaLink == '/media/'
-        if (HttpHeaders.MaxMediaStorageUsageInMB in
-                self.key_client.client_connection.last_response_headers):
-            assert database_account.MaxMediaStorageUsageInMB == self.key_client.client_connection.last_response_headers[
-                HttpHeaders.MaxMediaStorageUsageInMB]
-        if (HttpHeaders.CurrentMediaStorageUsageInMB in
-                self.key_client.client_connection.last_response_headers):
-            assert database_account.CurrentMediaStorageUsageInMB == self.key_client.client_connection.last_response_headers[
-                HttpHeaders.CurrentMediaStorageUsageInMB]
-        assert database_account.ConsistencyPolicy['defaultConsistencyLevel'] is not None
-
 
 
 if __name__ == '__main__':

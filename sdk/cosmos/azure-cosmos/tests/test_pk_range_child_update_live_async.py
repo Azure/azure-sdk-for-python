@@ -223,7 +223,7 @@ class TestPkRangeChildUpdateLiveAsync(unittest.IsolatedAsyncioTestCase):
                 phase = "routing_refresh"
                 new_ids = set(self.routing_map._rangeById)
                 if new_ids.isdisjoint(old_ids) and len(new_ids) > len(old_ids):
-                    phase = "read_offer"
+                    phase = "get_throughput"
                     offer = await self.key_container.get_throughput()
                     offer_pending = offer.properties["content"].get("isOfferReplacePending", False)
                     if not offer_pending:

@@ -91,7 +91,7 @@ class FeedRangeCompositeContinuation:
         feed_range: Optional[FeedRangeInternal] = None
         if data.get(FeedRangeInternalEpk.type_property_name):
             feed_range = FeedRangeInternalEpk.from_json(data)
-        elif data.get(FeedRangeInternalPartitionKey.type_property_name):
+        elif FeedRangeInternalPartitionKey.type_property_name in data:
             feed_range = FeedRangeInternalPartitionKey.from_json(data, continuation[0].feed_range)
         else:
             raise ValueError("Invalid feed range composite continuation token [Missing feed range scope]")
@@ -106,20 +106,7 @@ class FeedRangeCompositeContinuation:
         overlapping_ranges = routing_provider.get_overlapping_ranges(collection_link,
                                                                      [self._current_token.feed_range], feed_options)
 
-        if len(overlapping_ranges) == 1:
-            # merge,reusing the existing the feedRange and continuationToken
-            pass
-        else:
-            # split, remove the parent range and then add new child ranges.
-            # For each new child range, using the continuation token from the parent
-            self._continuation.popleft()
-            for child_range in overlapping_ranges:
-                self._continuation.append(
-                    CompositeContinuationToken(
-                        Range.PartitionKeyRangeToRange(child_range),
-                        self._current_token.token))
-
-            self._current_token = self._continuation[0]
+        self._replace_split_range(overlapping_ranges)
 
     async def handle_feed_range_gone_async(
             self,
@@ -132,20 +119,26 @@ class FeedRangeCompositeContinuation:
                 [self._current_token.feed_range],
                 feed_options)
 
-        if len(overlapping_ranges) == 1:
-            # merge,reusing the existing the feedRange and continuationToken
-            pass
-        else:
-            # split, remove the parent range and then add new child ranges.
-            # For each new child range, using the continuation token from the parent
-            self._continuation.popleft()
-            for child_range in overlapping_ranges:
-                self._continuation.append(
-                    CompositeContinuationToken(
-                        Range.PartitionKeyRangeToRange(child_range),
-                        self._current_token.token))
+        self._replace_split_range(overlapping_ranges)
 
-            self._current_token = self._continuation[0]
+    def _replace_split_range(self, overlapping_ranges) -> None:
+        if not overlapping_ranges:
+            raise ValueError("Change-feed routing returned no overlapping ranges.")
+        if len(overlapping_ranges) == 1:
+            return
+        parent = self._current_token
+        children = []
+        for child in overlapping_ranges:
+            lower = max(parent.feed_range.min, child["minInclusive"])
+            upper = min(parent.feed_range.max, child["maxExclusive"])
+            if lower < upper:
+                children.append(CompositeContinuationToken(Range(lower, upper, True, False), parent.token))
+        if not children:
+            raise ValueError("Change-feed split returned no children inside the saved scope.")
+        self._continuation.popleft()
+        self._continuation.extend(children)
+        self._current_token = self._continuation[0]
+        self._initial_no_result_range = None
 
     def should_retry_on_not_modified_response(self) -> bool:
         # when getting 304(Not Modified) response from one sub feed range,

@@ -36,7 +36,7 @@ from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
-    _ALLOWED_REDIRECT_DOMAIN_SUFFIXES,
+    _ALLOWED_REDIRECT_DOMAIN_SUFFIX_GROUPS,
     _AZURE_MONITOR_DISTRO_VERSION_ARG,
     _APPLICATIONINSIGHTS_AUTHENTICATION_STRING,
     _APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES,
@@ -86,12 +86,14 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_initial_success,
     get_statsbeat_shutdown,
     increment_and_check_statsbeat_failure_count,
+    get_statsbeat_manager,
     is_statsbeat_enabled,
     set_statsbeat_initial_success,
     set_statsbeat_gen_ai_input_output_limit_increase_feature_set,
     set_statsbeat_multi_endpoint_routing_feature_set,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
+    _get_region_from_endpoint,
     _update_requests_map,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat.customer._utils import (
@@ -109,6 +111,7 @@ logger = logging.getLogger(__name__)
 _AZURE_TEMPDIR_PREFIX = "Microsoft-AzureMonitor-"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
+_CUSTOMER_REDIRECT_LOCK = threading.RLock()
 _MAX_ROUTE_STORAGE_PARTITIONS = 64
 _MAX_CACHED_ROUTE_EXPORTERS = _MAX_ROUTE_STORAGE_PARTITIONS
 _ROUTING_REUSED_NAMED_POLICY_OPTIONS = (
@@ -188,12 +191,16 @@ class BaseExporter:
         else:
             # We use the credential on a regular exporter or customer sdkStats exporter
             self._credential = _get_authentication_credential(**kwargs)
-        self._consecutive_redirects = 0  # To prevent circular redirects
+        # Internal Statsbeat redirects must not wait on a customer route update
+        # that is itself waiting for an in-flight Statsbeat export.
+        self._redirect_lock = (
+            threading.RLock() if self._is_stats_exporter() or self._route is not None else _CUSTOMER_REDIRECT_LOCK
+        )
         self._routed_redirect_policy = _RoutedRedirectPolicy()
         self._disable_offline_storage = kwargs.get("disable_offline_storage", False)
         self._connection_string = parsed_connection_string._connection_string
         self._endpoint = route[0].rstrip("/") if route is not None else parsed_connection_string.endpoint
-        self._region = parsed_connection_string.region
+        self._region: Optional[str] = parsed_connection_string.region
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._routed_aad_audience = ""
         if self._enable_multi_endpoint_routing:
@@ -555,7 +562,9 @@ class BaseExporter:
     # pylint: disable=too-many-nested-blocks
     # pylint: disable=too-many-statements
     # pylint: disable=too-many-locals
-    def _transmit(self, envelopes: List[TelemetryItem], _skip_rate_limit: bool = False) -> ExportResult:
+    def _transmit(
+        self, envelopes: List[TelemetryItem], _skip_rate_limit: bool = False, _redirect_count: int = 0
+    ) -> ExportResult:
         # pylint: disable=protected-access
         """
         Transmit the data envelopes to the ingestion service.
@@ -566,6 +575,8 @@ class BaseExporter:
         :type envelopes: list of ~azure.monitor.opentelemetry.exporter._generated.exporter.models.TelemetryItem
         :param _skip_rate_limit: Internal flag to skip rate limiting on recursive calls (e.g. redirects).
         :type _skip_rate_limit: bool
+        :param _redirect_count: Number of redirects followed by this export chain.
+        :type _redirect_count: int
         :return: The result of the export.
         :rtype: ~azure.monitor.opentelemetry.exporter.export._base._ExportResult
         """
@@ -653,7 +664,6 @@ class BaseExporter:
                 else:
                     track_response = track_result
                 if not track_response.errors:  # 200
-                    self._consecutive_redirects = 0
                     if not self._is_stats_exporter():
                         logger.info(
                             "Transmission succeeded: Item received: %s. Items accepted: %s",
@@ -746,7 +756,6 @@ class BaseExporter:
                             )
                         if self._should_collect_customer_sdkstats():
                             track_dropped_items_from_storage(result_from_storage, resend_envelopes)
-                        self._consecutive_redirects = 0
                     elif resend_envelopes:
                         # Track items that would have been retried but are dropped since client has local storage disabled
                         if self._route is not None:
@@ -809,90 +818,9 @@ class BaseExporter:
                         if self._should_collect_customer_sdkstats() and isinstance(response_error.status_code, int):
                             track_dropped_items(envelopes, response_error.status_code)
                 elif _is_redirect_code(response_error.status_code):
-                    self._consecutive_redirects = self._consecutive_redirects + 1
-                    # pylint: disable=W0212
-                    if self._consecutive_redirects < self.client._config.redirect_policy.max_redirects:  # type: ignore
-                        if response_error.response and response_error.response.headers:  # type: ignore
-                            redirect_has_headers = True
-                            location = response_error.response.headers.get("location")  # type: ignore
-                            url = urlparse(location)
-                        else:
-                            redirect_has_headers = False
-                        if redirect_has_headers and url.scheme and url.netloc:  # pylint: disable=E0606
-                            current_url = urlparse(self.client._config.host)  # pylint: disable=W0212
-                            is_insecure_routed_redirect = self._route is not None and not _is_trusted_routed_redirect(
-                                self.client._config.host, location
-                            )
-                            is_cross_origin_redirect = self._route is None and not self._is_same_registered_domain(
-                                current_url.netloc, url.netloc
-                            )
-                            if is_insecure_routed_redirect or is_cross_origin_redirect:
-                                if not self._is_stats_exporter():
-                                    if self._should_collect_customer_sdkstats():
-                                        track_dropped_items(
-                                            envelopes,
-                                            DropCode.CLIENT_EXCEPTION,
-                                            _exception_categories.CLIENT_EXCEPTION.value,
-                                        )
-                                    if is_insecure_routed_redirect:
-                                        logger.error("Refusing untrusted routed redirect.")
-                                    else:
-                                        logger.error(
-                                            "Refusing cross-origin redirect to %s://%s.",
-                                            url.scheme,
-                                            url.netloc,
-                                        )
-                                result = ExportResult.FAILED_NOT_RETRYABLE
-                            else:
-                                if self._route is not None:
-                                    self._routed_redirect_policy.redirect_url = location
-                                # Change the host to the new redirected host
-                                self.client._config.host = "{}://{}".format(
-                                    url.scheme, url.netloc
-                                )  # pylint: disable=W0212
-                                # Attempt to export again
-                                result = self._transmit(envelopes, _skip_rate_limit=True)
-                                if self._route is not None:
-                                    retry_after_delay_seconds = self._retry_after_delay_seconds
-                        else:
-                            if not self._is_stats_exporter():
-                                if self._should_collect_customer_sdkstats():
-                                    track_dropped_items(
-                                        envelopes,
-                                        DropCode.CLIENT_EXCEPTION,
-                                        _exception_categories.CLIENT_EXCEPTION.value,
-                                    )
-                                if self._route is not None:
-                                    logger.error(
-                                        "Multi-endpoint routing: Could not parse a redirect. "
-                                        "Configure the correct HTTPS ingestion endpoint.",
-                                    )
-                                else:
-                                    logger.error("Error parsing redirect information.")
-                            result = ExportResult.FAILED_NOT_RETRYABLE
-                    else:
-                        if not self._is_stats_exporter():
-                            # Track dropped items in customer sdkstats, non-retryable scenario
-                            if self._should_collect_customer_sdkstats():
-                                track_dropped_items(
-                                    envelopes,
-                                    DropCode.CLIENT_EXCEPTION,
-                                    _exception_categories.CLIENT_EXCEPTION.value,
-                                )
-                            if self._route is not None:
-                                logger.error(
-                                    "Multi-endpoint routing: Too many consecutive redirects. "
-                                    "Configure the correct HTTPS ingestion endpoint.",
-                                )
-                            else:
-                                logger.error(
-                                    "Error sending telemetry because of circular redirects. "
-                                    "Please check the integrity of your connection string."
-                                )
-                        # If redirect but did not return, exception occurred
-                        if self._should_collect_stats():
-                            _update_requests_map(_REQ_EXCEPTION_NAME[1], value="Circular Redirect")
-                        result = ExportResult.FAILED_NOT_RETRYABLE
+                    result = self._handle_redirect(response_error, envelopes, _redirect_count + 1)
+                    if self._route is not None:
+                        retry_after_delay_seconds = self._retry_after_delay_seconds
                 else:
                     # Any other status code counts as failure (non-retryable)
                     # 400 - Invalid - The server cannot or will not process the request due to the invalid telemetry (invalid data, iKey, etc.)
@@ -1024,8 +952,77 @@ class BaseExporter:
             return final_result
 
         # No spans to export
-        self._consecutive_redirects = 0
         return ExportResult.SUCCESS
+
+    def _handle_redirect(
+        self, error: HttpResponseError, envelopes: List[TelemetryItem], redirect_count: int
+    ) -> ExportResult:
+        # Serialize validation, both routes, and the matching retry, including
+        # nested redirects, across customer exporters sharing Statsbeat.
+        with self._redirect_lock:
+            if redirect_count >= self.client._config.redirect_policy.max_redirects:  # pylint: disable=protected-access
+                if self._route is not None:
+                    message = (
+                        "Multi-endpoint routing: Too many consecutive redirects. "
+                        "Configure the correct HTTPS ingestion endpoint."
+                    )
+                else:
+                    message = (
+                        "Error sending telemetry because of circular redirects. "
+                        "Please check the integrity of your connection string."
+                    )
+                if self._should_collect_stats():
+                    _update_requests_map(_REQ_EXCEPTION_NAME[1], value="Circular Redirect")
+            else:
+                headers = getattr(error.response, "headers", None)
+                location = headers.get("location") if headers else None
+                try:
+                    url = urlparse(location) if isinstance(location, str) else None
+                    current_url = urlparse(self.client._config.host)  # pylint: disable=protected-access
+                    if self._route is not None:
+                        allowed = isinstance(location, str) and _is_trusted_routed_redirect(
+                            self.client._config.host, location  # pylint: disable=protected-access
+                        )
+                    else:
+                        allowed = (
+                            url is not None
+                            and url.scheme == "https"
+                            and url.username is None
+                            and url.password is None
+                            and self._is_same_registered_domain(current_url.netloc, url.netloc)
+                        )
+                except ValueError:
+                    allowed = False
+                if allowed and url is not None:
+                    endpoint = "{}://{}".format(url.scheme, url.netloc)
+                    try:
+                        if self._should_collect_stats():
+                            get_statsbeat_manager()._update_endpoint(endpoint)  # pylint: disable=protected-access
+                    except Exception:  # pylint: disable=broad-except
+                        logger.warning("Failed to update Statsbeat after an ingestion redirect.", exc_info=True)
+                        return ExportResult.FAILED_RETRYABLE
+                    if self._route is not None:
+                        self._routed_redirect_policy.redirect_url = location
+                    self.client._config.host = endpoint  # pylint: disable=protected-access
+                    if self._route is None:
+                        self._endpoint = endpoint
+                        self._region = _get_region_from_endpoint(endpoint)
+                    return self._transmit(envelopes, _skip_rate_limit=True, _redirect_count=redirect_count)
+                if self._route is not None:
+                    message = (
+                        "Multi-endpoint routing: Refusing an invalid or untrusted routed redirect. "
+                        "Configure the correct HTTPS ingestion endpoint."
+                    )
+                else:
+                    message = "Refusing invalid or untrusted ingestion redirect."
+
+            if not self._is_stats_exporter():
+                if self._should_collect_customer_sdkstats():
+                    track_dropped_items(
+                        envelopes, DropCode.CLIENT_EXCEPTION, _exception_categories.CLIENT_EXCEPTION.value
+                    )
+                logger.error(message)
+            return ExportResult.FAILED_NOT_RETRYABLE
 
     # OneSettings configuration-change callback: toggles local (offline) storage.
     def _local_storage_configuration_callback(self, settings: Dict[str, str]) -> None:
@@ -1123,6 +1120,8 @@ class BaseExporter:
     def _is_customer_sdkstats_exporter(self):
         return getattr(self, "_is_customer_sdkstats", False)
 
+    # Keep the redirect safety checks as explicit early returns.
+    # pylint: disable=too-many-return-statements
     def _is_same_registered_domain(self, current_netloc: str, redirect_netloc: str) -> bool:
         """Return True if the redirect target is safe to follow.
 
@@ -1132,8 +1131,8 @@ class BaseExporter:
 
         A redirect is permitted only when the target equals the currently
         configured host exactly, or when both the current host and the
-        redirect target are under one of the known Azure Monitor ingestion
-        host suffixes (see ``_ALLOWED_REDIRECT_DOMAIN_SUFFIXES``). Customers
+        redirect target are under trusted Azure Monitor ingestion host suffixes
+        in the same cloud (see ``_ALLOWED_REDIRECT_DOMAIN_SUFFIX_GROUPS``). Customers
         with a custom (non-Azure) ingestion host will therefore not have
         server-issued cross-host redirects followed; such deployments should
         configure their proxy to terminate redirects locally.
@@ -1144,22 +1143,32 @@ class BaseExporter:
         :rtype: bool
         """
 
-        def _host(netloc: str) -> str:
-            return netloc.split("@")[-1].split(":")[0].lower().rstrip(".")
-
         if not current_netloc or not redirect_netloc:
             return False
-        current_host = _host(current_netloc)
-        redirect_host = _host(redirect_netloc)
+        try:
+            current = urlparse("https://" + current_netloc)
+            redirect = urlparse("https://" + redirect_netloc)
+            if any(
+                value is not None
+                for value in (current.username, current.password, redirect.username, redirect.password)
+            ):
+                return False
+            current_host = (current.hostname or "").rstrip(".")
+            redirect_host = (redirect.hostname or "").rstrip(".")
+            current_port = current.port if current.port is not None else 443
+            redirect_port = redirect.port if redirect.port is not None else 443
+        except ValueError:
+            return False
         if not current_host or not redirect_host:
             return False
-        # Exact host match is always safe.
         if current_host == redirect_host:
-            return True
-        # Otherwise both hosts must live under the same trusted Azure Monitor
-        # ingestion suffix.
-        for suffix in _ALLOWED_REDIRECT_DOMAIN_SUFFIXES:
-            if current_host.endswith(suffix) and redirect_host.endswith(suffix):
+            return current_port == redirect_port
+        if current_port != 443 or redirect_port != 443:
+            return False
+        for group in _ALLOWED_REDIRECT_DOMAIN_SUFFIX_GROUPS:
+            if any(current_host.endswith(suffix) for suffix in group) and any(
+                redirect_host.endswith(suffix) for suffix in group
+            ):
                 return True
         return False
 

@@ -112,10 +112,12 @@ async def read_change_feed_with_continuation(container):
     print('\nReading Change Feed from the continuation\n')
     # Create items
     await create_items(container, 10, 'WA')
-    response_iterator = container.query_items_change_feed(start_time="Beginning")
-    async for doc in response_iterator:
-        print(doc)
-    continuation_token = container.client_connection.last_response_headers['etag']
+    pages = container.query_items_change_feed(start_time="Beginning").by_page()
+    async for page in pages:
+        async for doc in page:
+            print(doc)
+    # Save the pager's checkpoint only after processing its changes.
+    continuation_token = pages.continuation_token
 
     # Create additional items
     await create_items(container, 5, 'CA')
@@ -132,17 +134,22 @@ async def read_change_feed_with_all_versions_and_delete_mode(container):
     print('\nReading Change Feed with AllVersionsAndDeletes mode\n')
     # Read the initial change feed with 'AllVersionsAndDeletes' mode.
     # This initial call was made to store a point in time in a 'continuation' token
-    response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes")
-    async for doc in response_iterator:
-        print(doc)
-    continuation_token = container.client_connection.last_response_headers['etag']
+    pages = container.query_items_change_feed(mode="AllVersionsAndDeletes").by_page()
+    async for page in pages:
+        async for doc in page:
+            print(doc)
+    continuation_token = pages.continuation_token
 
     # Read all change feed with 'AllVersionsAndDeletes' mode after create items from a continuation
     await create_items(container, 10, 'CA')
     await create_items(container, 10, 'OR')
-    response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", continuation=continuation_token)
-    async for doc in response_iterator:
-        print(doc)
+    pages = container.query_items_change_feed(
+        mode="AllVersionsAndDeletes", continuation=continuation_token
+    ).by_page()
+    async for page in pages:
+        async for doc in page:
+            print(doc)
+    continuation_token = pages.continuation_token
 
     # Read all change feed with 'AllVersionsAndDeletes' mode after delete items from a continuation
     await clean_up(container)
@@ -155,19 +162,23 @@ async def read_change_feed_with_all_versions_and_delete_mode_with_partition_key(
 
     # Read the initial change feed with 'AllVersionsAndDeletes' mode with partition key('CA').
     # This initial call was made to store a point in time and 'partition_key' in a 'continuation' token
-    response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", partition_key="CA")
-    async for doc in response_iterator:
-        print(doc)
-    continuation_token = container.client_connection.last_response_headers['etag']
+    pages = container.query_items_change_feed(mode="AllVersionsAndDeletes", partition_key="CA").by_page()
+    async for page in pages:
+        async for doc in page:
+            print(doc)
+    continuation_token = pages.continuation_token
 
     await create_items(container, 10, 'CA')
     await create_items(container, 10, 'OR')
     # Read change feed 'AllVersionsAndDeletes' mode with 'CA' partition key value from the previous continuation.
     # Should only print the created items with 'CA' partition key value
-    response_iterator = container.query_items_change_feed(mode='AllVersionsAndDeletes', continuation=continuation_token)
-    async for doc in response_iterator:
-        print(doc)
-    continuation_token = container.client_connection.last_response_headers['etag']
+    pages = container.query_items_change_feed(
+        mode='AllVersionsAndDeletes', continuation=continuation_token
+    ).by_page()
+    async for page in pages:
+        async for doc in page:
+            print(doc)
+    continuation_token = pages.continuation_token
 
     await clean_up(container)
     # Read change feed 'AllVersionsAndDeletes' mode with 'CA' partition key value from the previous continuation.

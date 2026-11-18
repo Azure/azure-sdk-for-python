@@ -7,4 +7,3 @@ if __name__ == '__main__':
     scenario.run_basic_async()
     scenario.run_manual_conflict_async()
     scenario.run_LWW_async()
-    scenario.run_UDP_async()

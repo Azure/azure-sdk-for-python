@@ -129,7 +129,7 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
         captured = {}
 
         def capture_body(request):
-            captured['body'] = request.http_request.body
+            captured['body'] = request.body
 
         async with CosmosClient(
             self.host,
@@ -143,10 +143,12 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
             )
             created = None
             try:
-                created = await container.create_item(
-                    document,
-                    raw_request_hook=capture_body,
-                )
+                with test_config.capture_requests(container, resource_type='docs') as requests:
+                    created = await container.create_item(
+                        document,
+                    )
+                for request in requests:
+                    capture_body(request)
 
                 self.assertEqual(created['content'], document['content'])
                 # Compact bodies reach the transport as UTF-8 bytes, not str.

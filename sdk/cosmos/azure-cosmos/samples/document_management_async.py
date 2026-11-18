@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import json
+
 from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import StatusCodes
@@ -60,16 +62,15 @@ async def read_item(container, doc_id):
 async def read_items(container):
     print('\n1.3 - Reading all items in a container\n')
 
-    # NOTE: Use MaxItemCount on Options to control how many items come back per trip to the server
-    #       Important to handle throttles whenever you are doing operations such as this that might
-    #       result in a 429 (throttled request)
+    # max_item_count is a page-size hint, not a result limit.
+    # Continue the same live iterator; continuation tokens and resumption are not supported.
+    # Use query_items to select all items when you need to save and resume progress.
     read_all_items_response = container.read_all_items(max_item_count=10)
 
     # The asynchronous client returns an asynchronous iterator object for methods that
     # return several items, so attempting to cast this object into a list directly will
     # throw an error; instead, iterate over the items using an async for loop like shown
-    # here and in the query_items() method below. We also do not await read_all() because
-    # it doesn't deal with partition key logic the way query_items() does
+    # here and in the query_items() method below. Creating the pager does not perform I/O.
     item_list = [item async for item in read_all_items_response]
 
     print('Found {0} items'.format(item_list.__len__()))
@@ -79,7 +80,7 @@ async def read_items(container):
 
     # Alternatively, you can directly iterate over the asynchronous iterator without building a separate
     # list if you don't need the ordering or indexing capabilities
-    async for item in read_all_items_response:
+    async for item in container.read_all_items(max_item_count=10):
         print(item.get('id'))
 
 
@@ -357,9 +358,10 @@ async def execute_item_batch(database):
     # one of the operations failed within your batch request.
     print("\nResults for the batch operations: {}\n".format(batch_results))
 
-    # You can also use this logic to read directly from a file into the batch you'd like to create:
-    with open("file_name.txt", "r") as data_file:
-        container.execute_item_batch([("upsert", (t,)) for t in data_file.readlines()])
+    # Each JSON Lines document must have account_number="Account1"; the file must fit one batch.
+    with open("file_name.txt", "r", encoding="utf-8") as data_file:
+        operations = [("upsert", (json.loads(line),)) for line in data_file]
+        await container.execute_item_batch(operations, partition_key="Account1")
 
     # For error handling, you should use try/ except with CosmosBatchOperationError and use the information in the
     # error returned for your application debugging, making it easy to pinpoint the failing operation
