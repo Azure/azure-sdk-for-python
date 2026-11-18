@@ -20,7 +20,7 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from . import models as _models
 from ._configuration import IotCentralClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import AppsOperations, Operations
+from .operations import AppsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinksOperations
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -32,6 +32,11 @@ class IotCentralClient:
 
     :ivar apps: AppsOperations operations
     :vartype apps: azure.mgmt.iotcentral.operations.AppsOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections:
+     azure.mgmt.iotcentral.operations.PrivateEndpointConnectionsOperations
+    :ivar private_links: PrivateLinksOperations operations
+    :vartype private_links: azure.mgmt.iotcentral.operations.PrivateLinksOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.iotcentral.operations.Operations
     :param credential: Credential needed for the client to connect to Azure. Required.
@@ -43,8 +48,8 @@ class IotCentralClient:
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: Api Version. Default value is "2021-06-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2021-11-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -97,6 +102,10 @@ class IotCentralClient:
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.apps = AppsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_links = PrivateLinksOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:

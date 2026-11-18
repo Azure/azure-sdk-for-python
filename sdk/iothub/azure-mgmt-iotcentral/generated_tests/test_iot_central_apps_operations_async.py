@@ -25,7 +25,7 @@ class TestIotCentralAppsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.apps.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2021-06-01",
+            api_version="2021-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -46,13 +46,52 @@ class TestIotCentralAppsOperationsAsync(AzureMgmtRecordedTestCase):
                     "id": "str",
                     "identity": {"type": "str", "principalId": "str", "tenantId": "str"},
                     "name": "str",
+                    "networkRuleSets": {
+                        "applyToDevices": False,
+                        "applyToIoTCentral": False,
+                        "defaultAction": "Allow",
+                        "ipRules": [{"action": "str", "filterName": "str", "ipMask": "str"}],
+                    },
+                    "privateEndpointConnections": [
+                        {
+                            "groupIds": ["str"],
+                            "id": "str",
+                            "name": "str",
+                            "privateEndpoint": {"id": "str"},
+                            "privateLinkServiceConnectionState": {
+                                "actionsRequired": "str",
+                                "description": "str",
+                                "status": "str",
+                            },
+                            "provisioningState": "str",
+                            "systemData": {
+                                "createdAt": "2020-02-20 00:00:00",
+                                "createdBy": "str",
+                                "createdByType": "str",
+                                "lastModifiedAt": "2020-02-20 00:00:00",
+                                "lastModifiedBy": "str",
+                                "lastModifiedByType": "str",
+                            },
+                            "type": "str",
+                        }
+                    ],
+                    "provisioningState": "str",
+                    "publicNetworkAccess": "Enabled",
                     "state": "str",
                     "subdomain": "str",
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
                     "tags": {"str": "str"},
                     "template": "str",
                     "type": "str",
                 },
-                api_version="2021-06-01",
+                api_version="2021-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -70,13 +109,44 @@ class TestIotCentralAppsOperationsAsync(AzureMgmtRecordedTestCase):
                     "applicationId": "str",
                     "displayName": "str",
                     "identity": {"type": "str", "principalId": "str", "tenantId": "str"},
+                    "networkRuleSets": {
+                        "applyToDevices": False,
+                        "applyToIoTCentral": False,
+                        "defaultAction": "Allow",
+                        "ipRules": [{"action": "str", "filterName": "str", "ipMask": "str"}],
+                    },
+                    "privateEndpointConnections": [
+                        {
+                            "groupIds": ["str"],
+                            "id": "str",
+                            "name": "str",
+                            "privateEndpoint": {"id": "str"},
+                            "privateLinkServiceConnectionState": {
+                                "actionsRequired": "str",
+                                "description": "str",
+                                "status": "str",
+                            },
+                            "provisioningState": "str",
+                            "systemData": {
+                                "createdAt": "2020-02-20 00:00:00",
+                                "createdBy": "str",
+                                "createdByType": "str",
+                                "lastModifiedAt": "2020-02-20 00:00:00",
+                                "lastModifiedBy": "str",
+                                "lastModifiedByType": "str",
+                            },
+                            "type": "str",
+                        }
+                    ],
+                    "provisioningState": "str",
+                    "publicNetworkAccess": "Enabled",
                     "sku": {"name": "str"},
                     "state": "str",
                     "subdomain": "str",
                     "tags": {"str": "str"},
                     "template": "str",
                 },
-                api_version="2021-06-01",
+                api_version="2021-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -90,7 +160,7 @@ class TestIotCentralAppsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.apps.begin_delete(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                api_version="2021-06-01",
+                api_version="2021-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -101,7 +171,7 @@ class TestIotCentralAppsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_apps_list_by_subscription(self, resource_group):
         response = self.client.apps.list_by_subscription(
-            api_version="2021-06-01",
+            api_version="2021-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -112,7 +182,7 @@ class TestIotCentralAppsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_apps_list_by_resource_group(self, resource_group):
         response = self.client.apps.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2021-06-01",
+            api_version="2021-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -123,7 +193,7 @@ class TestIotCentralAppsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_apps_check_name_availability(self, resource_group):
         response = await self.client.apps.check_name_availability(
             operation_inputs={"name": "str", "type": "IoTApps"},
-            api_version="2021-06-01",
+            api_version="2021-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -134,7 +204,7 @@ class TestIotCentralAppsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_apps_check_subdomain_availability(self, resource_group):
         response = await self.client.apps.check_subdomain_availability(
             operation_inputs={"name": "str", "type": "IoTApps"},
-            api_version="2021-06-01",
+            api_version="2021-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -144,7 +214,7 @@ class TestIotCentralAppsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_apps_list_templates(self, resource_group):
         response = self.client.apps.list_templates(
-            api_version="2021-06-01",
+            api_version="2021-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

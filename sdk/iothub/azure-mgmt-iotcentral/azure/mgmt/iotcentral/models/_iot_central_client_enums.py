@@ -25,6 +25,65 @@ class AppState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUSPENDED = "suspended"
 
 
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
+class IpRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The network action for the IP mask."""
+
+    ALLOW = "Allow"
+
+
+class NetworkAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether to allow or deny network traffic."""
+
+    ALLOW = "Allow"
+    DENY = "Deny"
+
+
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The current provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
+
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private endpoint connection status."""
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the application."""
+
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    UPDATING = "Updating"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether requests from the public network are allowed."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
 class SystemAssignedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (either system assigned, or none)."""
 

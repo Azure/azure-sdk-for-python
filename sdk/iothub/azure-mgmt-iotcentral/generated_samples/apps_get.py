@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/iotcentral/resource-manager/Microsoft.IoTCentral/IoTCentral/stable/2021-06-01/examples/Apps_Get.json
+# x-ms-original-file: specification/iotcentral/resource-manager/Microsoft.IoTCentral/IoTCentral/preview/2021-11-01-preview/examples/Apps_Get.json
 if __name__ == "__main__":
     main()

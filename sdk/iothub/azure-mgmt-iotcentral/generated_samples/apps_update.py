@@ -31,13 +31,44 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.apps.begin_update(
+    client.apps.begin_update(
         resource_group_name="resRg",
         resource_name="myIoTCentralApp",
         app_patch={
             "applicationId": "str",
             "displayName": "str",
             "identity": {"type": "str", "principalId": "str", "tenantId": "str"},
+            "networkRuleSets": {
+                "applyToDevices": False,
+                "applyToIoTCentral": False,
+                "defaultAction": "Allow",
+                "ipRules": [{"action": "str", "filterName": "str", "ipMask": "str"}],
+            },
+            "privateEndpointConnections": [
+                {
+                    "groupIds": ["str"],
+                    "id": "str",
+                    "name": "str",
+                    "privateEndpoint": {"id": "str"},
+                    "privateLinkServiceConnectionState": {
+                        "actionsRequired": "str",
+                        "description": "str",
+                        "status": "str",
+                    },
+                    "provisioningState": "str",
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "type": "str",
+                }
+            ],
+            "provisioningState": "str",
+            "publicNetworkAccess": "Enabled",
             "sku": {"name": "str"},
             "state": "str",
             "subdomain": "str",
@@ -45,9 +76,8 @@ def main():
             "template": "str",
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/iotcentral/resource-manager/Microsoft.IoTCentral/IoTCentral/stable/2021-06-01/examples/Apps_Update.json
+# x-ms-original-file: specification/iotcentral/resource-manager/Microsoft.IoTCentral/IoTCentral/preview/2021-11-01-preview/examples/Apps_Update.json
 if __name__ == "__main__":
     main()
