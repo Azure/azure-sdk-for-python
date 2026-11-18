@@ -626,6 +626,9 @@ class _SearchIndexClientOperationsMixin(
     def get_search_client(self, index_name: str, **kwargs: Any) -> "azure.search.documents.aio.SearchClient":
         """Return a client to perform operations on Search.
 
+        The returned client uses the API version and the Microsoft Entra ID audience of this client,
+        unless ``api_version`` or ``audience`` is passed as a keyword argument.
+
         :param index_name: The name of the index. Required.
         :type index_name: str
         :return: A SearchClient for operations on the named index.
@@ -634,6 +637,9 @@ class _SearchIndexClientOperationsMixin(
         # pylint: disable=import-outside-toplevel
         from ....aio import SearchClient
 
+        kwargs.setdefault("api_version", self._config.api_version)
+        if not kwargs.get("audience"):
+            kwargs.setdefault("credential_scopes", self._config.credential_scopes)
         return SearchClient(
             endpoint=self._config.endpoint,
             index_name=index_name,
