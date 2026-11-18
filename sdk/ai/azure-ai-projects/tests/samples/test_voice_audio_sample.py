@@ -109,6 +109,10 @@ async def test_capture_does_not_replace_an_earlier_failed_send(sample) -> None:
     while not first_send.done():
         await asyncio.sleep(0)
     callback(b"\x02\x00", 1, None, None)
+    original_traceback = processor._send_error.__traceback__
+    for _ in range(10):
+        callback(b"\x03\x00", 1, None, None)
+    assert processor._send_error.__traceback__ is original_traceback
 
     with pytest.raises(ConnectionResetError, match="First audio send failed"):
         await processor.stop_capture()
