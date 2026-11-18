@@ -33,6 +33,7 @@ if TYPE_CHECKING:
         ApplicationGatewayClientRevocationOptions,
         ApplicationGatewayCookieBasedAffinity,
         ApplicationGatewayCustomErrorStatusCode,
+        ApplicationGatewayDeploymentTier,
         ApplicationGatewayFirewallMode,
         ApplicationGatewayFirewallRateLimitDuration,
         ApplicationGatewayFirewallUserSessionVariable,
@@ -165,6 +166,7 @@ if TYPE_CHECKING:
         NetworkInterfaceMigrationPhase,
         NetworkInterfaceNicType,
         NetworkProtocol,
+        NetworkVirtualApplianceLoadDistribution,
         NextStep,
         NicTypeInRequest,
         NicTypeInResponse,
@@ -2349,6 +2351,10 @@ class ApplicationGatewayPropertiesFormat(TypedDict, total=False):
 
     :ivar sku: SKU of the application gateway resource.
     :vartype sku: "ApplicationGatewaySku"
+    :ivar deploymentTier: Deployment tier of the application gateway resource. Only valid on
+     Standard_v2 and WAF_v2 SKUs. Known values are: "Standard", "NetworkIsolated", "Accelerated",
+     and "Elastic".
+    :vartype deploymentTier: Union[str, "ApplicationGatewayDeploymentTier"]
     :ivar sslPolicy: SSL policy of the application gateway resource.
     :vartype sslPolicy: "ApplicationGatewaySslPolicy"
     :ivar operationalState: Operational state of the application gateway resource. Known values
@@ -2439,6 +2445,9 @@ class ApplicationGatewayPropertiesFormat(TypedDict, total=False):
     :vartype enableHttp2: bool
     :ivar enableFips: Whether FIPS is enabled on the application gateway resource.
     :vartype enableFips: bool
+    :ivar enableConfidentialCompute: Whether Confidential Compute is enabled on the application
+     gateway resource.
+    :vartype enableConfidentialCompute: bool
     :ivar autoscaleConfiguration: Autoscale Configuration.
     :vartype autoscaleConfiguration: "ApplicationGatewayAutoscaleConfiguration"
     :ivar reservedCapacity: The reserved capacity of the application gateway resource. Applicable
@@ -2475,6 +2484,9 @@ class ApplicationGatewayPropertiesFormat(TypedDict, total=False):
 
     sku: "ApplicationGatewaySku"
     """SKU of the application gateway resource."""
+    deploymentTier: Union[str, "ApplicationGatewayDeploymentTier"]
+    """Deployment tier of the application gateway resource. Only valid on Standard_v2 and WAF_v2 SKUs.
+     Known values are: \"Standard\", \"NetworkIsolated\", \"Accelerated\", and \"Elastic\"."""
     sslPolicy: "ApplicationGatewaySslPolicy"
     """SSL policy of the application gateway resource."""
     operationalState: Union[str, "ApplicationGatewayOperationalState"]
@@ -2564,6 +2576,8 @@ class ApplicationGatewayPropertiesFormat(TypedDict, total=False):
     """Whether HTTP2 is enabled on the application gateway resource."""
     enableFips: bool
     """Whether FIPS is enabled on the application gateway resource."""
+    enableConfidentialCompute: bool
+    """Whether Confidential Compute is enabled on the application gateway resource."""
     autoscaleConfiguration: "ApplicationGatewayAutoscaleConfiguration"
     """Autoscale Configuration."""
     reservedCapacity: int
@@ -4225,6 +4239,9 @@ class AzureFirewallPropertiesFormat(TypedDict, total=False):
     :ivar aiSecurityAddOn: Indicates whether the AI security add-on is enabled for the Azure
      Firewall.
     :vartype aiSecurityAddOn: bool
+    :ivar tcpIdleTimeoutInMinutes: The TCP idle timeout for the Azure Firewall, in minutes. Valid
+     values range from 4 to 64, inclusive.
+    :vartype tcpIdleTimeoutInMinutes: int
     """
 
     applicationRuleCollections: list["AzureFirewallApplicationRuleCollection"]
@@ -4260,6 +4277,9 @@ class AzureFirewallPropertiesFormat(TypedDict, total=False):
     """AFC configuration for the Azure Firewall."""
     aiSecurityAddOn: bool
     """Indicates whether the AI security add-on is enabled for the Azure Firewall."""
+    tcpIdleTimeoutInMinutes: int
+    """The TCP idle timeout for the Azure Firewall, in minutes. Valid values range from 4 to 64,
+     inclusive."""
 
 
 class AzureFirewallPublicIPAddress(TypedDict, total=False):
@@ -10232,6 +10252,11 @@ class InboundSecurityRules(TypedDict, total=False):
     :ivar appliesOn: Public IP name in case of Permanent Rule type & Interface Name in case of Auto
      Expire Rule type.
     :vartype appliesOn: list[str]
+    :ivar loadBalancerConfiguration: Configuration of the Internet Ingress load-balancing rule for
+     a managed Network Virtual Appliance. Supported only when the enclosing ruleType is Permanent;
+     supplying this configuration for AutoExpire rules is rejected with HTTP 400 Bad Request. When
+     omitted on create or update, Default distribution and a 5-minute idle timeout are used.
+    :vartype loadBalancerConfiguration: "NetworkVirtualApplianceLoadBalancerConfiguration"
     """
 
     name: str
@@ -10248,6 +10273,11 @@ class InboundSecurityRules(TypedDict, total=False):
     appliesOn: list[str]
     """Public IP name in case of Permanent Rule type & Interface Name in case of Auto Expire Rule
      type."""
+    loadBalancerConfiguration: "NetworkVirtualApplianceLoadBalancerConfiguration"
+    """Configuration of the Internet Ingress load-balancing rule for a managed Network Virtual
+     Appliance. Supported only when the enclosing ruleType is Permanent; supplying this
+     configuration for AutoExpire rules is rejected with HTTP 400 Bad Request. When omitted on
+     create or update, Default distribution and a 5-minute idle timeout are used."""
 
 
 class IntentContent(TypedDict, total=False):
@@ -12214,6 +12244,8 @@ class NetworkInterfacePropertiesFormat(TypedDict, total=False):
     :vartype dnsSettings: "NetworkInterfaceDnsSettings"
     :ivar macAddress: The MAC address of the network interface.
     :vartype macAddress: str
+    :ivar networkAdapterIndex: The index of the physical network adapter.
+    :vartype networkAdapterIndex: int
     :ivar primary: Whether this is a primary network interface on a virtual machine.
     :vartype primary: bool
     :ivar vnetEncryptionSupported: Whether the virtual machine this nic is attached to supports
@@ -12270,6 +12302,8 @@ class NetworkInterfacePropertiesFormat(TypedDict, total=False):
     """The DNS settings in network interface."""
     macAddress: str
     """The MAC address of the network interface."""
+    networkAdapterIndex: int
+    """The index of the physical network adapter."""
     primary: bool
     """Whether this is a primary network interface on a virtual machine."""
     vnetEncryptionSupported: bool
@@ -13044,6 +13078,34 @@ class NetworkVirtualApplianceInstanceIds(TypedDict, total=False):
      virtual appliance."""
 
 
+class NetworkVirtualApplianceLoadBalancerConfiguration(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Load balancer settings shared by managed Network Virtual Appliances and their Permanent inbound
+    security rules.
+
+    :ivar loadDistribution: The load distribution policy. Default uses a five-tuple hash of source
+     IP, destination IP, source port, destination port, and protocol. SourceIP uses a two-tuple hash
+     of source IP and destination IP. SourceIPProtocol uses a three-tuple hash of source IP,
+     destination IP, and protocol. When omitted, Default is used. Known values are: "Default",
+     "SourceIP", and "SourceIPProtocol".
+    :vartype loadDistribution: Union[str, "NetworkVirtualApplianceLoadDistribution"]
+    :ivar idleTimeoutInMinutes: The idle timeout of the load-balancing rule, in minutes. When
+     omitted, the managed NVA platform default of 5 minutes is used. Values outside 4 through 100
+     are rejected with HTTP 400 InvalidParameter.
+    :vartype idleTimeoutInMinutes: int
+    """
+
+    loadDistribution: Union[str, "NetworkVirtualApplianceLoadDistribution"]
+    """The load distribution policy. Default uses a five-tuple hash of source IP, destination IP,
+     source port, destination port, and protocol. SourceIP uses a two-tuple hash of source IP and
+     destination IP. SourceIPProtocol uses a three-tuple hash of source IP, destination IP, and
+     protocol. When omitted, Default is used. Known values are: \"Default\", \"SourceIP\", and
+     \"SourceIPProtocol\"."""
+    idleTimeoutInMinutes: int
+    """The idle timeout of the load-balancing rule, in minutes. When omitted, the managed NVA platform
+     default of 5 minutes is used. Values outside 4 through 100 are rejected with HTTP 400
+     InvalidParameter."""
+
+
 class NetworkVirtualApplianceMigrationStatus(TypedDict, total=False):
     """The migration status of a Network Virtual Appliance.
 
@@ -13100,6 +13162,11 @@ class NetworkVirtualAppliancePropertiesFormat(TypedDict, total=False):
 
     :ivar nvaSku: Network Virtual Appliance SKU.
     :vartype nvaSku: "VirtualApplianceSkuProperties"
+    :ivar loadBalancerConfiguration: Configuration of the internal load balancer for a managed
+     Network Virtual Appliance in a virtual hub or virtual network. Not applicable to
+     partner-managed load balancers on SaaS NVAs. When omitted on create or update, Default
+     distribution and a 5-minute idle timeout are used.
+    :vartype loadBalancerConfiguration: "NetworkVirtualApplianceLoadBalancerConfiguration"
     :ivar addressPrefix: Address Prefix.
     :vartype addressPrefix: str
     :ivar addressPrefixV6: Address Prefix for Dual-Stack NVAs.
@@ -13162,6 +13229,10 @@ class NetworkVirtualAppliancePropertiesFormat(TypedDict, total=False):
 
     nvaSku: "VirtualApplianceSkuProperties"
     """Network Virtual Appliance SKU."""
+    loadBalancerConfiguration: "NetworkVirtualApplianceLoadBalancerConfiguration"
+    """Configuration of the internal load balancer for a managed Network Virtual Appliance in a
+     virtual hub or virtual network. Not applicable to partner-managed load balancers on SaaS NVAs.
+     When omitted on create or update, Default distribution and a 5-minute idle timeout are used."""
     addressPrefix: str
     """Address Prefix."""
     addressPrefixV6: str
