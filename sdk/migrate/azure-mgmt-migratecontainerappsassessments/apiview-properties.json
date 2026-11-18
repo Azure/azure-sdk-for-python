@@ -112,5 +112,5 @@
         "azure.mgmt.migratecontainerappsassessments.operations.ContainerAppsCostDetailOperationsOperations.list_by_parent": "Microsoft.Migrate.ContainerAppsCostDetailOperations.listByParent",
         "azure.mgmt.migratecontainerappsassessments.aio.operations.ContainerAppsCostDetailOperationsOperations.list_by_parent": "Microsoft.Migrate.ContainerAppsCostDetailOperations.listByParent"
     },
-    "CrossLanguageVersion": "38dc9d1eb543"
+    "CrossLanguageVersion": "2ff8dbf32086"
 }

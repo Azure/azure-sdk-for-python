@@ -1,5 +1,5 @@
 directory: specification/migrate/resource-manager/Microsoft.Migrate/ContainerAppsAssessments
-commit: cd755eb3575597f0ab4af3c464a58fa903b0798a
+commit: ebcb44d949ee5108bde76748d95bf8f1cc18ddcc
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 
 - specification/migrate/resource-manager/Microsoft.Migrate/ContainerAppsAssessments
