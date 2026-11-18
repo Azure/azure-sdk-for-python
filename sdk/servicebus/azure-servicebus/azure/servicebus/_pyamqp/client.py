@@ -829,7 +829,7 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         self._message_received_callback = kwargs.pop("message_received_callback", None)
 
         # Sender and Link settings
-        self._max_message_size = kwargs.pop("max_message_size", MAX_FRAME_SIZE_BYTES)
+        self._max_message_size = kwargs.pop("max_message_size", LINK_MAX_MESSAGE_SIZE)
         self._link_properties = kwargs.pop("link_properties", None)
         self._link_credit = kwargs.pop("link_credit", 300)
 
