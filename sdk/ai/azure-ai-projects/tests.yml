@@ -46,11 +46,16 @@ parameters:
     default: 10
 
 variables:
-  packageRoot: $(Build.SourcesDirectory)/sdk/ai/azure-ai-projects
+  - group: Foundry SDK Env Vars and Secrets
+  - name: packageRoot
+    value: $(Build.SourcesDirectory)/sdk/ai/azure-ai-projects
   # Connection configuration belongs here, not in the Run pipeline form.
-  azureServiceConnection: azure-sdk-tests
-  PYTHON_DOTENV_DISABLED: 'true'
-  PYTEST_ADDOPTS: ''
+  - name: azureServiceConnection
+    value: azure-sdk-tests
+  - name: PYTHON_DOTENV_DISABLED
+    value: 'true'
+  - name: PYTEST_ADDOPTS
+    value: ''
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
