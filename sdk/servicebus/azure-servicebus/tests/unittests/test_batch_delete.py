@@ -200,6 +200,24 @@ async def test_batch_delete_rejects_invalid_cutoff_before_open(is_async, operati
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("is_async", [False, True])
+@pytest.mark.parametrize("operation", ["delete_messages", "purge_messages"])
+@pytest.mark.parametrize("timeout", [float("nan"), float("inf"), float("-inf"), 0, -1])
+async def test_batch_delete_rejects_invalid_timeout_before_open(is_async, operation, timeout):
+    receiver = _receiver(AsyncServiceBusReceiver if is_async else ServiceBusReceiver)
+    receiver._config.try_timeout = 5
+    receiver._mgmt_request_response = AsyncMock(return_value=0) if is_async else MagicMock(return_value=0)
+    args = (1,) if operation == "delete_messages" else ()
+    with pytest.raises(ValueError, match="timeout"):
+        result = getattr(receiver, operation)(*args, timeout=timeout)
+        if is_async:
+            await result
+    receiver._open_with_retry.assert_not_called()
+    receiver._open_mgmt_link_with_retry.assert_not_called()
+    receiver._mgmt_request_response.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True])
 @pytest.mark.parametrize("timeout", [None, 300, 2])
 async def test_batch_delete_dispatch_honors_try_timeout(is_async, timeout):
     receiver = _receiver(AsyncServiceBusReceiver if is_async else ServiceBusReceiver)

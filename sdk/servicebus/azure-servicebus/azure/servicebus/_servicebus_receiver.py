@@ -5,6 +5,7 @@
 import threading
 import time
 import logging
+import math
 import functools
 import uuid
 import datetime
@@ -893,8 +894,8 @@ class ServiceBusReceiver(
          is 500 for Basic and Standard and 4,000 for Premium.
         :keyword Optional[datetime.datetime] before_enqueued_time: Only messages enqueued before this UTC time
          can be deleted. The operation start time is used when omitted.
-        :keyword Optional[float] timeout: The operation timeout in seconds. The value must be greater than 0
-         if specified.
+        :keyword Optional[float] timeout: The operation timeout in seconds. The value must be finite and
+         greater than 0 if specified.
         :returns: The delete result containing the number of messages actually deleted.
         :rtype: ~azure.servicebus.DeleteMessagesResult
         """
@@ -903,8 +904,8 @@ class ServiceBusReceiver(
             raise TypeError("The message_count must be an integer.")
         if not 1 <= message_count <= 2_147_483_647:
             raise ValueError("The message_count must be between 1 and 2147483647.")
-        if timeout is not None and timeout <= 0:
-            raise ValueError("The timeout must be greater than 0.")
+        if timeout is not None and (not math.isfinite(timeout) or timeout <= 0):
+            raise ValueError("The timeout must be finite and greater than 0.")
 
         if before_enqueued_time is not None and not isinstance(before_enqueued_time, datetime.datetime):
             raise TypeError("The before_enqueued_time must be a datetime.")
@@ -973,7 +974,7 @@ class ServiceBusReceiver(
          each batch-delete call. The default is 500. The service limit is 500 for Basic and Standard and 4,000
          for Premium.
         :keyword Optional[float] timeout: The timeout in seconds for the entire purge operation. The value must
-         be greater than 0 if specified.
+         be finite and greater than 0 if specified.
         :returns: The purge result containing the total number of messages actually deleted.
         :rtype: ~azure.servicebus.PurgeMessagesResult
         """
@@ -985,8 +986,8 @@ class ServiceBusReceiver(
             raise ValueError(
                 "The max_message_count_per_batch must be between 1 and 2147483647."
             )
-        if timeout is not None and timeout <= 0:
-            raise ValueError("The timeout must be greater than 0.")
+        if timeout is not None and (not math.isfinite(timeout) or timeout <= 0):
+            raise ValueError("The timeout must be finite and greater than 0.")
 
         cutoff = (
             datetime.datetime.now(datetime.timezone.utc) if before_enqueued_time is None else before_enqueued_time
