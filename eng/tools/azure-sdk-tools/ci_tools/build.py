@@ -9,6 +9,7 @@ from ci_tools.variables import DEFAULT_BUILD_ID, str_to_bool, discover_repo_root
 from ci_tools.versioning.version_shared import set_version_py, set_dev_classifier
 from ci_tools.versioning.version_set_dev import get_dev_version, format_build_id
 from ci_tools.logging import logger, configure_logging, run_logged
+from ci_tools.windows_wheels import windows_wheel_config
 
 
 def build_package() -> None:
@@ -246,12 +247,14 @@ def create_package(
         if is_compiled:
             if enable_wheel:
                 # Use cibuildwheel for compiled extensions (respects [tool.cibuildwheel] config)
-                run_logged(
-                    [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
-                    cwd=setup_parsed.folder,
-                    check=True,
-                    should_stream_to_console=should_log_build_output,
-                )
+                with windows_wheel_config(setup_parsed.folder) as (arguments, environment):
+                    run_logged(
+                        [sys.executable, "-m", "cibuildwheel", "--output-dir", dist, *arguments],
+                        cwd=setup_parsed.folder,
+                        check=True,
+                        should_stream_to_console=should_log_build_output,
+                        **environment,
+                    )
             if enable_sdist:
                 # Build isolation installs package-specific backends such as Maturin.
                 run_logged(
@@ -294,12 +297,14 @@ def create_package(
     else:
         if enable_wheel:
             if is_compiled:
-                run_logged(
-                    [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
-                    cwd=setup_parsed.folder,
-                    check=True,
-                    should_stream_to_console=should_log_build_output,
-                )
+                with windows_wheel_config(setup_parsed.folder) as (arguments, environment):
+                    run_logged(
+                        [sys.executable, "-m", "cibuildwheel", "--output-dir", dist, *arguments],
+                        cwd=setup_parsed.folder,
+                        check=True,
+                        should_stream_to_console=should_log_build_output,
+                        **environment,
+                    )
             else:
                 run_logged(
                     [sys.executable, "setup.py", "bdist_wheel", "-d", dist],
