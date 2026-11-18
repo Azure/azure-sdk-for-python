@@ -60,6 +60,9 @@ Native transfers do not support:
   supported.
 - **Text-mode downloads** — Download encoding is not supported; downloads return bytes.
 - **Download decompression** — Automatic content decompression is not supported.
+- **Download chunk iteration** — Native downloaders raise `NotImplementedError` for `chunks()`
+  and direct iteration. Use `read()`, `readall()`, or `readinto()` instead, or disable native
+  transfers before downloading to use `chunks()` through the Python implementation.
 - **Transactional content validation** — Checksum validation with `validate_content=True` is
   not supported for uploads or downloads.
 - **Progress callbacks** — The `progress_hook` option is not supported for uploads or downloads.

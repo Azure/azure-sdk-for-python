@@ -454,10 +454,11 @@ class NativeStorageStreamDownloader:
 
     Wraps the native download stream (an iterator of ``bytes`` chunks, one partition of
     ``max_chunk_get_size`` bytes each) and mimics the key parts of StorageStreamDownloader so callers
-    (e.g. readall(), readinto(), chunks()) work transparently. The native stream prefetches about
+    (e.g. readall(), readinto()) work transparently. The native stream prefetches about
     one window (``max_concurrency`` partitions) ahead of consumption, so memory for the streaming
-    paths (readinto/chunks) stays bounded. readall() necessarily materializes the full blob, and
+    paths (read/readinto) stays bounded. readall() necessarily materializes the full blob, and
     uses the native stream's own ``readall()`` when available to fill a single preallocated result.
+    ``chunks()`` and direct iteration are not supported.
     """
 
     def __init__(self, stream: Any, name: str, container: str) -> None:
@@ -475,7 +476,10 @@ class NativeStorageStreamDownloader:
         return self.size
 
     def __iter__(self) -> Iterator[bytes]:
-        return self.chunks()
+        raise NotImplementedError(
+            "Native downloads do not support direct iteration. Use read(), readall(), or readinto(), "
+            "or set AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1 before downloading to iterate."
+        )
 
     def readall(self) -> bytes:
         """Return the full blob content.
@@ -534,16 +538,14 @@ class NativeStorageStreamDownloader:
         return total
 
     def chunks(self) -> Iterator[bytes]:
-        """Iterate over the download one chunk at a time.
+        """Chunk iteration is not supported for native downloads.
 
-        :returns: An iterator over the blob content chunks.
-        :rtype: Iterator[bytes]
+        :raises NotImplementedError: Native downloads do not support chunk iteration.
         """
-        if self._buffer:
-            buffered = bytes(self._buffer)
-            self._buffer = bytearray()
-            yield buffered
-        yield from self._iter
+        raise NotImplementedError(
+            "Native downloads do not support chunks(). Use read(), readall(), or readinto(), "
+            "or set AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1 before downloading to use chunks()."
+        )
 
 
 def try_native_download(

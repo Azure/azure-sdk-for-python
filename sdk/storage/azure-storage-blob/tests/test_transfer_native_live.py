@@ -209,28 +209,6 @@ class TestStorageNativeTransfer(StorageRecordedTestCase):
             assert bytes_written == size
             assert stream.getvalue() == data
 
-    @pytest.mark.parametrize("size", BLOB_SIZES)
-    @BlobPreparer()
-    def test_download_blob_chunks(self, size, request, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-
-        # Arrange
-        blob = self._setup(storage_account_name, request)
-        data = os.urandom(size)
-        blob.upload_blob(data)
-        downloader = blob.download_blob(max_concurrency=4)
-        assert isinstance(downloader, NativeStorageStreamDownloader)
-
-        # Act
-        chunks = list(downloader.chunks())
-
-        # Assert
-        assert b"".join(chunks) == data
-        if size == SMALL_BLOB_SIZE:
-            assert len(chunks) == 1
-        else:
-            assert len(chunks) > 1
-
     @BlobPreparer()
     def test_download_blob_range(self, request, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")

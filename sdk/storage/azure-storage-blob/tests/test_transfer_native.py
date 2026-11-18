@@ -744,7 +744,7 @@ class TestNativeStorageStreamDownloader(_NativeTransferTestCase):
 
     def test_consumption_and_eof(self):
         for windows in ([], [b"abcde"], [b"ab", b"c", b"de"]):
-            for method in ("readall", "chunks", "iter", "readinto"):
+            for method in ("readall", "readinto"):
                 with self.subTest(windows=windows, method=method):
                     downloader, _ = self.make_downloader(windows)
                     expected = b"".join(windows)
@@ -753,10 +753,6 @@ class TestNativeStorageStreamDownloader(_NativeTransferTestCase):
                         self.assertEqual(downloader.readinto(destination), len(expected))
                         self.assertEqual(destination.getvalue(), expected)
                         self.assertEqual(downloader.readinto(BytesIO()), 0)
-                    elif method in ("chunks", "iter"):
-                        chunks = list(downloader if method == "iter" else downloader.chunks())
-                        self.assertEqual(chunks, windows)
-                        self.assertEqual(list(downloader.chunks()), [])
                     else:
                         self.assertEqual(downloader.readall(), expected)
                         self.assertEqual(downloader.readall(), b"")
@@ -785,54 +781,17 @@ class TestNativeStorageStreamDownloader(_NativeTransferTestCase):
                 self.assertEqual(downloader.read(*args), b"")
 
     def test_partial_read_then_other_consumption_methods(self):
-        for method in ("readall", "chunks", "readinto"):
+        for method in ("readall", "readinto"):
             with self.subTest(method=method):
                 downloader, _ = self.make_downloader([b"ab", b"cde", b"f"])
                 self.assertEqual(downloader.read(1), b"a")
-                if method == "chunks":
-                    self.assertEqual(list(downloader.chunks()), [b"b", b"cde", b"f"])
-                elif method == "readinto":
+                if method == "readinto":
                     destination = BytesIO()
                     self.assertEqual(downloader.readinto(destination), 5)
                     self.assertEqual(destination.getvalue(), b"bcdef")
                 else:
                     self.assertEqual(downloader.readall(), b"bcdef")
                 self.assertEqual(downloader.readall(), b"")
-                self.assertEqual(list(downloader.chunks()), [])
-
-    def test_chunks_are_lazy(self):
-        downloader, stream = self.make_downloader([b"ab", b"cde"])
-        chunks = downloader.chunks()
-        self.assertEqual(stream.events, [])
-        self.assertEqual(next(chunks), b"ab")
-        self.assertEqual(stream.events, [("next", b"ab")])
-        self.assertEqual(next(chunks), b"cde")
-        self.assertEqual(list(chunks), [])
-
-    def test_paused_chunks_does_not_duplicate_buffered_bytes(self):
-        for stream_type in (_FakeNativeStream, _FakeNativeReadallStream):
-            for method in ("read", "readall"):
-                with self.subTest(stream_type=stream_type, method=method):
-                    stream = stream_type([b"ab", b"cde", b"f"])
-                    downloader = NativeStorageStreamDownloader(stream, "blob", "container")
-                    self.assertEqual(downloader.read(1), b"a")
-                    chunks = downloader.chunks()
-                    self.assertEqual(next(chunks), b"b")
-                    if method == "read":
-                        self.assertEqual(downloader.read(2), b"cd")
-                        self.assertEqual(downloader.readall(), b"ef")
-                    else:
-                        self.assertEqual(downloader.readall(), b"cdef")
-                    self.assertEqual(list(chunks), [])
-
-    def test_resuming_chunks_preserves_newly_buffered_bytes(self):
-        downloader, _ = self.make_downloader([b"ab", b"cde"])
-        self.assertEqual(downloader.read(1), b"a")
-        chunks = downloader.chunks()
-        self.assertEqual(next(chunks), b"b")
-        self.assertEqual(downloader.read(1), b"c")
-        self.assertEqual(list(chunks), [])
-        self.assertEqual(downloader.readall(), b"de")
 
     def test_readinto_writes_each_window_before_fetching_next(self):
         downloader, stream = self.make_downloader([b"ab", b"cde", b"f"])
@@ -856,7 +815,7 @@ class TestNativeStorageStreamDownloader(_NativeTransferTestCase):
         )
 
     def test_stream_errors_propagate_from_consumption_methods(self):
-        for method in ("readall", "read", "chunks", "readinto"):
+        for method in ("readall", "read", "readinto"):
             with self.subTest(method=method):
                 failure = ValueError("incomplete native download")
 
@@ -871,9 +830,7 @@ class TestNativeStorageStreamDownloader(_NativeTransferTestCase):
                 self.assertEqual(downloader.read(2), b"fi")
                 destination = BytesIO()
                 with self.assertRaises(ValueError) as caught:
-                    if method == "chunks":
-                        list(downloader.chunks())
-                    elif method == "readinto":
+                    if method == "readinto":
                         downloader.readinto(destination)
                     else:
                         getattr(downloader, method)()
@@ -898,7 +855,6 @@ class TestNativeStorageStreamDownloader(_NativeTransferTestCase):
         self.assertEqual(stream.events, [("readall",)])
         self.assertEqual(downloader.readall(), b"")
         self.assertEqual(downloader.read(1), b"")
-        self.assertEqual(list(downloader.chunks()), [])
 
     def test_native_readall_after_partial_read_prepends_buffered_bytes(self):
         stream = _FakeNativeReadallStream([b"ab", b"cde", b"f"])
@@ -1077,7 +1033,7 @@ class TestNativeErrorMapping(_NativeTransferTestCase):
                     self.assertIs(caught.exception.__cause__, failure)
 
     def test_later_stream_failures_are_terminal_for_all_consumers(self):
-        for method in ("read", "readall", "readinto", "chunks", "iter"):
+        for method in ("read", "readall", "readinto"):
             with self.subTest(method=method):
                 failure = _FakeNativeTransferError(
                     "short response",
@@ -1101,10 +1057,6 @@ class TestNativeErrorMapping(_NativeTransferTestCase):
                 with self.assertRaises(IncompleteReadError) as caught:
                     if method == "readinto":
                         downloader.readinto(destination)
-                    elif method == "chunks":
-                        list(downloader.chunks())
-                    elif method == "iter":
-                        list(downloader)
                     else:
                         getattr(downloader, method)()
                 if method == "readinto":
@@ -1112,8 +1064,6 @@ class TestNativeErrorMapping(_NativeTransferTestCase):
                 for consume in (
                     downloader.readall,
                     lambda: downloader.read(1),
-                    lambda: list(downloader.chunks()),
-                    lambda: list(downloader),
                     lambda: downloader.readinto(BytesIO()),
                 ):
                     with self.assertRaises(IncompleteReadError) as repeated:
@@ -1137,8 +1087,6 @@ class TestNativeErrorMapping(_NativeTransferTestCase):
                 for consume in (
                     downloader.readall,
                     lambda: downloader.read(1),
-                    lambda: list(downloader.chunks()),
-                    lambda: list(downloader),
                     lambda: downloader.readinto(BytesIO()),
                 ):
                     with self.assertRaises(IncompleteReadError) as repeated:

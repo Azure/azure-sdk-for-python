@@ -709,7 +709,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Installing ``pip install "azure-storage-blob[ext-transfer]"`` enables an optional
             Rust-based extension that could increase performance for synchronous block blob downloads.
             The extension is experimental, is not intended for production use, and may have breaking
-            changes in minor releases. See the `native transfers section of the README
+            changes in minor releases. Native downloaders support ``read()``, ``readall()``, and
+            ``readinto()``, but ``chunks()`` and direct iteration raise ``NotImplementedError``.
+            Set ``AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1`` before downloading to use ``chunks()``
+            through the Python implementation. See the `native transfers section of the README
             <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob#experimental-native-transfers>`__
             for limitations, behavior differences, and how to disable native transfers.
 
