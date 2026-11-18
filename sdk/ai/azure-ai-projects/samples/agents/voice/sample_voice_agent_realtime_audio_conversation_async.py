@@ -137,6 +137,7 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
 
         # Bounds capture backpressure to a single in-flight send (see start_capture).
         self._pending_send: "Optional[concurrent.futures.Future[None]]" = None
+        self._send_error: Optional[BaseException] = None
         self._dropped_frames = 0
         # Count only successfully sent payloads, not captured or queued frames.
         self._input_bytes = 0
@@ -160,9 +161,18 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
             # accumulate without bound. Instead, only keep at most one in flight and drop
             # (skip sending) this frame if the previous send hasn't completed yet.
             assert self._loop is not None
-            if self._pending_send is not None and not self._pending_send.done():
-                self._dropped_frames += 1
-                return (None, pyaudio.paContinue)
+            if self._pending_send is not None:
+                if not self._pending_send.done():
+                    self._dropped_frames += 1
+                    return (None, pyaudio.paContinue)
+                try:
+                    self._pending_send.result()
+                except BaseException as exc:
+                    if self._send_error is None:
+                        self._send_error = exc
+                if self._send_error is not None:
+                    self._dropped_frames += 1
+                    return (None, pyaudio.paContinue)
             self._pending_send = asyncio.run_coroutine_threadsafe(self._append_input_audio(in_data), self._loop)
             return (None, pyaudio.paContinue)
 
@@ -190,10 +200,17 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
             self._input_stream.close()
             self._input_stream = None
         if self._pending_send is not None:
-            await asyncio.wrap_future(self._pending_send)
+            pending_send = self._pending_send
             self._pending_send = None
+            try:
+                await asyncio.wrap_future(pending_send)
+            except BaseException as exc:
+                if self._send_error is None:
+                    self._send_error = exc
         if self._dropped_frames:
             print(f"(dropped {self._dropped_frames} mic frame(s) while a send was still in flight)")
+        if self._send_error is not None:
+            raise self._send_error
 
     # -- playback ------------------------------------------------------------
 
@@ -334,13 +351,13 @@ async def _run_audio_conversation(client: AIProjectClient, agent_name: str) -> O
         # A voice agent owns its model, instructions, voice, turn detection, and
         # noise suppression server-side, so this client sends no ``session.update``.
         ap = _AudioProcessor(conn)
-        ap.start_playback()
-        ap.start_capture()
-
-        print("Speak now -- the agent replies after you pause.")
-        print("(talk over the agent to interrupt it; press Ctrl-C to end the session)")
-
         try:
+            ap.start_playback()
+            ap.start_capture()
+
+            print("Speak now -- the agent replies after you pause.")
+            print("(talk over the agent to interrupt it; press Ctrl-C to end the session)")
+
             async for event in conn:
                 # The public models use GA response.output_* names; legacy aliases remain raw mappings.
                 if isinstance(event, dict):
