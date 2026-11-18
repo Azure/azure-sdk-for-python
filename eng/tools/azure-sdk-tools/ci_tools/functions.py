@@ -69,7 +69,8 @@ PATHS_EXCLUDED_FROM_DISCOVERY = [
     "sdk/textanalytics/azure-ai-textanalytics",
 ]
 
-TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7"}
+# TODO: Remove the azure-identity-broker override once pymsalruntime publishes cp315 wheels.
+TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7", "azure-identity-broker": ">=3.10,<3.15"}
 TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {}
 
 omit_regression = (

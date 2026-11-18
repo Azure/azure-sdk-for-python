@@ -45,6 +45,32 @@ class TestCognitiveServicesManagementRaiPoliciesOperations(AzureMgmtRecordedTest
                     "acs": {
                         "agent_control_specification_version": "str",
                         "intervention_points": {
+                            "agent_shutdown": {
+                                "policy": {
+                                    "id": "str",
+                                    "aacs_moderation": {
+                                        "harm_configs": [{"category": "str", "harm_config_id": "str"}],
+                                        "subject_format": "str",
+                                    },
+                                    "query": "str",
+                                },
+                                "policy_target": "$snap.summary",
+                                "policy_target_kind": "agent_summary",
+                                "annotations": {"str": {"from": "str"}},
+                            },
+                            "agent_startup": {
+                                "policy": {
+                                    "id": "str",
+                                    "aacs_moderation": {
+                                        "harm_configs": [{"category": "str", "harm_config_id": "str"}],
+                                        "subject_format": "str",
+                                    },
+                                    "query": "str",
+                                },
+                                "policy_target": "$snap.agent_init",
+                                "policy_target_kind": "agent_init",
+                                "annotations": {"str": {"from": "str"}},
+                            },
                             "input": {
                                 "policy": {
                                     "id": "str",
@@ -56,7 +82,7 @@ class TestCognitiveServicesManagementRaiPoliciesOperations(AzureMgmtRecordedTest
                                 },
                                 "policy_target": "str",
                                 "policy_target_kind": "str",
-                                "annotations": {},
+                                "annotations": {"str": {"from": "str"}},
                             },
                             "output": {
                                 "policy": {
@@ -69,7 +95,20 @@ class TestCognitiveServicesManagementRaiPoliciesOperations(AzureMgmtRecordedTest
                                 },
                                 "policy_target": "str",
                                 "policy_target_kind": "str",
-                                "annotations": {},
+                                "annotations": {"str": {"from": "str"}},
+                            },
+                            "post_model_call": {
+                                "policy": {
+                                    "id": "str",
+                                    "aacs_moderation": {
+                                        "harm_configs": [{"category": "str", "harm_config_id": "str"}],
+                                        "subject_format": "str",
+                                    },
+                                    "query": "str",
+                                },
+                                "policy_target": "$snap.response",
+                                "policy_target_kind": "model_response",
+                                "annotations": {"str": {"from": "str"}},
                             },
                             "post_tool_call": {
                                 "policy": {
@@ -82,8 +121,21 @@ class TestCognitiveServicesManagementRaiPoliciesOperations(AzureMgmtRecordedTest
                                 },
                                 "policy_target": "str",
                                 "policy_target_kind": "str",
-                                "annotations": {},
+                                "annotations": {"str": {"from": "str"}},
                                 "tool_name_from": "str",
+                            },
+                            "pre_model_call": {
+                                "policy": {
+                                    "id": "str",
+                                    "aacs_moderation": {
+                                        "harm_configs": [{"category": "str", "harm_config_id": "str"}],
+                                        "subject_format": "str",
+                                    },
+                                    "query": "str",
+                                },
+                                "policy_target": "$snap.messages",
+                                "policy_target_kind": "messages",
+                                "annotations": {"str": {"from": "str"}},
                             },
                             "pre_tool_call": {
                                 "policy": {
@@ -96,12 +148,12 @@ class TestCognitiveServicesManagementRaiPoliciesOperations(AzureMgmtRecordedTest
                                 },
                                 "policy_target": "str",
                                 "policy_target_kind": "str",
-                                "annotations": {},
+                                "annotations": {"str": {"from": "str"}},
                                 "tool_name_from": "str",
                             },
                         },
                         "policies": {"str": {"query": "str", "type": "str"}},
-                        "annotators": {},
+                        "annotators": {"str": {"type": "str"}},
                         "metadata": {"str": {}},
                         "tools": {
                             "str": {

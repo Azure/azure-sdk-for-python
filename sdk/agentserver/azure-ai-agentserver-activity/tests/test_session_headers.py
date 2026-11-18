@@ -22,7 +22,8 @@ def test_original_subject_core_dependency_floor():
     if package_version.pre and package_version.pre[0] == "a":
         assert core.specifier.contains(Version(version("azure-ai-agentserver-core")), prereleases=True)
     else:
-        assert "2.3.0b2" in core.specifier
+        assert "2.3.0" in core.specifier
+        assert not core.specifier.contains("2.3.0b2", prereleases=True)
     assert "2.3.0b1" not in core.specifier
     assert "2.0.0b8" not in core.specifier
     assert callable(FoundryAgentRequestContext.model_attribution_headers)

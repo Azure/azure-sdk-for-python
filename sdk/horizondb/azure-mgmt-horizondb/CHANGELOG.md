@@ -1,5 +1,16 @@
 # Release History
 
+## 1.0.0b4 (2026-11-06)
+
+### Features Added
+
+  - Enum `ProvisioningState` added member `UPDATING`
+
+### Breaking Changes
+
+  - Model `Pool` deleted or renamed its instance variable `tags`
+  - Model `PoolForPatchUpdate` deleted or renamed its instance variable `tags`
+
 ## 1.0.0b3 (2026-10-15)
 
 ### Features Added

@@ -124,8 +124,12 @@ class ProxyResource(Resource):
 class BackupProperties(TypedDict, total=False):
     """Backup configuration properties for a HorizonDB cluster.
 
-    :ivar geoRedundancy: The geo-redundancy state. Geo-redundant backup is not supported when
-     dataEncryption.type is AzureKeyVault. Required. Known values are: "Enabled" and "Disabled".
+    :ivar geoRedundancy: The geo-redundancy state. When creationMode is PointInTimeRestore, the
+     service ignores the requested value during cluster creation and configures the new cluster with
+     the same geo-redundancy setting as the source cluster, for both same-location and
+     cross-location restores. The response reports the inherited setting. Geo-redundant backup is
+     not supported when dataEncryption.type is AzureKeyVault. Required. Known values are: "Enabled"
+     and "Disabled".
     :vartype geoRedundancy: Union[str, "GeoRedundancyState"]
     :ivar retentionDays: The number of days that automatic backups are retained. The service
      defaults to 7 days when this property is omitted.
@@ -136,8 +140,12 @@ class BackupProperties(TypedDict, total=False):
     """
 
     geoRedundancy: Required[Union[str, "GeoRedundancyState"]]
-    """The geo-redundancy state. Geo-redundant backup is not supported when dataEncryption.type is
-     AzureKeyVault. Required. Known values are: \"Enabled\" and \"Disabled\"."""
+    """The geo-redundancy state. When creationMode is PointInTimeRestore, the service ignores the
+     requested value during cluster creation and configures the new cluster with the same
+     geo-redundancy setting as the source cluster, for both same-location and cross-location
+     restores. The response reports the inherited setting. Geo-redundant backup is not supported
+     when dataEncryption.type is AzureKeyVault. Required. Known values are: \"Enabled\" and
+     \"Disabled\"."""
     retentionDays: int
     """The number of days that automatic backups are retained. The service defaults to 7 days when
      this property is omitted."""
@@ -209,7 +217,7 @@ class ChangeDataCaptureCapabilityProperties(TypedDict, total=False):
      "Enabling", "Enabled", "Disabling", "Disabled", "Degraded", and "Failed".
     :vartype effectiveState: Union[str, "ChangeDataCaptureEffectiveState"]
     :ivar provisioningState: The provisioning state of the latest capability mutation. Known values
-     are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     are: "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar autoUpgradeExtension: Whether HorizonDB may automatically upgrade the service-owned
      change data capture extension within the supported compatibility policy.
@@ -240,7 +248,7 @@ class ChangeDataCaptureCapabilityProperties(TypedDict, total=False):
      \"Disabling\", \"Disabled\", \"Degraded\", and \"Failed\"."""
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of the latest capability mutation. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
     autoUpgradeExtension: bool
     """Whether HorizonDB may automatically upgrade the service-owned change data capture extension
      within the supported compatibility policy."""
@@ -344,7 +352,7 @@ class ChangeDataCaptureConfigurationProperties(TypedDict, total=False):
      "Enabling", "Enabled", "Disabling", "Disabled", "Degraded", and "Failed".
     :vartype effectiveState: Union[str, "ChangeDataCaptureEffectiveState"]
     :ivar provisioningState: The provisioning state of the latest configuration mutation. Known
-     values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     values are: "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar extension: The change data capture extension state for the enrolled database. Required.
     :vartype extension: "ChangeDataCaptureExtensionStatus"
@@ -376,7 +384,7 @@ class ChangeDataCaptureConfigurationProperties(TypedDict, total=False):
      \"Enabled\", \"Disabling\", \"Disabled\", \"Degraded\", and \"Failed\"."""
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of the latest configuration mutation. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
     extension: Required["ChangeDataCaptureExtensionStatus"]
     """The change data capture extension state for the enrolled database. Required."""
     replication: Required["ChangeDataCaptureReplicationStatus"]
@@ -456,7 +464,7 @@ class ChangeDataCaptureDestinationProperties(TypedDict, total=False):
      "WaitingForIdentity", "Enabling", "Enabled", "Disabling", "Disabled", "Degraded", and "Failed".
     :vartype effectiveState: Union[str, "ChangeDataCaptureDestinationEffectiveState"]
     :ivar provisioningState: The provisioning state of the latest destination mutation. Known
-     values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     values are: "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar activeIdentityAssignmentResourceId: The resource ID of the currently active identity
      assignment, if one is active.
@@ -478,7 +486,7 @@ class ChangeDataCaptureDestinationProperties(TypedDict, total=False):
      \"Enabling\", \"Enabled\", \"Disabling\", \"Disabled\", \"Degraded\", and \"Failed\"."""
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of the latest destination mutation. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
     activeIdentityAssignmentResourceId: str
     """The resource ID of the currently active identity assignment, if one is active."""
     configurationCount: Required[int]
@@ -544,7 +552,8 @@ class ChangeDataCaptureIdentityAssignmentProperties(TypedDict, total=False):  # 
      represented as an RFC 4122 GUID. Required.
     :vartype tenantId: str
     :ivar provisioningState: The provisioning state of the latest identity-assignment mutation.
-     Known values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     Known values are: "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and
+     "Updating".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar validation: The latest validation result for this identity assignment. Required.
     :vartype validation: "IdentityValidationStatus"
@@ -573,7 +582,7 @@ class ChangeDataCaptureIdentityAssignmentProperties(TypedDict, total=False):  # 
      an RFC 4122 GUID. Required."""
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of the latest identity-assignment mutation. Known values are:
-     \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
     validation: Required["IdentityValidationStatus"]
     """The latest validation result for this identity assignment. Required."""
     status: Required["ChangeDataCaptureStatus"]
@@ -773,9 +782,11 @@ class ClusterProperties(TypedDict, total=False):
      from an available backup; pointInTimeUtc and creationSourceClusterResourceId are then required,
      postgreSqlVersion must be omitted because it is obtained from the backup metadata, and
      creationSourceClusterLocation is required when the source and target cluster locations differ.
-     This property is immutable and is returned as creation provenance. On replacement, omission
-     preserves the recorded value, resubmitting the same value is accepted, and changing it is
-     rejected. Known values are: "Create" and "PointInTimeRestore".
+     During PointInTimeRestore creation, the service ignores the requested backup.geoRedundancy
+     value and configures the new cluster with the same geo-redundancy setting as the source
+     cluster. This property is immutable and is returned as creation provenance. On replacement,
+     omission preserves the recorded value, resubmitting the same value is accepted, and changing it
+     is rejected. Known values are: "Create" and "PointInTimeRestore".
     :vartype creationMode: Union[str, "ClusterCreateMode"]
     :ivar pointInTimeUtc: The requested point in time, in UTC. This property is required in every
      PointInTimeRestore request. For a same-location restore, the service restores the latest backup
@@ -816,7 +827,7 @@ class ClusterProperties(TypedDict, total=False):
      "Deleting", "Inaccessible", and "Updating".
     :vartype state: Union[str, "ClusterState"]
     :ivar provisioningState: The provisioning state of the cluster. Required. Known values are:
-     "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar readWritePool: The pool currently designated to host the cluster's read-write node.
      Required.
@@ -836,9 +847,11 @@ class ClusterProperties(TypedDict, total=False):
      backup; pointInTimeUtc and creationSourceClusterResourceId are then required, postgreSqlVersion
      must be omitted because it is obtained from the backup metadata, and
      creationSourceClusterLocation is required when the source and target cluster locations differ.
-     This property is immutable and is returned as creation provenance. On replacement, omission
-     preserves the recorded value, resubmitting the same value is accepted, and changing it is
-     rejected. Known values are: \"Create\" and \"PointInTimeRestore\"."""
+     During PointInTimeRestore creation, the service ignores the requested backup.geoRedundancy
+     value and configures the new cluster with the same geo-redundancy setting as the source
+     cluster. This property is immutable and is returned as creation provenance. On replacement,
+     omission preserves the recorded value, resubmitting the same value is accepted, and changing it
+     is rejected. Known values are: \"Create\" and \"PointInTimeRestore\"."""
     pointInTimeUtc: str
     """The requested point in time, in UTC. This property is required in every PointInTimeRestore
      request. For a same-location restore, the service restores the latest backup available at or
@@ -879,7 +892,7 @@ class ClusterProperties(TypedDict, total=False):
      \"Deleting\", \"Inaccessible\", and \"Updating\"."""
     provisioningState: Required[Union[str, "ProvisioningState"]]
     """The provisioning state of the cluster. Required. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
     readWritePool: Required["ReadWritePoolProperties"]
     """The pool currently designated to host the cluster's read-write node. Required."""
 
@@ -1015,7 +1028,7 @@ class FirewallRuleProperties(TypedDict, total=False):
      characters.
     :vartype description: str
     :ivar provisioningState: The provisioning state of the firewall rule. Known values are:
-     "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
@@ -1028,7 +1041,7 @@ class FirewallRuleProperties(TypedDict, total=False):
     """The description of the HorizonDB firewall rule. The maximum length is 1024 characters."""
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of the firewall rule. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
 
 
 class HorizonDbClusterDataEncryption(TypedDict, total=False):
@@ -1361,7 +1374,8 @@ class MicrosoftEntraAuthenticationProperties(TypedDict, total=False):
      and "Disabled".
     :vartype state: Union[str, "AuthenticationState"]
     :ivar provisioningState: The provisioning state of the Microsoft Entra authentication method.
-     Known values are: "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     Known values are: "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and
+     "Updating".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
@@ -1370,7 +1384,7 @@ class MicrosoftEntraAuthenticationProperties(TypedDict, total=False):
      \"Disabled\"."""
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of the Microsoft Entra authentication method. Known values are:
-     \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
 
 
 class MicrosoftEntraAuthenticationPropertiesForPatchUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -1471,7 +1485,7 @@ class ParameterGroupProperties(TypedDict, total=False):
      "18".
     :vartype postgreSqlVersion: Union[str, "PostgreSqlVersion"]
     :ivar provisioningState: The provisioning state of the parameter group. Known values are:
-     "Succeeded", "Failed", "Canceled", "InProgress", and "Provisioning".
+     "Succeeded", "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
@@ -1487,7 +1501,7 @@ class ParameterGroupProperties(TypedDict, total=False):
      unambiguous. Required. Known values are: \"17\" and \"18\"."""
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of the parameter group. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     \"Canceled\", \"InProgress\", \"Provisioning\", and \"Updating\"."""
 
 
 class ParameterGroupPropertiesForPatchUpdate(TypedDict, total=False):
@@ -1603,16 +1617,16 @@ class PasswordAuthenticationProperties(TypedDict, total=False):
     :ivar state: The state of PostgreSQL username-and-password authentication. Required. Known
      values are: "Enabled" and "Disabled".
     :vartype state: Union[str, "AuthenticationState"]
-    :ivar administratorLogin: The PostgreSQL administrator login name. This value is not returned
-     in responses. After it is set, renaming is not supported. Setting the login requires password
-     authentication state to be Enabled in the same request.
+    :ivar administratorLogin: The PostgreSQL administrator login name. This value is returned in
+     responses after it is set. After it is set, renaming is not supported. Setting the login
+     requires password authentication state to be Enabled in the same request.
     :vartype administratorLogin: str
     :ivar administratorLoginPassword: The PostgreSQL administrator password. Setting the password
      requires password authentication state to be Enabled in the same request.
     :vartype administratorLoginPassword: str
     :ivar provisioningState: The provisioning state of the PostgreSQL username-and-password
-     authentication method. Known values are: "Succeeded", "Failed", "Canceled", "InProgress", and
-     "Provisioning".
+     authentication method. Known values are: "Succeeded", "Failed", "Canceled", "InProgress",
+     "Provisioning", and "Updating".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
@@ -1620,15 +1634,16 @@ class PasswordAuthenticationProperties(TypedDict, total=False):
     """The state of PostgreSQL username-and-password authentication. Required. Known values are:
      \"Enabled\" and \"Disabled\"."""
     administratorLogin: str
-    """The PostgreSQL administrator login name. This value is not returned in responses. After it is
-     set, renaming is not supported. Setting the login requires password authentication state to be
-     Enabled in the same request."""
+    """The PostgreSQL administrator login name. This value is returned in responses after it is set.
+     After it is set, renaming is not supported. Setting the login requires password authentication
+     state to be Enabled in the same request."""
     administratorLoginPassword: str
     """The PostgreSQL administrator password. Setting the password requires password authentication
      state to be Enabled in the same request."""
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of the PostgreSQL username-and-password authentication method. Known
-     values are: \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", and \"Provisioning\"."""
+     values are: \"Succeeded\", \"Failed\", \"Canceled\", \"InProgress\", \"Provisioning\", and
+     \"Updating\"."""
 
 
 class PasswordAuthenticationPropertiesForPatchUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -1678,14 +1693,10 @@ class Pool(ProxyResource):
     :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "PoolProperties"
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
     """
 
     properties: "PoolProperties"
     """The resource-specific properties for this resource."""
-    tags: dict[str, str]
-    """Resource tags."""
 
 
 class PoolComputeModel(TypedDict, total=False):
@@ -1753,14 +1764,10 @@ class PoolComputeModelForPatchUpdate(TypedDict, total=False):
 class PoolForPatchUpdate(TypedDict, total=False):
     """HorizonDB pool for update operations.
 
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
     :ivar properties: The properties that can be updated for a HorizonDB pool.
     :vartype properties: "PoolPropertiesForPatchUpdate"
     """
 
-    tags: dict[str, str]
-    """Resource tags."""
     properties: "PoolPropertiesForPatchUpdate"
     """The properties that can be updated for a HorizonDB pool."""
 
@@ -1801,10 +1808,10 @@ class PoolParameterGroupReference(TypedDict, total=False):
     version, initial pool creation accepts only the corresponding default parameter group; PUT
     updates to an existing pool can associate either group type.
 
-    :ivar parameterGroupResourceId: The Azure resource ID of the associated parameter group.
-     Initial pool creation in this API version requires the corresponding
-     Microsoft.HorizonDb/locations/parameterGroups resource. For an existing pool, PUT can specify
-     either the corresponding default group or a customer-created
+    :ivar parameterGroupResourceId: The Azure resource ID of the associated parameter group. When
+     the parameter group is supplied during initial pool creation in this API version, the ID must
+     identify the corresponding Microsoft.HorizonDb/locations/parameterGroups resource. For an
+     existing pool, PUT can specify either the corresponding default group or a customer-created
      Microsoft.HorizonDb/parameterGroups resource. Required.
     :vartype parameterGroupResourceId: str
     :ivar applyMethod: Determines when dynamic parameter changes from the associated parameter
@@ -1820,9 +1827,10 @@ class PoolParameterGroupReference(TypedDict, total=False):
     """
 
     parameterGroupResourceId: Required[str]
-    """The Azure resource ID of the associated parameter group. Initial pool creation in this API
-     version requires the corresponding Microsoft.HorizonDb/locations/parameterGroups resource. For
-     an existing pool, PUT can specify either the corresponding default group or a customer-created
+    """The Azure resource ID of the associated parameter group. When the parameter group is supplied
+     during initial pool creation in this API version, the ID must identify the corresponding
+     Microsoft.HorizonDb/locations/parameterGroups resource. For an existing pool, PUT can specify
+     either the corresponding default group or a customer-created
      Microsoft.HorizonDb/parameterGroups resource. Required."""
     applyMethod: Required[Union[str, "ParameterApplyMethod"]]
     """Determines when dynamic parameter changes from the associated parameter group become effective.
@@ -1877,19 +1885,20 @@ class PoolProperties(TypedDict, total=False):
      Disabled when nodeCount is 1, and must be AnyZone or ZoneRedundant when nodeCount is 2 through
      16. Required.
     :vartype highAvailability: "PoolHighAvailability"
-    :ivar parameterGroup: The required parameter group associated with the pool. When creating a
-     new pool in this API version, the caller must supply the corresponding default parameter group;
-     customer-created parameter groups are not accepted during creation. For an existing pool, PUT
-     or PATCH can associate either the corresponding default parameter group or a customer-created
-     parameter group. The create-visible shape intentionally supports both resource ID forms so a
-     future API version can allow customer-created parameter groups during creation without a
-     breaking schema change. Required.
+    :ivar parameterGroup: The parameter group associated with the pool. When omitted during
+     creation, the service applies the default parameter group compatible with the parent cluster's
+     PostgreSQL version. When supplied during creation in this API version, it must reference the
+     corresponding default parameter group; customer-created parameter groups are not accepted
+     during creation. For an existing pool, PUT or PATCH can associate either the corresponding
+     default parameter group or a customer-created parameter group. The create-visible shape
+     intentionally supports both resource ID forms so a future API version can allow
+     customer-created parameter groups during creation without a breaking schema change.
     :vartype parameterGroup: "PoolParameterGroupReference"
     :ivar scheduledMaintenance: The scheduled maintenance configuration for the pool. The
      properties available depend on the selected maintenance management type.
     :vartype scheduledMaintenance: "ScheduledMaintenanceProperties"
     :ivar provisioningState: The provisioning state of the pool. Known values are: "Succeeded",
-     "Failed", "Canceled", "InProgress", and "Provisioning".
+     "Failed", "Canceled", "InProgress", "Provisioning", and "Updating".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
@@ -1905,20 +1914,21 @@ class PoolProperties(TypedDict, total=False):
     highAvailability: Required["PoolHighAvailability"]
     """The required high-availability configuration for the pool. mode must be Disabled when nodeCount
      is 1, and must be AnyZone or ZoneRedundant when nodeCount is 2 through 16. Required."""
-    parameterGroup: Required["PoolParameterGroupReference"]
-    """The required parameter group associated with the pool. When creating a new pool in this API
-     version, the caller must supply the corresponding default parameter group; customer-created
-     parameter groups are not accepted during creation. For an existing pool, PUT or PATCH can
-     associate either the corresponding default parameter group or a customer-created parameter
-     group. The create-visible shape intentionally supports both resource ID forms so a future API
-     version can allow customer-created parameter groups during creation without a breaking schema
-     change. Required."""
+    parameterGroup: "PoolParameterGroupReference"
+    """The parameter group associated with the pool. When omitted during creation, the service applies
+     the default parameter group compatible with the parent cluster's PostgreSQL version. When
+     supplied during creation in this API version, it must reference the corresponding default
+     parameter group; customer-created parameter groups are not accepted during creation. For an
+     existing pool, PUT or PATCH can associate either the corresponding default parameter group or a
+     customer-created parameter group. The create-visible shape intentionally supports both resource
+     ID forms so a future API version can allow customer-created parameter groups during creation
+     without a breaking schema change."""
     scheduledMaintenance: "ScheduledMaintenanceProperties"
     """The scheduled maintenance configuration for the pool. The properties available depend on the
      selected maintenance management type."""
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of the pool. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"InProgress\", and \"Provisioning\"."""
+     \"InProgress\", \"Provisioning\", and \"Updating\"."""
 
 
 class PoolPropertiesForPatchUpdate(TypedDict, total=False):

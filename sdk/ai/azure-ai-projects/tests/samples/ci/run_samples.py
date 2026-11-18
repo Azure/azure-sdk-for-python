@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 """Run resolved sample pytest nodes against the Bicep-created project, without recording."""

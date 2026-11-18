@@ -196,7 +196,7 @@ class TestToolCallSuccessScore:
         with pytest.raises(EvaluationException) as raised:
             evaluate_with(llm_output)
 
-        assert str(raised.value) == f"(InternalError) Invalid score value: {shown}. Expected 0 or 1."
+        assert raised.value.message.startswith(f"Invalid score value: {shown}. Expected 0 or 1. Cause: ")
         assert raised.value.internal_message == "Invalid score value."
         assert raised.value.blame == ErrorBlame.SYSTEM_ERROR
         assert raised.value.category == ErrorCategory.FAILED_EXECUTION
@@ -206,7 +206,7 @@ class TestToolCallSuccessScore:
         with pytest.raises(EvaluationException) as raised:
             evaluate_with({"score": "x" * 500})
 
-        assert len(str(raised.value)) < 100
+        assert len(raised.value.message.split(" Cause: ")[0]) < 100
 
     def test_evaluate_reports_a_row_without_a_score_as_an_error(self, tmp_path):
         rows = [

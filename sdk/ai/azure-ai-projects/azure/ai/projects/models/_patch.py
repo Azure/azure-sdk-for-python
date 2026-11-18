@@ -55,8 +55,8 @@ _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE: Final = (
 )
 _AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
     [
+        _AgentDefinitionOptInKeys.A2_A_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
-        _AgentDefinitionOptInKeys.EXTERNAL_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.DRAFT_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.DIGITAL_WORKER_V1_PREVIEW.value,
@@ -68,7 +68,6 @@ _AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
 )
 
 _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
-    "agent_insight_monitors": _FoundryFeaturesOptInKeys.AGENT_INSIGHTS_V1_PREVIEW.value,
     "evaluation_taxonomies": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
     "evaluators": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
     "insights": _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW.value,
@@ -79,7 +78,6 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
     "skills": _FoundryFeaturesOptInKeys.SKILLS_V1_PREVIEW.value,
     "voice_agents": _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
-    "agents": _AGENT_OPERATION_FEATURE_HEADERS,
 }
 """Foundry-Features header values keyed by beta sub-client property name."""
 

@@ -195,7 +195,9 @@ class LocalFileStorage:
                     if path.endswith(".tmp"):
                         if name < timeout_deadline:
                             try:
-                                os.remove(path)  # TODO: log data loss
+                                os.remove(path)
+                                if self._capacity_lock is not None:
+                                    logger.warning("Retry write timed out. Check storage write access.")
                             except Exception:
                                 pass  # keep silent
                     if path.endswith(".lock"):
@@ -210,7 +212,9 @@ class LocalFileStorage:
                     if path.endswith(".blob"):
                         if name < retention_deadline:
                             try:
-                                os.remove(path)  # TODO: log data loss
+                                os.remove(path)
+                                if self._capacity_lock is not None:
+                                    logger.warning("Data expired. Check storage_retention_period.")
                             except Exception:
                                 pass  # keep silent
                         else:
@@ -307,13 +311,18 @@ class LocalFileStorage:
                     owner_uid = dir_stat.st_uid
                     current_uid = os.getuid()  # pylint: disable=no-member
                     if owner_uid not in (current_uid, 0):
-                        logger.error(
-                            "Storage directory %s is owned by uid %d, not the current user (%d) or admin (uid 0). "
-                            "Refusing to use this directory.",
-                            self._path,
-                            owner_uid,
-                            current_uid,
-                        )
+                        if self._capacity_lock is not None:
+                            logger.error(
+                                "Storage setup failed. Configure a directory owned by the current user or admin."
+                            )
+                        else:
+                            logger.error(
+                                "Storage directory %s is owned by uid %d, not the current user (%d) or admin (uid 0). "
+                                "Refusing to use this directory.",
+                                self._path,
+                                owner_uid,
+                                current_uid,
+                            )
                         set_local_storage_setup_state_exception(
                             f"Directory owned by uid {owner_uid}, expected {current_uid} or 0"
                         )
@@ -344,10 +353,10 @@ class LocalFileStorage:
                     try:
                         size += os.path.getsize(path)
                     except OSError:
-                        logger.error(
-                            "Path %s does not exist or is inaccessible.",
-                            path,
-                        )
+                        if self._capacity_lock is not None:
+                            logger.error("Retry file is inaccessible. Check storage permissions.")
+                        else:
+                            logger.error("Path %s does not exist or is inaccessible.", path)
                         continue
                     if size >= self._max_size:
                         # pylint: disable=logging-format-interpolation
@@ -374,6 +383,8 @@ class LocalFileStorage:
                     if filename < timeout_deadline:
                         try:
                             os.remove(path)
+                            if self._capacity_lock is not None:
+                                logger.warning("Retry write timed out. Check storage write access.")
                         except OSError:
                             pass
                     continue
@@ -388,6 +399,8 @@ class LocalFileStorage:
                 if filename < retention_deadline:
                     try:
                         os.remove(path)
+                        if self._capacity_lock is not None:
+                            logger.warning("Data expired. Check storage_retention_period.")
                     except OSError:
                         pass
 

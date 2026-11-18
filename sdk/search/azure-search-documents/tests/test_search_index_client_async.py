@@ -6,12 +6,15 @@
 
 from __future__ import annotations
 
+import json
 from unittest import mock
 
 import pytest
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import HttpResponseError
+from azure.core.rest import HttpRequest
 
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import SearchIndex
@@ -20,59 +23,6 @@ from _capabilities import require_capability
 
 ENDPOINT = "https://my-search-service.search.windows.net"
 KEY = "fake-api-key"
-
-_DELETE_RESOURCES = [
-    ("delete_index", "SearchIndex"),
-    ("delete_synonym_map", "SynonymMap"),
-    ("delete_alias", "SearchAlias"),
-    ("delete_knowledge_base", "KnowledgeBase"),
-    ("delete_knowledge_source", "SearchIndexKnowledgeSource"),
-]
-_DELETE_CONDITIONS = [
-    (MatchConditions.Unconditionally, None, None),
-    (MatchConditions.IfNotModified, "If-Match", '"etag"'),
-    (MatchConditions.IfModified, "If-None-Match", '"etag"'),
-    (MatchConditions.IfPresent, "If-Match", "*"),
-    (MatchConditions.IfMissing, "If-None-Match", "*"),
-]
-
-
-@pytest.mark.asyncio
-class TestSearchIndexClientDeletesAsync:
-    @pytest.mark.parametrize("method_name,model_name", _DELETE_RESOURCES)
-    @pytest.mark.parametrize("condition,header,value", _DELETE_CONDITIONS)
-    @pytest.mark.parametrize("as_model", [False, True])
-    async def test_delete_preserves_conditions_in_generated_headers(
-        self, method_name, model_name, condition, header, value, as_model
-    ):
-        from types import SimpleNamespace
-        from azure.search.documents.indexes import models
-
-        resource = (
-            getattr(models, model_name)({"name": "resource", "@odata.etag": '"etag"'}) if as_model else "resource"
-        )
-        kwargs = {} if as_model else {"etag": '"etag"'}
-        response = mock.Mock(status_code=204)
-
-        async with _client() as client:
-            with mock.patch.object(
-                client._client._pipeline,
-                "run",
-                new=mock.AsyncMock(return_value=SimpleNamespace(http_response=response)),
-            ) as run:
-                await getattr(client, method_name)(
-                    resource, match_condition=condition, headers={"x-custom": "value"}, **kwargs
-                )
-
-        request = run.call_args.args[0]
-        assert request.method == "DELETE"
-        assert "resource" in request.url
-        assert request.headers["x-custom"] == "value"
-        if header is None:
-            assert "If-Match" not in request.headers
-            assert "If-None-Match" not in request.headers
-        else:
-            assert request.headers[header] == value
 
 
 def _client() -> SearchIndexClient:
@@ -107,15 +57,159 @@ def _index_response_stub(name="hotels"):
     response.encryption_key = None
     response.similarity = None
     response.semantic_search = None
-    response.vector_search = None
+    response.vector_search = {
+        "topicGraphProfiles": [
+            {
+                "name": "topics",
+                "indexName": "hotel-topics",
+                "defaultKind": "diverse",
+                "defaultDiversityFactor": 0.35,
+                "defaultMinDiversityPoolSize": 2500,
+            }
+        ]
+    }
     response.permission_filter_option = None
     response.purview_enabled = None
+    response.graph_profile = {"kind": "edgeList", "provenanceIndexName": "hotel-chunks"}
     response.share_point_connector_app_registration = {
-        "applicationId": "sharepoint-app",
-        "federatedCredentialId": "sharepoint-credential",
+        "applicationId": "11111111-1111-1111-1111-111111111111",
+        "federatedCredentialId": "22222222-2222-2222-2222-222222222222",
+    }
+    response.one_lake_security_source = {
+        "fabricWorkspaceId": "33333333-3333-3333-3333-333333333333",
+        "lakehouseId": "44444444-4444-4444-4444-444444444444",
     }
     response.e_tag = '"etag"'
     return response
+
+
+@pytest.mark.asyncio
+class TestSearchIndexClientDeleteAsync:
+    @pytest.mark.parametrize("resource", ["index", "synonym_map", "alias", "knowledge_base", "knowledge_source"])
+    async def test_delete_resource_by_name_preserves_condition_and_etag(self, resource):
+        async with _client() as client:
+            with mock.patch.object(client, "_delete_" + resource, new_callable=mock.AsyncMock) as operation:
+                await getattr(client, "delete_" + resource)(
+                    "owned-resource", match_condition=MatchConditions.IfPresent, etag='"etag"'
+                )
+        operation.assert_awaited_once_with(
+            name="owned-resource", match_condition=MatchConditions.IfPresent, etag='"etag"'
+        )
+
+
+@pytest.mark.asyncio
+class TestSearchIndexClientKnowledgeBaseAsync:
+    async def test_create_or_update_knowledge_base_accepts_ga_model_constructor(self):
+        from azure.search.documents.indexes import types
+        from azure.search.documents.indexes.models import KnowledgeBaseAzureOpenAIModel, KnowledgeBaseModelKind
+
+        model = types.KnowledgeBaseModel(
+            kind=KnowledgeBaseModelKind.AZURE_OPEN_AI,
+            azureOpenAIParameters={"resourceUri": "https://example.openai.azure.com", "deploymentId": "query"},
+        )
+        base = types.KnowledgeBase(name="owned-base", knowledgeSources=[], models=[model])
+        async with _client() as client:
+            with mock.patch.object(
+                client, "_create_or_update_knowledge_base", new_callable=mock.AsyncMock
+            ) as operation:
+                await client.create_or_update_knowledge_base(base)
+
+        submitted = operation.call_args.kwargs["knowledge_base"]
+        assert operation.call_args.kwargs["name"] == "owned-base"
+        assert isinstance(submitted.models[0], KnowledgeBaseAzureOpenAIModel)
+        assert submitted.as_dict()["models"] == [model]
+
+    @pytest.mark.parametrize("kind", ["azureOpenAI", "microsoftRetriever1", "openAICompatible"])
+    @pytest.mark.parametrize("method", ["create_knowledge_base", "create_or_update_knowledge_base"])
+    async def test_knowledge_base_submission_accepts_expanded_model_inputs(self, kind, method):
+        from azure.search.documents.indexes import types
+        from azure.search.documents.indexes.models import KnowledgeBaseModelKind
+
+        require_capability(
+            "azure.search.documents.indexes.types.KnowledgeBaseInput",
+            "azure.search.documents.indexes.types.KnowledgeBaseModelInput",
+            "azure.search.documents.indexes.types.KnowledgeBaseMicrosoftRetriever1Model",
+            "azure.search.documents.indexes.types.KnowledgeBaseOpenAICompatibleModel",
+        )
+        if kind == "azureOpenAI":
+            model = types.KnowledgeBaseAzureOpenAIModel(
+                kind=KnowledgeBaseModelKind.AZURE_OPEN_AI,
+                azureOpenAIParameters={"resourceUri": "https://example.openai.azure.com", "deploymentId": "query"},
+            )
+        elif kind == "microsoftRetriever1":
+            model = types.KnowledgeBaseMicrosoftRetriever1Model(kind=KnowledgeBaseModelKind.MICROSOFT_RETRIEVER1)
+        else:
+            model = types.KnowledgeBaseOpenAICompatibleModel(
+                kind=KnowledgeBaseModelKind.OPEN_AI_COMPATIBLE,
+                openAICompatibleParameters={
+                    "uri": "https://example.invalid/chat/completions",
+                    "modelName": "gpt-4o",
+                    "headers": {"api-key": "synthetic-key"},
+                },
+            )
+        base = types.KnowledgeBaseInput(name="owned-base", knowledgeSources=[], models=[model])
+        response = mock.Mock()
+        response.http_response.status_code = 201
+        response.http_response.headers = {}
+        response.http_response.json.return_value = base
+        async with _client() as client:
+            with mock.patch.object(
+                client._client._pipeline, "run", new_callable=mock.AsyncMock, return_value=response
+            ) as operation:
+                submitted = await getattr(client, method)(base)
+
+        operation.assert_awaited_once()
+        request = operation.call_args.args[0]
+        assert request.method == ("POST" if method == "create_knowledge_base" else "PUT")
+        assert json.loads(request.content)["models"] == [model]
+        assert submitted.models[0].kind == kind
+        assert submitted.as_dict()["models"] == [model]
+
+
+@pytest.mark.asyncio
+class TestSearchIndexClientScoringAsync:
+    @pytest.mark.parametrize("scoring_kind", ["classic", "random", "seeded-random"])
+    @pytest.mark.parametrize("method", ["create_index", "create_or_update_index"])
+    async def test_index_submission_accepts_legacy_and_random_scoring_inputs(self, scoring_kind, method):
+        from azure.search.documents.indexes import types
+
+        if scoring_kind != "classic":
+            require_capability(
+                "azure.search.documents.indexes.types.RandomScoringFunction",
+                "azure.search.documents.indexes.types.RandomScoringParameters",
+                "azure.search.documents.indexes.types.ScoringFunctionInput",
+                "azure.search.documents.indexes.types.ScoringProfileInput",
+                "azure.search.documents.indexes.types.SearchIndexInput",
+            )
+            function = types.RandomScoringFunction(type="random")
+            if scoring_kind == "seeded-random":
+                function["random"] = {"seedParameter": "seed"}
+            profile = types.ScoringProfileInput(name="order", functions=[function])
+            index = types.SearchIndexInput(name="owned-index", fields=[], scoringProfiles=[profile])
+        else:
+            function = types.MagnitudeScoringFunction(
+                type="magnitude",
+                fieldName="rating",
+                boost=2.0,
+                magnitude={"boostingRangeStart": 0, "boostingRangeEnd": 5},
+            )
+            profile = types.ScoringProfile(name="order", functions=[function])
+            index = types.SearchIndex(name="owned-index", fields=[], scoringProfiles=[profile])
+        response = mock.Mock()
+        response.http_response.status_code = 201
+        response.http_response.headers = {}
+        response.http_response.json.return_value = index
+        async with _client() as client:
+            with mock.patch.object(
+                client._client._pipeline, "run", new_callable=mock.AsyncMock, return_value=response
+            ) as operation:
+                submitted = await getattr(client, method)(index)
+
+        operation.assert_awaited_once()
+        request = operation.call_args.args[0]
+        assert request.method == ("POST" if method == "create_index" else "PUT")
+        assert json.loads(request.content)["scoringProfiles"] == [profile]
+        assert submitted.scoring_profiles[0].functions[0].as_dict() == function
 
 
 @pytest.mark.asyncio
@@ -149,7 +243,11 @@ class TestListIndexesAsync:
             "azure.search.documents.indexes.aio.SearchIndexClient.list_indexes.search_type",
             "azure.search.documents.indexes.models.SearchIndex.cors_options",
             "azure.search.documents.indexes.models.SearchIndex.permission_filter_option",
+            "azure.search.documents.indexes.models.SearchIndex.purview_enabled",
+            "azure.search.documents.indexes.models.SearchIndex.one_lake_security_source",
             "azure.search.documents.indexes.models.SearchIndex.share_point_connector_app_registration",
+            "azure.search.documents.indexes.models.VectorSearch.topic_graph_profiles",
+            "azure.search.documents.indexes.models.GraphProfile.provenance_index_name",
         )
 
         with mock.patch(
@@ -167,13 +265,16 @@ class TestListIndexesAsync:
         assert kwargs["search"] == "hot"
         assert kwargs["page_size"] == 3
         assert kwargs["search_type"] == "prefix"
-        converted = kwargs["cls"]([_index_response_stub()])
+        response = _index_response_stub()
+        converted = kwargs["cls"]([response])
         assert isinstance(converted[0], SearchIndex)
         assert converted[0].name == "hotels"
-        registration = converted[0].share_point_connector_app_registration
-        assert registration.application_id == "sharepoint-app"
-        assert registration.federated_credential_id == "sharepoint-credential"
-        assert converted[0].e_tag == '"etag"'
+        assert converted[0].graph_profile.kind == "edgeList"
+        serialized = converted[0].as_dict()
+        assert serialized["graphProfile"] == response.graph_profile
+        assert serialized["vectorSearch"] == response.vector_search
+        assert serialized["oneLakeSecuritySource"] == response.one_lake_security_source
+        assert serialized["sharePointConnectorAppRegistration"] == response.share_point_connector_app_registration
 
 
 @pytest.mark.asyncio
@@ -320,60 +421,83 @@ async def test_custom_list_wrappers_forward_search_paging(public_method, generat
     )
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("api_version", ["2026-04-01", "2026-10-01"])
-@pytest.mark.parametrize(
-    ("public_method", "route", "model_name"),
-    [
-        ("get_synonym_maps", "synonymmaps", "SynonymMap"),
-        ("get_data_source_connections", "datasources", "SearchIndexerDataSourceConnection"),
-        ("get_indexers", "indexers", "SearchIndexer"),
-        ("get_skillsets", "skillsets", "SearchIndexerSkillset"),
-    ],
-)
-async def test_custom_list_wrappers_use_generated_paging(public_method, route, model_name, api_version):
-    from types import SimpleNamespace
-    from urllib.parse import parse_qs, urlsplit
+class TestSearchIndexClientFileIngestion:
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("operation", ["multipart", "replacement"])
+    async def test_begin_ingest_knowledge_source_file_returns_typed_poller(self, operation):
+        from azure.search.documents.indexes.models import KnowledgeSourceFile
 
-    from azure.search.documents.indexes import models
-    from azure.search.documents.indexes.aio import SearchIndexerClient
+        method = f"begin_ingest_knowledge_source_file_{operation}"
+        require_capability(f"azure.search.documents.indexes.aio.SearchIndexClient.{method}")
+        response = mock.Mock()
+        response.http_response.headers = {}
+        response.http_response.read = mock.AsyncMock()
+        response.http_response.json.return_value = {"result": {"fileId": "file-1"}}
+        initial = f"_ingest_knowledge_source_file_{operation}_initial"
+        kwargs = {"file_id": "file-1"} if operation == "replacement" else {}
+        client = _client()
+        with mock.patch.object(client, initial, new=mock.AsyncMock(return_value=response)):
+            poller = await getattr(client, method)(name="files", body={}, polling=False, **kwargs)
+            result = await poller.result()
 
-    client_type = SearchIndexClient if public_method == "get_synonym_maps" else SearchIndexerClient
-    pages = [
-        {
-            "value": [{"name": "hot-first"}],
-            "@odata.nextLink": f"{ENDPOINT}/{route}?continuationToken=next&api-version={api_version}",
-        },
-        {"value": [{"name": "hot-second"}]},
-    ]
-    responses = [mock.Mock(status_code=200) for _ in pages]
-    for response, payload in zip(responses, pages):
-        response.json.return_value = payload
-    options = {"search": "hot", "page_size": 1, "search_type": "prefix"} if api_version == "2026-10-01" else {}
+        assert isinstance(result, KnowledgeSourceFile)
+        assert result.file_id == "file-1"
 
-    async with client_type(ENDPOINT, AzureKeyCredential(KEY), api_version=api_version) as client:
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("operation", ["multipart", "replacement"])
+    async def test_begin_ingest_failed_monitor_raises(self, operation):
+        method = f"begin_ingest_knowledge_source_file_{operation}"
+        require_capability(f"azure.search.documents.indexes.aio.SearchIndexClient.{method}")
+        location = f"{ENDPOINT}/knowledgesources('files')/files/operations/operation-1"
+        accepted = mock.Mock()
+        accepted.http_response.status_code = 202
+        accepted.http_response.request = HttpRequest(
+            "POST", ENDPOINT, headers={"x-ms-client-request-id": "offline-ingestion"}
+        )
+        accepted.http_response.headers = {"operation-location": location}
+        accepted.http_response.read = mock.AsyncMock()
+        accepted.http_response.json.return_value = {"status": "Running"}
+        accepted.http_response.text.return_value = '{"status": "Running"}'
+        failed = mock.Mock()
+        failed.http_response.status_code = 200
+        failed.http_response.reason = "OK"
+        failed.http_response.headers = {}
+        failed.http_response.json.return_value = {
+            "status": "Failed",
+            "error": {"code": "ExtractionFailed", "message": "Fixture extraction failed"},
+        }
+        failed.http_response.text.return_value = json.dumps(failed.http_response.json.return_value)
+        kwargs = {"file_id": "file-1"} if operation == "replacement" else {}
+        async with _client() as client:
+            with mock.patch.object(
+                client, f"_ingest_knowledge_source_file_{operation}_initial", new=mock.AsyncMock(return_value=accepted)
+            ):
+                with mock.patch.object(
+                    client._client._pipeline, "run", new=mock.AsyncMock(return_value=failed)
+                ) as poll:
+                    poller = await getattr(client, method)(name="files", body={}, polling_interval=0, **kwargs)
+                    with pytest.raises(HttpResponseError, match="Fixture extraction failed") as error:
+                        await poller.result()
+        assert poller.status() == "Failed"
+        assert error.value.error.code == "ExtractionFailed"
+        poll.assert_awaited_once()
+        assert poll.call_args.args[0].method == "GET"
+        assert poll.call_args.args[0].url == location
+
+
+class TestSearchIndexClientKnowledgeSource:
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("scenario", ["facet_hint", "graph_cache"])
+    async def test_create_or_update_knowledge_source_preserves_preview_configuration(self, scenario):
+        from _preview_helpers import assert_knowledge_source_configuration, knowledge_source_configuration
+
+        source = knowledge_source_configuration(scenario)
+        client = _client()
         with mock.patch.object(
-            client._client._pipeline,
-            "run",
-            new=mock.AsyncMock(side_effect=[SimpleNamespace(http_response=response) for response in responses]),
-        ) as send:
-            result = await getattr(client, public_method)(select=["name"], headers={"x-custom": "value"}, **options)
+            client, "_create_or_update_knowledge_source", new=mock.AsyncMock(return_value=source)
+        ) as create:
+            result = await client.create_or_update_knowledge_source(source)
 
-    assert isinstance(result, list)
-    assert [item.name for item in result] == ["hot-first", "hot-second"]
-    assert all(isinstance(item, getattr(models, model_name)) for item in result)
-    assert send.await_count == 2
-    for call in send.call_args_list:
-        request = call.args[0]
-        assert request.method == "GET"
-        assert urlsplit(request.url).path == f"/{route}"
-        assert parse_qs(urlsplit(request.url).query)["api-version"] == [api_version]
-        assert request.headers["x-custom"] == "value"
-    first_query = parse_qs(urlsplit(send.call_args_list[0].args[0].url).query)
-    assert first_query["$select"] == ["name"]
-    if options:
-        assert first_query["search"] == ["hot"]
-        assert first_query["pageSize"] == ["1"]
-        assert first_query["searchType"] == ["prefix"]
-    else:
-        assert not {"search", "pageSize", "searchType"}.intersection(first_query)
+        assert result is source
+        assert create.call_args.kwargs["prefer"] == "return=representation"
+        assert_knowledge_source_configuration(create.call_args.kwargs["knowledge_source"].as_dict(), scenario)

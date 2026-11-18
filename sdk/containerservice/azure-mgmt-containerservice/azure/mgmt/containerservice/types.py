@@ -313,6 +313,9 @@ class AgentFabricMembership(ProxyResource):
     :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "AgentFabricMembershipProperties"
+    :ivar sku: The SKU of the AgentFabric membership. Determines which AgentFabric components are
+     deployed to the cluster. Required.
+    :vartype sku: "AgentFabricMembershipSku"
     :ivar managedBy: Resource ID of the AgentFabric that this cluster is a member of. The
      AgentFabric must be in the same tenant and subscription as the managed cluster. As the ARM
      envelope property, it also stops a complete mode deployment from deleting the membership and
@@ -322,6 +325,9 @@ class AgentFabricMembership(ProxyResource):
 
     properties: "AgentFabricMembershipProperties"
     """The resource-specific properties for this resource."""
+    sku: Required["AgentFabricMembershipSku"]
+    """The SKU of the AgentFabric membership. Determines which AgentFabric components are deployed to
+     the cluster. Required."""
     managedBy: Required[str]
     """Resource ID of the AgentFabric that this cluster is a member of. The AgentFabric must be in the
      same tenant and subscription as the managed cluster. As the ARM envelope property, it also
@@ -335,17 +341,24 @@ class AgentFabricMembershipProperties(TypedDict, total=False):
     :ivar provisioningState: The current provisioning state of the AgentFabric membership. Known
      values are: "Canceled", "Creating", "Deleting", "Failed", "Succeeded", and "Updating".
     :vartype provisioningState: Union[str, "AgentFabricMembershipProvisioningState"]
-    :ivar sku: The SKU of the AgentFabric membership. Determines which AgentFabric components are
-     deployed to the cluster. Required. Known values are: "Standard" and "Premium".
-    :vartype sku: Union[str, "AgentFabricMembershipSkuName"]
     """
 
     provisioningState: Union[str, "AgentFabricMembershipProvisioningState"]
     """The current provisioning state of the AgentFabric membership. Known values are: \"Canceled\",
      \"Creating\", \"Deleting\", \"Failed\", \"Succeeded\", and \"Updating\"."""
-    sku: Required[Union[str, "AgentFabricMembershipSkuName"]]
-    """The SKU of the AgentFabric membership. Determines which AgentFabric components are deployed to
-     the cluster. Required. Known values are: \"Standard\" and \"Premium\"."""
+
+
+class AgentFabricMembershipSku(TypedDict, total=False):
+    """The SKU of the AgentFabric membership.
+
+    :ivar name: The SKU name that determines which AgentFabric components are deployed to the
+     cluster. Required. Known values are: "Standard" and "Premium".
+    :vartype name: Union[str, "AgentFabricMembershipSkuName"]
+    """
+
+    name: Required[Union[str, "AgentFabricMembershipSkuName"]]
+    """The SKU name that determines which AgentFabric components are deployed to the cluster.
+     Required. Known values are: \"Standard\" and \"Premium\"."""
 
 
 class AgentPool(ProxyResource):
@@ -2890,10 +2903,6 @@ class LinuxOSConfig(TypedDict, total=False):
      <https://www.kernel.org/doc/html/latest/admin-guide/mm/transhuge.html#admin-guide-transhuge>`_."""
     swapFileSizeMB: int
     """The size in MB of a swap file that will be created on each node."""
-
-
-class ListBootstrapDataRequest(TypedDict, total=False):
-    """Empty request body for listing FlexNode bootstrap data."""
 
 
 class LoadBalancer(ProxyResource):

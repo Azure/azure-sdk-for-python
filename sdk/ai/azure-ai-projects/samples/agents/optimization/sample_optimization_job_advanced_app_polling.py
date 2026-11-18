@@ -18,7 +18,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.11.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -63,7 +63,12 @@ poll_interval = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 eval_model = os.environ["EVAL_MODEL"]
 optimization_model = os.environ.get("OPTIMIZATION_MODEL", "gpt-5.1")
 
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
+TERMINAL_STATUSES = {
+    JobStatus.SUCCEEDED,
+    JobStatus.FAILED,
+    JobStatus.CANCELLED,
+    JobStatus.SKIPPED,
+}
 
 with (
     DefaultAzureCredential() as credential,
@@ -136,6 +141,8 @@ with (
         raise RuntimeError(f"Optimization job `{job.id}` failed: {message}")
     if job.status == JobStatus.CANCELLED:
         raise RuntimeError(f"Optimization job `{job.id}` was cancelled.")
+    if job.status == JobStatus.SKIPPED:
+        raise RuntimeError(f"Optimization job `{job.id}` was skipped; no optimization result is available.")
 
     # ------------------------------------------------------------------
     # 3. Inspect the results.
