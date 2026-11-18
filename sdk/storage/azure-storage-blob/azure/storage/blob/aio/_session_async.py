@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
     from azure.core.pipeline.transport import AsyncHttpTransport
-    from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+    from .._shared.base_client import StorageAccountHostsMixin
 
 _LOGGER = logging.getLogger(__name__)
 UTC = timezone.utc
@@ -49,7 +49,7 @@ def _configure_session(kwargs: Dict[str, Any]) -> None:
         return
 
     def _factory(
-        client: "AsyncStorageAccountHostsMixin",
+        client: "StorageAccountHostsMixin",
         credential: Any,
         transport: "AsyncHttpTransport",
         audience: Optional[str],
