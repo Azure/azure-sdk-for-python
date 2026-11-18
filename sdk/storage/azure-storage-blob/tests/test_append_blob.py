@@ -1804,5 +1804,94 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
                 )
                 bsc.delete_container(self.source_container_name)
 
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_download_blob_modified_during_download_lock_etag(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_single_get_size=1024,
+            max_chunk_get_size=1024,
+        )
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
+        data = self.get_random_bytes(4 * 1024)
+        blob.append_block(data)
+
+        # Act
+        downloader = blob.download_blob()
+        blob.append_block(b"x" * 512)
+
+        # Assert
+        with pytest.raises(ResourceModifiedError):
+            downloader.readall()
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_download_blob_modified_during_download_no_lock_etag(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_single_get_size=1024,
+            max_chunk_get_size=1024,
+        )
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
+        data = self.get_random_bytes(4 * 1024)
+        blob.append_block(data)
+
+        # Act
+        downloader = blob.download_blob(lock_etag=False)
+        blob.append_block(b"x" * 512)
+        result = downloader.readall()
+
+        # Assert
+        assert result == data
+
+        # Act - caller-provided etag is still enforced on every request
+        props = blob.get_blob_properties()
+        downloader = blob.download_blob(lock_etag=False, etag=props.etag, match_condition=MatchConditions.IfNotModified)
+        blob.append_block(b"y" * 512)
+
+        # Assert
+        with pytest.raises(ResourceModifiedError):
+            downloader.readall()
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_download_blob_modified_during_download_no_lock_etag_chunks_and_read(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_single_get_size=1024,
+            max_chunk_get_size=1024,
+        )
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
+        data = self.get_random_bytes(4 * 1024)
+        blob.append_block(data)
+
+        # Act / Assert - chunks()
+        downloader = blob.download_blob(lock_etag=False)
+        blob.append_block(b"x" * 512)
+        assert b"".join(downloader.chunks()) == data
+
+        # Act / Assert - read(size)
+        downloader = blob.download_blob(offset=0, length=len(data), lock_etag=False)
+        blob.append_block(b"y" * 512)
+        assert downloader.read(2048) + downloader.read() == data
+
 
 # ------------------------------------------------------------------------------
