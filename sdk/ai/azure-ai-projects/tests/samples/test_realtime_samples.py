@@ -594,7 +594,7 @@ async def test_function_tool_entrypoint_rejects_unsuccessful_response(tool_sampl
 async def test_function_tool_entrypoint_error_paths_release_its_version_and_context(tool_sample, failure, capsys):
     expected_exception = None
     if failure == "timeout":
-        tool_sample.events.append(TimeoutError())
+        tool_sample.events.append(asyncio.TimeoutError())
     elif failure == "service-error":
         tool_sample.events.append(_error())
     elif failure == "transport-error":

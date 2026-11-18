@@ -161,6 +161,9 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
             # accumulate without bound. Instead, only keep at most one in flight and drop
             # (skip sending) this frame if the previous send hasn't completed yet.
             assert self._loop is not None
+            if self._send_error is not None:
+                self._dropped_frames += 1
+                return (None, pyaudio.paContinue)
             if self._pending_send is not None:
                 if not self._pending_send.done():
                     self._dropped_frames += 1
@@ -168,9 +171,7 @@ class _AudioProcessor:  # pylint: disable=too-many-instance-attributes
                 try:
                     self._pending_send.result()
                 except BaseException as exc:
-                    if self._send_error is None:
-                        self._send_error = exc
-                if self._send_error is not None:
+                    self._send_error = exc
                     self._dropped_frames += 1
                     return (None, pyaudio.paContinue)
             self._pending_send = asyncio.run_coroutine_threadsafe(self._append_input_audio(in_data), self._loop)
