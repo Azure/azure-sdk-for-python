@@ -1,3 +1,6 @@
 {
-  "apiVersion": "2024-10-01"
+  "apiVersion": "2024-10-01",
+  "apiVersions": {
+    "AzureHealthInsights": "2024-10-01"
+  }
 }

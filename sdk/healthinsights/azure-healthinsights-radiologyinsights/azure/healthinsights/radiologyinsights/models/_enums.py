@@ -14,59 +14,65 @@ class ClinicalDocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the clinical document."""
 
     CONSULTATION = "consultation"
+    """CONSULTATION."""
     DISCHARGE_SUMMARY = "dischargeSummary"
+    """DISCHARGE_SUMMARY."""
     HISTORY_AND_PHYSICAL = "historyAndPhysical"
+    """HISTORY_AND_PHYSICAL."""
     RADIOLOGY_REPORT = "radiologyReport"
+    """RADIOLOGY_REPORT."""
     PROCEDURE = "procedure"
+    """PROCEDURE."""
     PROGRESS = "progress"
+    """PROGRESS."""
     LABORATORY = "laboratory"
+    """LABORATORY."""
     PATHOLOGY_REPORT = "pathologyReport"
+    """PATHOLOGY_REPORT."""
 
 
 class ContactPointSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Contact Point System
-    see `https://www.hl7.org/fhir/R4/valueset-contact-point-system.html
+    """Contact Point System see `https://www.hl7.org/fhir/R4/valueset-contact-point-system.html
     <https://www.hl7.org/fhir/R4/valueset-contact-point-system.html>`_.
     """
 
     PHONE = "phone"
-    """Phone"""
+    """Phone."""
     FAX = "fax"
-    """Fax"""
+    """Fax."""
     EMAIL = "email"
-    """Email"""
+    """Email."""
     PAGER = "pager"
-    """Pager"""
+    """Pager."""
     URL = "url"
-    """Url"""
+    """Url."""
     SMS = "sms"
-    """Sms"""
+    """Sms."""
     OTHER = "other"
-    """Other"""
+    """Other."""
 
 
 class ContactPointUse(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Contact Point Use
-    See: 	`http://hl7.org/fhir/ValueSet/contact-point-use
+    """Contact Point Use See: 	`http://hl7.org/fhir/ValueSet/contact-point-use
     <http://hl7.org/fhir/ValueSet/contact-point-use>`_.
     """
 
     HOME = "home"
-    """Home"""
+    """Home."""
     WORK = "work"
-    """Work"""
+    """Work."""
     TEMP = "temp"
-    """Temp"""
+    """Temp."""
     OLD = "old"
-    """Old"""
+    """Old."""
     MOBILE = "mobile"
-    """Mobile"""
+    """Mobile."""
 
 
 class DocumentContentSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the content's source.
-    In case the source type is 'inline', the content is given as a string (for instance, text).
-    In case the source type is 'reference', the content is given as a URI.
+    """The type of the content's source. In case the source type is 'inline', the content is given as
+    a string (for instance, text). In case the source type is 'reference', the content is given as
+    a URI.
     """
 
     INLINE = "inline"
@@ -81,9 +87,13 @@ class DocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     NOTE = "note"
+    """NOTE."""
     FHIR_BUNDLE = "fhirBundle"
+    """FHIR_BUNDLE."""
     DICOM = "dicom"
+    """DICOM."""
     GENOMIC_SEQUENCING = "genomicSequencing"
+    """GENOMIC_SEQUENCING."""
 
 
 class EncounterClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -112,57 +122,61 @@ class EncounterClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A patient encounter where the patient is not physically present for the encounter, such as in a
     telehealth encounter, phone call, or electronic communication."""
     HEALTH_HOME = "healthHome"
-    """Healthcare encounter that takes place in the residence of the patient or a designee"""
+    """Healthcare encounter that takes place in the residence of the patient or a designee."""
 
 
 class GuidanceRankingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Refers to how important a clinical guidance is."""
 
     HIGH = "high"
-    """high"""
+    """high."""
     LOW = "low"
-    """low"""
+    """low."""
 
 
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the processing job."""
 
     NOT_STARTED = "notStarted"
+    """NOT_STARTED."""
     RUNNING = "running"
+    """RUNNING."""
     SUCCEEDED = "succeeded"
+    """SUCCEEDED."""
     FAILED = "failed"
+    """FAILED."""
     CANCELED = "canceled"
+    """CANCELED."""
 
 
 class LateralityDiscrepancyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Laterality discrepancy type."""
 
     ORDER_LATERALITY_MISMATCH = "orderLateralityMismatch"
-    """Mismatch between order and text"""
+    """Mismatch between order and text."""
     TEXT_LATERALITY_CONTRADICTION = "textLateralityContradiction"
-    """Contradiction in text"""
+    """Contradiction in text."""
     TEXT_LATERALITY_MISSING = "textLateralityMissing"
-    """Missing laterality in text"""
+    """Missing laterality in text."""
 
 
 class MedicalProfessionalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Medical Professional Type."""
 
     UNKNOWN = "unknown"
-    """Unknown medical professional type"""
+    """Unknown medical professional type."""
     DOCTOR = "doctor"
-    """Doctor medical professional type"""
+    """Doctor medical professional type."""
     NURSE = "nurse"
-    """Nurse medical professional type"""
+    """Nurse medical professional type."""
     MIDWIFE = "midwife"
-    """Technician medical professional type"""
+    """Technician medical professional type."""
     PHYSICIAN_ASSISTANT = "physicianAssistant"
-    """Technician medical professional type"""
+    """Technician medical professional type."""
 
 
 class ObservationStatusCodeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Observation Status
-    Based on `FHIR ObservationStatus
+    """Observation Status Based on `FHIR ObservationStatus
     <https://www.hl7.org/fhir/R4/valueset-observation-status.html>`_.
     """
 
@@ -180,128 +194,131 @@ class ObservationStatusCodeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     result."""
     CANCELLED = "cancelled"
     """The observation is unavailable because the measurement was not started or not completed (also
-    sometimes called "aborted")."""
+    sometimes called \"aborted\")."""
     ENTERED_IN_ERROR = "entered-in-error"
     """The observation has been withdrawn following previous final release."""
     UNKNOWN = "unknown"
-    """The observation status is unknown.  Note that "unknown" is a value of last resort and every
-    attempt should be made to provide a meaningful value other than "unknown"."""
+    """The observation status is unknown.  Note that \"unknown\" is a value of last resort and every
+    attempt should be made to provide a meaningful value other than \"unknown\"."""
 
 
 class PatientSex(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The patient's sex."""
 
     FEMALE = "female"
+    """FEMALE."""
     MALE = "male"
+    """MALE."""
     UNSPECIFIED = "unspecified"
+    """UNSPECIFIED."""
 
 
 class QualityMeasureComplianceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether the document is compliant."""
 
     NOT_ELIGIBLE = "notEligible"
-    """not eligible"""
+    """not eligible."""
     PERFORMANCE_NOT_MET = "performanceNotMet"
-    """performance not met"""
+    """performance not met."""
     PERFORMANCE_MET = "performanceMet"
-    """performance met"""
+    """performance met."""
     DENOMINATOR_EXCEPTION = "denominatorException"
-    """denominator exception"""
+    """denominator exception."""
 
 
 class QualityMeasureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Mips types that can be checked by the engine."""
 
     MIPS76 = "mips76"
-    """Mips 76"""
+    """Mips 76."""
     MIPS147 = "mips147"
-    """Mips 147"""
+    """Mips 147."""
     MIPS195 = "mips195"
-    """Mips 195"""
+    """Mips 195."""
     MIPS360 = "mips360"
-    """Mips 360"""
+    """Mips 360."""
     MIPS364 = "mips364"
-    """Mips 364"""
+    """Mips 364."""
     MIPS405 = "mips405"
-    """Mips 405"""
+    """Mips 405."""
     MIPS406 = "mips406"
-    """Mips 406"""
+    """Mips 406."""
     MIPS436 = "mips436"
-    """Mips 436"""
+    """Mips 436."""
     MIPS145 = "mips145"
-    """Mips 145"""
+    """Mips 145."""
     ACRAD36 = "acrad36"
-    """Acrad 36"""
+    """Acrad 36."""
     ACRAD37 = "acrad37"
-    """Acrad 37"""
+    """Acrad 37."""
     ACRAD38 = "acrad38"
-    """Acrad 38"""
+    """Acrad 38."""
     ACRAD39 = "acrad39"
-    """Acrad 39"""
+    """Acrad 39."""
     ACRAD40 = "acrad40"
-    """Acrad 40"""
+    """Acrad 40."""
     ACRAD41 = "acrad41"
-    """Acrad 41"""
+    """Acrad 41."""
     ACRAD42 = "acrad42"
-    """Acrad 42"""
+    """Acrad 42."""
     MEDNAX55 = "mednax55"
-    """Mednax55"""
+    """Mednax55."""
     MSN13 = "msn13"
-    """Msn13"""
+    """Msn13."""
     MSN15 = "msn15"
-    """Msn15"""
+    """Msn15."""
     QMM26 = "qmm26"
-    """Qmm26"""
+    """Qmm26."""
     QMM17 = "qmm17"
-    """Qmm17"""
+    """Qmm17."""
     QMM18 = "qmm18"
-    """Qmm18"""
+    """Qmm18."""
     QMM19 = "qmm19"
-    """Qmm19"""
+    """Qmm19."""
 
 
 class RadiologyInsightsInferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A Radiology Insights inference types."""
 
     AGE_MISMATCH = "ageMismatch"
-    """Age mismatch inference type"""
+    """Age mismatch inference type."""
     LATERALITY_DISCREPANCY = "lateralityDiscrepancy"
-    """Laterality discrepancy inference type"""
+    """Laterality discrepancy inference type."""
     SEX_MISMATCH = "sexMismatch"
-    """Sex mismatch inference type"""
+    """Sex mismatch inference type."""
     COMPLETE_ORDER_DISCREPANCY = "completeOrderDiscrepancy"
-    """Complete order discrepancy inference type"""
+    """Complete order discrepancy inference type."""
     LIMITED_ORDER_DISCREPANCY = "limitedOrderDiscrepancy"
-    """Limited order discrepancy inference type"""
+    """Limited order discrepancy inference type."""
     FINDING = "finding"
-    """Finding inference type"""
+    """Finding inference type."""
     CRITICAL_RESULT = "criticalResult"
-    """Critical finding inference type"""
+    """Critical finding inference type."""
     FOLLOWUP_RECOMMENDATION = "followupRecommendation"
-    """Recommendation inference type"""
+    """Recommendation inference type."""
     FOLLOWUP_COMMUNICATION = "followupCommunication"
-    """Followup Communication inference type"""
+    """Followup Communication inference type."""
     RADIOLOGY_PROCEDURE = "radiologyProcedure"
-    """Radiology Procedure inference type"""
+    """Radiology Procedure inference type."""
     SCORING_AND_ASSESSMENT = "scoringAndAssessment"
-    """Scoring and assessment inference type"""
+    """Scoring and assessment inference type."""
     GUIDANCE = "guidance"
-    """Guidance inference type"""
+    """Guidance inference type."""
     QUALITY_MEASURE = "qualityMeasure"
-    """Guidance measure inference type"""
+    """Guidance measure inference type."""
 
 
 class RecommendationFindingStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Recommendation finding status."""
 
     PRESENT = "present"
-    """Present finding status"""
+    """Present finding status."""
     DIFFERENTIAL = "differential"
-    """Differential finding status"""
+    """Differential finding status."""
     RULE_OUT = "ruleOut"
-    """Rule out finding status"""
+    """Rule out finding status."""
     CONDITIONAL = "conditional"
-    """Conditional finding status"""
+    """Conditional finding status."""
 
 
 class ResearchStudyStatusCodeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -334,7 +351,7 @@ class ResearchStudyStatusCodeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The study is temporarily closed to accrual; a pause in accrual while study is reviewed, but is
     expected to resume."""
     TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION = "temporarily-closed-to-accrual-and-intervention"
-    """Study is temporarily closed for accrual; can be potentially resumed in the future"""
+    """Study is temporarily closed for accrual; can be potentially resumed in the future."""
     WITHDRAWN = "withdrawn"
     """Protocol was withdrawn by the lead organization."""
 
@@ -343,79 +360,79 @@ class ScoringAndAssessmentCategoryType(str, Enum, metaclass=CaseInsensitiveEnumM
     """The category that gets a value, e.g. BIRADS, Z-SCORE or FRAX SCORE."""
 
     BIRADS = "BIRADS"
-    """BIRADS"""
+    """BIRADS."""
     C_RADS_COLONIC_FINDINGS = "C-RADS COLONIC FINDINGS"
-    """C-RADS COLONIC FINDINGS"""
+    """C-RADS COLONIC FINDINGS."""
     CAD_RADS = "CAD-RADS"
-    """CAD-RADS"""
+    """CAD-RADS."""
     LI_RADS = "LI-RADS"
-    """LI-RADS"""
+    """LI-RADS."""
     LUNG_RADS = "LUNG-RADS"
-    """LUNG-RADS"""
+    """LUNG-RADS."""
     NI_RADS = "NI-RADS"
-    """NI-RADS"""
+    """NI-RADS."""
     O_RADS = "O-RADS"
-    """O-RADS"""
+    """O-RADS."""
     PI_RADS = "PI-RADS"
-    """PI-RADS"""
+    """PI-RADS."""
     TI_RADS = "TI-RADS"
-    """TI-RADS"""
+    """TI-RADS."""
     C_RADS_EXTRACOLONIC_FINDINGS = "C-RADS EXTRACOLONIC FINDINGS"
-    """C-RADS EXTRACOLONIC FINDINGS"""
+    """C-RADS EXTRACOLONIC FINDINGS."""
     LIFETIME_BREAST_CANCER_RISK = "LIFETIME BREAST CANCER RISK"
-    """LIFETIME BREAST CANCER RISK"""
+    """LIFETIME BREAST CANCER RISK."""
     ASCVD_RISK = "ASCVD RISK"
-    """ASCVD RISK"""
+    """ASCVD RISK."""
     MODIFIED_GAIL_MODEL_RISK = "MODIFIED GAIL MODEL RISK"
-    """MODIFIED GAIL MODEL RISK"""
+    """MODIFIED GAIL MODEL RISK."""
     TYRER_CUSICK_MODEL_RISK = "TYRER CUSICK MODEL RISK"
-    """TYRER CUSICK MODEL RISK"""
+    """TYRER CUSICK MODEL RISK."""
     AGATSTON_SCORE = "AGATSTON SCORE"
-    """AGATSTON SCORE"""
+    """AGATSTON SCORE."""
     TEN_YEAR_CHD_RISK = "10 YEAR CHD RISK"
-    """10 YEAR CHD RISK"""
+    """10 YEAR CHD RISK."""
     Z_SCORE = "Z-SCORE"
-    """Z-SCORE"""
+    """Z-SCORE."""
     T_SCORE = "T-SCORE"
-    """T-SCORE"""
+    """T-SCORE."""
     CALCIUM_VOLUME_SCORE = "CALCIUM VOLUME SCORE"
-    """CALCIUM VOLUME SCORE"""
+    """CALCIUM VOLUME SCORE."""
     US_LI_RADS_VISUALIZATION_SCORE = "US LI-RADS VISUALIZATION SCORE"
-    """US LI-RADS VISUALIZATION SCORE"""
+    """US LI-RADS VISUALIZATION SCORE."""
     US_LI_RADS = "US LI-RADS"
-    """US LI-RADS"""
+    """US LI-RADS."""
     CEUS_LI_RADS = "CEUS LI-RADS"
-    """CEUS LI-RADS"""
+    """CEUS LI-RADS."""
     TREATMENT_RESPONSE_LI_RADS = "TREATMENT RESPONSE LI-RADS"
-    """TREATMENT RESPONSE LI-RADS"""
+    """TREATMENT RESPONSE LI-RADS."""
     O_RADS_MRI = "O-RADS MRI"
-    """O-RADS MRI"""
+    """O-RADS MRI."""
     CALCIUM_MASS_SCORE = "CALCIUM MASS SCORE"
-    """CALCIUM MASS SCORE"""
+    """CALCIUM MASS SCORE."""
     RISK_OF_MALIGNANCY_INDEX = "RISK OF MALIGNANCY INDEX"
-    """RISK OF MALIGNANCY INDEX"""
+    """RISK OF MALIGNANCY INDEX."""
     HNPCC_MUTATION_RISK = "HNPCC MUTATION RISK"
-    """HNPCC MUTATION RISK"""
+    """HNPCC MUTATION RISK."""
     ALBERTA_STROKE_PROGRAM_EARLY_CT_SCORE = "ALBERTA STROKE PROGRAM EARLY CT SCORE"
-    """ALBERTA STROKE PROGRAM EARLY CT SCORE"""
+    """ALBERTA STROKE PROGRAM EARLY CT SCORE."""
     KELLGREN_LAWRENCE_GRADING_SCALE = "KELLGREN-LAWRENCE GRADING SCALE"
-    """KELLGREN-LAWRENCE GRADING SCALE"""
+    """KELLGREN-LAWRENCE GRADING SCALE."""
     TONNIS_CLASSIFICATION = "TONNIS CLASSIFICATION"
-    """TONNIS CLASSIFICATION"""
+    """TONNIS CLASSIFICATION."""
     CALCIUM_SCORE_UNSPECIFIED = "CALCIUM SCORE (UNSPECIFIED)"
-    """CALCIUM SCORE (UNSPECIFIED)"""
+    """CALCIUM SCORE (UNSPECIFIED)."""
     TEN_YEAR_CHD_RISK_OBSERVED_AGE = "10 YEAR CHD RISK (OBSERVED AGE)"
-    """10 YEAR CHD RISK (OBSERVED AGE)"""
+    """10 YEAR CHD RISK (OBSERVED AGE)."""
     TEN_YEAR_CHD_RISK_ARTERIAL_AGE = "10 YEAR CHD RISK (ARTERIAL AGE)"
-    """10 YEAR CHD RISK (ARTERIAL AGE)"""
+    """10 YEAR CHD RISK (ARTERIAL AGE)."""
     FRAX_SCORE = "FRAX SCORE"
-    """FRAX SCORE"""
+    """FRAX SCORE."""
 
 
 class SpecialtyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Known values codes that can be used to indicate the type of the Specialty."""
 
     PATHOLOGY = "pathology"
-    """pathology"""
+    """pathology."""
     RADIOLOGY = "radiology"
-    """radiology"""
+    """radiology."""
