@@ -1,14 +1,11 @@
 # Release History
 
-## 1.27.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.27.1 (2026-11-17)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed `AzureDeveloperCliCredential` reading the UTC `expiresOn` value from `azd auth token` as local time, which made the token's `expires_on` off by the local UTC offset. This fix applies to both synchronous and asynchronous credentials. ([#49590](https://github.com/Azure/azure-sdk-for-python/pull/49590))
+- Fixed asynchronous `AzurePipelinesCredential` blocking the event loop during OIDC-token requests and using synchronous transport lifecycle methods. The asynchronous `ClientAssertionCredential` now supports awaitable assertion callbacks while remaining compatible with callbacks that return strings. ([#49831](https://github.com/Azure/azure-sdk-for-python/pull/49831))
 
 ## 1.27.0 (2026-10-26)
 
