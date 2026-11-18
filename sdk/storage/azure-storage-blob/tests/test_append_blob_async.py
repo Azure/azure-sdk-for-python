@@ -1799,7 +1799,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_download_blob_modified_during_download_lock_etag(self, **kwargs):
+    async def test_download_blob_modified_during_download_etag_lock(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -1812,7 +1812,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         )
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
-        data = self.get_random_bytes(4 * 1024)
+        data = b"abcd" * 1024
         await blob.append_block(data)
 
         # Act
@@ -1825,7 +1825,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_download_blob_modified_during_download_no_lock_etag(self, **kwargs):
+    async def test_download_blob_modified_during_download_disable_etag_lock(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -1838,55 +1838,46 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         )
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
-        data = self.get_random_bytes(4 * 1024)
+        data = b"abcd" * 1024
+        data2 = b"ab" * 256
         await blob.append_block(data)
 
         # Act
-        downloader = await blob.download_blob(lock_etag=False)
-        await blob.append_block(b"x" * 512)
+        downloader = await blob.download_blob(disable_etag_lock=True)
+        await blob.append_block(data2)
         result = await downloader.readall()
 
-        # Assert
         assert result == data
+
+        # Act / Assert - chunks()
+        downloader = await blob.download_blob(offset=0, length=len(data), disable_etag_lock=True)
+        await blob.append_block(data2)
+        assert b"".join([chunk async for chunk in downloader.chunks()]) == data
+
+        # Act / Assert - read(size)
+        downloader = await blob.download_blob(offset=0, length=len(data), disable_etag_lock=True)
+        await blob.append_block(data2)
+        assert await downloader.read(2048) + await downloader.read() == data
 
         # Act - caller-provided etag is still enforced on every request
         props = await blob.get_blob_properties()
         downloader = await blob.download_blob(
-            lock_etag=False, etag=props.etag, match_condition=MatchConditions.IfNotModified
+            disable_etag_lock=True, etag=props.etag, match_condition=MatchConditions.IfNotModified
         )
-        await blob.append_block(b"y" * 512)
+        await blob.append_block(data2)
 
-        # Assert
         with pytest.raises(ResourceModifiedError):
             await downloader.readall()
 
-    @BlobPreparer()
-    @recorded_by_proxy_async
-    async def test_download_blob_modified_during_download_no_lock_etag_chunks_and_read(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"),
-            storage_account_key.secret,
-            max_single_get_size=1024,
-            max_chunk_get_size=1024,
-        )
-        await self._setup(bsc)
-        blob = await self._create_blob(bsc)
-        data = self.get_random_bytes(4 * 1024)
+        # Act - blob replaced with a smaller one mid-download
+        await blob.create_append_blob()
         await blob.append_block(data)
+        downloader = await blob.download_blob(disable_etag_lock=True)
+        await blob.create_append_blob()
+        await blob.append_block(data[:1536])
 
-        # Act / Assert - chunks()
-        downloader = await blob.download_blob(lock_etag=False)
-        await blob.append_block(b"x" * 512)
-        assert b"".join([chunk async for chunk in downloader.chunks()]) == data
-
-        # Act / Assert - read(size)
-        downloader = await blob.download_blob(offset=0, length=len(data), lock_etag=False)
-        await blob.append_block(b"y" * 512)
-        assert await downloader.read(2048) + await downloader.read() == data
+        with pytest.raises(ResourceModifiedError):
+            await downloader.readall()
 
 
 # ------------------------------------------------------------------------------

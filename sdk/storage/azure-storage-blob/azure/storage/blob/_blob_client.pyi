@@ -215,7 +215,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_concurrency: Optional[int] = None,
         encoding: str,
         progress_hook: Optional[Callable[[int, int], None]] = None,
-        lock_etag: bool = True,
+        disable_etag_lock: bool = False,
         decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -238,7 +238,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_concurrency: Optional[int] = None,
         encoding: None = None,
         progress_hook: Optional[Callable[[int, int], None]] = None,
-        lock_etag: bool = True,
+        disable_etag_lock: bool = False,
         decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -261,7 +261,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_concurrency: Optional[int] = None,
         encoding: Optional[str] = None,
         progress_hook: Optional[Callable[[int, int], None]] = None,
-        lock_etag: bool = True,
+        disable_etag_lock: bool = False,
         decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any

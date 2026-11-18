@@ -297,7 +297,7 @@ def _download_blob_options(
         },
         "download_cls": kwargs.pop("cls", None) or deserialize_blob_stream,
         "max_concurrency": kwargs.pop("max_concurrency", None) or DEFAULT_MAX_CONCURRENCY,
-        "lock_etag": kwargs.pop("lock_etag", None) is not False,
+        "disable_etag_lock": kwargs.pop("disable_etag_lock", False),
         "encoding": encoding,
         "timeout": kwargs.pop("timeout", None),
         "name": blob_name,

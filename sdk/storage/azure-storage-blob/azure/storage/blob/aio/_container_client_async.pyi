@@ -318,7 +318,7 @@ class ContainerClient(  # type: ignore[misc]
         max_concurrency: Optional[int] = None,
         encoding: str,
         progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
-        lock_etag: bool = True,
+        disable_etag_lock: bool = False,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[str]: ...
@@ -341,7 +341,7 @@ class ContainerClient(  # type: ignore[misc]
         max_concurrency: Optional[int] = None,
         encoding: None = None,
         progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
-        lock_etag: bool = True,
+        disable_etag_lock: bool = False,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[bytes]: ...
@@ -364,7 +364,7 @@ class ContainerClient(  # type: ignore[misc]
         max_concurrency: Optional[int] = None,
         encoding: Optional[str] = None,
         progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
-        lock_etag: bool = True,
+        disable_etag_lock: bool = False,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]: ...
