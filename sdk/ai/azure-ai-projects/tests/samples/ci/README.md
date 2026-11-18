@@ -14,7 +14,7 @@ Selected cases are sorted by pytest node ID and divided **round-robin, without r
 
 ## One-time setup
 
-Configure a pipeline to use [../../../tests.yml](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests.yml), authorize the Azure SDK package feed and `azsdk-pool`, and save these variables:
+Configure a pipeline to use [../../../tests.yml](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests.yml), authorize the Azure SDK package feed and `azsdk-pool`, and save these variables in the [Foundry SDK Env Vars and Secrets Library group (163)](https://dev.azure.com/azure-sdk/internal/_library?view=VariableGroupView&variableGroupId=163):
 
 | Variable | Setting |
 | --- | --- |
@@ -24,7 +24,7 @@ Configure a pipeline to use [../../../tests.yml](https://github.com/Azure/azure-
 | `MCP_GITHUB_PAT` | **Secret** containing the complete GitHub PAT, including `github_pat_` or `ghp_`. Required on every run: the MCP connection is always provisioned. |
 | `PROJ_CONN_OPEN_API_KEY` | **Secret** containing the TripAdvisor service key for the OpenAPI sample. Required on every run: the OpenAPI connection is always provisioned. |
 
-The target IDs must be available to **both** Plan and RunSamples. Save runtime variables directly in the pipeline; there is no Library-group runtime parameter. Do not put secrets in YAML, chat, runtime parameters, command-line arguments, plans or artifacts.
+The YAML imports this Library group at pipeline scope so its variables are available to **both** Plan and RunSamples. Authorize the group for the Python pipeline; there is no Library-group runtime parameter. Keep pipeline governance/metadata variables on the pipeline definition. When migrating, enter existing secret values directly in the Library as secrets: Azure DevOps does not return their stored values. Remove duplicate pipeline-level environment variables and secrets only after the group is populated and the importing YAML is published. Do not put secrets in YAML, chat, runtime parameters, command-line arguments, plans or artifacts.
 
 The YAML variable `azureServiceConnection` is configured as **azure-sdk-tests**, an authorized Azure Resource Manager connection. It is not a Run pipeline field. Changing the connection requires updating that configuration and authorizing the pipeline; a subscription/MI name does not select or grant access to a service connection. Prefer workload identity federation. Its service principal must already have:
 
@@ -35,7 +35,7 @@ The YAML variable `azureServiceConnection` is configured as **azure-sdk-tests**,
 
 The scripts require **PowerShell 7.2+**. Azure subscription roles do not grant Azure DevOps pipeline-edit or service-connection authorization rights. Existing organization/service-connection approvals are not bypassed.
 
-Enter the PAT directly in the pipeline secret field. Use minimum GitHub permissions and an appropriate expiration/SSO authorization; see [GitHub MCP authentication](https://github.com/github/github-mcp-server/blob/main/docs/remote-server.md).
+Enter the PAT directly in the Library group's secret field. Use minimum GitHub permissions and an appropriate expiration/SSO authorization; see [GitHub MCP authentication](https://github.com/github/github-mcp-server/blob/main/docs/remote-server.md).
 
 ### Select the shared identity resource group
 
@@ -117,6 +117,13 @@ To verify repeatability, wait for all queues to pass and finish verified cleanup
 The infrastructure entry points have no dependency on Python, pytest, sample paths, or
 sample queries. They can prepare the same environment for .NET, Java, JavaScript/TypeScript,
 Go, or Python tests. The Azure resources always deploy as one complete bundle.
+
+The shared provisioning PowerShell, ten full-bundle Bicep modules, embedded
+Search assets, Function handler and shared validation scripts are synchronized
+with the .NET package. Keep these copies identical when changing resources.
+Language-specific discovery, test execution and environment aliases remain
+separate. The shared planner's optional `EnvironmentTemplatePath` discovers
+bindings from an explicit alternate template; the default remains the full bundle.
 
 | Layer | Entry points |
 | --- | --- |
@@ -331,8 +338,15 @@ skills and query-time vector generation explicitly select the Search UAMI for ou
 [managed-identity connections](https://learn.microsoft.com/azure/search/search-how-to-managed-identities)
 use Search API `2026-04-01`.
 
-Indexer reset/run is explicit on each script execution, including retries. The script
-waits for fresh, successful executions with nonzero processed documents, rejects indexing
+The index name defaults to `index-sample` and is preserved as supplied.
+Data-source, skillset and indexer names replace index-name underscores with
+hyphens, so an index such as `sample_index` does not produce invalid related
+resource names. Azure Search allows underscores in index names, but not in
+those related names.
+
+Workers create fresh indexers and wait for their automatic initial execution;
+they do not reset or manually rerun an indexer, which would race that execution.
+The script requires successful executions with nonzero processed documents, rejects indexing
 errors and warnings, and verifies searchable content before deployment can finish.
 Authorization propagation, throttling and transient HTTP failures have bounded retries;
 missing grants or model/embedding failures still fail the deployment. The deployment script
@@ -410,5 +424,7 @@ Retained Python unit tests live in this directory; mocked PowerShell tests and [
 
 - With dotenv/live execution disabled, run the Python tests using `--confcutdir=tests/samples/ci` to avoid parent service fixtures.
 - Run all PowerShell `*.Tests.ps1` files under validation using **Pester 4.10.1**. The suites isolate Azure calls and cover identity resource-group resolution and metadata checks. On-demand pipeline agents do not need Pester.
+- Run `python -m unittest discover -s validation -p test_bundle_assets.py` from this directory for the shared Function and Search deployment-asset tests.
+- Run `./validation/Test-BicepTemplates.ps1 -IdentityInfrastructurePath ./../shared-identities/infra` from this directory to include the Python-owned identity bootstrap checks. Omitting that input validates only the shared resource bundle and explicitly reports that bootstrap validation is outside scope.
 - The Bicep checker compiles the root bundle, all workload modules, the resource-group template, the administrator-only Search role update, and the secret-only parameter file with empty PAT and OpenAPI values. It checks unconditional modules, environment-contract parity, Function hosting defaults, identity-based settings, keyless Playwright configuration, Bing account/connection shapes, the four pinned Custom Search pages, secure OpenAPI credentials and non-secret outputs, and rejects Azure IAM writes in worker templates including nested deployments. Its optional `StandardTemplatePath` input also verifies and compiles the 14 unchanged cached official sources.
 - Use the repository Black configuration, PowerShell syntax checks and `git diff --check`. Real harness collection must use `PYTHON_DOTENV_DISABLED=true` and fictional target IDs and must not execute samples.
