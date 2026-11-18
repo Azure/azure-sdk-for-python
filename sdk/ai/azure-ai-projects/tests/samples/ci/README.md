@@ -41,16 +41,16 @@ Enter the PAT directly in the Library group's secret field. Use minimum GitHub p
 
 The run form asks for **`identityResourceGroup`**: the existing resource group that holds the shared identities, for example `rg-azsdk-identities-westus3-102826_164519`. It must be a valid Azure resource group name (1–90 characters; letters, digits, `_`, `-`, `.`, parentheses; no trailing period). It is not a subscription, region or MI name.
 
-The identities are created by [Deploy-Identities.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/shared-identities/infra/Deploy-Identities.ps1), which names them `mi-azsdk-sample-{project,account,search,function}-{region}-{timestamp}`. The pipeline needs only the `-project-`, `-account-`, `-search-` and `-function-` name segments; any prefix or suffix is accepted.
+The identities are created by [Deploy-Identities.ps1](https://dev.azure.com/msdata/Vienna/_git/foundry-sdk-test-resources?path=/shared-identities/infra/Deploy-Identities.ps1), which names them `mi-azsdk-sample-{project,account,search,function}-{region}-{timestamp}`. The pipeline needs only the `-project-`, `-account-`, `-search-` and `-function-` name segments; any prefix or suffix is accepted.
 
 The subscription/tenant still come from saved variables, never an active-account default or search across subscriptions. Offline **Plan** publishes only the RG name with resolution `Pending`—it invents no identity IDs or region. Read-only admission lists the managed identities in that RG and requires exactly one whose name contains each `-{purpose}-` segment (unrelated identities in the group are ignored). It then requires the `purpose`, `sample-ci-owner`, `sample-ci-retention=permanent` and `sample-ci-identity` tags set by the deployment script, one owner and one region, and binds their actual resource IDs, region, owner and principal IDs. Duplicates, missing identities, unowned/mixed sets or incomplete metadata fail closed. It verifies capacity, then publishes **resolved-sample-plan** for the workers; workers never use unresolved plans. Provider registrations and preconfigured grants are assumed to exist and are not checked. Each worker GET-rechecks identity metadata before writes and passes the four resolved resource IDs and the project principal ID to Bicep. No identity is created, replaced or granted roles by test jobs.
 
 ### Permanent identities and service grants
 
-[Deploy-Identities.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/shared-identities/infra/Deploy-Identities.ps1) is the single owner of the shared identities; an authorized administrator runs it, never a worker job. Without `-Apply` it only previews (`what-if`). With `-Apply` it prompts for a subscription and region (or takes `-SubscriptionId`/`-Location`) and, after confirmation, creates:
+[Deploy-Identities.ps1](https://dev.azure.com/msdata/Vienna/_git/foundry-sdk-test-resources?path=/shared-identities/infra/Deploy-Identities.ps1) is maintained only in the common `foundry-sdk-test-resources` repository; neither Python nor .NET carries a bootstrap copy. An authorized administrator runs it from that checkout, never a worker job. Without `-Apply` it only previews (`what-if`). With `-Apply` it prompts for a subscription and region (or takes `-SubscriptionId`/`-Location`) and, after confirmation, creates:
 
 - A permanent RG `rg-azsdk-identities-{region}-{MMddyy_HHmmss}` and four UAMIs `mi-azsdk-sample-{project,account,search,function}-{region}-{MMddyy_HHmmss}`, tagged `purpose=azsdk-sample-identities`, `sample-ci-retention=permanent`, a shared `sample-ci-owner` token and `sample-ci-identity={purpose}`. Pass the RG name to the pipeline's `identityResourceGroup`.
-- The eight **subscription-scoped** roles in [IdentityConfiguration.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/shared-identities/infra/IdentityConfiguration.json) for the project UAMI: Foundry User, Storage Blob Data Contributor, Storage Blob Data Owner (conditioned), Cosmos DB Operator, Search Service Contributor, Search Index Data Contributor, Storage Queue Data Contributor and Playwright Workspace Contributor.
+- The eight **subscription-scoped** roles in [IdentityConfiguration.json](https://dev.azure.com/msdata/Vienna/_git/foundry-sdk-test-resources?path=/shared-identities/infra/IdentityConfiguration.json) for the project UAMI: Foundry User, Storage Blob Data Contributor, Storage Blob Data Owner (conditioned), Cosmos DB Operator, Search Service Contributor, Search Index Data Contributor, Storage Queue Data Contributor and Playwright Workspace Contributor.
 - Subscription-scoped **Storage Blob Data Owner** and **Storage Queue Data Contributor** for the Function UAMI.
 - Subscription-scoped **Search Service Contributor**, **Search Index Data Contributor**,
   **Storage Blob Data Contributor**, and **Cognitive Services OpenAI User** for the Search
@@ -67,12 +67,12 @@ existing subscription-scoped bootstrap pattern because temporary worker resource
 exist yet; review that broad scope before approving them.
 
 For an **existing permanent identity set**, an administrator can preview
-[update-search-roles.bicep](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/shared-identities/infra/update-search-roles.bicep)
+[update-search-roles.bicep](https://dev.azure.com/msdata/Vienna/_git/foundry-sdk-test-resources?path=/shared-identities/infra/update-search-roles.bicep)
 without creating replacement identities:
 
 ```powershell
 az deployment sub what-if --subscription '<subscription-id>' --location '<identity-region>' `
-    --template-file tests\samples\shared-identities\infra\update-search-roles.bicep `
+    --template-file C:\repo\foundry-sdk-test-resources\shared-identities\infra\update-search-roles.bicep `
     --parameters identityResourceGroupName='<existing-identity-rg>' searchIdentityName='<existing-search-uami>'
 ```
 
@@ -425,6 +425,6 @@ Retained Python unit tests live in this directory; mocked PowerShell tests and [
 - With dotenv/live execution disabled, run the Python tests using `--confcutdir=tests/samples/ci` to avoid parent service fixtures.
 - Run all PowerShell `*.Tests.ps1` files under validation using **Pester 4.10.1**. The suites isolate Azure calls and cover identity resource-group resolution and metadata checks. On-demand pipeline agents do not need Pester.
 - Run `python -m unittest discover -s validation -p test_bundle_assets.py` from this directory for the shared Function and Search deployment-asset tests.
-- Run `./validation/Test-BicepTemplates.ps1 -IdentityInfrastructurePath ./../shared-identities/infra` from this directory to include the Python-owned identity bootstrap checks. Omitting that input validates only the shared resource bundle and explicitly reports that bootstrap validation is outside scope.
+- Run `./validation/Test-BicepTemplates.ps1 -IdentityInfrastructurePath C:\repo\foundry-sdk-test-resources\shared-identities\infra` from this directory to include identity bootstrap checks from a separate reviewed common-resource checkout. Omitting that input validates only the shared resource bundle and explicitly reports that bootstrap validation is outside scope. Bootstrap configuration regression tests live in that repository's `tools/test_identity_bootstrap.py`, not in the SDK test harness.
 - The Bicep checker compiles the root bundle, all workload modules, the resource-group template, the administrator-only Search role update, and the secret-only parameter file with empty PAT and OpenAPI values. It checks unconditional modules, environment-contract parity, Function hosting defaults, identity-based settings, keyless Playwright configuration, Bing account/connection shapes, the four pinned Custom Search pages, secure OpenAPI credentials and non-secret outputs, and rejects Azure IAM writes in worker templates including nested deployments. Its optional `StandardTemplatePath` input also verifies and compiles the 14 unchanged cached official sources.
 - Use the repository Black configuration, PowerShell syntax checks and `git diff --check`. Real harness collection must use `PYTHON_DOTENV_DISABLED=true` and fictional target IDs and must not execute samples.

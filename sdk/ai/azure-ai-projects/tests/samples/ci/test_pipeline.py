@@ -515,38 +515,3 @@ def test_shared_provisioning_has_no_python_planning_dependency():
     assert "'New-ResourceDeploymentPlan.ps1')" in plan
     assert "Get-SampleEnvironmentNames" in plan
     assert "function-app.bicep" not in plan
-
-
-@pytest.mark.parametrize(
-    "target, role_id",
-    [
-        ("function", "b7e6dc6d-f1e8-4753-8033-0f276bb0955b"),
-        ("function", "974c5e8b-45b9-4653-ba55-5f855dd0fb88"),
-        ("project", "974c5e8b-45b9-4653-ba55-5f855dd0fb88"),
-    ],
-)
-def test_shared_identity_bootstrap_preconfigures_function_storage_permissions(
-    target, role_id
-):
-    path = (
-        Path(__file__).resolve().parent.parent
-        / "shared-identities/infra/IdentityConfiguration.json"
-    )
-    configuration = json.loads(path.read_text(encoding="utf-8"))
-    matches = [
-        grant
-        for grant in configuration["roleAssignments"]
-        if grant["target"] == target and grant["roleDefinitionId"] == role_id
-    ]
-    assert len(matches) == 1
-    assert "condition" not in matches[0]
-    assert "conditionVersion" not in matches[0]
-    conditioned_owner = [
-        grant
-        for grant in configuration["roleAssignments"]
-        if grant["target"] == "project"
-        and grant["roleDefinitionId"] == "b7e6dc6d-f1e8-4753-8033-0f276bb0955b"
-    ]
-    assert len(conditioned_owner) == 1
-    assert "*-azureml-agent" in conditioned_owner[0]["condition"]
-    assert conditioned_owner[0]["conditionVersion"] == "2.0"
