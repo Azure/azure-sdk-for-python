@@ -1121,7 +1121,6 @@ class TestComponent(AzureRecordedTestCase):
             ),
         ],
     )
-    @pytest.mark.usefixtures("recorded_blob_download_size")
     def test_component_download(self, client: MLClient, randstr, component_path: str, request, snapshot_hash_sanitizer):
         save_dir = Path(f"./tests/test_configs/components/downloaded", request.node.callspec.id)
         temp_component_name = randstr("component_name")

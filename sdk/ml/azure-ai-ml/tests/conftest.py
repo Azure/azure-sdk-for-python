@@ -8,7 +8,6 @@ import time
 import uuid
 from collections import namedtuple
 from datetime import datetime
-from functools import partial
 from importlib import reload
 from os import getenv
 from pathlib import Path
@@ -70,22 +69,6 @@ def fake_datastore_key() -> str:
     fake_key = "this is fake key"
     b64_key = base64.b64encode(fake_key.encode("ascii"))
     return str(b64_key, "ascii")
-
-
-@pytest.fixture
-def recorded_blob_download_size(mocker: MockFixture):
-    """Preserve the 32 MiB download ranges in the existing playback recordings."""
-    if not is_live():
-        from azure.storage.blob import BlobServiceClient, ContainerClient
-
-        mocker.patch(
-            "azure.ai.ml._artifacts._blob_storage_helper.BlobServiceClient",
-            side_effect=partial(BlobServiceClient, max_single_get_size=32 * 1024 * 1024),
-        )
-        mocker.patch(
-            "azure.ai.ml._artifacts._blob_storage_helper.ContainerClient.from_container_url",
-            side_effect=partial(ContainerClient.from_container_url, max_single_get_size=32 * 1024 * 1024),
-        )
 
 
 def _query_param_regex(name, *, only_value=True) -> str:

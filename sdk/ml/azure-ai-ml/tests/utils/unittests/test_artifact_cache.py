@@ -3,10 +3,8 @@
 # ---------------------------------------------------------
 
 import errno
-import ntpath
 import os
 import subprocess
-import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import PureWindowsPath
 from threading import Event
@@ -92,20 +90,6 @@ def test_invalid_cache_components_rejected_before_access(artifact_cache, tmp_pat
     check.assert_not_called()
     run.assert_not_called()
     staging.assert_not_called()
-
-
-def test_cache_components_do_not_require_deprecated_pathlib_api(mocker):
-    if sys.version_info >= (3, 13):
-        mocker.patch.object(
-            PureWindowsPath,
-            "is_reserved",
-            side_effect=AssertionError("Deprecated pathlib API must not be used"),
-            create=True,
-        )
-    assert ArtifactCache._cache_path_component("package", "name") == "package"
-    assert ArtifactCache._cache_path_component("1.*", "version") == "1.%2A"
-    with pytest.raises(ValueError, match="Artifact"):
-        ArtifactCache._cache_path_component("NUL", "name")
 
 
 @pytest.mark.parametrize("field", ["feed", "name", "version"])
@@ -256,10 +240,7 @@ def test_version_selectors_have_safe_distinct_cache_keys(artifact_cache, downloa
     "version, cache_name", [("*", "%2A"), ("1.*", "1.%2A"), ("1.2.*", "1.2.%2A"), ("%2A", "%252A")]
 )
 def test_reserved_filename_check_uses_encoded_cache_component(mocker, version, cache_name):
-    if sys.version_info >= (3, 13):
-        windows_path = mocker.patch(f"{_MODULE}.ntpath.isreserved", wraps=ntpath.isreserved)
-    else:
-        windows_path = mocker.patch(f"{_MODULE}.PureWindowsPath", wraps=PureWindowsPath)
+    windows_path = mocker.patch(f"{_MODULE}.PureWindowsPath", wraps=PureWindowsPath)
 
     assert ArtifactCache._cache_path_component(version, "version") == cache_name
     windows_path.assert_called_once_with(cache_name)

@@ -175,7 +175,6 @@ class TestImportJob(AzureRecordedTestCase):
         assert import_pipeline_3.status in (JobStatus.CANCEL_REQUESTED, JobStatus.CANCELED)
 
     @pytest.mark.e2etest
-    @pytest.mark.usefixtures("recorded_blob_download_size")
     def test_import_job_download(self, randstr: Callable[[str], str], client: MLClient) -> None:
         job = client.jobs.create_or_update(
             load_job(

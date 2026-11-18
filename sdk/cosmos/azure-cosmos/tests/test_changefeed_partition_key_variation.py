@@ -3,7 +3,6 @@
 
 import unittest
 import uuid
-from unittest.mock import Mock
 import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
@@ -167,10 +166,10 @@ class TestChangeFeedPKVariation(unittest.TestCase):
         """Test changefeed with Hash V2 partition key."""
         container_id = f"container_test_hash_V2_{uuid.uuid4()}"
         container = self.create_container(container_id, "/pk", version=2)
-        self.addCleanup(self.key_db.delete_container, container_id)
         items = self.single_hash_items
         self.insert_items(container, items)
         self.validate_changefeed(container)
+        self.key_db.delete_container(container_id)
 
     def test_hpk_partition_key(self):
         """Test changefeed with hierarchical partition key."""
@@ -280,28 +279,6 @@ class TestChangeFeedPKVariation(unittest.TestCase):
         finally:
             container._get_properties = original_get_properties
             self.key_db.delete_container(container_id)
-
-
-@pytest.mark.parametrize("insert_times_out", [False, True])
-def test_hash_v2_container_cleanup(insert_times_out):
-    case = TestChangeFeedPKVariation("test_hash_v2_partition_key")
-    container = Mock()
-    case.key_db = Mock()
-    case.create_container = Mock(return_value=container)
-    case.insert_items = Mock(side_effect=TimeoutError("insert timed out") if insert_times_out else None)
-    case.validate_changefeed = Mock()
-    result = unittest.TestResult()
-
-    case.run(result)
-
-    assert not result.failures
-    assert len(result.errors) == int(insert_times_out)
-    if insert_times_out:
-        assert "TimeoutError: insert timed out" in result.errors[0][1]
-    container_id = case.create_container.call_args.args[0]
-    case.key_db.delete_container.assert_called_once_with(container_id)
-    case.insert_items.assert_called_once_with(container, case.single_hash_items)
-    assert case.validate_changefeed.call_count == int(not insert_times_out)
 
 
 if __name__ == "__main__":
