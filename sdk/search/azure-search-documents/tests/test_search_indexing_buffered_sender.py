@@ -400,6 +400,32 @@ class TestSearchIndexingBufferedSenderIndexing:
         assert results == [first_result, second_result]
         assert [len(call.kwargs["batch"].actions) for call in mock_index_documents.call_args_list] == [2, 1, 1]
 
+    def test_flush_sends_split_oversized_batch_once_and_shrinks_batch_size(self):
+        on_progress = mock.Mock()
+        sender = create_sender(initial_batch_action_count=2, on_progress=on_progress)
+        sender._index_key = "HotelId"
+        sender.upload_documents(
+            [
+                create_hotel_document(DOCUMENT_KEY),
+                create_hotel_document(REPLACEMENT_DOCUMENT_KEY, "Contoso Suites"),
+            ]
+        )
+        first_result = create_indexing_result(DOCUMENT_KEY)
+        second_result = create_indexing_result(REPLACEMENT_DOCUMENT_KEY)
+
+        with mock.patch.object(
+            sender._client,
+            "index_documents",
+            side_effect=[RequestEntityTooLargeError("request body too large"), [first_result], [second_result]],
+        ) as mock_index_documents:
+            has_error = sender.flush()
+
+        assert has_error is False
+        assert [len(call.kwargs["batch"].actions) for call in mock_index_documents.call_args_list] == [2, 1, 1]
+        assert sender.actions == []
+        assert sender._batch_action_count == 1
+        assert on_progress.call_count == 2
+
     def test_index_documents_raises_request_too_large_for_single_action(self):
         sender = create_sender()
         actions = sender._index_documents_batch.add_upload_actions([create_hotel_document(DOCUMENT_KEY)])

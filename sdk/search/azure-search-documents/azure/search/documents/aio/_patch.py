@@ -367,8 +367,7 @@ class SearchIndexingBufferedSender:
             if len(actions) == 1:
                 raise
             pos = round(len(actions) / 2)
-            if pos < self._batch_action_count:
-                self._index_documents_batch.enqueue_actions(actions)
+            self._batch_action_count = min(self._batch_action_count, pos)
             now = asyncio.get_event_loop().time()
             remaining = timeout - (now - begin_time)
             if remaining < 0:
