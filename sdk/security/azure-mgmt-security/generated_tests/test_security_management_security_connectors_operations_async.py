@@ -25,7 +25,7 @@ class TestSecurityManagementSecurityConnectorsOperationsAsync(AzureMgmtRecordedT
         response = await self.client.security_connectors.get(
             resource_group_name=resource_group.name,
             security_connector_name="str",
-            api_version="2024-08-01-preview",
+            api_version="2026-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -61,7 +61,7 @@ class TestSecurityManagementSecurityConnectorsOperationsAsync(AzureMgmtRecordedT
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-08-01-preview",
+            api_version="2026-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -97,7 +97,7 @@ class TestSecurityManagementSecurityConnectorsOperationsAsync(AzureMgmtRecordedT
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-08-01-preview",
+            api_version="2026-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -109,7 +109,7 @@ class TestSecurityManagementSecurityConnectorsOperationsAsync(AzureMgmtRecordedT
         response = await self.client.security_connectors.delete(
             resource_group_name=resource_group.name,
             security_connector_name="str",
-            api_version="2024-08-01-preview",
+            api_version="2026-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -120,7 +120,7 @@ class TestSecurityManagementSecurityConnectorsOperationsAsync(AzureMgmtRecordedT
     async def test_security_connectors_list_by_resource_group(self, resource_group):
         response = self.client.security_connectors.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-08-01-preview",
+            api_version="2026-08-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -130,7 +130,7 @@ class TestSecurityManagementSecurityConnectorsOperationsAsync(AzureMgmtRecordedT
     @recorded_by_proxy_async
     async def test_security_connectors_list(self, resource_group):
         response = self.client.security_connectors.list(
-            api_version="2024-08-01-preview",
+            api_version="2026-08-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

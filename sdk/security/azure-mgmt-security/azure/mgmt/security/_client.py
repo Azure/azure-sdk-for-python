@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +8,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -35,6 +36,7 @@ from .operations import (
     AzureDevOpsOrgsOperations,
     AzureDevOpsProjectsOperations,
     AzureDevOpsReposOperations,
+    BatchPricingsOperations,
     ComplianceResultsOperations,
     CompliancesOperations,
     CustomRecommendationsOperations,
@@ -95,15 +97,21 @@ from .operations import (
     SubAssessmentsOperations,
     TasksOperations,
     TopologyOperations,
+    TopologyResourcesOperations,
     WorkspaceSettingsOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class SecurityManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class SecurityManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """SecurityManagementClient.
 
     :ivar alerts: AlertsOperations operations
@@ -122,6 +130,8 @@ class SecurityManagementClient:  # pylint: disable=client-accepts-api-version-ke
     :vartype automations: azure.mgmt.security.operations.AutomationsOperations
     :ivar security_contacts: SecurityContactsOperations operations
     :vartype security_contacts: azure.mgmt.security.operations.SecurityContactsOperations
+    :ivar batch_pricings: BatchPricingsOperations operations
+    :vartype batch_pricings: azure.mgmt.security.operations.BatchPricingsOperations
     :ivar compliance_results: ComplianceResultsOperations operations
     :vartype compliance_results: azure.mgmt.security.operations.ComplianceResultsOperations
     :ivar governance_assignments: GovernanceAssignmentsOperations operations
@@ -189,6 +199,8 @@ class SecurityManagementClient:  # pylint: disable=client-accepts-api-version-ke
      azure.mgmt.security.operations.JitNetworkAccessPoliciesOperations
     :ivar security_solutions: SecuritySolutionsOperations operations
     :vartype security_solutions: azure.mgmt.security.operations.SecuritySolutionsOperations
+    :ivar topology_resources: TopologyResourcesOperations operations
+    :vartype topology_resources: azure.mgmt.security.operations.TopologyResourcesOperations
     :ivar security_standards: SecurityStandardsOperations operations
     :vartype security_standards: azure.mgmt.security.operations.SecurityStandardsOperations
     :ivar standard_assignments: StandardAssignmentsOperations operations
@@ -273,11 +285,11 @@ class SecurityManagementClient:  # pylint: disable=client-accepts-api-version-ke
     :ivar server_vulnerability_assessment: ServerVulnerabilityAssessmentOperations operations
     :vartype server_vulnerability_assessment:
      azure.mgmt.security.operations.ServerVulnerabilityAssessmentOperations
-    :ivar topology: TopologyOperations operations
-    :vartype topology: azure.mgmt.security.operations.TopologyOperations
     :ivar security_solutions_reference_data: SecuritySolutionsReferenceDataOperations operations
     :vartype security_solutions_reference_data:
      azure.mgmt.security.operations.SecuritySolutionsReferenceDataOperations
+    :ivar topology: TopologyOperations operations
+    :vartype topology: azure.mgmt.security.operations.TopologyOperations
     :ivar sensitivity_settings: SensitivitySettingsOperations operations
     :vartype sensitivity_settings: azure.mgmt.security.operations.SensitivitySettingsOperations
     :ivar sql_vulnerability_assessment_settings: SqlVulnerabilityAssessmentSettingsOperations
@@ -364,6 +376,7 @@ class SecurityManagementClient:  # pylint: disable=client-accepts-api-version-ke
         self.security_contacts = SecurityContactsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.batch_pricings = BatchPricingsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.compliance_results = ComplianceResultsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -433,6 +446,9 @@ class SecurityManagementClient:  # pylint: disable=client-accepts-api-version-ke
             self._client, self._config, self._serialize, self._deserialize
         )
         self.security_solutions = SecuritySolutionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.topology_resources = TopologyResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.security_standards = SecurityStandardsOperations(
@@ -513,10 +529,10 @@ class SecurityManagementClient:  # pylint: disable=client-accepts-api-version-ke
         self.server_vulnerability_assessment = ServerVulnerabilityAssessmentOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.topology = TopologyOperations(self._client, self._config, self._serialize, self._deserialize)
         self.security_solutions_reference_data = SecuritySolutionsReferenceDataOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.topology = TopologyOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sensitivity_settings = SensitivitySettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
