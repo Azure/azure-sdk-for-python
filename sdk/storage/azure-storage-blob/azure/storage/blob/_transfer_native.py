@@ -14,7 +14,6 @@ inputs rather than silently falling back to Python.
 
 from contextlib import contextmanager
 from datetime import timezone
-import logging
 import os
 import threading
 from typing import (
@@ -57,8 +56,6 @@ if TYPE_CHECKING:
 _STORAGE_SCOPE = "https://storage.azure.com/.default"
 
 _T = TypeVar("_T")
-
-_LOGGER = logging.getLogger(__name__)
 
 # Escape hatch to force the pure-Python transfer path even when the native extension is
 # installed. Intended for benchmarking and troubleshooting. Set the environment variable
@@ -348,7 +345,6 @@ def try_native_upload(
         credential=blob_client.credential,
         **kwargs,
     ):
-        _LOGGER.debug("Native upload extension unavailable; using Python upload path.")
         return None
 
     from azure.storage.extensions.transfer import (  # pylint: disable=import-outside-toplevel
@@ -445,7 +441,6 @@ def try_native_upload(
             max_concurrency=max_concurrency,
             max_block_size=config.max_block_size,
         )
-    _LOGGER.info("Used native Rust extension for blob upload.")
     return result
 
 
@@ -574,7 +569,6 @@ def try_native_download(
         credential=blob_client.credential,
         **kwargs,
     ):
-        _LOGGER.debug("Native download extension unavailable; using Python download path.")
         return None
 
     from azure.storage.extensions.transfer import (  # pylint: disable=import-outside-toplevel
@@ -616,7 +610,6 @@ def try_native_download(
             max_concurrency=max_concurrency,
             max_chunk_size=blob_client._config.max_chunk_get_size,  # pylint: disable=protected-access
         )
-    _LOGGER.info("Used native Rust extension for blob download.")
     return NativeStorageStreamDownloader(
         stream=stream,
         name=blob_client.blob_name,

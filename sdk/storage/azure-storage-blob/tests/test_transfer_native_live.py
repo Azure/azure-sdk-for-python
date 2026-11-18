@@ -33,13 +33,12 @@ BLOB_SIZES = [
 @pytest.mark.live_test_only
 class TestStorageNativeTransfer(StorageRecordedTestCase):
     @pytest.fixture(autouse=True)
-    def require_native_transfer(self, caplog):
+    def require_native_transfer(self):
         if not self.is_live:
             pytest.skip("Native transfer integration tests are live only.")
         pytest.importorskip("azure.storage.extensions.transfer")
         if not _is_native_available():
             pytest.skip("The native transfer extension must be available and enabled.")
-        caplog.set_level("INFO", logger="azure.storage.blob._transfer_native")
 
     def _setup(self, storage_account_name, request):
         self.bsc = BlobServiceClient(
@@ -54,7 +53,7 @@ class TestStorageNativeTransfer(StorageRecordedTestCase):
 
     @pytest.mark.parametrize("credential_type", [str, AzureSasCredential], ids=["raw-sas", "sas-credential"])
     @BlobPreparer()
-    def test_upload_download_blob_with_sas(self, credential_type, request, caplog, **kwargs):
+    def test_upload_download_blob_with_sas(self, credential_type, request, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
         # Arrange
@@ -79,13 +78,12 @@ class TestStorageNativeTransfer(StorageRecordedTestCase):
             downloader = sas_blob.download_blob()
 
             # Assert
-            assert "Used native Rust extension for blob upload." in caplog.text
             assert isinstance(downloader, NativeStorageStreamDownloader)
             assert downloader.readall() == data
 
     @pytest.mark.parametrize("size", BLOB_SIZES)
     @BlobPreparer()
-    def test_upload_blob_with_options(self, size, request, caplog, **kwargs):
+    def test_upload_blob_with_options(self, size, request, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
         # Arrange
@@ -110,7 +108,6 @@ class TestStorageNativeTransfer(StorageRecordedTestCase):
         )
 
         # Assert
-        assert "Used native Rust extension for blob upload." in caplog.text
         properties = blob.get_blob_properties()
         assert response["etag"] == properties.etag
         assert properties.size == size
