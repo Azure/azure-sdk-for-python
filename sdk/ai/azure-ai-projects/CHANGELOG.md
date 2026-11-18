@@ -1,5 +1,11 @@
 # Release History
 
+## 2.11.1 (Unreleased)
+
+### Sample updates
+
+* Fixed Realtime Voice Agent samples to defer tool execution until responses succeed, surface microphone send failures, clean up audio devices after startup failures, and report unsuccessful responses or failed conversation persistence.
+
 ## 2.11.0 (2026-11-13)
 
 ### Features Added
