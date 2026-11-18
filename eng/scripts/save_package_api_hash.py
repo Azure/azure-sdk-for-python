@@ -11,7 +11,7 @@ from extract_apiview_metadata import extract_metadata
 def update_package_info(metadata_path: pathlib.Path, package_info_path: pathlib.Path) -> None:
     metadata = yaml.safe_load(metadata_path.read_text(encoding="utf-8-sig"))
     api_hash = metadata.get("apiHash") if isinstance(metadata, dict) else None
-    if not isinstance(api_hash, str) or not api_hash:
+    if not isinstance(api_hash, str) or not api_hash.strip():
         raise ValueError(f"apiHash was not found in {metadata_path}")
 
     package_info = json.loads(package_info_path.read_text(encoding="utf-8-sig"))
