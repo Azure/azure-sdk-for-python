@@ -9841,17 +9841,18 @@ class OutputFile(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
 
     :ivar file_pattern: A pattern indicating which file(s) to upload. Both relative and absolute
      paths are supported. Relative paths are relative to the Task working directory. The following
-     wildcards are supported: * matches 0 or more characters (for example pattern abc* would match
-     abc or abcdef), ** matches any directory, ? matches any single character, [abc] matches one
-     character in the brackets, and [a-c] matches one character in the range. Brackets can include a
-     negation to match any character not specified (for example [!abc] matches any character but a,
-     b, or c). If a file name starts with "." it is ignored by default but may be matched by
-     specifying it explicitly (for example *.gif will not match .a.gif, but .*.gif will). A simple
-     example: **\\*.txt matches any file that does not start in '.' and ends with .txt in the Task
-     working directory or any subdirectory. If the filename contains a wildcard character it can be
-     escaped using brackets (for example abc[*] would match a file named abc*). Note that both \\
-     and / are treated as directory separators on Windows, but only / is on Linux. Environment
-     variables (%var% on Windows or $var on Linux) are expanded prior to the pattern being applied.
+     wildcards are supported: ``*`` matches 0 or more characters (for example pattern ``abc*`` would
+     match ``abc`` or ``abcdef``), ``**`` matches any directory, ``?`` matches any single character,
+     ``[abc]`` matches one character in the brackets, and ``[a-c]`` matches one character in the
+     range. Brackets can include a negation to match any character not specified (for example
+     ``[!abc]`` matches any character but a, b, or c). If a file name starts with "." it is ignored
+     by default but may be matched by specifying it explicitly (for example ``*.gif`` will not match
+     ``.a.gif``, but ``.*.gif`` will). A simple example: ``**/*.txt`` matches any file that does not
+     start in '.' and ends with .txt in the Task working directory or any subdirectory. If the
+     filename contains a wildcard character it can be escaped using brackets (for example ``abc[*]``
+     would match a file named ``abc*``). On Windows, backslashes and forward slashes are treated as
+     directory separators; on Linux, only forward slashes are separators. Environment variables
+     (``%var%`` on Windows or ``$var`` on Linux) are expanded prior to the pattern being applied.
      Required.
     :vartype file_pattern: str
     :ivar destination: The destination for the output file(s). Required.
@@ -9864,17 +9865,19 @@ class OutputFile(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
     file_pattern: str = rest_field(name="filePattern", visibility=["read", "create", "update", "delete", "query"])
     """A pattern indicating which file(s) to upload. Both relative and absolute paths are supported.
      Relative paths are relative to the Task working directory. The following wildcards are
-     supported: * matches 0 or more characters (for example pattern abc* would match abc or abcdef),
-     ** matches any directory, ? matches any single character, [abc] matches one character in the
-     brackets, and [a-c] matches one character in the range. Brackets can include a negation to
-     match any character not specified (for example [!abc] matches any character but a, b, or c). If
-     a file name starts with \".\" it is ignored by default but may be matched by specifying it
-     explicitly (for example *.gif will not match .a.gif, but .*.gif will). A simple example:
-     **\\*.txt matches any file that does not start in '.' and ends with .txt in the Task working
-     directory or any subdirectory. If the filename contains a wildcard character it can be escaped
-     using brackets (for example abc[*] would match a file named abc*). Note that both \\ and / are
-     treated as directory separators on Windows, but only / is on Linux. Environment variables
-     (%var% on Windows or $var on Linux) are expanded prior to the pattern being applied. Required."""
+     supported: ``*`` matches 0 or more characters (for example pattern ``abc*`` would match ``abc``
+     or ``abcdef``), ``**`` matches any directory, ``?`` matches any single character, ``[abc]``
+     matches one character in the brackets, and ``[a-c]`` matches one character in the range.
+     Brackets can include a negation to match any character not specified (for example ``[!abc]``
+     matches any character but a, b, or c). If a file name starts with \".\" it is ignored by
+     default but may be matched by specifying it explicitly (for example ``*.gif`` will not match
+     ``.a.gif``, but ``.*.gif`` will). A simple example: ``**/*.txt`` matches any file that does not
+     start in '.' and ends with .txt in the Task working directory or any subdirectory. If the
+     filename contains a wildcard character it can be escaped using brackets (for example ``abc[*]``
+     would match a file named ``abc*``). On Windows, backslashes and forward slashes are treated as
+     directory separators; on Linux, only forward slashes are separators. Environment variables
+     (``%var%`` on Windows or ``$var`` on Linux) are expanded prior to the pattern being applied.
+     Required."""
     destination: "_models.OutputFileDestination" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10905,13 +10908,10 @@ class VirtualMachineConfiguration(_Model):  # pylint: disable=docstring-keyword-
      <https://learn.microsoft.com/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine>`_.
     :vartype data_disks: list[~azure.batch.models.DataDisk]
     :ivar license_type: This only applies to Images that contain the Windows operating system, and
-     should only be used when you hold valid on-premises licenses for the Compute
-     Nodes which will be deployed. If omitted, no on-premises licensing discount is
-     applied. Values are:
-
-      Windows_Server - The on-premises license is for Windows
-     Server.
-      Windows_Client - The on-premises license is for Windows Client.
+     should only be used when you hold valid on-premises licenses for the Compute Nodes which will
+     be deployed. If omitted, no on-premises licensing discount is applied. Values are:
+     ``Windows_Server`` - The on-premises license is for Windows Server. ``Windows_Client`` - The
+     on-premises license is for Windows Client.
     :vartype license_type: str
     :ivar container_configuration: The container configuration for the Pool. If specified, setup is
      performed on each Compute Node in the Pool to allow Tasks to run in containers. All regular
@@ -10992,14 +10992,11 @@ class VirtualMachineConfiguration(_Model):  # pylint: disable=docstring-keyword-
     license_type: Optional[str] = rest_field(
         name="licenseType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """This only applies to Images that contain the Windows operating system, and
-     should only be used when you hold valid on-premises licenses for the Compute
-     Nodes which will be deployed. If omitted, no on-premises licensing discount is
-     applied. Values are:
-     
-      Windows_Server - The on-premises license is for Windows
-     Server.
-      Windows_Client - The on-premises license is for Windows Client."""
+    """This only applies to Images that contain the Windows operating system, and should only be used
+     when you hold valid on-premises licenses for the Compute Nodes which will be deployed. If
+     omitted, no on-premises licensing discount is applied. Values are: ``Windows_Server`` - The
+     on-premises license is for Windows Server. ``Windows_Client`` - The on-premises license is for
+     Windows Client."""
     container_configuration: Optional["_models.BatchContainerConfiguration"] = rest_field(
         name="containerConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
