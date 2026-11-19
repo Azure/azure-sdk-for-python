@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- With `azure-monitor-opentelemetry-exporter` 1.0.0b60 or later, `ItemCount` reflects the sampling rate for logs retained by `enable_trace_based_sampling_for_logs`. At 5% sampling, each retained log counts as 20 items. Logs outside a trace still count as one.
+- Fixed `ItemCount` for logs retained by `enable_trace_based_sampling_for_logs`. At 5% sampling, each retained log counts as 20 items. Logs outside a trace still count as one.
 
 ### Other Changes
 
