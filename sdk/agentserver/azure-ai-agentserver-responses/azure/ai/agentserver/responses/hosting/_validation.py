@@ -27,6 +27,7 @@ from ..models._errors import RequestValidationError
 from ..models._validators import (
     validate_create_response_payload,
 )
+from ..store._foundry_errors import _FoundryAccessError
 
 
 def parse_create_response(payload: Mapping[str, Any]) -> _public_models.CreateResponse:
@@ -402,6 +403,7 @@ def error_response(
     Automatically classifies the error source when *error_source* is not
     provided:
 
+    - Foundry storage HTTP 401/403 errors → ``user``, preserving status and message
     - :class:`RequestValidationError` / :class:`ValueError` → ``user``
     - Exceptions tagged with :data:`PLATFORM_ERROR_TAG` → ``platform``
       (includes ``x-platform-error-detail`` header)
@@ -418,6 +420,20 @@ def error_response(
     :return: A JSONResponse with the appropriate status code and error payload.
     :rtype: JSONResponse
     """
+    if isinstance(error, _FoundryAccessError):
+        payload = error.response_body
+        if payload is None:
+            payload = build_api_error_response(
+                message=error.message,
+                code="unauthorized" if error.status_code == 401 else "forbidden",
+                error_type="invalid_request_error",
+            )
+        return JSONResponse(
+            payload,
+            status_code=error.status_code,
+            headers=_apply_error_source_headers(headers, ERROR_SOURCE_USER),
+        )
+
     envelope = to_api_error_response(error)
     payload = _json_payload(envelope)
     error_type = payload.get("error", {}).get("type") if isinstance(payload, dict) else None
