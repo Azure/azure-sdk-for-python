@@ -708,8 +708,6 @@ class BreakingChangesTracker:
 
     def check_property_required(self, components: Dict) -> None:
         def _get_property_type(value: Any) -> Any:
-            if isinstance(value, dict) and value.get("is_annotation") is False:
-                return None
             return value.get("attr_type") if isinstance(value, dict) else value
 
         def _is_nullable(annotation: Any) -> bool:
@@ -724,8 +722,7 @@ class BreakingChangesTracker:
                 continue
             stable_type = _get_property_type(stable_properties[key])
             current_type = _get_property_type(current_properties[key])
-            if stable_type is None or current_type is None:
-                continue
+
             if _is_nullable(stable_type) and not _is_nullable(current_type):
                 bc = (
                     self.REQUIRED_PROPERTY_MSG,
@@ -738,9 +735,10 @@ class BreakingChangesTracker:
 
     def check_property_type_changed(self, components: Dict) -> None:
         def _get_property_type(value: Any) -> Any:
-            if isinstance(value, dict) and value.get("is_annotation") is False:
-                return None
             return value.get("attr_type") if isinstance(value, dict) else value
+
+        def _is_annotation(value: dict) -> bool:
+            return value.get("is_annotation") is True
 
         stable_class = self.stable[self._module_name]["class_nodes"][self._class_name]
         if (
@@ -759,7 +757,11 @@ class BreakingChangesTracker:
             current_type = _get_property_type(current_properties[key])
             if not isinstance(stable_type, str) or not isinstance(current_type, str) or stable_type == current_type:
                 continue
-            if stable_type in {"Optional", "Union", key} or current_type in {"Optional", "Union", key}:
+            if stable_type in {"Optional", "Union"} or current_type in {"Optional", "Union"}:
+                continue
+            if key in {stable_type, current_type} and not (
+                _is_annotation(stable_properties[key]) or _is_annotation(current_properties[key])
+            ):
                 continue
 
             stable_members = _normalize_property_type(stable_type)

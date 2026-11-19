@@ -1385,8 +1385,8 @@ def test_class_property_is_required_with_default_report():
     get_property_names(stable_class, stable_properties)
     get_property_names(current_class, current_properties)
 
-    assert stable_properties == {"foo": {"attr_type": "Optional[Foo]"}}
-    assert current_properties == {"foo": {"attr_type": "Foo"}}
+    assert stable_properties == {"foo": {"attr_type": "Optional[Foo]", "is_annotation": True}}
+    assert current_properties == {"foo": {"attr_type": "Foo", "is_annotation": True}}
 
     stable = {
         "azure.contoso.models": {
@@ -1568,8 +1568,8 @@ def test_class_property_type_changed_with_default_report(stable_type, current_ty
     get_property_names(stable_class, stable_properties)
     get_property_names(current_class, current_properties)
 
-    assert stable_properties == {"foo": {"attr_type": stable_type}}
-    assert current_properties == {"foo": {"attr_type": current_type}}
+    assert stable_properties == {"foo": {"attr_type": stable_type, "is_annotation": True}}
+    assert current_properties == {"foo": {"attr_type": current_type, "is_annotation": True}}
 
     stable = {
         "azure.contoso.models": {
@@ -1602,6 +1602,88 @@ def test_class_property_type_changed_with_default_report(stable_type, current_ty
     assert msg == ChangelogTracker.CHANGED_PROPERTY_TYPE_MSG
     assert args == ["azure.contoso.models", "ContosoModel", "foo", stable_type, current_type]
     assert msg.format(*args[1:]) in changelog
+
+
+def test_class_property_type_changed_when_annotation_matches_name():
+    stable_properties = {}
+    current_properties = {}
+    stable_class = ast.parse("class ContosoModel:\n    date: date\n").body[0]
+    current_class = ast.parse("class ContosoModel:\n    date: datetime\n").body[0]
+    get_property_names(stable_class, stable_properties)
+    get_property_names(current_class, current_properties)
+
+    stable = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {"type": None, "methods": {}, "properties": stable_properties}
+            }
+        }
+    }
+    current = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {"type": None, "methods": {}, "properties": current_properties}
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+
+    assert len(bc.breaking_changes) == 1
+    _, _, module_name, class_name, property_name, stable_type, current_type = bc.breaking_changes[0]
+    assert (module_name, class_name, property_name, stable_type, current_type) == (
+        "azure.contoso.models",
+        "ContosoModel",
+        "date",
+        "date",
+        "datetime",
+    )
+
+
+def test_quoted_client_operation_group_annotation_classification():
+    operation_group_properties = {}
+    client_class = ast.parse(
+        'class ContosoClient:\n'
+        '    widgets: "WidgetsOperations"\n'
+        '    def __init__(self):\n'
+        '        self.widgets = WidgetsOperations()\n'
+    ).body[0]
+    get_property_names(client_class, operation_group_properties)
+    assert operation_group_properties == {
+        "widgets": {"attr_type": "WidgetsOperations", "is_annotation": True}
+    }
+
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {"name": {"attr_type": "str"}},
+                }
+            }
+        }
+    }
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {"name": {"attr_type": "str"}, **operation_group_properties},
+                }
+            }
+        }
+    }
+    added = ChangelogTracker(stable, current, "azure-contoso")
+    added.run_checks()
+    assert len(added.features_added) == 1
+    assert added.features_added[0][0] == ChangelogTracker.ADDED_OPERATION_GROUP_MSG
+
+    removed = BreakingChangesTracker(current, stable, "azure-contoso")
+    removed.run_checks()
+    assert len(removed.breaking_changes) == 1
+    assert removed.breaking_changes[0][0] == BreakingChangesTracker.REMOVED_OR_RENAMED_OPERATION_GROUP_MSG
 
 
 def test_class_property_type_unchanged_with_metadata_change():
