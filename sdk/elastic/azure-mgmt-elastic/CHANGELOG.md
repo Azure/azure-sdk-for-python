@@ -1,10 +1,10 @@
 # Release History
 
-## 3.1.0b1 (2026-11-16)
+## 3.1.0b1 (2026-11-19)
 
 ### Features Added
 
-  - Operation group `MonitorsOperations` added parameter `soft_delete` in method `begin_delete`
+  - Model `MonitorsOperations` added parameter `soft_delete` in method `begin_delete`
 
 ## 3.0.0 (2026-07-29)
 

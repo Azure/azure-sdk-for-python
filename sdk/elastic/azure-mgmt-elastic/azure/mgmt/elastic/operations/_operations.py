@@ -2931,7 +2931,7 @@ class MonitorsOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
         :param body: Elastic monitor resource model. Default value is None.
         :type body: ~azure.mgmt.elastic.models.ElasticMonitorResource
@@ -2960,7 +2960,7 @@ class MonitorsOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
         :param body: Elastic monitor resource model. Default value is None.
         :type body: ~azure.mgmt.elastic.types.ElasticMonitorResource
@@ -2989,7 +2989,7 @@ class MonitorsOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
         :param body: Elastic monitor resource model. Default value is None.
         :type body: IO[bytes]
@@ -3016,7 +3016,7 @@ class MonitorsOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
         :param body: Elastic monitor resource model. Is either a ElasticMonitorResource type or a
          IO[bytes] type. Default value is None.
@@ -3178,7 +3178,7 @@ class MonitorsOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
         :param body: Elastic resource model update parameters. Default value is None.
         :type body: ~azure.mgmt.elastic.models.ElasticMonitorResourceUpdateParameters
@@ -3207,7 +3207,7 @@ class MonitorsOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
         :param body: Elastic resource model update parameters. Default value is None.
         :type body: ~azure.mgmt.elastic.types.ElasticMonitorResourceUpdateParameters
@@ -3236,7 +3236,7 @@ class MonitorsOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
         :param body: Elastic resource model update parameters. Default value is None.
         :type body: IO[bytes]
@@ -3267,7 +3267,7 @@ class MonitorsOperations:  # pylint: disable=docstring-missing-param
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitor_name: Required.
+        :param monitor_name: Monitor resource name. Required.
         :type monitor_name: str
         :param body: Elastic resource model update parameters. Is either a
          ElasticMonitorResourceUpdateParameters type or a IO[bytes] type. Default value is None.
