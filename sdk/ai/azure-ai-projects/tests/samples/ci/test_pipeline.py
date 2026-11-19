@@ -220,12 +220,14 @@ def test_validator_model_is_absent_from_plan_and_provisioning_sources():
     for name in (
         "New-SampleDeploymentPlan.ps1",
         "Invoke-SampleProvisioning.ps1",
-        "infra/sample-resources.bicepparam",
+        "shared/infra/sample-resources.bicepparam",
     ):
         source = (directory / name).read_text(encoding="utf-8").lower()
         assert "validationmodel" not in source
         assert "validation_model" not in source
-    template = (directory / "infra/sample-resources.bicep").read_text(encoding="utf-8")
+    template = (directory / "shared/infra/sample-resources.bicep").read_text(
+        encoding="utf-8"
+    )
     assert "validationDeployment" not in template
     assert "validationModel" not in template
     assert "LLM_VALIDATION_PROJECT_ENDPOINT" not in template
@@ -302,7 +304,8 @@ def test_internal_plan_only_collects_and_plans_without_test_framework_bootstrap(
 
 def test_provisioning_uses_shared_variant_without_worker_iam_writes():
     directory = Path(__file__).resolve().parent
-    source = (directory / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
+    shared = directory / "shared"
+    source = (shared / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
     assert source.index("Get-SampleSharedIdentities -Plan $plan") < source.index(
         "$state = @{"
     )
@@ -310,38 +313,40 @@ def test_provisioning_uses_shared_variant_without_worker_iam_writes():
         "@('deployment', 'sub', 'create')"
     )
     assert "[Parameter(Mandatory)] [string] $StandardTemplatePath" not in source
-    helper = (directory / "SampleCiHelpers.ps1").read_text(encoding="utf-8")
+    helper = (shared / "SampleCiHelpers.ps1").read_text(encoding="utf-8")
     assert "function Get-SampleStandardTemplate" in helper
     assert "SHA256]::HashData($bytes)" in helper
     assert "checksum mismatch" in helper
     assert "infra/main.bicep" in source
-    root = (directory / "infra/main.bicep").read_text(encoding="utf-8")
+    root = (directory / "shared/infra/main.bicep").read_text(encoding="utf-8")
     assert "'./standard-shared-identities.bicep'" in root
     for name in ("sample-resources.bicep", "standard-shared-identities.bicep"):
         assert "'Microsoft.Authorization/roleAssignments@" not in (
-            directory / "infra" / name
+            directory / "shared" / "infra" / name
         ).read_text(encoding="utf-8")
 
 
 def test_subscription_is_not_derived_from_the_service_connection_default():
     directory = Path(__file__).resolve().parent
-    source = (directory / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
+    shared = directory / "shared"
+    source = (shared / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
     assert "$subscription = [string] $account.id" not in source
     assert "Set-SampleSubscriptionContext -Plan $plan" in source
     assert "$subscription = Get-SampleSubscriptionId" in source
-    plan = (directory / "New-ResourceDeploymentPlan.ps1").read_text(encoding="utf-8")
+    plan = (shared / "New-ResourceDeploymentPlan.ps1").read_text(encoding="utf-8")
     assert "subscriptionId = $subscription" in plan
-    cleanup = (directory / "Remove-SampleResources.ps1").read_text(encoding="utf-8")
+    cleanup = (shared / "Remove-SampleResources.ps1").read_text(encoding="utf-8")
     assert "$state['subscriptionId'] -ine $state.plan.subscriptionId" in cleanup
     assert "Set-SampleSubscriptionContext -Plan $state.plan" in cleanup
 
 
 def test_tenant_is_required_from_environment_and_bound_to_plan_and_cleanup():
     directory = Path(__file__).resolve().parent
-    plan = (directory / "New-ResourceDeploymentPlan.ps1").read_text(encoding="utf-8")
+    shared = directory / "shared"
+    plan = (shared / "New-ResourceDeploymentPlan.ps1").read_text(encoding="utf-8")
     assert "$tenant = Get-SampleTenantId" in plan
     assert "tenantId = $tenant" in plan
-    provisioning = (directory / "Invoke-ResourceProvisioning.ps1").read_text(
+    provisioning = (shared / "Invoke-ResourceProvisioning.ps1").read_text(
         encoding="utf-8"
     )
     assert "tenantId = $runnerIdentity.tenantId" in provisioning
@@ -349,7 +354,7 @@ def test_tenant_is_required_from_environment_and_bound_to_plan_and_cleanup():
         "$state.environment['AZURE_TENANT_ID'] = $runnerIdentity.tenantId"
         in provisioning
     )
-    cleanup = (directory / "Remove-SampleResources.ps1").read_text(encoding="utf-8")
+    cleanup = (shared / "Remove-SampleResources.ps1").read_text(encoding="utf-8")
     assert "$state['tenantId'] -ine $state.plan.tenantId" in cleanup
 
 
@@ -421,7 +426,8 @@ def test_round_robin_workers_are_isolated_without_an_environment_dependency(pipe
 
 def test_batch_admission_retains_guards_without_querying_ado():
     directory = Path(__file__).resolve().parent
-    source = (directory / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
+    shared = directory / "shared"
+    source = (shared / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
     admission = source.split("if (-not $ConfirmProvisioning)", 1)[0]
     for guard in (
         "Set-SampleSubscriptionContext",
@@ -430,14 +436,15 @@ def test_batch_admission_retains_guards_without_querying_ado():
     ):
         assert guard in admission
     assert "Assert-SampleCapacityLock" not in source
-    helper = (directory / "SampleCiHelpers.ps1").read_text(encoding="utf-8")
+    helper = (shared / "SampleCiHelpers.ps1").read_text(encoding="utf-8")
     assert "function Assert-SampleCapacityLock" not in helper
     assert "pipelines/checks/configurations" not in helper
 
 
 def test_provisioning_metadata_is_passed_directly_not_through_environment_variables():
     directory = Path(__file__).resolve().parent
-    parameters = (directory / "infra/sample-resources.bicepparam").read_text(
+    shared = directory / "shared"
+    parameters = (directory / "shared/infra/sample-resources.bicepparam").read_text(
         encoding="utf-8"
     )
     assert parameters.startswith("using none")
@@ -447,7 +454,7 @@ def test_provisioning_metadata_is_passed_directly_not_through_environment_variab
         "param openApiKey = readEnvironmentVariable('PROJ_CONN_OPEN_API_KEY', '')"
         in parameters
     )
-    provisioning = (directory / "Invoke-ResourceProvisioning.ps1").read_text(
+    provisioning = (shared / "Invoke-ResourceProvisioning.ps1").read_text(
         encoding="utf-8"
     )
     assert "SAMPLE_CI_" not in provisioning + parameters
@@ -457,22 +464,25 @@ def test_provisioning_metadata_is_passed_directly_not_through_environment_variab
         "'sampleModel=' + ($modelParameters | ConvertTo-Json -Compress)" in provisioning
     )
     assert "Invoke-SampleAzure -Arguments $bundleArguments -Sensitive" in provisioning
-    root = (directory / "infra/main.bicep").read_text(encoding="utf-8")
+    root = (directory / "shared/infra/main.bicep").read_text(encoding="utf-8")
     assert "accountName: standard.outputs.accountName" in root
     assert "projectName: standard.outputs.projectName" in root
 
 
 def test_function_infrastructure_is_always_provisioned_using_resolved_inputs():
     directory = Path(__file__).resolve().parent
-    provisioning = (directory / "Invoke-ResourceProvisioning.ps1").read_text(
+    shared = directory / "shared"
+    provisioning = (shared / "Invoke-ResourceProvisioning.ps1").read_text(
         encoding="utf-8"
     )
-    template = (directory / "infra/sample-resources.bicep").read_text(encoding="utf-8")
-    parameters = (directory / "infra/sample-resources.bicepparam").read_text(
+    template = (directory / "shared/infra/sample-resources.bicep").read_text(
+        encoding="utf-8"
+    )
+    parameters = (directory / "shared/infra/sample-resources.bicepparam").read_text(
         encoding="utf-8"
     )
     assert "enableFunctionApp" not in provisioning + template + parameters
-    root = (directory / "infra/main.bicep").read_text(encoding="utf-8")
+    root = (directory / "shared/infra/main.bicep").read_text(encoding="utf-8")
     assert "'./function-app.bicep'" in root
     assert "storageAccountName: standard.outputs.storageAccountName" in root
     assert (
@@ -482,7 +492,7 @@ def test_function_infrastructure_is_always_provisioned_using_resolved_inputs():
     assert "Test-SampleFunctionRequired" not in provisioning
     assert "$requiresFunction" not in provisioning
     assert "requiredEnvironment" not in provisioning
-    helper = (directory / "SampleCiHelpers.ps1").read_text(encoding="utf-8")
+    helper = (shared / "SampleCiHelpers.ps1").read_text(encoding="utf-8")
     assert "Test-SampleFunctionRequired" not in helper
     assert "RequireFunctionAccess" not in helper
     assert "requiredEnvironment" not in helper
@@ -493,13 +503,14 @@ def test_function_infrastructure_is_always_provisioned_using_resolved_inputs():
 
 def test_shared_provisioning_has_no_python_planning_dependency():
     directory = Path(__file__).resolve().parent
+    shared = directory / "shared"
     for name in (
         "New-ResourceDeploymentPlan.ps1",
         "Invoke-ResourceProvisioning.ps1",
         "SampleCiHelpers.ps1",
         "Remove-SampleResources.ps1",
     ):
-        source = (directory / name).read_text(encoding="utf-8")
+        source = (shared / name).read_text(encoding="utf-8")
         for dependency in (
             "selectedTests",
             "requiredEnvironment",
@@ -510,8 +521,8 @@ def test_shared_provisioning_has_no_python_planning_dependency():
             assert dependency not in source
     adapter = (directory / "Invoke-SampleProvisioning.ps1").read_text(encoding="utf-8")
     assert "Assert-PythonSamplePartition -Plans $plans" in adapter
-    assert "'Invoke-ResourceProvisioning.ps1') @PSBoundParameters" in adapter
+    assert "'shared/Invoke-ResourceProvisioning.ps1') @PSBoundParameters" in adapter
     plan = (directory / "New-SampleDeploymentPlan.ps1").read_text(encoding="utf-8")
-    assert "'New-ResourceDeploymentPlan.ps1')" in plan
+    assert "'shared/New-ResourceDeploymentPlan.ps1')" in plan
     assert "Get-SampleEnvironmentNames" in plan
     assert "function-app.bicep" not in plan

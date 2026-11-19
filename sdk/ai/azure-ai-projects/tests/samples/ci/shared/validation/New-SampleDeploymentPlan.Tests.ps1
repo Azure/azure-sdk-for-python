@@ -25,7 +25,7 @@ Describe 'Offline deployment-plan defaults' {
             JobAttempt = '1'
             IdentityResourceGroup = 'rg-azsdk-identities-westus3-102826_164519'
         }
-        $script:planScript = Join-Path $PSScriptRoot '../New-SampleDeploymentPlan.ps1'
+        $script:planScript = Join-Path $PSScriptRoot '../../New-SampleDeploymentPlan.ps1'
     }
     AfterEach {
         $env:AZURE_SUBSCRIPTION_ID = $script:originalSubscription
@@ -175,7 +175,7 @@ Describe 'Per-sample rejection of unsupported environment variables' {
         $script:packageRoot = Join-Path $TestDrive 'package'
         $scannerDirectory = Join-Path $script:packageRoot '.github/skills/azure-ai-projects-record-sample/scripts'
         $null = New-Item -ItemType Directory -Path $scannerDirectory, (Join-Path $script:packageRoot 'samples') -Force
-        Copy-Item -LiteralPath (Join-Path $PSScriptRoot '../../../../.github/skills/azure-ai-projects-record-sample/scripts/GetSampleRequiredEnvironmentVariables.ps1') -Destination $scannerDirectory
+        Copy-Item -LiteralPath (Join-Path $PSScriptRoot '../../../../../.github/skills/azure-ai-projects-record-sample/scripts/GetSampleRequiredEnvironmentVariables.ps1') -Destination $scannerDirectory
         Set-Content -LiteralPath (Join-Path $script:packageRoot 'samples/supported.py') -Value @('import os', 'endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]')
         Set-Content -LiteralPath (Join-Path $script:packageRoot 'samples/validated.py') -Value @('import os', 'endpoint = os.environ["LLM_VALIDATION_PROJECT_ENDPOINT"]')
         Set-Content -LiteralPath (Join-Path $script:packageRoot 'samples/unsupported.py') -Value @('import os', 'value = os.environ["UNIT_UNSUPPORTED_SETTING"]')
@@ -187,7 +187,7 @@ Describe 'Per-sample rejection of unsupported environment variables' {
                 ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $path -Encoding utf8
             return $path
         }
-        $script:planScript = Join-Path $PSScriptRoot '../New-SampleDeploymentPlan.ps1'
+        $script:planScript = Join-Path $PSScriptRoot '../../New-SampleDeploymentPlan.ps1'
         $script:arguments = @{
             OutputDirectory = $script:planDirectory; QueueName = 'q1'; PackageRoot = $script:packageRoot
             DefinitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
