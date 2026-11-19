@@ -506,6 +506,46 @@ def test_same_username_different_tenants(get_token_method):
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_cached_access_token_matches_requested_tenant(get_token_method):
+    """One account (one home_account_id) with an access token cached for tenant A. A caller
+    requesting get_token(tenant_id=tenant_b) must not get that tenant A token back -- it should
+    fall through to a fresh refresh-token exchange for tenant B, the same way it would if nothing
+    were cached at all. A single signed-in identity can have access tokens cached for more than
+    one tenant (e.g. a guest account), and they share one home_account_id with different realms.
+    """
+
+    scope = "https://graph.example/.default"
+    upn = "spam@eggs"
+    tenant_a = "tenant-a"
+    tenant_b = "tenant-b"
+    uid = "same-uid"  # same uid -> same home_account_id regardless of which tenant signed in
+    stale_access_token = "access-token-cached-for-tenant-a"
+    expected_refresh_token = "refresh-token"
+    expected_access_token = "access-token-issued-for-tenant-b"
+
+    account = get_account_event(
+        username=upn,
+        uid=uid,
+        utid=tenant_a,
+        refresh_token=expected_refresh_token,
+        access_token=stale_access_token,
+        scopes=[scope],
+    )
+    cache = populated_cache(account)
+
+    transport = validating_transport(
+        requests=[Request(required_data={"refresh_token": expected_refresh_token, "scope": scope})],
+        responses=[mock_response(json_payload=build_aad_response(access_token=expected_access_token))],
+    )
+    credential = SharedTokenCacheCredential(username=upn, _cache=cache, transport=transport)
+    kwargs = {"tenant_id": tenant_b}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
+    token = getattr(credential, get_token_method)(scope, **kwargs)
+    assert token.token == expected_access_token
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 def test_same_tenant_different_usernames(get_token_method):
     """two cached accounts, same tenant, different usernames"""
 
