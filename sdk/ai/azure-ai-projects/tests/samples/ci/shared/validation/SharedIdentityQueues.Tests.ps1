@@ -3,7 +3,7 @@
 #Requires -Version 7.2
 
 . (Join-Path $PSScriptRoot '../SampleCiHelpers.ps1')
-. (Join-Path $PSScriptRoot '../PythonSampleCiHelpers.ps1')
+. (Join-Path $PSScriptRoot '../../PythonSampleCiHelpers.ps1')
 
 function Invoke-QueueTestEnvironment {
     param([Parameter(Mandatory)] [scriptblock] $Test)
@@ -49,7 +49,7 @@ function New-OfflineQueuePlan {
         node_id = 'tests/samples/test_samples.py::TestSamples::test_agent_tools_samples[sample_agent_mcp_with_project_connection-{0}]' -f $QueueName
         sample_path = 'samples/agents/tools/sample_agent_mcp_with_project_connection.py'
     }) } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $manifest -Encoding utf8
-    $planScript = Join-Path $PSScriptRoot '../New-SampleDeploymentPlan.ps1'
+    $planScript = Join-Path $PSScriptRoot '../../New-SampleDeploymentPlan.ps1'
     & $planScript -SelectionManifest $manifest -OutputDirectory $OutputDirectory -QueueName $QueueName `
         -DefinitionId $env:SYSTEM_DEFINITIONID -BuildId $env:BUILD_BUILDID -JobAttempt $env:SYSTEM_JOBATTEMPT -IdentityResourceGroup $IdentityResourceGroup
     $plan = Get-Content -LiteralPath (Join-Path $OutputDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable
@@ -161,7 +161,7 @@ Describe 'Offline queue ownership and deployment plans' {
             $plan = New-OfflineQueuePlan -OutputDirectory $directory -QueueName q2
             $planPath = Join-Path $directory 'deployment-plan.json'
             $statePath = Join-Path $TestDrive 'q1-state.json'
-            $provisioningScript = Join-Path $PSScriptRoot '../Invoke-SampleProvisioning.ps1'
+            $provisioningScript = Join-Path $PSScriptRoot '../../Invoke-SampleProvisioning.ps1'
             { & $provisioningScript -PlanPath $planPath -StatePath $statePath -QueueName q1 -ConfirmProvisioning } |
                 Should Throw 'different test queue'
             $plan.queueName | Should Be 'q2'
