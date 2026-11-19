@@ -43,5 +43,5 @@ def test_base_class_properties():
     # Check the report for properties of the base class in Bar
     assert report["base_class"]["class_nodes"]["Foo"]["properties"] == {"a": {"attr_type": "int", "is_annotation": True}}
     assert report["base_class"]["class_nodes"]["Bar"]["properties"] == {
-        "a": {"attr_type": "int", "is_annotation": True}, "b": {"attr_type": "int"}
+        "a": {"attr_type": "int", "is_annotation": True}, "b": {"attr_type": "int", "is_annotation": True}
     }
