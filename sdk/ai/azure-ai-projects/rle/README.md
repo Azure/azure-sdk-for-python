@@ -26,7 +26,7 @@ Version selection follows `--version`, then `AZURE_AI_PROJECTS_VERSION`, then
 the manifest's `latest`. Pin an exact version listed in the manifest with:
 
 ```powershell
-python install_rle_sdk.py --version 2.7.15b1
+python install_rle_sdk.py --version 2.7.16b1
 ```
 
 Unavailable versions and checksum mismatches fail installation; there is no
@@ -429,3 +429,38 @@ environments or consumer images. Training support for these harness settings
 remains deferred. Merging this artifact change into `rle-releases` selects
 `2.7.15b1` as `latest`. This is an RLE preview distribution, not a PyPI
 publication or live backend qualification.
+
+## Version 2.7.16b1
+
+This preview adds optional `OpenCodeConfiguration.steps`, the native OpenCode
+primary-agent iteration allowance. Values must be positive integers up to
+`2147483647`; booleans, zero and other invalid values fail before submission.
+The value survives synchronous/asynchronous HTTP and queued/WebSocket requests.
+Omitting it preserves existing behavior.
+
+This is not a hard rollout-wide model-call cap. Native final-step behavior
+depends on the OpenCode version, and new user input starts a fresh allowance.
+Training support for these harness settings remains deferred.
+
+The wheel is built from merged source commit
+[`a96c824ae17eee477b40dcdbf6212ec204de8ec5`](https://github.com/sujit-kamireddy/azure-sdk-for-python/commit/a96c824ae17eee477b40dcdbf6212ec204de8ec5),
+including [source PR #25](https://github.com/sujit-kamireddy/azure-sdk-for-python/pull/25).
+Only the staged package version is overridden to `2.7.16b1`.
+It retains the existing OpenCode configuration/provider timers, 128-call
+admission limit, 90-minute default post-admission timeout, 64 MiB V4
+result-download budget, explicit caller overrides and no-execution-replay behavior.
+
+The wheel is 616690 bytes with SHA-256
+`17bcb6e2eb134874d7cbdbfbcd9825821e5b96712ea02cfaa10292ddf149fa3e`.
+The isolated installed-wheel rollout/model and release-tool suites passed all
+1014 tests. All 63 packaged Python files match the pinned source except for
+the release version; dependencies are unchanged. All 16 registry wheels pass
+metadata, integrity and checksum validation, and all 15 historical entries and
+wheel bytes are preserved.
+
+Matching service and Harbor worker support is required in the selected region.
+This artifact-only release does not deploy that support, rebuild consumer images,
+or qualify live rollouts/training. Static analysis was not rerun and this does not
+claim source-hosted checks passed. Merging this change into `rle-releases` selects
+`2.7.16b1` as `latest`; existing environments must install the new wheel to use it.
+This is an RLE preview distribution, not a PyPI publication.
