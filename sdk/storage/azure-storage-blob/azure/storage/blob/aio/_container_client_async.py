@@ -46,6 +46,7 @@ from ._list_blobs_helper import (
     BlobPrefix,
 )
 from ._models import FilteredBlobPaged
+from ._session_async import _configure_session
 from .._container_client_helpers import (
     _format_url,
     _generate_delete_blobs_options,
@@ -164,6 +165,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         # This parameter is used for the hierarchy traversal. Give precedence to credential.
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential)
+        _configure_session(kwargs)
         super(ContainerClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
         self._api_version = get_api_version(kwargs)
         self._client = self._build_generated_client()

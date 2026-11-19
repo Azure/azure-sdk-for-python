@@ -55,7 +55,7 @@ from .._models import (
 )
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
-from .._shared.session_async import SessionProvider
+from ._session_async import SessionProvider
 
 class ContainerClient(  # type: ignore[misc]
     AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin

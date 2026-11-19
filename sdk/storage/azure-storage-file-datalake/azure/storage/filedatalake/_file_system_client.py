@@ -32,6 +32,7 @@ from ._models import (
 )
 from ._shared.base_client import parse_connection_str, parse_query, TransportWrapper, StorageAccountHostsMixin
 from ._serialize import convert_dfs_url_to_blob_url, get_api_version
+from ._session import _configure_session
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -132,7 +133,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
-
+        _configure_session(kwargs)
         super(FileSystemClient, self).__init__(
             parsed_url, service="dfs", credential=self._raw_credential, _hosts=datalake_hosts, **kwargs
         )
