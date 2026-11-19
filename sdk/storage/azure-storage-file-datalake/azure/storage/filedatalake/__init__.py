@@ -6,7 +6,7 @@
 
 from ._download import StorageStreamDownloader
 from ._data_lake_file_client import DataLakeFileClient
-from ._data_lake_directory_client import DataLakeDirectoryClient
+from ._session_async import SessionProvider, ContainerSessionProvider
 from ._file_system_client import FileSystemClient
 from ._data_lake_service_client import DataLakeServiceClient
 from ._data_lake_lease import DataLakeLeaseClient
@@ -56,7 +56,7 @@ from ._shared_access_signature import (
 
 from ._shared.policies import ExponentialRetry, LinearRetry
 from ._shared.models import StorageErrorCode, Services
-from ._shared.session import Session, SessionProvider, ContainerSessionProvider
+from ._session import Session, SessionProvider, ContainerSessionProvider
 from ._version import VERSION
 
 __version__ = VERSION

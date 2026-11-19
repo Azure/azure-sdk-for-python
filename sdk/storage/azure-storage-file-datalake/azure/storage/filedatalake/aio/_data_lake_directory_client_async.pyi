@@ -31,7 +31,7 @@ from .._models import (
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_lease_async import DataLakeLeaseClient
 from ._path_client_async import PathClient
-from azure.storage.filedatalake._shared.session_async import SessionProvider
+from azure.storage.filedatalake.aio._session_async import SessionProvider
 
 class DataLakeDirectoryClient(PathClient):
     url: str

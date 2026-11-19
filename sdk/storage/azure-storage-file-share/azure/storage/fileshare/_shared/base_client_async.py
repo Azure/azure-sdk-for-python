@@ -101,13 +101,12 @@ class AsyncStorageAccountHostsMixin(object):
         self._credential_policy: Optional[
             Union[AsyncStorageBearerTokenCredentialPolicy, SharedKeyCredentialPolicy, AzureSasCredentialPolicy]
         ] = None
+        audience = kwargs.pop("audience", None)
+        session_policy_factory = kwargs.pop("_session_policy_factory", None)
         if hasattr(credential, "get_token"):
-            if kwargs.get("audience"):
-                audience = str(kwargs.pop("audience")).rstrip("/") + DEFAULT_OAUTH_SCOPE
-            else:
-                audience = STORAGE_OAUTH_SCOPE
+            scope = str(audience).rstrip("/") + DEFAULT_OAUTH_SCOPE if audience else STORAGE_OAUTH_SCOPE
             self._credential_policy = AsyncStorageBearerTokenCredentialPolicy(
-                cast(AsyncTokenCredential, credential), audience
+                cast(AsyncTokenCredential, credential), scope
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
@@ -144,12 +143,18 @@ class AsyncStorageAccountHostsMixin(object):
             config.headers_policy,
             StorageRequestHook(**kwargs),
             self._credential_policy,
-            config.logging_policy,
-            AsyncStorageResponseHook(**kwargs),
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
-            StorageSensitiveHeaderCleanupPolicy(**kwargs),
         ]
+        if session_policy_factory:
+            policies.append(session_policy_factory(self, credential, transport, audience, kwargs))
+        policies.extend(
+            [
+                config.logging_policy,
+                AsyncStorageResponseHook(**kwargs),
+                DistributedTracingPolicy(**kwargs),
+                HttpLoggingPolicy(**kwargs),
+                StorageSensitiveHeaderCleanupPolicy(**kwargs),
+            ]
+        )
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
         config.transport = transport  # type: ignore

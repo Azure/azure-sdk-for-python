@@ -4,23 +4,45 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import copy
 import logging
 from datetime import datetime, timedelta, timezone
 from threading import Lock
-from typing import Any, Dict, Optional, Tuple, TYPE_CHECKING
-from urllib.parse import urlparse
+from time import time
+from typing import Any, cast, Dict, Optional, Tuple, TYPE_CHECKING
+from urllib.parse import unquote, urlparse
+from wsgiref.handlers import format_date_time
 
 from typing_extensions import Protocol
 
 from azure.core.exceptions import AzureError, HttpResponseError
+from azure.core.pipeline.policies import HTTPPolicy
 
-from azure.storage.blob._generated.models import CreateSessionConfiguration, CreateSessionResponse
-from .models import StorageErrorCode
+from ._generated.models import CreateSessionConfiguration, CreateSessionResponse
+from ._shared import sign_string
+from ._shared.authentication import AzureSigningError, _storage_header_sort
+from ._shared.models import StorageErrorCode
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline import PipelineRequest
+    from azure.core.pipeline import PipelineRequest, PipelineResponse
+    from azure.core.pipeline.transport import HttpTransport
+    from ._shared.base_client import StorageAccountHostsMixin
 
+SESSION_BEARER_AUTH_KEY = "_session_bearer_auth"
+_SESSION_SIGNED_HEADERS = (
+    "content-encoding",
+    "content-language",
+    "content-length",
+    "content-md5",
+    "content-type",
+    "date",
+    "if-modified-since",
+    "if-match",
+    "if-none-match",
+    "if-unmodified-since",
+    "byte_range",
+)
 _LOGGER = logging.getLogger(__name__)
 UTC = timezone.utc
 
@@ -65,6 +87,90 @@ def _is_cooldown_error(status: Optional[int], error_code: str) -> bool:
     if status >= 500 and status != 503 or status == 403:
         return True
     return status == 400 and error_code == StorageErrorCode.FEATURE_NOT_ENABLED
+
+
+def _apply_session_auth(request: "PipelineRequest", session_token: str, session_key: str, account_name: str) -> None:
+    """Sign an eligible request with the SharedKey protocol under the Session scheme.
+
+    Shared by the sync and async session policies; ``account_name`` is passed in
+    rather than read from ``self`` so neither policy needs to instantiate the other.
+
+    :param ~azure.core.pipeline.PipelineRequest request: The request to sign in place.
+    :param str session_token: The session token to embed in the Authorization header.
+    :param str session_key: The HMAC signing key for the session.
+    :param str account_name: Storage account name; the signer identity.
+    :raises AzureSigningError: if signing fails.
+    """
+    http_request = request.http_request
+    http_request.headers["x-ms-date"] = format_date_time(time())
+
+    # 1) Standard headers. Storage omits content-length when it is "0".
+    headers = {name.lower(): value for name, value in http_request.headers.items() if value}
+    if headers.get("content-length") == "0":
+        del headers["content-length"]
+    signed_headers = "\n".join(headers.get(h, "") for h in _SESSION_SIGNED_HEADERS) + "\n"
+
+    # 2) Canonicalized x-ms-* headers, sorted by the service-emulating comparator.
+    x_ms_headers = _storage_header_sort(
+        [(n.lower(), v) for n, v in http_request.headers.items() if n.lower().startswith("x-ms-")]
+    )
+    canonicalized_headers = "".join(f"{n}:{v}\n" for n, v in x_ms_headers if v is not None)
+
+    # 3) Canonicalized resource + query (query values must be url-decoded).
+    canonicalized_resource = "/" + account_name + urlparse(http_request.url).path
+    canonicalized_resource += "".join(
+        f"\n{n.lower()}:{unquote(v)}" for n, v in sorted(http_request.query.items()) if v is not None
+    )
+
+    string_to_sign = http_request.method + "\n" + signed_headers + canonicalized_headers + canonicalized_resource
+
+    try:
+        signature = sign_string(session_key, string_to_sign)
+    except Exception as ex:  # pylint: disable=broad-except
+        raise AzureSigningError(str(ex)) from ex
+    http_request.headers["Authorization"] = f"Session {session_token}:{signature}"
+
+
+def _configure_session(kwargs: Dict[str, Any]) -> None:
+    """Pop the session keywords and, if enabled, register a session policy factory for the pipeline.
+
+    :param Dict[str, Any] kwargs: The client constructor keyword arguments. Modified in place.
+    """
+    use_session = bool(kwargs.pop("use_session", False))
+    session_provider: Optional[SessionProvider] = kwargs.pop("session_provider", None)
+    session_account_name: Optional[str] = kwargs.pop("session_account_name", None)
+    if not use_session:
+        return
+
+    def _factory(
+        client: "StorageAccountHostsMixin",
+        credential: Any,
+        transport: "HttpTransport",
+        audience: Optional[str],
+        pipeline_kwargs: Dict[str, Any],
+    ) -> StorageSessionPolicy:
+        provider = session_provider
+        if provider is None:
+            sub_kwargs = dict(pipeline_kwargs)
+            sub_kwargs.pop("_configuration", None)
+            sub_kwargs.pop("pipeline", None)
+            sub_kwargs.pop("sdk_moniker", None)
+            sub_kwargs["transport"] = transport
+            if sub_kwargs.get("retry_policy") is not None:
+                sub_kwargs["retry_policy"] = copy.copy(sub_kwargs["retry_policy"])
+            sub_kwargs.pop("_additional_pipeline_policies", None)
+            provider = ContainerSessionProvider(
+                f"{client.scheme}://{client.primary_hostname}",
+                cast("TokenCredential", credential),
+                audience=audience,
+                **sub_kwargs,
+            )
+        return StorageSessionPolicy(
+            account_name=session_account_name or client.account_name,
+            session_provider=provider,
+        )
+
+    kwargs["_session_policy_factory"] = _factory
 
 
 class Session:
@@ -201,12 +307,13 @@ class ContainerSessionProvider:
     """
 
     def __init__(self, service_url: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        from azure.storage.blob import BlobServiceClient  # module-level import would cycle
+        from ._blob_service_client import BlobServiceClient  # module-level import would cycle
 
         if not hasattr(credential, "get_token"):
             raise TypeError(
                 f"ContainerSessionProvider requires a TokenCredential; received {type(credential).__name__}."
             )
+        kwargs["logging_body"] = False
         self._client = BlobServiceClient(_to_service_url(service_url), credential=credential, **kwargs)
         self._cache = SessionCache()
 
@@ -292,3 +399,96 @@ class ContainerSessionProvider:
             create_session_configuration=CreateSessionConfiguration(authentication_type="HMAC")
         )
         return _extract_session(response)
+
+
+class StorageSessionPolicy(HTTPPolicy):
+    """
+    A pipeline policy that selects between session token and bearer token authentication.
+
+    Eligible requests are authenticated with a session token obtained from the
+    session provider. Everything else is left to the bearer token policy that
+    sits earlier in the pipeline.
+    """
+
+    def __init__(
+        self,
+        *,
+        account_name: Optional[str],
+        session_provider: SessionProvider,
+    ) -> None:
+        """Constructs a StorageSessionPolicy.
+
+        :keyword str account_name: Storage account name; used as the signer
+            identity when signing session-authenticated requests.
+        :keyword session_provider: Creates, caches, and invalidates per-container sessions.
+        :paramtype session_provider: SessionProvider
+        :raises ValueError: if `account_name` is `None`.
+        """
+        if account_name is None:
+            raise ValueError(
+                "Unable to determine the account name from the service URL. "
+                "Supply session_account_name when using a custom endpoint."
+            )
+        super().__init__()
+        self._account_name = account_name
+        self._session_provider = session_provider
+
+    def send(self, request: "PipelineRequest") -> "PipelineResponse":
+        """Orchestrate session auth.
+
+        :param ~azure.core.pipeline.PipelineRequest request: The outgoing request.
+        :return: The pipeline response.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
+        session = self.on_request(request)
+        response = self.next.send(request)
+        return self.on_response(request, response, session)
+
+    def on_request(self, request: "PipelineRequest") -> Optional[Session]:
+        """Stamp session auth if eligible, otherwise leave the bearer header intact.
+
+        :param ~azure.core.pipeline.PipelineRequest request: The request to (maybe) sign.
+        :return: The session that was applied, else None.
+        :rtype: Session or None
+        """
+        session = self._session_provider.get_session(request)
+        if session is None or not session.session_token or not session.session_key:
+            return None
+
+        # Kept so a 401 can serve this request with bearer instead of re-signing.
+        request.context[SESSION_BEARER_AUTH_KEY] = request.http_request.headers.get("Authorization")
+        _apply_session_auth(request, session.session_token, session.session_key, self._account_name)
+        return session
+
+    def on_response(
+        self,
+        request: "PipelineRequest",
+        response: "PipelineResponse",
+        session: Optional[Session],
+    ) -> "PipelineResponse":
+        """On 401, invalidate the cached session and serve the request with bearer.
+
+        :param ~azure.core.pipeline.PipelineRequest request: The original request.
+        :param ~azure.core.pipeline.PipelineResponse response: The response to inspect.
+        :param session: The session that signed the request, or `None` if bearer was used.
+        :type session: Session or None
+        :return: The final response.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
+        if session is None:
+            return response  # bearer was used; nothing session-related to react to
+
+        status = response.http_response.status_code
+
+        # 401 → drop the cached session and serve this request with bearer.
+        if status == 401:
+            _LOGGER.info("Session authentication: HTTP 401; invalidating session and retrying with bearer.")
+            self._session_provider.invalidate_session(request, session)
+            bearer = request.context.get(SESSION_BEARER_AUTH_KEY)
+            if bearer:
+                request.http_request.headers["Authorization"] = bearer
+                response.http_response.close()
+                return self.next.send(request)
+            return response
+
+        return response
