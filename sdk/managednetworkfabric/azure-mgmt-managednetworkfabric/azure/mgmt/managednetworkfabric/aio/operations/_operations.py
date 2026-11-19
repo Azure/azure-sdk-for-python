@@ -18850,13 +18850,6 @@ class NetworkFabricsOperations:  # pylint: disable=docstring-missing-param,too-m
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-07-15",
-        params_added_on={
-            "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name", "accept"]
-        },
-        api_versions_list=["2025-07-15", "2026-01-15-preview"],
-    )
     async def get(self, resource_group_name: str, network_fabric_name: str, **kwargs: Any) -> _models.NetworkFabric:
         """Get Network Fabric resource details.
 
@@ -18926,20 +18919,6 @@ class NetworkFabricsOperations:  # pylint: disable=docstring-missing-param,too-m
 
         return deserialized  # type: ignore
 
-    @api_version_validation(
-        method_added_on="2025-07-15",
-        params_added_on={
-            "2025-07-15": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "network_fabric_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-07-15", "2026-01-15-preview"],
-    )
     async def _create_initial(
         self,
         resource_group_name: str,
@@ -19105,20 +19084,6 @@ class NetworkFabricsOperations:  # pylint: disable=docstring-missing-param,too-m
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-07-15",
-        params_added_on={
-            "2025-07-15": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "network_fabric_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-07-15", "2026-01-15-preview"],
-    )
     async def begin_create(
         self,
         resource_group_name: str,
@@ -19194,20 +19159,6 @@ class NetworkFabricsOperations:  # pylint: disable=docstring-missing-param,too-m
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        method_added_on="2025-07-15",
-        params_added_on={
-            "2025-07-15": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "network_fabric_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-07-15", "2026-01-15-preview"],
-    )
     async def _update_initial(
         self,
         resource_group_name: str,
@@ -19371,20 +19322,6 @@ class NetworkFabricsOperations:  # pylint: disable=docstring-missing-param,too-m
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-07-15",
-        params_added_on={
-            "2025-07-15": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "network_fabric_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-07-15", "2026-01-15-preview"],
-    )
     async def begin_update(
         self,
         resource_group_name: str,
@@ -19461,13 +19398,6 @@ class NetworkFabricsOperations:  # pylint: disable=docstring-missing-param,too-m
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        method_added_on="2025-07-15",
-        params_added_on={
-            "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name"]
-        },
-        api_versions_list=["2025-07-15", "2026-01-15-preview"],
-    )
     async def _delete_initial(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -19530,13 +19460,6 @@ class NetworkFabricsOperations:  # pylint: disable=docstring-missing-param,too-m
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-07-15",
-        params_added_on={
-            "2025-07-15": ["api_version", "subscription_id", "resource_group_name", "network_fabric_name"]
-        },
-        api_versions_list=["2025-07-15", "2026-01-15-preview"],
-    )
     async def begin_delete(
         self, resource_group_name: str, network_fabric_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -19596,11 +19519,6 @@ class NetworkFabricsOperations:  # pylint: disable=docstring-missing-param,too-m
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-15",
-        params_added_on={"2025-07-15": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2025-07-15", "2026-01-15-preview"],
-    )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.NetworkFabric"]:
@@ -19701,11 +19619,6 @@ class NetworkFabricsOperations:  # pylint: disable=docstring-missing-param,too-m
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-07-15",
-        params_added_on={"2025-07-15": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2025-07-15", "2026-01-15-preview"],
-    )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkFabric"]:
         """List all the Network Fabric resources in the given subscription.
 

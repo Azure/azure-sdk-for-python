@@ -917,5 +917,5 @@
         "azure.mgmt.managednetworkfabric.operations.FabricsOperations.list_by_subscription": "Microsoft.ManagedNetworkFabric.Fabrics.listBySubscription",
         "azure.mgmt.managednetworkfabric.aio.operations.FabricsOperations.list_by_subscription": "Microsoft.ManagedNetworkFabric.Fabrics.listBySubscription"
     },
-    "CrossLanguageVersion": "89b0489c61dc"
+    "CrossLanguageVersion": "be592015aaeb"
 }

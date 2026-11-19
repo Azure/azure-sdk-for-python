@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0b1 (2026-10-30)
+## 3.0.0b1 (2026-11-19)
 
 ### Features Added
 
@@ -66,7 +66,7 @@
   - Added model `ValidateConfigurationResponseProperties`
   - Added model `ValidateConfigurationResponseV2`
   - Added model `VmProfile`
-  - Operation group `NetworkFabricsOperations` added parameter `content_type` in method `begin_refresh_configuration`
+  - Model `NetworkFabricsOperations` added parameter `content_type` in method `begin_refresh_configuration`
   - Added operation group `EdgeConnectorsOperations`
   - Added operation group `FabricsOperations`
 

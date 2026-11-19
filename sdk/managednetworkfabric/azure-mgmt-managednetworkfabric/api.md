@@ -2750,7 +2750,6 @@ namespace azure.mgmt.managednetworkfabric.aio.operations
             ) -> AsyncLROPoller[NetworkFabric]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-15', params_added_on={'2025-07-15': ['api_version', 'subscription_id', 'resource_group_name', 'network_fabric_name']}, api_versions_list=['2025-07-15', '2026-01-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -3095,7 +3094,6 @@ namespace azure.mgmt.managednetworkfabric.aio.operations
             ) -> AsyncLROPoller[ViewDeviceConfigurationOperationResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-15', params_added_on={'2025-07-15': ['api_version', 'subscription_id', 'resource_group_name', 'network_fabric_name', 'accept']}, api_versions_list=['2025-07-15', '2026-01-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -3104,7 +3102,6 @@ namespace azure.mgmt.managednetworkfabric.aio.operations
             ) -> NetworkFabric: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-15', params_added_on={'2025-07-15': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-07-15', '2026-01-15-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -3112,7 +3109,6 @@ namespace azure.mgmt.managednetworkfabric.aio.operations
             ) -> AsyncItemPaged[NetworkFabric]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-15', params_added_on={'2025-07-15': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-07-15', '2026-01-15-preview'])
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[NetworkFabric]: ...
 
 
@@ -15547,7 +15543,6 @@ namespace azure.mgmt.managednetworkfabric.operations
             ) -> LROPoller[NetworkFabric]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-15', params_added_on={'2025-07-15': ['api_version', 'subscription_id', 'resource_group_name', 'network_fabric_name']}, api_versions_list=['2025-07-15', '2026-01-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -15892,7 +15887,6 @@ namespace azure.mgmt.managednetworkfabric.operations
             ) -> LROPoller[ViewDeviceConfigurationOperationResponse]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-15', params_added_on={'2025-07-15': ['api_version', 'subscription_id', 'resource_group_name', 'network_fabric_name', 'accept']}, api_versions_list=['2025-07-15', '2026-01-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -15901,7 +15895,6 @@ namespace azure.mgmt.managednetworkfabric.operations
             ) -> NetworkFabric: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-15', params_added_on={'2025-07-15': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-07-15', '2026-01-15-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -15909,7 +15902,6 @@ namespace azure.mgmt.managednetworkfabric.operations
             ) -> ItemPaged[NetworkFabric]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-15', params_added_on={'2025-07-15': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-07-15', '2026-01-15-preview'])
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[NetworkFabric]: ...
 
 
