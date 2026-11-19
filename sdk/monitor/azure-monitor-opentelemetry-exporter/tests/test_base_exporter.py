@@ -2322,8 +2322,8 @@ class TestBaseExporterExperimentalFeatures(unittest.TestCase):
             self.addCleanup(patch.stop)
         os.environ.pop(_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES, None)
 
-    def _create_exporter(self):
-        exporter = BaseExporter(
+    def _create_exporter(self, exporter_class=BaseExporter):
+        exporter = exporter_class(
             connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab",
             disable_offline_storage=True,
         )
@@ -2473,3 +2473,24 @@ class TestBaseExporterExperimentalFeatures(unittest.TestCase):
                 second = self._create_exporter()
                 self.assertIs(first._enable_multi_endpoint_routing, initially_enabled)
                 self.assertIs(second._enable_multi_endpoint_routing, initially_enabled)
+
+    def test_routing_selection_is_shared_across_signals(self):
+        exporter_classes = (AzureMonitorLogExporter, AzureMonitorMetricExporter, AzureMonitorTraceExporter)
+        for initially_enabled in (False, True):
+            for first_exporter_class in exporter_classes:
+                with self.subTest(
+                    initially_enabled=initially_enabled, first_exporter=first_exporter_class.__name__
+                ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+                    os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = (
+                        "multi_endpoint_routing" if initially_enabled else ""
+                    )
+                    first = self._create_exporter(first_exporter_class)
+                    self.addCleanup(first.shutdown)
+                    os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = (
+                        "" if initially_enabled else "multi_endpoint_routing"
+                    )
+                    self.assertIs(first._enable_multi_endpoint_routing, initially_enabled)
+                    for exporter_class in exporter_classes:
+                        exporter = self._create_exporter(exporter_class)
+                        self.addCleanup(exporter.shutdown)
+                        self.assertIs(exporter._enable_multi_endpoint_routing, initially_enabled)

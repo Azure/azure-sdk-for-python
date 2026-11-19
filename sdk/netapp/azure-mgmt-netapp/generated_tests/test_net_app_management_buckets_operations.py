@@ -46,16 +46,8 @@ class TestNetAppManagementBucketsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "properties": {
                     "akvDetails": {
-                        "certificateAkvDetails": {
-                            "certificateKeyVaultUri": "str",
-                            "certificateName": "str",
-                            "userAssignedIdentity": "str",
-                        },
-                        "credentialsAkvDetails": {
-                            "credentialsKeyVaultUri": "str",
-                            "secretName": "str",
-                            "userAssignedIdentity": "str",
-                        },
+                        "certificateAkvDetails": {"certificateKeyVaultUri": "str", "certificateName": "str"},
+                        "credentialsAkvDetails": {"credentialsKeyVaultUri": "str", "secretName": "str"},
                     },
                     "fileSystemUser": {"cifsUser": {"username": "str"}, "nfsUser": {"groupId": 0, "userId": 0}},
                     "path": "str",
@@ -100,16 +92,8 @@ class TestNetAppManagementBucketsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "properties": {
                     "akvDetails": {
-                        "certificateAkvDetails": {
-                            "certificateKeyVaultUri": "str",
-                            "certificateName": "str",
-                            "userAssignedIdentity": "str",
-                        },
-                        "credentialsAkvDetails": {
-                            "credentialsKeyVaultUri": "str",
-                            "secretName": "str",
-                            "userAssignedIdentity": "str",
-                        },
+                        "certificateAkvDetails": {"certificateKeyVaultUri": "str", "certificateName": "str"},
+                        "credentialsAkvDetails": {"credentialsKeyVaultUri": "str", "secretName": "str"},
                     },
                     "fileSystemUser": {"cifsUser": {"username": "str"}, "nfsUser": {"groupId": 0, "userId": 0}},
                     "permissions": "str",

@@ -58,6 +58,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-11-01/CreateAccountWithTrustedCertificateSources.json
+# x-ms-original-file: 2026-11-15-preview/CreateAccountWithTrustedCertificateSources.json
 if __name__ == "__main__":
     main()

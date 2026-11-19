@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-11-01/ListManagedComputeCapacitiesWithLocation.json
+# x-ms-original-file: 2026-11-15-preview/ListManagedComputeCapacitiesWithLocation.json
 if __name__ == "__main__":
     main()
