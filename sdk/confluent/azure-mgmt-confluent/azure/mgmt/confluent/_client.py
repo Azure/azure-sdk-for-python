@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -26,6 +27,8 @@ from .operations import (
     ConnectorOperations,
     EnvironmentOperations,
     MarketplaceAgreementsOperations,
+    MonitorResourcesOperations,
+    MonitorTagRulesOperations,
     NetworkGatewayResourcesOperations,
     OrganizationOperations,
     OrganizationOperationsOperations,
@@ -43,9 +46,13 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ConfluentManagementClient:  # pylint: disable=too-many-instance-attributes
+class ConfluentManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """ConfluentManagementClient.
 
+    :ivar monitor_resources: MonitorResourcesOperations operations
+    :vartype monitor_resources: azure.mgmt.confluent.operations.MonitorResourcesOperations
+    :ivar monitor_tag_rules: MonitorTagRulesOperations operations
+    :vartype monitor_tag_rules: azure.mgmt.confluent.operations.MonitorTagRulesOperations
     :ivar network_gateway_resources: NetworkGatewayResourcesOperations operations
     :vartype network_gateway_resources:
      azure.mgmt.confluent.operations.NetworkGatewayResourcesOperations
@@ -81,7 +88,7 @@ class ConfluentManagementClient:  # pylint: disable=too-many-instance-attributes
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-06-02-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-10-21-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -136,6 +143,12 @@ class ConfluentManagementClient:  # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
+        self.monitor_resources = MonitorResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.monitor_tag_rules = MonitorTagRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.network_gateway_resources = NetworkGatewayResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

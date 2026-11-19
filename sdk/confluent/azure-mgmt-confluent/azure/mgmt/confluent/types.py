@@ -20,9 +20,11 @@ if TYPE_CHECKING:
         ConnectorType,
         CreatedByType,
         DataFormatType,
+        MonitoringStatus,
         Package,
         ProvisionState,
         SaaSOfferStatus,
+        TagAction,
     )
 
 
@@ -49,8 +51,8 @@ class AccessCreateRoleBindingRequestModel(TypedDict, total=False):
 class AccessInvitedUserDetails(TypedDict, total=False):
     """Details of the user being invited.
 
-    :ivar invited_email: UPN/Email of the user who is being invited.
-    :vartype invited_email: str
+    :ivar invitedEmail: UPN/Email of the user who is being invited.
+    :vartype invitedEmail: str
     :ivar auth_type: Auth type of the user.
     :vartype auth_type: str
     """
@@ -64,14 +66,14 @@ class AccessInvitedUserDetails(TypedDict, total=False):
 class AccessInviteUserAccountModel(TypedDict, total=False):
     """Invite User Account model.
 
-    :ivar organization_id: Id of the organization.
-    :vartype organization_id: str
+    :ivar organizationId: Id of the organization.
+    :vartype organizationId: str
     :ivar email: Email of the logged in user.
     :vartype email: str
     :ivar upn: Upn of the logged in user.
     :vartype upn: str
-    :ivar invited_user_details: Details of the user who is being invited.
-    :vartype invited_user_details: "AccessInvitedUserDetails"
+    :ivar invitedUserDetails: Details of the user who is being invited.
+    :vartype invitedUserDetails: "AccessInvitedUserDetails"
     """
 
     organizationId: str
@@ -87,23 +89,23 @@ class AccessInviteUserAccountModel(TypedDict, total=False):
 class AccessPointProperties(TypedDict, total=False):
     """Access Point Properties.
 
-    :ivar access_point_name: Display name of the access point. Required.
-    :vartype access_point_name: str
+    :ivar accessPointName: Display name of the access point. Required.
+    :vartype accessPointName: str
     :ivar region: The cloud service provider region for the access point. Required.
     :vartype region: str
-    :ivar vnet_injection: VNet injection target (LiftrBase standard model). Contains the virtual
+    :ivar vnetInjection: VNet injection target (LiftrBase standard model). Contains the virtual
      network resource ID and the delegated subnet resource ID. Required.
-    :vartype vnet_injection: "VnetInjectionDetails"
-    :ivar egress_routes: IP ranges to route through your virtual network instead of Confluent's
+    :vartype vnetInjection: "VnetInjectionDetails"
+    :ivar egressRoutes: IP ranges to route through your virtual network instead of Confluent's
      default path. Required for Kafka clients in peered VNets or on-premises networks (e.g.,
      10.0.0.0/8, 172.16.0.0/12).
-    :vartype egress_routes: list[str]
+    :vartype egressRoutes: list[str]
     :ivar metadata: Metadata of the record.
     :vartype metadata: "SCMetadataEntity"
-    :ivar provisioning_state: Provisioning state of the access point. Known values are: "Accepted",
+    :ivar provisioningState: Provisioning state of the access point. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisionState"]
+    :vartype provisioningState: Union[str, "ProvisionState"]
     :ivar dictionary: Additional properties for extensibility.
     :vartype dictionary: list["KeyValuePair"]
     """
@@ -139,9 +141,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -167,9 +169,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -184,9 +186,9 @@ class AccessPointResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Access Point Properties.
     :vartype properties: "AccessPointProperties"
     """
@@ -198,10 +200,10 @@ class AccessPointResource(ProxyResource):
 class ActivateSaaSParameterRequest(TypedDict, total=False):
     """SaaS guid & PublisherId for Activate and Validate SaaS Resource.
 
-    :ivar saas_guid: SaaS guid for Activate and Validate SaaS Resource. Required.
-    :vartype saas_guid: str
-    :ivar publisher_id: Publisher Id for Confluent resource.
-    :vartype publisher_id: str
+    :ivar saasGuid: SaaS guid for Activate and Validate SaaS Resource. Required.
+    :vartype saasGuid: str
+    :ivar publisherId: Publisher Id for Confluent resource.
+    :vartype publisherId: str
     """
 
     saasGuid: Required[str]
@@ -213,16 +215,15 @@ class ActivateSaaSParameterRequest(TypedDict, total=False):
 class AzureBlobStorageSinkConnectorServiceInfo(TypedDict, total=False):
     """The authentication info when auth_type is azureBlobStorageSinkConnector.
 
-    :ivar storage_account_name: Azure Blob Storage Account Name.
-    :vartype storage_account_name: str
-    :ivar storage_account_key: Azure Blob Storage Account Key.
-    :vartype storage_account_key: str
-    :ivar storage_container_name: Azure Blob Storage Account Container Name.
-    :vartype storage_container_name: str
-    :ivar connector_service_type: The connector service type. Required.
+    :ivar storageAccountName: Azure Blob Storage Account Name.
+    :vartype storageAccountName: str
+    :ivar storageAccountKey: Azure Blob Storage Account Key.
+    :vartype storageAccountKey: str
+    :ivar storageContainerName: Azure Blob Storage Account Container Name.
+    :vartype storageContainerName: str
+    :ivar connectorServiceType: The connector service type. Required.
      AZURE_BLOB_STORAGE_SINK_CONNECTOR.
-    :vartype connector_service_type:
-     Literal[ConnectorServiceType.AZURE_BLOB_STORAGE_SINK_CONNECTOR]
+    :vartype connectorServiceType: Literal[ConnectorServiceType.AZURE_BLOB_STORAGE_SINK_CONNECTOR]
     """
 
     storageAccountName: str
@@ -238,15 +239,15 @@ class AzureBlobStorageSinkConnectorServiceInfo(TypedDict, total=False):
 class AzureBlobStorageSourceConnectorServiceInfo(TypedDict, total=False):  # pylint: disable=name-too-long
     """The connector service type is AzureBlobStorageSourceConnector.
 
-    :ivar storage_account_name: Azure Blob Storage Account Name.
-    :vartype storage_account_name: str
-    :ivar storage_account_key: Azure Blob Storage Account Key.
-    :vartype storage_account_key: str
-    :ivar storage_container_name: Azure Blob Storage Account Container Name.
-    :vartype storage_container_name: str
-    :ivar connector_service_type: The connector service type. Required.
+    :ivar storageAccountName: Azure Blob Storage Account Name.
+    :vartype storageAccountName: str
+    :ivar storageAccountKey: Azure Blob Storage Account Key.
+    :vartype storageAccountKey: str
+    :ivar storageContainerName: Azure Blob Storage Account Container Name.
+    :vartype storageContainerName: str
+    :ivar connectorServiceType: The connector service type. Required.
      AZURE_BLOB_STORAGE_SOURCE_CONNECTOR.
-    :vartype connector_service_type:
+    :vartype connectorServiceType:
      Literal[ConnectorServiceType.AZURE_BLOB_STORAGE_SOURCE_CONNECTOR]
     """
 
@@ -263,21 +264,21 @@ class AzureBlobStorageSourceConnectorServiceInfo(TypedDict, total=False):  # pyl
 class AzureCosmosDBSinkConnectorServiceInfo(TypedDict, total=False):
     """The authentication info when auth_type is AzureCosmosDBSinkConnector.
 
-    :ivar cosmos_database_name: Azure Cosmos Database Name.
-    :vartype cosmos_database_name: str
-    :ivar cosmos_master_key: Azure Cosmos Database Master Key.
-    :vartype cosmos_master_key: str
-    :ivar cosmos_connection_endpoint: Azure Cosmos Database Connection Endpoint.
-    :vartype cosmos_connection_endpoint: str
-    :ivar cosmos_containers_topic_mapping: Azure Cosmos Database Containers Topic Mapping.
-    :vartype cosmos_containers_topic_mapping: str
-    :ivar cosmos_id_strategy: Azure Cosmos Database Id Strategy.
-    :vartype cosmos_id_strategy: str
-    :ivar cosmos_write_details: Azure Cosmos write config details.
-    :vartype cosmos_write_details: str
-    :ivar connector_service_type: The connector service type. Required.
+    :ivar cosmosDatabaseName: Azure Cosmos Database Name.
+    :vartype cosmosDatabaseName: str
+    :ivar cosmosMasterKey: Azure Cosmos Database Master Key.
+    :vartype cosmosMasterKey: str
+    :ivar cosmosConnectionEndpoint: Azure Cosmos Database Connection Endpoint.
+    :vartype cosmosConnectionEndpoint: str
+    :ivar cosmosContainersTopicMapping: Azure Cosmos Database Containers Topic Mapping.
+    :vartype cosmosContainersTopicMapping: str
+    :ivar cosmosIdStrategy: Azure Cosmos Database Id Strategy.
+    :vartype cosmosIdStrategy: str
+    :ivar cosmosWriteDetails: Azure Cosmos write config details.
+    :vartype cosmosWriteDetails: str
+    :ivar connectorServiceType: The connector service type. Required.
      AZURE_COSMOS_DB_SINK_CONNECTOR.
-    :vartype connector_service_type: Literal[ConnectorServiceType.AZURE_COSMOS_DB_SINK_CONNECTOR]
+    :vartype connectorServiceType: Literal[ConnectorServiceType.AZURE_COSMOS_DB_SINK_CONNECTOR]
     """
 
     cosmosDatabaseName: str
@@ -299,24 +300,24 @@ class AzureCosmosDBSinkConnectorServiceInfo(TypedDict, total=False):
 class AzureCosmosDBSourceConnectorServiceInfo(TypedDict, total=False):
     """The authentication info when auth_type is AzureCosmosDBSourceConnector.
 
-    :ivar cosmos_database_name: Azure Cosmos Database Name.
-    :vartype cosmos_database_name: str
-    :ivar cosmos_master_key: Azure Cosmos Database Master Key.
-    :vartype cosmos_master_key: str
-    :ivar cosmos_connection_endpoint: Azure Cosmos Database Connection Endpoint.
-    :vartype cosmos_connection_endpoint: str
-    :ivar cosmos_containers_topic_mapping: Azure Cosmos Database Containers Topic Mapping.
-    :vartype cosmos_containers_topic_mapping: str
-    :ivar cosmos_message_key_enabled: Azure Cosmos Database Message Key Enabled.
-    :vartype cosmos_message_key_enabled: bool
-    :ivar cosmos_message_key_field: Azure Cosmos Database Message Key Field.
-    :vartype cosmos_message_key_field: str
-    :ivar connector_service_type: The connector service type. Required.
+    :ivar cosmosDatabaseName: Azure Cosmos Database Name.
+    :vartype cosmosDatabaseName: str
+    :ivar cosmosMasterKey: Azure Cosmos Database Master Key.
+    :vartype cosmosMasterKey: str
+    :ivar cosmosConnectionEndpoint: Azure Cosmos Database Connection Endpoint.
+    :vartype cosmosConnectionEndpoint: str
+    :ivar cosmosContainersTopicMapping: Azure Cosmos Database Containers Topic Mapping.
+    :vartype cosmosContainersTopicMapping: str
+    :ivar cosmosMessageKeyEnabled: Azure Cosmos Database Message Key Enabled.
+    :vartype cosmosMessageKeyEnabled: bool
+    :ivar cosmosMessageKeyField: Azure Cosmos Database Message Key Field.
+    :vartype cosmosMessageKeyField: str
+    :ivar connectorServiceType: The connector service type. Required.
      AZURE_COSMOS_DB_SOURCE_CONNECTOR.
-    :vartype connector_service_type: Literal[ConnectorServiceType.AZURE_COSMOS_DB_SOURCE_CONNECTOR]
-    :ivar cosmos_include_all_containers: Azure Cosmos Database Include all the containers in the
+    :vartype connectorServiceType: Literal[ConnectorServiceType.AZURE_COSMOS_DB_SOURCE_CONNECTOR]
+    :ivar cosmosIncludeAllContainers: Azure Cosmos Database Include all the containers in the
      database.
-    :vartype cosmos_include_all_containers: str
+    :vartype cosmosIncludeAllContainers: str
     """
 
     cosmosDatabaseName: str
@@ -340,17 +341,17 @@ class AzureCosmosDBSourceConnectorServiceInfo(TypedDict, total=False):
 class AzureSynapseAnalyticsSinkConnectorServiceInfo(TypedDict, total=False):  # pylint: disable=name-too-long
     """The authentication info when auth_type is AzureSynapseAnalyticsSinkConnector.
 
-    :ivar synapse_sql_server_name: Azure Synapse Analytics SQL Server Name.
-    :vartype synapse_sql_server_name: str
-    :ivar synapse_sql_user: Azure Synapse SQL login details.
-    :vartype synapse_sql_user: str
-    :ivar synapse_sql_password: Azure Synapse SQL login details.
-    :vartype synapse_sql_password: str
-    :ivar synapse_sql_database_name: Azure Synapse Dedicated SQL Pool Database Name.
-    :vartype synapse_sql_database_name: str
-    :ivar connector_service_type: The connector service type. Required.
+    :ivar synapseSqlServerName: Azure Synapse Analytics SQL Server Name.
+    :vartype synapseSqlServerName: str
+    :ivar synapseSqlUser: Azure Synapse SQL login details.
+    :vartype synapseSqlUser: str
+    :ivar synapseSqlPassword: Azure Synapse SQL login details.
+    :vartype synapseSqlPassword: str
+    :ivar synapseSqlDatabaseName: Azure Synapse Dedicated SQL Pool Database Name.
+    :vartype synapseSqlDatabaseName: str
+    :ivar connectorServiceType: The connector service type. Required.
      AZURE_SYNAPSE_ANALYTICS_SINK_CONNECTOR.
-    :vartype connector_service_type:
+    :vartype connectorServiceType:
      Literal[ConnectorServiceType.AZURE_SYNAPSE_ANALYTICS_SINK_CONNECTOR]
     """
 
@@ -420,13 +421,13 @@ class ConfluentAgreementProperties(TypedDict, total=False):
     :vartype product: str
     :ivar plan: Plan identifier string.
     :vartype plan: str
-    :ivar license_text_link: Link to HTML with Microsoft and Publisher terms.
-    :vartype license_text_link: str
-    :ivar privacy_policy_link: Link to the privacy policy of the publisher.
-    :vartype privacy_policy_link: str
-    :ivar retrieve_datetime: Date and time in UTC of when the terms were accepted. This is empty if
+    :ivar licenseTextLink: Link to HTML with Microsoft and Publisher terms.
+    :vartype licenseTextLink: str
+    :ivar privacyPolicyLink: Link to the privacy policy of the publisher.
+    :vartype privacyPolicyLink: str
+    :ivar retrieveDatetime: Date and time in UTC of when the terms were accepted. This is empty if
      Accepted is false.
-    :vartype retrieve_datetime: str
+    :vartype retrieveDatetime: str
     :ivar signature: Terms signature.
     :vartype signature: str
     :ivar accepted: If any version of the terms have been accepted, otherwise false.
@@ -460,8 +461,8 @@ class ConfluentAgreementResource(TypedDict, total=False):
     :vartype name: str
     :ivar type: The type of the agreement.
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: "SystemData"
+    :ivar systemData: Metadata pertaining to creation and last modification of the resource.
+    :vartype systemData: "SystemData"
     :ivar properties: Represents the properties of the resource.
     :vartype properties: "ConfluentAgreementProperties"
     """
@@ -481,18 +482,18 @@ class ConfluentAgreementResource(TypedDict, total=False):
 class ConnectorInfoBase(TypedDict, total=False):
     """Connector Info Base properties.
 
-    :ivar connector_type: Connector Type. Known values are: "SINK" and "SOURCE".
-    :vartype connector_type: Union[str, "ConnectorType"]
-    :ivar connector_class: Connector Class. Known values are: "AZUREBLOBSOURCE", "AZUREBLOBSINK",
+    :ivar connectorType: Connector Type. Known values are: "SINK" and "SOURCE".
+    :vartype connectorType: Union[str, "ConnectorType"]
+    :ivar connectorClass: Connector Class. Known values are: "AZUREBLOBSOURCE", "AZUREBLOBSINK",
      "AZURECOSMOSV2SINK", and "AZURECOSMOSV2SOURCE".
-    :vartype connector_class: Union[str, "ConnectorClass"]
-    :ivar connector_name: Connector Name.
-    :vartype connector_name: str
-    :ivar connector_id: Connector Id.
-    :vartype connector_id: str
-    :ivar connector_state: Connector Status. Known values are: "PROVISIONING", "RUNNING", "PAUSED",
+    :vartype connectorClass: Union[str, "ConnectorClass"]
+    :ivar connectorName: Connector Name.
+    :vartype connectorName: str
+    :ivar connectorId: Connector Id.
+    :vartype connectorId: str
+    :ivar connectorState: Connector Status. Known values are: "PROVISIONING", "RUNNING", "PAUSED",
      and "FAILED".
-    :vartype connector_state: Union[str, "ConnectorStatus"]
+    :vartype connectorState: Union[str, "ConnectorStatus"]
     """
 
     connectorType: Union[str, "ConnectorType"]
@@ -519,9 +520,9 @@ class ConnectorResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of the Connector. Required.
     :vartype properties: "ConnectorResourceProperties"
     """
@@ -533,12 +534,12 @@ class ConnectorResource(ProxyResource):
 class ConnectorResourceProperties(TypedDict, total=False):
     """The resource properties of the Connector.
 
-    :ivar connector_basic_info: Connector Info Base.
-    :vartype connector_basic_info: "ConnectorInfoBase"
-    :ivar connector_service_type_info: Connector Service type info base properties.
-    :vartype connector_service_type_info: "ConnectorServiceTypeInfoBase"
-    :ivar partner_connector_info: The connection information consumed by applications.
-    :vartype partner_connector_info: "PartnerInfoBase"
+    :ivar connectorBasicInfo: Connector Info Base.
+    :vartype connectorBasicInfo: "ConnectorInfoBase"
+    :ivar connectorServiceTypeInfo: Connector Service type info base properties.
+    :vartype connectorServiceTypeInfo: "ConnectorServiceTypeInfoBase"
+    :ivar partnerConnectorInfo: The connection information consumed by applications.
+    :vartype partnerConnectorInfo: "PartnerInfoBase"
     """
 
     connectorBasicInfo: "ConnectorInfoBase"
@@ -567,8 +568,8 @@ class CreateAPIKeyModel(TypedDict, total=False):
 class EnvironmentProperties(TypedDict, total=False):
     """Environment resource property.
 
-    :ivar stream_governance_config: Stream governance configuration.
-    :vartype stream_governance_config: "StreamGovernanceConfig"
+    :ivar streamGovernanceConfig: Stream governance configuration.
+    :vartype streamGovernanceConfig: "StreamGovernanceConfig"
     :ivar metadata: Metadata of the record.
     :vartype metadata: "SCMetadataEntity"
     """
@@ -579,38 +580,61 @@ class EnvironmentProperties(TypedDict, total=False):
     """Metadata of the record."""
 
 
+class FilteringTag(TypedDict, total=False):
+    """A tag filter that includes or excludes activity logs from matching Azure resources.
+
+    :ivar name: The Azure resource tag name to match. Required.
+    :vartype name: str
+    :ivar value: The Azure resource tag value to match. When omitted, the filter matches any value
+     for the specified tag name.
+    :vartype value: str
+    :ivar action: Specifies whether logs from resources matching the tag filter are included or
+     excluded. Required. Known values are: "Include" and "Exclude".
+    :vartype action: Union[str, "TagAction"]
+    """
+
+    name: Required[str]
+    """The Azure resource tag name to match. Required."""
+    value: str
+    """The Azure resource tag value to match. When omitted, the filter matches any value for the
+     specified tag name."""
+    action: Required[Union[str, "TagAction"]]
+    """Specifies whether logs from resources matching the tag filter are included or excluded.
+     Required. Known values are: \"Include\" and \"Exclude\"."""
+
+
 class KafkaAzureBlobStorageSinkConnectorInfo(TypedDict, total=False):
     """The partner connector type is KafkaAzureBlobStorageSink.
 
-    :ivar auth_type: Kafka Auth Type. Known values are: "SERVICE_ACCOUNT" and "KAFKA_API_KEY".
-    :vartype auth_type: Union[str, "AuthType"]
-    :ivar input_format: Kafka Input Data Format Type. Known values are: "AVRO", "JSON", "STRING",
+    :ivar authType: Kafka Auth Type. Known values are: "SERVICE_ACCOUNT" and "KAFKA_API_KEY".
+    :vartype authType: Union[str, "AuthType"]
+    :ivar inputFormat: Kafka Input Data Format Type. Known values are: "AVRO", "JSON", "STRING",
      "BYTES", and "PROTOBUF".
-    :vartype input_format: Union[str, "DataFormatType"]
-    :ivar output_format: Kafka Output Data Format Type. Known values are: "AVRO", "JSON", "STRING",
+    :vartype inputFormat: Union[str, "DataFormatType"]
+    :ivar outputFormat: Kafka Output Data Format Type. Known values are: "AVRO", "JSON", "STRING",
      "BYTES", and "PROTOBUF".
-    :vartype output_format: Union[str, "DataFormatType"]
-    :ivar api_key: Kafka API Key.
-    :vartype api_key: str
-    :ivar api_secret: Kafka API Key Secret.
-    :vartype api_secret: str
-    :ivar service_account_id: Kafka Service Account Id.
-    :vartype service_account_id: str
-    :ivar service_account_name: Kafka Service Account Name.
-    :vartype service_account_name: str
+    :vartype outputFormat: Union[str, "DataFormatType"]
+    :ivar apiKey: Kafka API Key.
+    :vartype apiKey: str
+    :ivar apiSecret: Kafka API Key Secret.
+    :vartype apiSecret: str
+    :ivar serviceAccountId: Kafka Service Account Id.
+    :vartype serviceAccountId: str
+    :ivar serviceAccountName: Kafka Service Account Name.
+    :vartype serviceAccountName: str
     :ivar topics: Kafka topics list.
     :vartype topics: list[str]
-    :ivar topics_dir: Kafka topics directory.
-    :vartype topics_dir: str
-    :ivar flush_size: Flush size.
-    :vartype flush_size: str
-    :ivar max_tasks: Maximum Tasks.
-    :vartype max_tasks: str
-    :ivar time_interval: Time Interval.
-    :vartype time_interval: str
-    :ivar partner_connector_type: The partner connector type. Required.
+    :ivar topicsDir: Kafka topics directory.
+    :vartype topicsDir: str
+    :ivar flushSize: Flush size.
+    :vartype flushSize: str
+    :ivar maxTasks: Maximum Tasks.
+    :vartype maxTasks: str
+    :ivar timeInterval: Time Interval.
+    :vartype timeInterval: str
+    :ivar partnerConnectorType: The partner connector type. Required.
      KAFKA_AZURE_BLOB_STORAGE_SINK.
-    :vartype partner_connector_type: Literal[PartnerConnectorType.KAFKA_AZURE_BLOB_STORAGE_SINK]
+    :vartype partnerConnectorType: Literal[PartnerConnectorType.KAFKA_AZURE_BLOB_STORAGE_SINK]
     """
 
     authType: Union[str, "AuthType"]
@@ -646,31 +670,31 @@ class KafkaAzureBlobStorageSinkConnectorInfo(TypedDict, total=False):
 class KafkaAzureBlobStorageSourceConnectorInfo(TypedDict, total=False):
     """The partner connector type is KafkaAzureBlobStorageSource.
 
-    :ivar auth_type: Kafka Auth Type. Known values are: "SERVICE_ACCOUNT" and "KAFKA_API_KEY".
-    :vartype auth_type: Union[str, "AuthType"]
-    :ivar input_format: Kafka Input Data Format Type. Known values are: "AVRO", "JSON", "STRING",
+    :ivar authType: Kafka Auth Type. Known values are: "SERVICE_ACCOUNT" and "KAFKA_API_KEY".
+    :vartype authType: Union[str, "AuthType"]
+    :ivar inputFormat: Kafka Input Data Format Type. Known values are: "AVRO", "JSON", "STRING",
      "BYTES", and "PROTOBUF".
-    :vartype input_format: Union[str, "DataFormatType"]
-    :ivar output_format: Kafka Output Data Format Type. Known values are: "AVRO", "JSON", "STRING",
+    :vartype inputFormat: Union[str, "DataFormatType"]
+    :ivar outputFormat: Kafka Output Data Format Type. Known values are: "AVRO", "JSON", "STRING",
      "BYTES", and "PROTOBUF".
-    :vartype output_format: Union[str, "DataFormatType"]
-    :ivar api_key: Kafka API Key.
-    :vartype api_key: str
-    :ivar api_secret: Kafka API Secret.
-    :vartype api_secret: str
-    :ivar service_account_id: Kafka Service Account Id.
-    :vartype service_account_id: str
-    :ivar service_account_name: Kafka Service Account Name.
-    :vartype service_account_name: str
-    :ivar topic_regex: Kafka topics Regex pattern.
-    :vartype topic_regex: str
-    :ivar topics_dir: Kafka topics directory.
-    :vartype topics_dir: str
-    :ivar max_tasks: Maximum Tasks.
-    :vartype max_tasks: str
-    :ivar partner_connector_type: The partner connector type. Required.
+    :vartype outputFormat: Union[str, "DataFormatType"]
+    :ivar apiKey: Kafka API Key.
+    :vartype apiKey: str
+    :ivar apiSecret: Kafka API Secret.
+    :vartype apiSecret: str
+    :ivar serviceAccountId: Kafka Service Account Id.
+    :vartype serviceAccountId: str
+    :ivar serviceAccountName: Kafka Service Account Name.
+    :vartype serviceAccountName: str
+    :ivar topicRegex: Kafka topics Regex pattern.
+    :vartype topicRegex: str
+    :ivar topicsDir: Kafka topics directory.
+    :vartype topicsDir: str
+    :ivar maxTasks: Maximum Tasks.
+    :vartype maxTasks: str
+    :ivar partnerConnectorType: The partner connector type. Required.
      KAFKA_AZURE_BLOB_STORAGE_SOURCE.
-    :vartype partner_connector_type: Literal[PartnerConnectorType.KAFKA_AZURE_BLOB_STORAGE_SOURCE]
+    :vartype partnerConnectorType: Literal[PartnerConnectorType.KAFKA_AZURE_BLOB_STORAGE_SOURCE]
     """
 
     authType: Union[str, "AuthType"]
@@ -702,34 +726,34 @@ class KafkaAzureBlobStorageSourceConnectorInfo(TypedDict, total=False):
 class KafkaAzureCosmosDBSinkConnectorInfo(TypedDict, total=False):
     """The partner connector type is KafkaAzureCosmosDBSink.
 
-    :ivar auth_type: Kafka Auth Type. Known values are: "SERVICE_ACCOUNT" and "KAFKA_API_KEY".
-    :vartype auth_type: Union[str, "AuthType"]
-    :ivar input_format: Kafka Input Data Format Type. Known values are: "AVRO", "JSON", "STRING",
+    :ivar authType: Kafka Auth Type. Known values are: "SERVICE_ACCOUNT" and "KAFKA_API_KEY".
+    :vartype authType: Union[str, "AuthType"]
+    :ivar inputFormat: Kafka Input Data Format Type. Known values are: "AVRO", "JSON", "STRING",
      "BYTES", and "PROTOBUF".
-    :vartype input_format: Union[str, "DataFormatType"]
-    :ivar output_format: Kafka Output Data Format Type. Known values are: "AVRO", "JSON", "STRING",
+    :vartype inputFormat: Union[str, "DataFormatType"]
+    :ivar outputFormat: Kafka Output Data Format Type. Known values are: "AVRO", "JSON", "STRING",
      "BYTES", and "PROTOBUF".
-    :vartype output_format: Union[str, "DataFormatType"]
-    :ivar api_key: Kafka API Key.
-    :vartype api_key: str
-    :ivar api_secret: Kafka API Key Secret.
-    :vartype api_secret: str
-    :ivar service_account_id: Kafka Service Account Id.
-    :vartype service_account_id: str
-    :ivar service_account_name: Kafka Service Account Name.
-    :vartype service_account_name: str
+    :vartype outputFormat: Union[str, "DataFormatType"]
+    :ivar apiKey: Kafka API Key.
+    :vartype apiKey: str
+    :ivar apiSecret: Kafka API Key Secret.
+    :vartype apiSecret: str
+    :ivar serviceAccountId: Kafka Service Account Id.
+    :vartype serviceAccountId: str
+    :ivar serviceAccountName: Kafka Service Account Name.
+    :vartype serviceAccountName: str
     :ivar topics: Kafka topics list.
     :vartype topics: list[str]
-    :ivar topics_dir: Kafka topics directory.
-    :vartype topics_dir: str
-    :ivar flush_size: Flush size.
-    :vartype flush_size: str
-    :ivar max_tasks: Maximum Tasks.
-    :vartype max_tasks: str
-    :ivar time_interval: Time Interval.
-    :vartype time_interval: str
-    :ivar partner_connector_type: The partner connector type. Required. KAFKA_AZURE_COSMOS_DB_SINK.
-    :vartype partner_connector_type: Literal[PartnerConnectorType.KAFKA_AZURE_COSMOS_DB_SINK]
+    :ivar topicsDir: Kafka topics directory.
+    :vartype topicsDir: str
+    :ivar flushSize: Flush size.
+    :vartype flushSize: str
+    :ivar maxTasks: Maximum Tasks.
+    :vartype maxTasks: str
+    :ivar timeInterval: Time Interval.
+    :vartype timeInterval: str
+    :ivar partnerConnectorType: The partner connector type. Required. KAFKA_AZURE_COSMOS_DB_SINK.
+    :vartype partnerConnectorType: Literal[PartnerConnectorType.KAFKA_AZURE_COSMOS_DB_SINK]
     """
 
     authType: Union[str, "AuthType"]
@@ -765,31 +789,30 @@ class KafkaAzureCosmosDBSinkConnectorInfo(TypedDict, total=False):
 class KafkaAzureCosmosDBSourceConnectorInfo(TypedDict, total=False):
     """The partner connector type is KafkaAzureCosmosDBSource.
 
-    :ivar auth_type: Kafka Auth Type. Known values are: "SERVICE_ACCOUNT" and "KAFKA_API_KEY".
-    :vartype auth_type: Union[str, "AuthType"]
-    :ivar input_format: Kafka Input Data Format Type. Known values are: "AVRO", "JSON", "STRING",
+    :ivar authType: Kafka Auth Type. Known values are: "SERVICE_ACCOUNT" and "KAFKA_API_KEY".
+    :vartype authType: Union[str, "AuthType"]
+    :ivar inputFormat: Kafka Input Data Format Type. Known values are: "AVRO", "JSON", "STRING",
      "BYTES", and "PROTOBUF".
-    :vartype input_format: Union[str, "DataFormatType"]
-    :ivar output_format: Kafka Output Data Format Type. Known values are: "AVRO", "JSON", "STRING",
+    :vartype inputFormat: Union[str, "DataFormatType"]
+    :ivar outputFormat: Kafka Output Data Format Type. Known values are: "AVRO", "JSON", "STRING",
      "BYTES", and "PROTOBUF".
-    :vartype output_format: Union[str, "DataFormatType"]
-    :ivar api_key: Kafka API Key.
-    :vartype api_key: str
-    :ivar api_secret: Kafka API Secret.
-    :vartype api_secret: str
-    :ivar service_account_id: Kafka Service Account Id.
-    :vartype service_account_id: str
-    :ivar service_account_name: Kafka Service Account Name.
-    :vartype service_account_name: str
-    :ivar topic_regex: Kafka topics Regex pattern.
-    :vartype topic_regex: str
-    :ivar topics_dir: Kafka topics directory.
-    :vartype topics_dir: str
-    :ivar max_tasks: Maximum Tasks.
-    :vartype max_tasks: str
-    :ivar partner_connector_type: The partner connector type. Required.
-     KAFKA_AZURE_COSMOS_DB_SOURCE.
-    :vartype partner_connector_type: Literal[PartnerConnectorType.KAFKA_AZURE_COSMOS_DB_SOURCE]
+    :vartype outputFormat: Union[str, "DataFormatType"]
+    :ivar apiKey: Kafka API Key.
+    :vartype apiKey: str
+    :ivar apiSecret: Kafka API Secret.
+    :vartype apiSecret: str
+    :ivar serviceAccountId: Kafka Service Account Id.
+    :vartype serviceAccountId: str
+    :ivar serviceAccountName: Kafka Service Account Name.
+    :vartype serviceAccountName: str
+    :ivar topicRegex: Kafka topics Regex pattern.
+    :vartype topicRegex: str
+    :ivar topicsDir: Kafka topics directory.
+    :vartype topicsDir: str
+    :ivar maxTasks: Maximum Tasks.
+    :vartype maxTasks: str
+    :ivar partnerConnectorType: The partner connector type. Required. KAFKA_AZURE_COSMOS_DB_SOURCE.
+    :vartype partnerConnectorType: Literal[PartnerConnectorType.KAFKA_AZURE_COSMOS_DB_SOURCE]
     """
 
     authType: Union[str, "AuthType"]
@@ -821,36 +844,35 @@ class KafkaAzureCosmosDBSourceConnectorInfo(TypedDict, total=False):
 class KafkaAzureSynapseAnalyticsSinkConnectorInfo(TypedDict, total=False):  # pylint: disable=name-too-long
     """The partner connector type is KafkaAzureSynapseAnalyticsSink.
 
-    :ivar auth_type: Kafka Auth Type. Known values are: "SERVICE_ACCOUNT" and "KAFKA_API_KEY".
-    :vartype auth_type: Union[str, "AuthType"]
-    :ivar input_format: Kafka Input Data Format Type. Known values are: "AVRO", "JSON", "STRING",
+    :ivar authType: Kafka Auth Type. Known values are: "SERVICE_ACCOUNT" and "KAFKA_API_KEY".
+    :vartype authType: Union[str, "AuthType"]
+    :ivar inputFormat: Kafka Input Data Format Type. Known values are: "AVRO", "JSON", "STRING",
      "BYTES", and "PROTOBUF".
-    :vartype input_format: Union[str, "DataFormatType"]
-    :ivar output_format: Kafka Output Data Format Type. Known values are: "AVRO", "JSON", "STRING",
+    :vartype inputFormat: Union[str, "DataFormatType"]
+    :ivar outputFormat: Kafka Output Data Format Type. Known values are: "AVRO", "JSON", "STRING",
      "BYTES", and "PROTOBUF".
-    :vartype output_format: Union[str, "DataFormatType"]
-    :ivar api_key: Kafka API Key.
-    :vartype api_key: str
-    :ivar api_secret: Kafka API Key Secret.
-    :vartype api_secret: str
-    :ivar service_account_id: Kafka Service Account Id.
-    :vartype service_account_id: str
-    :ivar service_account_name: Kafka Service Account Name.
-    :vartype service_account_name: str
+    :vartype outputFormat: Union[str, "DataFormatType"]
+    :ivar apiKey: Kafka API Key.
+    :vartype apiKey: str
+    :ivar apiSecret: Kafka API Key Secret.
+    :vartype apiSecret: str
+    :ivar serviceAccountId: Kafka Service Account Id.
+    :vartype serviceAccountId: str
+    :ivar serviceAccountName: Kafka Service Account Name.
+    :vartype serviceAccountName: str
     :ivar topics: Kafka topics list.
     :vartype topics: list[str]
-    :ivar topics_dir: Kafka topics directory.
-    :vartype topics_dir: str
-    :ivar flush_size: Flush size.
-    :vartype flush_size: str
-    :ivar max_tasks: Maximum Tasks.
-    :vartype max_tasks: str
-    :ivar time_interval: Time Interval.
-    :vartype time_interval: str
-    :ivar partner_connector_type: The partner connector type. Required.
+    :ivar topicsDir: Kafka topics directory.
+    :vartype topicsDir: str
+    :ivar flushSize: Flush size.
+    :vartype flushSize: str
+    :ivar maxTasks: Maximum Tasks.
+    :vartype maxTasks: str
+    :ivar timeInterval: Time Interval.
+    :vartype timeInterval: str
+    :ivar partnerConnectorType: The partner connector type. Required.
      KAFKA_AZURE_SYNAPSE_ANALYTICS_SINK.
-    :vartype partner_connector_type:
-     Literal[PartnerConnectorType.KAFKA_AZURE_SYNAPSE_ANALYTICS_SINK]
+    :vartype partnerConnectorType: Literal[PartnerConnectorType.KAFKA_AZURE_SYNAPSE_ANALYTICS_SINK]
     """
 
     authType: Union[str, "AuthType"]
@@ -912,27 +934,223 @@ class LinkOrganization(TypedDict, total=False):
 class ListAccessRequestModel(TypedDict, total=False):
     """List Access Request Model.
 
-    :ivar search_filters: Search filters for the request.
-    :vartype search_filters: dict[str, str]
+    :ivar searchFilters: Search filters for the request.
+    :vartype searchFilters: dict[str, str]
     """
 
     searchFilters: dict[str, str]
     """Search filters for the request."""
 
 
+class LogRules(TypedDict, total=False):
+    """Rules that select Azure log categories and Azure resources whose logs are sent to the monitor's
+    configured Confluent topic.
+
+    :ivar sendAadLogs: Specifies whether Microsoft Entra ID logs are sent to Confluent.
+    :vartype sendAadLogs: bool
+    :ivar sendSubscriptionLogs: Specifies whether Azure subscription logs are sent to Confluent.
+    :vartype sendSubscriptionLogs: bool
+    :ivar sendActivityLogs: Specifies whether activity logs from Azure resources are sent to
+     Confluent.
+    :vartype sendActivityLogs: bool
+    :ivar filteringTags: Azure resource-tag filters applied when activity logs are enabled. If only
+     exclusion filters are present, logs from all resources except matching resources are sent. If
+     any inclusion filter is present, logs are sent only from matching resources. Exclusion filters
+     take precedence over inclusion filters.
+    :vartype filteringTags: list["FilteringTag"]
+    """
+
+    sendAadLogs: bool
+    """Specifies whether Microsoft Entra ID logs are sent to Confluent."""
+    sendSubscriptionLogs: bool
+    """Specifies whether Azure subscription logs are sent to Confluent."""
+    sendActivityLogs: bool
+    """Specifies whether activity logs from Azure resources are sent to Confluent."""
+    filteringTags: list["FilteringTag"]
+    """Azure resource-tag filters applied when activity logs are enabled. If only exclusion filters
+     are present, logs from all resources except matching resources are sent. If any inclusion
+     filter is present, logs are sent only from matching resources. Exclusion filters take
+     precedence over inclusion filters."""
+
+
+class MonitorProperties(TypedDict, total=False):
+    """The Confluent log destination and current status of a monitor.
+
+    :ivar organizationId: The identifier of the Confluent organization that contains the
+     destination environment.
+    :vartype organizationId: str
+    :ivar environmentId: The identifier of the Confluent environment that contains the destination
+     cluster. Required.
+    :vartype environmentId: str
+    :ivar environmentName: The display name of the Confluent environment that contains the
+     destination cluster.
+    :vartype environmentName: str
+    :ivar clusterId: The identifier of the Confluent cluster containing the destination topic.
+     Required.
+    :vartype clusterId: str
+    :ivar clusterName: The display name of the Confluent cluster containing the destination topic.
+    :vartype clusterName: str
+    :ivar topicId: The identifier of the Confluent topic that receives the selected Azure logs.
+    :vartype topicId: str
+    :ivar topicName: The name of the Confluent topic that receives the selected Azure logs.
+     Required.
+    :vartype topicName: str
+    :ivar dictionary: Additional key-value information associated with the monitor.
+    :vartype dictionary: list["KeyValuePair"]
+    :ivar provisioningState: The status of the most recent operation performed on the monitor.
+     Known values are: "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed",
+     "Canceled", "Deleted", and "NotSpecified".
+    :vartype provisioningState: Union[str, "ProvisionState"]
+    :ivar monitoringStatus: Indicates whether the monitor is currently sending Azure logs to
+     Confluent. Known values are: "Enabled" and "Disabled".
+    :vartype monitoringStatus: Union[str, "MonitoringStatus"]
+    """
+
+    organizationId: str
+    """The identifier of the Confluent organization that contains the destination environment."""
+    environmentId: Required[str]
+    """The identifier of the Confluent environment that contains the destination cluster. Required."""
+    environmentName: str
+    """The display name of the Confluent environment that contains the destination cluster."""
+    clusterId: Required[str]
+    """The identifier of the Confluent cluster containing the destination topic. Required."""
+    clusterName: str
+    """The display name of the Confluent cluster containing the destination topic."""
+    topicId: str
+    """The identifier of the Confluent topic that receives the selected Azure logs."""
+    topicName: Required[str]
+    """The name of the Confluent topic that receives the selected Azure logs. Required."""
+    dictionary: list["KeyValuePair"]
+    """Additional key-value information associated with the monitor."""
+    provisioningState: Union[str, "ProvisionState"]
+    """The status of the most recent operation performed on the monitor. Known values are:
+     \"Accepted\", \"Creating\", \"Updating\", \"Deleting\", \"Succeeded\", \"Failed\",
+     \"Canceled\", \"Deleted\", and \"NotSpecified\"."""
+    monitoringStatus: Union[str, "MonitoringStatus"]
+    """Indicates whether the monitor is currently sending Azure logs to Confluent. Known values are:
+     \"Enabled\" and \"Disabled\"."""
+
+
+class TrackedResource(Resource):
+    """Tracked Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+    location: Required[str]
+    """The geo-location where the resource lives. Required."""
+
+
+class MonitorResource(TrackedResource):
+    """A monitor that defines the Confluent environment, cluster, and topic to which selected Azure
+    logs are sent.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The configured Confluent log destination and current status of the monitor.
+     Required.
+    :vartype properties: "MonitorProperties"
+    """
+
+    properties: Required["MonitorProperties"]
+    """The configured Confluent log destination and current status of the monitor. Required."""
+
+
+class MonitorResourceUpdateParameters(TypedDict, total=False):
+    """The parameters for updating the Azure resource tags of a Confluent monitor.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+
+
+class MonitorTagRule(ProxyResource):
+    """A rule set that specifies which Azure logs are sent to a monitor's configured Confluent topic.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The rules that select Azure logs and the current status of the rule set.
+    :vartype properties: "MonitorTagRuleProperties"
+    """
+
+    properties: "MonitorTagRuleProperties"
+    """The rules that select Azure logs and the current status of the rule set."""
+
+
+class MonitorTagRuleProperties(TypedDict, total=False):
+    """The Azure log-selection rules and current status of a monitor rule set.
+
+    :ivar provisioningState: The status of the most recent operation performed on the rule set.
+     Known values are: "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed",
+     "Canceled", "Deleted", and "NotSpecified".
+    :vartype provisioningState: Union[str, "ProvisionState"]
+    :ivar logRules: Rules that specify which Azure logs are sent to the monitor's configured
+     Confluent topic.
+    :vartype logRules: "LogRules"
+    """
+
+    provisioningState: Union[str, "ProvisionState"]
+    """The status of the most recent operation performed on the rule set. Known values are:
+     \"Accepted\", \"Creating\", \"Updating\", \"Deleting\", \"Succeeded\", \"Failed\",
+     \"Canceled\", \"Deleted\", and \"NotSpecified\"."""
+    logRules: "LogRules"
+    """Rules that specify which Azure logs are sent to the monitor's configured Confluent topic."""
+
+
 class NetworkGatewayProperties(TypedDict, total=False):
     """Network Gateway Properties.
 
-    :ivar network_gateway_name: Display name of the network gateway. Required.
-    :vartype network_gateway_name: str
+    :ivar networkGatewayName: Display name of the network gateway. Required.
+    :vartype networkGatewayName: str
     :ivar region: The cloud service provider region for the network gateway. Required.
     :vartype region: str
     :ivar metadata: Metadata of the record.
     :vartype metadata: "SCMetadataEntity"
-    :ivar provisioning_state: Provisioning state of the network gateway. Known values are:
+    :ivar provisioningState: Provisioning state of the network gateway. Known values are:
      "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted",
      and "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisionState"]
+    :vartype provisioningState: Union[str, "ProvisionState"]
     :ivar dictionary: Additional properties for extensibility.
     :vartype dictionary: list["KeyValuePair"]
     """
@@ -962,9 +1180,9 @@ class NetworkGatewayResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Network Gateway Properties.
     :vartype properties: "NetworkGatewayProperties"
     """
@@ -976,22 +1194,22 @@ class NetworkGatewayResource(ProxyResource):
 class OfferDetail(TypedDict, total=False):
     """Confluent Offer detail.
 
-    :ivar publisher_id: Publisher Id. Required.
-    :vartype publisher_id: str
+    :ivar publisherId: Publisher Id. Required.
+    :vartype publisherId: str
     :ivar id: Offer Id. Required.
     :vartype id: str
-    :ivar plan_id: Offer Plan Id. Required.
-    :vartype plan_id: str
-    :ivar plan_name: Offer Plan Name. Required.
-    :vartype plan_name: str
-    :ivar term_unit: Offer Plan Term unit. Required.
-    :vartype term_unit: str
-    :ivar term_id: Offer Plan Term Id.
-    :vartype term_id: str
-    :ivar private_offer_id: Private Offer Id.
-    :vartype private_offer_id: str
-    :ivar private_offer_ids: Array of Private Offer Ids.
-    :vartype private_offer_ids: list[str]
+    :ivar planId: Offer Plan Id. Required.
+    :vartype planId: str
+    :ivar planName: Offer Plan Name. Required.
+    :vartype planName: str
+    :ivar termUnit: Offer Plan Term unit. Required.
+    :vartype termUnit: str
+    :ivar termId: Offer Plan Term Id.
+    :vartype termId: str
+    :ivar privateOfferId: Private Offer Id.
+    :vartype privateOfferId: str
+    :ivar privateOfferIds: Array of Private Offer Ids.
+    :vartype privateOfferIds: list[str]
     :ivar status: SaaS Offer Status. Known values are: "Started", "PendingFulfillmentStart",
      "InProgress", "Subscribed", "Suspended", "Reinstated", "Succeeded", "Failed", "Unsubscribed",
      and "Updating".
@@ -1020,32 +1238,6 @@ class OfferDetail(TypedDict, total=False):
      \"Updating\"."""
 
 
-class TrackedResource(Resource):
-    """Tracked Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    tags: dict[str, str]
-    """Resource tags."""
-    location: Required[str]
-    """The geo-location where the resource lives. Required."""
-
-
 class OrganizationResource(TrackedResource):
     """Organization resource.
 
@@ -1057,9 +1249,9 @@ class OrganizationResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1075,22 +1267,22 @@ class OrganizationResource(TrackedResource):
 class OrganizationResourceProperties(TypedDict, total=False):
     """Organization resource property.
 
-    :ivar created_time: The creation time of the resource.
-    :vartype created_time: str
-    :ivar provisioning_state: Provision states for confluent RP. Known values are: "Accepted",
+    :ivar createdTime: The creation time of the resource.
+    :vartype createdTime: str
+    :ivar provisioningState: Provision states for confluent RP. Known values are: "Accepted",
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
      "NotSpecified".
-    :vartype provisioning_state: Union[str, "ProvisionState"]
-    :ivar organization_id: Id of the Confluent organization.
-    :vartype organization_id: str
-    :ivar sso_url: SSO url for the Confluent organization.
-    :vartype sso_url: str
-    :ivar offer_detail: Confluent offer detail. Required.
-    :vartype offer_detail: "OfferDetail"
-    :ivar user_detail: Subscriber detail. Required.
-    :vartype user_detail: "UserDetail"
-    :ivar link_organization: Link an existing Confluent organization.
-    :vartype link_organization: "LinkOrganization"
+    :vartype provisioningState: Union[str, "ProvisionState"]
+    :ivar organizationId: Id of the Confluent organization.
+    :vartype organizationId: str
+    :ivar ssoUrl: SSO url for the Confluent organization.
+    :vartype ssoUrl: str
+    :ivar offerDetail: Confluent offer detail. Required.
+    :vartype offerDetail: "OfferDetail"
+    :ivar userDetail: Subscriber detail. Required.
+    :vartype userDetail: "UserDetail"
+    :ivar linkOrganization: Link an existing Confluent organization.
+    :vartype linkOrganization: "LinkOrganization"
     """
 
     createdTime: str
@@ -1124,8 +1316,8 @@ class OrganizationResourceUpdate(TypedDict, total=False):
 class SaaSData(TypedDict, total=False):
     """SaaS-related data properties.
 
-    :ivar saa_s_resource_id: SaaS resource id.
-    :vartype saa_s_resource_id: str
+    :ivar saaSResourceId: SaaS resource id.
+    :vartype saaSResourceId: str
     """
 
     saaSResourceId: str
@@ -1139,8 +1331,8 @@ class SCClusterByokEntity(TypedDict, total=False):
     :vartype id: str
     :ivar related: API URL for accessing or modifying the referred object.
     :vartype related: str
-    :ivar resource_name: CRN reference to the referred resource.
-    :vartype resource_name: str
+    :ivar resourceName: CRN reference to the referred resource.
+    :vartype resourceName: str
     """
 
     id: str
@@ -1160,8 +1352,8 @@ class SCClusterNetworkEnvironmentEntity(TypedDict, total=False):
     :vartype environment: str
     :ivar related: API URL for accessing or modifying the referred object.
     :vartype related: str
-    :ivar resource_name: CRN reference to the referred resource.
-    :vartype resource_name: str
+    :ivar resourceName: CRN reference to the referred resource.
+    :vartype resourceName: str
     """
 
     id: str
@@ -1185,9 +1377,9 @@ class SCClusterRecord(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar kind: Type of cluster.
     :vartype kind: str
     :ivar properties: Cluster Properties.
@@ -1215,13 +1407,13 @@ class SCClusterSpecEntity(TypedDict, total=False):
     :vartype package: Union[str, "Package"]
     :ivar region: The cloud service provider region.
     :vartype region: str
-    :ivar kafka_bootstrap_endpoint: The bootstrap endpoint used by Kafka clients to connect to the
+    :ivar kafkaBootstrapEndpoint: The bootstrap endpoint used by Kafka clients to connect to the
      cluster.
-    :vartype kafka_bootstrap_endpoint: str
-    :ivar http_endpoint: The cluster HTTP request URL.
-    :vartype http_endpoint: str
-    :ivar api_endpoint: The Kafka API cluster endpoint.
-    :vartype api_endpoint: str
+    :vartype kafkaBootstrapEndpoint: str
+    :ivar httpEndpoint: The cluster HTTP request URL.
+    :vartype httpEndpoint: str
+    :ivar apiEndpoint: The Kafka API cluster endpoint.
+    :vartype apiEndpoint: str
     :ivar config: Specification of the cluster configuration.
     :vartype config: "ClusterConfigEntity"
     :ivar environment: Specification of the cluster environment.
@@ -1271,9 +1463,9 @@ class SCEnvironmentRecord(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar kind: Type of environment.
     :vartype kind: str
     :ivar properties: Environment properties.
@@ -1289,16 +1481,16 @@ class SCEnvironmentRecord(ProxyResource):
 class SCMetadataEntity(TypedDict, total=False):
     """Metadata of the data record.
 
-    :ivar self_property: Self lookup url.
-    :vartype self_property: str
-    :ivar resource_name: Resource name of the record.
-    :vartype resource_name: str
-    :ivar created_timestamp: Created Date Time.
-    :vartype created_timestamp: str
-    :ivar updated_timestamp: Updated Date time.
-    :vartype updated_timestamp: str
-    :ivar deleted_timestamp: Deleted Date time.
-    :vartype deleted_timestamp: str
+    :ivar self: Self lookup url.
+    :vartype self: str
+    :ivar resourceName: Resource name of the record.
+    :vartype resourceName: str
+    :ivar createdTimestamp: Created Date Time.
+    :vartype createdTimestamp: str
+    :ivar updatedTimestamp: Updated Date time.
+    :vartype updatedTimestamp: str
+    :ivar deletedTimestamp: Deleted Date time.
+    :vartype deletedTimestamp: str
     """
 
     self: str
@@ -1327,20 +1519,20 @@ class StreamGovernanceConfig(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -1362,10 +1554,10 @@ class SystemData(TypedDict, total=False):
 class TopicMetadataEntity(TypedDict, total=False):
     """Metadata of the data record.
 
-    :ivar self_property: Self lookup url.
-    :vartype self_property: str
-    :ivar resource_name: Resource name of the record.
-    :vartype resource_name: str
+    :ivar self: Self lookup url.
+    :vartype self: str
+    :ivar resourceName: Resource name of the record.
+    :vartype resourceName: str
     """
 
     self: str
@@ -1379,22 +1571,22 @@ class TopicProperties(TypedDict, total=False):
 
     :ivar kind: Type of topic.
     :vartype kind: str
-    :ivar topic_id: Topic Id returned by Confluent.
-    :vartype topic_id: str
+    :ivar topicId: Topic Id returned by Confluent.
+    :vartype topicId: str
     :ivar metadata: Metadata of the record.
     :vartype metadata: "TopicMetadataEntity"
     :ivar partitions: Partition Specification of the topic.
     :vartype partitions: "TopicsRelatedLink"
     :ivar configs: Config Specification of the topic.
     :vartype configs: "TopicsRelatedLink"
-    :ivar input_configs: Input Config Specification of the topic.
-    :vartype input_configs: list["TopicsInputConfig"]
-    :ivar partitions_reassignments: Partition Reassignment Specification of the topic.
-    :vartype partitions_reassignments: "TopicsRelatedLink"
-    :ivar partitions_count: Partition count of the topic.
-    :vartype partitions_count: str
-    :ivar replication_factor: Replication factor of the topic.
-    :vartype replication_factor: str
+    :ivar inputConfigs: Input Config Specification of the topic.
+    :vartype inputConfigs: list["TopicsInputConfig"]
+    :ivar partitionsReassignments: Partition Reassignment Specification of the topic.
+    :vartype partitionsReassignments: "TopicsRelatedLink"
+    :ivar partitionsCount: Partition count of the topic.
+    :vartype partitionsCount: str
+    :ivar replicationFactor: Replication factor of the topic.
+    :vartype replicationFactor: str
     """
 
     kind: str
@@ -1428,9 +1620,9 @@ class TopicRecord(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Topic Properties.
     :vartype properties: "TopicProperties"
     """
@@ -1468,16 +1660,16 @@ class TopicsRelatedLink(TypedDict, total=False):
 class UserDetail(TypedDict, total=False):
     """Subscriber detail.
 
-    :ivar first_name: First name.
-    :vartype first_name: str
-    :ivar last_name: Last name.
-    :vartype last_name: str
-    :ivar email_address: Email address. Required.
-    :vartype email_address: str
-    :ivar user_principal_name: User principal name.
-    :vartype user_principal_name: str
-    :ivar aad_email: AAD email address.
-    :vartype aad_email: str
+    :ivar firstName: First name.
+    :vartype firstName: str
+    :ivar lastName: Last name.
+    :vartype lastName: str
+    :ivar emailAddress: Email address. Required.
+    :vartype emailAddress: str
+    :ivar userPrincipalName: User principal name.
+    :vartype userPrincipalName: str
+    :ivar aadEmail: AAD email address.
+    :vartype aadEmail: str
     """
 
     firstName: str
@@ -1495,10 +1687,10 @@ class UserDetail(TypedDict, total=False):
 class VnetInjectionDetails(TypedDict, total=False):
     """Details for VNet injection.
 
-    :ivar virtual_network_resource_id: Resource ID of the virtual network. Required.
-    :vartype virtual_network_resource_id: str
-    :ivar subnet_resource_id: Resource ID of the subnet. Required.
-    :vartype subnet_resource_id: str
+    :ivar virtualNetworkResourceId: Resource ID of the virtual network. Required.
+    :vartype virtualNetworkResourceId: str
+    :ivar subnetResourceId: Resource ID of the subnet. Required.
+    :vartype subnetResourceId: str
     """
 
     virtualNetworkResourceId: Required[str]
