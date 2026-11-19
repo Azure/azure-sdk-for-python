@@ -282,8 +282,6 @@ uses `ProjectManagedIdentity` authentication and audience
 derived from the workspace's actual `dataplaneUri`, replacing the API hostname with the MCP
 hostname and appending `/mcp`, exactly as in the restored pool script. Browser provisioning
 depends only on Standard setup, not on model deployments or Search indexing.
-The connection shape also matches the
-[official Foundry sample](https://github.com/microsoft-foundry/foundry-samples/blob/main/samples/csharp/hosted-agents/agent-framework/browser-automation/infra-modules/playwright-connection.bicep).
 The `2025-04-01-preview` Bicep type enum omits `ProjectManagedIdentity`, so only that
 property's `BCP036` warning is suppressed; the compiled contract checker pins its value.
 
