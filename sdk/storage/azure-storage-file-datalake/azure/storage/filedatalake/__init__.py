@@ -6,7 +6,7 @@
 
 from ._download import StorageStreamDownloader
 from ._data_lake_file_client import DataLakeFileClient
-from ._session_async import SessionProvider, ContainerSessionProvider
+from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._file_system_client import FileSystemClient
 from ._data_lake_service_client import DataLakeServiceClient
 from ._data_lake_lease import DataLakeLeaseClient

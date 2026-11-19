@@ -176,11 +176,11 @@ class AsyncStorageAccountHostsMixin(object):
             policies.append(session_policy_factory(self, credential, transport, audience, kwargs))
         policies.extend(
             [
+                StorageSensitiveHeaderCleanupPolicy(**kwargs),
                 config.logging_policy,
                 AsyncStorageResponseHook(**kwargs),
                 DistributedTracingPolicy(**kwargs),
                 HttpLoggingPolicy(**kwargs),
-                StorageSensitiveHeaderCleanupPolicy(**kwargs),
             ]
         )
         if kwargs.get("_additional_pipeline_policies"):
